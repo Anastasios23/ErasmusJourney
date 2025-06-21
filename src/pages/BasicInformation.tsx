@@ -15,6 +15,11 @@ import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import {
+  getAllUniversities,
+  getDepartmentsByUniversity,
+  getUniversityById,
+} from "@/data/universities";
 
 const BasicInformation = () => {
   const [formData, setFormData] = useState({
@@ -32,8 +37,33 @@ const BasicInformation = () => {
     department: "",
   });
 
+  const universities = getAllUniversities();
+  const [selectedHomeUniversityId, setSelectedHomeUniversityId] = useState("");
+  const [selectedForeignUniversityId, setSelectedForeignUniversityId] =
+    useState("");
+
+  const homeDepartments = selectedHomeUniversityId
+    ? getDepartmentsByUniversity(selectedHomeUniversityId)
+    : [];
+  const foreignDepartments = selectedForeignUniversityId
+    ? getDepartmentsByUniversity(selectedForeignUniversityId)
+    : [];
+
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+
+    // Handle university selection for department filtering
+    if (field === "homeUniversity") {
+      const uni = universities.find((u) => u.name === value);
+      setSelectedHomeUniversityId(uni?.id || "");
+      setFormData((prev) => ({ ...prev, department: "" })); // Reset department when university changes
+    }
+
+    if (field === "foreignUniversity") {
+      const uni = universities.find((u) => u.name === value);
+      setSelectedForeignUniversityId(uni?.id || "");
+      setFormData((prev) => ({ ...prev, departmentAtHost: "" })); // Reset department when university changes
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -180,27 +210,43 @@ const BasicInformation = () => {
                     <Label htmlFor="universityInCyprus">
                       University in Cyprus
                     </Label>
-                    <Input
-                      id="universityInCyprus"
-                      placeholder="Enter your university in Cyprus"
-                      value={formData.universityInCyprus}
-                      onChange={(e) =>
-                        handleInputChange("universityInCyprus", e.target.value)
+                    <Select
+                      onValueChange={(value) =>
+                        handleInputChange("universityInCyprus", value)
                       }
-                    />
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your university in Cyprus" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {universities.map((uni) => (
+                          <SelectItem key={uni.id} value={uni.name}>
+                            {uni.name} ({uni.shortName})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="homeUniversity">
                       Home University in Cyprus
                     </Label>
-                    <Input
-                      id="homeUniversity"
-                      placeholder="Enter your home university"
-                      value={formData.homeUniversity}
-                      onChange={(e) =>
-                        handleInputChange("homeUniversity", e.target.value)
+                    <Select
+                      onValueChange={(value) =>
+                        handleInputChange("homeUniversity", value)
                       }
-                    />
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your home university" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {universities.map((uni) => (
+                          <SelectItem key={uni.id} value={uni.name}>
+                            {uni.name} ({uni.shortName})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
@@ -233,40 +279,89 @@ const BasicInformation = () => {
                   <Label htmlFor="foreignUniversity">
                     Foreign University (Host University)
                   </Label>
-                  <Input
-                    id="foreignUniversity"
-                    placeholder="Enter host university name"
-                    value={formData.foreignUniversity}
-                    onChange={(e) =>
-                      handleInputChange("foreignUniversity", e.target.value)
+                  <Select
+                    onValueChange={(value) =>
+                      handleInputChange("foreignUniversity", value)
                     }
-                  />
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select host university" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {universities.map((uni) => (
+                        <SelectItem key={uni.id} value={uni.name}>
+                          {uni.name} ({uni.shortName})
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="other">
+                        Other (European University)
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="departmentAtHost">
                     Department at Host University
                   </Label>
-                  <Input
-                    id="departmentAtHost"
-                    placeholder="Enter department at host university"
-                    value={formData.departmentAtHost}
-                    onChange={(e) =>
-                      handleInputChange("departmentAtHost", e.target.value)
-                    }
-                  />
+                  {selectedForeignUniversityId ? (
+                    <Select
+                      onValueChange={(value) =>
+                        handleInputChange("departmentAtHost", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select department at host university" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {foreignDepartments.map((dept, index) => (
+                          <SelectItem key={index} value={dept.name}>
+                            {dept.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Input
+                      id="departmentAtHost"
+                      placeholder="Enter department at host university"
+                      value={formData.departmentAtHost}
+                      onChange={(e) =>
+                        handleInputChange("departmentAtHost", e.target.value)
+                      }
+                    />
+                  )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="department">Department</Label>
-                  <Input
-                    id="department"
-                    placeholder="Enter your department"
-                    value={formData.department}
-                    onChange={(e) =>
-                      handleInputChange("department", e.target.value)
-                    }
-                  />
+                  <Label htmlFor="department">Your Department</Label>
+                  {selectedHomeUniversityId ? (
+                    <Select
+                      onValueChange={(value) =>
+                        handleInputChange("department", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your department" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {homeDepartments.map((dept, index) => (
+                          <SelectItem key={index} value={dept.name}>
+                            {dept.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Input
+                      id="department"
+                      placeholder="Enter your department"
+                      value={formData.department}
+                      onChange={(e) =>
+                        handleInputChange("department", e.target.value)
+                      }
+                    />
+                  )}
                 </div>
               </div>
             </CardContent>
