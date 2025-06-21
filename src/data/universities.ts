@@ -1242,7 +1242,11 @@ export const getDepartmentsByUniversity = (
 
   const departments: Department[] = [];
   university.faculties.forEach((faculty) => {
-    departments.push(...faculty.departments);
+    departments.push(
+      ...faculty.departments.filter(
+        (dept) => dept.name && dept.name.trim() !== "",
+      ),
+    );
   });
   return departments;
 };
