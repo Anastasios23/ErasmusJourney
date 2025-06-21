@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
+import Community from "./pages/Community";
+import ShareStory from "./pages/ShareStory";
 import Experiences from "./pages/Experiences";
 import BasicInformation from "./pages/BasicInformation";
 import CourseMatching from "./pages/CourseMatching";
@@ -24,6 +26,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/share-story" element={<ShareStory />} />
           <Route path="/experiences" element={<Experiences />} />
           <Route path="/basic-information" element={<BasicInformation />} />
           <Route path="/course-matching" element={<CourseMatching />} />
