@@ -9,6 +9,8 @@ import Login from "./pages/Login";
 import Community from "./pages/Community";
 import ShareStory from "./pages/ShareStory";
 import Destinations from "./pages/Destinations";
+import StudentStories from "./pages/StudentStories";
+import StudentAccommodations from "./pages/StudentAccommodations";
 import Experiences from "./pages/Experiences";
 import BasicInformation from "./pages/BasicInformation";
 import CourseMatching from "./pages/CourseMatching";
@@ -38,6 +40,11 @@ const App = () => (
           <Route path="/community" element={<Community />} />
           <Route path="/share-story" element={<ShareStory />} />
           <Route path="/destinations" element={<Destinations />} />
+          <Route path="/student-stories" element={<StudentStories />} />
+          <Route
+            path="/student-accommodations"
+            element={<StudentAccommodations />}
+          />
           <Route path="/experiences" element={<Experiences />} />
           <Route path="/basic-information" element={<BasicInformation />} />
           <Route path="/course-matching" element={<CourseMatching />} />

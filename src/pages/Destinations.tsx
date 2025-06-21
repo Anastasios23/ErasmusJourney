@@ -303,16 +303,12 @@ const Destinations = () => {
                             ? "s"
                             : ""}
                         </div>
-                        <Button
-                          size="sm"
-                          className="text-xs"
-                          onClick={() => {
-                            // Navigate to destination details or application
-                          }}
-                        >
-                          Learn More
-                          <ArrowRight className="h-3 w-3 ml-1" />
-                        </Button>
+                        <Link to="/student-stories">
+                          <Button size="sm" className="text-xs">
+                            Learn More
+                            <ArrowRight className="h-3 w-3 ml-1" />
+                          </Button>
+                        </Link>
                       </div>
 
                       {testimonials.length > 0 && (

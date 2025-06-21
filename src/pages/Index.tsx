@@ -85,9 +85,11 @@ const Index = () => {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
-                <Button variant="outline" size="lg" className="px-8">
-                  Learn More
-                </Button>
+                <Link to="/student-stories">
+                  <Button variant="outline" size="lg" className="px-8">
+                    Learn More
+                  </Button>
+                </Link>
               </div>
             </div>
             <div className="relative">
@@ -178,7 +180,7 @@ const Index = () => {
               </p>
             </Link>
 
-            <Link to="/accommodation" className="group cursor-pointer">
+            <Link to="/student-accommodations" className="group cursor-pointer">
               <div className="bg-green-100 rounded-2xl p-8 mb-6 aspect-square flex items-center justify-center transition-transform group-hover:scale-105">
                 <img
                   src="https://images.unsplash.com/photo-1586105251261-72a756497a11?w=300&h=200&fit=crop"
@@ -190,7 +192,7 @@ const Index = () => {
                 Secure your stay
               </h3>
               <p className="text-gray-600">
-                Find accommodation and plan your budget
+                Find accommodation where other students lived
               </p>
             </Link>
           </div>
