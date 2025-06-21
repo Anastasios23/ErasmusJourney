@@ -52,30 +52,6 @@ const Index = () => {
     },
   ];
 
-  const resources = [
-    {
-      title: "Complete your application",
-      description: "Essential tips for a successful Erasmus application",
-      image:
-        "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=300&h=200&fit=crop",
-      color: "bg-yellow-100",
-    },
-    {
-      title: "Choose your destination",
-      description: "Explore universities and cities across Europe",
-      image:
-        "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=300&h=200&fit=crop",
-      color: "bg-blue-100",
-    },
-    {
-      title: "Secure your stay",
-      description: "Find accommodation and plan your budget",
-      image:
-        "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=300&h=200&fit=crop",
-      color: "bg-green-100",
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -170,23 +146,53 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {resources.map((resource, index) => (
-              <div key={index} className="group cursor-pointer">
-                <div
-                  className={`${resource.color} rounded-2xl p-8 mb-6 aspect-square flex items-center justify-center transition-transform group-hover:scale-105`}
-                >
-                  <img
-                    src={resource.image}
-                    alt={resource.title}
-                    className="w-full h-full object-cover rounded-xl"
-                  />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                  {resource.title}
-                </h3>
-                <p className="text-gray-600">{resource.description}</p>
+            <Link to="/basic-information" className="group cursor-pointer">
+              <div className="bg-yellow-100 rounded-2xl p-8 mb-6 aspect-square flex items-center justify-center transition-transform group-hover:scale-105">
+                <img
+                  src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=300&h=200&fit=crop"
+                  alt="Complete your application"
+                  className="w-full h-full object-cover rounded-xl"
+                />
               </div>
-            ))}
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                Complete your application
+              </h3>
+              <p className="text-gray-600">
+                Essential tips for a successful Erasmus application
+              </p>
+            </Link>
+
+            <Link to="/destinations" className="group cursor-pointer">
+              <div className="bg-blue-100 rounded-2xl p-8 mb-6 aspect-square flex items-center justify-center transition-transform group-hover:scale-105">
+                <img
+                  src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=300&h=200&fit=crop"
+                  alt="Choose your destination"
+                  className="w-full h-full object-cover rounded-xl"
+                />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                Choose your destination
+              </h3>
+              <p className="text-gray-600">
+                Explore universities and cities across Europe
+              </p>
+            </Link>
+
+            <Link to="/accommodation" className="group cursor-pointer">
+              <div className="bg-green-100 rounded-2xl p-8 mb-6 aspect-square flex items-center justify-center transition-transform group-hover:scale-105">
+                <img
+                  src="https://images.unsplash.com/photo-1586105251261-72a756497a11?w=300&h=200&fit=crop"
+                  alt="Secure your stay"
+                  className="w-full h-full object-cover rounded-xl"
+                />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                Secure your stay
+              </h3>
+              <p className="text-gray-600">
+                Find accommodation and plan your budget
+              </p>
+            </Link>
           </div>
         </div>
       </section>
