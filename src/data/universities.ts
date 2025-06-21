@@ -1208,7 +1208,8 @@ export const CYPRUS_UNIVERSITIES: University[] = [
 ];
 
 // Helper functions to get data
-export const getAllUniversities = (): University[] => CYPRUS_UNIVERSITIES;
+export const getAllUniversities = (): University[] =>
+  CYPRUS_UNIVERSITIES.filter((uni) => uni.name && uni.name.trim() !== "");
 
 export const getUniversityById = (id: string): University | undefined =>
   CYPRUS_UNIVERSITIES.find((uni) => uni.id === id);
