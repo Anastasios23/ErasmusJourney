@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Community from "./pages/Community";
 import ShareStory from "./pages/ShareStory";
+import PhotoStory from "./pages/PhotoStory";
 import Destinations from "./pages/Destinations";
 import StudentStories from "./pages/StudentStories";
 import StudentAccommodations from "./pages/StudentAccommodations";
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/community" element={<Community />} />
           <Route path="/share-story" element={<ShareStory />} />
+          <Route path="/photo-story" element={<PhotoStory />} />
           <Route path="/destinations" element={<Destinations />} />
           <Route path="/student-stories" element={<StudentStories />} />
           <Route

@@ -34,7 +34,7 @@ const ShareStory = () => {
       time: "10 minutes",
       impact: "Gives future students a real sense of places and experiences",
       color: "bg-green-100 text-green-600",
-      link: "#",
+      link: "/photo-story",
     },
     {
       icon: Heart,
