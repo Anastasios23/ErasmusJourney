@@ -42,11 +42,15 @@ const Destinations = () => {
   const universities = getAllUniversities();
 
   // Get unique values for filters
-  const countries = [...new Set(destinations.map((d) => d.country))].sort();
+  const countries = [...new Set(destinations.map((d) => d.country))]
+    .filter(Boolean)
+    .sort();
   const costLevels = ["low", "medium", "high"];
   const academicFields = [
     ...new Set(destinations.flatMap((d) => d.popularWith)),
-  ].sort();
+  ]
+    .filter(Boolean)
+    .sort();
 
   // Filter destinations based on search criteria
   const filteredDestinations = destinations.filter((dest) => {
