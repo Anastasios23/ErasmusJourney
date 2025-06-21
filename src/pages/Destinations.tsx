@@ -57,13 +57,19 @@ const Destinations = () => {
       dest.university.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesCountry =
-      selectedCountry === "" || dest.country === selectedCountry;
+      selectedCountry === "" ||
+      selectedCountry === "all-countries" ||
+      dest.country === selectedCountry;
 
     const matchesCost =
-      selectedCostLevel === "" || dest.costOfLiving === selectedCostLevel;
+      selectedCostLevel === "" ||
+      selectedCostLevel === "all-costs" ||
+      dest.costOfLiving === selectedCostLevel;
 
     const matchesField =
-      selectedField === "" || dest.popularWith.includes(selectedField);
+      selectedField === "" ||
+      selectedField === "all-fields" ||
+      dest.popularWith.includes(selectedField);
 
     return matchesSearch && matchesCountry && matchesCost && matchesField;
   });
@@ -136,7 +142,7 @@ const Destinations = () => {
                 <SelectValue placeholder="Country" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Countries</SelectItem>
+                <SelectItem value="all-countries">All Countries</SelectItem>
                 {countries.map((country) => (
                   <SelectItem key={country} value={country}>
                     {country}
@@ -149,7 +155,7 @@ const Destinations = () => {
                 <SelectValue placeholder="Cost Level" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Costs</SelectItem>
+                <SelectItem value="all-costs">All Costs</SelectItem>
                 {costLevels.map((cost) => (
                   <SelectItem key={cost} value={cost}>
                     {cost.charAt(0).toUpperCase() + cost.slice(1)} Cost
@@ -162,7 +168,7 @@ const Destinations = () => {
                 <SelectValue placeholder="Academic Field" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Fields</SelectItem>
+                <SelectItem value="all-fields">All Fields</SelectItem>
                 {academicFields.map((field) => (
                   <SelectItem key={field} value={field}>
                     {field}
@@ -174,9 +180,9 @@ const Destinations = () => {
               variant="outline"
               onClick={() => {
                 setSearchTerm("");
-                setSelectedCountry("");
-                setSelectedCostLevel("");
-                setSelectedField("");
+                setSelectedCountry("all-countries");
+                setSelectedCostLevel("all-costs");
+                setSelectedField("all-fields");
               }}
             >
               <Filter className="h-4 w-4 mr-2" />
