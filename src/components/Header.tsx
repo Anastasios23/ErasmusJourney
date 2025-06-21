@@ -43,12 +43,16 @@ const Header = () => {
 
           {/* Action Buttons */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
-              Log in
-            </Button>
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-              Get Started
-            </Button>
+            <Link to="/login">
+              <Button variant="ghost" size="sm">
+                Log in
+              </Button>
+            </Link>
+            <Link to="/basic-information">
+              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                Get Started
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
