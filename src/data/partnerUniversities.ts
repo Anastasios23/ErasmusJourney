@@ -65,7 +65,7 @@ const UCY_ENGLISH_STUDIES: PartnerUniversity[] = [
     country: "Greece",
   },
   { name: "University of Eotvos Lorand", city: "Budapest", country: "Hungary" },
-  { name: "University of Roma Tre", city: "Sevilla", country: "Spain" },
+  { name: "Universidad de Sevilla", city: "Sevilla", country: "Spain" },
   { name: "University of Jyvaskyla", city: "Jyvaskya", country: "Finland" },
   { name: "Universitat Bamberg", city: "Bamberg", country: "Germany" },
   { name: "Universite de Liege", city: "Liege", country: "Belgium" },
@@ -109,7 +109,7 @@ const UCY_ENGLISH_STUDIES: PartnerUniversity[] = [
     country: "Germany",
   },
   { name: "Universita Degli Studi Di Parma", city: "Parma", country: "Italy" },
-  { name: "University of Roma Tre", city: "Prague", country: "Czech Republic" },
+  { name: "Charles University", city: "Prague", country: "Czech Republic" },
   { name: "Sofia University", city: "Sofia", country: "Bulgaria" },
   { name: "Ionio University", city: "Athens", country: "Greece" },
   {
@@ -864,7 +864,7 @@ const UCLAN_ENGINEERING: PartnerUniversity[] = [
     country: "Romania",
   },
   { name: "The University of Oradea", city: "Oradea", country: "Romania" },
-  { name: "University of Niš", city: "Niš", country: "Serbia" },
+  { name: "University of Ni��", city: "Niš", country: "Serbia" },
   { name: "Universidad de Virgo", city: "Virgo", country: "Spain" },
 ];
 
