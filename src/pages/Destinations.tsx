@@ -42,6 +42,7 @@ import {
 const Destinations = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
   const [selectedCostLevel, setSelectedCostLevel] = useState("");
   const [selectedField, setSelectedField] = useState("");
 
