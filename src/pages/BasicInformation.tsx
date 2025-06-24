@@ -248,7 +248,7 @@ const BasicInformation = () => {
                       </SelectTrigger>
                       <SelectContent>
                         {universities.map((uni) => (
-                          <SelectItem key={uni.id} value={uni.name}>
+                          <SelectItem key={`uni-${uni.id}`} value={uni.name}>
                             {uni.name} ({uni.shortName})
                           </SelectItem>
                         ))}
