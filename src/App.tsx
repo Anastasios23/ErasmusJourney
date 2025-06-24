@@ -53,13 +53,45 @@ const App = () => (
               element={<StudentAccommodations />}
             />
             <Route path="/experiences" element={<Experiences />} />
-            <Route path="/basic-information" element={<BasicInformation />} />
-            <Route path="/course-matching" element={<CourseMatching />} />
-            <Route path="/accommodation" element={<Accommodation />} />
-            <Route path="/living-expenses" element={<LivingExpenses />} />
+            <Route
+              path="/basic-information"
+              element={
+                <ProtectedRoute>
+                  <BasicInformation />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/course-matching"
+              element={
+                <ProtectedRoute>
+                  <CourseMatching />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/accommodation"
+              element={
+                <ProtectedRoute>
+                  <Accommodation />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/living-expenses"
+              element={
+                <ProtectedRoute>
+                  <LivingExpenses />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/help-future-students"
-              element={<HelpFutureStudents />}
+              element={
+                <ProtectedRoute>
+                  <HelpFutureStudents />
+                </ProtectedRoute>
+              }
             />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
