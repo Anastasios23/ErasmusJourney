@@ -1328,14 +1328,7 @@ export const getAllPartnerUniversities = (): PartnerUniversity[] => {
     (agreement) => agreement.partnerUniversities,
   );
 
-  // Remove duplicates based on name and city
-  const uniquePartners = allPartners.filter(
-    (partner, index, self) =>
-      index ===
-      self.findIndex((p) => p.name === partner.name && p.city === partner.city),
-  );
-
-  return uniquePartners;
+  return removeDuplicateUniversities(allPartners);
 };
 
 export const formatUniversityDisplay = (partner: PartnerUniversity): string => {
