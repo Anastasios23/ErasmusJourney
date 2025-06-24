@@ -177,47 +177,6 @@ const Accommodation = () => {
                   />
                 </div>
               </div>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="roomSize">Room Size (sqm)</Label>
-                  <Input
-                    id="roomSize"
-                    type="number"
-                    placeholder="e.g., 15"
-                    value={formData.roomSize}
-                    onChange={(e) =>
-                      handleInputChange("roomSize", e.target.value)
-                    }
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Room Furnished?</Label>
-                  <RadioGroup
-                    value={formData.roomFurnished}
-                    onValueChange={(value) =>
-                      handleInputChange("roomFurnished", value)
-                    }
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="yes" id="furnished-yes" />
-                      <Label htmlFor="furnished-yes">Yes</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="no" id="furnished-no" />
-                      <Label htmlFor="furnished-no">No</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem
-                        value="partially"
-                        id="furnished-partial"
-                      />
-                      <Label htmlFor="furnished-partial">Partially</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-              </div>
             </CardContent>
           </Card>
 
