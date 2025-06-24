@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Mail, Lock, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowLeft, Mail, Lock, User, AlertCircle } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -17,15 +20,75 @@ const Login = () => {
     firstName: "",
     lastName: "",
   });
+  const [error, setError] = useState("");
+
+  const { login, register, isLoading, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    if (error) setError("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(isLogin ? "Login submitted:" : "Signup submitted:", formData);
-    // Implement authentication logic here
+    setError("");
+
+    if (!formData.email || !formData.password) {
+      setError("Please fill in all required fields");
+      return;
+    }
+
+    if (!isLogin) {
+      if (!formData.firstName || !formData.lastName) {
+        setError("Please fill in all required fields");
+        return;
+      }
+      if (formData.password !== formData.confirmPassword) {
+        setError("Passwords do not match");
+        return;
+      }
+    }
+
+    try {
+      if (isLogin) {
+        const success = await login(formData.email, formData.password);
+        if (success) {
+          toast({
+            title: "Welcome back!",
+            description: "You have successfully logged in.",
+          });
+          navigate("/");
+        } else {
+          setError("Invalid email or password");
+        }
+      } else {
+        const success = await register({
+          email: formData.email,
+          password: formData.password,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+        });
+        if (success) {
+          toast({
+            title: "Account created!",
+            description: "Welcome to Erasmus Journey!",
+          });
+          navigate("/");
+        } else {
+          setError("Failed to create account. Please try again.");
+        }
+      }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+    }
   };
 
   return (
@@ -52,19 +115,26 @@ const Login = () => {
           </h2>
           <p className="mt-2 text-sm text-gray-600">
             {isLogin
-              ? "Continue your Erasmus journey"
-              : "Start sharing your Erasmus experience"}
+              ? "Enter your details to access your Erasmus journey"
+              : "Join thousands of students sharing their experiences"}
           </p>
         </div>
 
-        {/* Form */}
+        {/* Auth Form */}
         <Card>
           <CardHeader>
             <CardTitle className="text-center">
-              {isLogin ? "Sign In" : "Sign Up"}
+              {isLogin ? "Login" : "Sign Up"}
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {error && (
+              <Alert className="mb-4" variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
                 <div className="grid grid-cols-2 gap-4">
@@ -81,7 +151,7 @@ const Login = () => {
                           handleInputChange("firstName", e.target.value)
                         }
                         className="pl-10"
-                        required
+                        required={!isLogin}
                       />
                     </div>
                   </div>
@@ -98,7 +168,7 @@ const Login = () => {
                           handleInputChange("lastName", e.target.value)
                         }
                         className="pl-10"
-                        required
+                        required={!isLogin}
                       />
                     </div>
                   </div>
@@ -153,48 +223,47 @@ const Login = () => {
                         handleInputChange("confirmPassword", e.target.value)
                       }
                       className="pl-10"
-                      required
+                      required={!isLogin}
                     />
                   </div>
                 </div>
               )}
 
-              <Button
-                type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                {isLogin ? "Sign In" : "Create Account"}
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading
+                  ? "Please wait..."
+                  : isLogin
+                    ? "Sign In"
+                    : "Create Account"}
               </Button>
             </form>
 
-            <div className="mt-6">
-              <Separator />
-              <div className="mt-6 text-center">
-                <p className="text-sm text-gray-600">
-                  {isLogin
-                    ? "Don't have an account?"
-                    : "Already have an account?"}
-                  <button
-                    type="button"
-                    onClick={() => setIsLogin(!isLogin)}
-                    className="ml-1 font-medium text-blue-600 hover:text-blue-500"
-                  >
-                    {isLogin ? "Sign up" : "Sign in"}
-                  </button>
-                </p>
-              </div>
-            </div>
+            <Separator className="my-6" />
 
-            {isLogin && (
-              <div className="mt-4 text-center">
-                <Link
-                  to="#"
-                  className="text-sm text-blue-600 hover:text-blue-500"
-                >
-                  Forgot your password?
-                </Link>
-              </div>
-            )}
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                {isLogin
+                  ? "Don't have an account?"
+                  : "Already have an account?"}
+              </p>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setError("");
+                  setFormData({
+                    email: "",
+                    password: "",
+                    confirmPassword: "",
+                    firstName: "",
+                    lastName: "",
+                  });
+                }}
+                className="text-blue-600 hover:text-blue-700"
+              >
+                {isLogin ? "Create an account" : "Sign in instead"}
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
@@ -204,7 +273,7 @@ const Login = () => {
             to="/"
             className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ArrowLeft className="h-4 w-4 mr-2" />
             Back to home
           </Link>
         </div>
