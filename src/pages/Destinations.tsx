@@ -51,6 +51,7 @@ const Destinations = () => {
 
   // Get unique values for filters
   const countries = getUniqueCountries();
+  const cities = [...new Set(cityDestinations.map((dest) => dest.city))].sort();
   const costLevels = ["low", "medium", "high"];
   const academicFields = [
     "Engineering",
