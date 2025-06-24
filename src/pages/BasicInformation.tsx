@@ -385,7 +385,10 @@ const BasicInformation = () => {
                       </SelectTrigger>
                       <SelectContent>
                         {foreignDepartments.map((dept, index) => (
-                          <SelectItem key={index} value={dept.name}>
+                          <SelectItem
+                            key={`foreign-dept-${dept.name}-${index}`}
+                            value={dept.name}
+                          >
                             {dept.name}
                           </SelectItem>
                         ))}
