@@ -498,6 +498,24 @@ const HelpFutureStudents = () => {
                         </div>
                       ))}
                     </div>
+                    {formData.specializations.includes("Other") && (
+                      <div className="space-y-2 mt-4">
+                        <Label htmlFor="otherSpecialization">
+                          Please specify your specialization
+                        </Label>
+                        <Input
+                          id="otherSpecialization"
+                          placeholder="Enter your academic specialization..."
+                          value={formData.otherSpecialization}
+                          onChange={(e) =>
+                            handleInputChange(
+                              "otherSpecialization",
+                              e.target.value,
+                            )
+                          }
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
