@@ -51,7 +51,15 @@ const Destinations = () => {
   // Get unique values for filters
   const countries = getUniqueCountries();
   const costLevels = ["low", "medium", "high"];
-  const academicFields = ["Engineering", "Business", "Medicine", "Computer Science", "Arts", "Law", "Psychology"]
+  const academicFields = [
+    "Engineering",
+    "Business",
+    "Medicine",
+    "Computer Science",
+    "Arts",
+    "Law",
+    "Psychology",
+  ]
     .filter(Boolean)
     .sort();
 
@@ -61,18 +69,21 @@ const Destinations = () => {
       searchTerm === "" ||
       dest.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
       dest.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      dest.popularUniversities.some(uni =>
-        uni.toLowerCase().includes(searchTerm.toLowerCase())
+      dest.popularUniversities.some((uni) =>
+        uni.toLowerCase().includes(searchTerm.toLowerCase()),
       );
 
     const matchesCountry =
-      selectedCountry === "" || selectedCountry === "all-countries" || dest.country === selectedCountry;
+      selectedCountry === "" ||
+      selectedCountry === "all-countries" ||
+      dest.country === selectedCountry;
 
     const matchesCost =
-      selectedCostLevel === "" || selectedCostLevel === "all-costs" || dest.costLevel === selectedCostLevel;
+      selectedCostLevel === "" ||
+      selectedCostLevel === "all-costs" ||
+      dest.costLevel === selectedCostLevel;
 
-    const matchesField =
-      selectedField === "" || selectedField === "all-fields";
+    const matchesField = selectedField === "" || selectedField === "all-fields";
 
     return matchesSearch && matchesCountry && matchesCost && matchesField;
   });
@@ -212,8 +223,10 @@ const Destinations = () => {
             {filteredDestinations.map((destination) => {
               const avgRating =
                 destination.testimonials.length > 0
-                  ? destination.testimonials.reduce((acc, t) => acc + t.rating, 0) /
-                    destination.testimonials.length
+                  ? destination.testimonials.reduce(
+                      (acc, t) => acc + t.rating,
+                      0,
+                    ) / destination.testimonials.length
                   : 0;
 
               return (
@@ -241,7 +254,7 @@ const Destinations = () => {
                           className="bg-white/90 text-gray-900"
                         >
                           <Globe className="h-3 w-3 mr-1" />
-                          {destination.language.split(' ')[0]}
+                          {destination.language.split(" ")[0]}
                         </Badge>
                       </div>
                     </div>
@@ -265,7 +278,8 @@ const Destinations = () => {
                       </div>
 
                       <p className="text-sm text-gray-600 mb-3">
-                        {destination.popularUniversities[0]} + {destination.popularUniversities.length - 1} more
+                        {destination.popularUniversities[0]} +{" "}
+                        {destination.popularUniversities.length - 1} more
                       </p>
 
                       <p className="text-gray-700 text-sm mb-4 line-clamp-2">
@@ -279,7 +293,7 @@ const Destinations = () => {
 
                       <div className="flex flex-wrap gap-2 mb-4">
                         <Badge variant="outline" className="text-xs">
-                          {destination.climate.split(' ')[0]} Climate
+                          {destination.climate.split(" ")[0]} Climate
                         </Badge>
                         <Badge variant="outline" className="text-xs">
                           {destination.attractions.length} Attractions
@@ -289,7 +303,8 @@ const Destinations = () => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-xs text-gray-500">
                           <Users className="h-3 w-3 mr-1" />
-                          {destination.testimonials.length} review{destination.testimonials.length !== 1 ? "s" : ""}
+                          {destination.testimonials.length} review
+                          {destination.testimonials.length !== 1 ? "s" : ""}
                         </div>
 
                         <Link to={`/destination/${destination.id}`}>
@@ -303,34 +318,6 @@ const Destinations = () => {
                           </Button>
                         </Link>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-                              <AvatarImage
-                                src={testimonials[0].avatar}
-                                alt={testimonials[0].studentName}
-                              />
-                              <AvatarFallback className="text-xs">
-                                {testimonials[0].studentName
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="text-xs text-gray-600">
-                              <span className="font-medium">
-                                {testimonials[0].studentName}
-                              </span>{" "}
-                              from {testimonials[0].homeUniversity}
-                            </div>
-                          </div>
-                          <p className="text-xs text-gray-600 mt-2 line-clamp-2">
-                            "{testimonials[0].cityReview.slice(0, 100)}..."
-                          </p>
-                        </div>
-                      )}
                     </div>
                   </CardContent>
                 </Card>
