@@ -155,17 +155,6 @@ const CourseMatching = () => {
     setCourses(updatedCourses);
   };
 
-  const addEquivalentCourse = () => {
-    setEquivalentCourses([
-      ...equivalentCourses,
-      { name: "", code: "", ects: "" },
-    ]);
-  };
-
-  const removeEquivalentCourse = (index: number) => {
-    setEquivalentCourses(equivalentCourses.filter((_, i) => i !== index));
-  };
-
   const updateEquivalentCourse = (
     index: number,
     field: string,
