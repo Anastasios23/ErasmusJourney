@@ -80,6 +80,11 @@ const Destinations = () => {
       selectedCountry === "all-countries" ||
       dest.country === selectedCountry;
 
+    const matchesCity =
+      selectedCity === "" ||
+      selectedCity === "all-cities" ||
+      dest.city === selectedCity;
+
     const matchesCost =
       selectedCostLevel === "" ||
       selectedCostLevel === "all-costs" ||
@@ -87,7 +92,13 @@ const Destinations = () => {
 
     const matchesField = selectedField === "" || selectedField === "all-fields";
 
-    return matchesSearch && matchesCountry && matchesCost && matchesField;
+    return (
+      matchesSearch &&
+      matchesCountry &&
+      matchesCity &&
+      matchesCost &&
+      matchesField
+    );
   });
 
   const getCostBadgeColor = (cost: string) => {
