@@ -327,6 +327,83 @@ const CourseMatching = () => {
             </CardContent>
           </Card>
 
+          {/* Course Count Planning */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl font-semibold text-gray-900">
+                Course Planning
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="hostCourseCount">
+                    How many courses did you take at the host university?
+                  </Label>
+                  <Select
+                    onValueChange={(value) =>
+                      handleInputChange("hostCourseCount", value)
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select number of courses" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 10 }, (_, i) => i + 1).map(
+                        (num) => (
+                          <SelectItem key={num} value={num.toString()}>
+                            {num} {num === 1 ? "course" : "courses"}
+                          </SelectItem>
+                        ),
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="homeCourseCount">
+                    How many equivalent courses do you have at your home
+                    university?
+                  </Label>
+                  <Select
+                    onValueChange={(value) =>
+                      handleInputChange("homeCourseCount", value)
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select number of courses" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 10 }, (_, i) => i + 1).map(
+                        (num) => (
+                          <SelectItem key={num} value={num.toString()}>
+                            {num} {num === 1 ? "course" : "courses"}
+                          </SelectItem>
+                        ),
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {formData.hostCourseCount && formData.homeCourseCount && (
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-800">
+                    <strong>Course Setup:</strong> You'll provide details for{" "}
+                    <span className="font-semibold">
+                      {formData.hostCourseCount} host university courses
+                    </span>{" "}
+                    and{" "}
+                    <span className="font-semibold">
+                      {formData.homeCourseCount} equivalent home courses
+                    </span>
+                    .
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Courses at Host University */}
           <Card>
             <CardHeader>
