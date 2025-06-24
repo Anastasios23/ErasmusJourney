@@ -43,19 +43,19 @@ const CourseMatching = () => {
     hostDepartment: "",
     homeUniversity: "",
     homeDepartment: "",
+    hostCourseCount: "",
+    homeCourseCount: "",
     courseMatchingDifficult: "",
     courseMatchingChallenges: "",
     recommendCourses: "",
     recommendationReason: "",
   });
 
-  const [courses, setCourses] = useState<Course[]>([
-    { name: "", code: "", ects: "", difficulty: "", examType: "" },
-  ]);
-
+  const [courses, setCourses] = useState<Course[]>([]);
   const [equivalentCourses, setEquivalentCourses] = useState<
     EquivalentCourse[]
-  >([{ name: "", code: "", ects: "" }]);
+  >([]);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const [selectedHostUniversityId, setSelectedHostUniversityId] = useState("");
   const [selectedHomeUniversityId, setSelectedHomeUniversityId] = useState("");
