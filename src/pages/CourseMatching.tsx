@@ -547,50 +547,40 @@ const CourseMatching = () => {
                         </Select>
                       </div>
                       <div className="space-y-2 md:col-span-2">
-                        <Label>Exam Type</Label>
-                        <RadioGroup
-                          value={course.examType}
-                          onValueChange={(value) =>
-                            updateCourse(index, "examType", value)
-                          }
-                        >
-                          <div className="flex flex-wrap gap-6">
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem
-                                value="oral"
-                                id={`oral-${index}`}
-                              />
-                              <Label htmlFor={`oral-${index}`}>Oral</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem
-                                value="written"
-                                id={`written-${index}`}
-                              />
-                              <Label htmlFor={`written-${index}`}>
-                                Written
-                              </Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem
-                                value="presentation"
-                                id={`presentation-${index}`}
-                              />
-                              <Label htmlFor={`presentation-${index}`}>
-                                Presentation
-                              </Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem
-                                value="project"
-                                id={`project-${index}`}
-                              />
-                              <Label htmlFor={`project-${index}`}>
-                                Project-Based
-                              </Label>
-                            </div>
-                          </div>
-                        </RadioGroup>
+                        <Label>Exam Types (Select all that apply)</Label>
+                        <div className="flex flex-wrap gap-6">
+                          {["oral", "written", "presentation", "project"].map(
+                            (examType) => (
+                              <div
+                                key={examType}
+                                className="flex items-center space-x-2"
+                              >
+                                <Checkbox
+                                  id={`${examType}-${index}`}
+                                  checked={course.examTypes.includes(examType)}
+                                  onCheckedChange={(checked) =>
+                                    updateCourseExamTypes(
+                                      index,
+                                      examType,
+                                      checked as boolean,
+                                    )
+                                  }
+                                />
+                                <Label htmlFor={`${examType}-${index}`}>
+                                  {examType === "project"
+                                    ? "Project-Based"
+                                    : examType.charAt(0).toUpperCase() +
+                                      examType.slice(1)}
+                                </Label>
+                              </div>
+                            ),
+                          )}
+                        </div>
+                        {course.examTypes.length > 0 && (
+                          <p className="text-xs text-gray-600">
+                            Selected: {course.examTypes.join(", ")}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </Card>
