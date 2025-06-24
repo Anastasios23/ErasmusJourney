@@ -38,27 +38,34 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/community" element={<Community />} />
-          <Route path="/share-story" element={<ShareStory />} />
-          <Route path="/photo-story" element={<PhotoStory />} />
-          <Route path="/destinations" element={<Destinations />} />
-          <Route path="/destination/:id" element={<DestinationDetail />} />
-          <Route path="/student-stories" element={<StudentStories />} />
-          <Route path="/student-accommodations" element={<StudentAccommodations />} />
-          <Route path="/experiences" element={<Experiences />} />
-          <Route path="/basic-information" element={<BasicInformation />} />
-          <Route path="/course-matching" element={<CourseMatching />} />
-          <Route path="/accommodation" element={<Accommodation />} />
-          <Route path="/living-expenses" element={<LivingExpenses />} />
-          <Route path="/help-future-students" element={<HelpFutureStudents />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/community" element={<Community />} />
+            <Route path="/share-story" element={<ShareStory />} />
+            <Route path="/photo-story" element={<PhotoStory />} />
+            <Route path="/destinations" element={<Destinations />} />
+            <Route path="/destination/:id" element={<DestinationDetail />} />
+            <Route path="/student-stories" element={<StudentStories />} />
+            <Route
+              path="/student-accommodations"
+              element={<StudentAccommodations />}
+            />
+            <Route path="/experiences" element={<Experiences />} />
+            <Route path="/basic-information" element={<BasicInformation />} />
+            <Route path="/course-matching" element={<CourseMatching />} />
+            <Route path="/accommodation" element={<Accommodation />} />
+            <Route path="/living-expenses" element={<LivingExpenses />} />
+            <Route
+              path="/help-future-students"
+              element={<HelpFutureStudents />}
+            />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
