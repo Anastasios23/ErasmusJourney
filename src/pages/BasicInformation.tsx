@@ -66,8 +66,19 @@ const BasicInformation = () => {
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-    // Reset foreign university when home university changes
+    // Reset dependent fields when home university changes
     if (field === "universityInCyprus") {
+      setFormData((prev) => ({
+        ...prev,
+        department: "",
+        foreignUniversity: "",
+        departmentAtHost: "",
+      }));
+      setSelectedForeignUniversityId("");
+    }
+
+    // Reset foreign university when department changes
+    if (field === "department") {
       setFormData((prev) => ({
         ...prev,
         foreignUniversity: "",
