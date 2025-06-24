@@ -20,6 +20,10 @@ import {
   getDepartmentsByUniversity,
   getUniversityById,
 } from "@/data/universities";
+import {
+  getPartnerUniversitiesForHome,
+  formatUniversityDisplay,
+} from "@/data/partnerUniversities";
 
 const BasicInformation = () => {
   const [formData, setFormData] = useState({
@@ -38,25 +42,29 @@ const BasicInformation = () => {
   });
 
   const universities = getAllUniversities();
-  const [selectedHomeUniversityId, setSelectedHomeUniversityId] = useState("");
   const [selectedForeignUniversityId, setSelectedForeignUniversityId] =
     useState("");
 
-  const homeDepartments = selectedHomeUniversityId
-    ? getDepartmentsByUniversity(selectedHomeUniversityId)
-    : [];
   const foreignDepartments = selectedForeignUniversityId
     ? getDepartmentsByUniversity(selectedForeignUniversityId)
+    : [];
+
+  // Get partner universities based on selected home university
+  const partnerUniversities = formData.universityInCyprus
+    ? getPartnerUniversitiesForHome(formData.universityInCyprus)
     : [];
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-    // Handle university selection for department filtering
-    if (field === "homeUniversity") {
-      const uni = universities.find((u) => u.name === value);
-      setSelectedHomeUniversityId(uni?.id || "");
-      setFormData((prev) => ({ ...prev, department: "" })); // Reset department when university changes
+    // Reset foreign university when home university changes
+    if (field === "universityInCyprus") {
+      setFormData((prev) => ({
+        ...prev,
+        foreignUniversity: "",
+        departmentAtHost: "",
+      }));
+      setSelectedForeignUniversityId("");
     }
 
     if (field === "foreignUniversity") {
@@ -227,27 +235,6 @@ const BasicInformation = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="homeUniversity">
-                      Home University in Cyprus
-                    </Label>
-                    <Select
-                      onValueChange={(value) =>
-                        handleInputChange("homeUniversity", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your home university" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {universities.map((uni) => (
-                          <SelectItem key={uni.id} value={uni.name}>
-                            {uni.name} ({uni.shortName})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
@@ -279,25 +266,34 @@ const BasicInformation = () => {
                   <Label htmlFor="foreignUniversity">
                     Foreign University (Host University)
                   </Label>
-                  <Select
-                    onValueChange={(value) =>
-                      handleInputChange("foreignUniversity", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select host university" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {universities.map((uni) => (
-                        <SelectItem key={uni.id} value={uni.name}>
-                          {uni.name} ({uni.shortName})
+                  {formData.universityInCyprus ? (
+                    <Select
+                      onValueChange={(value) =>
+                        handleInputChange("foreignUniversity", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select partner university" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {partnerUniversities.map((partner, index) => (
+                          <SelectItem key={index} value={partner.name}>
+                            {formatUniversityDisplay(partner)}
+                          </SelectItem>
+                        ))}
+                        <SelectItem value="other">
+                          Other (European University)
                         </SelectItem>
-                      ))}
-                      <SelectItem value="other">
-                        Other (European University)
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <div className="p-3 border border-gray-200 rounded-md bg-gray-50">
+                      <p className="text-sm text-gray-600">
+                        Please select your university in Cyprus first to see
+                        available partner universities
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -328,37 +324,6 @@ const BasicInformation = () => {
                       value={formData.departmentAtHost}
                       onChange={(e) =>
                         handleInputChange("departmentAtHost", e.target.value)
-                      }
-                    />
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="department">Your Department</Label>
-                  {selectedHomeUniversityId ? (
-                    <Select
-                      onValueChange={(value) =>
-                        handleInputChange("department", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your department" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {homeDepartments.map((dept, index) => (
-                          <SelectItem key={index} value={dept.name}>
-                            {dept.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <Input
-                      id="department"
-                      placeholder="Enter your department"
-                      value={formData.department}
-                      onChange={(e) =>
-                        handleInputChange("department", e.target.value)
                       }
                     />
                   )}
