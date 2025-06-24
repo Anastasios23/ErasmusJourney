@@ -269,7 +269,10 @@ const BasicInformation = () => {
                         </SelectTrigger>
                         <SelectContent>
                           {departmentsWithAgreements.map((dept, index) => (
-                            <SelectItem key={index} value={dept}>
+                            <SelectItem
+                              key={`dept-${dept}-${index}`}
+                              value={dept}
+                            >
                               {dept}
                             </SelectItem>
                           ))}
