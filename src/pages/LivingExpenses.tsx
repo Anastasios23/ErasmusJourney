@@ -297,35 +297,6 @@ const LivingExpenses = () => {
                     </div>
                   </RadioGroup>
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="moneyManagementTools">
-                    Money Management Tools Used
-                  </Label>
-                  <Input
-                    id="moneyManagementTools"
-                    placeholder="e.g., banking apps, budgeting apps, spreadsheets..."
-                    value={formData.moneyManagementTools}
-                    onChange={(e) =>
-                      handleInputChange("moneyManagementTools", e.target.value)
-                    }
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="currencyExchangeTips">
-                    Currency Exchange Tips
-                  </Label>
-                  <Textarea
-                    id="currencyExchangeTips"
-                    placeholder="Best ways to exchange money, avoid fees, etc..."
-                    value={formData.currencyExchangeTips}
-                    onChange={(e) =>
-                      handleInputChange("currencyExchangeTips", e.target.value)
-                    }
-                    rows={3}
-                  />
-                </div>
               </div>
             </CardContent>
           </Card>
