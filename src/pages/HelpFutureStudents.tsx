@@ -125,6 +125,7 @@ const HelpFutureStudents = () => {
     "Architecture",
     "Education",
     "Social Work",
+    "Other",
   ];
 
   const testimonials = getAllTestimonials().slice(0, 3);
