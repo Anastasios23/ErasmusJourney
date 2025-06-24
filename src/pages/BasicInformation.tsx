@@ -314,7 +314,7 @@ const BasicInformation = () => {
                   <Label htmlFor="foreignUniversity">
                     Foreign University (Host University)
                   </Label>
-                  {formData.universityInCyprus ? (
+                  {formData.universityInCyprus && formData.department ? (
                     <Select
                       onValueChange={(value) =>
                         handleInputChange("foreignUniversity", value)
@@ -324,24 +324,44 @@ const BasicInformation = () => {
                         <SelectValue placeholder="Select partner university" />
                       </SelectTrigger>
                       <SelectContent>
-                        {partnerUniversities.map((partner, index) => (
-                          <SelectItem key={index} value={partner.name}>
-                            {formatUniversityDisplay(partner)}
+                        {partnerUniversities.length > 0 ? (
+                          <>
+                            {partnerUniversities.map((partner, index) => (
+                              <SelectItem key={index} value={partner.name}>
+                                {formatUniversityDisplay(partner)}
+                              </SelectItem>
+                            ))}
+                            <SelectItem value="other">
+                              Other (European University)
+                            </SelectItem>
+                          </>
+                        ) : (
+                          <SelectItem value="no-agreements" disabled>
+                            No specific agreements found for this department
                           </SelectItem>
-                        ))}
-                        <SelectItem value="other">
-                          Other (European University)
-                        </SelectItem>
+                        )}
                       </SelectContent>
                     </Select>
                   ) : (
                     <div className="p-3 border border-gray-200 rounded-md bg-gray-50">
                       <p className="text-sm text-gray-600">
-                        Please select your university in Cyprus first to see
-                        available partner universities
+                        {!formData.universityInCyprus
+                          ? "Please select your university in Cyprus first"
+                          : "Please select your department to see available partner universities with specific agreements"}
                       </p>
                     </div>
                   )}
+                  {formData.universityInCyprus &&
+                    formData.department &&
+                    partnerUniversities.length > 0 && (
+                      <div className="p-3 border border-blue-200 rounded-md bg-blue-50">
+                        <p className="text-sm text-blue-800">
+                          <strong>{partnerUniversities.length}</strong> partner
+                          universities found with agreements for{" "}
+                          {formData.department} at {formData.universityInCyprus}
+                        </p>
+                      </div>
+                    )}
                 </div>
 
                 <div className="space-y-2">
