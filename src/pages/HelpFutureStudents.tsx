@@ -531,38 +531,6 @@ const HelpFutureStudents = () => {
                       </div>
                     </RadioGroup>
                   </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="mentorshipExperience">
-                      Previous Mentorship Experience
-                    </Label>
-                    <Textarea
-                      id="mentorshipExperience"
-                      placeholder="Have you mentored students before? Any relevant experience..."
-                      value={formData.mentorshipExperience}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "mentorshipExperience",
-                          e.target.value,
-                        )
-                      }
-                      rows={3}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="funFact">
-                      Fun Fact About Your Erasmus Experience
-                    </Label>
-                    <Input
-                      id="funFact"
-                      placeholder="Something interesting or unique about your journey..."
-                      value={formData.funFact}
-                      onChange={(e) =>
-                        handleInputChange("funFact", e.target.value)
-                      }
-                    />
-                  </div>
                 </CardContent>
               </Card>
 
