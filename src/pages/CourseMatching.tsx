@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 import Header from "@/components/Header";
-import { ArrowRight, ArrowLeft, Upload, BookOpen } from "lucide-react";
+import { ArrowRight, ArrowLeft, Upload, BookOpen, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   getAllUniversities,
