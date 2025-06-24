@@ -1194,6 +1194,41 @@ export const UNIVERSITY_DEPARTMENT_AGREEMENTS: UniversityDepartmentAgreement[] =
       homeDepartment: "Accounting and Finance",
       partnerUniversities: FREDERICK_BUSINESS,
     },
+    {
+      homeUniversity: "Frederick University",
+      homeDepartment: "Maritime",
+      partnerUniversities: FREDERICK_MARITIME,
+    },
+    {
+      homeUniversity: "Frederick University",
+      homeDepartment: "Law",
+      partnerUniversities: FREDERICK_LAW,
+    },
+    {
+      homeUniversity: "Frederick University",
+      homeDepartment: "Civil Engineering",
+      partnerUniversities: FREDERICK_CIVIL_ENGINEERING,
+    },
+    {
+      homeUniversity: "Frederick University",
+      homeDepartment: "Electrical Engineering",
+      partnerUniversities: FREDERICK_ELECTRICAL_ENGINEERING,
+    },
+    {
+      homeUniversity: "Frederick University",
+      homeDepartment: "Computer Science",
+      partnerUniversities: FREDERICK_COMPUTER_SCIENCE,
+    },
+    {
+      homeUniversity: "Frederick University",
+      homeDepartment: "Psychology",
+      partnerUniversities: FREDERICK_PSYCHOLOGY,
+    },
+    {
+      homeUniversity: "Frederick University",
+      homeDepartment: "Nursing",
+      partnerUniversities: FREDERICK_NURSING,
+    },
 
     // UCLan Cyprus
     {
@@ -1210,6 +1245,43 @@ export const UNIVERSITY_DEPARTMENT_AGREEMENTS: UniversityDepartmentAgreement[] =
       homeUniversity: "University of Central Lancashire Cyprus",
       homeDepartment: "Computer Science",
       partnerUniversities: UCLAN_COMPUTING,
+    },
+    {
+      homeUniversity: "University of Central Lancashire Cyprus",
+      homeDepartment: "Engineering",
+      partnerUniversities: UCLAN_ENGINEERING,
+    },
+    {
+      homeUniversity: "University of Central Lancashire Cyprus",
+      homeDepartment: "Sports and Exercise Science",
+      partnerUniversities: UCLAN_SPORTS,
+    },
+    {
+      homeUniversity: "University of Central Lancashire Cyprus",
+      homeDepartment: "Law",
+      partnerUniversities: UCLAN_LAW,
+    },
+
+    // European University Cyprus
+    {
+      homeUniversity: "European University Cyprus",
+      homeDepartment: "Medicine",
+      partnerUniversities: EUC_MEDICINE,
+    },
+    {
+      homeUniversity: "European University Cyprus",
+      homeDepartment: "Psychology",
+      partnerUniversities: EUC_PSYCHOLOGY,
+    },
+    {
+      homeUniversity: "European University Cyprus",
+      homeDepartment: "Nursing and Midwifery",
+      partnerUniversities: EUC_NURSING,
+    },
+    {
+      homeUniversity: "European University Cyprus",
+      homeDepartment: "Business Administration",
+      partnerUniversities: EUC_BUSINESS,
     },
   ];
 
