@@ -210,7 +210,7 @@ const Destinations = () => {
       <section className="py-6 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-gray-600">
-            Showing {filteredDestinations.length} of {destinations.length}{" "}
+            Showing {filteredDestinations.length} of {cityDestinations.length}{" "}
             destinations
           </p>
         </div>
