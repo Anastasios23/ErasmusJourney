@@ -45,16 +45,20 @@ const Destinations = () => {
   const [selectedCostLevel, setSelectedCostLevel] = useState("");
   const [selectedField, setSelectedField] = useState("");
 
-  const destinations = getAllDestinations();
+  const cityDestinations = getAllCityDestinations();
   const universities = getAllUniversities();
 
   // Get unique values for filters
-  const countries = [...new Set(destinations.map((d) => d.country))]
-    .filter(Boolean)
-    .sort();
+  const countries = getUniqueCountries();
   const costLevels = ["low", "medium", "high"];
   const academicFields = [
-    ...new Set(destinations.flatMap((d) => d.popularWith)),
+    "Engineering",
+    "Business",
+    "Medicine",
+    "Computer Science",
+    "Arts",
+    "Law",
+    "Psychology",
   ]
     .filter(Boolean)
     .sort();
