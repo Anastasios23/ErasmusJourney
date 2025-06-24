@@ -56,6 +56,7 @@ const HelpFutureStudents = () => {
     allowPublicContact: "",
     responseTime: "",
     specializations: [],
+    otherSpecialization: "",
     funFact: "",
     nickname: "",
   });
