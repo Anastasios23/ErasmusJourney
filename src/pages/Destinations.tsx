@@ -64,12 +64,14 @@ const Destinations = () => {
     .sort();
 
   // Filter destinations based on search criteria
-  const filteredDestinations = destinations.filter((dest) => {
+  const filteredDestinations = cityDestinations.filter((dest) => {
     const matchesSearch =
       searchTerm === "" ||
       dest.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
       dest.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      dest.university.toLowerCase().includes(searchTerm.toLowerCase());
+      dest.popularUniversities.some((uni) =>
+        uni.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
 
     const matchesCountry =
       selectedCountry === "" ||
@@ -79,12 +81,9 @@ const Destinations = () => {
     const matchesCost =
       selectedCostLevel === "" ||
       selectedCostLevel === "all-costs" ||
-      dest.costOfLiving === selectedCostLevel;
+      dest.costLevel === selectedCostLevel;
 
-    const matchesField =
-      selectedField === "" ||
-      selectedField === "all-fields" ||
-      dest.popularWith.includes(selectedField);
+    const matchesField = selectedField === "" || selectedField === "all-fields";
 
     return matchesSearch && matchesCountry && matchesCost && matchesField;
   });
