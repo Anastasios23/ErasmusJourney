@@ -606,38 +606,6 @@ const HelpFutureStudents = () => {
             </>
           )}
 
-          {/* Additional Advice */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold text-gray-900">
-                Additional Advice for Future Students
-              </CardTitle>
-              <p className="text-gray-600">
-                Share any final wisdom or tips that could help future Erasmus
-                students
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Label htmlFor="additionalAdvice">Your Advice (Optional)</Label>
-                <Textarea
-                  id="additionalAdvice"
-                  placeholder="What do you wish you knew before starting your Erasmus? What advice would you give to someone just starting their journey? Any final tips or encouragement..."
-                  value={formData.additionalAdvice}
-                  onChange={(e) =>
-                    handleInputChange("additionalAdvice", e.target.value)
-                  }
-                  rows={6}
-                  className="resize-none"
-                />
-                <p className="text-xs text-gray-500">
-                  This advice will be shared with future students and could be
-                  featured in our resources section.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Current Mentors Preview */}
           {formData.wantToHelp === "yes" && (
             <Card className="bg-gradient-to-r from-blue-50 to-green-50 border-blue-200">
