@@ -34,12 +34,11 @@ const BasicInformation = () => {
     semester: "",
     levelOfStudy: "",
     universityInCyprus: "",
-    homeUniversity: "",
+    department: "",
     receptionCountry: "",
     receptionCity: "",
     foreignUniversity: "",
     departmentAtHost: "",
-    department: "",
   });
 
   const universities = getAllUniversities();
