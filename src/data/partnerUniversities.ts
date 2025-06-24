@@ -864,7 +864,7 @@ const UCLAN_ENGINEERING: PartnerUniversity[] = [
     country: "Romania",
   },
   { name: "The University of Oradea", city: "Oradea", country: "Romania" },
-  { name: "University of Ni��", city: "Niš", country: "Serbia" },
+  { name: "University of Niš", city: "Niš", country: "Serbia" },
   { name: "Universidad de Virgo", city: "Virgo", country: "Spain" },
 ];
 
@@ -1285,6 +1285,22 @@ export const UNIVERSITY_DEPARTMENT_AGREEMENTS: UniversityDepartmentAgreement[] =
     },
   ];
 
+// Helper function to remove duplicate universities
+const removeDuplicateUniversities = (
+  universities: PartnerUniversity[],
+): PartnerUniversity[] => {
+  const uniqueUniversities = new Map<string, PartnerUniversity>();
+
+  universities.forEach((uni) => {
+    const key = `${uni.name}-${uni.city}-${uni.country}`;
+    if (!uniqueUniversities.has(key)) {
+      uniqueUniversities.set(key, uni);
+    }
+  });
+
+  return Array.from(uniqueUniversities.values());
+};
+
 // Helper functions
 export const getPartnerUniversitiesForDepartment = (
   homeUniversity: string,
@@ -1295,7 +1311,8 @@ export const getPartnerUniversitiesForDepartment = (
       agreement.homeUniversity === homeUniversity &&
       agreement.homeDepartment === department,
   );
-  return agreement ? agreement.partnerUniversities : [];
+  const partners = agreement ? agreement.partnerUniversities : [];
+  return removeDuplicateUniversities(partners);
 };
 
 export const getDepartmentsWithAgreements = (
