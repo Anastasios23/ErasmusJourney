@@ -82,6 +82,31 @@ const CourseMatching = () => {
       setSelectedHomeUniversityId(uni?.id || "");
       setFormData((prev) => ({ ...prev, homeDepartment: "" }));
     }
+
+    if (field === "hostCourseCount") {
+      const count = parseInt(value) || 0;
+      if (count > 0) {
+        initializeCourses(count);
+      }
+    }
+
+    if (field === "homeCourseCount") {
+      const count = parseInt(value) || 0;
+      if (count > 0) {
+        initializeEquivalentCourses(count);
+      }
+    }
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setUploadedFile(file);
+    }
+  };
+
+  const removeUploadedFile = () => {
+    setUploadedFile(null);
   };
 
   // Initialize courses based on count
