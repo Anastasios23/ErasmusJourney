@@ -164,10 +164,10 @@ const Index = () => {
               </p>
             </Link>
 
-            <Link to="/destinations" className="group cursor-pointer">
+            <div className="group cursor-pointer">
               <div className="bg-blue-100 rounded-2xl p-8 mb-6 aspect-square flex items-center justify-center transition-transform group-hover:scale-105">
                 <img
-                  src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=300&h=200&fit=crop"
+                  src="https://cdn.builder.io/api/v1/image/assets%2F3ab1e1015f654e219ee7dc3d44bc47c8%2F27f8f1ff719e4d429c98e6c083c70785?format=webp&width=800"
                   alt="Choose your destination"
                   className="w-full h-full object-cover rounded-xl"
                 />
@@ -175,15 +175,36 @@ const Index = () => {
               <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
                 Choose your destination
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 mb-4">
                 Explore universities and cities across Europe
               </p>
-            </Link>
 
-            <Link to="/student-accommodations" className="group cursor-pointer">
+              <div className="grid grid-cols-2 gap-3">
+                <Link
+                  to="/destinations?filter=country"
+                  className="bg-blue-50 hover:bg-blue-100 rounded-lg p-3 text-center transition-colors"
+                >
+                  <div className="text-sm font-medium text-blue-900">
+                    By Country
+                  </div>
+                  <div className="text-xs text-blue-600">25+ Countries</div>
+                </Link>
+                <Link
+                  to="/destinations?filter=city"
+                  className="bg-blue-50 hover:bg-blue-100 rounded-lg p-3 text-center transition-colors"
+                >
+                  <div className="text-sm font-medium text-blue-900">
+                    By City
+                  </div>
+                  <div className="text-xs text-blue-600">50+ Cities</div>
+                </Link>
+              </div>
+            </div>
+
+            <div className="group cursor-pointer">
               <div className="bg-green-100 rounded-2xl p-8 mb-6 aspect-square flex items-center justify-center transition-transform group-hover:scale-105">
                 <img
-                  src="https://images.unsplash.com/photo-1586105251261-72a756497a11?w=300&h=200&fit=crop"
+                  src="https://cdn.builder.io/api/v1/image/assets%2F3ab1e1015f654e219ee7dc3d44bc47c8%2Fa61eeadc6a6c4179b45dc1cf7f6e2b96?format=webp&width=800"
                   alt="Secure your stay"
                   className="w-full h-full object-cover rounded-xl"
                 />
@@ -191,10 +212,31 @@ const Index = () => {
               <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
                 Secure your stay
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 mb-4">
                 Find accommodation where other students lived
               </p>
-            </Link>
+
+              <div className="grid grid-cols-2 gap-3">
+                <Link
+                  to="/student-accommodations?type=shared"
+                  className="bg-green-50 hover:bg-green-100 rounded-lg p-3 text-center transition-colors"
+                >
+                  <div className="text-sm font-medium text-green-900">
+                    Shared Rooms
+                  </div>
+                  <div className="text-xs text-green-600">€300-600/mo</div>
+                </Link>
+                <Link
+                  to="/student-accommodations?type=studio"
+                  className="bg-green-50 hover:bg-green-100 rounded-lg p-3 text-center transition-colors"
+                >
+                  <div className="text-sm font-medium text-green-900">
+                    Studios
+                  </div>
+                  <div className="text-xs text-green-600">€500-900/mo</div>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
