@@ -327,7 +327,10 @@ const BasicInformation = () => {
                         {partnerUniversities.length > 0 ? (
                           <>
                             {partnerUniversities.map((partner, index) => (
-                              <SelectItem key={index} value={partner.name}>
+                              <SelectItem
+                                key={`${partner.name}-${partner.city}-${partner.country}-${index}`}
+                                value={partner.name}
+                              >
                                 {formatUniversityDisplay(partner)}
                               </SelectItem>
                             ))}
