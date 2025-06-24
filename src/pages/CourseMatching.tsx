@@ -52,7 +52,9 @@ const CourseMatching = () => {
   });
 
   const [courses, setCourses] = useState<Course[]>([]);
-  const [equivalentCourses, setEquivalentCourses] = useState<EquivalentCourse[]>([]);
+  const [equivalentCourses, setEquivalentCourses] = useState<
+    EquivalentCourse[]
+  >([]);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const [selectedHostUniversityId, setSelectedHostUniversityId] = useState("");
@@ -136,12 +138,16 @@ const CourseMatching = () => {
     setCourses(updatedCourses);
   };
 
-  const updateCourseExamTypes = (courseIndex: number, examType: string, checked: boolean) => {
+  const updateCourseExamTypes = (
+    courseIndex: number,
+    examType: string,
+    checked: boolean,
+  ) => {
     const updatedCourses = courses.map((course, i) => {
       if (i === courseIndex) {
         const examTypes = checked
           ? [...course.examTypes, examType]
-          : course.examTypes.filter(type => type !== examType);
+          : course.examTypes.filter((type) => type !== examType);
         return { ...course, examTypes };
       }
       return course;
@@ -343,18 +349,21 @@ const CourseMatching = () => {
                       <SelectValue placeholder="Select number of courses" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-                        <SelectItem key={num} value={num.toString()}>
-                          {num} {num === 1 ? 'course' : 'courses'}
-                        </SelectItem>
-                      ))}
+                      {Array.from({ length: 10 }, (_, i) => i + 1).map(
+                        (num) => (
+                          <SelectItem key={num} value={num.toString()}>
+                            {num} {num === 1 ? "course" : "courses"}
+                          </SelectItem>
+                        ),
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="homeCourseCount">
-                    How many equivalent courses do you have at your home university?
+                    How many equivalent courses do you have at your home
+                    university?
                   </Label>
                   <Select
                     onValueChange={(value) =>
@@ -365,11 +374,13 @@ const CourseMatching = () => {
                       <SelectValue placeholder="Select number of courses" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-                        <SelectItem key={num} value={num.toString()}>
-                          {num} {num === 1 ? 'course' : 'courses'}
-                        </SelectItem>
-                      ))}
+                      {Array.from({ length: 10 }, (_, i) => i + 1).map(
+                        (num) => (
+                          <SelectItem key={num} value={num.toString()}>
+                            {num} {num === 1 ? "course" : "courses"}
+                          </SelectItem>
+                        ),
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -378,9 +389,15 @@ const CourseMatching = () => {
               {formData.hostCourseCount && formData.homeCourseCount && (
                 <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                   <p className="text-sm text-blue-800">
-                    <strong>Course Setup:</strong> You'll provide details for{' '}
-                    <span className="font-semibold">{formData.hostCourseCount} host university courses</span> and{' '}
-                    <span className="font-semibold">{formData.homeCourseCount} equivalent home courses</span>.
+                    <strong>Course Setup:</strong> You'll provide details for{" "}
+                    <span className="font-semibold">
+                      {formData.hostCourseCount} host university courses
+                    </span>{" "}
+                    and{" "}
+                    <span className="font-semibold">
+                      {formData.homeCourseCount} equivalent home courses
+                    </span>
+                    .
                   </p>
                 </div>
               )}
@@ -392,7 +409,8 @@ const CourseMatching = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-gray-900">
-                  Courses at Host University ({courses.length} of {formData.hostCourseCount})
+                  Courses at Host University ({courses.length} of{" "}
+                  {formData.hostCourseCount})
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -417,7 +435,8 @@ const CourseMatching = () => {
                           </Button>
                         </div>
                         <p className="text-xs text-gray-500">
-                          File uploaded successfully. You can still fill the manual entry below.
+                          File uploaded successfully. You can still fill the
+                          manual entry below.
                         </p>
                       </div>
                     ) : (
@@ -437,116 +456,137 @@ const CourseMatching = () => {
                           type="button"
                           variant="outline"
                           size="sm"
-                          onClick={() => document.getElementById('course-program-upload')?.click()}
+                          onClick={() =>
+                            document
+                              .getElementById("course-program-upload")
+                              ?.click()
+                          }
                         >
                           Choose File
                         </Button>
                         <p className="text-xs text-gray-500 mt-2">
-                          If the photo program is not accurate, we'll use the manual entry below
+                          If the photo program is not accurate, we'll use the
+                          manual entry below
                         </p>
                       </div>
                     )}
                   </div>
                 </div>
 
-              {courses.map((course, index) => (
-                <Card key={index} className="p-4 border-l-4 border-l-blue-500">
-                  <div className="flex items-center justify-between mb-4">
-                    <h4 className="font-medium text-gray-900">
-                      Course {index + 1}
-                    </h4>
-                    {courses.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => removeCourse(index)}
-                      >
-                        Remove
-                      </Button>
-                    )}
-                  </div>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Course Name</Label>
-                      <Input
-                        placeholder="Enter course name"
-                        value={course.name}
-                        onChange={(e) =>
-                          updateCourse(index, "name", e.target.value)
-                        }
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Course Code</Label>
-                      <Input
-                        placeholder="Enter course code"
-                        value={course.code}
-                        onChange={(e) =>
-                          updateCourse(index, "code", e.target.value)
-                        }
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>ECTS Credits</Label>
-                      <Input
-                        type="number"
-                        placeholder="Enter ECTS credits"
-                        value={course.ects}
-                        onChange={(e) =>
-                          updateCourse(index, "ects", e.target.value)
-                        }
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Level of Difficulty (1-5)</Label>
-                      <Select
-                        onValueChange={(value) =>
-                          updateCourse(index, "difficulty", value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select difficulty" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1">1 - Very Easy</SelectItem>
-                          <SelectItem value="2">2 - Easy</SelectItem>
-                          <SelectItem value="3">3 - Moderate</SelectItem>
-                          <SelectItem value="4">4 - Difficult</SelectItem>
-                          <SelectItem value="5">5 - Very Difficult</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <Label>Exam Types (Select all that apply)</Label>
-                      <div className="flex flex-wrap gap-6">
-                        {['oral', 'written', 'presentation', 'project'].map((examType) => (
-                          <div key={examType} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`${examType}-${index}`}
-                              checked={course.examTypes.includes(examType)}
-                              onCheckedChange={(checked) =>
-                                updateCourseExamTypes(index, examType, checked as boolean)
-                              }
-                            />
-                            <Label htmlFor={`${examType}-${index}`}>
-                              {examType === 'project' ? 'Project-Based' :
-                               examType.charAt(0).toUpperCase() + examType.slice(1)}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                      {course.examTypes.length > 0 && (
-                        <p className="text-xs text-gray-600">
-                          Selected: {course.examTypes.join(', ')}
-                        </p>
+                {courses.map((course, index) => (
+                  <Card
+                    key={index}
+                    className="p-4 border-l-4 border-l-blue-500"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="font-medium text-gray-900">
+                        Course {index + 1}
+                      </h4>
+                      {courses.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeCourse(index)}
+                        >
+                          Remove
+                        </Button>
                       )}
                     </div>
-                  </div>
-                </Card>
-              ))}
-            </CardContent>
-          </Card>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Course Name</Label>
+                        <Input
+                          placeholder="Enter course name"
+                          value={course.name}
+                          onChange={(e) =>
+                            updateCourse(index, "name", e.target.value)
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Course Code</Label>
+                        <Input
+                          placeholder="Enter course code"
+                          value={course.code}
+                          onChange={(e) =>
+                            updateCourse(index, "code", e.target.value)
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>ECTS Credits</Label>
+                        <Input
+                          type="number"
+                          placeholder="Enter ECTS credits"
+                          value={course.ects}
+                          onChange={(e) =>
+                            updateCourse(index, "ects", e.target.value)
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Level of Difficulty (1-5)</Label>
+                        <Select
+                          onValueChange={(value) =>
+                            updateCourse(index, "difficulty", value)
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select difficulty" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">1 - Very Easy</SelectItem>
+                            <SelectItem value="2">2 - Easy</SelectItem>
+                            <SelectItem value="3">3 - Moderate</SelectItem>
+                            <SelectItem value="4">4 - Difficult</SelectItem>
+                            <SelectItem value="5">
+                              5 - Very Difficult
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label>Exam Types (Select all that apply)</Label>
+                        <div className="flex flex-wrap gap-6">
+                          {["oral", "written", "presentation", "project"].map(
+                            (examType) => (
+                              <div
+                                key={examType}
+                                className="flex items-center space-x-2"
+                              >
+                                <Checkbox
+                                  id={`${examType}-${index}`}
+                                  checked={course.examTypes.includes(examType)}
+                                  onCheckedChange={(checked) =>
+                                    updateCourseExamTypes(
+                                      index,
+                                      examType,
+                                      checked as boolean,
+                                    )
+                                  }
+                                />
+                                <Label htmlFor={`${examType}-${index}`}>
+                                  {examType === "project"
+                                    ? "Project-Based"
+                                    : examType.charAt(0).toUpperCase() +
+                                      examType.slice(1)}
+                                </Label>
+                              </div>
+                            ),
+                          )}
+                        </div>
+                        {course.examTypes.length > 0 && (
+                          <p className="text-xs text-gray-600">
+                            Selected: {course.examTypes.join(", ")}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </CardContent>
+            </Card>
           )}
 
           {/* Home University Equivalent Courses */}
@@ -554,54 +594,71 @@ const CourseMatching = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-gray-900">
-                  Home University Equivalent Courses ({equivalentCourses.length} of {formData.homeCourseCount})
+                  Home University Equivalent Courses ({equivalentCourses.length}{" "}
+                  of {formData.homeCourseCount})
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 {equivalentCourses.map((course, index) => (
-                  <Card key={index} className="p-4 border-l-4 border-l-green-500">
+                  <Card
+                    key={index}
+                    className="p-4 border-l-4 border-l-green-500"
+                  >
                     <div className="flex items-center justify-between mb-4">
                       <h4 className="font-medium text-gray-900">
                         Equivalent Course {index + 1}
                       </h4>
                     </div>
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label>Course Name</Label>
-                      <Input
-                        placeholder="Enter equivalent course name"
-                        value={course.name}
-                        onChange={(e) =>
-                          updateEquivalentCourse(index, "name", e.target.value)
-                        }
-                      />
+                    <div className="grid md:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label>Course Name</Label>
+                        <Input
+                          placeholder="Enter equivalent course name"
+                          value={course.name}
+                          onChange={(e) =>
+                            updateEquivalentCourse(
+                              index,
+                              "name",
+                              e.target.value,
+                            )
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Course Code</Label>
+                        <Input
+                          placeholder="Enter course code"
+                          value={course.code}
+                          onChange={(e) =>
+                            updateEquivalentCourse(
+                              index,
+                              "code",
+                              e.target.value,
+                            )
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>ECTS Credits</Label>
+                        <Input
+                          type="number"
+                          placeholder="Enter ECTS credits"
+                          value={course.ects}
+                          onChange={(e) =>
+                            updateEquivalentCourse(
+                              index,
+                              "ects",
+                              e.target.value,
+                            )
+                          }
+                        />
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label>Course Code</Label>
-                      <Input
-                        placeholder="Enter course code"
-                        value={course.code}
-                        onChange={(e) =>
-                          updateEquivalentCourse(index, "code", e.target.value)
-                        }
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>ECTS Credits</Label>
-                      <Input
-                        type="number"
-                        placeholder="Enter ECTS credits"
-                        value={course.ects}
-                        onChange={(e) =>
-                          updateEquivalentCourse(index, "ects", e.target.value)
-                        }
-                      />
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </CardContent>
-          </Card>
+                  </Card>
+                ))}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Course Matching Evaluation */}
           <Card>
