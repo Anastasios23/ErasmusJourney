@@ -28,7 +28,7 @@ interface Course {
   code: string;
   ects: string;
   difficulty: string;
-  examType: string;
+  examTypes: string[];
 }
 
 interface EquivalentCourse {
