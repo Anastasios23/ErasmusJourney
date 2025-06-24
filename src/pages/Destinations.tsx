@@ -154,7 +154,7 @@ const Destinations = () => {
       {/* Search and Filters */}
       <section className="py-8 bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-5 gap-4">
+          <div className="grid md:grid-cols-6 gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
@@ -173,6 +173,19 @@ const Destinations = () => {
                 {countries.map((country) => (
                   <SelectItem key={country} value={country}>
                     {country}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select onValueChange={setSelectedCity}>
+              <SelectTrigger>
+                <SelectValue placeholder="City" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all-cities">All Cities</SelectItem>
+                {cities.map((city) => (
+                  <SelectItem key={city} value={city}>
+                    {city}
                   </SelectItem>
                 ))}
               </SelectContent>
