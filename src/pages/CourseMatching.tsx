@@ -482,16 +482,6 @@ const CourseMatching = () => {
                       <h4 className="font-medium text-gray-900">
                         Course {index + 1}
                       </h4>
-                      {courses.length > 1 && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => removeCourse(index)}
-                        >
-                          Remove
-                        </Button>
-                      )}
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
