@@ -10,6 +10,7 @@ import Community from "./pages/Community";
 import ShareStory from "./pages/ShareStory";
 import PhotoStory from "./pages/PhotoStory";
 import Destinations from "./pages/Destinations";
+import DestinationDetail from "./pages/DestinationDetail";
 import StudentStories from "./pages/StudentStories";
 import StudentAccommodations from "./pages/StudentAccommodations";
 import Experiences from "./pages/Experiences";
