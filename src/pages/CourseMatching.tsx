@@ -84,21 +84,49 @@ const CourseMatching = () => {
     }
   };
 
-  const addCourse = () => {
-    setCourses([
-      ...courses,
-      { name: "", code: "", ects: "", difficulty: "", examType: "" },
-    ]);
+  // Initialize courses based on count
+  const initializeCourses = (count: number) => {
+    const newCourses = Array.from({ length: count }, () => ({
+      name: "",
+      code: "",
+      ects: "",
+      difficulty: "",
+      examTypes: [],
+    }));
+    setCourses(newCourses);
   };
 
-  const removeCourse = (index: number) => {
-    setCourses(courses.filter((_, i) => i !== index));
+  // Initialize equivalent courses based on count
+  const initializeEquivalentCourses = (count: number) => {
+    const newCourses = Array.from({ length: count }, () => ({
+      name: "",
+      code: "",
+      ects: "",
+    }));
+    setEquivalentCourses(newCourses);
   };
 
   const updateCourse = (index: number, field: string, value: string) => {
     const updatedCourses = courses.map((course, i) =>
       i === index ? { ...course, [field]: value } : course,
     );
+    setCourses(updatedCourses);
+  };
+
+  const updateCourseExamTypes = (
+    courseIndex: number,
+    examType: string,
+    checked: boolean,
+  ) => {
+    const updatedCourses = courses.map((course, i) => {
+      if (i === courseIndex) {
+        const examTypes = checked
+          ? [...course.examTypes, examType]
+          : course.examTypes.filter((type) => type !== examType);
+        return { ...course, examTypes };
+      }
+      return course;
+    });
     setCourses(updatedCourses);
   };
 
