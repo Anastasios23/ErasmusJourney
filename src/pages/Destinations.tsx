@@ -220,9 +220,10 @@ const Destinations = () => {
               variant="outline"
               onClick={() => {
                 setSearchTerm("");
-                setSelectedCountry("all-countries");
-                setSelectedCostLevel("all-costs");
-                setSelectedField("all-fields");
+                setSelectedCountry("");
+                setSelectedCity("");
+                setSelectedCostLevel("");
+                setSelectedField("");
               }}
             >
               <Filter className="h-4 w-4 mr-2" />
