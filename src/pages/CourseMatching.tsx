@@ -52,9 +52,7 @@ const CourseMatching = () => {
   });
 
   const [courses, setCourses] = useState<Course[]>([]);
-  const [equivalentCourses, setEquivalentCourses] = useState<
-    EquivalentCourse[]
-  >([]);
+  const [equivalentCourses, setEquivalentCourses] = useState<EquivalentCourse[]>([]);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const [selectedHostUniversityId, setSelectedHostUniversityId] = useState("");
@@ -138,16 +136,12 @@ const CourseMatching = () => {
     setCourses(updatedCourses);
   };
 
-  const updateCourseExamTypes = (
-    courseIndex: number,
-    examType: string,
-    checked: boolean,
-  ) => {
+  const updateCourseExamTypes = (courseIndex: number, examType: string, checked: boolean) => {
     const updatedCourses = courses.map((course, i) => {
       if (i === courseIndex) {
         const examTypes = checked
           ? [...course.examTypes, examType]
-          : course.examTypes.filter((type) => type !== examType);
+          : course.examTypes.filter(type => type !== examType);
         return { ...course, examTypes };
       }
       return course;
@@ -349,21 +343,18 @@ const CourseMatching = () => {
                       <SelectValue placeholder="Select number of courses" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Array.from({ length: 10 }, (_, i) => i + 1).map(
-                        (num) => (
-                          <SelectItem key={num} value={num.toString()}>
-                            {num} {num === 1 ? "course" : "courses"}
-                          </SelectItem>
-                        ),
-                      )}
+                      {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                        <SelectItem key={num} value={num.toString()}>
+                          {num} {num === 1 ? 'course' : 'courses'}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="homeCourseCount">
-                    How many equivalent courses do you have at your home
-                    university?
+                    How many equivalent courses do you have at your home university?
                   </Label>
                   <Select
                     onValueChange={(value) =>
@@ -374,13 +365,11 @@ const CourseMatching = () => {
                       <SelectValue placeholder="Select number of courses" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Array.from({ length: 10 }, (_, i) => i + 1).map(
-                        (num) => (
-                          <SelectItem key={num} value={num.toString()}>
-                            {num} {num === 1 ? "course" : "courses"}
-                          </SelectItem>
-                        ),
-                      )}
+                      {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                        <SelectItem key={num} value={num.toString()}>
+                          {num} {num === 1 ? 'course' : 'courses'}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -389,15 +378,9 @@ const CourseMatching = () => {
               {formData.hostCourseCount && formData.homeCourseCount && (
                 <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                   <p className="text-sm text-blue-800">
-                    <strong>Course Setup:</strong> You'll provide details for{" "}
-                    <span className="font-semibold">
-                      {formData.hostCourseCount} host university courses
-                    </span>{" "}
-                    and{" "}
-                    <span className="font-semibold">
-                      {formData.homeCourseCount} equivalent home courses
-                    </span>
-                    .
+                    <strong>Course Setup:</strong> You'll provide details for{' '}
+                    <span className="font-semibold">{formData.hostCourseCount} host university courses</span> and{' '}
+                    <span className="font-semibold">{formData.homeCourseCount} equivalent home courses</span>.
                   </p>
                 </div>
               )}
@@ -405,40 +388,66 @@ const CourseMatching = () => {
           </Card>
 
           {/* Courses at Host University */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
+          {formData.hostCourseCount && (
+            <Card>
+              <CardHeader>
                 <CardTitle className="text-xl font-semibold text-gray-900">
-                  Courses at Host University
+                  Courses at Host University ({courses.length} of {formData.hostCourseCount})
                 </CardTitle>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={addCourse}
-                >
-                  Add Course
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Course Program Image Upload */}
-              <div className="space-y-2">
-                <Label>Course Program Image (Optional)</Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm text-gray-600 mb-2">
-                    Upload a photo of your course program
-                  </p>
-                  <Button type="button" variant="outline" size="sm">
-                    Choose File
-                  </Button>
-                  <p className="text-xs text-gray-500 mt-2">
-                    If the photo program is not accurate, we'll use the manual
-                    entry below
-                  </p>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Course Program Image Upload */}
+                <div className="space-y-2">
+                  <Label>Course Program Image (Optional)</Label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    {uploadedFile ? (
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-center space-x-2">
+                          <BookOpen className="h-6 w-6 text-green-600" />
+                          <span className="text-sm font-medium text-green-600">
+                            {uploadedFile.name}
+                          </span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={removeUploadedFile}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          File uploaded successfully. You can still fill the manual entry below.
+                        </p>
+                      </div>
+                    ) : (
+                      <div>
+                        <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Upload a photo of your course program
+                        </p>
+                        <input
+                          type="file"
+                          accept="image/*,.pdf"
+                          onChange={handleFileUpload}
+                          className="hidden"
+                          id="course-program-upload"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => document.getElementById('course-program-upload')?.click()}
+                        >
+                          Choose File
+                        </Button>
+                        <p className="text-xs text-gray-500 mt-2">
+                          If the photo program is not accurate, we'll use the manual entry below
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
 
               {courses.map((course, index) => (
                 <Card key={index} className="p-4 border-l-4 border-l-blue-500">
