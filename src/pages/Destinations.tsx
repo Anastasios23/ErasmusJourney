@@ -31,6 +31,13 @@ import {
   ERASMUS_DESTINATIONS,
 } from "@/data/destinations";
 import { getAllUniversities } from "@/data/universities";
+import {
+  getAllCityDestinations,
+  getCityDestinationsByCountry,
+  getUniqueCountries,
+  searchDestinations,
+  CityDestination,
+} from "@/data/citiesDestinations";
 
 const Destinations = () => {
   const [searchTerm, setSearchTerm] = useState("");
