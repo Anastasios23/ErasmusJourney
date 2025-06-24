@@ -224,36 +224,6 @@ const LivingExpenses = () => {
             <CardContent className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="monthlyIncomeSource">
-                    Primary Income Source
-                  </Label>
-                  <Select
-                    onValueChange={(value) =>
-                      handleInputChange("monthlyIncomeSource", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select income source" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="erasmus-grant">
-                        Erasmus Grant
-                      </SelectItem>
-                      <SelectItem value="family-support">
-                        Family Support
-                      </SelectItem>
-                      <SelectItem value="part-time-job">
-                        Part-time Job
-                      </SelectItem>
-                      <SelectItem value="scholarship">Scholarship</SelectItem>
-                      <SelectItem value="savings">Personal Savings</SelectItem>
-                      <SelectItem value="multiple">Multiple Sources</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
                   <Label htmlFor="monthlyIncomeAmount">
                     Monthly Income Amount (€)
                   </Label>
