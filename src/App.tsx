@@ -33,10 +33,11 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
@@ -46,19 +47,13 @@ const App = () => (
           <Route path="/destinations" element={<Destinations />} />
           <Route path="/destination/:id" element={<DestinationDetail />} />
           <Route path="/student-stories" element={<StudentStories />} />
-          <Route
-            path="/student-accommodations"
-            element={<StudentAccommodations />}
-          />
+          <Route path="/student-accommodations" element={<StudentAccommodations />} />
           <Route path="/experiences" element={<Experiences />} />
           <Route path="/basic-information" element={<BasicInformation />} />
           <Route path="/course-matching" element={<CourseMatching />} />
           <Route path="/accommodation" element={<Accommodation />} />
           <Route path="/living-expenses" element={<LivingExpenses />} />
-          <Route
-            path="/help-future-students"
-            element={<HelpFutureStudents />}
-          />
+          <Route path="/help-future-students" element={<HelpFutureStudents />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
