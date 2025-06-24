@@ -255,6 +255,34 @@ const BasicInformation = () => {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="department">Your Department/Program</Label>
+                    {formData.universityInCyprus ? (
+                      <Select
+                        onValueChange={(value) =>
+                          handleInputChange("department", value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your department" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {departmentsWithAgreements.map((dept, index) => (
+                            <SelectItem key={index} value={dept}>
+                              {dept}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <div className="p-3 border border-gray-200 rounded-md bg-gray-50">
+                        <p className="text-sm text-gray-600">
+                          Please select your university in Cyprus first
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
