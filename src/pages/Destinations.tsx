@@ -51,15 +51,7 @@ const Destinations = () => {
   // Get unique values for filters
   const countries = getUniqueCountries();
   const costLevels = ["low", "medium", "high"];
-  const academicFields = [
-    "Engineering",
-    "Business",
-    "Medicine",
-    "Computer Science",
-    "Arts",
-    "Law",
-    "Psychology",
-  ]
+  const academicFields = ["Engineering", "Business", "Medicine", "Computer Science", "Arts", "Law", "Psychology"]
     .filter(Boolean)
     .sort();
 
@@ -69,21 +61,18 @@ const Destinations = () => {
       searchTerm === "" ||
       dest.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
       dest.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      dest.popularUniversities.some((uni) =>
-        uni.toLowerCase().includes(searchTerm.toLowerCase()),
+      dest.popularUniversities.some(uni =>
+        uni.toLowerCase().includes(searchTerm.toLowerCase())
       );
 
     const matchesCountry =
-      selectedCountry === "" ||
-      selectedCountry === "all-countries" ||
-      dest.country === selectedCountry;
+      selectedCountry === "" || selectedCountry === "all-countries" || dest.country === selectedCountry;
 
     const matchesCost =
-      selectedCostLevel === "" ||
-      selectedCostLevel === "all-costs" ||
-      dest.costLevel === selectedCostLevel;
+      selectedCostLevel === "" || selectedCostLevel === "all-costs" || dest.costLevel === selectedCostLevel;
 
-    const matchesField = selectedField === "" || selectedField === "all-fields";
+    const matchesField =
+      selectedField === "" || selectedField === "all-fields";
 
     return matchesSearch && matchesCountry && matchesCost && matchesField;
   });
@@ -221,13 +210,10 @@ const Destinations = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredDestinations.map((destination) => {
-              const testimonials = getTestimonialsByDestination(
-                destination.city,
-              );
               const avgRating =
-                testimonials.length > 0
-                  ? testimonials.reduce((acc, t) => acc + t.rating, 0) /
-                    testimonials.length
+                destination.testimonials.length > 0
+                  ? destination.testimonials.reduce((acc, t) => acc + t.rating, 0) /
+                    destination.testimonials.length
                   : 0;
 
               return (
@@ -238,17 +224,15 @@ const Destinations = () => {
                   <CardContent className="p-0">
                     <div className="aspect-video relative overflow-hidden rounded-t-lg">
                       <img
-                        src={destination.imageUrl}
+                        src={destination.imageUrl || `/api/placeholder/400/250`}
                         alt={destination.city}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute top-4 left-4">
                         <Badge
-                          className={getCostBadgeColor(
-                            destination.costOfLiving,
-                          )}
+                          className={getCostBadgeColor(destination.costLevel)}
                         >
-                          {destination.costOfLiving} cost
+                          {destination.costLevel} cost
                         </Badge>
                       </div>
                       <div className="absolute top-4 right-4">
@@ -257,7 +241,7 @@ const Destinations = () => {
                           className="bg-white/90 text-gray-900"
                         >
                           <Globe className="h-3 w-3 mr-1" />
-                          {destination.language}
+                          {destination.language.split(' ')[0]}
                         </Badge>
                       </div>
                     </div>
@@ -281,7 +265,7 @@ const Destinations = () => {
                       </div>
 
                       <p className="text-sm text-gray-600 mb-3">
-                        {destination.universityShort}
+                        {destination.popularUniversities[0]} + {destination.popularUniversities.length - 1} more
                       </p>
 
                       <p className="text-gray-700 text-sm mb-4 line-clamp-2">
@@ -289,42 +273,41 @@ const Destinations = () => {
                       </p>
 
                       <div className="flex items-center text-sm text-gray-600 mb-4">
-                        <Euro className="h-4 w-4 mr-1" />€
-                        {destination.averageRent}/month avg. rent
+                        <Euro className="h-4 w-4 mr-1" />
+                        {destination.averageRent} rent
                       </div>
 
                       <div className="flex flex-wrap gap-2 mb-4">
-                        {destination.popularWith.map((field, index) => (
-                          <Badge
-                            key={index}
-                            variant="outline"
-                            className="text-xs"
-                          >
-                            {field}
-                          </Badge>
-                        ))}
+                        <Badge variant="outline" className="text-xs">
+                          {destination.climate.split(' ')[0]} Climate
+                        </Badge>
+                        <Badge variant="outline" className="text-xs">
+                          {destination.attractions.length} Attractions
+                        </Badge>
                       </div>
 
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-xs text-gray-500">
                           <Users className="h-3 w-3 mr-1" />
-                          {destination.partnerUniversities.length} partner uni
-                          {destination.partnerUniversities.length !== 1
-                            ? "s"
-                            : ""}
+                          {destination.testimonials.length} review{destination.testimonials.length !== 1 ? "s" : ""}
                         </div>
-                        <Link to="/student-stories">
-                          <Button size="sm" className="text-xs">
+
+                        <Link to={`/destination/${destination.id}`}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          >
                             Learn More
-                            <ArrowRight className="h-3 w-3 ml-1" />
+                            <ArrowRight className="h-4 w-4 ml-1" />
                           </Button>
                         </Link>
                       </div>
-
-                      {testimonials.length > 0 && (
-                        <div className="mt-4 pt-4 border-t">
-                          <div className="flex items-center space-x-2">
-                            <Avatar className="h-6 w-6">
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
                               <AvatarImage
                                 src={testimonials[0].avatar}
                                 alt={testimonials[0].studentName}
