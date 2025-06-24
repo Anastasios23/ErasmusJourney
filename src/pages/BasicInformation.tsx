@@ -21,7 +21,8 @@ import {
   getUniversityById,
 } from "@/data/universities";
 import {
-  getPartnerUniversitiesForHome,
+  getPartnerUniversitiesForDepartment,
+  getDepartmentsWithAgreements,
   formatUniversityDisplay,
 } from "@/data/partnerUniversities";
 
