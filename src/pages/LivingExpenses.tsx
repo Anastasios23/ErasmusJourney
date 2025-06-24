@@ -240,21 +240,6 @@ const LivingExpenses = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="biggestExpense">
-                  What was your biggest unexpected expense?
-                </Label>
-                <Textarea
-                  id="biggestExpense"
-                  placeholder="Describe any unexpected costs you encountered..."
-                  value={formData.biggestExpense}
-                  onChange={(e) =>
-                    handleInputChange("biggestExpense", e.target.value)
-                  }
-                  rows={3}
-                />
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="unexpectedCosts">
                   Unexpected Costs/Hidden Expenses
                 </Label>
