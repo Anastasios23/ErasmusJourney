@@ -49,10 +49,19 @@ const BasicInformation = () => {
     ? getDepartmentsByUniversity(selectedForeignUniversityId)
     : [];
 
-  // Get partner universities based on selected home university
-  const partnerUniversities = formData.universityInCyprus
-    ? getPartnerUniversitiesForHome(formData.universityInCyprus)
+  // Get departments with agreements based on selected home university
+  const departmentsWithAgreements = formData.universityInCyprus
+    ? getDepartmentsWithAgreements(formData.universityInCyprus)
     : [];
+
+  // Get partner universities based on selected home university and department
+  const partnerUniversities =
+    formData.universityInCyprus && formData.department
+      ? getPartnerUniversitiesForDepartment(
+          formData.universityInCyprus,
+          formData.department,
+        )
+      : [];
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
