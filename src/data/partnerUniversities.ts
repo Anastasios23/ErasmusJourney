@@ -434,6 +434,290 @@ const FREDERICK_BUSINESS: PartnerUniversity[] = [
   },
 ];
 
+// Frederick University - Additional departments
+const FREDERICK_MARITIME: PartnerUniversity[] = [
+  { name: "Tallinna Tehnikakorgkool", city: "Tallinn", country: "Estonia" },
+  {
+    name: "Jade University of Applied Science",
+    city: "Wilhelmshaven",
+    country: "Germany",
+  },
+];
+
+const FREDERICK_LAW: PartnerUniversity[] = [
+  {
+    name: "Ethino kai Kapodistriako Panepistimio Athinon",
+    city: "Athens",
+    country: "Greece",
+  },
+  {
+    name: "Democritus University Of Thrace",
+    city: "Komotini",
+    country: "Greece",
+  },
+  { name: "La Rochelle Universite", city: "La Rochelle", country: "France" },
+  { name: "University of Trnave", city: "Trnava", country: "Slovakia" },
+  {
+    name: "Univerzita Mateja Bela V Banskej Bystrici",
+    city: "Banská Bystrica",
+    country: "Slovakia",
+  },
+  {
+    name: "Univerzitet Privredna Akademija U Novom Sadu",
+    city: "Novi Sad",
+    country: "Serbia",
+  },
+  { name: "Universidade De Coimbra", city: "Coimbra", country: "Portugal" },
+  {
+    name: "Viesoji Istaiga Europos Humanitarinis Universitetas",
+    city: "Vilnius",
+    country: "Lithuania",
+  },
+  { name: "Hellenic Open University", city: "Patras", country: "Greece" },
+  { name: "University of Macedonia", city: "Thessaloniki", country: "Greece" },
+];
+
+const FREDERICK_CIVIL_ENGINEERING: PartnerUniversity[] = [
+  {
+    name: "Metropolia University of Applied Sciences",
+    city: "Helsinki",
+    country: "Finland",
+  },
+  {
+    name: "Czech Technical University",
+    city: "Prague",
+    country: "Czech Republic",
+  },
+  {
+    name: "Technical University of Kosice",
+    city: "Košice",
+    country: "Slovakia",
+  },
+  {
+    name: "Democritus University of Thrace",
+    city: "Komotini",
+    country: "Greece",
+  },
+  { name: "Tallinna Tehnikakorgkool", city: "Tallinn", country: "Estonia" },
+  { name: "La Rochelle Universite", city: "La Rochelle", country: "France" },
+  {
+    name: "Universitatea Tehnica de Constructii Bucuresti",
+    city: "Bucharest",
+    country: "Romania",
+  },
+  {
+    name: "Kaunas University of Technology",
+    city: "Kaunas",
+    country: "Lithuania",
+  },
+  {
+    name: "Diethnes Panepistimio Ellados",
+    city: "Thessaloniki",
+    country: "Greece",
+  },
+  { name: "Nisantasi Universitesi", city: "Istanbul", country: "Turkey" },
+  {
+    name: "Klaipeda University Applied Sciences",
+    city: "Klaipėda",
+    country: "Lithuania",
+  },
+  { name: "Universite d'Orleans", city: "Orléans", country: "France" },
+  { name: "Hellenic Open University", city: "Patras", country: "Greece" },
+];
+
+const FREDERICK_ELECTRICAL_ENGINEERING: PartnerUniversity[] = [
+  {
+    name: "Metropolia University of Applied Sciences",
+    city: "Helsinki",
+    country: "Finland",
+  },
+  {
+    name: "Technical University of Kosice",
+    city: "Košice",
+    country: "Slovakia",
+  },
+  {
+    name: "Technology University of Gdansk",
+    city: "Gdańsk",
+    country: "Poland",
+  },
+  {
+    name: "Democritus University of Thrace",
+    city: "Komotini",
+    country: "Greece",
+  },
+  { name: "Tallinna Tehnikakorgkool", city: "Tallinn", country: "Estonia" },
+  { name: "Nisantasi Universitesi", city: "Istanbul", country: "Turkey" },
+  {
+    name: "Kaunas University of Technology",
+    city: "Kaunas",
+    country: "Lithuania",
+  },
+  {
+    name: "Uniwersytet Technologiczno-Humanistyczny im. Kazimierza Pulaskiego w Radomiu",
+    city: "Radom",
+    country: "Poland",
+  },
+  {
+    name: "University Of Western Macedonia",
+    city: "Kozani",
+    country: "Greece",
+  },
+  {
+    name: "Academia im. Jacuba z Paradyza",
+    city: "Świebodzin",
+    country: "Poland",
+  },
+  { name: "University of Split", city: "Split", country: "Croatia" },
+  {
+    name: "Klaipeda University Applied Sciences",
+    city: "Klaipėda",
+    country: "Lithuania",
+  },
+  {
+    name: "Hellenic Mediterranean University",
+    city: "Heraklion",
+    country: "Greece",
+  },
+  { name: "Hochschule Stralsund", city: "Stralsund", country: "Germany" },
+  { name: "University of Aalen", city: "Aalen", country: "Germany" },
+  {
+    name: "Technical University of Bucharest",
+    city: "Bucharest",
+    country: "Romania",
+  },
+  { name: "Kadir Has University", city: "Istanbul", country: "Turkey" },
+  { name: "Universite d'Orleans", city: "Orléans", country: "France" },
+];
+
+const FREDERICK_COMPUTER_SCIENCE: PartnerUniversity[] = [
+  {
+    name: "Kaunas University Of Technology",
+    city: "Kaunas",
+    country: "Lithuania",
+  },
+  {
+    name: "Technische Hochschule Deggendorf",
+    city: "Deggendorf",
+    country: "Germany",
+  },
+  { name: "La Rochelle Universite", city: "La Rochelle", country: "France" },
+  { name: "Panepistimio Thessalias", city: "Volos", country: "Greece" },
+  {
+    name: "Wyzsza Szkola Przedsiebiorczoscii Administracji W Lublinie",
+    city: "Lublin",
+    country: "Poland",
+  },
+  { name: "Tomas Moore", city: "Mechelen", country: "Belgium" },
+  { name: "Universidad De Leon", city: "León", country: "Spain" },
+  {
+    name: "Viesoji Istaiga Europos Humanitarinis Universitetas",
+    city: "Vilnius",
+    country: "Lithuania",
+  },
+  {
+    name: "Universitatea Politehnica Din Bucuresti",
+    city: "Bucharest",
+    country: "Romania",
+  },
+  {
+    name: "Metropolia University Of Applied Sciences",
+    city: "Helsinki",
+    country: "Finland",
+  },
+  { name: "Diethnes Panepistimio Ellados", city: "Athens", country: "Greece" },
+  {
+    name: "Akademia Im. Jakuba Z Paradyza",
+    city: "Świebodzin",
+    country: "Poland",
+  },
+  {
+    name: "University Of Western Macedonia",
+    city: "Kozani",
+    country: "Greece",
+  },
+  {
+    name: "Univerzita Mateja Bela V Banskej Bystrici",
+    city: "Banská Bystrica",
+    country: "Slovakia",
+  },
+  {
+    name: "Klaipeda University Applied Sciences",
+    city: "Klaipėda",
+    country: "Lithuania",
+  },
+  { name: "University of Aalen", city: "Aalen", country: "Germany" },
+  { name: "Hochschule Stralsund", city: "Stralsund", country: "Germany" },
+  { name: "Hochschule der Medien", city: "Stuttgart", country: "Germany" },
+  {
+    name: "Instituto Universitário de Lisboa",
+    city: "Lisbon",
+    country: "Portugal",
+  },
+  { name: "Hellenic Open University", city: "Patras", country: "Greece" },
+];
+
+const FREDERICK_PSYCHOLOGY: PartnerUniversity[] = [
+  { name: "Nisantasi Universitesi", city: "Istanbul", country: "Turkey" },
+  {
+    name: "Kaunas University of Technology",
+    city: "Kaunas",
+    country: "Lithuania",
+  },
+  { name: "University of Ioannina", city: "Ioannina", country: "Greece" },
+  {
+    name: "South-West University Neofit Rilski",
+    city: "Blagoevgrad",
+    country: "Bulgaria",
+  },
+];
+
+const FREDERICK_NURSING: PartnerUniversity[] = [
+  {
+    name: "Instituto Politecnico De Santarem",
+    city: "Santarém",
+    country: "Portugal",
+  },
+  { name: "Linkopings University", city: "Linköping", country: "Sweden" },
+  { name: "Medical University - Sofia", city: "Sofia", country: "Bulgaria" },
+  { name: "Tallinna Tervishoiu Kõrgkool", city: "Tallinn", country: "Estonia" },
+  { name: "Diethnes Panepistimio Ellados", city: "Athens", country: "Greece" },
+  {
+    name: "Aristoteleio Panepistimio Thessalonikis",
+    city: "Thessaloniki",
+    country: "Greece",
+  },
+  { name: "University of Thessaly", city: "Volos", country: "Greece" },
+  {
+    name: "Universita Degli Studi Di Foggia",
+    city: "Foggia",
+    country: "Italy",
+  },
+  {
+    name: "Vysoka skola zdravotnicka, o.p.s.",
+    city: "Prague",
+    country: "Czech Republic",
+  },
+  {
+    name: "Klaipeda University Applied Sciences",
+    city: "Klaipėda",
+    country: "Lithuania",
+  },
+  { name: "University of Valencia", city: "Valencia", country: "Spain" },
+  {
+    name: "Hellenic Mediterranean University",
+    city: "Heraklion",
+    country: "Greece",
+  },
+  { name: "University of Ioannina", city: "Ioannina", country: "Greece" },
+  { name: "University of Patra", city: "Patras", country: "Greece" },
+  {
+    name: "Democritus University of Thrace",
+    city: "Komotini",
+    country: "Greece",
+  },
+];
+
 // UCLan agreements by department
 const UCLAN_BUSINESS: PartnerUniversity[] = [
   {
