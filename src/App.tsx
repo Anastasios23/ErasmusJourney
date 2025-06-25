@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import ConnectionStatus from "./components/ConnectionStatus";
 import OfflineBanner from "./components/OfflineBanner";
 import BackendStartupBanner from "./components/BackendStartupBanner";
+import SimpleSetupBanner from "./components/SimpleSetupBanner";
 import SimpleBackendStatus from "./components/SimpleBackendStatus";
 import OfflineStatusOnly from "./components/OfflineStatusOnly";
 import ConnectionTester from "./components/ConnectionTester";
