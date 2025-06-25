@@ -138,7 +138,10 @@ const StudentAccommodations = () => {
       return {
         id: testimonial.id,
         studentName: testimonial.studentName,
-        studentAvatar: testimonial.avatar,
+        studentAvatar:
+          index === 0
+            ? "https://cdn.builder.io/api/v1/image/assets%2F3ab1e1015f654e219ee7dc3d44bc47c8%2F76989c425d164c7683fb6621d949af84?format=webp&width=800"
+            : `https://images.unsplash.com/photo-${1500000000000 + index * 100000}?w=150&h=150&fit=crop&crop=face`,
         homeUniversity: testimonial.homeUniversity,
         city: testimonial.city,
         country: testimonial.country,
