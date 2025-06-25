@@ -41,6 +41,7 @@ import {
 } from "@/data/citiesDestinations";
 
 const Destinations = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
