@@ -31,6 +31,7 @@ db.serialize(() => {
   // Basic Information table
   db.run(`CREATE TABLE IF NOT EXISTS basic_information (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
     firstName TEXT,
     lastName TEXT,
     email TEXT,
@@ -42,7 +43,8 @@ db.serialize(() => {
     receptionCity TEXT,
     foreignUniversity TEXT,
     departmentAtHost TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
   )`);
 
   // Course Matching table
