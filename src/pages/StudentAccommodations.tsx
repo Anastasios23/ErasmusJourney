@@ -29,6 +29,10 @@ import {
   Globe,
 } from "lucide-react";
 import { getAllTestimonials } from "@/data/destinations";
+import {
+  generateAccommodationListings,
+  type AccommodationListing,
+} from "@/utils/accommodationData";
 
 interface AccommodationListing {
   id: string;
