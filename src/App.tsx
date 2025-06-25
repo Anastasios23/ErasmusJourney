@@ -23,6 +23,7 @@ import Destinations from "./pages/Destinations";
 import DestinationDetail from "./pages/DestinationDetail";
 import StudentStories from "./pages/StudentStories";
 import StudentAccommodations from "./pages/StudentAccommodations";
+import AccommodationDetail from "./pages/AccommodationDetail";
 import Experiences from "./pages/Experiences";
 import BasicInformation from "./pages/BasicInformation";
 import CourseMatching from "./pages/CourseMatching";
