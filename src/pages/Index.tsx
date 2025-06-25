@@ -11,6 +11,9 @@ import {
   Heart,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import TeaserGallery from "@/components/TeaserGallery";
+import LocationBrowser from "@/components/LocationBrowser";
+import ComingNext from "@/components/ComingNext";
 
 const Index = () => {
   const steps = [
