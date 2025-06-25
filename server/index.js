@@ -133,6 +133,110 @@ db.serialize(() => {
 
 // API Routes
 
+// User Authentication
+app.post("/api/register", (req, res) => {
+  const { firstName, lastName, email, password } = req.body;
+
+  if (!firstName || !lastName || !email || !password) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  // Check if user already exists
+  db.get("SELECT * FROM users WHERE email = ?", [email], (err, row) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+
+    if (row) {
+      res.status(400).json({ error: "User already exists with this email" });
+      return;
+    }
+
+    // Insert new user (in production, hash the password!)
+    const stmt = db.prepare(`
+      INSERT INTO users (firstName, lastName, email, password)
+      VALUES (?, ?, ?, ?)
+    `);
+
+    stmt.run([firstName, lastName, email, password], function (err) {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+
+      // Return user data without password
+      res.json({
+        id: this.lastID,
+        firstName,
+        lastName,
+        email,
+        message: "User registered successfully",
+      });
+    });
+
+    stmt.finalize();
+  });
+});
+
+app.post("/api/login", (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
+
+  db.get("SELECT * FROM users WHERE email = ?", [email], (err, row) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+
+    if (!row || row.password !== password) {
+      res.status(401).json({ error: "Invalid email or password" });
+      return;
+    }
+
+    // Update last login
+    db.run("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?", [
+      row.id,
+    ]);
+
+    // Return user data without password
+    res.json({
+      id: row.id,
+      firstName: row.firstName,
+      lastName: row.lastName,
+      email: row.email,
+      role: row.role,
+      message: "Login successful",
+    });
+  });
+});
+
+// Get user profile
+app.get("/api/user/:id", (req, res) => {
+  const userId = req.params.id;
+
+  db.get(
+    "SELECT id, firstName, lastName, email, role, created_at, last_login FROM users WHERE id = ?",
+    [userId],
+    (err, row) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+
+      if (!row) {
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
+
+      res.json(row);
+    },
+  );
+});
+
 // Save basic information
 app.post("/api/basic-information", (req, res) => {
   const {
