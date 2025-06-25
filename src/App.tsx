@@ -145,9 +145,9 @@ const App = () => (
             </Routes>
           </BrowserRouter>
           <OfflineStatusOnly />
-          <ErrorBoundary fallback={null}>
-            <ConnectionTester />
-          </ErrorBoundary>
+          {/* <ErrorBoundary fallback={null}>
+        <ConnectionTester />
+      </ErrorBoundary> */}
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>
