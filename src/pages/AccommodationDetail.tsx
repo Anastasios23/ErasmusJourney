@@ -57,8 +57,9 @@ const accommodationListings = [
     amenities: ["WiFi", "Kitchen Access", "Laundry", "Furnished"],
     images: [
       "https://cdn.builder.io/api/v1/image/assets%2F3ab1e1015f654e219ee7dc3d44bc47c8%2F76989c425d164c7683fb6621d949af84?format=webp&width=800",
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
+      "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800",
       "https://images.unsplash.com/photo-1515263487990-61b07816b704?w=800",
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800",
     ],
   },
   // Add more listings as needed...
