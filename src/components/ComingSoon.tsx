@@ -1,72 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Users,
-  Camera,
-  MapPin,
-  Euro,
-  Star,
-  BookOpen,
-  Calendar,
-  Bell,
-  Heart,
-  Globe,
-} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Users, Camera, MapPin, Calendar, Heart, Globe } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const ComingSoon = () => {
-  const upcomingFeatures = [
-    {
-      icon: Users,
-      title: "Student Testimonials",
-      description:
-        "Real stories from students who've completed their Erasmus journey",
-      status: "In Development",
-      eta: "Coming in January 2024",
-    },
-    {
-      icon: Camera,
-      title: "Photo Galleries",
-      description:
-        "Visual journeys showcasing life, culture, and experiences abroad",
-      status: "Design Phase",
-      eta: "Coming in February 2024",
-    },
-    {
-      icon: MapPin,
-      title: "Destination Guides",
-      description:
-        "Comprehensive guides for each Erasmus destination with insider tips",
-      status: "Content Creation",
-      eta: "Coming in March 2024",
-    },
-    {
-      icon: Euro,
-      title: "Budget Breakdowns",
-      description:
-        "Detailed cost analysis and budget planning tools for each city",
-      status: "In Development",
-      eta: "Coming in January 2024",
-    },
-    {
-      icon: Star,
-      title: "Recommendation Systems",
-      description:
-        "Personalized destination and course recommendations based on your preferences",
-      status: "Research Phase",
-      eta: "Coming in April 2024",
-    },
-    {
-      icon: BookOpen,
-      title: "Course Reviews",
-      description:
-        "Student reviews and ratings for courses at partner universities",
-      status: "Planning",
-      eta: "Coming in May 2024",
-    },
-  ];
-
   const currentStats = [
     { label: "Students Interviewed", value: "150+", icon: Users },
     { label: "Universities Covered", value: "45", icon: Globe },
