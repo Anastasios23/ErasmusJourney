@@ -40,7 +40,7 @@ const generateAccommodationListings = () => {
   ];
 
   return testimonials.map((testimonial, index) => ({
-    id: index + 1,
+    id: testimonial.id,
     studentName: testimonial.studentName,
     studentAvatar:
       index === 0
