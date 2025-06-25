@@ -8,28 +8,60 @@ const BackendStartupBanner = () => {
   const [hasChecked, setHasChecked] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+
     const checkBackend = async () => {
-      if (hasChecked) return;
+      if (hasChecked || !isMounted) return;
 
       try {
+        // Create manual timeout to avoid AbortSignal.timeout issues
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => {
+          try {
+            controller.abort();
+          } catch {
+            // Ignore abort errors
+          }
+        }, 1500);
+
         const response = await fetch(
           `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/health`,
-          { method: "GET" },
+          {
+            method: "GET",
+            signal: controller.signal,
+          },
         );
 
-        if (!response.ok) {
-          setIsVisible(true);
+        clearTimeout(timeoutId);
+
+        if (isMounted) {
+          if (!response.ok) {
+            setIsVisible(true);
+          }
         }
       } catch (error) {
-        setIsVisible(true);
+        // Completely silent error handling
+        if (isMounted) {
+          setIsVisible(true);
+        }
       } finally {
-        setHasChecked(true);
+        if (isMounted) {
+          setHasChecked(true);
+        }
       }
     };
 
     // Delay the check to avoid showing immediately
-    const timer = setTimeout(checkBackend, 2000);
-    return () => clearTimeout(timer);
+    const timer = setTimeout(() => {
+      if (isMounted) {
+        checkBackend();
+      }
+    }, 3000);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
   }, [hasChecked]);
 
   if (!isVisible) return null;
