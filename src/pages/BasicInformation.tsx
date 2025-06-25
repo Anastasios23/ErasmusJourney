@@ -14,7 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
 import { ArrowRight, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   getAllUniversities,
   getDepartmentsByUniversity,
@@ -25,6 +25,9 @@ import {
   getDepartmentsWithAgreements,
   formatUniversityDisplay,
 } from "@/data/partnerUniversities";
+import { useAuth } from "@/contexts/AuthContext";
+import { apiService, sessionManager } from "@/services/api";
+import { useToast } from "@/hooks/use-toast";
 
 const BasicInformation = () => {
   const [formData, setFormData] = useState({
