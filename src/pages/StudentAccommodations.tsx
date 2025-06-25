@@ -26,6 +26,7 @@ import {
   Mail,
   Home,
   ArrowRight,
+  Globe,
 } from "lucide-react";
 import { getAllTestimonials } from "@/data/destinations";
 
