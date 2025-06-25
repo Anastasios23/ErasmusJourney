@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ConnectionStatus from "./components/ConnectionStatus";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Community from "./pages/Community";
