@@ -197,6 +197,9 @@ const StudentAccommodations = () => {
 
   // Filter accommodations
   const cities = [...new Set(accommodationListings.map((a) => a.city))].sort();
+  const countries = [
+    ...new Set(accommodationListings.map((a) => a.country)),
+  ].sort();
   const types = [
     ...new Set(accommodationListings.map((a) => a.accommodationType)),
   ].sort();
