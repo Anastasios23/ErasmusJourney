@@ -216,6 +216,11 @@ const StudentAccommodations = () => {
       selectedCity === "all-cities" ||
       listing.city === selectedCity;
 
+    const matchesCountry =
+      selectedCountry === "" ||
+      selectedCountry === "all-countries" ||
+      listing.country === selectedCountry;
+
     const matchesType =
       selectedType === "" ||
       selectedType === "all-types" ||
