@@ -395,7 +395,8 @@ const StudentAccommodations = () => {
             {filteredListings.map((listing) => (
               <Card
                 key={listing.id}
-                className="hover:shadow-lg transition-shadow"
+                className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:scale-[1.02]"
+                onClick={() => navigate(`/accommodation-detail/${listing.id}`)}
               >
                 <CardContent className="p-6">
                   <div className="grid lg:grid-cols-3 gap-6">
