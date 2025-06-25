@@ -53,17 +53,7 @@ const Destinations = () => {
   const countries = getUniqueCountries();
   const cities = [...new Set(cityDestinations.map((dest) => dest.city))].sort();
   const costLevels = ["low", "medium", "high"];
-  const academicFields = [
-    "Engineering",
-    "Business",
-    "Medicine",
-    "Computer Science",
-    "Arts",
-    "Law",
-    "Psychology",
-  ]
-    .filter(Boolean)
-    .sort();
+  // Removed academic fields filter as requested
 
   // Filter destinations based on search criteria
   const filteredDestinations = cityDestinations.filter((dest) => {
