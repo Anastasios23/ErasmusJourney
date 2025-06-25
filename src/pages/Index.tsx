@@ -65,11 +65,40 @@ const Index = () => {
       <section className="relative bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-
+            <div>
+              <Badge className="mb-6 bg-blue-100 text-blue-800">
+                ✨ Your Journey Starts Here
+              </Badge>
+              <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                Your Complete{" "}
+                <span className="text-blue-600">Erasmus Journey</span>
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                Connect with thousands of students, find the perfect
+                accommodation, and get insider tips for your study abroad
+                adventure.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link to="/destinations">
+                  <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+                    Explore Destinations
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link to="/student-stories">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="border-gray-300 hover:bg-gray-50"
+                  >
+                    Read Stories
+                    <BookOpen className="ml-2 h-5 w-5" />
+                  </Button>
                 </Link>
               </div>
             </div>
-          <div className="grid md:grid-cols-2 gap-8 border-t border-gray-700 pt-16 mt-16">
+
+            <div className="relative">
               <img
                 src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=400&fit=crop"
                 alt="Students studying abroad"
