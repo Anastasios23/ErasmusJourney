@@ -45,6 +45,7 @@ const BasicInformation = () => {
     departmentAtHost: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   const { user } = useAuth();
   const navigate = useNavigate();
