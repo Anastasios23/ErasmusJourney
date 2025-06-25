@@ -6,6 +6,7 @@ const ConnectionStatus = () => {
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
   const [isChecking, setIsChecking] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [showWhenConnected, setShowWhenConnected] = useState(true);
 
   const checkConnection = async () => {
     setIsChecking(true);
@@ -54,11 +55,7 @@ const ConnectionStatus = () => {
     return () => clearInterval(interval);
   }, [isConnected, retryCount]);
 
-  // Don't show anything on initial load
-  if (isConnected === null && !isChecking) return null;
-
   // Auto-hide when connected for more than 10 seconds
-  const [showWhenConnected, setShowWhenConnected] = useState(true);
   useEffect(() => {
     if (isConnected) {
       const timer = setTimeout(() => setShowWhenConnected(false), 10000);
@@ -67,6 +64,9 @@ const ConnectionStatus = () => {
       setShowWhenConnected(true);
     }
   }, [isConnected]);
+
+  // Don't show anything on initial load
+  if (isConnected === null && !isChecking) return null;
 
   // Don't show when connected and auto-hide timer has passed
   if (isConnected && !showWhenConnected) return null;
