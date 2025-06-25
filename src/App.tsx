@@ -108,7 +108,9 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
-          <SimpleBackendStatus />
+          <ErrorBoundary fallback={null}>
+            <SimpleBackendStatus />
+          </ErrorBoundary>
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>
