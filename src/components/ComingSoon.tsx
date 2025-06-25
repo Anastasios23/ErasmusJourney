@@ -134,58 +134,6 @@ const ComingSoon = () => {
         </div>
       </section>
 
-      {/* What's Coming */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              What's Coming Next
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              We're working hard to bring you the most comprehensive Erasmus
-              experience platform. Here's what you can expect in the coming
-              months.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {upcomingFeatures.map((feature, index) => (
-              <Card
-                key={index}
-                className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg"
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between mb-3">
-                    <feature.icon className="h-8 w-8 text-blue-600" />
-                    <Badge
-                      variant="outline"
-                      className={
-                        feature.status === "In Development"
-                          ? "text-green-600 border-green-200 bg-green-50"
-                          : feature.status === "Design Phase"
-                            ? "text-blue-600 border-blue-200 bg-blue-50"
-                            : feature.status === "Content Creation"
-                              ? "text-purple-600 border-purple-200 bg-purple-50"
-                              : "text-gray-600 border-gray-200 bg-gray-50"
-                      }
-                    >
-                      {feature.status}
-                    </Badge>
-                  </div>
-                  <CardTitle className="text-lg">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 mb-4">{feature.description}</p>
-                  <div className="text-sm text-blue-600 font-medium">
-                    {feature.eta}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Newsletter Signup */}
       <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
