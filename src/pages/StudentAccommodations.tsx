@@ -95,6 +95,7 @@ interface AccommodationListing {
 }
 
 const StudentAccommodations = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedType, setSelectedType] = useState("");
@@ -520,7 +521,7 @@ const StudentAccommodations = () => {
                       <div className="bg-white border-2 border-green-200 rounded-lg p-4">
                         <div className="text-center mb-4">
                           <div className="text-3xl font-bold text-green-600">
-                            ���{listing.monthlyRent}
+                            €{listing.monthlyRent}
                           </div>
                           <div className="text-sm text-gray-600">per month</div>
                         </div>
