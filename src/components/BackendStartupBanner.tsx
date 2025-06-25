@@ -100,9 +100,13 @@ The connection status will show "Connected" when working.
               variant="outline"
               size="sm"
               className="text-yellow-800 border-yellow-300 hover:bg-yellow-100"
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                // Clear the dismissed flag and reload to test connection
+                localStorage.removeItem("backend-banner-dismissed");
+                window.location.reload();
+              }}
             >
-              🔄 Check Connection
+              🔄 Test Connection
             </Button>
           </div>
         </AlertDescription>
