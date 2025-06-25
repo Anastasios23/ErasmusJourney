@@ -239,6 +239,7 @@ const StudentAccommodations = () => {
     return (
       matchesSearch &&
       matchesCity &&
+      matchesCountry &&
       matchesType &&
       matchesBudget &&
       matchesRating
