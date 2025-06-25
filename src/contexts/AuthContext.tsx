@@ -54,27 +54,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
 
-    // Simulate API call - in real app, this would be an actual API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch(
+        `${process.env.VITE_API_URL || "http://localhost:5000"}/api/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        },
+      );
 
-    // For demo purposes, accept any email/password combination
-    // In real app, this would validate against backend
-    if (email && password) {
-      const userData: User = {
-        id: "demo-user-" + Date.now(),
-        email,
-        firstName: email.split("@")[0] || "User",
-        lastName: "Demo",
-      };
+      const data = await response.json();
 
-      setUser(userData);
-      localStorage.setItem("erasmusUser", JSON.stringify(userData));
+      if (response.ok) {
+        const userData: User = {
+          id: data.id.toString(),
+          email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
+        };
+
+        setUser(userData);
+        localStorage.setItem("erasmusUser", JSON.stringify(userData));
+        setIsLoading(false);
+        return true;
+      } else {
+        setIsLoading(false);
+        return false;
+      }
+    } catch (error) {
+      console.error("Login error:", error);
       setIsLoading(false);
-      return true;
+      return false;
     }
-
-    setIsLoading(false);
-    return false;
   };
 
   const register = async (userData: {
