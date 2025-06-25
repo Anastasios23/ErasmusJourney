@@ -131,6 +131,37 @@ db.serialize(() => {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (basic_info_id) REFERENCES basic_information(id)
   )`);
+
+  // Create default admin user if it doesn't exist
+  db.get("SELECT * FROM users WHERE role = 'admin'", [], (err, row) => {
+    if (err) {
+      console.error("Error checking for admin user:", err);
+      return;
+    }
+
+    if (!row) {
+      // Create default admin user
+      const stmt = db.prepare(`
+        INSERT INTO users (firstName, lastName, email, password, role)
+        VALUES (?, ?, ?, ?, ?)
+      `);
+
+      stmt.run(
+        ["Admin", "User", "admin@erasmusjourney.com", "admin123", "admin"],
+        function (err) {
+          if (err) {
+            console.error("Error creating admin user:", err);
+          } else {
+            console.log(
+              "Default admin user created: admin@erasmusjourney.com / admin123",
+            );
+          }
+        },
+      );
+
+      stmt.finalize();
+    }
+  });
 });
 
 // API Routes
