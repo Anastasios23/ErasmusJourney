@@ -14,7 +14,6 @@ import { Link } from "react-router-dom";
 import TeaserGallery from "@/components/TeaserGallery";
 import LocationBrowser from "@/components/LocationBrowser";
 
-
 const Index = () => {
   const steps = [
     {
@@ -54,8 +53,6 @@ const Index = () => {
       color: "bg-purple-500",
     },
   ];
-
-
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -128,12 +125,12 @@ const Index = () => {
               Essential Steps
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Follow our comprehensive guide to document and share your Erasmus
-              experience
+              Follow our comprehensive guide to make your Erasmus journey smooth
+              and memorable. Each step builds on the previous one.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {steps.map((step) => (
               <StepCard key={step.step} {...step} />
             ))}
@@ -141,59 +138,68 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Resources Section */}
-      <section className="py-16 lg:py-24 bg-white">
+      {/* Quick Access Cards */}
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
-              Resources
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Popular Destinations
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Helpful guides and tips for your Erasmus journey
+            <p className="text-xl text-gray-600">
+              Explore the most sought-after study destinations
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <Link to="/basic-information" className="group cursor-pointer">
-              <div className="bg-yellow-100 rounded-2xl p-8 mb-6 aspect-square flex items-center justify-center transition-transform group-hover:scale-105">
-                <img
-                  src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=300&h=200&fit=crop"
-                  alt="Complete your application"
-                  className="w-full h-full object-cover rounded-xl"
-                />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                Complete your application
-              </h3>
-              <p className="text-gray-600">Essential tips for a successful Erasmus application</p>
-            </Link>
-
-            <Link to="/destinations" className="group cursor-pointer">
-              <div className="bg-blue-100 rounded-2xl p-8 mb-6 aspect-square flex items-center justify-center transition-transform group-hover:scale-105">
-                <img
-                  src="https://cdn.builder.io/api/v1/image/assets%2F3ab1e1015f654e219ee7dc3d44bc47c8%2F27f8f1ff719e4d429c98e6c083c70785?format=webp&width=800"
-                  alt="Choose your destination"
-                  className="w-full h-full object-cover rounded-xl"
-                />
+            <Link
+              to="/destinations"
+              className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 p-8 hover:shadow-xl transition-all duration-300"
+            >
+              <div className="absolute top-4 right-4">
+                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                  <BookOpen className="h-4 w-4 text-white" />
+                </div>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
                 Choose your destination
               </h3>
-              <p className="text-gray-600">Explore universities and cities across Europe</p>
+              <p className="text-gray-600">
+                Explore universities and cities across Europe
+              </p>
             </Link>
 
-            <Link to="/student-accommodations" className="group cursor-pointer">
-              <div className="bg-green-100 rounded-2xl p-8 mb-6 aspect-square flex items-center justify-center transition-transform group-hover:scale-105">
-                <img
-                  src="https://cdn.builder.io/api/v1/image/assets%2F3ab1e1015f654e219ee7dc3d44bc47c8%2Fa61eeadc6a6c4179b45dc1cf7f6e2b96?format=webp&width=800"
-                  alt="Secure your stay"
-                  className="w-full h-full object-cover rounded-xl"
-                />
+            <Link
+              to="/student-stories"
+              className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-50 to-emerald-100 p-8 hover:shadow-xl transition-all duration-300"
+            >
+              <div className="absolute top-4 right-4">
+                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                  <Users className="h-4 w-4 text-white" />
+                </div>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">
+                Read student stories
+              </h3>
+              <p className="text-gray-600">
+                Get insights from students who've been there
+              </p>
+            </Link>
+
+            <Link
+              to="/student-accommodations"
+              className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-50 to-amber-100 p-8 hover:shadow-xl transition-all duration-300"
+            >
+              <div className="absolute top-4 right-4">
+                <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                  <Home className="h-4 w-4 text-white" />
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
                 Secure your stay
               </h3>
-              <p className="text-gray-600">Find accommodation where other students lived</p>
+              <p className="text-gray-600">
+                Find accommodation where other students lived
+              </p>
             </Link>
           </div>
         </div>
@@ -204,8 +210,6 @@ const Index = () => {
 
       {/* Location Browser */}
       <LocationBrowser />
-
-
 
       {/* Connect and Help Others Section */}
       <section className="py-16 lg:py-24 bg-gray-900 text-white">
@@ -230,45 +234,23 @@ const Index = () => {
               <Button
                 variant="outline"
                 size="lg"
-                className="border-white text-white hover:bg-white hover:text-gray-900 px-8"
+                className="border-white text-gray-900 hover:bg-white hover:text-gray-900 px-8"
               >
                 Share Your Story
               </Button>
             </Link>
           </div>
-
-          {/* Stats */}
-          <div className="grid md:grid-cols-4 gap-8 mt-16 pt-16 border-t border-gray-700">
-            <div>
-              <div className="text-3xl font-bold text-blue-400 mb-2">50+</div>
-              <div className="text-gray-300">Universities</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-green-400 mb-2">25+</div>
-              <div className="text-gray-300">Countries</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-purple-400 mb-2">
-                10k+
-              </div>
-              <div className="text-gray-300">Students</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-yellow-400 mb-2">98%</div>
-              <div className="text-gray-300">Satisfaction</div>
-            </div>
-          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-50 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
+      <footer className="bg-white border-t">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="grid md:grid-cols-2 gap-8 border-t border-gray-200 pt-16 mt-16">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">E</span>
+              <div className="flex items-center mb-4">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-2">
+                  <Heart className="h-5 w-5 text-white" />
                 </div>
                 <span className="text-xl font-semibold text-gray-900">
                   Erasmus Journey
@@ -279,37 +261,32 @@ const Index = () => {
                 experience.
               </p>
             </div>
-
-                <li>
-                  <a href="#" className="hover:text-blue-600">
-                    Community
-                  </a>
-                </li>
-              </ul>
-            </div>
             <div>
-              <h3 className="font-semibold text-gray-900 mb-4">Legal</h3>
+              <h3 className="font-semibold text-gray-900 mb-4">Support</h3>
               <ul className="space-y-2 text-gray-600">
                 <li>
-                  <a href="#" className="hover:text-blue-600">
-                    Privacy
+                  <a href="#" className="hover:text-gray-900 transition-colors">
+                    Help Center
                   </a>
                 </li>
-                <li>
-                  <a href="#" className="hover:text-blue-600">
-                    Terms
+                <li className="mt-2">
+                  <a href="#" className="hover:text-gray-900 transition-colors">
+                    Contact
                   </a>
                 </li>
-                <li>
-                  <a href="#" className="hover:text-blue-600">
-                    Cookies
-                  </a>
+                <li className="mt-2">
+                  <Link
+                    to="/community"
+                    className="hover:text-gray-900 transition-colors"
+                  >
+                    Community
+                  </Link>
                 </li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-200 mt-8 pt-8 text-center text-gray-600">
-            <p>&copy; 2024 Erasmus Journey. All rights reserved.</p>
+            © 2024 Erasmus Journey. All rights reserved.
           </div>
         </div>
       </footer>
