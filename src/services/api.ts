@@ -79,6 +79,8 @@ export interface HelpFutureStudentsData {
 }
 
 class ApiService {
+  private isBackendAvailable = true;
+
   private async makeRequest<T>(
     endpoint: string,
     options?: RequestInit,
@@ -86,13 +88,21 @@ class ApiService {
     const url = `${API_BASE_URL}/api${endpoint}`;
 
     try {
+      // Add timeout to requests
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
       const response = await fetch(url, {
         headers: {
           "Content-Type": "application/json",
           ...options?.headers,
         },
+        signal: controller.signal,
         ...options,
       });
+
+      clearTimeout(timeoutId);
+      this.isBackendAvailable = true;
 
       if (!response.ok) {
         throw new Error(`API request failed: ${response.statusText}`);
@@ -100,10 +110,17 @@ class ApiService {
 
       return response.json();
     } catch (error) {
-      console.error(`Backend connection failed for ${endpoint}:`, error);
+      this.isBackendAvailable = false;
+
+      // Only log in development mode
+      if (import.meta.env.DEV) {
+        console.warn(`Backend connection failed for ${endpoint}:`, error);
+      }
 
       // Return mock success response when backend is not available
       if (options?.method === "POST") {
+        // Store data locally when backend is unavailable
+        this.storeLocally(endpoint, options.body);
         return {
           id: Date.now(),
           message: "Data saved locally (backend unavailable)",
@@ -112,6 +129,26 @@ class ApiService {
 
       throw error;
     }
+  }
+
+  private storeLocally(endpoint: string, data: any): void {
+    try {
+      const localData = JSON.parse(
+        localStorage.getItem("offline_submissions") || "[]",
+      );
+      localData.push({
+        endpoint,
+        data: typeof data === "string" ? JSON.parse(data) : data,
+        timestamp: new Date().toISOString(),
+      });
+      localStorage.setItem("offline_submissions", JSON.stringify(localData));
+    } catch (error) {
+      console.warn("Failed to store data locally:", error);
+    }
+  }
+
+  public getBackendStatus(): boolean {
+    return this.isBackendAvailable;
   }
 
   async saveBasicInformation(
