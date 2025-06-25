@@ -202,6 +202,15 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Teaser Gallery */}
+      <TeaserGallery />
+
+      {/* Location Browser */}
+      <LocationBrowser />
+
+      {/* What's Coming Next */}
+      <ComingNext />
+
       {/* Connect and Help Others Section */}
       <section className="py-16 lg:py-24 bg-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
