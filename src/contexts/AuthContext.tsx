@@ -99,20 +99,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }): Promise<boolean> => {
     setIsLoading(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch(
+        `${process.env.VITE_API_URL || "http://localhost:5000"}/api/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        },
+      );
 
-    const newUser: User = {
-      id: "demo-user-" + Date.now(),
-      email: userData.email,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-    };
+      const data = await response.json();
 
-    setUser(newUser);
-    localStorage.setItem("erasmusUser", JSON.stringify(newUser));
-    setIsLoading(false);
-    return true;
+      if (response.ok) {
+        const newUser: User = {
+          id: data.id.toString(),
+          email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
+        };
+
+        setUser(newUser);
+        localStorage.setItem("erasmusUser", JSON.stringify(newUser));
+        setIsLoading(false);
+        return true;
+      } else {
+        setIsLoading(false);
+        return false;
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      setIsLoading(false);
+      return false;
+    }
   };
 
   const logout = () => {
