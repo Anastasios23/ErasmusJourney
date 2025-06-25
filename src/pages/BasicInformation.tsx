@@ -239,7 +239,7 @@ const BasicInformation = () => {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">Email *</Label>
                 <Input
                   id="email"
                   type="email"
@@ -247,6 +247,7 @@ const BasicInformation = () => {
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
                   className="w-full"
+                  required
                 />
               </div>
             </CardContent>
