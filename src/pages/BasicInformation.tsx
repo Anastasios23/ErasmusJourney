@@ -43,6 +43,11 @@ const BasicInformation = () => {
     foreignUniversity: "",
     departmentAtHost: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const universities = getAllUniversities();
   const [selectedForeignUniversityId, setSelectedForeignUniversityId] =
