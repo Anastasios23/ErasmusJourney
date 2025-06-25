@@ -242,6 +242,7 @@ app.get("/api/user/:id", (req, res) => {
 // Save basic information
 app.post("/api/basic-information", (req, res) => {
   const {
+    userId,
     firstName,
     lastName,
     email,
@@ -255,15 +256,20 @@ app.post("/api/basic-information", (req, res) => {
     departmentAtHost,
   } = req.body;
 
+  if (!userId) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
   const stmt = db.prepare(`
     INSERT INTO basic_information
-    (firstName, lastName, email, semester, levelOfStudy, universityInCyprus,
+    (user_id, firstName, lastName, email, semester, levelOfStudy, universityInCyprus,
      department, receptionCountry, receptionCity, foreignUniversity, departmentAtHost)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   stmt.run(
     [
+      userId,
       firstName,
       lastName,
       email,
