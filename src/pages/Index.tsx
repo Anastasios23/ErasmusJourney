@@ -13,7 +13,7 @@ import {
 import { Link } from "react-router-dom";
 import TeaserGallery from "@/components/TeaserGallery";
 import LocationBrowser from "@/components/LocationBrowser";
-import ComingNext from "@/components/ComingNext";
+
 
 const Index = () => {
   const steps = [
@@ -55,6 +55,8 @@ const Index = () => {
     },
   ];
 
+
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -63,39 +65,11 @@ const Index = () => {
       <section className="relative bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <Badge
-                variant="outline"
-                className="mb-6 text-blue-600 border-blue-200"
-              >
-                Erasmus Journey
-              </Badge>
-              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                Your Guide to Studying
-                <span className="text-blue-600"> Abroad</span>
-              </h1>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Navigate your Erasmus experience with ease. Share your journey
-                and help future students make informed decisions.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/basic-information">
-                  <Button
-                    size="lg"
-                    className="bg-black hover:bg-gray-800 text-white px-8"
-                  >
-                    Start Now
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link to="/student-stories">
-                  <Button variant="outline" size="lg" className="px-8">
-                    Learn More
-                  </Button>
+
                 </Link>
               </div>
             </div>
-            <div className="relative">
+          <div className="grid md:grid-cols-2 gap-8 border-t border-gray-700 pt-16 mt-16">
               <img
                 src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=400&fit=crop"
                 alt="Students studying abroad"
@@ -162,9 +136,7 @@ const Index = () => {
               <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
                 Complete your application
               </h3>
-              <p className="text-gray-600">
-                Essential tips for a successful Erasmus application
-              </p>
+              <p className="text-gray-600">Essential tips for a successful Erasmus application</p>
             </Link>
 
             <Link to="/destinations" className="group cursor-pointer">
@@ -178,9 +150,7 @@ const Index = () => {
               <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
                 Choose your destination
               </h3>
-              <p className="text-gray-600">
-                Explore universities and cities across Europe
-              </p>
+              <p className="text-gray-600">Explore universities and cities across Europe</p>
             </Link>
 
             <Link to="/student-accommodations" className="group cursor-pointer">
@@ -194,9 +164,7 @@ const Index = () => {
               <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
                 Secure your stay
               </h3>
-              <p className="text-gray-600">
-                Find accommodation where other students lived
-              </p>
+              <p className="text-gray-600">Find accommodation where other students lived</p>
             </Link>
           </div>
         </div>
@@ -208,8 +176,7 @@ const Index = () => {
       {/* Location Browser */}
       <LocationBrowser />
 
-      {/* What's Coming Next */}
-      <ComingNext />
+
 
       {/* Connect and Help Others Section */}
       <section className="py-16 lg:py-24 bg-gray-900 text-white">
@@ -283,39 +250,7 @@ const Index = () => {
                 experience.
               </p>
             </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4">Platform</h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>
-                  <Link to="/basic-information" className="hover:text-blue-600">
-                    Get Started
-                  </Link>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-blue-600">
-                    Features
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-blue-600">
-                    Resources
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4">Support</h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>
-                  <a href="#" className="hover:text-blue-600">
-                    Help Center
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-blue-600">
-                    Contact
-                  </a>
-                </li>
+
                 <li>
                   <a href="#" className="hover:text-blue-600">
                     Community
