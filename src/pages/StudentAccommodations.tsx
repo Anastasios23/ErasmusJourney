@@ -66,6 +66,7 @@ const StudentAccommodations = () => {
   const [selectedType, setSelectedType] = useState("");
   const [maxBudget, setMaxBudget] = useState("");
   const [selectedRating, setSelectedRating] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
 
   const testimonials = getAllTestimonials();
 
