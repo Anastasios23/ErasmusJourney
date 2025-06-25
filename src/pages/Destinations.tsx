@@ -177,19 +177,7 @@ const Destinations = () => {
                 ))}
               </SelectContent>
             </Select>
-            <Select onValueChange={setSelectedField}>
-              <SelectTrigger>
-                <SelectValue placeholder="Academic Field" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all-fields">All Fields</SelectItem>
-                {academicFields.map((field) => (
-                  <SelectItem key={field} value={field}>
-                    {field}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+
             <Button
               variant="outline"
               onClick={() => {
