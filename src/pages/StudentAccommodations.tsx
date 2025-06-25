@@ -281,17 +281,17 @@ const StudentAccommodations = () => {
           <div className="text-center">
             <Badge
               variant="secondary"
-              className="mb-4 bg-white/20 text-white border-white/30"
+              className="mb-6 bg-white/20 text-white border-white/30 px-4 py-2"
             >
-              Student Accommodations
+              ✨ Student Experiences
             </Badge>
-            <h1 className="text-4xl lg:text-5xl font-bold mb-6">
-              Secure Your Stay
+            <h1 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+              Student Accommodations
             </h1>
-            <p className="text-xl text-green-100 mb-8 max-w-3xl mx-auto">
-              Find accommodation based on real experiences from students who've
-              already lived there. Get insider tips, contact details, and
-              booking platforms used by fellow Erasmus students.
+            <p className="text-xl text-green-100 mb-8 max-w-3xl mx-auto leading-relaxed">
+              Real reviews from Erasmus students about their accommodation
+              experiences across Europe. Find your perfect place to stay with
+              honest insights and practical tips.
             </p>
             <div className="grid md:grid-cols-3 gap-6 max-w-2xl mx-auto text-center">
               <div>
@@ -362,7 +362,7 @@ const StudentAccommodations = () => {
                 <SelectItem value="no-limit">No Limit</SelectItem>
                 <SelectItem value="400">€400</SelectItem>
                 <SelectItem value="500">€500</SelectItem>
-                <SelectItem value="600">���600</SelectItem>
+                <SelectItem value="600">€600</SelectItem>
                 <SelectItem value="700">€700</SelectItem>
               </SelectContent>
             </Select>
