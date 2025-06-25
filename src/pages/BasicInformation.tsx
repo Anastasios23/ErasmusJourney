@@ -499,6 +499,17 @@ const BasicInformation = () => {
           </div>
         </form>
       </div>
+
+      <SuccessDialog
+        isOpen={showSuccessDialog}
+        onClose={() => setShowSuccessDialog(false)}
+        title="Basic Information Saved!"
+        description="Your personal and academic information has been successfully saved. Ready for the next step?"
+        nextStep={{
+          label: "Continue to Course Matching",
+          path: "/course-matching",
+        }}
+      />
     </div>
   );
 };
