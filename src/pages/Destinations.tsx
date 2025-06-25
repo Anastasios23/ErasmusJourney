@@ -222,9 +222,7 @@ const Destinations = () => {
                 <Card
                   key={destination.id}
                   className="group hover:shadow-xl transition-all duration-300 cursor-pointer"
-                  onClick={() =>
-                    (window.location.href = `/destination/${destination.id}`)
-                  }
+                  onClick={() => navigate(`/destination/${destination.id}`)}
                 >
                   <CardContent className="p-0">
                     <div className="aspect-video relative overflow-hidden rounded-t-lg">
