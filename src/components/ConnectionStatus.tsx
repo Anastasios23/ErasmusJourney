@@ -44,23 +44,48 @@ const ConnectionStatus = () => {
 
   useEffect(() => {
     checkConnection();
-    // Check every 30 seconds
-    const interval = setInterval(checkConnection, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    // Use exponential backoff for retries when disconnected
+    const getInterval = () => {
+      if (isConnected) return 30000; // 30 seconds when connected
+      return Math.min(5000 * Math.pow(2, retryCount), 60000); // Exponential backoff, max 60s
+    };
 
+    const interval = setInterval(checkConnection, getInterval());
+    return () => clearInterval(interval);
+  }, [isConnected, retryCount]);
+
+  // Don't show anything on initial load
   if (isConnected === null && !isChecking) return null;
+
+  // Auto-hide when connected for more than 10 seconds
+  const [showWhenConnected, setShowWhenConnected] = useState(true);
+  useEffect(() => {
+    if (isConnected) {
+      const timer = setTimeout(() => setShowWhenConnected(false), 10000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowWhenConnected(true);
+    }
+  }, [isConnected]);
+
+  // Don't show when connected and auto-hide timer has passed
+  if (isConnected && !showWhenConnected) return null;
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
       <Badge
         variant={isConnected ? "default" : "destructive"}
         className={`
-          flex items-center space-x-2 px-3 py-2 cursor-pointer
+          flex items-center space-x-2 px-3 py-2 cursor-pointer transition-all duration-200
           ${isChecking ? "animate-pulse" : ""}
-          ${isConnected ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"}
+          ${isConnected ? "bg-green-600 hover:bg-green-700" : "bg-yellow-600 hover:bg-yellow-700"}
         `}
         onClick={checkConnection}
+        title={
+          isConnected
+            ? "Backend is connected"
+            : `Backend unavailable. Working offline. Click to retry.`
+        }
       >
         {isChecking ? (
           <AlertCircle className="h-4 w-4 animate-spin" />
@@ -73,7 +98,7 @@ const ConnectionStatus = () => {
           {isChecking
             ? "Checking..."
             : isConnected
-              ? "Backend Connected"
+              ? "Connected"
               : "Offline Mode"}
         </span>
       </Badge>
