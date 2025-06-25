@@ -10,6 +10,7 @@ import ConnectionStatus from "./components/ConnectionStatus";
 import OfflineBanner from "./components/OfflineBanner";
 import BackendStartupBanner from "./components/BackendStartupBanner";
 import SimpleBackendStatus from "./components/SimpleBackendStatus";
+import OfflineStatusOnly from "./components/OfflineStatusOnly";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
