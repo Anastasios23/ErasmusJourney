@@ -11,32 +11,44 @@ const ConnectionTester = () => {
   const testConnection = async () => {
     setStatus("testing");
 
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
+    // Wrap in try-catch and use setTimeout to prevent error bubbling
+    setTimeout(async () => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => {
+          try {
+            controller.abort();
+          } catch {
+            // Silently ignore abort errors
+          }
+        }, 2000);
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/health`,
-        {
-          method: "GET",
-          signal: controller.signal,
-        },
-      );
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/health`,
+          {
+            method: "GET",
+            signal: controller.signal,
+          },
+        ).catch(() => {
+          // Catch fetch errors at the promise level
+          return null;
+        });
 
-      clearTimeout(timeoutId);
+        clearTimeout(timeoutId);
 
-      if (response.ok) {
-        setStatus("connected");
-        // Hide success message after 3 seconds
-        setTimeout(() => setStatus("idle"), 3000);
-      } else {
+        if (response && response.ok) {
+          setStatus("connected");
+          setTimeout(() => setStatus("idle"), 3000);
+        } else {
+          setStatus("failed");
+          setTimeout(() => setStatus("idle"), 3000);
+        }
+      } catch (error) {
+        // Silent error handling
         setStatus("failed");
         setTimeout(() => setStatus("idle"), 3000);
       }
-    } catch (error) {
-      setStatus("failed");
-      setTimeout(() => setStatus("idle"), 3000);
-    }
+    }, 0);
   };
 
   if (status === "idle") {
