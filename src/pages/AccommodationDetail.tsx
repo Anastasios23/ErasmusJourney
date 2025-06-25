@@ -86,6 +86,7 @@ const AccommodationDetail = () => {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  const accommodationListings = generateAccommodationListings();
   const listing = accommodationListings.find(
     (item) => item.id === parseInt(id || "0"),
   );
