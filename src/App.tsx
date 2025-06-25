@@ -66,6 +66,24 @@ window.addEventListener("error", (event) => {
   }
 });
 
+// Suppress console errors for fetch-related issues in production
+const originalConsoleError = console.error;
+console.error = (...args) => {
+  const message = args.join(" ");
+  if (
+    !import.meta.env.DEV &&
+    (message.includes("Failed to fetch") ||
+      message.includes("Backend connection failed") ||
+      message.includes("NetworkError") ||
+      message.includes("AbortError"))
+  ) {
+    // Suppress fetch-related errors in production
+    return;
+  }
+  // Allow other errors through
+  originalConsoleError.apply(console, args);
+};
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
