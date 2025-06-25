@@ -4,65 +4,23 @@ import { Button } from "@/components/ui/button";
 import { X, Server, ExternalLink } from "lucide-react";
 
 const BackendStartupBanner = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [hasChecked, setHasChecked] = useState(false);
+  const [isVisible, setIsVisible] = useState(true); // Show by default
+  const [hasBeenDismissed, setHasBeenDismissed] = useState(false);
 
   useEffect(() => {
-    let isMounted = true;
+    // Check if user has previously dismissed this banner
+    const dismissed = localStorage.getItem("backend-banner-dismissed");
+    if (dismissed === "true") {
+      setIsVisible(false);
+      setHasBeenDismissed(true);
+    }
+  }, []);
 
-    const checkBackend = async () => {
-      if (hasChecked || !isMounted) return;
-
-      try {
-        // Create manual timeout to avoid AbortSignal.timeout issues
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => {
-          try {
-            controller.abort();
-          } catch {
-            // Ignore abort errors
-          }
-        }, 1500);
-
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/health`,
-          {
-            method: "GET",
-            signal: controller.signal,
-          },
-        );
-
-        clearTimeout(timeoutId);
-
-        if (isMounted) {
-          if (!response.ok) {
-            setIsVisible(true);
-          }
-        }
-      } catch (error) {
-        // Completely silent error handling
-        if (isMounted) {
-          setIsVisible(true);
-        }
-      } finally {
-        if (isMounted) {
-          setHasChecked(true);
-        }
-      }
-    };
-
-    // Delay the check to avoid showing immediately
-    const timer = setTimeout(() => {
-      if (isMounted) {
-        checkBackend();
-      }
-    }, 3000);
-
-    return () => {
-      isMounted = false;
-      clearTimeout(timer);
-    };
-  }, [hasChecked]);
+  const handleDismiss = () => {
+    setIsVisible(false);
+    setHasBeenDismissed(true);
+    localStorage.setItem("backend-banner-dismissed", "true");
+  };
 
   if (!isVisible) return null;
 
