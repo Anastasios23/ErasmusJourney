@@ -28,6 +28,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { apiService, sessionManager } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
+import SuccessDialog from "@/components/SuccessDialog";
 
 const BasicInformation = () => {
   const [formData, setFormData] = useState({
