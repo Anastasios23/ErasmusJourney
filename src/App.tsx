@@ -30,6 +30,18 @@ import HelpFutureStudents from "./pages/HelpFutureStudents";
 import AdminPanel from "./pages/AdminPanel";
 import NotFound from "./pages/NotFound";
 
+// Global error handling for unhandled fetch errors
+window.addEventListener("unhandledrejection", (event) => {
+  if (
+    event.reason &&
+    event.reason.message &&
+    event.reason.message.includes("Failed to fetch")
+  ) {
+    // Silently handle fetch errors - prevent them from showing in console
+    event.preventDefault();
+  }
+});
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
