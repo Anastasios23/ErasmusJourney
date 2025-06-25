@@ -166,6 +166,11 @@ db.serialize(() => {
 
 // API Routes
 
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
 // User Authentication
 app.post("/api/register", (req, res) => {
   const { firstName, lastName, email, password } = req.body;
