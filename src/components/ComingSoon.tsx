@@ -108,10 +108,6 @@ const ComingSoon = () => {
                 Share Your Experience
               </Button>
             </Link>
-            <Button variant="outline" size="lg" className="px-8">
-              <Bell className="h-5 w-5 mr-2" />
-              Get Notified
-            </Button>
           </div>
         </div>
       </section>
