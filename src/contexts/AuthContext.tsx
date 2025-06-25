@@ -57,18 +57,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-      // Try to connect to backend first
+      // Try to connect to backend first with silent error handling
       const response = await fetch(`${apiUrl}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
+      }).catch(() => {
+        // Silently catch fetch errors and return null
+        return null;
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
+      if (response && response.ok) {
+        const data = await response.json();
         const userData: User = {
           id: data.id.toString(),
           email: data.email,
@@ -80,15 +82,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         localStorage.setItem("erasmusUser", JSON.stringify(userData));
         setIsLoading(false);
         return true;
-      } else {
+      } else if (response && !response.ok) {
         setIsLoading(false);
         return false;
       }
+
+      // If response is null (fetch failed), fall through to fallback
     } catch (error) {
-      console.error(
-        "Backend connection failed, using fallback authentication:",
-        error,
-      );
+      // Silent error handling - only log in development
+      if (import.meta.env.DEV) {
+        console.warn(
+          "Backend connection failed, using fallback authentication",
+        );
+      }
 
       // Fallback authentication when backend is not available
       if (email && password.length >= 3) {
