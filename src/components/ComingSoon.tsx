@@ -137,33 +137,7 @@ const ComingSoon = () => {
       {/* Early Access */}
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Card className="border-2 border-dashed border-blue-200 bg-blue-50/50">
-            <CardContent className="p-8">
-              <div className="text-4xl mb-4">🚀</div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Want Early Access?
-              </h3>
-              <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                Share your Erasmus experience now and get exclusive early access
-                to all new features as they launch. Plus, help us build a better
-                platform for future students!
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/basic-information">
-                  <Button size="lg" className="px-8">
-                    <Users className="h-5 w-5 mr-2" />
-                    Share Your Experience
-                  </Button>
-                </Link>
-                <Link to="/destinations">
-                  <Button variant="outline" size="lg" className="px-8">
-                    <MapPin className="h-5 w-5 mr-2" />
-                    Explore Destinations
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+          <Card className="border-2 border-dashed border-blue-200 bg-blue-50/50"></Card>
         </div>
       </section>
     </div>
