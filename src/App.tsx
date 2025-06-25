@@ -33,12 +33,34 @@ import NotFound from "./pages/NotFound";
 
 // Global error handling for unhandled fetch errors
 window.addEventListener("unhandledrejection", (event) => {
+  const reason = event.reason;
+
+  // Handle various types of fetch-related errors
   if (
-    event.reason &&
-    event.reason.message &&
-    event.reason.message.includes("Failed to fetch")
+    reason &&
+    ((reason.message &&
+      (reason.message.includes("Failed to fetch") ||
+        reason.message.includes("NetworkError") ||
+        reason.message.includes("signal is aborted") ||
+        reason.message.includes("AbortError"))) ||
+      reason.name === "AbortError" ||
+      reason.name === "TypeError" ||
+      reason.name === "NetworkError")
   ) {
-    // Silently handle fetch errors - prevent them from showing in console
+    // Silently handle all network-related errors
+    event.preventDefault();
+  }
+});
+
+// Also handle regular errors
+window.addEventListener("error", (event) => {
+  if (
+    event.error &&
+    event.error.message &&
+    (event.error.message.includes("Failed to fetch") ||
+      event.error.message.includes("NetworkError") ||
+      event.error.message.includes("AbortError"))
+  ) {
     event.preventDefault();
   }
 });
