@@ -50,15 +50,42 @@ const ConnectionStatus = () => {
   };
 
   useEffect(() => {
-    checkConnection();
-    // Use exponential backoff for retries when disconnected
-    const getInterval = () => {
-      if (isConnected) return 30000; // 30 seconds when connected
-      return Math.min(5000 * Math.pow(2, retryCount), 60000); // Exponential backoff, max 60s
+    let isMounted = true;
+
+    const safeCheckConnection = async () => {
+      if (isMounted) {
+        try {
+          await checkConnection();
+        } catch (error) {
+          // Silently handle any remaining errors
+        }
+      }
     };
 
-    const interval = setInterval(checkConnection, getInterval());
-    return () => clearInterval(interval);
+    // Initial check with delay to avoid immediate errors
+    const initialTimer = setTimeout(() => {
+      if (isMounted) {
+        safeCheckConnection();
+      }
+    }, 1000);
+
+    // Use exponential backoff for retries when disconnected
+    const getInterval = () => {
+      if (isConnected) return 60000; // 60 seconds when connected
+      return Math.min(10000 * Math.pow(1.5, Math.min(retryCount, 5)), 120000); // Slower backoff, max 2 minutes
+    };
+
+    const interval = setInterval(() => {
+      if (isMounted) {
+        safeCheckConnection();
+      }
+    }, getInterval());
+
+    return () => {
+      isMounted = false;
+      clearTimeout(initialTimer);
+      clearInterval(interval);
+    };
   }, [isConnected, retryCount]);
 
   // Auto-hide when connected for more than 10 seconds
