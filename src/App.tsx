@@ -100,6 +100,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
+        <ConnectionStatus />
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
