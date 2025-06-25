@@ -184,7 +184,6 @@ const Destinations = () => {
                 setSelectedCountry("");
                 setSelectedCity("");
                 setSelectedCostLevel("");
-                setSelectedField("");
               }}
             >
               <Filter className="h-4 w-4 mr-2" />
