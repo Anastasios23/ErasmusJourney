@@ -61,7 +61,7 @@ const Community = () => {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="border-white text-white hover:bg-white hover:text-blue-600"
+                  className="border-white text-blue-600 hover:bg-white hover:text-blue-600"
                 >
                   Browse Stories
                 </Button>
