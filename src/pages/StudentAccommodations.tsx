@@ -75,60 +75,7 @@ const StudentAccommodations = () => {
   const accommodationListings: AccommodationListing[] =
     generateAccommodationListings();
 
-  function getNeighborhood(city: string): string {
-    const neighborhoods: { [key: string]: string } = {
-      Berlin: "Friedrichshain",
-      Barcelona: "Gràcia",
-      Amsterdam: "Zuid",
-      Vienna: "3rd District",
-      Prague: "Vinohrady",
-      Stockholm: "Södermalm",
-      Toulouse: "Centre",
-      Dublin: "Rathmines",
-    };
-    return neighborhoods[city] || "City Center";
-  }
-
-  function getRandomAmenities(): string[] {
-    const allAmenities = [
-      "Wifi",
-      "Kitchen Access",
-      "Laundry",
-      "Furnished",
-      "Parking",
-      "Gym",
-      "Study Room",
-      "Common Area",
-    ];
-    const count = 3 + Math.floor(Math.random() * 4);
-    return allAmenities.slice(0, count);
-  }
-
-  function getNearbyAmenities(city: string): string[] {
-    return ["Supermarket", "Public Transport", "Restaurants", "University"];
-  }
-
-  function getTipsForCity(city: string): string {
-    const tips: { [key: string]: string } = {
-      Berlin:
-        "Start looking early! Housing market is competitive. Check Facebook groups for shared apartments.",
-      Barcelona:
-        "Avoid touristy areas for better prices. Gothic Quarter is expensive but charming.",
-      Amsterdam:
-        "Register with housing associations early. Bikes are essential for transport.",
-      Vienna:
-        "Student housing is affordable. Check ÖH (student union) for recommendations.",
-      Prague:
-        "Very affordable compared to Western Europe. Dormitories are a great budget option.",
-      Stockholm:
-        "Housing queue system - register as early as possible. Consider suburbs for better prices.",
-      Toulouse:
-        "CROUS offers cheap student housing. Pink city is beautiful and affordable.",
-      Dublin:
-        "Expensive city! Consider sharing to reduce costs. Temple Bar area is fun but pricey.",
-    };
-    return tips[city] || "Research the area well and start your search early!";
-  }
+  // Helper functions moved to shared utility
 
   // Filter accommodations
   const cities = [...new Set(accommodationListings.map((a) => a.city))].sort();
