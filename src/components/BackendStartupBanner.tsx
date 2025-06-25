@@ -49,34 +49,62 @@ const BackendStartupBanner = () => {
             <X className="h-4 w-4" />
           </Button>
         </AlertTitle>
-        <AlertDescription className="mt-2 space-y-2">
-          <p>
-            The backend server is not running. The app will work in offline
-            mode, but some features may be limited.
-          </p>
+        <AlertDescription className="mt-2 space-y-3">
+          <div className="bg-yellow-100 border border-yellow-200 rounded p-3">
+            <p className="font-semibold text-yellow-900 mb-2">
+              ⚠️ Backend Required for Full Functionality
+            </p>
+            <p className="text-yellow-800 text-sm">
+              Authentication, form saving, and admin features require the
+              backend server.
+            </p>
+          </div>
+
+          <div className="bg-gray-50 border rounded p-3 font-mono text-sm">
+            <p className="font-semibold mb-2">🚀 Quick Start:</p>
+            <div className="space-y-1 text-gray-700">
+              <p>cd server</p>
+              <p>npm install</p>
+              <p>npm run dev</p>
+            </div>
+          </div>
+
           <div className="flex flex-col sm:flex-row gap-2">
             <Button
               variant="outline"
               size="sm"
               className="text-yellow-800 border-yellow-300 hover:bg-yellow-100"
               onClick={() => {
-                const instructions = `
-To start the backend server:
+                const instructions = `# Erasmus Journey Backend Setup
 
-1. Open a terminal
-2. Navigate to the server folder: cd server
-3. Install dependencies: npm install
-4. Start the server: npm run dev
+## Terminal Commands:
+cd server
+npm install
+npm run dev
 
-The server will run on http://localhost:5000
-                `.trim();
+## Expected Output:
+Server running on port 5000
+
+## Then refresh this page
+The connection status will show "Connected" when working.
+
+## Troubleshooting:
+- Make sure you're in the project root directory
+- Check if port 5000 is available
+- Try 'node index.js' if npm run dev fails`;
 
                 navigator.clipboard.writeText(instructions).then(() => {
-                  alert("Instructions copied to clipboard!");
+                  const notification = document.createElement("div");
+                  notification.innerHTML =
+                    "✅ Instructions copied to clipboard!";
+                  notification.style.cssText =
+                    "position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 12px 20px; border-radius: 6px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15);";
+                  document.body.appendChild(notification);
+                  setTimeout(() => notification.remove(), 3000);
                 });
               }}
             >
-              Copy Setup Instructions
+              📋 Copy Full Instructions
             </Button>
             <Button
               variant="outline"
@@ -84,7 +112,7 @@ The server will run on http://localhost:5000
               className="text-yellow-800 border-yellow-300 hover:bg-yellow-100"
               onClick={() => window.location.reload()}
             >
-              Retry Connection
+              🔄 Check Connection
             </Button>
           </div>
         </AlertDescription>
