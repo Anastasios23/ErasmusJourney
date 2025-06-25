@@ -212,7 +212,7 @@ const BasicInformation = () => {
             <CardContent className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
+                  <Label htmlFor="firstName">First Name *</Label>
                   <Input
                     id="firstName"
                     placeholder="Enter your first name"
@@ -221,10 +221,11 @@ const BasicInformation = () => {
                       handleInputChange("firstName", e.target.value)
                     }
                     className="w-full"
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
+                  <Label htmlFor="lastName">Last Name *</Label>
                   <Input
                     id="lastName"
                     placeholder="Enter your last name"
@@ -233,6 +234,7 @@ const BasicInformation = () => {
                       handleInputChange("lastName", e.target.value)
                     }
                     className="w-full"
+                    required
                   />
                 </div>
               </div>
