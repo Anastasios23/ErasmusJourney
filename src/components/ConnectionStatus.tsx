@@ -10,10 +10,18 @@ const ConnectionStatus = () => {
 
   const checkConnection = async () => {
     setIsChecking(true);
+
+    // Wrap everything in try-catch to prevent any errors from bubbling up
     try {
       // Create an AbortController for timeout handling
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000); // Reduced timeout
+      const timeoutId = setTimeout(() => {
+        try {
+          controller.abort();
+        } catch (abortError) {
+          // Ignore abort errors
+        }
+      }, 2000); // Reduced timeout to 2 seconds
 
       const response = await fetch(
         `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/health`,
@@ -25,19 +33,17 @@ const ConnectionStatus = () => {
       );
 
       clearTimeout(timeoutId);
-      if (response.ok) {
+
+      if (response && response.ok) {
         setIsConnected(true);
         setRetryCount(0); // Reset retry count on success
       } else {
         setIsConnected(false);
       }
     } catch (error) {
-      // Only log error details in development
-      if (import.meta.env.DEV) {
-        console.warn("Backend connection check failed:", error);
-      }
+      // Silently handle all errors - don't let them propagate
       setIsConnected(false);
-      setRetryCount((prev) => prev + 1);
+      setRetryCount((prev) => Math.min(prev + 1, 10)); // Cap retry count
     } finally {
       setIsChecking(false);
     }
