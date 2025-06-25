@@ -605,12 +605,12 @@ const StudentAccommodations = () => {
                         </div>
                       </div>
 
-                      <Link to="/accommodation">
-                        <Button className="w-full bg-green-600 hover:bg-green-700">
-                          <Home className="h-4 w-4 mr-2" />
-                          View Similar Options
-                        </Button>
-                      </Link>
+                      <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                        <p className="text-sm text-gray-500">
+                          Click to view details
+                        </p>
+                        <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                      </div>
                     </div>
                   </div>
                 </CardContent>
