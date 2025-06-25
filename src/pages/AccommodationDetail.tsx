@@ -87,9 +87,7 @@ const AccommodationDetail = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const accommodationListings = generateAccommodationListings();
-  const listing = accommodationListings.find(
-    (item) => item.id === parseInt(id || "0"),
-  );
+  const listing = accommodationListings.find((item) => item.id === id);
 
   if (!listing) {
     return (
