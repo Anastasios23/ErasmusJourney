@@ -494,8 +494,9 @@ const BasicInformation = () => {
             <Button
               type="submit"
               className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
+              disabled={isSubmitting}
             >
-              Continue to Course Matching
+              {isSubmitting ? "Saving..." : "Continue to Course Matching"}
               <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
