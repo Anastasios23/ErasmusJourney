@@ -44,7 +44,6 @@ const Destinations = () => {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedCostLevel, setSelectedCostLevel] = useState("");
-  const [selectedField, setSelectedField] = useState("");
 
   const cityDestinations = getAllCityDestinations();
   const universities = getAllUniversities();
