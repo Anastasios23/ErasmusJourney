@@ -138,10 +138,9 @@ const StudentAccommodations = () => {
       return {
         id: testimonial.id,
         studentName: testimonial.studentName,
-        studentAvatar:
-          index === 0
-            ? "https://cdn.builder.io/api/v1/image/assets%2F3ab1e1015f654e219ee7dc3d44bc47c8%2F76989c425d164c7683fb6621d949af84?format=webp&width=800"
-            : `https://images.unsplash.com/photo-${1500000000000 + index * 100000}?w=150&h=150&fit=crop&crop=face`,
+        studentAvatar: index === 0
+          ? "https://cdn.builder.io/api/v1/image/assets%2F3ab1e1015f654e219ee7dc3d44bc47c8%2F76989c425d164c7683fb6621d949af84?format=webp&width=800"
+          : `https://images.unsplash.com/photo-${1500000000000 + index * 100000}?w=150&h=150&fit=crop&crop=face`,
         homeUniversity: testimonial.homeUniversity,
         city: testimonial.city,
         country: testimonial.country,
@@ -520,8 +519,20 @@ const StudentAccommodations = () => {
                       </div>
                     </div>
 
-                    {/* Booking & Contact Info */}
-                    <div className="space-y-4">
+                    {/* Pricing & Actions */}
+                    <div className="relative bg-gray-50 p-6 space-y-4">
+                      {/* Background Image */}
+                      <div className="absolute inset-0 overflow-hidden rounded-r-lg">
+                        <img
+                          src={listing.studentAvatar}
+                          alt={`${listing.accommodationType} in ${listing.neighborhood}`}
+                          className="w-full h-full object-cover opacity-10"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-gray-50/80 to-transparent" />
+                      </div>
+
+                      {/* Content */}
+                      <div className="relative z-10">
                       <div className="bg-white border-2 border-green-200 rounded-lg p-4">
                         <div className="text-center mb-4">
                           <div className="text-3xl font-bold text-green-600">
@@ -609,9 +620,7 @@ const StudentAccommodations = () => {
                       </div>
 
                       <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-                        <p className="text-sm text-gray-500">
-                          Click to view details
-                        </p>
+                        <p className="text-sm text-gray-500">Click to view details</p>
                         <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors" />
                       </div>
                     </div>
