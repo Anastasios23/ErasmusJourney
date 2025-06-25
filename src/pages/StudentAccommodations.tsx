@@ -170,7 +170,7 @@ const StudentAccommodations = () => {
         contactAllowed: index % 4 !== 0,
         tips: getTipsForCity(testimonial.city),
       };
-    },
+    }
   );
 
   function getNeighborhood(city: string): string {
