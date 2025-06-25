@@ -401,10 +401,10 @@ const StudentAccommodations = () => {
                 className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:scale-[1.02]"
                 onClick={() => navigate(`/accommodation-detail/${listing.id}`)}
               >
-                <CardContent className="p-6">
-                  <div className="grid lg:grid-cols-3 gap-6">
+                <CardContent className="p-0">
+                  <div className="grid lg:grid-cols-3 gap-0">
                     {/* Student Info & Basic Details */}
-                    <div className="lg:col-span-2 space-y-4">
+                    <div className="lg:col-span-2 p-6 space-y-4">
                       <div className="flex items-start justify-between">
                         <div className="flex items-center space-x-4">
                           <Avatar className="h-12 w-12">
