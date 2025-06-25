@@ -138,9 +138,10 @@ const StudentAccommodations = () => {
       return {
         id: testimonial.id,
         studentName: testimonial.studentName,
-        studentAvatar: index === 0
-          ? "https://cdn.builder.io/api/v1/image/assets%2F3ab1e1015f654e219ee7dc3d44bc47c8%2F76989c425d164c7683fb6621d949af84?format=webp&width=800"
-          : `https://images.unsplash.com/photo-${1500000000000 + index * 100000}?w=150&h=150&fit=crop&crop=face`,
+        studentAvatar:
+          index === 0
+            ? "https://cdn.builder.io/api/v1/image/assets%2F3ab1e1015f654e219ee7dc3d44bc47c8%2F76989c425d164c7683fb6621d949af84?format=webp&width=800"
+            : `https://images.unsplash.com/photo-${1500000000000 + index * 100000}?w=150&h=150&fit=crop&crop=face`,
         homeUniversity: testimonial.homeUniversity,
         city: testimonial.city,
         country: testimonial.country,
@@ -170,7 +171,7 @@ const StudentAccommodations = () => {
         contactAllowed: index % 4 !== 0,
         tips: getTipsForCity(testimonial.city),
       };
-    }
+    },
   );
 
   function getNeighborhood(city: string): string {
@@ -361,7 +362,7 @@ const StudentAccommodations = () => {
                 <SelectItem value="no-limit">No Limit</SelectItem>
                 <SelectItem value="400">€400</SelectItem>
                 <SelectItem value="500">€500</SelectItem>
-                <SelectItem value="600">€600</SelectItem>
+                <SelectItem value="600">���600</SelectItem>
                 <SelectItem value="700">€700</SelectItem>
               </SelectContent>
             </Select>
@@ -533,95 +534,100 @@ const StudentAccommodations = () => {
 
                       {/* Content */}
                       <div className="relative z-10">
-                      <div className="bg-white border-2 border-green-200 rounded-lg p-4">
-                        <div className="text-center mb-4">
-                          <div className="text-3xl font-bold text-green-600">
-                            €{listing.monthlyRent}
-                          </div>
-                          <div className="text-sm text-gray-600">per month</div>
-                        </div>
-
-                        <div className="space-y-3">
-                          <div>
-                            <Label className="text-sm font-medium text-gray-700">
-                              Found via:
-                            </Label>
-                            <div className="flex items-center mt-1">
-                              <Globe className="h-4 w-4 text-blue-500 mr-2" />
-                              <span className="text-sm font-medium">
-                                {listing.platformUsed}
-                              </span>
+                        <div className="bg-white border-2 border-green-200 rounded-lg p-4">
+                          <div className="text-center mb-4">
+                            <div className="text-3xl font-bold text-green-600">
+                              €{listing.monthlyRent}
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              per month
                             </div>
                           </div>
 
-                          {listing.bookingWebsite && (
+                          <div className="space-y-3">
                             <div>
                               <Label className="text-sm font-medium text-gray-700">
-                                Booking Website:
+                                Found via:
                               </Label>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="w-full mt-1 text-xs"
-                                onClick={() =>
-                                  window.open(
-                                    `https://${listing.bookingWebsite.toLowerCase().replace(/\s+/g, "")}.com`,
-                                    "_blank",
-                                  )
-                                }
-                              >
-                                <ExternalLink className="h-3 w-3 mr-1" />
-                                {listing.bookingWebsite}
-                              </Button>
-                            </div>
-                          )}
-
-                          {listing.contactAllowed && (
-                            <div className="space-y-2">
-                              <Label className="text-sm font-medium text-gray-700">
-                                Contact Student:
-                              </Label>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="w-full text-xs"
-                              >
-                                <MessageSquare className="h-3 w-3 mr-1" />
-                                Message {listing.studentName.split(" ")[0]}
-                              </Button>
-                            </div>
-                          )}
-
-                          {listing.landlordEmail && (
-                            <div>
-                              <Label className="text-sm font-medium text-gray-700">
-                                Landlord Contact:
-                              </Label>
-                              <div className="text-xs text-blue-600 mt-1">
-                                <Mail className="h-3 w-3 inline mr-1" />
-                                {listing.landlordEmail}
+                              <div className="flex items-center mt-1">
+                                <Globe className="h-4 w-4 text-blue-500 mr-2" />
+                                <span className="text-sm font-medium">
+                                  {listing.platformUsed}
+                                </span>
                               </div>
                             </div>
-                          )}
-                        </div>
-                      </div>
 
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <h4 className="font-medium text-gray-900 mb-2 text-sm">
-                          🚌 Transport & Location
-                        </h4>
-                        <p className="text-xs text-gray-600 mb-2">
-                          {listing.transportLinks}
-                        </p>
-                        <div className="text-xs">
-                          <span className="font-medium">Nearby: </span>
-                          {listing.nearbyAmenities.join(", ")}
-                        </div>
-                      </div>
+                            {listing.bookingWebsite && (
+                              <div>
+                                <Label className="text-sm font-medium text-gray-700">
+                                  Booking Website:
+                                </Label>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="w-full mt-1 text-xs"
+                                  onClick={() =>
+                                    window.open(
+                                      `https://${listing.bookingWebsite.toLowerCase().replace(/\s+/g, "")}.com`,
+                                      "_blank",
+                                    )
+                                  }
+                                >
+                                  <ExternalLink className="h-3 w-3 mr-1" />
+                                  {listing.bookingWebsite}
+                                </Button>
+                              </div>
+                            )}
 
-                      <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-                        <p className="text-sm text-gray-500">Click to view details</p>
-                        <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                            {listing.contactAllowed && (
+                              <div className="space-y-2">
+                                <Label className="text-sm font-medium text-gray-700">
+                                  Contact Student:
+                                </Label>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="w-full text-xs"
+                                >
+                                  <MessageSquare className="h-3 w-3 mr-1" />
+                                  Message {listing.studentName.split(" ")[0]}
+                                </Button>
+                              </div>
+                            )}
+
+                            {listing.landlordEmail && (
+                              <div>
+                                <Label className="text-sm font-medium text-gray-700">
+                                  Landlord Contact:
+                                </Label>
+                                <div className="text-xs text-blue-600 mt-1">
+                                  <Mail className="h-3 w-3 inline mr-1" />
+                                  {listing.landlordEmail}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                          <h4 className="font-medium text-gray-900 mb-2 text-sm">
+                            🚌 Transport & Location
+                          </h4>
+                          <p className="text-xs text-gray-600 mb-2">
+                            {listing.transportLinks}
+                          </p>
+                          <div className="text-xs">
+                            <span className="font-medium">Nearby: </span>
+                            {listing.nearbyAmenities.join(", ")}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                          <p className="text-sm text-gray-500">
+                            Click to view details
+                          </p>
+                          <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                        </div>
                       </div>
                     </div>
                   </div>
