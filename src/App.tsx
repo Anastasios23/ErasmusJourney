@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import ConnectionStatus from "./components/ConnectionStatus";
 import OfflineBanner from "./components/OfflineBanner";
 import BackendStartupBanner from "./components/BackendStartupBanner";
+import SimpleBackendStatus from "./components/SimpleBackendStatus";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Community from "./pages/Community";
