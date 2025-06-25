@@ -134,35 +134,6 @@ const ComingSoon = () => {
         </div>
       </section>
 
-      {/* Newsletter Signup */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Be the First to Know
-          </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Get notified when new features launch and be among the first
-            students to access our comprehensive Erasmus experience platform.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-4 py-3 rounded-lg border-0 focus:ring-2 focus:ring-white/50 focus:outline-none"
-            />
-            <Button className="bg-white text-blue-600 hover:bg-gray-100 px-8">
-              <Bell className="h-4 w-4 mr-2" />
-              Notify Me
-            </Button>
-          </div>
-
-          <p className="text-sm text-blue-200 mt-4">
-            No spam, just updates on new features and student stories.
-          </p>
-        </div>
-      </section>
-
       {/* Early Access */}
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
