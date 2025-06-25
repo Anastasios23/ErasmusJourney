@@ -104,7 +104,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-        {/* <ConnectionStatus /> */}
+        <SimpleBackendStatus />
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
