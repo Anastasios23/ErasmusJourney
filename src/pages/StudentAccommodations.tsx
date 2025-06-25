@@ -1,4 +1,32 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Header from "../components/Header";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Search,
+  Filter,
+  Star,
+  Calendar,
+  MapPin,
+  CheckCircle,
+  ExternalLink,
+  MessageSquare,
+  Mail,
+  Home,
+  ArrowRight,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -492,7 +520,7 @@ const StudentAccommodations = () => {
                       <div className="bg-white border-2 border-green-200 rounded-lg p-4">
                         <div className="text-center mb-4">
                           <div className="text-3xl font-bold text-green-600">
-                            €{listing.monthlyRent}
+                            ���{listing.monthlyRent}
                           </div>
                           <div className="text-sm text-gray-600">per month</div>
                         </div>
