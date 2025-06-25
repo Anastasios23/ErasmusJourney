@@ -221,7 +221,7 @@ const Destinations = () => {
                   key={destination.id}
                   className="group hover:shadow-xl transition-all duration-300 cursor-pointer"
                   onClick={() =>
-                    window.open(`/destination/${destination.id}`, "_blank")
+                    (window.location.href = `/destination/${destination.id}`)
                   }
                 >
                   <CardContent className="p-0">
