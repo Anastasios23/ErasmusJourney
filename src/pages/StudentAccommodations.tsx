@@ -316,6 +316,19 @@ const StudentAccommodations = () => {
                 ))}
               </SelectContent>
             </Select>
+            <Select onValueChange={setSelectedCountry}>
+              <SelectTrigger>
+                <SelectValue placeholder="Country" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all-countries">All Countries</SelectItem>
+                {countries.map((country) => (
+                  <SelectItem key={country} value={country}>
+                    {country}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Select onValueChange={setSelectedType}>
               <SelectTrigger>
                 <SelectValue placeholder="Accommodation Type" />
