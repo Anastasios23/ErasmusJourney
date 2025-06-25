@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
+import { getAllTestimonials } from "@/data/destinations";
 import {
   ArrowLeft,
   Star,
@@ -23,30 +24,43 @@ import {
   Heart,
 } from "lucide-react";
 
-// Import the same mock data
-const accommodationListings = [
-  {
-    id: 1,
-    studentName: "Andreas Georgiou",
+// Use the same data generation logic as StudentAccommodations
+const generateAccommodationListings = () => {
+  const testimonials = getAllTestimonials();
+
+  const bookingWebsites = [
+    "WG-Gesucht.de",
+    "Studenten-WG.de",
+    "Airbnb",
+    "Spotahome",
+    "HousingAnywhere",
+    "Erasmusu",
+    "Uniplaces",
+    "Student.com",
+  ];
+
+  return testimonials.map((testimonial, index) => ({
+    id: index + 1,
+    studentName: testimonial.studentName,
     studentAvatar:
-      "https://cdn.builder.io/api/v1/image/assets%2F3ab1e1015f654e219ee7dc3d44bc47c8%2F76989c425d164c7683fb6621d949af84?format=webp&width=800",
-    homeUniversity: "Cyprus University of Technology",
-    rating: 4,
-    semester: "Spring",
-    year: "2023",
-    accommodationType: "Shared Apartment",
-    city: "Barcelona",
-    neighborhood: "Gracia",
-    monthlyRent: "€480",
-    roomSize: "19",
-    billsIncluded: true,
-    additionalCosts: null,
-    review:
-      "Shared a 3-bedroom apartment with two Spanish students near Sagrada Familia. The flat was a bit old but charming, with a small balcony. My roommates were amazing and helped me improve my Spanish. Finding accommodation was stressful, but totally worth it in the end.",
-    wouldRecommend: true,
-    contactAllowed: true,
-    bookingWebsite: "Studenten-WG",
-    landlordEmail: null,
+      index === 0
+        ? "https://cdn.builder.io/api/v1/image/assets%2F3ab1e1015f654e219ee7dc3d44bc47c8%2F76989c425d164c7683fb6621d949af84?format=webp&width=800"
+        : `https://images.unsplash.com/photo-${1500000000000 + index * 100000}?w=150&h=150&fit=crop&crop=face`,
+    homeUniversity: testimonial.homeUniversity,
+    rating: testimonial.rating,
+    semester: testimonial.semester,
+    year: testimonial.year,
+    accommodationType: testimonial.accommodationType,
+    city: testimonial.city,
+    neighborhood: testimonial.city === "Barcelona" ? "Gracia" : "City Center",
+    monthlyRent: `€${testimonial.monthlyRent}`,
+    roomSize: `${15 + Math.floor(Math.random() * 20)}`,
+    review: testimonial.accommodationReview,
+    wouldRecommend: testimonial.wouldRecommend,
+    contactAllowed: index % 4 !== 0,
+    bookingWebsite:
+      index % 2 === 0 ? bookingWebsites[index % bookingWebsites.length] : null,
+    landlordEmail: index % 3 === 0 ? `landlord${index}@example.com` : null,
     transportLinks: "Metro station 5-10 min walk, bus stop 2 min walk",
     nearbyAmenities: [
       "Supermarket",
@@ -55,15 +69,17 @@ const accommodationListings = [
       "University",
     ],
     amenities: ["WiFi", "Kitchen Access", "Laundry", "Furnished"],
+    billsIncluded: index % 3 !== 0,
+    country: testimonial.country,
     images: [
-      "https://cdn.builder.io/api/v1/image/assets%2F3ab1e1015f654e219ee7dc3d44bc47c8%2F76989c425d164c7683fb6621d949af84?format=webp&width=800",
-      "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800",
+      index === 0
+        ? "https://cdn.builder.io/api/v1/image/assets%2F3ab1e1015f654e219ee7dc3d44bc47c8%2F76989c425d164c7683fb6621d949af84?format=webp&width=800"
+        : `https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800`,
       "https://images.unsplash.com/photo-1515263487990-61b07816b704?w=800",
       "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800",
     ],
-  },
-  // Add more listings as needed...
-];
+  }));
+};
 
 const AccommodationDetail = () => {
   const { id } = useParams();
