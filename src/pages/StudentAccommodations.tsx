@@ -27,31 +27,6 @@ import {
   Home,
   ArrowRight,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Header from "@/components/Header";
-import {
-  Home,
-  Star,
-  MapPin,
-  Euro,
-  Wifi,
-  Users,
-  Search,
-  ExternalLink,
-  CheckCircle,
-  MessageSquare,
-  Calendar,
-  Utensils,
-  Car,
-  Zap,
-  Droplets,
-  ArrowRight,
-  Globe,
-  Phone,
-  Mail,
-} from "lucide-react";
-import { Link } from "react-router-dom";
 import { getAllTestimonials } from "@/data/destinations";
 
 interface AccommodationListing {
