@@ -12,18 +12,33 @@ const SimpleBackendStatus = () => {
       if (!isMounted) return;
 
       try {
+        // Use manual timeout instead of AbortSignal.timeout for better compatibility
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => {
+          try {
+            controller.abort();
+          } catch {
+            // Silently ignore abort errors
+          }
+        }, 1500);
+
         const response = await fetch(
           `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/health`,
           {
             method: "GET",
-            signal: AbortSignal.timeout(2000),
+            signal: controller.signal,
           },
         );
 
-        if (isMounted && response.ok) {
+        clearTimeout(timeoutId);
+
+        if (isMounted && response && response.ok) {
           setIsConnected(true);
+        } else if (isMounted) {
+          setIsConnected(false);
         }
-      } catch {
+      } catch (error) {
+        // Completely silent error handling - no logging, no propagation
         if (isMounted) {
           setIsConnected(false);
         }
