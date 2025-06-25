@@ -102,10 +102,72 @@ const BasicInformation = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Navigate to next page
+
+    // Validation for mandatory fields
+    const requiredFields = [
+      "firstName",
+      "lastName",
+      "email",
+      "semester",
+      "levelOfStudy",
+      "universityInCyprus",
+      "department",
+      "receptionCountry",
+      "receptionCity",
+    ];
+
+    const missingFields = requiredFields.filter(
+      (field) => !formData[field as keyof typeof formData],
+    );
+
+    if (missingFields.length > 0) {
+      toast({
+        title: "Missing Required Fields",
+        description: "Please fill in all required fields before continuing.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Authentication Error",
+        description: "Please log in to continue.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await apiService.saveBasicInformation({
+        ...formData,
+        userId: parseInt(user.id),
+      });
+
+      // Store the basic info ID in session for next steps
+      sessionManager.setBasicInfoId(response.id);
+
+      toast({
+        title: "Information Saved!",
+        description: "Your basic information has been saved successfully.",
+      });
+
+      // Navigate to course matching
+      navigate("/course-matching");
+    } catch (error) {
+      console.error("Error saving basic information:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save information. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
