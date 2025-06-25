@@ -153,13 +153,8 @@ const BasicInformation = () => {
       // Store the basic info ID in session for next steps
       sessionManager.setBasicInfoId(response.id);
 
-      toast({
-        title: "Information Saved!",
-        description: "Your basic information has been saved successfully.",
-      });
-
-      // Navigate to course matching
-      navigate("/course-matching");
+      // Show success dialog instead of immediate navigation
+      setShowSuccessDialog(true);
     } catch (error) {
       console.error("Error saving basic information:", error);
       toast({
