@@ -252,6 +252,9 @@ const Destinations = () => {
                 <Card
                   key={destination.id}
                   className="group hover:shadow-xl transition-all duration-300 cursor-pointer"
+                  onClick={() =>
+                    window.open(`/destination/${destination.id}`, "_blank")
+                  }
                 >
                   <CardContent className="p-0">
                     <div className="aspect-video relative overflow-hidden rounded-t-lg">
