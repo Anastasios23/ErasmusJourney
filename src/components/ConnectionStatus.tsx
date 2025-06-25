@@ -9,15 +9,22 @@ const ConnectionStatus = () => {
   const checkConnection = async () => {
     setIsChecking(true);
     try {
+      // Create an AbortController for timeout handling
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
       const response = await fetch(
         `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/health`,
         {
           method: "GET",
-          timeout: 5000,
+          signal: controller.signal,
         },
       );
+
+      clearTimeout(timeoutId);
       setIsConnected(response.ok);
     } catch (error) {
+      console.warn("Backend connection check failed:", error);
       setIsConnected(false);
     } finally {
       setIsChecking(false);
