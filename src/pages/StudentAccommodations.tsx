@@ -34,34 +34,7 @@ import {
   type AccommodationListing,
 } from "@/utils/accommodationData";
 
-interface AccommodationListing {
-  id: string;
-  studentName: string;
-  studentAvatar: string;
-  homeUniversity: string;
-  city: string;
-  country: string;
-  accommodationType: string;
-  monthlyRent: number;
-  address: string;
-  neighborhood: string;
-  roomSize?: number;
-  rating: number;
-  review: string;
-  landlordEmail?: string;
-  bookingWebsite?: string;
-  platformUsed: string;
-  billsIncluded: boolean;
-  additionalCosts?: number;
-  amenities: string[];
-  nearbyAmenities: string[];
-  transportLinks: string;
-  wouldRecommend: boolean;
-  semester: string;
-  year: number;
-  contactAllowed: boolean;
-  tips: string;
-}
+// AccommodationListing interface imported from shared utility
 
 const StudentAccommodations = () => {
   const navigate = useNavigate();
