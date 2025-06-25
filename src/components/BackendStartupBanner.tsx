@@ -33,7 +33,7 @@ const BackendStartupBanner = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setIsVisible(false)}
+            onClick={handleDismiss}
             className="h-6 w-6 p-0 text-yellow-600 hover:bg-yellow-100"
           >
             <X className="h-4 w-4" />
