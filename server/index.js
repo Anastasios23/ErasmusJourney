@@ -16,6 +16,18 @@ const db = new sqlite3.Database(dbPath);
 
 // Initialize database tables
 db.serialize(() => {
+  // Users table for authentication
+  db.run(`CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    firstName TEXT NOT NULL,
+    lastName TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    role TEXT DEFAULT 'user',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_login DATETIME
+  )`);
+
   // Basic Information table
   db.run(`CREATE TABLE IF NOT EXISTS basic_information (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -138,8 +150,8 @@ app.post("/api/basic-information", (req, res) => {
   } = req.body;
 
   const stmt = db.prepare(`
-    INSERT INTO basic_information 
-    (firstName, lastName, email, semester, levelOfStudy, universityInCyprus, 
+    INSERT INTO basic_information
+    (firstName, lastName, email, semester, levelOfStudy, universityInCyprus,
      department, receptionCountry, receptionCity, foreignUniversity, departmentAtHost)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
@@ -188,7 +200,7 @@ app.post("/api/course-matching", (req, res) => {
 
   // Insert course matching record
   const stmt = db.prepare(`
-    INSERT INTO course_matching 
+    INSERT INTO course_matching
     (basic_info_id, hostCourseCount, homeCourseCount, courseMatchingDifficult,
      courseMatchingChallenges, recommendCourses, recommendationReason)
     VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -259,7 +271,7 @@ app.post("/api/accommodation", (req, res) => {
   } = req.body;
 
   const stmt = db.prepare(`
-    INSERT INTO accommodation 
+    INSERT INTO accommodation
     (basic_info_id, accommodationType, monthlyRent, utilities, neighborhood,
      roommates, satisfactionLevel, recommendAccommodation, recommendationReason)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -306,7 +318,7 @@ app.post("/api/living-expenses", (req, res) => {
   } = req.body;
 
   const stmt = db.prepare(`
-    INSERT INTO living_expenses 
+    INSERT INTO living_expenses
     (basic_info_id, monthlyIncomeAmount, unexpectedCosts, moneyManagementHabits,
      cheapGroceryPlaces, cheapEatingPlaces, transportationTips, budgetAdvice)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -363,7 +375,7 @@ app.post("/api/help-future-students", (req, res) => {
   } = req.body;
 
   const stmt = db.prepare(`
-    INSERT INTO help_future_students 
+    INSERT INTO help_future_students
     (basic_info_id, wantToHelp, contactMethod, email, instagramUsername,
      facebookLink, linkedinProfile, personalWebsite, phoneNumber,
      preferredContactTime, languagesSpoken, helpTopics, specializations,
@@ -412,7 +424,7 @@ app.post("/api/help-future-students", (req, res) => {
 // Get all submissions for admin
 app.get("/api/submissions", (req, res) => {
   const query = `
-    SELECT 
+    SELECT
       bi.*,
       cm.hostCourseCount,
       cm.homeCourseCount,
