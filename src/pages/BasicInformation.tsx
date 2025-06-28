@@ -384,6 +384,7 @@ const BasicInformation = () => {
                       University in Cyprus
                     </Label>
                     <Select
+                      value={formData.universityInCyprus}
                       onValueChange={(value) =>
                         handleInputChange("universityInCyprus", value)
                       }
@@ -392,8 +393,8 @@ const BasicInformation = () => {
                         <SelectValue placeholder="Select your university in Cyprus" />
                       </SelectTrigger>
                       <SelectContent>
-                        {universities.map((uni) => (
-                          <SelectItem key={`uni-${uni.id}`} value={uni.name}>
+                        {cyprusUniversities.map((uni) => (
+                          <SelectItem key={uni.code} value={uni.code}>
                             {uni.name} ({uni.shortName})
                           </SelectItem>
                         ))}
