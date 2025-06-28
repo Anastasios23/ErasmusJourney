@@ -22,6 +22,12 @@ import {
   getDepartmentsByUniversity,
   getUniversityById,
 } from "@/data/universities";
+import {
+  CYPRUS_UNIVERSITIES,
+  ALL_UNIVERSITY_AGREEMENTS,
+  getAgreementsByUniversity,
+  getAgreementsByDepartment,
+} from "@/data/universityAgreements";
 
 interface Course {
   name: string;
