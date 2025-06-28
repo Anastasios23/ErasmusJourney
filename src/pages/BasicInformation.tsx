@@ -521,8 +521,9 @@ const BasicInformation = () => {
                   <Label htmlFor="foreignUniversity">
                     Foreign University (Host University)
                   </Label>
-                  {formData.universityInCyprus && formData.department ? (
+                  {formData.receptionCity ? (
                     <Select
+                      value={formData.foreignUniversity}
                       onValueChange={(value) =>
                         handleInputChange("foreignUniversity", value)
                       }
@@ -531,25 +532,23 @@ const BasicInformation = () => {
                         <SelectValue placeholder="Select partner university" />
                       </SelectTrigger>
                       <SelectContent>
-                        {partnerUniversities.length > 0 ? (
-                          <>
-                            {partnerUniversities.map((partner, index) => (
-                              <SelectItem
-                                key={`${partner.name}-${partner.city}-${partner.country}-${index}`}
-                                value={partner.name}
-                              >
-                                {formatUniversityDisplay(partner)}
-                              </SelectItem>
-                            ))}
-                            <SelectItem value="other">
-                              Other (European University)
+                        {availableHostUniversities
+                          .filter(
+                            (uni) =>
+                              uni.city === formData.receptionCity &&
+                              uni.country === formData.receptionCountry,
+                          )
+                          .map((university, index) => (
+                            <SelectItem
+                              key={`${university.university}-${index}`}
+                              value={university.university}
+                            >
+                              {university.university}
                             </SelectItem>
-                          </>
-                        ) : (
-                          <SelectItem value="no-agreements" disabled>
-                            No specific agreements found for this department
-                          </SelectItem>
-                        )}
+                          ))}
+                        <SelectItem value="other">
+                          Other (European University)
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   ) : (
@@ -557,21 +556,14 @@ const BasicInformation = () => {
                       <p className="text-sm text-gray-600">
                         {!formData.universityInCyprus
                           ? "Please select your university in Cyprus first"
-                          : "Please select your department to see available partner universities with specific agreements"}
+                          : !formData.department
+                            ? "Please select your department first"
+                            : !formData.receptionCountry
+                              ? "Please select a country first"
+                              : "Please select a city first"}
                       </p>
                     </div>
                   )}
-                  {formData.universityInCyprus &&
-                    formData.department &&
-                    partnerUniversities.length > 0 && (
-                      <div className="p-3 border border-blue-200 rounded-md bg-blue-50">
-                        <p className="text-sm text-blue-800">
-                          <strong>{partnerUniversities.length}</strong> partner
-                          universities found with agreements for{" "}
-                          {formData.department} at {formData.universityInCyprus}
-                        </p>
-                      </div>
-                    )}
                 </div>
 
                 <div className="space-y-2">
