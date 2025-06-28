@@ -264,6 +264,123 @@ const CourseMatching = () => {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <form onSubmit={handleSubmit} className="space-y-8">
+          {/* University Selection */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl font-semibold text-gray-900">
+                University Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="homeUniversity">
+                    Your Home University (Cyprus)
+                  </Label>
+                  <Select
+                    value={formData.homeUniversity}
+                    onValueChange={(value) =>
+                      handleInputChange("homeUniversity", value)
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your Cyprus university" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cyprusUniversities.map((university) => (
+                        <SelectItem
+                          key={university.code}
+                          value={university.code}
+                        >
+                          {university.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="homeDepartment">
+                    Your Department/Field of Study
+                  </Label>
+                  <Select
+                    value={formData.homeDepartment}
+                    onValueChange={(value) =>
+                      handleInputChange("homeDepartment", value)
+                    }
+                    disabled={!formData.homeUniversity}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your department" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {homeDepartments.map((department) => (
+                        <SelectItem key={department} value={department}>
+                          {department}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {formData.homeUniversity && formData.homeDepartment && (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="hostUniversity">
+                      Host University (where you studied abroad)
+                    </Label>
+                    <Select
+                      value={formData.hostUniversity}
+                      onValueChange={(value) =>
+                        handleInputChange("hostUniversity", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select host university" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableHostUniversities.map((university, index) => (
+                          <SelectItem key={index} value={university.university}>
+                            {university.university} - {university.city},{" "}
+                            {university.country}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {availableHostUniversities.length === 0 &&
+                      formData.homeDepartment && (
+                        <p className="text-sm text-gray-500">
+                          No partner universities found for{" "}
+                          {formData.homeDepartment} department. Please check
+                          your department selection or contact your university.
+                        </p>
+                      )}
+                  </div>
+
+                  {availableHostUniversities.length > 0 && (
+                    <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                      <p className="text-sm text-green-800">
+                        <strong>Partnership Available:</strong> Found{" "}
+                        <span className="font-semibold">
+                          {availableHostUniversities.length} partner
+                          universities
+                        </span>{" "}
+                        for {formData.homeDepartment} department from{" "}
+                        {
+                          cyprusUniversities.find(
+                            (u) => u.code === formData.homeUniversity,
+                          )?.shortName
+                        }
+                        .
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Course Count Planning */}
           <Card>
             <CardHeader>
