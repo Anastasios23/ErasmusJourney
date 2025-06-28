@@ -95,16 +95,48 @@ const CourseMatching = () => {
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-    if (field === "hostUniversity") {
-      const uni = universities.find((u) => u.name === value);
-      setSelectedHostUniversityId(uni?.id || "");
-      setFormData((prev) => ({ ...prev, hostDepartment: "" }));
+    if (field === "homeUniversity") {
+      setSelectedHomeUniversityId(value);
+      setFormData((prev) => ({
+        ...prev,
+        homeDepartment: "",
+        hostUniversity: "",
+        hostDepartment: "",
+      }));
+      setAvailableHostUniversities([]);
     }
 
-    if (field === "homeUniversity") {
-      const uni = universities.find((u) => u.name === value);
-      setSelectedHomeUniversityId(uni?.id || "");
-      setFormData((prev) => ({ ...prev, homeDepartment: "" }));
+    if (field === "homeDepartment") {
+      // Update available host universities based on partnership agreements
+      if (formData.homeUniversity) {
+        const partnershipAgreements = getAgreementsByDepartment(
+          formData.homeUniversity,
+          value,
+        );
+        const hostUniversities = partnershipAgreements.map((agreement) => ({
+          university: agreement.partnerUniversity,
+          city: agreement.partnerCity,
+          country: agreement.partnerCountry,
+        }));
+
+        // Remove duplicates
+        const uniqueHostUniversities = hostUniversities.filter(
+          (uni, index, self) =>
+            index === self.findIndex((u) => u.university === uni.university),
+        );
+
+        setAvailableHostUniversities(uniqueHostUniversities);
+        setFormData((prev) => ({
+          ...prev,
+          hostUniversity: "",
+          hostDepartment: "",
+        }));
+      }
+    }
+
+    if (field === "hostUniversity") {
+      setSelectedHostUniversityId(value);
+      setFormData((prev) => ({ ...prev, hostDepartment: "" }));
     }
 
     if (field === "hostCourseCount") {
