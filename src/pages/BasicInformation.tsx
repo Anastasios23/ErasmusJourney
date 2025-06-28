@@ -432,28 +432,88 @@ const BasicInformation = () => {
                   </div>
                 </div>
 
+                {formData.department &&
+                  availableHostUniversities.length > 0 && (
+                    <div className="p-4 bg-green-50 rounded-lg border border-green-200 mb-4">
+                      <p className="text-sm text-green-800">
+                        <strong>Partnerships Available:</strong> Found{" "}
+                        <span className="font-semibold">
+                          {availableHostUniversities.length} partner
+                          universities
+                        </span>{" "}
+                        for {formData.department} department from{" "}
+                        {
+                          cyprusUniversities.find(
+                            (u) => u.code === formData.universityInCyprus,
+                          )?.shortName
+                        }
+                        .
+                      </p>
+                    </div>
+                  )}
+
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="receptionCountry">Reception Country</Label>
-                    <Input
-                      id="receptionCountry"
-                      placeholder="Enter reception country"
-                      value={formData.receptionCountry}
-                      onChange={(e) =>
-                        handleInputChange("receptionCountry", e.target.value)
-                      }
-                    />
+                    {formData.department ? (
+                      <Select
+                        value={formData.receptionCountry}
+                        onValueChange={(value) =>
+                          handleInputChange("receptionCountry", value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select country" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from(
+                            new Set(
+                              availableHostUniversities.map((u) => u.country),
+                            ),
+                          )
+                            .sort()
+                            .map((country) => (
+                              <SelectItem key={country} value={country}>
+                                {country}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <div className="p-3 border border-gray-200 rounded-md bg-gray-50">
+                        <p className="text-sm text-gray-600">
+                          Please select your department first
+                        </p>
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="receptionCity">Reception City</Label>
-                    <Input
-                      id="receptionCity"
-                      placeholder="Enter reception city"
-                      value={formData.receptionCity}
-                      onChange={(e) =>
-                        handleInputChange("receptionCity", e.target.value)
-                      }
-                    />
+                    {formData.receptionCountry ? (
+                      <Select
+                        value={formData.receptionCity}
+                        onValueChange={(value) =>
+                          handleInputChange("receptionCity", value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select city" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableCities.map((city) => (
+                            <SelectItem key={city} value={city}>
+                              {city}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <div className="p-3 border border-gray-200 rounded-md bg-gray-50">
+                        <p className="text-sm text-gray-600">
+                          Please select a country first
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
