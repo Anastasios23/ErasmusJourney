@@ -464,5 +464,3 @@ export function searchUniversities(query: string): UniversitySearchResult[] {
     (a, b) => b.agreementCount - a.agreementCount,
   );
 }
-
-export { generateEnhancedDestinations };
