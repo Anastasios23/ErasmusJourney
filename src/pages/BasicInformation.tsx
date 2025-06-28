@@ -100,26 +100,82 @@ const BasicInformation = () => {
       setFormData((prev) => ({
         ...prev,
         department: "",
+        receptionCountry: "",
+        receptionCity: "",
+        foreignUniversity: "",
+        departmentAtHost: "",
+      }));
+      setSelectedForeignUniversityId("");
+      setAvailableHostUniversities([]);
+      setAvailableCities([]);
+    }
+
+    // Update available partner universities when department changes
+    if (field === "department") {
+      if (formData.universityInCyprus) {
+        const partnershipAgreements = getAgreementsByDepartment(
+          formData.universityInCyprus,
+          value,
+        );
+        const hostUniversities = partnershipAgreements.map((agreement) => ({
+          university: agreement.partnerUniversity,
+          city: agreement.partnerCity,
+          country: agreement.partnerCountry,
+        }));
+
+        // Remove duplicates and update state
+        const uniqueHostUniversities = hostUniversities.filter(
+          (uni, index, self) =>
+            index === self.findIndex((u) => u.university === uni.university),
+        );
+
+        const uniqueCities = Array.from(
+          new Set(hostUniversities.map((u) => u.city)),
+        ).sort();
+
+        setAvailableHostUniversities(uniqueHostUniversities);
+        setAvailableCities(uniqueCities);
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        receptionCountry: "",
+        receptionCity: "",
         foreignUniversity: "",
         departmentAtHost: "",
       }));
       setSelectedForeignUniversityId("");
     }
 
-    // Reset foreign university when department changes
-    if (field === "department") {
+    // Filter cities by country when country changes
+    if (field === "receptionCountry") {
+      const citiesInCountry = availableHostUniversities
+        .filter((uni) => uni.country === value)
+        .map((uni) => uni.city);
+      const uniqueCitiesInCountry = Array.from(new Set(citiesInCountry)).sort();
+
+      setAvailableCities(uniqueCitiesInCountry);
+      setFormData((prev) => ({
+        ...prev,
+        receptionCity: "",
+        foreignUniversity: "",
+        departmentAtHost: "",
+      }));
+    }
+
+    // Filter universities by city when city changes
+    if (field === "receptionCity") {
       setFormData((prev) => ({
         ...prev,
         foreignUniversity: "",
         departmentAtHost: "",
       }));
-      setSelectedForeignUniversityId("");
     }
 
     if (field === "foreignUniversity") {
       const uni = universities.find((u) => u.name === value);
       setSelectedForeignUniversityId(uni?.id || "");
-      setFormData((prev) => ({ ...prev, departmentAtHost: "" })); // Reset department when university changes
+      setFormData((prev) => ({ ...prev, departmentAtHost: "" }));
     }
   };
 
