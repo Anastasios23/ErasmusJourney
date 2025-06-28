@@ -30,6 +30,7 @@ import CourseMatching from "./pages/CourseMatching";
 import Accommodation from "./pages/Accommodation";
 import LivingExpenses from "./pages/LivingExpenses";
 import HelpFutureStudents from "./pages/HelpFutureStudents";
+import UniversityPartnerships from "./pages/UniversityPartnerships";
 import AdminPanel from "./pages/AdminPanel";
 import NotFound from "./pages/NotFound";
 
