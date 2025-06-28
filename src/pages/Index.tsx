@@ -9,6 +9,7 @@ import {
   Home,
   DollarSign,
   Heart,
+  Globe,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import TeaserGallery from "@/components/TeaserGallery";
