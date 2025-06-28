@@ -59,25 +59,37 @@ const BasicInformation = () => {
   const { toast } = useToast();
 
   const universities = getAllUniversities();
+  const cyprusUniversities = CYPRUS_UNIVERSITIES;
+  const partnerCountries = getPartnerCountries();
+
   const [selectedForeignUniversityId, setSelectedForeignUniversityId] =
     useState("");
+  const [availableHostUniversities, setAvailableHostUniversities] = useState<
+    Array<{ university: string; city: string; country: string }>
+  >([]);
+  const [availableCities, setAvailableCities] = useState<string[]>([]);
 
   const foreignDepartments = selectedForeignUniversityId
     ? getDepartmentsByUniversity(selectedForeignUniversityId)
     : [];
 
-  // Get departments with agreements based on selected home university
-  const departmentsWithAgreements = formData.universityInCyprus
-    ? getDepartmentsWithAgreements(formData.universityInCyprus)
+  // Get departments for selected Cyprus university
+  const availableDepartments = formData.universityInCyprus
+    ? cyprusUniversities.find((u) => u.code === formData.universityInCyprus)
+        ?.departments || []
     : [];
 
   // Get partner universities based on selected home university and department
   const partnerUniversities =
     formData.universityInCyprus && formData.department
-      ? getPartnerUniversitiesForDepartment(
+      ? getAgreementsByDepartment(
           formData.universityInCyprus,
           formData.department,
-        )
+        ).map((agreement) => ({
+          university: agreement.partnerUniversity,
+          city: agreement.partnerCity,
+          country: agreement.partnerCountry,
+        }))
       : [];
 
   const handleInputChange = (field: string, value: string) => {
