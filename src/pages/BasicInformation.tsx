@@ -25,6 +25,13 @@ import {
   getDepartmentsWithAgreements,
   formatUniversityDisplay,
 } from "@/data/partnerUniversities";
+import {
+  CYPRUS_UNIVERSITIES,
+  ALL_UNIVERSITY_AGREEMENTS,
+  getAgreementsByUniversity,
+  getAgreementsByDepartment,
+  getPartnerCountries,
+} from "@/data/universityAgreements";
 import { useAuth } from "@/contexts/AuthContext";
 import { apiService, sessionManager } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
