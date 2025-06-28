@@ -406,6 +406,7 @@ const BasicInformation = () => {
                     <Label htmlFor="department">Your Department/Program</Label>
                     {formData.universityInCyprus ? (
                       <Select
+                        value={formData.department}
                         onValueChange={(value) =>
                           handleInputChange("department", value)
                         }
@@ -414,11 +415,8 @@ const BasicInformation = () => {
                           <SelectValue placeholder="Select your department" />
                         </SelectTrigger>
                         <SelectContent>
-                          {departmentsWithAgreements.map((dept, index) => (
-                            <SelectItem
-                              key={`dept-${dept}-${index}`}
-                              value={dept}
-                            >
+                          {availableDepartments.map((dept) => (
+                            <SelectItem key={dept} value={dept}>
                               {dept}
                             </SelectItem>
                           ))}
