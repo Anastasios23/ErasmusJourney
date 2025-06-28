@@ -211,6 +211,69 @@ const Index = () => {
       {/* Location Browser */}
       <LocationBrowser />
 
+      {/* University Partnerships Section */}
+      <section className="py-16 bg-gradient-to-br from-slate-50 to-blue-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+              University Partnerships
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Explore comprehensive partnership agreements between Cyprus
+              universities and institutions across Europe
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <div className="bg-white rounded-xl p-8 shadow-lg">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Globe className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
+                500+ Destinations
+              </h3>
+              <p className="text-gray-600 text-center">
+                Partner universities across 30+ European countries
+              </p>
+            </div>
+
+            <div className="bg-white rounded-xl p-8 shadow-lg">
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <BookOpen className="h-6 w-6 text-green-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
+                All Academic Fields
+              </h3>
+              <p className="text-gray-600 text-center">
+                From Engineering to Arts, Medicine to Business
+              </p>
+            </div>
+
+            <div className="bg-white rounded-xl p-8 shadow-lg">
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Users className="h-6 w-6 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
+                5 Cyprus Universities
+              </h3>
+              <p className="text-gray-600 text-center">
+                UNIC, UCY, UCLan, Frederick, and EUC partnerships
+              </p>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <Link
+              to="/university-partnerships"
+              className="inline-flex items-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Explore All Partnerships
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Connect and Help Others Section */}
       <section className="py-16 lg:py-24 bg-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
