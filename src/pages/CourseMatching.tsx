@@ -65,14 +65,32 @@ const CourseMatching = () => {
 
   const [selectedHostUniversityId, setSelectedHostUniversityId] = useState("");
   const [selectedHomeUniversityId, setSelectedHomeUniversityId] = useState("");
+  const [availableHostUniversities, setAvailableHostUniversities] = useState<
+    Array<{ university: string; city: string; country: string }>
+  >([]);
 
   const universities = getAllUniversities();
-  const hostDepartments = selectedHostUniversityId
-    ? getDepartmentsByUniversity(selectedHostUniversityId)
-    : [];
+  const cyprusUniversities = CYPRUS_UNIVERSITIES;
+
+  // Get departments for selected Cyprus university
   const homeDepartments = selectedHomeUniversityId
-    ? getDepartmentsByUniversity(selectedHomeUniversityId)
+    ? cyprusUniversities.find((u) => u.code === selectedHomeUniversityId)
+        ?.departments || []
     : [];
+
+  // Get available host departments based on home university and department selection
+  const availableHostDepartments =
+    formData.homeUniversity && formData.homeDepartment
+      ? Array.from(
+          new Set(
+            ALL_UNIVERSITY_AGREEMENTS.filter(
+              (agreement) =>
+                agreement.homeUniversity === formData.homeUniversity &&
+                agreement.homeDepartment === formData.homeDepartment,
+            ).map((agreement) => agreement.homeDepartment),
+          ),
+        )
+      : [];
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
