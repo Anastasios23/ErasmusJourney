@@ -1,11 +1,11 @@
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import ErrorBoundary from "@/components/ErrorBoundary";
-import "@/src/index.css";
+import { Toaster } from "../src/components/ui/toaster";
+import { Toaster as Sonner } from "../src/components/ui/sonner";
+import { TooltipProvider } from "../src/components/ui/tooltip";
+import ErrorBoundary from "../src/components/ErrorBoundary";
+import "../src/index.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
