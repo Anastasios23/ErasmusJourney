@@ -5537,7 +5537,7 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
     "partnerUniversity": "Università degli Studi di Roma I – La Sapienza",
     "partnerCity": "Rome",
     "partnerCountry": "Italy"
-  }
+  },
   // Add remaining architecture partnerships...
 
   // Engineering departments
