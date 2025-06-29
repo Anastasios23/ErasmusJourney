@@ -4560,19 +4560,244 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
   },
   // Business Administration
   {
-    homeUniversity: "UCY",
-    homeDepartment: "Business Administration",
-    partnerUniversity: "University of Liechtenstein",
-    partnerCity: "Vaduz",
-    partnerCountry: "Liechtenstein",
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "University Degli Studi di Parma",
+    "partnerCity": "Parma",
+    "partnerCountry": "Italy"
   },
   {
-    homeUniversity: "UCY",
-    homeDepartment: "Business Administration",
-    partnerUniversity: "Universität Witten-Herdecke",
-    partnerCity: "Witten",
-    partnerCountry: "Germany",
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Universita degli studi di Bergamo",
+    "partnerCity": "Bergamo",
+    "partnerCountry": "Italy"
   },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Universidad de A Coruna",
+    "partnerCity": "Coruña",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "University of Macedonia Economics & Social Sciences",
+    "partnerCity": "Thessaloniki",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Universita Degli Studi di Salerno",
+    "partnerCity": "Salerno",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Turku University of Applied Sciences",
+    "partnerCity": "Turku",
+    "partnerCountry": "Finland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Fachhochschule Worms",
+    "partnerCity": "Worms",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Uniwersytet Warminsko-Mazurski W Olsztynie",
+    "partnerCity": "Olsztyn",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Radboud Universiteit Nijmegen",
+    "partnerCity": "Nijmegen",
+    "partnerCountry": "Netherlands"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Athens University of Economics and Business",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "University of Hradec Kralove",
+    "partnerCity": "Hradec Králové",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "University of Pireaus",
+    "partnerCity": "Piraeus",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Hochschule Bremen",
+    "partnerCity": "Bremen",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "L' Universite de Franche-Comte",
+    "partnerCity": "Besançon",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Universitat Ulm",
+    "partnerCity": "Ulm",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Panteion University of Social and Political Sciences",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "FHS Kufstein Tirol University of Applied Sciences",
+    "partnerCity": "Kufstein",
+    "partnerCountry": "Austria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "BA School of Business and Finance (Banku augstskola)",
+    "partnerCity": "Riga",
+    "partnerCountry": "Latvia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Karel de Grote Hogeschool",
+    "partnerCity": "Antwerp",
+    "partnerCountry": "Belgium"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Universitat Paderborn",
+    "partnerCity": "Paderborn",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Hochschule Trier",
+    "partnerCity": "Trier",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Hochschule Kaiserslautern",
+    "partnerCity": "Kaiserslautern",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Universita Degli Studi di Siena",
+    "partnerCity": "Siena",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "University of Kozminski",
+    "partnerCity": "Warsaw",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Universidad de Cantabria",
+    "partnerCity": "Santander",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "University of Almeria",
+    "partnerCity": "Almería",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Instituto de Estudos Superiores de Fafe",
+    "partnerCity": "Fafe",
+    "partnerCountry": "Portugal"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "IÉSEG School of Management",
+    "partnerCity": "Lille/Paris",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Hellenic Mediterranean University (Ex Technological Educational Institute of Crete)",
+    "partnerCity": "Heraklion",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "EM Normandie Business School",
+    "partnerCity": "Le Havre/Paris",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Hochschule Landshut (University of Applied Sciences)",
+    "partnerCity": "Landshut",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "University College Leuven Limburg",
+    "partnerCity": "Leuven",
+    "partnerCountry": "Belgium"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Katholieke Hogeschool VIVES Zuid",
+    "partnerCity": "Kortrijk",
+    "partnerCountry": "Belgium"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Administration",
+    "partnerUniversity": "Audencia Business School",
+    "partnerCity": "Nantes",
+    "partnerCountry": "France"
+  }
+,
   // Add remaining business administration partnerships...
 
   // Architecture
