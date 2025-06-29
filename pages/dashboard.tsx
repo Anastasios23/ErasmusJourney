@@ -3,12 +3,17 @@ import { getServerSession } from "next-auth/next";
 import Head from "next/head";
 import Link from "next/link";
 import { authOptions } from "./api/auth/[...nextauth]";
-import { prisma } from "@/lib/prisma";
-import Header from "@/src/components/Header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import { prisma } from "../lib/prisma";
+import Header from "../components/Header";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../src/components/ui/card";
+import { Button } from "../src/components/ui/button";
+import { Badge } from "../src/components/ui/badge";
+import { Progress } from "../src/components/ui/progress";
 
 interface UserData {
   id: string;
