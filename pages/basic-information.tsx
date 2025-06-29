@@ -1,8 +1,5 @@
 import { useState } from "react";
-import { GetServerSideProps } from "next";
-import { getServerSession } from "next-auth/next";
 import Head from "next/head";
-import { authOptions } from "./api/auth/[...nextauth]";
 import Header from "../components/Header";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
@@ -25,20 +22,11 @@ import { Badge } from "../src/components/ui/badge";
 import { Progress } from "../src/components/ui/progress";
 import { Save, User, MapPin, GraduationCap, Calendar } from "lucide-react";
 
-interface BasicInformationProps {
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
-}
-
-export default function BasicInformation({ user }: BasicInformationProps) {
+export default function BasicInformation() {
   const [formData, setFormData] = useState({
-    firstName: user.firstName || "",
-    lastName: user.lastName || "",
-    email: user.email || "",
+    firstName: "",
+    lastName: "",
+    email: "",
     dateOfBirth: "",
     nationality: "",
     phoneNumber: "",
