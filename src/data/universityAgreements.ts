@@ -5941,6 +5941,141 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
     "partnerCity": "Orléans",
     "partnerCountry": "France"
   },
+  // Civil And Environmental Engineering
+  
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "University of Salerno",
+    "partnerCity": "Salerno",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "Fachhochschule Regensburg - OTH Regensburg",
+    "partnerCity": "Regensburg",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "Polytechnio Kritis (Technical University of Crete) Department of Production",
+    "partnerCity": "Chania",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "University of Thessaly",
+    "partnerCity": "Volos",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "Budapest University of Technology and Economics",
+    "partnerCity": "Budapest",
+    "partnerCountry": "Hungary"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "Aristotle University of Thessaloniki",
+    "partnerCity": "Thessaloniki",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "Polytechnio Kritis (Technical University of Crete) School of Architectural Engineering",
+    "partnerCity": "Chania",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "Lublin University of Technology",
+    "partnerCity": "Lublin",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "Universidade do Minho",
+    "partnerCity": "Braga",
+    "partnerCountry": "Portugal"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "Universita Degli Studi di Genova",
+    "partnerCity": "Genoa",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "University of Western Macedonia",
+    "partnerCity": "Kozani",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "Aristotle University of Thessaloniki",
+    "partnerCity": "Thessaloniki",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "University of Almeria",
+    "partnerCity": "Almería",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "University of Patras",
+    "partnerCity": "Patras",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "University of Peloponnese",
+    "partnerCity": "Tripoli",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "University of Coimbra",
+    "partnerCity": "Coimbra",
+    "partnerCountry": "Portugal"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "University of Orleans",
+    "partnerCity": "Orléans",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "University Politecnica de Catalunya",
+    "partnerCity": "Barcelona",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Civil And Environmental Engineering",
+    "partnerUniversity": "University of Alcala",
+    "partnerCity": "Alcalá de Henares",
+    "partnerCountry": "Spain"
+  },
 
   // Humanities departments
   {
