@@ -70,7 +70,7 @@ export default function CourseMatching() {
     Array<{ university: string; city: string; country: string }>
   >([]);
 
-  const cyprusUniversities = CYPRESS_UNIVERSITIES;
+  const cyprusUniversities = CYPRUS_UNIVERSITIES;
 
   // Get departments for selected Cyprus university
   const homeDepartments = selectedHomeUniversityId
