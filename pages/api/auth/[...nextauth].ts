@@ -19,11 +19,21 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          const user = await prisma.user.findUnique({
-            where: {
-              email: credentials.email,
-            },
-          });
+          // Handle special case for demo user
+          let user;
+          if (credentials.email === "demo") {
+            user = await prisma.user.findUnique({
+              where: {
+                email: "demo",
+              },
+            });
+          } else {
+            user = await prisma.user.findUnique({
+              where: {
+                email: credentials.email,
+              },
+            });
+          }
 
           if (!user) {
             return null;
