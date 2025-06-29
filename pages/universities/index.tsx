@@ -253,7 +253,11 @@ export const getStaticProps: GetStaticProps = async () => {
 
     return {
       props: {
-        universities,
+        universities: universities.map((uni) => ({
+          ...uni,
+          createdAt: uni.createdAt.toISOString(),
+          updatedAt: uni.updatedAt.toISOString(),
+        })),
         totalPartnerships,
         lastUpdated: new Date().toISOString(),
       },
