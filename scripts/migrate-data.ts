@@ -173,24 +173,41 @@ async function main() {
 
     console.log(`✅ Migrated ${agreementsCount} university agreements`);
 
-    // Create sample admin user
-    console.log("👤 Creating sample admin user...");
+    // Create sample users
+    console.log("👤 Creating sample users...");
     const bcrypt = await import("bcryptjs");
-    const hashedPassword = await bcrypt.hash("admin123", 12);
 
+    // Create admin user
+    const hashedAdminPassword = await bcrypt.hash("admin123", 12);
     await prisma.user.create({
       data: {
         email: "admin@erasmus.cy",
         firstName: "Admin",
         lastName: "User",
-        password: hashedPassword,
+        password: hashedAdminPassword,
         nationality: "Cyprus",
         homeCountry: "Cyprus",
         homeCity: "Nicosia",
       },
     });
 
-    console.log("✅ Sample admin user created (admin@erasmus.cy / admin123)");
+    // Create demo user
+    const hashedDemoPassword = await bcrypt.hash("demo", 12);
+    await prisma.user.create({
+      data: {
+        email: "demo",
+        firstName: "Demo",
+        lastName: "User",
+        password: hashedDemoPassword,
+        nationality: "Cyprus",
+        homeCountry: "Cyprus",
+        homeCity: "Nicosia",
+      },
+    });
+
+    console.log("✅ Sample users created:");
+    console.log("   - Admin: admin@erasmus.cy / admin123");
+    console.log("   - Demo: demo / demo");
 
     console.log("🎉 Data migration completed successfully!");
   } catch (error) {
