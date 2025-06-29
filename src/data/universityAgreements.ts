@@ -6260,7 +6260,7 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
 
   //History And Archaeology
 
-  
+
   {
     "homeUniversity": "UCY",
     "homeDepartment": "History And Archaeology",
@@ -6708,6 +6708,268 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
     "partnerUniversity": "Adam Mickiewicz University Of Poznan",
     "partnerCity": "Poznań",
     "partnerCountry": "Poland"
+  },
+
+  // Classics And Philosophy
+
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University Of Roma Tre",
+    "partnerCity": "Rome",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University Of Ioannina",
+    "partnerCity": "Ioannina",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "Universidad De A Coruna",
+    "partnerCity": "A Coruña",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University Of Huelva",
+    "partnerCity": "Huelva",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "Universidad Complutense De Madrid",
+    "partnerCity": "Madrid",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University Of Crete",
+    "partnerCity": "Heraklion",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "Uniwersytet Warminsko-Mazurski W Olsztynie",
+    "partnerCity": "Olsztyn",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "National And Kapodistrian University Of Athens",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University Of Pardubice",
+    "partnerCity": "Pardubice",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "New Bulgarian University",
+    "partnerCity": "Sofia",
+    "partnerCountry": "Bulgaria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University Of Patras",
+    "partnerCity": "Patras",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "Democritus University Of Thrace",
+    "partnerCity": "Komotini",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "Universite De Liege",
+    "partnerCity": "Liège",
+    "partnerCountry": "Belgium"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "Universidad De Valladolid",
+    "partnerCity": "Valladolid",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University College Dublin",
+    "partnerCity": "Dublin",
+    "partnerCountry": "Ireland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University Hradec Kralove",
+    "partnerCity": "Hradec Králové",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "Vilnius University",
+    "partnerCity": "Vilnius",
+    "partnerCountry": "Lithuania"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "Technische Universitat Dresden",
+    "partnerCity": "Dresden",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "National And Kapodistrian University Of Athens",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University Of Salamanca",
+    "partnerCity": "Salamanca",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "National And Kapodistrian University Of Athens",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "Bielefeld University",
+    "partnerCity": "Bielefeld",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University Of Pavia",
+    "partnerCity": "Pavia",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University Of Cusano",
+    "partnerCity": "Rome",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University Of Crete",
+    "partnerCity": "Heraklion",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University Of Salzburg",
+    "partnerCity": "Salzburg",
+    "partnerCountry": "Austria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University Of Bari Aldo Moro",
+    "partnerCity": "Bari",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "Comenius University In Bratislava",
+    "partnerCity": "Bratislava",
+    "partnerCountry": "Slovakia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "Albert-Ludwigs-Universitaet Freiburg",
+    "partnerCity": "Freiburg im Breisgau",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University Of Wroclaw",
+    "partnerCity": "Wrocław",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "Democritus University Of Thrace",
+    "partnerCity": "Komotini",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University Of Malta",
+    "partnerCity": "Msida",
+    "partnerCountry": "Malta"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "Tecnico Lisboa (Universidade De Lisboa)",
+    "partnerCity": "Lisbon",
+    "partnerCountry": "Portugal"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "Nicolaus Copernicus University",
+    "partnerCity": "Toruń",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "University Of Amsterdam",
+    "partnerCity": "Amsterdam",
+    "partnerCountry": "Netherlands"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "Universitaet Trier",
+    "partnerCity": "Trier",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Classics And Philosophy",
+    "partnerUniversity": "Universidad Autonoma De Madrid",
+    "partnerCity": "Madrid",
+    "partnerCountry": "Spain"
   }
 ];
 
