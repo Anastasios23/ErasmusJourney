@@ -143,9 +143,9 @@ export default function LoginPage() {
                 Demo Credentials:
               </h4>
               <p className="text-xs text-gray-600">
-                Email: admin@erasmus.cy
+                Demo: demo / demo
                 <br />
-                Password: admin123
+                Admin: admin@erasmus.cy / admin123
               </p>
             </div>
           </CardContent>
