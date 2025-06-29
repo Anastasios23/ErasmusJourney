@@ -2003,13 +2003,7 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
     partnerCity: "Mytilene",
     partnerCountry: "Greece",
   },
-  {
-    homeUniversity: "UCY",
-    homeDepartment: "Computer Science",
-    partnerUniversity: "University of Peloponnese",
-    partnerCity: "Tripoli",
-    partnerCountry: "Greece",
-  },
+  
   {
     homeUniversity: "UCY",
     homeDepartment: "Computer Science",
