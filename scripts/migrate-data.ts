@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { CYPRUS_UNIVERSITIES } from "../src/data/universities";
-import { universityAgreements as UNIVERSITY_AGREEMENTS } from "../src/data/universityAgreements";
+import { ALL_UNIVERSITY_AGREEMENTS as UNIVERSITY_AGREEMENTS } from "../src/data/universityAgreements";
 
 const prisma = new PrismaClient();
 
