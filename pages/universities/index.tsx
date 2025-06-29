@@ -1,11 +1,16 @@
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
-import Header from "@/src/components/Header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { prisma } from "../../lib/prisma";
+import Header from "../../components/Header";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../src/components/ui/card";
+import { Badge } from "../../src/components/ui/badge";
+import { Button } from "../../src/components/ui/button";
 
 interface University {
   id: string;
@@ -259,7 +264,7 @@ export const getStaticProps: GetStaticProps = async () => {
     console.error("Error fetching universities:", error);
 
     // Fallback to static data if database is not available
-    const { CYPRUS_UNIVERSITIES } = await import("@/src/data/universities");
+    const { CYPRUS_UNIVERSITIES } = await import("../../src/data/universities");
 
     return {
       props: {

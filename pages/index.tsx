@@ -1,10 +1,15 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
-import { prisma } from "@/lib/prisma";
-import Header from "@/src/components/Header";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { prisma } from "../lib/prisma";
+import Header from "../components/Header";
+import { Button } from "../src/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../src/components/ui/card";
+import { Badge } from "../src/components/ui/badge";
 import Link from "next/link";
 
 interface Story {
