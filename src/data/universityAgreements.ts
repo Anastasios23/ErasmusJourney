@@ -5942,7 +5942,7 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
     "partnerCountry": "France"
   },
   // Civil And Environmental Engineering
-  
+
   {
     "homeUniversity": "UCY",
     "homeDepartment": "Civil And Environmental Engineering",
@@ -6078,27 +6078,637 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
   },
 
   // Humanities departments
+  //Byzantine And Modern Greek Studies
+  
+
   {
-    homeUniversity: "UCY",
-    homeDepartment: "Byzantine and Modern Greek Studies",
-    partnerUniversity: "Universidad de Alicante",
-    partnerCity: "Alicante",
-    partnerCountry: "Spain",
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "Universidad De Alicante",
+    "partnerCity": "Alicante",
+    "partnerCountry": "Spain"
   },
   {
-    homeUniversity: "UCY",
-    homeDepartment: "History and Archaeology",
-    partnerUniversity: "Universita Degli Studi di Roma Tre",
-    partnerCity: "Rome",
-    partnerCountry: "Italy",
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "Aristotle University Of Thessaloniki",
+    "partnerCity": "Thessaloniki",
+    "partnerCountry": "Greece"
   },
   {
-    homeUniversity: "UCY",
-    homeDepartment: "Classics and Philosophy",
-    partnerUniversity: "University of Roma Tre",
-    partnerCity: "Rome",
-    partnerCountry: "Italy",
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "University Of Crete",
+    "partnerCity": "Heraklion",
+    "partnerCountry": "Greece"
   },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "Universidad De Granada",
+    "partnerCity": "Granada",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "Freie Universitat Berlin",
+    "partnerCity": "Berlin",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "Adam Mickiewicz University Of Poznan",
+    "partnerCity": "Poznań",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "University Of Warsaw",
+    "partnerCity": "Warsaw",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "Institut National Des Langues Et Civilisations Orentales (INALCO)",
+    "partnerCity": "Paris",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "University Of Masaryk",
+    "partnerCity": "Brno",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "University Of Vienna",
+    "partnerCity": "Vienna",
+    "partnerCountry": "Austria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "Universitat Hamburg",
+    "partnerCity": "Hamburg",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "New Bulgarian University",
+    "partnerCity": "Sofia",
+    "partnerCountry": "Bulgaria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "University Of Palermo",
+    "partnerCity": "Palermo",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "Democritus University Of Thrace",
+    "partnerCity": "Komotini",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "University Of Patras",
+    "partnerCity": "Patras",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "Universita Degli Studi Di Torino",
+    "partnerCity": "Turin",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "Lunds Universitet",
+    "partnerCity": "Lund",
+    "partnerCountry": "Sweden"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "Ionio University",
+    "partnerCity": "Corfu",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "University Of Patras",
+    "partnerCity": "Patras",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "Charles University In Prague",
+    "partnerCity": "Prague",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "Democritus University Of Thrace",
+    "partnerCity": "Komotini",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "Universita Degli Studi Di Padova",
+    "partnerCity": "Padua",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "University Of Palermo",
+    "partnerCity": "Palermo",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "Universitaet Bamberg",
+    "partnerCity": "Bamberg",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Byzantine And Modern Greek Studies",
+    "partnerUniversity": "Universita Degli Studi Di Roma I – La Sapienza",
+    "partnerCity": "Rome",
+    "partnerCountry": "Italy"
+  },
+
+
+  //History And Archaeology
+
+  
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Universita Degli Studi Di Roma Tre",
+    "partnerCity": "Rome",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Ioannina",
+    "partnerCity": "Ioannina",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Philips – Universitat Marburg",
+    "partnerCity": "Marburg",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Vrije Universiteit Brussel",
+    "partnerCity": "Brussels",
+    "partnerCountry": "Belgium"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Rzeszow",
+    "partnerCity": "Rzeszów",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Rennes 2 Haute Bretagne",
+    "partnerCity": "Rennes",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Uniwersytet Warminsko-Mazurski W Olsztynie",
+    "partnerCity": "Olsztyn",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Crete",
+    "partnerCity": "Heraklion",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Universite Toulouse Jean Jaures",
+    "partnerCity": "Toulouse",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Freie Universitat Berlin",
+    "partnerCity": "Berlin",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Lodz",
+    "partnerCity": "Łódź",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Adam Mickiewicz University Of Poznan",
+    "partnerCity": "Poznań",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Universytet Jagiellonski",
+    "partnerCity": "Kraków",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Universite De Nantes",
+    "partnerCity": "Nantes",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Johannes Gutenberg-Universitat Mainz",
+    "partnerCity": "Mainz",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Universiteit Leiden",
+    "partnerCity": "Leiden",
+    "partnerCountry": "Netherlands"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Universitat Hamburg",
+    "partnerCity": "Hamburg",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Europos Humanitarinis University",
+    "partnerCity": "Vilnius",
+    "partnerCountry": "Lithuania"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Katholieke Universitei Leuven",
+    "partnerCity": "Leuven",
+    "partnerCountry": "Belgium"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Szeged",
+    "partnerCity": "Szeged",
+    "partnerCountry": "Hungary"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University College Dublin",
+    "partnerCity": "Dublin",
+    "partnerCountry": "Ireland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Universita Degli Studi Di Sassari",
+    "partnerCity": "Sassari",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Trinity College Dublin",
+    "partnerCity": "Dublin",
+    "partnerCountry": "Ireland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Universite De Provence - Aix-Marselille I",
+    "partnerCity": "Aix-en-Provence",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Universita Degli Studi Di Milano",
+    "partnerCity": "Milan",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Ruhr-Universitat Bochum",
+    "partnerCity": "Bochum",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Pedagogical University Of Krakow",
+    "partnerCity": "Kraków",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Paris Sorbonne Paris Iv",
+    "partnerCity": "Paris",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Plovdiv University \"Paisii Hilendarski\"",
+    "partnerCity": "Plovdiv",
+    "partnerCountry": "Bulgaria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Thessaly",
+    "partnerCity": "Volos",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Aristotle University Of Thessaloniki",
+    "partnerCity": "Thessaloniki",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Mus Alparslan University",
+    "partnerCity": "Mus",
+    "partnerCountry": "Türkiye"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Humboldt University Berlin",
+    "partnerCity": "Berlin",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "National And Kapodistrian University Of Athens",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Le Mans Universite",
+    "partnerCity": "Le Mans",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Zadar",
+    "partnerCity": "Zadar",
+    "partnerCountry": "Croatia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Peloponnese",
+    "partnerCity": "Tripoli",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Hradec Kralove",
+    "partnerCity": "Hradec Králové",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of L' Aquila",
+    "partnerCity": "L'Aquila",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "National And Kapodistrian University Of Athens",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Munster",
+    "partnerCity": "Münster",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Munster",
+    "partnerCity": "Münster",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Universita Degli Studi Di Torino",
+    "partnerCity": "Turin",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Avignon University",
+    "partnerCity": "Avignon",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Lisbon",
+    "partnerCity": "Lisbon",
+    "partnerCountry": "Portugal"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Panteion University Of Social And Political Sciences",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Democritus University Of Thrace",
+    "partnerCity": "Komotini",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Patras",
+    "partnerCity": "Patras",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Siedlce University Of Natural Sciences And Humanities",
+    "partnerCity": "Siedlce",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Sofia University",
+    "partnerCity": "Sofia",
+    "partnerCountry": "Bulgaria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Panteion University Of Social And Political Sciences",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Sevilla",
+    "partnerCity": "Seville",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Institut Catholique De Toulouse",
+    "partnerCity": "Toulouse",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Pazmany Peter Catholic University",
+    "partnerCity": "Budapest",
+    "partnerCountry": "Hungary"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Gent",
+    "partnerCity": "Ghent",
+    "partnerCountry": "Belgium"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Lorraine",
+    "partnerCity": "Nancy",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Bremen",
+    "partnerCity": "Bremen",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Konstanz",
+    "partnerCity": "Konstanz",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Udine",
+    "partnerCity": "Udine",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Florence",
+    "partnerCity": "Florence",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "University Of Cologne",
+    "partnerCity": "Cologne",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Ecole Nationale Superieure Des Sciences De L'information Et Des Bibliotheques",
+    "partnerCity": "Lyon",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Johann Wolfgang Goethe- Universitat – Frankfurt Am Main",
+    "partnerCity": "Frankfurt am Main",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "History And Archaeology",
+    "partnerUniversity": "Adam Mickiewicz University Of Poznan",
+    "partnerCity": "Poznań",
+    "partnerCountry": "Poland"
+  }
 ];
 
 // UCLan University Agreements - Complete Dataset
