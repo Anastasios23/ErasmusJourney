@@ -157,14 +157,15 @@ export default function Accommodation() {
                     </div>
 
                     <div>
-                      <Label htmlFor="accommodationAddress">
-                        Address/Area
-                      </Label>
+                      <Label htmlFor="accommodationAddress">Address/Area</Label>
                       <Input
                         placeholder="Enter general area (e.g., City Center, University District)"
                         value={formData.accommodationAddress}
                         onChange={(e) =>
-                          handleInputChange("accommodationAddress", e.target.value)
+                          handleInputChange(
+                            "accommodationAddress",
+                            e.target.value,
+                          )
                         }
                       />
                     </div>
@@ -276,11 +277,15 @@ export default function Accommodation() {
                           <SelectValue placeholder="Select room size" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="small">Small (< 15m²)</SelectItem>
+                          <SelectItem value="small">
+                            Small (&lt; 15m²)
+                          </SelectItem>
                           <SelectItem value="medium">
                             Medium (15-25m²)
                           </SelectItem>
-                          <SelectItem value="large">Large (> 25m²)</SelectItem>
+                          <SelectItem value="large">
+                            Large (&gt; 25m²)
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -324,7 +329,10 @@ export default function Accommodation() {
                         className="mt-2"
                       >
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="private" id="kitchen-private" />
+                          <RadioGroupItem
+                            value="private"
+                            id="kitchen-private"
+                          />
                           <Label htmlFor="kitchen-private">Private</Label>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -394,7 +402,10 @@ export default function Accommodation() {
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                     {amenities.map((amenity) => (
-                      <div key={amenity} className="flex items-center space-x-2">
+                      <div
+                        key={amenity}
+                        className="flex items-center space-x-2"
+                      >
                         <Checkbox
                           id={amenity}
                           checked={formData.nearbyAmenities.includes(amenity)}
@@ -509,7 +520,10 @@ export default function Accommodation() {
                       placeholder="Why would you recommend or not recommend this place?"
                       value={formData.recommendationReason}
                       onChange={(e) =>
-                        handleInputChange("recommendationReason", e.target.value)
+                        handleInputChange(
+                          "recommendationReason",
+                          e.target.value,
+                        )
                       }
                       className="mt-2"
                     />
