@@ -20,6 +20,8 @@ interface University {
   type: string;
   country: string;
   city: string;
+  createdAt: string;
+  updatedAt: string;
   _count: {
     faculties: number;
     homeAgreements: number;
