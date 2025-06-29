@@ -1,10 +1,7 @@
 import { useState } from "react";
-import { GetServerSideProps } from "next";
-import { getServerSession } from "next-auth/next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { authOptions } from "./api/auth/[...nextauth]";
 import { Badge } from "../src/components/ui/badge";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
