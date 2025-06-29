@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -24,11 +24,11 @@ model User {
   nationality  String?
   homeCity     String?
   homeCountry  String?
-  
+
   // Erasmus application data
   applications Application[]
   stories      Story[]
-  
+
   @@map("users")
 }
 
@@ -67,7 +67,7 @@ model Faculty {
   description  String?
   universityId String
   university   University   @relation(fields: [universityId], references: [id], onDelete: Cascade)
-  
+
   departments  Department[]
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
@@ -81,7 +81,7 @@ model Department {
   description String?
   facultyId   String
   faculty     Faculty   @relation(fields: [facultyId], references: [id], onDelete: Cascade)
-  
+
   programs    Program[]
   agreements  Agreement[]
   createdAt   DateTime  @default(now())
@@ -100,7 +100,7 @@ model Program {
   description  String?
   departmentId String
   department   Department  @relation(fields: [departmentId], references: [id], onDelete: Cascade)
-  
+
   applications Application[]
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
@@ -126,18 +126,18 @@ model Agreement {
   homeUniversity        University     @relation("HomeUniversity", fields: [homeUniversityId], references: [id])
   homeDepartmentId      String
   homeDepartment        Department     @relation(fields: [homeDepartmentId], references: [id])
-  
+
   partnerUniversityId   String
   partnerUniversity     University     @relation("PartnerUniversity", fields: [partnerUniversityId], references: [id])
   partnerCity           String
   partnerCountry        String
-  
+
   agreementType         AgreementType  @default(BOTH)
   notes                 String?
   isActive              Boolean        @default(true)
   startDate             DateTime?
   endDate               DateTime?
-  
+
   applications          Application[]
   createdAt             DateTime       @default(now())
   updatedAt             DateTime       @updatedAt
@@ -156,24 +156,24 @@ model Application {
   id               String            @id @default(cuid())
   userId           String
   user             User              @relation(fields: [userId], references: [id])
-  
+
   homeUniversityId String
   homeUniversity   University        @relation(fields: [homeUniversityId], references: [id])
   programId        String
   program          Program           @relation(fields: [programId], references: [id])
   agreementId      String
   agreement        Agreement         @relation(fields: [agreementId], references: [id])
-  
+
   status           ApplicationStatus @default(DRAFT)
   semester         String?
   academicYear     String?
   duration         String?
-  
+
   // Application form data
   motivation       String?
   languageSkills   Json?
   grades           Json?
-  
+
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 
@@ -197,20 +197,20 @@ model Story {
   imageUrl         String?
   isPublic         Boolean    @default(true)
   isPinned         Boolean    @default(false)
-  
+
   authorId         String
   author           User       @relation(fields: [authorId], references: [id])
   universityId     String?
   university       University? @relation(fields: [universityId], references: [id])
-  
+
   country          String?
   city             String?
   category         StoryCategory @default(EXPERIENCE)
   tags             String[]
-  
+
   likes            Int        @default(0)
   views            Int        @default(0)
-  
+
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
 
@@ -234,14 +234,14 @@ model Accommodation {
   address     String
   city        String
   country     String
-  
+
   pricePerMonth Decimal?
   currency      String?
   imageUrls     String[]
-  
+
   amenities     Json?
   contactInfo   Json?
-  
+
   isActive      Boolean         @default(true)
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
@@ -264,11 +264,11 @@ model Destination {
   description String?
   imageUrl    String?
   featured    Boolean  @default(false)
-  
+
   climate     String?
   costOfLiving Json?
   highlights  String[]
-  
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
