@@ -1171,7 +1171,7 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
   {
     homeUniversity: "UCY",
     homeDepartment: "English Studies",
-    partnerUniversity: "University of Roma Tre",
+    partnerUniversity: "Charles University in Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
   },
