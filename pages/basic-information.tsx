@@ -383,7 +383,7 @@ export default function BasicInformation({ user }: BasicInformationProps) {
                               <SelectValue placeholder="Select level" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="">None</SelectItem>
+                              <SelectItem value="none">None</SelectItem>
                               <SelectItem value="beginner">Beginner</SelectItem>
                               <SelectItem value="intermediate">
                                 Intermediate
