@@ -4558,287 +4558,1388 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
     "partnerCity": "Łódź",
     "partnerCountry": "Poland"
   },
-  // Business Administration
+  // Business Adminsitration And Accounting And Finance
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "University Degli Studi di Parma",
     "partnerCity": "Parma",
     "partnerCountry": "Italy"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Universita degli studi di Bergamo",
     "partnerCity": "Bergamo",
     "partnerCountry": "Italy"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Universidad de A Coruna",
     "partnerCity": "Coruña",
     "partnerCountry": "Spain"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "University of Macedonia Economics & Social Sciences",
     "partnerCity": "Thessaloniki",
     "partnerCountry": "Greece"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Universita Degli Studi di Salerno",
     "partnerCity": "Salerno",
     "partnerCountry": "Italy"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Turku University of Applied Sciences",
     "partnerCity": "Turku",
     "partnerCountry": "Finland"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Fachhochschule Worms",
     "partnerCity": "Worms",
     "partnerCountry": "Germany"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Uniwersytet Warminsko-Mazurski W Olsztynie",
     "partnerCity": "Olsztyn",
     "partnerCountry": "Poland"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Radboud Universiteit Nijmegen",
     "partnerCity": "Nijmegen",
     "partnerCountry": "Netherlands"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Athens University of Economics and Business",
     "partnerCity": "Athens",
     "partnerCountry": "Greece"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "University of Hradec Kralove",
     "partnerCity": "Hradec Králové",
     "partnerCountry": "Czech Republic"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "University of Pireaus",
     "partnerCity": "Piraeus",
     "partnerCountry": "Greece"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Hochschule Bremen",
     "partnerCity": "Bremen",
     "partnerCountry": "Germany"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "L' Universite de Franche-Comte",
     "partnerCity": "Besançon",
     "partnerCountry": "France"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Universitat Ulm",
     "partnerCity": "Ulm",
     "partnerCountry": "Germany"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Panteion University of Social and Political Sciences",
     "partnerCity": "Athens",
     "partnerCountry": "Greece"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "FHS Kufstein Tirol University of Applied Sciences",
     "partnerCity": "Kufstein",
     "partnerCountry": "Austria"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "BA School of Business and Finance (Banku augstskola)",
     "partnerCity": "Riga",
     "partnerCountry": "Latvia"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Karel de Grote Hogeschool",
     "partnerCity": "Antwerp",
     "partnerCountry": "Belgium"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Universitat Paderborn",
     "partnerCity": "Paderborn",
     "partnerCountry": "Germany"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Hochschule Trier",
     "partnerCity": "Trier",
     "partnerCountry": "Germany"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Hochschule Kaiserslautern",
     "partnerCity": "Kaiserslautern",
     "partnerCountry": "Germany"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Universita Degli Studi di Siena",
     "partnerCity": "Siena",
     "partnerCountry": "Italy"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "University of Kozminski",
     "partnerCity": "Warsaw",
     "partnerCountry": "Poland"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Universidad de Cantabria",
     "partnerCity": "Santander",
     "partnerCountry": "Spain"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "University of Almeria",
     "partnerCity": "Almería",
     "partnerCountry": "Spain"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Instituto de Estudos Superiores de Fafe",
     "partnerCity": "Fafe",
     "partnerCountry": "Portugal"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "IÉSEG School of Management",
     "partnerCity": "Lille/Paris",
     "partnerCountry": "France"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Hellenic Mediterranean University (Ex Technological Educational Institute of Crete)",
     "partnerCity": "Heraklion",
     "partnerCountry": "Greece"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "EM Normandie Business School",
     "partnerCity": "Le Havre/Paris",
     "partnerCountry": "France"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Hochschule Landshut (University of Applied Sciences)",
     "partnerCity": "Landshut",
     "partnerCountry": "Germany"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "University College Leuven Limburg",
     "partnerCity": "Leuven",
     "partnerCountry": "Belgium"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Katholieke Hogeschool VIVES Zuid",
     "partnerCity": "Kortrijk",
     "partnerCountry": "Belgium"
   },
   {
     "homeUniversity": "UCY",
-    "homeDepartment": "Business Administration",
+    "homeDepartment": "Business Adminsitration And Accounting And Finance",
     "partnerUniversity": "Audencia Business School",
     "partnerCity": "Nantes",
     "partnerCountry": "France"
   }
-,
+  ,
+//// Business Adminsitration
   // Add remaining business administration partnerships...
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "University of Liechtenstein",
+    "partnerCity": "Vaduz",
+    "partnerCountry": "Liechtenstein"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Universität Witten-Herdecke",
+    "partnerCity": "Witten",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "University of Vaasa",
+    "partnerCity": "Vaasa",
+    "partnerCountry": "Finland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Jagiellonian University",
+    "partnerCity": "Kraków",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Universita di Pisa",
+    "partnerCity": "Pisa",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Ecole Superieure des Sciences Commerciales d' Angers (ESSCA)",
+    "partnerCity": "Angers",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Hochschule Esslingen - University of Applied Sciences",
+    "partnerCity": "Esslingen",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "JAMK University of Applied Sciences",
+    "partnerCity": "Jyväskylä",
+    "partnerCountry": "Finland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Wroclaw University of Economics",
+    "partnerCity": "Wrocław",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Bauhaus-Universität Weimar",
+    "partnerCity": "Weimar",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Universita Degli Studi Della Basilicata",
+    "partnerCity": "Potenza",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "University of Granada (Ceuta)",
+    "partnerCity": "Ceuta",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Universidad de Valladolid",
+    "partnerCity": "Valladolid",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "ESCE International Business School",
+    "partnerCity": "Paris",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "University of Gdańsk",
+    "partnerCity": "Gdańsk",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Romanian-American University",
+    "partnerCity": "Bucharest",
+    "partnerCountry": "Romania"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "University of Economics-Varna",
+    "partnerCity": "Varna",
+    "partnerCountry": "Bulgaria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Bucharest University of Economic Studies",
+    "partnerCity": "Bucharest",
+    "partnerCountry": "Romania"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "International Balkan University",
+    "partnerCity": "Skopje",
+    "partnerCountry": "North Macedonia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Nord University",
+    "partnerCity": "Bodø",
+    "partnerCountry": "Norway"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "University of Antwerp",
+    "partnerCity": "Antwerp",
+    "partnerCountry": "Belgium"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "RWTH Aachen University",
+    "partnerCity": "Aachen",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Lithuania Business University of Applied Sciences",
+    "partnerCity": "Klaipėda",
+    "partnerCountry": "Lithuania"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "University of Rijeka",
+    "partnerCity": "Rijeka",
+    "partnerCountry": "Croatia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "ISAG-European Business School",
+    "partnerCity": "Porto",
+    "partnerCountry": "Portugal"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Ruhr University Bochum",
+    "partnerCity": "Bochum",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "University of Chemistry and Technology, Prague",
+    "partnerCity": "Prague",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Ionio University",
+    "partnerCity": "Corfu",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Jan Kochanowski University of Kielce",
+    "partnerCity": "Kielce",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "University of National and World Economy",
+    "partnerCity": "Sofia",
+    "partnerCountry": "Bulgaria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "ICD International Business School",
+    "partnerCity": "Paris",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Universita Degli Studi Di Padova",
+    "partnerCity": "Padua",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "EM Normandie Business School",
+    "partnerCity": "Le Havre/Paris",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "University of Rijeka",
+    "partnerCity": "Rijeka",
+    "partnerCountry": "Croatia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "University of Belgrade",
+    "partnerCity": "Belgrade",
+    "partnerCountry": "Serbia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Tallinn University of Technology",
+    "partnerCity": "Tallinn",
+    "partnerCountry": "Estonia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Unie University",
+    "partnerCity": "Madrid",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "University of Minho",
+    "partnerCity": "Braga",
+    "partnerCountry": "Portugal"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Collegium Humanum",
+    "partnerCity": "Warsaw",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Matej Bel University In Banska Bystrica",
+    "partnerCity": "Banská Bystrica",
+    "partnerCountry": "Slovakia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "ISC Paris School of Management",
+    "partnerCity": "Paris",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "ESC DIJON BOURGOGNE - Burgundy School Of Business",
+    "partnerCity": "Dijon",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Hochschule Koblenz",
+    "partnerCity": "Koblenz",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "ESIC Business & Marketing School",
+    "partnerCity": "Madrid",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Akademia WSB",
+    "partnerCity": "Dąbrowa Górnicza",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "University of Carlos III of Madrid",
+    "partnerCity": "Madrid",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Universidade Nova de Lisboa",
+    "partnerCity": "Lisbon",
+    "partnerCountry": "Portugal"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "University of Wroclaw",
+    "partnerCity": "Wrocław",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "PAR University of Applied Sciences",
+    "partnerCity": "Pula",
+    "partnerCountry": "Croatia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Eötvös József College",
+    "partnerCity": "Baja",
+    "partnerCountry": "Hungary"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "CY Cergy Paris Université",
+    "partnerCity": "Cergy",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Neoma Business School",
+    "partnerCity": "Rouen/Reims",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Hochschule Mannheim",
+    "partnerCity": "Mannheim",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Universidad de Valladolid",
+    "partnerCity": "Valladolid",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Vysoká škola kreativní komunikace (VŠKK)",
+    "partnerCity": "Prague",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Business Adminsitration",
+    "partnerUniversity": "Eotvos Lorand University (ELTE)",
+    "partnerCity": "Budapest",
+    "partnerCountry": "Hungary"
+  },
+  //Accounting and Finance
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "IÉSEG School of Management",
+    "partnerCity": "Paris",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "Universidad de Valladolid",
+    "partnerCity": "Valladolid",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "University of Calabria",
+    "partnerCity": "Catanzaro",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "University of Gdansk",
+    "partnerCity": "Gdansk",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "Hellenic Mediterranean University",
+    "partnerCity": "Heraklion",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "Romanian-American University",
+    "partnerCity": "Bucharest",
+    "partnerCountry": "Romania"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "University of Economics-Varna",
+    "partnerCity": "Varna",
+    "partnerCountry": "Bulgaria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "Bucharest University of Economic Studies",
+    "partnerCity": "Bucharest",
+    "partnerCountry": "Romania"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "Kufstein Tirol University of Applied Sciences",
+    "partnerCity": "Kufstein",
+    "partnerCountry": "Austria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "University of Antwerp",
+    "partnerCity": "Antwerp",
+    "partnerCountry": "Belgium"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "University of Hradec Kralove",
+    "partnerCity": "Hradec Kralove",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "Tomas Bata University in Zlín",
+    "partnerCity": "Zlín",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "Tallin University of Tecnology",
+    "partnerCity": "Tallinn",
+    "partnerCountry": "Estonia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "University of Macedonia Economics and Social Sciences",
+    "partnerCity": "Thessaloniki",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "University Degli Studi di Parma",
+    "partnerCity": "Parma",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "RWTH Aachen University",
+    "partnerCity": "Aachen",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "Lithuania Business University of Applied Sciences",
+    "partnerCity": "Vilnius",
+    "partnerCountry": "Lithuania"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "Athens University of Economicsand Business",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "University of National and World Economy",
+    "partnerCity": "Sofia",
+    "partnerCountry": "Bulgaria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "Universita Degli Studi Di Padova",
+    "partnerCity": "Padua",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "Matej Bel University In Banska Bystrica",
+    "partnerCity": "Banska Bystrica",
+    "partnerCountry": "Slovakia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "University of Thessaly",
+    "partnerCity": "Volos",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "1 Decembrie 1918 University of Alba Iulia",
+    "partnerCity": "Alba Iulia",
+    "partnerCountry": "Romania"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "Radboud Universiteit Nijmegen",
+    "partnerCity": "Nijmegen",
+    "partnerCountry": "Netherlands"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "Akademia WSB",
+    "partnerCity": "Dąbrowa Górnicza",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Accounting and Finance",
+    "partnerUniversity": "Universidade Nova de Lisboa",
+    "partnerCity": "Lisbon",
+    "partnerCountry": "Portugal"
+  },
 
   // Architecture
   {
-    homeUniversity: "UCY",
-    homeDepartment: "Architecture",
-    partnerUniversity: "University of Patras",
-    partnerCity: "Patras",
-    partnerCountry: "Greece",
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "University of Patras",
+    "partnerCity": "Patras",
+    "partnerCountry": "Greece"
   },
   {
-    homeUniversity: "UCY",
-    homeDepartment: "Architecture",
-    partnerUniversity:
-      "Ecole Nationale Superieure D´Architecture De Paris La Villette",
-    partnerCity: "Paris",
-    partnerCountry: "France",
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "École Nationale Supérieure d’Architecture de Paris La Villette",
+    "partnerCity": "Paris",
+    "partnerCountry": "France"
   },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "University of Thessaly",
+    "partnerCity": "Volos",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "Politecnico di Milano",
+    "partnerCity": "Milan",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "National Technical University of Athens (Metsoveio)",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "Aristotle University of Thessaloniki",
+    "partnerCity": "Thessaloniki",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "Università degli Studi di Sassari",
+    "partnerCity": "Sassari",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "Técnico Lisboa (Universidade de Lisboa)",
+    "partnerCity": "Lisbon",
+    "partnerCountry": "Portugal"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "Universitat Rovira i Virgili",
+    "partnerCity": "Tarragona",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "Universidad de A Coruña",
+    "partnerCity": "A Coruña",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "Graz University of Technology",
+    "partnerCity": "Graz",
+    "partnerCountry": "Austria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "École Nationale Supérieure d’Architecture de Normandie",
+    "partnerCity": "Caen",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "Universita Degli Studi di Parma",
+    "partnerCity": "Parma",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "University of Ioannina",
+    "partnerCity": "Ioannina",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "TU Wien University",
+    "partnerCity": "Vienna",
+    "partnerCountry": "Austria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "D’Annunzio University of Chieti–Pescara",
+    "partnerCity": "Chieti-Pescara",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "University of Belgrade",
+    "partnerCity": "Belgrade",
+    "partnerCountry": "Serbia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "Katholieke Universiteit Leuven",
+    "partnerCity": "Leuven",
+    "partnerCountry": "Belgium"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "University of Lusófona",
+    "partnerCity": "Lisbon",
+    "partnerCountry": "Portugal"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "Università degli Studi di Roma I – La Sapienza",
+    "partnerCity": "Rome",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "University of Stuttgart",
+    "partnerCity": "Stuttgart",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "Università degli Studi di Firenze",
+    "partnerCity": "Florence",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Architecture",
+    "partnerUniversity": "Università degli Studi di Roma I – La Sapienza",
+    "partnerCity": "Rome",
+    "partnerCountry": "Italy"
+  }
   // Add remaining architecture partnerships...
 
   // Engineering departments
   {
-    homeUniversity: "UCY",
-    homeDepartment: "Electrical and Computer Engineering",
-    partnerUniversity: "Gheorghe Asachi Technical University of Iasi",
-    partnerCity: "Iași",
-    partnerCountry: "Romania",
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "“Gheorghe Asachi” Technical University of Iasi",
+    "partnerCity": "Iași",
+    "partnerCountry": "Romania"
   },
   {
-    homeUniversity: "UCY",
-    homeDepartment: "Mechanical and Manufacturing Engineering",
-    partnerUniversity: "Universidad Politecnica de Cartagena",
-    partnerCity: "Cartagena",
-    partnerCountry: "Spain",
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "University Politecnica de Catalunya",
+    "partnerCity": "Barcelona",
+    "partnerCountry": "Spain"
   },
   {
-    homeUniversity: "UCY",
-    homeDepartment: "Civil and Environmental Engineering",
-    partnerUniversity: "University of Salerno",
-    partnerCity: "Salerno",
-    partnerCountry: "Italy",
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "National Technical University of Athens (Metsovio)",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Rigas Tehniska Universitate",
+    "partnerCity": "Riga",
+    "partnerCountry": "Latvia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Universidad Rey Juan Carlos",
+    "partnerCity": "Madrid",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Universitatea \"Politehnica\" din Bucuresti",
+    "partnerCity": "Bucharest",
+    "partnerCountry": "Romania"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Tomas Bata University in Zlin",
+    "partnerCity": "Zlín",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "University Politecnica de Catalunya",
+    "partnerCity": "Barcelona",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "University of Western Macedonia former Technological Education Institution of Western Macedonia (TEI Kozanis)",
+    "partnerCity": "Kozani",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "University of Thessaly",
+    "partnerCity": "Volos",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "University of A Coruna",
+    "partnerCity": "A Coruña",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "University of Rijeka",
+    "partnerCity": "Rijeka",
+    "partnerCountry": "Croatia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Aristotle University of Thessaloniki",
+    "partnerCity": "Thessaloniki",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Politecnico di Torino",
+    "partnerCity": "Turin",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Universita Campus Bio-Medico di Roma",
+    "partnerCity": "Rome",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "University Politecnica de Catalunya",
+    "partnerCity": "Barcelona",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Democritus University of Thrace",
+    "partnerCity": "Komotini",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "University of Technology and Life Sciences in Bydgoszcz",
+    "partnerCity": "Bydgoszcz",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "University of Western Macedonia",
+    "partnerCity": "Kozani",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "University of Ljubljana",
+    "partnerCity": "Ljubljana",
+    "partnerCountry": "Slovenia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "AGH University of Science and Technology",
+    "partnerCity": "Kraków",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "ESIEE Paris",
+    "partnerCity": "Paris",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Hochschule Landshut (University of Applied Sciences)",
+    "partnerCity": "Landshut",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "University of Pardubice",
+    "partnerCity": "Pardubice",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Universite du Havre",
+    "partnerCity": "Le Havre",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "University of Oradea",
+    "partnerCity": "Oradea",
+    "partnerCountry": "Romania"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Hellenic Mediterranean University",
+    "partnerCity": "Heraklion",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "University of the Peloponnese",
+    "partnerCity": "Tripoli",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Lodz University of Technology",
+    "partnerCity": "Łódź",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "UNIVERSITY OF CAGLIARI",
+    "partnerCity": "Cagliari",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Universita Degli Studi Di Padova",
+    "partnerCity": "Padua",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Universita del Salento",
+    "partnerCity": "Lecce",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Unie University",
+    "partnerCity": "Madrid",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Democritus University of Thrace",
+    "partnerCity": "Komotini",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "University of West Attica",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Ceia3 Universities University of Almeria University of Cadiz University of Cordoba University of Huelva University of Jaen",
+    "partnerCity": "Almería / Cádiz / Córdoba / Huelva / Jaén",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Fontys University of Applied Sciences",
+    "partnerCity": "Eindhoven",
+    "partnerCountry": "Netherlands"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "University of Orleans",
+    "partnerCity": "Orléans",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Democritus University of Thrace",
+    "partnerCity": "Komotini",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Electrical And Computer Engineering",
+    "partnerUniversity": "Stichting Hanzehogeschool Groningen",
+    "partnerCity": "Groningen",
+    "partnerCountry": "Netherlands"
+  },
+//Mechanical And Manufacturing Engineering
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "Universidad Politecnica de Cartagena",
+    "partnerCity": "Cartagena",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "Universitat Politecnica de Catalunya",
+    "partnerCity": "Barcelona",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "Bielefeld University Of Applied Sciences",
+    "partnerCity": "Bielefeld",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "Aristotle University Of Thessaloniki",
+    "partnerCity": "Thessaloniki",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "National Technical University Of Athens",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "Montanuniversitat Leoben",
+    "partnerCity": "Leoben",
+    "partnerCountry": "Austria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "Technological Education Institution Of Western Macedonia",
+    "partnerCity": "Kozani",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "Budapest University Of Technology And Economics",
+    "partnerCity": "Budapest",
+    "partnerCountry": "Hungary"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "Technical University Of Sofia",
+    "partnerCity": "Sofia",
+    "partnerCountry": "Bulgaria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "Hochschule Landshut (University Of Applied Sciences)",
+    "partnerCity": "Landshut",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "University Of Peloponnese",
+    "partnerCity": "Tripoli",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "Hochschule Esslingen University Of Applied Sciences",
+    "partnerCity": "Esslingen",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "Hellenic Mediterranean University",
+    "partnerCity": "Heraklion",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "National And Kapodistrian University Of Athens",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "University Degli Studi Di Napoli Federico II",
+    "partnerCity": "Naples",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "Fontys University Of Applied Sciences",
+    "partnerCity": "Eindhoven",
+    "partnerCountry": "Netherlands"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Mechanical And Manufacturing Engineering",
+    "partnerUniversity": "University Of Orleans",
+    "partnerCity": "Orléans",
+    "partnerCountry": "France"
   },
 
   // Humanities departments
