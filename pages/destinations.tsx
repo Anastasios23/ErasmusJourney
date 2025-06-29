@@ -267,7 +267,9 @@ export default function Destinations() {
                       <SelectValue placeholder="All Countries" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Countries</SelectItem>
+                      <SelectItem value="all-countries">
+                        All Countries
+                      </SelectItem>
                       {countries.map((country) => (
                         <SelectItem key={country} value={country}>
                           {country}
@@ -284,7 +286,7 @@ export default function Destinations() {
                       <SelectValue placeholder="All Cost Levels" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Cost Levels</SelectItem>
+                      <SelectItem value="all-costs">All Cost Levels</SelectItem>
                       {costLevels.map((level) => (
                         <SelectItem key={level} value={level}>
                           {level.charAt(0).toUpperCase() + level.slice(1)} Cost
