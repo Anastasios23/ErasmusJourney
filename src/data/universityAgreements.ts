@@ -2538,7 +2538,7 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
   {
     homeUniversity: "UCY",
     homeDepartment: "Physics",
-    partnerUniversity: "UMEA Universitet",
+    partnerUniversity: "Umeå University",
     partnerCity: "Umeå",
     partnerCountry: "Sweden",
   },
@@ -3169,7 +3169,7 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
   {
     homeUniversity: "UCY",
     homeDepartment: "Law",
-    partnerUniversity: "Univeristy of Maribor",
+    partnerUniversity: "University of Maribor",
     partnerCity: "Maribor",
     partnerCountry: "Slovenia",
   },
@@ -3211,7 +3211,7 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
   {
     homeUniversity: "UCY",
     homeDepartment: "Law",
-    partnerUniversity: "University of Coruna",
+    partnerUniversity: "University of A Coruña",
     partnerCity: "A Coruña",
     partnerCountry: "Spain",
   },
@@ -3451,112 +3451,1113 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
   // (For brevity, continuing with abbreviated sections)
 
   // Psychology
+  
   {
     homeUniversity: "UCY",
     homeDepartment: "Psychology",
     partnerUniversity: "University of Vilnius",
     partnerCity: "Vilnius",
-    partnerCountry: "Lithuania",
+    partnerCountry: "Lithuania"
   },
   {
     homeUniversity: "UCY",
     homeDepartment: "Psychology",
     partnerUniversity: "University of Maribor",
     partnerCity: "Maribor",
-    partnerCountry: "Slovenia",
+    partnerCountry: "Slovenia"
   },
   {
     homeUniversity: "UCY",
     homeDepartment: "Psychology",
     partnerUniversity: "Panteion University of Social and Political Sciences",
     partnerCity: "Athens",
-    partnerCountry: "Greece",
+    partnerCountry: "Greece"
   },
   {
     homeUniversity: "UCY",
     homeDepartment: "Psychology",
     partnerUniversity: "Aristotle University of Thessaloniki",
     partnerCity: "Thessaloniki",
-    partnerCountry: "Greece",
+    partnerCountry: "Greece"
   },
   {
     homeUniversity: "UCY",
     homeDepartment: "Psychology",
     partnerUniversity: "University of Crete",
     partnerCity: "Heraklion",
-    partnerCountry: "Greece",
+    partnerCountry: "Greece"
   },
   {
     homeUniversity: "UCY",
     homeDepartment: "Psychology",
     partnerUniversity: "Universidad de Almeria",
     partnerCity: "Almería",
-    partnerCountry: "Spain",
+    partnerCountry: "Spain"
   },
   {
     homeUniversity: "UCY",
     homeDepartment: "Psychology",
     partnerUniversity: "Universita Degli Studi di Milano - Bicocca",
     partnerCity: "Milan",
-    partnerCountry: "Italy",
+    partnerCountry: "Italy"
   },
   {
     homeUniversity: "UCY",
     homeDepartment: "Psychology",
     partnerUniversity: "Universite Paris Cite",
     partnerCity: "Paris",
-    partnerCountry: "France",
+    partnerCountry: "France"
   },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Universidad Complutense de Madrid",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Democritus University of Thrace",
+    partnerCity: "Komotini",
+    partnerCountry: "Greece"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Universita degli studi di Padova",
+    partnerCity: "Padua",
+    partnerCountry: "Italy"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Istanbul Kemerburgaz University",
+    partnerCity: "Istanbul",
+    partnerCountry: "Türkiye"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Universidade De Aveiro",
+    partnerCity: "Aveiro",
+    partnerCountry: "Portugal"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "University of Ioannina",
+    partnerCity: "Ioannina",
+    partnerCountry: "Greece"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "The University of Szczecin",
+    partnerCity: "Szczecin",
+    partnerCountry: "Poland"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Universita Degli Studi di Urbino Carlo Bo",
+    partnerCity: "Urbino",
+    partnerCountry: "Italy"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "National and Kapodistrian University of Athens",
+    partnerCity: "Athens",
+    partnerCountry: "Greece"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Universita Degli Studi Di Roma \"La Sapienza\"",
+    partnerCity: "Rome",
+    partnerCountry: "Italy"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Ruhr-Universitat Bochum",
+    partnerCity: "Bochum",
+    partnerCountry: "Germany"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Universite Lumiere Lyon 2",
+    partnerCity: "Lyon",
+    partnerCountry: "France"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "National and Kapodistrian University of Athens",
+    partnerCity: "Athens",
+    partnerCountry: "Greece"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Universita Degli Studi Della Campania \"Luigi Vanvitelli\"",
+    partnerCity: "Caserta",
+    partnerCountry: "Italy"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "University of Thessaly",
+    partnerCity: "Volos",
+    partnerCountry: "Greece"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Riga Stradins University",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "University of Thessaly",
+    partnerCity: "Volos",
+    partnerCountry: "Greece"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "University College Cork",
+    partnerCity: "Cork",
+    partnerCountry: "Ireland"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Private Universitat Witten/Herdecke",
+    partnerCity: "Witten",
+    partnerCountry: "Germany"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Technische Universitat Dresden",
+    partnerCity: "Dresden",
+    partnerCountry: "Germany"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "South-West University \"NEOFIT RILSKI\"",
+    partnerCity: "Blagoevgrad",
+    partnerCountry: "Bulgaria"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Thomas More Mechelen-Antwerpen Thomas More Kempen",
+    partnerCity: "Mechelen",
+    partnerCountry: "Belgium"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Universita di Enna \"Kore\"",
+    partnerCity: "Enna",
+    partnerCountry: "Italy"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "University of Jyvaskyla",
+    partnerCity: "Jyväskylä",
+    partnerCountry: "Finland"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Democritus University of Thrace",
+    partnerCity: "Komotini",
+    partnerCountry: "Greece"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "D'Annunzio University of Chieti–Pescara",
+    partnerCity: "Chieti–Pescara",
+    partnerCountry: "Italy"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "SWPS University of Social Sciences and Humanities",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "University of Cusano",
+    partnerCity: "Rome",
+    partnerCountry: "Italy"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "University of Primorska",
+    partnerCity: "Koper",
+    partnerCountry: "Slovenia"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "WSB Merito University in Bydgoszcz",
+    partnerCity: "Bydgoszcz",
+    partnerCountry: "Poland"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Universite Catholique de Louvain",
+    partnerCity: "Louvain-la-Neuve",
+    partnerCountry: "Belgium"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "University of Cordoba",
+    partnerCity: "Córdoba",
+    partnerCountry: "Spain"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Univerzita Palackeho V Olomouci",
+    partnerCity: "Olomouc",
+    partnerCountry: "Czech Republic"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Universita Degli Studi di Firenze",
+    partnerCity: "Florence",
+    partnerCountry: "Italy"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "University of Bari Aldo Moro",
+    partnerCity: "Bari",
+    partnerCountry: "Italy"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "University of Trento",
+    partnerCity: "Trento",
+    partnerCountry: "Italy"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "University of Groningen",
+    partnerCity: "Groningen",
+    partnerCountry: "Netherlands"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Universidade de Tras-os-Montes e Alto Duro",
+    partnerCity: "Vila Real",
+    partnerCountry: "Portugal"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Democritus University of Thrace",
+    partnerCity: "Komotini",
+    partnerCountry: "Greece"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Autonomus University of Barcelona",
+    partnerCity: "Barcelona",
+    partnerCountry: "Spain"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "Psychology",
+    partnerUniversity: "Autonomus University of Madrid",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain"
+  },
+
+
   // Add remaining psychology partnerships...
 
   // Social and Political Sciences
   {
-    homeUniversity: "UCY",
-    homeDepartment: "Social and Political Sciences",
-    partnerUniversity: "Universidad de Granada",
-    partnerCity: "Granada",
-    partnerCountry: "Spain",
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Universidad de Granada",
+    "partnerCity": "Granada",
+    "partnerCountry": "Spain"
   },
   {
-    homeUniversity: "UCY",
-    homeDepartment: "Social and Political Sciences",
-    partnerUniversity: "Panteion University of Social and Political Sciences",
-    partnerCity: "Athens",
-    partnerCountry: "Greece",
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Panteion University of Social and Political Sciences",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
   },
   {
-    homeUniversity: "UCY",
-    homeDepartment: "Social and Political Sciences",
-    partnerUniversity: "New Bulgarian University",
-    partnerCity: "Sofia",
-    partnerCountry: "Bulgaria",
-  },
-  // Add remaining social and political sciences partnerships...
-
-  // Economics
-  {
-    homeUniversity: "UCY",
-    homeDepartment: "Economics",
-    partnerUniversity: "University of Minho",
-    partnerCity: "Braga",
-    partnerCountry: "Portugal",
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "New Bulgarian University",
+    "partnerCity": "Sofia",
+    "partnerCountry": "Bulgaria"
   },
   {
-    homeUniversity: "UCY",
-    homeDepartment: "Economics",
-    partnerUniversity: "University of Ca Foscari di Venezia",
-    partnerCity: "Venice (Venezia)",
-    partnerCountry: "Italy",
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Universidad de Salamanca",
+    "partnerCity": "Salamanca",
+    "partnerCountry": "Spain"
   },
   {
-    homeUniversity: "UCY",
-    homeDepartment: "Economics",
-    partnerUniversity: "Universidad de A Coruna",
-    partnerCity: "Coruña",
-    partnerCountry: "Spain",
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Charles University in Prague",
+    "partnerCity": "Prague",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Universidad de A Coruna",
+    "partnerCity": "Coruña",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Katholieke Hogeschool VIVES Zuid",
+    "partnerCity": "Kortrijk",
+    "partnerCountry": "Belgium"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Universitat Osnabruck",
+    "partnerCity": "Osnabrück",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Universite Lumiere Lyon 2",
+    "partnerCity": "Lyon",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Uniwersytet Warminsko-Mazurski W Olsztynie",
+    "partnerCity": "Olsztyn",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Macedonia Economics & Social Sciences",
+    "partnerCity": "Thessaloniki",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Constantine The Philosopher University in Nitra",
+    "partnerCity": "Nitra",
+    "partnerCountry": "Slovakia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Rostock",
+    "partnerCity": "Rostock",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Bologna",
+    "partnerCity": "Bologna",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Adam Mickiewicz University of Poznan",
+    "partnerCity": "Poznań",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Metropolitan University Prague",
+    "partnerCity": "Prague",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Johann Wolfgang Goethe-Universität – Frankfurt am Main (Faculty of Social Sciences)",
+    "partnerCity": "Frankfurt am Main",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Johann Wolfgang Goethe-Universität – Frankfurt am Main (Institute of Cultural Anthropology and European Ethology)",
+    "partnerCity": "Frankfurt am Main",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Peloponnese",
+    "partnerCity": "Tripoli",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Universidad Complutense de Madrid",
+    "partnerCity": "Madrid",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Crete",
+    "partnerCity": "Heraklion",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Corvinus, University of Budapest",
+    "partnerCity": "Budapest",
+    "partnerCountry": "Hungary"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Jagiellonian University Krakow",
+    "partnerCity": "Kraków",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Eotvos Lorand",
+    "partnerCity": "Budapest",
+    "partnerCountry": "Hungary"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of the Aegean",
+    "partnerCity": "Mytilene",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Aristotle University of Thessaloniki",
+    "partnerCity": "Thessaloniki",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Panteion University of Social and Political Sciences",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Universite de Strasbourg",
+    "partnerCity": "Strasbourg",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Europos Humanitarinis University",
+    "partnerCity": "Vilnius",
+    "partnerCountry": "Lithuania"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Universita Degli Studi Roma Tre",
+    "partnerCity": "Rome",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Eberhard Karls University of Tubingen",
+    "partnerCity": "Tübingen",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Institut d’Etudes Politiques d’Aix-en-Provence",
+    "partnerCity": "Aix-en-Provence",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Uniwersytet Rzeszowski",
+    "partnerCity": "Rzeszów",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Warsaw",
+    "partnerCity": "Warsaw",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Universite des Nantes",
+    "partnerCity": "Nantes",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Sciences Po Lille",
+    "partnerCity": "Lille",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Calabria",
+    "partnerCity": "Calabria",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Universita Cattolica del Sacro Cuore (UCSC)",
+    "partnerCity": "Milan",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Aristotle University of Thessaloniki",
+    "partnerCity": "Thessaloniki",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Beira Interior",
+    "partnerCity": "Covilhã",
+    "partnerCountry": "Portugal"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "National and Kapodistrian University of Athens",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Tartu",
+    "partnerCity": "Tartu",
+    "partnerCountry": "Estonia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Masaryk",
+    "partnerCity": "Brno",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Matej Bel University in Banska Bystrica",
+    "partnerCity": "Banská Bystrica",
+    "partnerCountry": "Slovakia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Universidad Pablo de Olavide",
+    "partnerCity": "Seville",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Babes-Bolayi University, Cluj, Romania",
+    "partnerCity": "Cluj-Napoca",
+    "partnerCountry": "Romania"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Jan Kochanowski University of Kielce",
+    "partnerCity": "Kielce",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Masaryk",
+    "partnerCity": "Brno",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Panteion University of Social and Political Sciences",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Helsinki/HELSINGIN YLIOPISTO",
+    "partnerCity": "Helsinki",
+    "partnerCountry": "Finland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Bulgarian Academy of Sciences",
+    "partnerCity": "Sofia",
+    "partnerCountry": "Bulgaria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Institut Catholique de Vendee",
+    "partnerCity": "La Roche-sur-Yon",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Lodz",
+    "partnerCity": "Łódź",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Konstanz",
+    "partnerCity": "Konstanz",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "AGH University of Science and Technology",
+    "partnerCity": "Kraków",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Wroclaw",
+    "partnerCity": "Wrocław",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Tampere",
+    "partnerCity": "Tampere",
+    "partnerCountry": "Finland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Polish Academy of Sciences",
+    "partnerCity": "Warsaw",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Valladolid",
+    "partnerCity": "Valladolid",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Vysoká škola kreativní komunikace (VŠKK)",
+    "partnerCity": "Prague",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "Nicolaus Copernicus University",
+    "partnerCity": "Toruń",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "University of Antwerp",
+    "partnerCity": "Antwerp",
+    "partnerCountry": "Belgium"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Social and Political Sciences",
+    "partnerUniversity": "NLA University College",
+    "partnerCity": "Bergen",
+    "partnerCountry": "Norway"
   },
   // Add remaining economics partnerships...
-
+  // economics
+ {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Minho",
+    "partnerCity": "Braga",
+    "partnerCountry": "Portugal"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Ca’ Foscari University of Venice",
+    "partnerCity": "Venice",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Universidad de A Coruña",
+    "partnerCity": "Coruña",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Ioannina",
+    "partnerCity": "Ioannina",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Athens University of Economics and Business",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Panteion University of Social and Political Sciences",
+    "partnerCity": "Athens",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Bologna (Campus Forlì)",
+    "partnerCity": "Forlì",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Cantabria",
+    "partnerCity": "Santander",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Siena",
+    "partnerCity": "Siena",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Piraeus",
+    "partnerCity": "Piraeus",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Macedonia Economics & Social Sciences",
+    "partnerCity": "Thessaloniki",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Eötvös Loránd University",
+    "partnerCity": "Budapest",
+    "partnerCountry": "Hungary"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Uniwersytet Warmińsko-Mazurski w Olsztynie",
+    "partnerCity": "Olsztyn",
+    "partnerCountry": "Poland"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Tallinn University of Technology",
+    "partnerCity": "Tallinn",
+    "partnerCountry": "Estonia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Naples Federico II",
+    "partnerCity": "Naples",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Copenhagen",
+    "partnerCity": "Copenhagen",
+    "partnerCountry": "Denmark"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Worms University of Applied Sciences",
+    "partnerCity": "Worms",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Czech University of Life Sciences Prague",
+    "partnerCity": "Prague",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Parma",
+    "partnerCity": "Parma",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Hradec Králové",
+    "partnerCity": "Hradec Králové",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Bergamo",
+    "partnerCity": "Bergamo",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Ulm",
+    "partnerCity": "Ulm",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Witten/Herdecke University",
+    "partnerCity": "Witten",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of the Peloponnese",
+    "partnerCity": "Tripoli",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Pisa",
+    "partnerCity": "Pisa",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Palermo",
+    "partnerCity": "Palermo",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Crete",
+    "partnerCity": "Heraklion",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Universidad de Valladolid",
+    "partnerCity": "Valladolid",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Bucharest University of Economic Studies",
+    "partnerCity": "Bucharest",
+    "partnerCountry": "Romania"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Rijeka",
+    "partnerCity": "Rijeka",
+    "partnerCountry": "Croatia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Milan",
+    "partnerCity": "Milan",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Ruhr University Bochum",
+    "partnerCity": "Bochum",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Chemistry and Technology, Prague",
+    "partnerCity": "Prague",
+    "partnerCountry": "Czech Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Aristotle University of Thessaloniki",
+    "partnerCity": "Thessaloniki",
+    "partnerCountry": "Greece"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of National and World Economy",
+    "partnerCity": "Sofia",
+    "partnerCountry": "Bulgaria"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Paris-Saclay University (ENS Paris-Saclay)",
+    "partnerCity": "Cachan",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Belgrade",
+    "partnerCity": "Belgrade",
+    "partnerCountry": "Serbia"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Padua",
+    "partnerCity": "Padua",
+    "partnerCountry": "Italy"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Matej Bel University in Banská Bystrica",
+    "partnerCity": "Banská Bystrica",
+    "partnerCountry": "Slovak Republic"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Konstanz",
+    "partnerCity": "Konstanz",
+    "partnerCountry": "Germany"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Radboud University Nijmegen",
+    "partnerCity": "Nijmegen",
+    "partnerCountry": "The Netherlands"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Carlos III University of Madrid",
+    "partnerCity": "Madrid",
+    "partnerCountry": "Spain"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "Nova University of Lisbon",
+    "partnerCity": "Lisbon",
+    "partnerCountry": "Portugal"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "CY Cergy Paris Université",
+    "partnerCity": "Cergy",
+    "partnerCountry": "France"
+  },
+  {
+    "homeUniversity": "UCY",
+    "homeDepartment": "Economics",
+    "partnerUniversity": "University of Łódź",
+    "partnerCity": "Łódź",
+    "partnerCountry": "Poland"
+  }
   // Business Administration
   {
     homeUniversity: "UCY",
