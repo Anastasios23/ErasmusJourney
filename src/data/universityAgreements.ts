@@ -4557,7 +4557,7 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
     "partnerUniversity": "University of Łódź",
     "partnerCity": "Łódź",
     "partnerCountry": "Poland"
-  }
+  },
   // Business Administration
   {
     homeUniversity: "UCY",
