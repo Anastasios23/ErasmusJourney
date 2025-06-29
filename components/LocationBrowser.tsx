@@ -41,7 +41,7 @@ const LocationBrowser = () => {
     "Rome",
     "Lisbon",
     "Stockholm",
-    "Budapest"
+    "Budapest",
   ]);
 
   useEffect(() => {
@@ -195,7 +195,7 @@ const LocationBrowser = () => {
                               {entry.price}
                             </Badge>
                           </div>
-                        </div>
+                        )}
                       </div>
 
                       <div className="p-6">
