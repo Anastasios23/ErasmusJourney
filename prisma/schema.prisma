@@ -1,0 +1,276 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // User profile data
+  studentId    String?
+  nationality  String?
+  homeCity     String?
+  homeCountry  String?
+  
+  // Erasmus application data
+  applications Application[]
+  stories      Story[]
+  
+  @@map("users")
+}
+
+model University {
+  id          String        @id @default(cuid())
+  code        String        @unique // UCY, UNIC, EUC, etc.
+  name        String
+  shortName   String
+  type        UniversityType
+  country     String
+  city        String
+  website     String?
+  description String?
+  imageUrl    String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relationships
+  faculties   Faculty[]
+  homeAgreements    Agreement[] @relation("HomeUniversity")
+  partnerAgreements Agreement[] @relation("PartnerUniversity")
+  applications      Application[]
+  stories          Story[]
+
+  @@map("universities")
+}
+
+enum UniversityType {
+  PUBLIC
+  PRIVATE
+}
+
+model Faculty {
+  id           String       @id @default(cuid())
+  name         String
+  description  String?
+  universityId String
+  university   University   @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  
+  departments  Department[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@map("faculties")
+}
+
+model Department {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  facultyId   String
+  faculty     Faculty   @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  
+  programs    Program[]
+  agreements  Agreement[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("departments")
+}
+
+model Program {
+  id           String      @id @default(cuid())
+  name         String
+  level        ProgramLevel
+  duration     String
+  type         ProgramType?
+  ects         Int?
+  description  String?
+  departmentId String
+  department   Department  @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  
+  applications Application[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@map("programs")
+}
+
+enum ProgramLevel {
+  BACHELOR
+  MASTER
+  PHD
+}
+
+enum ProgramType {
+  DISTANCE
+  JOINT
+  INTEGRATED
+}
+
+model Agreement {
+  id                    String         @id @default(cuid())
+  homeUniversityId      String
+  homeUniversity        University     @relation("HomeUniversity", fields: [homeUniversityId], references: [id])
+  homeDepartmentId      String
+  homeDepartment        Department     @relation(fields: [homeDepartmentId], references: [id])
+  
+  partnerUniversityId   String
+  partnerUniversity     University     @relation("PartnerUniversity", fields: [partnerUniversityId], references: [id])
+  partnerCity           String
+  partnerCountry        String
+  
+  agreementType         AgreementType  @default(BOTH)
+  notes                 String?
+  isActive              Boolean        @default(true)
+  startDate             DateTime?
+  endDate               DateTime?
+  
+  applications          Application[]
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  @@map("agreements")
+}
+
+enum AgreementType {
+  STUDENT
+  STAFF
+  BOTH
+  TRAINEESHIP
+}
+
+model Application {
+  id               String            @id @default(cuid())
+  userId           String
+  user             User              @relation(fields: [userId], references: [id])
+  
+  homeUniversityId String
+  homeUniversity   University        @relation(fields: [homeUniversityId], references: [id])
+  programId        String
+  program          Program           @relation(fields: [programId], references: [id])
+  agreementId      String
+  agreement        Agreement         @relation(fields: [agreementId], references: [id])
+  
+  status           ApplicationStatus @default(DRAFT)
+  semester         String?
+  academicYear     String?
+  duration         String?
+  
+  // Application form data
+  motivation       String?
+  languageSkills   Json?
+  grades           Json?
+  
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@map("applications")
+}
+
+enum ApplicationStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  ACCEPTED
+  REJECTED
+  COMPLETED
+}
+
+model Story {
+  id               String     @id @default(cuid())
+  title            String
+  content          String
+  excerpt          String?
+  imageUrl         String?
+  isPublic         Boolean    @default(true)
+  isPinned         Boolean    @default(false)
+  
+  authorId         String
+  author           User       @relation(fields: [authorId], references: [id])
+  universityId     String?
+  university       University? @relation(fields: [universityId], references: [id])
+  
+  country          String?
+  city             String?
+  category         StoryCategory @default(EXPERIENCE)
+  tags             String[]
+  
+  likes            Int        @default(0)
+  views            Int        @default(0)
+  
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  @@map("stories")
+}
+
+enum StoryCategory {
+  EXPERIENCE
+  ACCOMMODATION
+  ACADEMICS
+  CULTURE
+  TRAVEL
+  TIPS
+}
+
+model Accommodation {
+  id          String            @id @default(cuid())
+  name        String
+  type        AccommodationType
+  description String?
+  address     String
+  city        String
+  country     String
+  
+  pricePerMonth Decimal?
+  currency      String?
+  imageUrls     String[]
+  
+  amenities     Json?
+  contactInfo   Json?
+  
+  isActive      Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@map("accommodations")
+}
+
+enum AccommodationType {
+  DORMITORY
+  APARTMENT
+  HOMESTAY
+  STUDIO
+  SHARED_APARTMENT
+}
+
+model Destination {
+  id          String   @id @default(cuid())
+  name        String
+  country     String
+  description String?
+  imageUrl    String?
+  featured    Boolean  @default(false)
+  
+  climate     String?
+  costOfLiving Json?
+  highlights  String[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("destinations")
+}
