@@ -3,9 +3,9 @@ import Head from "next/head";
 import Link from "next/link";
 import { prisma } from "../lib/prisma";
 import Header from "../components/Header";
-import StepCard from "../src/components/StepCard";
-import TeaserGallery from "../src/components/TeaserGallery";
-import LocationBrowser from "../src/components/LocationBrowser";
+import StepCard from "../components/StepCard";
+import TeaserGallery from "../components/TeaserGallery";
+import LocationBrowser from "../components/LocationBrowser";
 import { Button } from "../src/components/ui/button";
 import { Badge } from "../src/components/ui/badge";
 import {
