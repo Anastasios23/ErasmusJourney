@@ -1280,6 +1280,14 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
     partnerCity: "Msida",
     partnerCountry: "Malta",
   },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: "English Studies",
+    partnerUniversity: "University Pablo de Olavide",
+    partnerCity: "Sevilla",
+    partnerCountry: "Spain",
+  },
+  
 
   // French and European Studies
   {
@@ -1425,25 +1433,11 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
   {
     homeUniversity: "UCY",
     homeDepartment: "French and European Studies",
-    partnerUniversity: "LE MANS UNIVERSITE (Department of Didactics)",
+    partnerUniversity: "LE MANS UNIVERSITE",
     partnerCity: "Le Mans",
     partnerCountry: "France",
   },
-  {
-    homeUniversity: "UCY",
-    homeDepartment: "French and European Studies",
-    partnerUniversity: "LE MANS UNIVERSITE (Department of Letters)",
-    partnerCity: "Le Mans",
-    partnerCountry: "France",
-  },
-  {
-    homeUniversity: "UCY",
-    homeDepartment: "French and European Studies",
-    partnerUniversity:
-      "LE MANS UNIVERSITE (Department of Langues Etrangeres Appliquees - LEA)",
-    partnerCity: "Le Mans",
-    partnerCountry: "France",
-  },
+  
   {
     homeUniversity: "UCY",
     homeDepartment: "French and European Studies",
@@ -2047,7 +2041,7 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
   {
     homeUniversity: "UCY",
     homeDepartment: "Computer Science",
-    partnerUniversity: "University of Piraeus (Informatics)",
+    partnerUniversity: "University of Piraeus",
     partnerCity: "Piraeus",
     partnerCountry: "Greece",
   },
@@ -2120,13 +2114,6 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "Universite de Nantes",
     partnerCity: "Nantes",
     partnerCountry: "France",
-  },
-  {
-    homeUniversity: "UCY",
-    homeDepartment: "Computer Science",
-    partnerUniversity: "University of Piraeus (Digital Systems)",
-    partnerCity: "Piraeus",
-    partnerCountry: "Greece",
   },
   {
     homeUniversity: "UCY",
@@ -2209,7 +2196,7 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
     homeUniversity: "UCY",
     homeDepartment: "Computer Science",
     partnerUniversity:
-      "University of the Peloponnese (ex (ex Technological Educational Institute of Western Greece (TEI)",
+      "University of the Peloponnese",
     partnerCity: "Tripoli",
     partnerCountry: "Greece",
   },
@@ -2293,7 +2280,7 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
   {
     homeUniversity: "UCY",
     homeDepartment: "Computer Science",
-    partnerUniversity: "ICD International Business Schoo",
+    partnerUniversity: "ICD International Business School",
     partnerCity: "Paris",
     partnerCountry: "France",
   },
