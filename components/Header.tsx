@@ -2,14 +2,14 @@ import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Button } from "@/src/components/ui/button";
+import { Button } from "../src/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/src/components/ui/dropdown-menu";
+} from "../src/components/ui/dropdown-menu";
 import { Menu, X, User, LogOut, Settings, BookOpen } from "lucide-react";
 
 export default function Header() {
