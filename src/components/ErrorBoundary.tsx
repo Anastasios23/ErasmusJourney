@@ -25,7 +25,7 @@ class ErrorBoundary extends React.Component<
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Only log in development
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV === "development") {
       console.warn("Error boundary caught an error:", error, errorInfo);
     }
   }
