@@ -282,6 +282,8 @@ export const getStaticProps: GetStaticProps = async () => {
           type: uni.type.toUpperCase(),
           country: "Cyprus",
           city: "Nicosia",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
           _count: {
             faculties: uni.faculties.length,
             homeAgreements: Math.floor(Math.random() * 50) + 10,
