@@ -206,7 +206,7 @@ model Story {
   country          String?
   city             String?
   category         StoryCategory @default(EXPERIENCE)
-  tags             String[]
+  tags             String?
 
   likes            Int        @default(0)
   views            Int        @default(0)
@@ -237,7 +237,7 @@ model Accommodation {
 
   pricePerMonth Decimal?
   currency      String?
-  imageUrls     String[]
+  imageUrl      String?
 
   amenities     Json?
   contactInfo   Json?
@@ -267,7 +267,7 @@ model Destination {
 
   climate     String?
   costOfLiving Json?
-  highlights  String[]
+  highlights  String?
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
