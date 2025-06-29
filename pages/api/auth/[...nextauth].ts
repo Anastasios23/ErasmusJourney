@@ -10,7 +10,7 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        email: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
@@ -19,8 +19,10 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          // Handle special case for demo user
+          // Handle username or email login
           let user;
+
+          // First try to find by username (for demo user)
           if (credentials.email === "demo") {
             user = await prisma.user.findUnique({
               where: {
@@ -28,11 +30,24 @@ export const authOptions: NextAuthOptions = {
               },
             });
           } else {
+            // Try to find by email first, then by username if not found
             user = await prisma.user.findUnique({
               where: {
                 email: credentials.email,
               },
             });
+
+            // If not found by email, try searching by username in firstName field (temporary solution)
+            if (!user) {
+              user = await prisma.user.findFirst({
+                where: {
+                  OR: [
+                    { firstName: credentials.email },
+                    { lastName: credentials.email },
+                  ],
+                },
+              });
+            }
           }
 
           if (!user) {

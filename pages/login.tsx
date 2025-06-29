@@ -20,7 +20,7 @@ import { Alert, AlertDescription } from "../src/components/ui/alert";
 import { Loader2 } from "lucide-react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -33,13 +33,13 @@ export default function LoginPage() {
 
     try {
       const result = await signIn("credentials", {
-        email,
+        email: username, // Use username but send as email field for NextAuth compatibility
         password,
         redirect: false,
       });
 
       if (result?.error) {
-        setError("Invalid email or password");
+        setError("Invalid username or password");
       } else {
         // Redirect to intended page or dashboard
         const redirectUrl =
@@ -80,13 +80,13 @@ export default function LoginPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="username">Username</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="your.email@university.edu"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="username"
+                  type="text"
+                  placeholder="Enter your username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
                   disabled={isLoading}
                 />
