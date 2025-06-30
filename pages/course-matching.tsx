@@ -93,13 +93,17 @@ export default function CourseMatching() {
       setAvailableHostUniversities([]);
     }
 
-    if (field === "homeDepartment") {
+    if (field === "homeDepartment" || field === "levelOfStudy") {
       // Update available host universities based on partnership agreements
-      if (formData.homeUniversity && formData.levelOfStudy) {
+      const department =
+        field === "homeDepartment" ? value : formData.homeDepartment;
+      const level = field === "levelOfStudy" ? value : formData.levelOfStudy;
+
+      if (formData.homeUniversity && department && level) {
         const partnershipAgreements = getAgreementsByDepartmentAndLevel(
           formData.homeUniversity,
-          value,
-          formData.levelOfStudy as "bachelor" | "master" | "phd",
+          department,
+          level as "bachelor" | "master" | "phd",
         );
         const hostUniversities = partnershipAgreements.map((agreement) => ({
           university: agreement.partnerUniversity,
