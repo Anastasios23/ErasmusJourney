@@ -11619,12 +11619,70 @@ export const ALL_UNIVERSITY_AGREEMENTS: UniversityAgreement[] = [
   ...EUC_AGREEMENTS,
 ];
 
+// Academic level mapping based on degree abbreviations
+export const DEGREE_LEVEL_MAPPING: Record<
+  string,
+  "bachelor" | "master" | "phd"
+> = {
+  // Bachelor's degrees
+  BSc: "bachelor",
+  BA: "bachelor",
+  BBA: "bachelor",
+  BEng: "bachelor",
+  LLB: "bachelor",
+  BFA: "bachelor",
+  BMus: "bachelor",
+  BArch: "bachelor",
+
+  // Master's degrees
+  MSc: "master",
+  MA: "master",
+  MBA: "master",
+  MEng: "master",
+  LLM: "master",
+  MFA: "master",
+  MMus: "master",
+  MArch: "master",
+
+  // Doctoral degrees
+  PhD: "phd",
+  Dr: "phd",
+};
+
 // Helper functions
 export function getAgreementsByUniversity(
   universityCode: string,
 ): UniversityAgreement[] {
   return ALL_UNIVERSITY_AGREEMENTS.filter(
     (agreement) => agreement.homeUniversity === universityCode,
+  );
+}
+
+export function getAgreementsByUniversityAndLevel(
+  universityCode: string,
+  academicLevel: "bachelor" | "master" | "phd",
+): UniversityAgreement[] {
+  return ALL_UNIVERSITY_AGREEMENTS.filter(
+    (agreement) =>
+      agreement.homeUniversity === universityCode &&
+      (agreement.academicLevel === academicLevel ||
+        agreement.academicLevel === "all" ||
+        !agreement.academicLevel), // Include agreements without level specified for backward compatibility
+  );
+}
+
+export function getAgreementsByDepartmentAndLevel(
+  universityCode: string,
+  department: string,
+  academicLevel: "bachelor" | "master" | "phd",
+): UniversityAgreement[] {
+  return ALL_UNIVERSITY_AGREEMENTS.filter(
+    (agreement) =>
+      agreement.homeUniversity === universityCode &&
+      agreement.homeDepartment === department &&
+      (agreement.academicLevel === academicLevel ||
+        agreement.academicLevel === "all" ||
+        !agreement.academicLevel), // Include agreements without level specified for backward compatibility
   );
 }
 
