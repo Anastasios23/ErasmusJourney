@@ -28,6 +28,7 @@ import {
   CYPRUS_UNIVERSITIES,
   ALL_UNIVERSITY_AGREEMENTS,
   getAgreementsByDepartment,
+  getAgreementsByDepartmentAndLevel,
 } from "../src/data/universityAgreements";
 
 interface Course {
