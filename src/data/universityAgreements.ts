@@ -537,6 +537,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "University of Applied Sciences BFI Vienna",
     partnerCity: "Vienna",
     partnerCountry: "Austria",
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
