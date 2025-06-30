@@ -371,12 +371,13 @@ export default function CourseMatching() {
                         </SelectContent>
                       </Select>
                       {availableHostUniversities.length === 0 &&
-                        formData.homeDepartment && (
+                        formData.homeDepartment &&
+                        formData.levelOfStudy && (
                           <p className="text-sm text-gray-500">
                             No partner universities found for{" "}
-                            {formData.homeDepartment} department. Please check
-                            your department selection or contact your
-                            university.
+                            {formData.homeDepartment} department at{" "}
+                            {formData.levelOfStudy} level. Please check your
+                            selections or contact your university.
                           </p>
                         )}
                     </div>
