@@ -261,13 +261,15 @@ export default function StudentStoriesPage() {
                       className="group"
                       aria-labelledby={`story-${story.id}-title`}
                     >
-                      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col">
+                      <Card
+                        className="hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col"
+                        onClick={() => router.push(`/stories/${story.id}`)}
+                      >
                         <div className="aspect-video overflow-hidden rounded-t-lg">
                           <img
                             src={story.image}
                             alt={story.title}
                             className="w-full h-full object-cover hover:scale-105 transition-transform"
-                            onClick={() => router.push(`/stories/${story.id}`)}
                           />
                         </div>
                         <CardHeader className="pb-2 flex-none">
