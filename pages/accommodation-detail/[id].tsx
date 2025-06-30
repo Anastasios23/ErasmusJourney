@@ -139,7 +139,7 @@ export default function AccommodationDetailPage({
   const facilityIcons: Record<string, React.ReactNode> = {
     Wifi: <Wifi className="h-4 w-4" />,
     Kitchen: <Utensils className="h-4 w-4" />,
-    "Washing Machine": <Washing_machine className="h-4 w-4" />,
+    "Washing Machine": <WashingMachine className="h-4 w-4" />,
     "Air Conditioning": <AirVent className="h-4 w-4" />,
     Parking: <Car className="h-4 w-4" />,
     "Private Bathroom": <ShowerHead className="h-4 w-4" />,
