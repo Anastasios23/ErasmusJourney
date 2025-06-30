@@ -65,30 +65,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 
-interface AccommodationListing {
-  id: string;
-  studentName: string;
-  accommodationType: string;
-  city: string;
-  country: string;
-  neighborhood: string;
-  monthlyRent: number;
-  rating: number;
-  datePosted: string;
-  description: string;
-  highlights: string[];
-  contact: {
-    email?: string;
-    phone?: string;
-    allowContact: boolean;
-  };
-  facilities: string[];
-  nearbyAmenities: string[];
-  transportLinks: string;
-  photos: string[];
-  verified: boolean;
-  featured: boolean;
-}
+const ITEMS_PER_PAGE = 6;
 
 export default function StudentAccommodations() {
   const router = useRouter();
@@ -98,163 +75,88 @@ export default function StudentAccommodations() {
   const [maxBudget, setMaxBudget] = useState("");
   const [selectedRating, setSelectedRating] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showFilters, setShowFilters] = useState(false);
 
-  // Sample accommodation data
-  const accommodationListings: AccommodationListing[] = [
-    {
-      id: "1",
-      studentName: "Maria S.",
-      accommodationType: "Private Apartment",
-      city: "Barcelona",
-      country: "Spain",
-      neighborhood: "Eixample",
-      monthlyRent: 850,
-      rating: 5,
-      datePosted: "2024-01-15",
-      description:
-        "Beautiful 1-bedroom apartment in the heart of Barcelona, 10 minutes walk to UPC. Fully furnished with modern amenities. Great neighborhood with lots of cafes and restaurants.",
-      highlights: [
-        "Close to university",
-        "Modern furnishing",
-        "Great location",
-        "Quiet neighborhood",
-      ],
-      contact: {
-        email: "maria.s@university.edu",
-        allowContact: true,
-      },
-      facilities: ["Wifi", "Kitchen", "Washing Machine", "Air Conditioning"],
-      nearbyAmenities: ["Supermarket", "Metro", "Restaurants", "Pharmacy"],
-      transportLinks: "Metro L2 - 5 min walk, Bus 24 - 2 min walk",
-      photos: [
-        "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&h=300&fit=crop",
-      ],
-      verified: true,
-      featured: true,
-    },
-    {
-      id: "2",
-      studentName: "Andreas M.",
-      accommodationType: "Student Residence",
-      city: "Prague",
-      country: "Czech Republic",
-      neighborhood: "New Town",
-      monthlyRent: 450,
-      rating: 4,
-      datePosted: "2024-01-12",
-      description:
-        "Modern student residence with great facilities and international community. 15 minutes to Charles University by tram. Includes gym and study rooms.",
-      highlights: [
-        "Student community",
-        "Affordable price",
-        "Good facilities",
-        "International environment",
-      ],
-      contact: {
-        email: "andreas.m@uni.cz",
-        allowContact: true,
-      },
-      facilities: ["Wifi", "Shared Kitchen", "Gym", "Study Room", "Laundry"],
-      nearbyAmenities: ["Tram Stop", "Shopping Center", "Park", "Library"],
-      transportLinks: "Tram 22 - direct to university (15 min)",
-      photos: [
-        "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&h=300&fit=crop",
-      ],
-      verified: true,
-      featured: false,
-    },
-    {
-      id: "3",
-      studentName: "Elena K.",
-      accommodationType: "Shared Apartment",
-      city: "Paris",
-      country: "France",
-      neighborhood: "Latin Quarter",
-      monthlyRent: 700,
-      rating: 4,
-      datePosted: "2024-01-10",
-      description:
-        "Charming shared apartment in the Latin Quarter, walking distance to Sorbonne. Shared with 2 other international students. Historic building with character.",
-      highlights: [
-        "Historic location",
-        "Walking to university",
-        "International flatmates",
-        "Cultural area",
-      ],
-      contact: {
-        allowContact: false,
-      },
-      facilities: ["Wifi", "Shared Kitchen", "Shared Bathroom"],
-      nearbyAmenities: ["University", "Metro", "Cafes", "Bookshops"],
-      transportLinks: "Walking distance to Sorbonne, Metro Saint-Michel",
-      photos: [
-        "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&h=300&fit=crop",
-      ],
-      verified: true,
-      featured: false,
-    },
-  ];
+  // React Query for data fetching with caching
+  const filters = useMemo(
+    () => ({
+      search: searchTerm,
+      city: selectedCity === "all-cities" ? undefined : selectedCity,
+      country:
+        selectedCountry === "all-countries" ? undefined : selectedCountry,
+      type: selectedType === "all-types" ? undefined : selectedType,
+      maxBudget: maxBudget === "no-limit" ? undefined : parseInt(maxBudget),
+      minRating:
+        selectedRating === "all-ratings" ? undefined : parseInt(selectedRating),
+    }),
+    [
+      searchTerm,
+      selectedCity,
+      selectedCountry,
+      selectedType,
+      maxBudget,
+      selectedRating,
+    ],
+  );
 
-  // Filter options
-  const cities = [...new Set(accommodationListings.map((a) => a.city))].sort();
-  const countries = [
-    ...new Set(accommodationListings.map((a) => a.country)),
-  ].sort();
+  const {
+    data: accommodations = [],
+    isLoading,
+    error,
+  } = useAccommodations(filters);
+  const contactMutation = useContactStudent();
+
+  // Pagination
+  const totalPages = Math.ceil(accommodations.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedAccommodations = accommodations.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE,
+  );
+
+  // Filter options derived from data
+  const cities = [...new Set(accommodations.map((a) => a.city))].sort();
+  const countries = [...new Set(accommodations.map((a) => a.country))].sort();
   const types = [
-    ...new Set(accommodationListings.map((a) => a.accommodationType)),
+    ...new Set(accommodations.map((a) => a.accommodationType)),
   ].sort();
 
-  const filteredListings = accommodationListings.filter((listing) => {
-    const matchesSearch =
-      searchTerm === "" ||
-      listing.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      listing.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      listing.neighborhood.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesCity =
-      selectedCity === "" ||
-      selectedCity === "all-cities" ||
-      listing.city === selectedCity;
-
-    const matchesCountry =
-      selectedCountry === "" ||
-      selectedCountry === "all-countries" ||
-      listing.country === selectedCountry;
-
-    const matchesType =
-      selectedType === "" ||
-      selectedType === "all-types" ||
-      listing.accommodationType === selectedType;
-
-    const matchesBudget =
-      maxBudget === "" ||
-      maxBudget === "no-limit" ||
-      listing.monthlyRent <= parseInt(maxBudget);
-
-    const matchesRating =
-      selectedRating === "" ||
-      selectedRating === "all-ratings" ||
-      listing.rating >= parseInt(selectedRating);
-
-    return (
-      matchesSearch &&
-      matchesCity &&
-      matchesCountry &&
-      matchesType &&
-      matchesBudget &&
-      matchesRating
-    );
-  });
-
-  const handleContactStudent = (listing: AccommodationListing) => {
-    if (listing.contact.allowContact && listing.contact.email) {
-      window.location.href = `mailto:${listing.contact.email}?subject=Question about your accommodation in ${listing.city}`;
+  const handleContactStudent = async (accommodation: any) => {
+    if (accommodation.contact.allowContact && accommodation.contact.email) {
+      try {
+        await contactMutation.mutateAsync({
+          studentEmail: accommodation.contact.email,
+          subject: `Question about your accommodation in ${accommodation.city}`,
+          message: `Hi ${accommodation.studentName},\n\nI saw your accommodation listing in ${accommodation.city} and would like to know more details.\n\nBest regards`,
+        });
+      } catch (error) {
+        console.error("Failed to send contact email:", error);
+      }
     }
   };
 
   const handleViewDetails = (id: string) => {
     router.push(`/accommodation-detail/${id}`);
   };
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedCity("");
+    setSelectedType("");
+    setMaxBudget("");
+    setSelectedRating("");
+    setSelectedCountry("");
+    setCurrentPage(1);
+  };
+
+  const hasActiveFilters =
+    searchTerm ||
+    selectedCity ||
+    selectedType ||
+    maxBudget ||
+    selectedRating ||
+    selectedCountry;
 
   return (
     <>
