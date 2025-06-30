@@ -95,7 +95,9 @@ export default function Header() {
                   >
                     <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
                       <span className="text-white text-sm font-medium">
-                        {session.user.firstName?.[0] || session.user.email[0]}
+                        {session.user.firstName?.[0] ||
+                          session.user.username?.[0] ||
+                          session.user.email[0]}
                       </span>
                     </div>
                   </Button>
@@ -104,7 +106,8 @@ export default function Header() {
                   <div className="flex items-center justify-start gap-2 p-2">
                     <div className="flex flex-col space-y-1 leading-none">
                       <p className="font-medium">
-                        {session.user.firstName} {session.user.lastName}
+                        {session.user.username ||
+                          `${session.user.firstName} ${session.user.lastName}`}
                       </p>
                       <p className="w-[200px] truncate text-sm text-muted-foreground">
                         {session.user.email}
