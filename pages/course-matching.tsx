@@ -27,6 +27,7 @@ import { ArrowRight, ArrowLeft, Upload, BookOpen, X } from "lucide-react";
 import {
   CYPRUS_UNIVERSITIES,
   ALL_UNIVERSITY_AGREEMENTS,
+  getAgreementsByDepartment,
 } from "../src/data/universityAgreements";
 
 interface Course {
@@ -44,7 +45,6 @@ interface EquivalentCourse {
 }
 
 export default function CourseMatching() {
-  const router = useRouter();
   const [formData, setFormData] = useState({
     hostUniversity: "",
     hostDepartment: "",
@@ -64,7 +64,6 @@ export default function CourseMatching() {
   >([]);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
-  const [selectedHostUniversityId, setSelectedHostUniversityId] = useState("");
   const [selectedHomeUniversityId, setSelectedHomeUniversityId] = useState("");
   const [availableHostUniversities, setAvailableHostUniversities] = useState<
     Array<{ university: string; city: string; country: string }>
@@ -93,47 +92,79 @@ export default function CourseMatching() {
     }
 
     if (field === "homeDepartment") {
-      // Filter available host universities based on department
-      const agreements = ALL_UNIVERSITY_AGREEMENTS.filter(
-        (agreement) =>
-          agreement.homeUniversity === formData.homeUniversity &&
-          agreement.homeDepartment === value,
-      );
+      // Update available host universities based on partnership agreements
+      if (formData.homeUniversity) {
+        const partnershipAgreements = getAgreementsByDepartment(
+          formData.homeUniversity,
+          value,
+        );
+        const hostUniversities = partnershipAgreements.map((agreement) => ({
+          university: agreement.partnerUniversity,
+          city: agreement.partnerCity,
+          country: agreement.partnerCountry,
+        }));
 
-      const hostUniversities = Array.from(
-        new Set(
-          agreements.map((agreement) => ({
-            university: agreement.partnerUniversity,
-            city: agreement.partnerCity,
-            country: agreement.partnerCountry,
-          })),
-        ),
-      );
+        // Remove duplicates
+        const uniqueHostUniversities = hostUniversities.filter(
+          (uni, index, self) =>
+            index === self.findIndex((u) => u.university === uni.university),
+        );
 
-      setAvailableHostUniversities(hostUniversities);
-      setFormData((prev) => ({
-        ...prev,
-        hostUniversity: "",
-        hostDepartment: "",
-      }));
+        setAvailableHostUniversities(uniqueHostUniversities);
+        setFormData((prev) => ({
+          ...prev,
+          hostUniversity: "",
+          hostDepartment: "",
+        }));
+      }
+    }
+
+    if (field === "hostCourseCount") {
+      const count = parseInt(value) || 0;
+      if (count > 0) {
+        initializeCourses(count);
+      }
+    }
+
+    if (field === "homeCourseCount") {
+      const count = parseInt(value) || 0;
+      if (count > 0) {
+        initializeEquivalentCourses(count);
+      }
     }
   };
 
-  const addCourse = () => {
-    setCourses([
-      ...courses,
-      {
-        name: "",
-        code: "",
-        ects: "",
-        difficulty: "",
-        examTypes: [],
-      },
-    ]);
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setUploadedFile(file);
+    }
   };
 
-  const removeCourse = (index: number) => {
-    setCourses(courses.filter((_, i) => i !== index));
+  const removeUploadedFile = () => {
+    setUploadedFile(null);
+  };
+
+  // Initialize courses based on count
+  const initializeCourses = (count: number) => {
+    const newCourses = Array.from({ length: count }, () => ({
+      name: "",
+      code: "",
+      ects: "",
+      difficulty: "",
+      examTypes: [],
+    }));
+    setCourses(newCourses);
+  };
+
+  // Initialize equivalent courses based on count
+  const initializeEquivalentCourses = (count: number) => {
+    const newCourses = Array.from({ length: count }, () => ({
+      name: "",
+      code: "",
+      ects: "",
+    }));
+    setEquivalentCourses(newCourses);
   };
 
   const updateCourse = (index: number, field: string, value: string) => {
@@ -143,19 +174,21 @@ export default function CourseMatching() {
     setCourses(updatedCourses);
   };
 
-  const addEquivalentCourse = () => {
-    setEquivalentCourses([
-      ...equivalentCourses,
-      {
-        name: "",
-        code: "",
-        ects: "",
-      },
-    ]);
-  };
-
-  const removeEquivalentCourse = (index: number) => {
-    setEquivalentCourses(equivalentCourses.filter((_, i) => i !== index));
+  const updateCourseExamTypes = (
+    courseIndex: number,
+    examType: string,
+    checked: boolean,
+  ) => {
+    const updatedCourses = courses.map((course, i) => {
+      if (i === courseIndex) {
+        const examTypes = checked
+          ? [...course.examTypes, examType]
+          : course.examTypes.filter((type) => type !== examType);
+        return { ...course, examTypes };
+      }
+      return course;
+    });
+    setCourses(updatedCourses);
   };
 
   const updateEquivalentCourse = (
@@ -169,21 +202,16 @@ export default function CourseMatching() {
     setEquivalentCourses(updatedCourses);
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setUploadedFile(file);
-    }
-  };
+  const router = useRouter();
 
-  const handleSubmit = () => {
-    console.log("Form submitted:", {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Course Matching Form submitted:", {
       formData,
       courses,
       equivalentCourses,
-      uploadedFile,
     });
-    // Handle form submission logic here
+    router.push("/accommodation");
   };
 
   return (
@@ -192,179 +220,508 @@ export default function CourseMatching() {
         <title>Course Matching - Erasmus Journey Platform</title>
         <meta
           name="description"
-          content="Match courses between universities for your Erasmus exchange"
+          content="Share details about your course matching and academic experience"
         />
       </Head>
 
       <div className="min-h-screen bg-gray-50">
         <Header />
 
-        <div className="pt-20 pb-16 px-4">
-          <div className="max-w-4xl mx-auto">
-            {/* Header */}
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                Course Matching
-              </h1>
-              <p className="text-gray-600">
-                Match courses between your home and host universities
-              </p>
+        {/* Progress Header */}
+        <div className="bg-white border-b">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <Badge
+                  variant="outline"
+                  className="text-blue-600 border-blue-200"
+                >
+                  Step 2 of 5
+                </Badge>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Course Matching Information
+                </h1>
+              </div>
+              <div className="flex space-x-2">
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <div className="w-2 h-2 bg-gray-200 rounded-full"></div>
+                <div className="w-2 h-2 bg-gray-200 rounded-full"></div>
+                <div className="w-2 h-2 bg-gray-200 rounded-full"></div>
+              </div>
             </div>
+          </div>
+        </div>
 
-            <div className="space-y-8">
-              {/* University Selection */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>University Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Home University */}
-                    <div className="space-y-4">
-                      <Label className="text-base font-semibold">
-                        Home University (Cyprus)
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {/* University Selection */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-gray-900">
+                  University Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="homeUniversity">
+                      Your Home University (Cyprus)
+                    </Label>
+                    <Select
+                      value={formData.homeUniversity}
+                      onValueChange={(value) =>
+                        handleInputChange("homeUniversity", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your Cyprus university" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {cyprusUniversities.map((university) => (
+                          <SelectItem
+                            key={university.code}
+                            value={university.code}
+                          >
+                            {university.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="homeDepartment">
+                      Your Department/Field of Study
+                    </Label>
+                    <Select
+                      value={formData.homeDepartment}
+                      onValueChange={(value) =>
+                        handleInputChange("homeDepartment", value)
+                      }
+                      disabled={!formData.homeUniversity}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your department" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {homeDepartments.map((department) => (
+                          <SelectItem key={department} value={department}>
+                            {department}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {formData.homeUniversity && formData.homeDepartment && (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="hostUniversity">
+                        Host University (where you studied abroad)
                       </Label>
-                      <div>
-                        <Label htmlFor="homeUniversity">University</Label>
-                        <Select
-                          value={formData.homeUniversity}
-                          onValueChange={(value) =>
-                            handleInputChange("homeUniversity", value)
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select your university" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {cyprusUniversities.map((university) => (
+                      <Select
+                        value={formData.hostUniversity}
+                        onValueChange={(value) =>
+                          handleInputChange("hostUniversity", value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select host university" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableHostUniversities.map(
+                            (university, index) => (
                               <SelectItem
-                                key={university.code}
-                                value={university.code}
+                                key={index}
+                                value={university.university}
                               >
-                                {university.name}
+                                {university.university} - {university.city},{" "}
+                                {university.country}
                               </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="homeDepartment">Department</Label>
-                        <Select
-                          value={formData.homeDepartment}
-                          onValueChange={(value) =>
-                            handleInputChange("homeDepartment", value)
-                          }
-                          disabled={!formData.homeUniversity}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select department" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {homeDepartments.map((department) => (
-                              <SelectItem key={department} value={department}>
-                                {department}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                            ),
+                          )}
+                        </SelectContent>
+                      </Select>
+                      {availableHostUniversities.length === 0 &&
+                        formData.homeDepartment && (
+                          <p className="text-sm text-gray-500">
+                            No partner universities found for{" "}
+                            {formData.homeDepartment} department. Please check
+                            your department selection or contact your
+                            university.
+                          </p>
+                        )}
                     </div>
 
-                    {/* Host University */}
-                    <div className="space-y-4">
-                      <Label className="text-base font-semibold">
-                        Host University
-                      </Label>
-                      <div>
-                        <Label htmlFor="hostUniversity">University</Label>
-                        <Select
-                          value={formData.hostUniversity}
-                          onValueChange={(value) =>
-                            handleInputChange("hostUniversity", value)
+                    {availableHostUniversities.length > 0 && (
+                      <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                        <p className="text-sm text-green-800">
+                          <strong>Partnership Available:</strong> Found{" "}
+                          <span className="font-semibold">
+                            {availableHostUniversities.length} partner
+                            universities
+                          </span>{" "}
+                          for {formData.homeDepartment} department from{" "}
+                          {
+                            cyprusUniversities.find(
+                              (u) => u.code === formData.homeUniversity,
+                            )?.shortName
                           }
-                          disabled={availableHostUniversities.length === 0}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select host university" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {availableHostUniversities.map(
-                              (university, index) => (
-                                <SelectItem
-                                  key={index}
-                                  value={university.university}
+                          .
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Course Count Planning */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-gray-900">
+                  Course Planning
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="hostCourseCount">
+                      How many courses did you take at the host university?
+                    </Label>
+                    <Select
+                      onValueChange={(value) =>
+                        handleInputChange("hostCourseCount", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select number of courses" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 10 }, (_, i) => i + 1).map(
+                          (num) => (
+                            <SelectItem key={num} value={num.toString()}>
+                              {num} {num === 1 ? "course" : "courses"}
+                            </SelectItem>
+                          ),
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="homeCourseCount">
+                      How many equivalent courses do you have at your home
+                      university?
+                    </Label>
+                    <Select
+                      onValueChange={(value) =>
+                        handleInputChange("homeCourseCount", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select number of courses" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 10 }, (_, i) => i + 1).map(
+                          (num) => (
+                            <SelectItem key={num} value={num.toString()}>
+                              {num} {num === 1 ? "course" : "courses"}
+                            </SelectItem>
+                          ),
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {formData.hostCourseCount && formData.homeCourseCount && (
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-sm text-blue-800">
+                      <strong>Course Setup:</strong> You'll provide details for{" "}
+                      <span className="font-semibold">
+                        {formData.hostCourseCount} host university courses
+                      </span>{" "}
+                      and{" "}
+                      <span className="font-semibold">
+                        {formData.homeCourseCount} equivalent home courses
+                      </span>
+                      .
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Courses at Host University */}
+            {formData.hostCourseCount && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl font-semibold text-gray-900">
+                    Courses at Host University ({courses.length} of{" "}
+                    {formData.hostCourseCount})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Course Program Image Upload */}
+                  <div className="space-y-2">
+                    <Label>Course Program Image (Optional)</Label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                      {uploadedFile ? (
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-center space-x-2">
+                            <BookOpen className="h-6 w-6 text-green-600" />
+                            <span className="text-sm font-medium text-green-600">
+                              {uploadedFile.name}
+                            </span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={removeUploadedFile}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <p className="text-xs text-gray-500">
+                            File uploaded successfully. You can still fill the
+                            manual entry below.
+                          </p>
+                        </div>
+                      ) : (
+                        <div>
+                          <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                          <p className="text-sm text-gray-600 mb-2">
+                            Upload a photo of your course program
+                          </p>
+                          <input
+                            type="file"
+                            accept="image/*,.pdf"
+                            onChange={handleFileUpload}
+                            className="hidden"
+                            id="course-program-upload"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              document
+                                .getElementById("course-program-upload")
+                                ?.click()
+                            }
+                          >
+                            Choose File
+                          </Button>
+                          <p className="text-xs text-gray-500 mt-2">
+                            If the photo program is not accurate, we'll use the
+                            manual entry below
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {courses.map((course, index) => (
+                    <Card
+                      key={index}
+                      className="p-4 border-l-4 border-l-blue-500"
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="font-medium text-gray-900">
+                          Course {index + 1}
+                        </h4>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Course Name</Label>
+                          <Input
+                            placeholder="Enter course name"
+                            value={course.name}
+                            onChange={(e) =>
+                              updateCourse(index, "name", e.target.value)
+                            }
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Course Code</Label>
+                          <Input
+                            placeholder="Enter course code"
+                            value={course.code}
+                            onChange={(e) =>
+                              updateCourse(index, "code", e.target.value)
+                            }
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>ECTS Credits</Label>
+                          <Input
+                            type="number"
+                            placeholder="Enter ECTS credits"
+                            value={course.ects}
+                            onChange={(e) =>
+                              updateCourse(index, "ects", e.target.value)
+                            }
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Level of Difficulty (1-5)</Label>
+                          <Select
+                            onValueChange={(value) =>
+                              updateCourse(index, "difficulty", value)
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select difficulty" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="1">1 - Very Easy</SelectItem>
+                              <SelectItem value="2">2 - Easy</SelectItem>
+                              <SelectItem value="3">3 - Moderate</SelectItem>
+                              <SelectItem value="4">4 - Difficult</SelectItem>
+                              <SelectItem value="5">
+                                5 - Very Difficult
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Exam Types (Select all that apply)</Label>
+                          <div className="flex flex-wrap gap-6">
+                            {["oral", "written", "presentation", "project"].map(
+                              (examType) => (
+                                <div
+                                  key={examType}
+                                  className="flex items-center space-x-2"
                                 >
-                                  {university.university} - {university.city},{" "}
-                                  {university.country}
-                                </SelectItem>
+                                  <Checkbox
+                                    id={`${examType}-${index}`}
+                                    checked={course.examTypes.includes(
+                                      examType,
+                                    )}
+                                    onCheckedChange={(checked) =>
+                                      updateCourseExamTypes(
+                                        index,
+                                        examType,
+                                        checked as boolean,
+                                      )
+                                    }
+                                  />
+                                  <Label htmlFor={`${examType}-${index}`}>
+                                    {examType === "project"
+                                      ? "Project-Based"
+                                      : examType.charAt(0).toUpperCase() +
+                                        examType.slice(1)}
+                                  </Label>
+                                </div>
                               ),
                             )}
-                          </SelectContent>
-                        </Select>
+                          </div>
+                          {course.examTypes.length > 0 && (
+                            <p className="text-xs text-gray-600">
+                              Selected: {course.examTypes.join(", ")}
+                            </p>
+                          )}
+                        </div>
                       </div>
-
-                      <div>
-                        <Label htmlFor="hostDepartment">Department</Label>
-                        <Input
-                          placeholder="Enter department name"
-                          value={formData.hostDepartment}
-                          onChange={(e) =>
-                            handleInputChange("hostDepartment", e.target.value)
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
+                    </Card>
+                  ))}
                 </CardContent>
               </Card>
+            )}
 
-              {/* Course Information */}
+            {/* Home University Equivalent Courses */}
+            {formData.homeCourseCount && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Course Information</CardTitle>
+                  <CardTitle className="text-xl font-semibold text-gray-900">
+                    Home University Equivalent Courses (
+                    {equivalentCourses.length} of {formData.homeCourseCount})
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <Label htmlFor="hostCourseCount">
-                        Number of courses taken at host university
-                      </Label>
-                      <Input
-                        type="number"
-                        placeholder="Enter number"
-                        value={formData.hostCourseCount}
-                        onChange={(e) =>
-                          handleInputChange("hostCourseCount", e.target.value)
-                        }
-                      />
-                    </div>
+                  {equivalentCourses.map((course, index) => (
+                    <Card
+                      key={index}
+                      className="p-4 border-l-4 border-l-green-500"
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="font-medium text-gray-900">
+                          Equivalent Course {index + 1}
+                        </h4>
+                      </div>
+                      <div className="grid md:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <Label>Course Name</Label>
+                          <Input
+                            placeholder="Enter equivalent course name"
+                            value={course.name}
+                            onChange={(e) =>
+                              updateEquivalentCourse(
+                                index,
+                                "name",
+                                e.target.value,
+                              )
+                            }
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Course Code</Label>
+                          <Input
+                            placeholder="Enter course code"
+                            value={course.code}
+                            onChange={(e) =>
+                              updateEquivalentCourse(
+                                index,
+                                "code",
+                                e.target.value,
+                              )
+                            }
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>ECTS Credits</Label>
+                          <Input
+                            type="number"
+                            placeholder="Enter ECTS credits"
+                            value={course.ects}
+                            onChange={(e) =>
+                              updateEquivalentCourse(
+                                index,
+                                "ects",
+                                e.target.value,
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </CardContent>
+              </Card>
+            )}
 
-                    <div>
-                      <Label htmlFor="homeCourseCount">
-                        Number of equivalent courses at home university
-                      </Label>
-                      <Input
-                        type="number"
-                        placeholder="Enter number"
-                        value={formData.homeCourseCount}
-                        onChange={(e) =>
-                          handleInputChange("homeCourseCount", e.target.value)
-                        }
-                      />
-                    </div>
-                  </div>
-
+            {/* Course Matching Evaluation */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-gray-900">
+                  Course Matching Evaluation
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
                   <div>
-                    <Label htmlFor="courseMatchingDifficult">
-                      Was course matching difficult?
+                    <Label className="text-base font-medium">
+                      Was the course-matching process difficult?
                     </Label>
                     <RadioGroup
                       value={formData.courseMatchingDifficult}
                       onValueChange={(value) =>
                         handleInputChange("courseMatchingDifficult", value)
                       }
-                      className="flex space-x-6 mt-2"
+                      className="mt-2"
                     >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="yes" id="difficult-yes" />
@@ -377,137 +734,36 @@ export default function CourseMatching() {
                     </RadioGroup>
                   </div>
 
-                  <div>
-                    <Label htmlFor="courseMatchingChallenges">
-                      What challenges did you face during course matching?
-                    </Label>
-                    <Textarea
-                      placeholder="Describe the challenges..."
-                      value={formData.courseMatchingChallenges}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "courseMatchingChallenges",
-                          e.target.value,
-                        )
-                      }
-                      className="mt-2"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Host University Courses */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Host University Courses</span>
-                    <Button onClick={addCourse} variant="outline">
-                      <BookOpen className="w-4 h-4 mr-2" />
-                      Add Course
-                    </Button>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {courses.map((course, index) => (
-                    <div
-                      key={index}
-                      className="p-4 border rounded-lg space-y-4 relative"
-                    >
-                      <Button
-                        onClick={() => removeCourse(index)}
-                        variant="ghost"
-                        size="sm"
-                        className="absolute top-2 right-2"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <Label>Course Name</Label>
-                          <Input
-                            placeholder="Enter course name"
-                            value={course.name}
-                            onChange={(e) =>
-                              updateCourse(index, "name", e.target.value)
-                            }
-                          />
-                        </div>
-                        <div>
-                          <Label>Course Code</Label>
-                          <Input
-                            placeholder="Enter course code"
-                            value={course.code}
-                            onChange={(e) =>
-                              updateCourse(index, "code", e.target.value)
-                            }
-                          />
-                        </div>
-                        <div>
-                          <Label>ECTS</Label>
-                          <Input
-                            placeholder="Enter ECTS"
-                            value={course.ects}
-                            onChange={(e) =>
-                              updateCourse(index, "ects", e.target.value)
-                            }
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label>Course Difficulty</Label>
-                        <RadioGroup
-                          value={course.difficulty}
-                          onValueChange={(value) =>
-                            updateCourse(index, "difficulty", value)
-                          }
-                          className="flex space-x-6 mt-2"
-                        >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="easy" id={`easy-${index}`} />
-                            <Label htmlFor={`easy-${index}`}>Easy</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem
-                              value="medium"
-                              id={`medium-${index}`}
-                            />
-                            <Label htmlFor={`medium-${index}`}>Medium</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="hard" id={`hard-${index}`} />
-                            <Label htmlFor={`hard-${index}`}>Hard</Label>
-                          </div>
-                        </RadioGroup>
-                      </div>
-                    </div>
-                  ))}
-
-                  {courses.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
-                      No courses added yet. Click "Add Course" to get started.
+                  {formData.courseMatchingDifficult === "yes" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="challenges">
+                        What were the challenges?
+                      </Label>
+                      <Textarea
+                        id="challenges"
+                        placeholder="Describe the challenges you faced during the course-matching process..."
+                        value={formData.courseMatchingChallenges}
+                        onChange={(e) =>
+                          handleInputChange(
+                            "courseMatchingChallenges",
+                            e.target.value,
+                          )
+                        }
+                        rows={4}
+                      />
                     </div>
                   )}
-                </CardContent>
-              </Card>
 
-              {/* Recommendations */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Course Recommendations</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
                   <div>
-                    <Label htmlFor="recommendCourses">
-                      Would you recommend these courses to future students?
+                    <Label className="text-base font-medium">
+                      Would you recommend these courses for future students?
                     </Label>
                     <RadioGroup
                       value={formData.recommendCourses}
                       onValueChange={(value) =>
                         handleInputChange("recommendCourses", value)
                       }
-                      className="flex space-x-6 mt-2"
+                      className="mt-2"
                     >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="yes" id="recommend-yes" />
@@ -520,40 +776,45 @@ export default function CourseMatching() {
                     </RadioGroup>
                   </div>
 
-                  <div>
-                    <Label htmlFor="recommendationReason">
-                      Please explain your recommendation
-                    </Label>
-                    <Textarea
-                      placeholder="Explain why you would or wouldn't recommend..."
-                      value={formData.recommendationReason}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "recommendationReason",
-                          e.target.value,
-                        )
-                      }
-                      className="mt-2"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
+                  {formData.recommendCourses === "no" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="recommendationReason">Why not?</Label>
+                      <Textarea
+                        id="recommendationReason"
+                        placeholder="Explain why you wouldn't recommend these courses..."
+                        value={formData.recommendationReason}
+                        onChange={(e) =>
+                          handleInputChange(
+                            "recommendationReason",
+                            e.target.value,
+                          )
+                        }
+                        rows={4}
+                      />
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
 
-              {/* Submit Button */}
-              <div className="flex justify-between">
-                <Link href="/basic-information">
-                  <Button variant="outline">
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Previous
-                  </Button>
-                </Link>
-                <Button onClick={handleSubmit}>
-                  Submit Course Matching
-                  <ArrowRight className="w-4 h-4 ml-2" />
+            {/* Navigation */}
+            <div className="flex justify-between items-center pt-8">
+              <Link href="/basic-information">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Basic Information
                 </Button>
-              </div>
+              </Link>
+
+              <Button
+                type="submit"
+                className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
+              >
+                Continue to Accommodation
+                <ArrowRight className="h-4 w-4" />
+              </Button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </>
