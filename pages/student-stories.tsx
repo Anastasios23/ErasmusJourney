@@ -24,75 +24,73 @@ import {
   PaginationPrevious,
 } from "../src/components/ui/pagination";
 import { useStories, useLikeStory } from "../src/hooks/useQueries";
-import { Search, Heart, Eye, Calendar, BookOpen, SlidersHorizontal, X, ChevronDown } from "lucide-react";
+import {
+  Search,
+  Heart,
+  Eye,
+  Calendar,
+  BookOpen,
+  SlidersHorizontal,
+  X,
+  ChevronDown,
+  MapPin,
+  GraduationCap,
+} from "lucide-react";
 
 const ITEMS_PER_PAGE = 6;
-  {
-    id: "1",
-    title: "My Amazing Semester in Barcelona",
-    excerpt:
-      "Studying at UPC Barcelona was a life-changing experience. The city's vibrant culture, amazing architecture, and friendly locals made my Erasmus journey unforgettable.",
-    author: {
-      firstName: "Maria",
-      lastName: "K.",
-      avatar:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face",
-    },
-    university: "Universitat Politècnica de Catalunya",
-    country: "Spain",
-    city: "Barcelona",
-    category: "EXPERIENCE",
-    likes: 45,
-    views: 230,
-    createdAt: "2024-01-15",
-    image:
-      "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&h=200&fit=crop",
-  },
-  {
-    id: "2",
-    title: "Finding the Perfect Student Accommodation in Prague",
-    excerpt:
-      "Tips and tricks for finding affordable, comfortable housing in Prague. From dorms to shared apartments, here's what I learned during my search.",
-    author: {
-      firstName: "Andreas",
-      lastName: "M.",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face",
-    },
-    university: "Charles University",
-    country: "Czech Republic",
-    city: "Prague",
-    category: "ACCOMMODATION",
-    likes: 32,
-    views: 145,
-    createdAt: "2024-01-10",
-    image:
-      "https://images.unsplash.com/photo-1542324151-ee2b73cb0d95?w=400&h=200&fit=crop",
-  },
-  {
-    id: "3",
-    title: "Navigating Academic Life at Sorbonne University",
-    excerpt:
-      "From enrollment to exams, here's everything you need to know about the academic system in France and how to make the most of your studies.",
-    author: {
-      firstName: "Elena",
-      lastName: "P.",
-      avatar:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face",
-    },
-    university: "Sorbonne University",
-    country: "France",
-    city: "Paris",
-    category: "ACADEMICS",
-    likes: 28,
-    views: 98,
-    createdAt: "2024-01-08",
-    image:
-      "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=200&fit=crop",
-  },
+
+const CATEGORY_OPTIONS = [
+  { value: "all", label: "All Stories" },
+  { value: "experience", label: "Experience" },
+  { value: "accommodation", label: "Accommodation" },
+  { value: "academics", label: "Academics" },
+  { value: "culture", label: "Culture" },
+  { value: "travel", label: "Travel" },
 ];
 
 export default function StudentStoriesPage() {
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showFilters, setShowFilters] = useState(false);
+
+  // React Query for data fetching with caching
+  const filters = useMemo(
+    () => ({
+      search: searchTerm,
+      category: selectedCategory === "all" ? undefined : selectedCategory,
+    }),
+    [searchTerm, selectedCategory],
+  );
+
+  const { data: stories = [], isLoading, error } = useStories(filters);
+  const likeMutation = useLikeStory();
+
+  // Pagination
+  const totalPages = Math.ceil(stories.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedStories = stories.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE,
+  );
+
+  const handleLikeStory = async (storyId: string) => {
+    try {
+      await likeMutation.mutateAsync({ storyId });
+    } catch (error) {
+      console.error("Failed to like story:", error);
+    }
+  };
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedCategory("all");
+    setCurrentPage(1);
+  };
+
+  const hasActiveFilters = searchTerm || selectedCategory !== "all";
+
   return (
     <>
       <Head>
@@ -101,15 +99,16 @@ export default function StudentStoriesPage() {
           name="description"
           content="Read inspiring stories from Erasmus students sharing their experiences abroad."
         />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
       <div className="min-h-screen bg-gray-50">
         <Header />
 
-        <div className="pt-20 pb-16 px-4">
+        <main className="pt-20 pb-16 px-4">
           <div className="max-w-7xl mx-auto">
             {/* Header Section */}
-            <div className="text-center mb-12">
+            <header className="text-center mb-12">
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
                 Student Stories
               </h1>
@@ -118,155 +117,369 @@ export default function StudentStoriesPage() {
                 their Erasmus journey. Get insights, tips, and motivation for
                 your own adventure.
               </p>
-            </div>
+            </header>
 
             {/* Search and Filter */}
-            <div className="mb-8">
-              <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input placeholder="Search stories..." className="pl-10" />
-                </div>
-                <div className="flex gap-2">
-                  <Badge
-                    variant="outline"
-                    className="cursor-pointer hover:bg-blue-50"
-                  >
-                    All
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className="cursor-pointer hover:bg-blue-50"
-                  >
-                    Experience
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className="cursor-pointer hover:bg-blue-50"
-                  >
-                    Accommodation
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className="cursor-pointer hover:bg-blue-50"
-                  >
-                    Academics
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className="cursor-pointer hover:bg-blue-50"
-                  >
-                    Culture
-                  </Badge>
-                </div>
+            <section aria-label="Search and filter stories">
+              <Card className="mb-8">
+                <CardContent className="pt-6">
+                  {/* Search Bar */}
+                  <div className="mb-4">
+                    <Label htmlFor="search" className="sr-only">
+                      Search stories
+                    </Label>
+                    <div className="relative">
+                      <Search
+                        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4"
+                        aria-hidden="true"
+                      />
+                      <Input
+                        id="search"
+                        placeholder="Search stories by title, city, or content..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                        aria-describedby="search-help"
+                      />
+                      <div id="search-help" className="sr-only">
+                        Search for stories by title, city, or content
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Filter Toggle and Categories */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-wrap gap-2">
+                      {CATEGORY_OPTIONS.map((category) => (
+                        <Badge
+                          key={category.value}
+                          variant={
+                            selectedCategory === category.value
+                              ? "default"
+                              : "outline"
+                          }
+                          className="cursor-pointer hover:bg-blue-50 transition-colors"
+                          onClick={() => {
+                            setSelectedCategory(category.value);
+                            setCurrentPage(1);
+                          }}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              setSelectedCategory(category.value);
+                              setCurrentPage(1);
+                            }
+                          }}
+                        >
+                          {category.label}
+                        </Badge>
+                      ))}
+                    </div>
+                    {hasActiveFilters && (
+                      <Button variant="ghost" size="sm" onClick={clearFilters}>
+                        <X className="h-4 w-4 mr-2" />
+                        Clear all
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </section>
+
+            {/* Results Summary */}
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <p className="text-gray-600">
+                  {isLoading ? (
+                    "Loading stories..."
+                  ) : (
+                    <>
+                      Found {stories.length}{" "}
+                      {stories.length === 1 ? "story" : "stories"}
+                      {currentPage > 1 &&
+                        ` (Page ${currentPage} of ${totalPages})`}
+                    </>
+                  )}
+                </p>
               </div>
+              <Link href="/share-story">
+                <Button variant="outline">
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  Share Your Story
+                </Button>
+              </Link>
             </div>
+
+            {/* Error State */}
+            {error && (
+              <Card className="mb-8 bg-red-50 border-red-200">
+                <CardContent className="pt-6">
+                  <p className="text-red-800">
+                    Failed to load stories. Please try again later.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Loading State */}
+            {isLoading && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                {[...Array(6)].map((_, i) => (
+                  <Card key={i}>
+                    <Skeleton className="aspect-video w-full" />
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between items-start mb-2">
+                        <Skeleton className="h-5 w-20" />
+                        <Skeleton className="h-4 w-16" />
+                      </div>
+                      <Skeleton className="h-6 w-full" />
+                    </CardHeader>
+                    <CardContent>
+                      <Skeleton className="h-4 w-full mb-2" />
+                      <Skeleton className="h-4 w-3/4 mb-4" />
+                      <div className="flex items-center gap-3 mb-3">
+                        <Skeleton className="h-8 w-8 rounded-full" />
+                        <div>
+                          <Skeleton className="h-4 w-24 mb-1" />
+                          <Skeleton className="h-3 w-32" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
 
             {/* Stories Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {sampleStories.map((story) => (
-                <Card
-                  key={story.id}
-                  className="hover:shadow-lg transition-shadow cursor-pointer"
-                >
-                  <div className="aspect-video overflow-hidden rounded-t-lg">
-                    <img
-                      src={story.image}
-                      alt={story.title}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform"
-                    />
+            {!isLoading && !error && (
+              <section aria-label="Student stories">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                  {paginatedStories.map((story) => (
+                    <article
+                      key={story.id}
+                      className="group"
+                      aria-labelledby={`story-${story.id}-title`}
+                    >
+                      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col">
+                        <div className="aspect-video overflow-hidden rounded-t-lg">
+                          <img
+                            src={story.image}
+                            alt={story.title}
+                            className="w-full h-full object-cover hover:scale-105 transition-transform"
+                            onClick={() => router.push(`/stories/${story.id}`)}
+                          />
+                        </div>
+                        <CardHeader className="pb-2 flex-none">
+                          <div className="flex justify-between items-start mb-2">
+                            <Badge variant="secondary">
+                              {story.category.toLowerCase()}
+                            </Badge>
+                            <div className="flex items-center text-xs text-gray-500 gap-1">
+                              <Calendar
+                                className="h-3 w-3"
+                                aria-hidden="true"
+                              />
+                              <time dateTime={story.createdAt}>
+                                {new Date(story.createdAt).toLocaleDateString()}
+                              </time>
+                            </div>
+                          </div>
+                          <CardTitle
+                            id={`story-${story.id}-title`}
+                            className="text-lg line-clamp-2 group-hover:text-blue-600 transition-colors cursor-pointer"
+                            onClick={() => router.push(`/stories/${story.id}`)}
+                          >
+                            {story.title}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex-1 flex flex-col">
+                          <p
+                            className="text-gray-600 text-sm mb-4 line-clamp-3 flex-1 cursor-pointer"
+                            onClick={() => router.push(`/stories/${story.id}`)}
+                          >
+                            {story.excerpt}
+                          </p>
+
+                          {/* Author Info */}
+                          <div className="flex items-center gap-3 mb-3">
+                            <img
+                              src={story.author.avatar}
+                              alt={`${story.author.firstName} ${story.author.lastName}`}
+                              className="w-8 h-8 rounded-full"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium truncate">
+                                {story.author.firstName} {story.author.lastName}
+                              </div>
+                              <div className="text-xs text-gray-500 truncate">
+                                {story.university}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Location */}
+                          <div className="flex items-center gap-1 text-sm text-blue-600 mb-3">
+                            <MapPin className="h-3 w-3" aria-hidden="true" />
+                            <span>
+                              {story.city}, {story.country}
+                            </span>
+                          </div>
+
+                          {/* Stats and Actions */}
+                          <div className="flex justify-between items-center text-sm text-gray-500">
+                            <div className="flex gap-4">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleLikeStory(story.id);
+                                }}
+                                className="flex items-center gap-1 hover:text-red-500 transition-colors"
+                                disabled={likeMutation.isPending}
+                                aria-label={`Like story: ${story.title}`}
+                              >
+                                <Heart className="h-3 w-3" />
+                                <span>{story.likes}</span>
+                              </button>
+                              <span className="flex items-center gap-1">
+                                <Eye className="h-3 w-3" aria-hidden="true" />
+                                <span>{story.views}</span>
+                              </span>
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                router.push(`/stories/${story.id}`)
+                              }
+                            >
+                              Read More
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </article>
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex justify-center">
+                    <Pagination>
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious
+                            onClick={() =>
+                              setCurrentPage(Math.max(1, currentPage - 1))
+                            }
+                            className={
+                              currentPage === 1
+                                ? "pointer-events-none opacity-50"
+                                : "cursor-pointer"
+                            }
+                            aria-disabled={currentPage === 1}
+                          />
+                        </PaginationItem>
+
+                        {[...Array(totalPages)].map((_, i) => {
+                          const page = i + 1;
+                          if (
+                            page === 1 ||
+                            page === totalPages ||
+                            (page >= currentPage - 1 && page <= currentPage + 1)
+                          ) {
+                            return (
+                              <PaginationItem key={page}>
+                                <PaginationLink
+                                  onClick={() => setCurrentPage(page)}
+                                  isActive={currentPage === page}
+                                  className="cursor-pointer"
+                                  aria-current={
+                                    currentPage === page ? "page" : undefined
+                                  }
+                                >
+                                  {page}
+                                </PaginationLink>
+                              </PaginationItem>
+                            );
+                          } else if (
+                            page === currentPage - 2 ||
+                            page === currentPage + 2
+                          ) {
+                            return (
+                              <PaginationItem key={page}>
+                                <PaginationEllipsis />
+                              </PaginationItem>
+                            );
+                          }
+                          return null;
+                        })}
+
+                        <PaginationItem>
+                          <PaginationNext
+                            onClick={() =>
+                              setCurrentPage(
+                                Math.min(totalPages, currentPage + 1),
+                              )
+                            }
+                            className={
+                              currentPage === totalPages
+                                ? "pointer-events-none opacity-50"
+                                : "cursor-pointer"
+                            }
+                            aria-disabled={currentPage === totalPages}
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
                   </div>
-                  <CardHeader className="pb-2">
-                    <div className="flex justify-between items-start mb-2">
-                      <Badge variant="secondary">
-                        {story.category.toLowerCase()}
-                      </Badge>
-                      <div className="flex items-center text-xs text-gray-500 gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {new Date(story.createdAt).toLocaleDateString()}
-                      </div>
-                    </div>
-                    <CardTitle className="text-lg line-clamp-2">
-                      {story.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                      {story.excerpt}
-                    </p>
+                )}
+              </section>
+            )}
 
-                    {/* Author Info */}
-                    <div className="flex items-center gap-3 mb-3">
-                      <img
-                        src={story.author.avatar}
-                        alt={`${story.author.firstName} ${story.author.lastName}`}
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <div>
-                        <div className="text-sm font-medium">
-                          {story.author.firstName} {story.author.lastName}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {story.university}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Location */}
-                    <div className="text-sm text-blue-600 mb-3">
-                      📍 {story.city}, {story.country}
-                    </div>
-
-                    {/* Stats */}
-                    <div className="flex justify-between items-center text-sm text-gray-500">
-                      <div className="flex gap-4">
-                        <span className="flex items-center gap-1">
-                          <Heart className="h-3 w-3" />
-                          {story.likes}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Eye className="h-3 w-3" />
-                          {story.views}
-                        </span>
-                      </div>
-                      <Link href={`/stories/${story.id}`}>
-                        <Button variant="outline" size="sm">
-                          Read More
-                        </Button>
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Load More Button */}
-            <div className="text-center">
-              <Button variant="outline" size="lg">
-                Load More Stories
-              </Button>
-            </div>
+            {/* No Results */}
+            {!isLoading && !error && stories.length === 0 && (
+              <div className="text-center py-12">
+                <BookOpen
+                  className="h-12 w-12 text-gray-400 mx-auto mb-4"
+                  aria-hidden="true"
+                />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No stories found
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Try adjusting your search criteria or be the first to share a
+                  story about this topic.
+                </p>
+                <Link href="/share-story">
+                  <Button>Share Your Story</Button>
+                </Link>
+              </div>
+            )}
 
             {/* CTA Section */}
             <section className="mt-16">
               <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
                 <CardContent className="pt-8 pb-8 text-center">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
                     Share Your Erasmus Story
-                  </h3>
+                  </h2>
                   <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
                     Have an amazing Erasmus experience to share? Help future
                     students by sharing your insights, tips, and memorable
                     moments.
                   </p>
                   <Link href="/share-story">
-                    <Button size="lg">Share Your Story</Button>
+                    <Button size="lg">
+                      <BookOpen className="h-5 w-5 mr-2" />
+                      Share Your Story
+                    </Button>
                   </Link>
                 </CardContent>
               </Card>
             </section>
           </div>
-        </div>
+        </main>
       </div>
     </>
   );
