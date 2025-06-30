@@ -313,6 +313,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "Frankfurt University of Applied Sciences",
     partnerCity: "Frankfurt",
     partnerCountry: "Germany",
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -320,6 +321,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "University of Peloponnese",
     partnerCity: "Patras",
     partnerCountry: "Greece",
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -327,6 +329,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "University of Thessaly",
     partnerCity: "Larissa",
     partnerCountry: "Greece",
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -334,6 +337,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "University of Crete",
     partnerCity: "Heraklion",
     partnerCountry: "Greece",
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
