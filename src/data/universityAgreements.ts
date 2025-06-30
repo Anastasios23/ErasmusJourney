@@ -4,6 +4,7 @@ export interface UniversityAgreement {
   partnerUniversity: string;
   partnerCity: string;
   partnerCountry: string;
+  academicLevel?: "bachelor" | "master" | "phd" | "all";
   agreementType?: "student" | "staff" | "both" | "traineeship";
   notes?: string;
 }
