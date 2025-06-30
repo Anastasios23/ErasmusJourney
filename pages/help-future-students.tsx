@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { Badge } from "../src/components/ui/badge";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
@@ -21,12 +22,7 @@ import {
 } from "../src/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
 import { Checkbox } from "../src/components/ui/checkbox";
-import { Separator } from "../src/components/ui/separator";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "../src/components/ui/avatar";
+import { Avatar, AvatarFallback } from "../src/components/ui/avatar";
 import Header from "../components/Header";
 import {
   ArrowLeft,
@@ -40,8 +36,6 @@ import {
   Linkedin,
   Globe,
   Star,
-  MapPin,
-  Calendar,
   Trophy,
 } from "lucide-react";
 
@@ -70,6 +64,8 @@ export default function HelpFutureStudents() {
     nickname: "",
   });
 
+  const router = useRouter();
+
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -88,60 +84,82 @@ export default function HelpFutureStudents() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Help Future Students Form submitted:", formData);
-    // Handle form submission
+    alert("Thank you for joining our mentor community! 🎉");
+    router.push("/community");
   };
 
   const languages = [
     "English",
+    "Greek",
+    "German",
     "Spanish",
     "French",
-    "German",
     "Italian",
     "Portuguese",
     "Dutch",
-    "Polish",
+    "Swedish",
     "Czech",
-    "Greek",
+    "Polish",
     "Other",
   ];
 
   const helpTopics = [
-    "University Application Process",
-    "Course Selection & Matching",
-    "Accommodation Hunting",
-    "Visa & Documentation",
+    "Accommodation Search",
+    "University Application",
+    "Visa Requirements",
+    "Course Selection",
     "Budget Planning",
-    "City Orientation",
-    "Social Life & Making Friends",
-    "Academic System",
-    "Part-time Jobs",
-    "Travel Tips",
-    "Language Learning",
     "Cultural Adaptation",
+    "Language Learning",
+    "Social Activities",
+    "Travel Tips",
+    "Academic Support",
+    "Career Guidance",
     "Emergency Situations",
-    "Local Customs",
-    "Transportation",
   ];
 
   const specializations = [
-    "Business/Economics",
     "Engineering",
-    "Medicine/Health Sciences",
-    "Computer Science/IT",
-    "Arts & Humanities",
-    "Social Sciences",
-    "Natural Sciences",
+    "Business",
+    "Medicine",
+    "Computer Science",
+    "Arts & Design",
     "Law",
-    "Education",
-    "Architecture",
+    "Psychology",
     "Languages",
+    "Sciences",
+    "Architecture",
+    "Education",
+    "Social Work",
+    "Other",
   ];
 
-  const mentorStats = [
-    { icon: Users, value: "245", label: "Active Mentors" },
-    { icon: MessageSquare, value: "1,203", label: "Students Helped" },
-    { icon: Star, value: "4.9", label: "Average Rating" },
-    { icon: Heart, value: "96%", label: "Satisfaction Rate" },
+  // Mock testimonials
+  const testimonials = [
+    {
+      id: "1",
+      studentName: "Maria K.",
+      city: "Barcelona",
+      rating: 5,
+      avatar:
+        "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face",
+    },
+    {
+      id: "2",
+      studentName: "Alex M.",
+      city: "Vienna",
+      rating: 4,
+      avatar:
+        "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=40&h=40&fit=crop&crop=face",
+    },
+    {
+      id: "3",
+      studentName: "Lisa T.",
+      city: "Prague",
+      rating: 5,
+      avatar:
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face",
+    },
   ];
 
   return (
@@ -150,63 +168,93 @@ export default function HelpFutureStudents() {
         <title>Help Future Students - Erasmus Journey Platform</title>
         <meta
           name="description"
-          content="Become a mentor and help future Erasmus students with their journey"
+          content="Join our mentor community and help future Erasmus students"
         />
       </Head>
 
       <div className="min-h-screen bg-gray-50">
         <Header />
 
-        <div className="pt-20 pb-16 px-4">
-          <div className="max-w-4xl mx-auto">
-            {/* Hero Section */}
-            <div className="text-center mb-12">
-              <Badge
-                variant="secondary"
-                className="mb-4 bg-purple-100 text-purple-700"
-              >
-                Mentorship Program
-              </Badge>
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                Help Future Students
-              </h1>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Share your Erasmus experience and become a mentor to help future
-                students navigate their journey abroad. Your insights can make a
-                real difference.
-              </p>
+        {/* Progress Header */}
+        <div className="bg-white border-b">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <Badge
+                  variant="outline"
+                  className="text-blue-600 border-blue-200"
+                >
+                  Step 5 of 5
+                </Badge>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Helping Future Erasmus Students
+                </h1>
+              </div>
+              <div className="flex space-x-2">
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+              </div>
             </div>
+          </div>
+        </div>
 
-            {/* Impact Stats */}
-            <div className="grid md:grid-cols-4 gap-6 mb-12">
-              {mentorStats.map((stat, index) => (
-                <Card key={index} className="text-center">
-                  <CardContent className="pt-6">
-                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <stat.icon className="h-6 w-6 text-purple-600" />
-                    </div>
-                    <div className="text-2xl font-bold text-gray-900 mb-1">
-                      {stat.value}
-                    </div>
-                    <div className="text-sm text-gray-600">{stat.label}</div>
-                  </CardContent>
-                </Card>
-              ))}
+        {/* Hero Section */}
+        <section className="bg-gradient-to-r from-green-600 to-blue-600 text-white py-12">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <Heart className="h-12 w-12 text-green-200 mx-auto mb-4" />
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+              Become a Mentor
+            </h2>
+            <p className="text-xl text-green-100 mb-6 max-w-2xl mx-auto">
+              Your experience could be exactly what someone needs to succeed.
+              Join our community of student mentors and make a real difference.
+            </p>
+            <div className="grid md:grid-cols-3 gap-6 text-center">
+              <div>
+                <div className="text-2xl font-bold text-green-200 mb-1">
+                  847
+                </div>
+                <div className="text-sm">Active Mentors</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-blue-200 mb-1">
+                  3,241
+                </div>
+                <div className="text-sm">Students Helped</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-yellow-200 mb-1">
+                  4.9
+                </div>
+                <div className="text-sm">Average Rating</div>
+              </div>
             </div>
+          </div>
+        </section>
 
-            <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Willingness to Help */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Heart className="h-5 w-5" />
-                    Mentorship Interest
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Main Decision */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
+                  <Heart className="h-5 w-5 mr-2 text-red-500" />
+                  Join Our Mentor Community
+                </CardTitle>
+                <p className="text-gray-600">
+                  Help future Erasmus students by sharing your experience and
+                  providing guidance
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
                   <div>
-                    <Label htmlFor="wantToHelp">
-                      Would you like to help future Erasmus students?
+                    <Label className="text-base font-medium">
+                      Do you want to be a point of contact and help other future
+                      Erasmus Students?
                     </Label>
                     <RadioGroup
                       value={formData.wantToHelp}
@@ -218,132 +266,75 @@ export default function HelpFutureStudents() {
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="yes" id="help-yes" />
                         <Label htmlFor="help-yes">
-                          Yes, I'd love to be a mentor
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="maybe" id="help-maybe" />
-                        <Label htmlFor="help-maybe">
-                          Maybe, depending on time availability
+                          Yes, I want to help future students! 🌟
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="no" id="help-no" />
-                        <Label htmlFor="help-no">
-                          Not at this time, but maybe in the future
-                        </Label>
+                        <Label htmlFor="help-no">No, not at this time</Label>
                       </div>
                     </RadioGroup>
                   </div>
 
-                  {formData.wantToHelp === "yes" ||
-                  formData.wantToHelp === "maybe" ? (
-                    <>
-                      <div>
-                        <Label htmlFor="availabilityLevel">
-                          How much time can you dedicate to mentoring?
-                        </Label>
-                        <Select
-                          value={formData.availabilityLevel}
-                          onValueChange={(value) =>
-                            handleInputChange("availabilityLevel", value)
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select your availability" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="occasional">
-                              Occasional (1-2 hours/month)
-                            </SelectItem>
-                            <SelectItem value="regular">
-                              Regular (3-5 hours/month)
-                            </SelectItem>
-                            <SelectItem value="active">
-                              Active (6-10 hours/month)
-                            </SelectItem>
-                            <SelectItem value="dedicated">
-                              Dedicated (10+ hours/month)
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                  {formData.wantToHelp === "no" && (
+                    <div className="p-4 bg-blue-50 rounded-lg">
+                      <p className="text-sm text-gray-700">
+                        No problem! You can always change your mind later. Your
+                        experience story will still help future students even
+                        without direct mentoring.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
 
-                      <div>
-                        <Label htmlFor="responseTime">
-                          Expected response time to messages
-                        </Label>
-                        <Select
-                          value={formData.responseTime}
-                          onValueChange={(value) =>
-                            handleInputChange("responseTime", value)
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select response time" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="within-24h">
-                              Within 24 hours
-                            </SelectItem>
-                            <SelectItem value="within-48h">
-                              Within 48 hours
-                            </SelectItem>
-                            <SelectItem value="within-week">
-                              Within a week
-                            </SelectItem>
-                            <SelectItem value="when-possible">
-                              When possible
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </>
-                  ) : null}
-                </CardContent>
-              </Card>
-
-              {/* Contact Information */}
-              {(formData.wantToHelp === "yes" ||
-                formData.wantToHelp === "maybe") && (
+            {formData.wantToHelp === "yes" && (
+              <>
+                {/* Contact Information */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <MessageSquare className="h-5 w-5" />
+                    <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
+                      <MessageSquare className="h-5 w-5 mr-2" />
                       Contact Information
                     </CardTitle>
+                    <p className="text-gray-600">
+                      How would you like future students to contact you?
+                    </p>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="contactMethod">
-                        Preferred contact method
+                        Preferred Contact Method
                       </Label>
                       <Select
-                        value={formData.contactMethod}
                         onValueChange={(value) =>
                           handleInputChange("contactMethod", value)
                         }
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="How would you like to be contacted?" />
+                          <SelectValue placeholder="Select your preferred method" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="email">Email</SelectItem>
                           <SelectItem value="instagram">Instagram</SelectItem>
                           <SelectItem value="facebook">Facebook</SelectItem>
                           <SelectItem value="linkedin">LinkedIn</SelectItem>
-                          <SelectItem value="website">
-                            Personal Website
+                          <SelectItem value="multiple">
+                            Multiple Methods
                           </SelectItem>
-                          <SelectItem value="phone">Phone/WhatsApp</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <Label htmlFor="email">Email Address</Label>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="email" className="flex items-center">
+                          <Mail className="h-4 w-4 mr-2" />
+                          Email Address
+                        </Label>
                         <Input
+                          id="email"
                           type="email"
                           placeholder="your.email@example.com"
                           value={formData.email}
@@ -353,11 +344,16 @@ export default function HelpFutureStudents() {
                         />
                       </div>
 
-                      <div>
-                        <Label htmlFor="instagramUsername">
-                          Instagram Username (optional)
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="instagramUsername"
+                          className="flex items-center"
+                        >
+                          <Instagram className="h-4 w-4 mr-2" />
+                          Instagram Username
                         </Label>
                         <Input
+                          id="instagramUsername"
                           placeholder="@yourusername"
                           value={formData.instagramUsername}
                           onChange={(e) =>
@@ -368,14 +364,35 @@ export default function HelpFutureStudents() {
                           }
                         />
                       </div>
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <Label htmlFor="linkedinProfile">
-                          LinkedIn Profile (optional)
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="facebookLink"
+                          className="flex items-center"
+                        >
+                          <Facebook className="h-4 w-4 mr-2" />
+                          Facebook Profile Link
                         </Label>
                         <Input
+                          id="facebookLink"
+                          placeholder="https://facebook.com/yourprofile"
+                          value={formData.facebookLink}
+                          onChange={(e) =>
+                            handleInputChange("facebookLink", e.target.value)
+                          }
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="linkedinProfile"
+                          className="flex items-center"
+                        >
+                          <Linkedin className="h-4 w-4 mr-2" />
+                          LinkedIn Profile
+                        </Label>
+                        <Input
+                          id="linkedinProfile"
                           placeholder="https://linkedin.com/in/yourprofile"
                           value={formData.linkedinProfile}
                           onChange={(e) =>
@@ -383,51 +400,80 @@ export default function HelpFutureStudents() {
                           }
                         />
                       </div>
-
-                      <div>
-                        <Label htmlFor="personalWebsite">
-                          Personal Website (optional)
-                        </Label>
-                        <Input
-                          placeholder="https://yourwebsite.com"
-                          value={formData.personalWebsite}
-                          onChange={(e) =>
-                            handleInputChange("personalWebsite", e.target.value)
-                          }
-                        />
-                      </div>
                     </div>
 
-                    <div>
-                      <Label htmlFor="preferredContactTime">
-                        Best time to contact you
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="personalWebsite"
+                        className="flex items-center"
+                      >
+                        <Globe className="h-4 w-4 mr-2" />
+                        Personal Website (Optional)
                       </Label>
                       <Input
-                        placeholder="e.g., Weekday evenings, Weekend mornings, etc."
-                        value={formData.preferredContactTime}
+                        id="personalWebsite"
+                        placeholder="https://yourwebsite.com"
+                        value={formData.personalWebsite}
                         onChange={(e) =>
-                          handleInputChange(
-                            "preferredContactTime",
-                            e.target.value,
-                          )
+                          handleInputChange("personalWebsite", e.target.value)
                         }
                       />
                     </div>
                   </CardContent>
                 </Card>
-              )}
 
-              {/* Areas of Help */}
-              {(formData.wantToHelp === "yes" ||
-                formData.wantToHelp === "maybe") && (
+                {/* Mentor Profile */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Areas Where You Can Help</CardTitle>
+                    <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
+                      <Users className="h-5 w-5 mr-2" />
+                      Mentor Profile
+                    </CardTitle>
+                    <p className="text-gray-600">
+                      Help students understand how you can help them
+                    </p>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <div>
-                      <Label>Languages you can communicate in</Label>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="nickname">
+                          Preferred Name/Nickname
+                        </Label>
+                        <Input
+                          id="nickname"
+                          placeholder="What should students call you?"
+                          value={formData.nickname}
+                          onChange={(e) =>
+                            handleInputChange("nickname", e.target.value)
+                          }
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="responseTime">
+                          Expected Response Time
+                        </Label>
+                        <Select
+                          onValueChange={(value) =>
+                            handleInputChange("responseTime", value)
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="How quickly do you respond?" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="same-day">Same Day</SelectItem>
+                            <SelectItem value="1-2-days">1-2 Days</SelectItem>
+                            <SelectItem value="3-5-days">3-5 Days</SelectItem>
+                            <SelectItem value="weekly">Weekly</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Languages You Speak</Label>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {languages.map((language) => (
                           <div
                             key={language}
@@ -454,9 +500,9 @@ export default function HelpFutureStudents() {
                       </div>
                     </div>
 
-                    <div>
-                      <Label>Topics you can help with</Label>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                    <div className="space-y-2">
+                      <Label>Areas You Can Help With</Label>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {helpTopics.map((topic) => (
                           <div
                             key={topic}
@@ -481,9 +527,9 @@ export default function HelpFutureStudents() {
                       </div>
                     </div>
 
-                    <div>
-                      <Label>Academic specializations</Label>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
+                    <div className="space-y-2">
+                      <Label>Academic Specializations</Label>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {specializations.map((spec) => (
                           <div
                             key={spec}
@@ -506,174 +552,263 @@ export default function HelpFutureStudents() {
                           </div>
                         ))}
                       </div>
+                      {formData.specializations.includes("Other") && (
+                        <div className="space-y-2 mt-4">
+                          <Label htmlFor="otherSpecialization">
+                            Please specify your specialization
+                          </Label>
+                          <Input
+                            id="otherSpecialization"
+                            placeholder="Enter your academic specialization..."
+                            value={formData.otherSpecialization}
+                            onChange={(e) =>
+                              handleInputChange(
+                                "otherSpecialization",
+                                e.target.value,
+                              )
+                            }
+                          />
+                        </div>
+                      )}
                     </div>
 
-                    <div>
-                      <Label htmlFor="otherSpecialization">
-                        Other specialization (if not listed above)
-                      </Label>
-                      <Input
-                        placeholder="Enter your field of study"
-                        value={formData.otherSpecialization}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "otherSpecialization",
-                            e.target.value,
-                          )
-                        }
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Personal Touch */}
-              {(formData.wantToHelp === "yes" ||
-                formData.wantToHelp === "maybe") && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Personal Touch</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div>
-                      <Label htmlFor="nickname">
-                        Preferred name/nickname for students to use
-                      </Label>
-                      <Input
-                        placeholder="How would you like students to address you?"
-                        value={formData.nickname}
-                        onChange={(e) =>
-                          handleInputChange("nickname", e.target.value)
-                        }
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="mentorshipExperience">
-                        Previous mentoring or helping experience (optional)
-                      </Label>
-                      <Textarea
-                        placeholder="Have you mentored students before? Any relevant experience..."
-                        value={formData.mentorshipExperience}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "mentorshipExperience",
-                            e.target.value,
-                          )
-                        }
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="funFact">
-                        Fun fact about yourself or your Erasmus experience
-                      </Label>
-                      <Textarea
-                        placeholder="Share something interesting that might help students connect with you..."
-                        value={formData.funFact}
-                        onChange={(e) =>
-                          handleInputChange("funFact", e.target.value)
-                        }
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="additionalAdvice">
-                        Any additional advice for future Erasmus students?
-                      </Label>
-                      <Textarea
-                        placeholder="Share your wisdom and key insights..."
-                        value={formData.additionalAdvice}
-                        onChange={(e) =>
-                          handleInputChange("additionalAdvice", e.target.value)
-                        }
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Privacy Settings */}
-              {(formData.wantToHelp === "yes" ||
-                formData.wantToHelp === "maybe") && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Privacy Settings</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div>
-                      <Label htmlFor="publicProfile">
-                        Allow your mentor profile to be publicly visible?
+                    <div className="space-y-2">
+                      <Label htmlFor="availabilityLevel">
+                        Availability Level
                       </Label>
                       <RadioGroup
-                        value={formData.publicProfile}
+                        value={formData.availabilityLevel}
                         onValueChange={(value) =>
-                          handleInputChange("publicProfile", value)
+                          handleInputChange("availabilityLevel", value)
                         }
-                        className="mt-2"
                       >
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="yes" id="public-yes" />
-                          <Label htmlFor="public-yes">
-                            Yes, students can find and contact me
+                          <RadioGroupItem value="high" id="availability-high" />
+                          <Label htmlFor="availability-high">
+                            High - I love helping and have lots of time
                           </Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="no" id="public-no" />
-                          <Label htmlFor="public-no">
-                            No, only match me with students privately
+                          <RadioGroupItem
+                            value="medium"
+                            id="availability-medium"
+                          />
+                          <Label htmlFor="availability-medium">
+                            Medium - I can help occasionally
                           </Label>
                         </div>
-                      </RadioGroup>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="allowPublicContact">
-                        Allow students to contact you directly through the
-                        platform?
-                      </Label>
-                      <RadioGroup
-                        value={formData.allowPublicContact}
-                        onValueChange={(value) =>
-                          handleInputChange("allowPublicContact", value)
-                        }
-                        className="mt-2"
-                      >
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="yes" id="contact-yes" />
-                          <Label htmlFor="contact-yes">Yes</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="no" id="contact-no" />
-                          <Label htmlFor="contact-no">
-                            No, only through moderated connections
+                          <RadioGroupItem value="low" id="availability-low" />
+                          <Label htmlFor="availability-low">
+                            Low - Only for important questions
                           </Label>
                         </div>
                       </RadioGroup>
                     </div>
                   </CardContent>
                 </Card>
-              )}
 
-              {/* Submit Button */}
-              <div className="flex justify-between">
-                <Link href="/living-expenses">
-                  <Button variant="outline">
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Previous
-                  </Button>
-                </Link>
-                <Button type="submit">
-                  {formData.wantToHelp === "yes" ||
-                  formData.wantToHelp === "maybe"
-                    ? "Join as Mentor"
-                    : "Complete Form"}
-                  <CheckCircle className="w-4 h-4 ml-2" />
+                {/* Privacy Settings */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-xl font-semibold text-gray-900">
+                      Privacy & Profile Settings
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="space-y-4">
+                      <div>
+                        <Label className="text-base font-medium">
+                          Create a public mentor profile?
+                        </Label>
+                        <p className="text-sm text-gray-600 mb-2">
+                          This will allow students to find you in our mentor
+                          directory
+                        </p>
+                        <RadioGroup
+                          value={formData.publicProfile}
+                          onValueChange={(value) =>
+                            handleInputChange("publicProfile", value)
+                          }
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="yes" id="public-yes" />
+                            <Label htmlFor="public-yes">
+                              Yes, make my profile public
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="no" id="public-no" />
+                            <Label htmlFor="public-no">
+                              No, only contact through forms
+                            </Label>
+                          </div>
+                        </RadioGroup>
+                      </div>
+
+                      <div>
+                        <Label className="text-base font-medium">
+                          Allow students to contact you directly?
+                        </Label>
+                        <p className="text-sm text-gray-600 mb-2">
+                          Students can reach out to you without going through
+                          our platform
+                        </p>
+                        <RadioGroup
+                          value={formData.allowPublicContact}
+                          onValueChange={(value) =>
+                            handleInputChange("allowPublicContact", value)
+                          }
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="yes" id="contact-yes" />
+                            <Label htmlFor="contact-yes">
+                              Yes, I'm open to direct contact
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="no" id="contact-no" />
+                            <Label htmlFor="contact-no">
+                              No, prefer platform messaging only
+                            </Label>
+                          </div>
+                        </RadioGroup>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            )}
+
+            {/* Current Mentors Preview */}
+            {formData.wantToHelp === "yes" && (
+              <Card className="bg-gradient-to-r from-blue-50 to-green-50 border-blue-200">
+                <CardHeader>
+                  <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
+                    <Trophy className="h-5 w-5 mr-2 text-yellow-500" />
+                    Join These Amazing Mentors
+                  </CardTitle>
+                  <p className="text-gray-600">
+                    You'll be joining a community of experienced students who
+                    are making a difference
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    {testimonials.map((testimonial) => (
+                      <div
+                        key={testimonial.id}
+                        className="bg-white p-4 rounded-lg border"
+                      >
+                        <div className="flex items-center space-x-3 mb-3">
+                          <Avatar className="h-10 w-10">
+                            <AvatarFallback>
+                              {testimonial.studentName
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h4 className="font-medium text-gray-900">
+                              {testimonial.studentName}
+                            </h4>
+                            <p className="text-xs text-gray-600">
+                              {testimonial.city}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-1 mb-2">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`h-3 w-3 ${
+                                i < testimonial.rating
+                                  ? "text-yellow-400 fill-current"
+                                  : "text-gray-300"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <p className="text-xs text-gray-600 line-clamp-3">
+                          "Ready to help future students with accommodation and
+                          city life in {testimonial.city}!"
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Final Call to Action */}
+            <Card className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
+              <CardContent className="text-center py-8">
+                <CheckCircle className="h-12 w-12 text-green-200 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold mb-4">
+                  {formData.wantToHelp === "yes"
+                    ? "You're Almost Ready to Start Helping!"
+                    : "Complete Your Erasmus Journey"}
+                </h3>
+                <p className="text-green-100 mb-6 max-w-2xl mx-auto">
+                  {formData.wantToHelp === "yes"
+                    ? "Thank you for choosing to help future students! Your experience and guidance will be invaluable to students planning their Erasmus journey."
+                    : "Thank you for sharing your complete Erasmus experience! Your story will help countless future students make informed decisions."}
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Navigation */}
+            <div className="flex justify-between items-center pt-8">
+              <Link href="/living-expenses">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Living Expenses
                 </Button>
-              </div>
-            </form>
-          </div>
+              </Link>
+
+              <Button
+                type="submit"
+                className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2 px-8"
+              >
+                <CheckCircle className="h-4 w-4" />
+                Complete Application
+              </Button>
+            </div>
+          </form>
         </div>
+
+        {/* Thank You Section */}
+        <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+          <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-6">
+              Thank You for Your Journey
+            </h2>
+            <p className="text-xl text-blue-100 mb-8">
+              Whether you choose to mentor or not, sharing your experience helps
+              build a stronger Erasmus community for everyone.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/community">
+                <Button
+                  size="lg"
+                  className="bg-white text-blue-600 hover:bg-gray-100"
+                >
+                  Explore Community
+                </Button>
+              </Link>
+              <Link href="/experiences">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-white text-white hover:bg-white hover:text-blue-600"
+                >
+                  Read Other Stories
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
       </div>
     </>
   );
