@@ -1,5 +1,7 @@
+import { useState, useMemo } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import Header from "../components/Header";
 import { Button } from "../src/components/ui/button";
 import {
@@ -10,10 +12,21 @@ import {
 } from "../src/components/ui/card";
 import { Badge } from "../src/components/ui/badge";
 import { Input } from "../src/components/ui/input";
-import { Search, Heart, Eye, Calendar } from "lucide-react";
+import { Skeleton } from "../src/components/ui/skeleton";
+import { Label } from "../src/components/ui/label";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../src/components/ui/pagination";
+import { useStories, useLikeStory } from "../src/hooks/useQueries";
+import { Search, Heart, Eye, Calendar, BookOpen, SlidersHorizontal, X, ChevronDown } from "lucide-react";
 
-// Sample stories data (in production this would come from your database)
-const sampleStories = [
+const ITEMS_PER_PAGE = 6;
   {
     id: "1",
     title: "My Amazing Semester in Barcelona",
