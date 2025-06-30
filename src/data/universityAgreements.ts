@@ -289,6 +289,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "KEDGE",
     partnerCity: "Bordeaux",
     partnerCountry: "France",
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -296,6 +297,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "Institut Limayrac",
     partnerCity: "Toulouse",
     partnerCountry: "France",
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -303,6 +305,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "University of Rennes",
     partnerCity: "Rennes",
     partnerCountry: "France",
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
