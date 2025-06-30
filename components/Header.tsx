@@ -189,7 +189,8 @@ export default function Header() {
                   <div className="space-y-1">
                     <div className="px-3 py-2">
                       <div className="text-base font-medium text-gray-800">
-                        {session.user.firstName} {session.user.lastName}
+                        {session.user.username ||
+                          `${session.user.firstName} ${session.user.lastName}`}
                       </div>
                       <div className="text-sm text-gray-500">
                         {session.user.email}
