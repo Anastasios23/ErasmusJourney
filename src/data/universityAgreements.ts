@@ -580,6 +580,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "Hogeschool West-Vlaanderen Howest",
     partnerCity: "Bruges/Kortrijk",
     partnerCountry: "Belgium",
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
