@@ -552,6 +552,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "KU Leuven",
     partnerCity: "Leuven",
     partnerCountry: "Belgium",
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -559,6 +560,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
     partnerCountry: "Bulgaria",
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3208,7 +3210,7 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
     homeUniversity: "UCY",
     homeDepartment: "Law",
     partnerUniversity: "University of Lodz",
-    partnerCity: "Łódź",
+    partnerCity: "Ł��dź",
     partnerCountry: "Poland",
   },
   {
