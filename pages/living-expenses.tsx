@@ -2,6 +2,7 @@ import { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { Badge } from "../src/components/ui/badge";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
 import { Label } from "../src/components/ui/label";
@@ -67,6 +68,8 @@ export default function LivingExpenses() {
     otherExpenses: "",
   });
 
+  const router = useRouter();
+
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -89,39 +92,45 @@ export default function LivingExpenses() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Living Expenses Form submitted:", { formData, expenses });
-    // Handle form submission
+    router.push("/help-future-students");
   };
 
   const expenseCategories = [
     {
       key: "groceries" as keyof ExpenseCategory,
-      label: "Groceries & Food Shopping",
+      label: "Groceries",
+      description: "Food shopping, household items",
       icon: "🛒",
     },
     {
       key: "transportation" as keyof ExpenseCategory,
-      label: "Transportation (Public Transport, etc.)",
+      label: "Transportation",
+      description: "Public transport, bike, car expenses",
       icon: "🚌",
     },
     {
       key: "eatingOut" as keyof ExpenseCategory,
-      label: "Eating Out & Restaurants",
-      icon: "🍽️",
+      label: "Eating Out",
+      description: "Restaurants, cafes, takeaway",
+      icon: "🍕",
     },
     {
       key: "socialLife" as keyof ExpenseCategory,
-      label: "Social Life & Entertainment",
+      label: "Social Life",
+      description: "Clubbing, events, entertainment",
       icon: "🎉",
     },
     {
       key: "travel" as keyof ExpenseCategory,
-      label: "Travel & Weekend Trips",
+      label: "Travel",
+      description: "Trips during Erasmus",
       icon: "✈️",
     },
     {
       key: "otherExpenses" as keyof ExpenseCategory,
       label: "Other Expenses",
-      icon: "💳",
+      description: "Clothes, personal care, misc.",
+      icon: "🛍️",
     },
   ];
 
@@ -131,198 +140,156 @@ export default function LivingExpenses() {
         <title>Living Expenses - Erasmus Journey Platform</title>
         <meta
           name="description"
-          content="Share your living expenses and budget tips from your Erasmus experience"
+          content="Share your living expenses and budget tips"
         />
       </Head>
 
       <div className="min-h-screen bg-gray-50">
         <Header />
 
-        <div className="pt-20 pb-16 px-4">
-          <div className="max-w-4xl mx-auto">
-            {/* Header */}
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                Living Expenses & Budget
-              </h1>
-              <p className="text-gray-600">
-                Help future students plan their budget by sharing your expense
-                breakdown and money-saving tips
-              </p>
+        {/* Progress Header */}
+        <div className="bg-white border-b">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <Badge
+                  variant="outline"
+                  className="text-blue-600 border-blue-200"
+                >
+                  Step 4 of 5
+                </Badge>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Living Expenses & Lifestyle
+                </h1>
+              </div>
+              <div className="flex space-x-2">
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <div className="w-2 h-2 bg-gray-200 rounded-full"></div>
+              </div>
             </div>
+          </div>
+        </div>
 
-            <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Monthly Expenses Breakdown */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calculator className="h-5 w-5" />
-                    Monthly Expenses Breakdown
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {expenseCategories.map((category) => (
-                      <div key={category.key}>
-                        <Label htmlFor={category.key}>
-                          {category.icon} {category.label}
-                        </Label>
-                        <div className="relative">
-                          <Euro className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                          <Input
-                            id={category.key}
-                            type="number"
-                            placeholder="Enter monthly amount"
-                            value={expenses[category.key]}
-                            onChange={(e) =>
-                              handleExpenseChange(category.key, e.target.value)
-                            }
-                            className="pl-10"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <Separator />
-
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <span className="text-lg font-semibold">
-                        Total Monthly Expenses:
-                      </span>
-                      <span className="text-2xl font-bold text-blue-600">
-                        €{getTotalExpenses().toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Income Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Euro className="h-5 w-5" />
-                    Income & Support
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <Label htmlFor="monthlyIncomeSource">
-                        Main source of funding
-                      </Label>
-                      <Select
-                        value={formData.monthlyIncomeSource}
-                        onValueChange={(value) =>
-                          handleInputChange("monthlyIncomeSource", value)
-                        }
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Monthly Expenses Breakdown */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
+                  <Calculator className="h-5 w-5 mr-2" />
+                  Monthly Expenses (Excluding Rent & Utilities)
+                </CardTitle>
+                <p className="text-sm text-gray-600">
+                  Please provide your average monthly expenses for each category
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  {expenseCategories.map((category) => (
+                    <div key={category.key} className="space-y-2">
+                      <Label
+                        htmlFor={category.key}
+                        className="flex items-center"
                       >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select funding source" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="erasmus-grant">
-                            Erasmus Grant
-                          </SelectItem>
-                          <SelectItem value="family-support">
-                            Family Support
-                          </SelectItem>
-                          <SelectItem value="part-time-job">
-                            Part-time Job
-                          </SelectItem>
-                          <SelectItem value="savings">
-                            Personal Savings
-                          </SelectItem>
-                          <SelectItem value="scholarship">
-                            Scholarship
-                          </SelectItem>
-                          <SelectItem value="student-loan">
-                            Student Loan
-                          </SelectItem>
-                          <SelectItem value="multiple-sources">
-                            Multiple Sources
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="monthlyIncomeAmount">
-                        Monthly budget/income (€)
+                        <span className="mr-2">{category.icon}</span>
+                        {category.label}
                       </Label>
-                      <Input
-                        type="number"
-                        placeholder="Enter amount"
-                        value={formData.monthlyIncomeAmount}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "monthlyIncomeAmount",
-                            e.target.value,
-                          )
-                        }
-                      />
+                      <div className="relative">
+                        <Euro className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input
+                          id={category.key}
+                          type="number"
+                          placeholder="0"
+                          value={expenses[category.key]}
+                          onChange={(e) =>
+                            handleExpenseChange(category.key, e.target.value)
+                          }
+                          className="pl-10"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500">
+                        {category.description}
+                      </p>
                     </div>
-                  </div>
+                  ))}
+                </div>
 
-                  <div>
-                    <Label htmlFor="biggestExpense">
-                      What was your biggest expense category?
-                    </Label>
-                    <Select
-                      value={formData.biggestExpense}
-                      onValueChange={(value) =>
-                        handleInputChange("biggestExpense", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select biggest expense" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="accommodation">
-                          Accommodation
-                        </SelectItem>
-                        <SelectItem value="food">Food & Groceries</SelectItem>
-                        <SelectItem value="travel">Travel</SelectItem>
-                        <SelectItem value="social">
-                          Social Life & Entertainment
-                        </SelectItem>
-                        <SelectItem value="transportation">
-                          Transportation
-                        </SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <Separator />
 
-                  <div>
-                    <Label htmlFor="unexpectedCosts">
-                      Any unexpected costs you didn't plan for?
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-gray-900">
+                      Total Monthly Expenses:
+                    </span>
+                    <span className="text-2xl font-bold text-blue-600">
+                      €{getTotalExpenses().toFixed(2)}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-1">
+                    This excludes rent and utilities
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Income and Financial Overview */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-gray-900">
+                  Financial Overview
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="monthlyIncomeAmount">
+                      Monthly Income Amount (€)
                     </Label>
-                    <Textarea
-                      placeholder="Describe any surprise expenses..."
-                      value={formData.unexpectedCosts}
+                    <Input
+                      id="monthlyIncomeAmount"
+                      type="number"
+                      placeholder="e.g., 800"
+                      value={formData.monthlyIncomeAmount}
                       onChange={(e) =>
-                        handleInputChange("unexpectedCosts", e.target.value)
+                        handleInputChange("monthlyIncomeAmount", e.target.value)
                       }
                     />
                   </div>
-                </CardContent>
-              </Card>
+                </div>
 
-              {/* Spending Habits */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <TrendingDown className="h-5 w-5" />
-                    Spending Habits
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="unexpectedCosts">
+                    Unexpected Costs/Hidden Expenses
+                  </Label>
+                  <Textarea
+                    id="unexpectedCosts"
+                    placeholder="Any costs you didn't anticipate (deposits, registration fees, etc.)..."
+                    value={formData.unexpectedCosts}
+                    onChange={(e) =>
+                      handleInputChange("unexpectedCosts", e.target.value)
+                    }
+                    rows={3}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Spending Habits */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
+                  <TrendingDown className="h-5 w-5 mr-2" />
+                  Spending Habits
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
                   <div>
-                    <Label htmlFor="spendingHabit">
-                      How would you describe your spending habits?
+                    <Label className="text-base font-medium">
+                      Spending habit during your Erasmus
                     </Label>
                     <RadioGroup
                       value={formData.spendingHabit}
@@ -332,179 +299,202 @@ export default function LivingExpenses() {
                       className="mt-2"
                     >
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="very-frugal" id="very-frugal" />
-                        <Label htmlFor="very-frugal">
-                          Very frugal - I saved wherever possible
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
                         <RadioGroupItem
-                          value="budget-conscious"
-                          id="budget-conscious"
+                          value="very-careful"
+                          id="very-careful"
                         />
-                        <Label htmlFor="budget-conscious">
-                          Budget-conscious but comfortable
+                        <Label htmlFor="very-careful">
+                          Very Careful (Budgeting Every Euro)
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="moderate" id="moderate" />
-                        <Label htmlFor="moderate">
-                          Moderate - balanced spending
+                        <RadioGroupItem value="careful" id="careful" />
+                        <Label htmlFor="careful">
+                          Careful (Occasionally Spending)
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="comfortable" id="comfortable" />
-                        <Label htmlFor="comfortable">
-                          Comfortable - money wasn't a major concern
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="lived-it-up" id="lived-it-up" />
-                        <Label htmlFor="lived-it-up">
-                          Lived it up - YOLO approach
+                        <RadioGroupItem value="not-careful" id="not-careful" />
+                        <Label htmlFor="not-careful">
+                          Not Careful (Didn't Budget)
                         </Label>
                       </div>
                     </RadioGroup>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
 
-                  <div>
-                    <Label htmlFor="moneyManagementTools">
-                      Did you use any budgeting apps or tools?
-                    </Label>
-                    <Textarea
-                      placeholder="Mention any apps, spreadsheets, or methods you used to track expenses..."
-                      value={formData.moneyManagementTools}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "moneyManagementTools",
-                          e.target.value,
-                        )
-                      }
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="currencyExchangeTips">
-                      Currency exchange and banking tips
-                    </Label>
-                    <Textarea
-                      placeholder="Share tips about best exchange rates, banking fees, cards to use, etc..."
-                      value={formData.currencyExchangeTips}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "currencyExchangeTips",
-                          e.target.value,
-                        )
-                      }
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Money-Saving Tips */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Lightbulb className="h-5 w-5" />
-                    Money-Saving Tips & Recommendations
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div>
+            {/* Budget Tips and Recommendations */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
+                  <Lightbulb className="h-5 w-5 mr-2" />
+                  Budget Tips for Future Students
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-6">
+                  <div className="space-y-2">
                     <Label htmlFor="cheapGroceryPlaces">
-                      Best places for cheap groceries
+                      Cheap Places to Buy Groceries
                     </Label>
                     <Textarea
-                      placeholder="Share specific stores, markets, or areas for affordable food shopping..."
+                      id="cheapGroceryPlaces"
+                      placeholder="Recommend specific stores, markets, or chains where students can save money on groceries..."
                       value={formData.cheapGroceryPlaces}
                       onChange={(e) =>
                         handleInputChange("cheapGroceryPlaces", e.target.value)
                       }
+                      rows={3}
                     />
                   </div>
 
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="cheapEatingPlaces">
-                      Affordable restaurants and eating spots
+                      Cheap Places to Eat Out
                     </Label>
                     <Textarea
-                      placeholder="Recommend budget-friendly places to eat out..."
+                      id="cheapEatingPlaces"
+                      placeholder="Recommend affordable restaurants, cafes, or food spots..."
                       value={formData.cheapEatingPlaces}
                       onChange={(e) =>
                         handleInputChange("cheapEatingPlaces", e.target.value)
                       }
+                      rows={3}
                     />
                   </div>
 
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="transportationTips">
-                      Transportation money-saving tips
+                      Transportation Money-Saving Tips
                     </Label>
                     <Textarea
-                      placeholder="Share tips about student discounts, monthly passes, bike rentals, etc..."
+                      id="transportationTips"
+                      placeholder="Student discounts, monthly passes, bike rentals, etc..."
                       value={formData.transportationTips}
                       onChange={(e) =>
                         handleInputChange("transportationTips", e.target.value)
                       }
+                      rows={3}
                     />
                   </div>
 
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="socialLifeTips">
-                      Social life on a budget
+                      Social Life on a Budget
                     </Label>
                     <Textarea
-                      placeholder="How to have fun without breaking the bank..."
+                      id="socialLifeTips"
+                      placeholder="Free events, student discounts for entertainment, happy hours, etc..."
                       value={formData.socialLifeTips}
                       onChange={(e) =>
                         handleInputChange("socialLifeTips", e.target.value)
                       }
+                      rows={3}
                     />
                   </div>
 
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="travelTips">
-                      Travel tips and cheap trip ideas
+                      Travel Tips and Budget Options
                     </Label>
                     <Textarea
-                      placeholder="Share budget travel tips, best booking sites, cheap destinations..."
+                      id="travelTips"
+                      placeholder="Cheap flights, train passes, hostels, travel apps..."
                       value={formData.travelTips}
                       onChange={(e) =>
                         handleInputChange("travelTips", e.target.value)
                       }
+                      rows={3}
                     />
                   </div>
 
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="overallBudgetAdvice">
-                      Overall budget advice for future students
+                      Overall Budget Advice
                     </Label>
                     <Textarea
-                      placeholder="Your top budget tips and advice for managing money abroad..."
+                      id="overallBudgetAdvice"
+                      placeholder="General tips for managing money during Erasmus that you wish you knew before..."
                       value={formData.overallBudgetAdvice}
                       onChange={(e) =>
                         handleInputChange("overallBudgetAdvice", e.target.value)
                       }
+                      rows={4}
                     />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Budget Summary */}
+            {getTotalExpenses() > 0 && (
+              <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+                <CardHeader>
+                  <CardTitle className="text-xl font-semibold text-gray-900">
+                    Budget Summary
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">
+                        €{getTotalExpenses().toFixed(2)}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Monthly Expenses
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-600">
+                        €{formData.monthlyIncomeAmount || "0"}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Monthly Income
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div
+                        className={`text-2xl font-bold ${
+                          (parseFloat(formData.monthlyIncomeAmount) || 0) -
+                            getTotalExpenses() >=
+                          0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
+                        €
+                        {(
+                          (parseFloat(formData.monthlyIncomeAmount) || 0) -
+                          getTotalExpenses()
+                        ).toFixed(2)}
+                      </div>
+                      <div className="text-sm text-gray-600">Balance</div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
+            )}
 
-              {/* Submit Button */}
-              <div className="flex justify-between">
-                <Link href="/accommodation">
-                  <Button variant="outline">
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Previous
-                  </Button>
-                </Link>
-                <Button type="submit">
-                  Continue to Help Future Students
-                  <ArrowRight className="w-4 h-4 ml-2" />
+            {/* Navigation */}
+            <div className="flex justify-between items-center pt-8">
+              <Link href="/accommodation">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Accommodation
                 </Button>
-              </div>
-            </form>
-          </div>
+              </Link>
+
+              <Button
+                type="submit"
+                className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
+              >
+                Continue to Help Future Students
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
     </>
