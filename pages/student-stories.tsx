@@ -347,9 +347,10 @@ export default function StudentStoriesPage() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() =>
-                                router.push(`/stories/${story.id}`)
-                              }
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                router.push(`/stories/${story.id}`);
+                              }}
                             >
                               Read More
                             </Button>
