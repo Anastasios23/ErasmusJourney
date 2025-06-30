@@ -377,6 +377,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "State University of Applied Sciences in Wloclawek",
     partnerCity: "Włocławek",
     partnerCountry: "Poland",
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -384,6 +385,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "Instituto Politécnico Da Guarda",
     partnerCity: "Guarda",
     partnerCountry: "Portugal",
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -391,6 +393,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "Romanian-American University",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
