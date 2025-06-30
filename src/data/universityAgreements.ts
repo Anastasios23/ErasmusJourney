@@ -265,6 +265,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
       "Brno University of Technology, Faculty of Business and Management",
     partnerCity: "Brno",
     partnerCountry: "Czech Republic",
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
