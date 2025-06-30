@@ -50,6 +50,7 @@ export default function CourseMatching() {
     hostDepartment: "",
     homeUniversity: "",
     homeDepartment: "",
+    levelOfStudy: "",
     hostCourseCount: "",
     homeCourseCount: "",
     courseMatchingDifficult: "",
