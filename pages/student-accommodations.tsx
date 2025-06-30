@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -7,6 +7,7 @@ import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
 import { Badge } from "../src/components/ui/badge";
 import { Card, CardContent } from "../src/components/ui/card";
+import { Skeleton } from "../src/components/ui/skeleton";
 import {
   Avatar,
   AvatarFallback,
@@ -20,6 +21,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../src/components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../src/components/ui/pagination";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../src/components/ui/alert-dialog";
+import { useAccommodations, useContactStudent } from "../src/hooks/useQueries";
 import {
   Search,
   Filter,
@@ -38,6 +60,9 @@ import {
   Wifi,
   Car,
   Utensils,
+  SlidersHorizontal,
+  X,
+  ChevronDown,
 } from "lucide-react";
 
 interface AccommodationListing {
