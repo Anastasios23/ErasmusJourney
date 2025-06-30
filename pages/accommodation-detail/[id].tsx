@@ -39,7 +39,7 @@ import {
   Wifi,
   Car,
   Utensils,
-  Washing_machine,
+  WashingMachine,
   AirVent,
   ShowerHead,
   Home,
