@@ -95,10 +95,11 @@ export default function CourseMatching() {
 
     if (field === "homeDepartment") {
       // Update available host universities based on partnership agreements
-      if (formData.homeUniversity) {
-        const partnershipAgreements = getAgreementsByDepartment(
+      if (formData.homeUniversity && formData.levelOfStudy) {
+        const partnershipAgreements = getAgreementsByDepartmentAndLevel(
           formData.homeUniversity,
           value,
+          formData.levelOfStudy as "bachelor" | "master" | "phd",
         );
         const hostUniversities = partnershipAgreements.map((agreement) => ({
           university: agreement.partnerUniversity,
