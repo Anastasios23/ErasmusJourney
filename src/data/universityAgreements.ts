@@ -7043,7 +7043,7 @@ export const UCLAN_AGREEMENTS: UniversityAgreement[] = [
   // Arts and Media / Media Production
   {
     homeUniversity: "UCLan",
-    homeDepartment: "Arts and Media",
+    homeDepartment: "Arts and Media/Media Production",
     partnerUniversity: "WUHAN University",
     partnerCity: "Wuhan",
     partnerCountry: "China",
@@ -7051,7 +7051,7 @@ export const UCLAN_AGREEMENTS: UniversityAgreement[] = [
   },
   {
     homeUniversity: "UCLan",
-    homeDepartment: "Arts and Media",
+    homeDepartment: "Arts and Media/Media Production",
     partnerUniversity: "UNIVERSITATEA BABES BOLYAI",
     partnerCity: "Cluj-Napoca",
     partnerCountry: "Romania",
