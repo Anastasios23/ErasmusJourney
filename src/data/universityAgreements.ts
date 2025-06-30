@@ -2904,7 +2904,7 @@ export const UCY_AGREEMENTS: UniversityAgreement[] = [
   {
     homeUniversity: "UCY",
     homeDepartment: "Education",
-    partnerUniversity: "Pädagogische Hochschule Ludwigsburg",
+    partnerUniversity: "P��dagogische Hochschule Ludwigsburg",
     partnerCity: "Ludwigsburg",
     partnerCountry: "Germany",
   },
@@ -11678,14 +11678,57 @@ export function getAgreementsByDepartmentAndLevel(
   department: string,
   academicLevel: "bachelor" | "master" | "phd",
 ): UniversityAgreement[] {
-  return ALL_UNIVERSITY_AGREEMENTS.filter(
-    (agreement) =>
-      agreement.homeUniversity === universityCode &&
-      agreement.homeDepartment === department &&
-      (agreement.academicLevel === academicLevel ||
-        agreement.academicLevel === "all" ||
-        !agreement.academicLevel), // Include agreements without level specified for backward compatibility
-  );
+  return ALL_UNIVERSITY_AGREEMENTS.filter((agreement) => {
+    // Basic filters
+    if (
+      agreement.homeUniversity !== universityCode ||
+      agreement.homeDepartment !== department
+    ) {
+      return false;
+    }
+
+    // For UNIC, apply strict academic level filtering
+    if (universityCode === "UNIC") {
+      // If agreement has specific level, must match
+      if (agreement.academicLevel) {
+        return (
+          agreement.academicLevel === academicLevel ||
+          agreement.academicLevel === "all"
+        );
+      }
+      // For UNIC agreements without level specified, assign based on partner university type
+      return assignDefaultLevel(agreement, academicLevel);
+    }
+
+    // For other universities, include all agreements regardless of level
+    return true;
+  });
+}
+
+// Helper function to assign default academic levels for UNIC agreements
+function assignDefaultLevel(
+  agreement: UniversityAgreement,
+  requestedLevel: "bachelor" | "master" | "phd",
+): boolean {
+  const partnerName = agreement.partnerUniversity.toLowerCase();
+
+  // Universities typically offering PhD programs
+  if (partnerName.includes("university") && !partnerName.includes("applied")) {
+    return true; // All levels available
+  }
+
+  // Polytechnics and Applied Sciences typically bachelor/master
+  if (partnerName.includes("polytechnic") || partnerName.includes("applied")) {
+    return requestedLevel !== "phd";
+  }
+
+  // Conservatories typically have all levels
+  if (partnerName.includes("conservator")) {
+    return true;
+  }
+
+  // Default: assume all levels available
+  return true;
 }
 
 export function getAgreementsByDepartment(
