@@ -266,7 +266,7 @@ export default function CourseMatching() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid md:grid-cols-3 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="homeUniversity">
                       Your Home University (Cyprus)
@@ -289,6 +289,25 @@ export default function CourseMatching() {
                             {university.name}
                           </SelectItem>
                         ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="levelOfStudy">Level of Study</Label>
+                    <Select
+                      value={formData.levelOfStudy}
+                      onValueChange={(value) =>
+                        handleInputChange("levelOfStudy", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="bachelor">Bachelor</SelectItem>
+                        <SelectItem value="master">Master</SelectItem>
+                        <SelectItem value="phd">PhD</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
