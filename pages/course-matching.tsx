@@ -24,7 +24,10 @@ import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
 import { Checkbox } from "../src/components/ui/checkbox";
 import Header from "../components/Header";
 import { ArrowRight, ArrowLeft, Upload, BookOpen, X } from "lucide-react";
-import { CYPRUS_UNIVERSITIES } from "../src/data/universityAgreements";
+import {
+  CYPRUS_UNIVERSITIES,
+  ALL_UNIVERSITY_AGREEMENTS,
+} from "../src/data/universityAgreements";
 
 interface Course {
   name: string;
