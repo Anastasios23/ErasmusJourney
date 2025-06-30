@@ -289,17 +289,13 @@ export default function StudentStoriesPage() {
                           </div>
                           <CardTitle
                             id={`story-${story.id}-title`}
-                            className="text-lg line-clamp-2 group-hover:text-blue-600 transition-colors cursor-pointer"
-                            onClick={() => router.push(`/stories/${story.id}`)}
+                            className="text-lg line-clamp-2 group-hover:text-blue-600 transition-colors"
                           >
                             {story.title}
                           </CardTitle>
                         </CardHeader>
                         <CardContent className="flex-1 flex flex-col">
-                          <p
-                            className="text-gray-600 text-sm mb-4 line-clamp-3 flex-1 cursor-pointer"
-                            onClick={() => router.push(`/stories/${story.id}`)}
-                          >
+                          <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-1">
                             {story.excerpt}
                           </p>
 
