@@ -273,6 +273,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -280,6 +281,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "ESC Rennes - School of Business",
     partnerCity: "Rennes",
     partnerCountry: "France",
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
