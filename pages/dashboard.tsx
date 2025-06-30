@@ -55,133 +55,156 @@ interface Story {
   createdAt: string;
 }
 
-interface DashboardProps {
-  user: UserData;
-  applications: Application[];
-  stories: Story[];
-  stats: {
-    totalApplications: number;
-    pendingApplications: number;
-    acceptedApplications: number;
-    totalStories: number;
-    totalLikes: number;
+export default function DashboardPage() {
+  // Mock data for demo
+  const user = {
+    id: "demo",
+    firstName: "Demo",
+    lastName: "User",
+    email: "demo@erasmus.cy",
+    nationality: "Cypriot",
+    homeCountry: "Cyprus",
+    homeCity: "Nicosia",
   };
-}
 
-export default function DashboardPage({
-  user,
-  applications,
-  stories,
-  stats,
-}: DashboardProps) {
+  const applications: Application[] = [];
+  const stories: Story[] = [];
+  const stats = {
+    totalApplications: 0,
+    pendingApplications: 0,
+    acceptedApplications: 0,
+    totalStories: 0,
+    totalLikes: 0,
+  };
+
   const profileCompletion = calculateProfileCompletion(user);
 
   return (
     <>
       <Head>
         <title>Dashboard - Erasmus Journey Platform</title>
-        <meta name="description" content="Your Erasmus Journey dashboard" />
+        <meta
+          name="description"
+          content="Your personal Erasmus journey dashboard"
+        />
       </Head>
 
       <div className="min-h-screen bg-gray-50">
         <Header />
 
-        <div className="pt-20 pb-16 px-4">
-          <div className="max-w-7xl mx-auto">
+        <main className="pt-20 pb-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Welcome Section */}
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-gray-900">
-                Welcome back, {user.firstName}!
+                Welcome back, {user.firstName}! 👋
               </h1>
-              <p className="text-gray-600 mt-2">
-                Track your Erasmus journey and explore new opportunities.
+              <p className="mt-2 text-gray-600">
+                Track your Erasmus journey and discover new opportunities.
               </p>
             </div>
 
-            {/* Profile Completion */}
-            {profileCompletion < 100 && (
-              <Card className="mb-8 border-amber-200 bg-amber-50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <span>Complete Your Profile</span>
-                    <Badge variant="secondary">{profileCompletion}%</Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Progress value={profileCompletion} className="mb-4" />
-                  <p className="text-sm text-gray-600 mb-4">
-                    Complete your profile to get better partnership
-                    recommendations and increase your application success rate.
-                  </p>
+            {/* Profile Completion Card */}
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  Profile Completion
+                  <Badge variant="outline" className="ml-2">
+                    {profileCompletion}% Complete
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Progress value={profileCompletion} className="w-full mb-4" />
+                <div className="flex flex-wrap gap-2 mb-4">
                   <Link href="/basic-information">
-                    <Button>Complete Profile</Button>
+                    <Button variant="outline" size="sm">
+                      Complete Profile
+                    </Button>
                   </Link>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-2xl font-bold text-blue-600 mb-1">
-                    {stats.totalApplications}
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    Total Applications
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-2xl font-bold text-yellow-600 mb-1">
-                    {stats.pendingApplications}
-                  </div>
-                  <div className="text-sm text-gray-600">Pending Review</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-2xl font-bold text-green-600 mb-1">
-                    {stats.acceptedApplications}
-                  </div>
-                  <div className="text-sm text-gray-600">Accepted</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-2xl font-bold text-purple-600 mb-1">
-                    {stats.totalStories}
-                  </div>
-                  <div className="text-sm text-gray-600">Stories Shared</div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Recent Applications */}
-              <section>
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    Your Applications
-                  </h2>
                   <Link href="/course-matching">
-                    <Button variant="outline">New Application</Button>
+                    <Button variant="outline" size="sm">
+                      Course Matching
+                    </Button>
+                  </Link>
+                  <Link href="/accommodation">
+                    <Button variant="outline" size="sm">
+                      Find Housing
+                    </Button>
                   </Link>
                 </div>
+                {profileCompletion < 100 && (
+                  <p className="text-sm text-gray-600">
+                    Complete your profile to unlock personalized recommendations
+                    and connect with universities.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
 
-                <div className="space-y-4">
-                  {applications.length > 0 ? (
-                    applications.map((application) => (
-                      <Card key={application.id}>
-                        <CardContent className="pt-4">
-                          <div className="flex justify-between items-start mb-3">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Left Column - Applications & Quick Actions */}
+              <div className="lg:col-span-2 space-y-6">
+                {/* Quick Stats */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <Card>
+                    <CardContent className="p-4 text-center">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {stats.totalApplications}
+                      </div>
+                      <div className="text-sm text-gray-600">Applications</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-4 text-center">
+                      <div className="text-2xl font-bold text-yellow-600">
+                        {stats.pendingApplications}
+                      </div>
+                      <div className="text-sm text-gray-600">Pending</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-4 text-center">
+                      <div className="text-2xl font-bold text-green-600">
+                        {stats.acceptedApplications}
+                      </div>
+                      <div className="text-sm text-gray-600">Accepted</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-4 text-center">
+                      <div className="text-2xl font-bold text-purple-600">
+                        {stats.totalStories}
+                      </div>
+                      <div className="text-sm text-gray-600">Stories</div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Applications Section */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Recent Applications</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {applications.length > 0 ? (
+                      <div className="space-y-4">
+                        {applications.map((application) => (
+                          <div
+                            key={application.id}
+                            className="flex items-center justify-between p-4 border rounded-lg"
+                          >
                             <div>
-                              <h3 className="font-semibold">
+                              <h4 className="font-medium">
                                 {application.program.name}
-                              </h3>
+                              </h4>
                               <p className="text-sm text-gray-600">
-                                {application.homeUniversity.name}
+                                {application.agreement.partnerUniversity.name},{" "}
+                                {application.agreement.partnerUniversity.city}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {application.semester}{" "}
+                                {application.academicYear}
                               </p>
                             </div>
                             <Badge
@@ -193,139 +216,190 @@ export default function DashboardPage({
                                     : "outline"
                               }
                             >
-                              {application.status.toLowerCase()}
+                              {application.status}
                             </Badge>
                           </div>
-                          <div className="text-sm text-gray-600 mb-2">
-                            Partner:{" "}
-                            {application.agreement.partnerUniversity.name}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            📍 {application.agreement.partnerUniversity.city},{" "}
-                            {application.agreement.partnerUniversity.country}
-                          </div>
-                          {application.semester && (
-                            <div className="text-sm text-gray-600 mt-1">
-                              📅 {application.semester}{" "}
-                              {application.academicYear}
-                            </div>
-                          )}
-                        </CardContent>
-                      </Card>
-                    ))
-                  ) : (
-                    <Card>
-                      <CardContent className="pt-6 text-center">
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
                         <p className="text-gray-500 mb-4">
-                          No applications yet. Start your Erasmus journey!
+                          No applications yet. Start your journey!
                         </p>
-                        <Link href="/course-matching">
-                          <Button>Find Opportunities</Button>
+                        <Link href="/universities">
+                          <Button>Explore Universities</Button>
                         </Link>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              </section>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
 
-              {/* Recent Stories */}
-              <section>
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    Your Stories
-                  </h2>
-                  <Link href="/share-story">
-                    <Button variant="outline">Share Story</Button>
-                  </Link>
-                </div>
-
-                <div className="space-y-4">
-                  {stories.length > 0 ? (
-                    stories.map((story) => (
-                      <Card key={story.id}>
-                        <CardContent className="pt-4">
-                          <div className="flex justify-between items-start mb-2">
-                            <h3 className="font-semibold line-clamp-1">
-                              {story.title}
-                            </h3>
-                            <Badge variant="secondary">
-                              {story.category.toLowerCase()}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                            {story.excerpt || "No excerpt available"}
-                          </p>
-                          <div className="flex justify-between items-center text-sm text-gray-500">
-                            <span>
-                              {story.isPublic ? "🌍 Public" : "🔒 Private"}
-                            </span>
-                            <div className="flex gap-4">
-                              <span>❤️ {story.likes}</span>
-                              <span>👁️ {story.views}</span>
+                {/* Your Stories */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      Your Stories
+                      <Link href="/share-story">
+                        <Button variant="outline" size="sm">
+                          Share Story
+                        </Button>
+                      </Link>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {stories.length > 0 ? (
+                      <div className="space-y-4">
+                        {stories.map((story) => (
+                          <div key={story.id} className="border rounded-lg p-4">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <h4 className="font-medium mb-1">
+                                  {story.title}
+                                </h4>
+                                <p className="text-sm text-gray-600 mb-2">
+                                  {story.excerpt}
+                                </p>
+                                <div className="flex items-center space-x-4 text-xs text-gray-500">
+                                  <span>❤️ {story.likes} likes</span>
+                                  <span>👁️ {story.views} views</span>
+                                  <Badge variant="outline" className="text-xs">
+                                    {story.category}
+                                  </Badge>
+                                </div>
+                              </div>
+                              <Badge
+                                variant={story.isPublic ? "default" : "outline"}
+                              >
+                                {story.isPublic ? "Public" : "Private"}
+                              </Badge>
                             </div>
                           </div>
-                        </CardContent>
-                      </Card>
-                    ))
-                  ) : (
-                    <Card>
-                      <CardContent className="pt-6 text-center">
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
                         <p className="text-gray-500 mb-4">
-                          No stories shared yet. Share your experience!
+                          Share your Erasmus experience with others!
                         </p>
                         <Link href="/share-story">
-                          <Button>Share Your Story</Button>
+                          <Button>Write Your First Story</Button>
                         </Link>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              </section>
-            </div>
-
-            {/* Quick Actions */}
-            <section className="mt-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Quick Actions
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Link href="/universities">
-                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                    <CardContent className="pt-6 text-center">
-                      <div className="text-3xl mb-2">🏫</div>
-                      <h3 className="font-semibold">Explore Universities</h3>
-                      <p className="text-sm text-gray-600">
-                        Discover partnership opportunities
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-                <Link href="/student-stories">
-                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                    <CardContent className="pt-6 text-center">
-                      <div className="text-3xl mb-2">📖</div>
-                      <h3 className="font-semibold">Read Stories</h3>
-                      <p className="text-sm text-gray-600">
-                        Learn from other students
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-                <Link href="/help-future-students">
-                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                    <CardContent className="pt-6 text-center">
-                      <div className="text-3xl mb-2">💬</div>
-                      <h3 className="font-semibold">Help Others</h3>
-                      <p className="text-sm text-gray-600">
-                        Share your knowledge
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               </div>
-            </section>
+
+              {/* Right Column - Quick Actions & Recommendations */}
+              <div className="space-y-6">
+                {/* Quick Actions */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Quick Actions</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <Link href="/basic-information" className="block">
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start"
+                      >
+                        📝 Update Profile
+                      </Button>
+                    </Link>
+                    <Link href="/universities" className="block">
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start"
+                      >
+                        🏫 Browse Universities
+                      </Button>
+                    </Link>
+                    <Link href="/destinations" className="block">
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start"
+                      >
+                        🌍 Find Destinations
+                      </Button>
+                    </Link>
+                    <Link href="/student-accommodations" className="block">
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start"
+                      >
+                        🏠 Find Housing
+                      </Button>
+                    </Link>
+                    <Link href="/student-stories" className="block">
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start"
+                      >
+                        📖 Read Stories
+                      </Button>
+                    </Link>
+                    <Link href="/community" className="block">
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start"
+                      >
+                        👥 Join Community
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+
+                {/* Recommended for You */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Recommended for You</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="border rounded-lg p-4">
+                        <h4 className="font-medium mb-2">
+                          Complete Your Profile
+                        </h4>
+                        <p className="text-sm text-gray-600 mb-3">
+                          Add more details to get personalized recommendations.
+                        </p>
+                        <Link href="/basic-information">
+                          <Button size="sm">Complete Now</Button>
+                        </Link>
+                      </div>
+
+                      <div className="border rounded-lg p-4">
+                        <h4 className="font-medium mb-2">
+                          Explore Popular Destinations
+                        </h4>
+                        <p className="text-sm text-gray-600 mb-3">
+                          Discover the most popular study abroad destinations.
+                        </p>
+                        <Link href="/destinations">
+                          <Button size="sm" variant="outline">
+                            Explore
+                          </Button>
+                        </Link>
+                      </div>
+
+                      <div className="border rounded-lg p-4">
+                        <h4 className="font-medium mb-2">Share Your Story</h4>
+                        <p className="text-sm text-gray-600 mb-3">
+                          Help future students by sharing your experience.
+                        </p>
+                        <Link href="/share-story">
+                          <Button size="sm" variant="outline">
+                            Share
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </div>
-        </div>
+        </main>
       </div>
     </>
   );
@@ -344,149 +418,3 @@ function calculateProfileCompletion(user: UserData): number {
   const completed = fields.filter(Boolean).length;
   return Math.round((completed / fields.length) * 100);
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getServerSession(context.req, context.res, authOptions);
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-
-  try {
-    // Fetch user data
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        nationality: true,
-        homeCountry: true,
-        homeCity: true,
-      },
-    });
-
-    if (!user) {
-      return {
-        redirect: {
-          destination: "/login",
-          permanent: false,
-        },
-      };
-    }
-
-    // Fetch user's applications
-    const applications = await prisma.application.findMany({
-      where: { userId: session.user.id },
-      include: {
-        homeUniversity: {
-          select: { name: true, shortName: true },
-        },
-        program: {
-          select: { name: true, level: true },
-        },
-        agreement: {
-          include: {
-            partnerUniversity: {
-              select: { name: true, city: true, country: true },
-            },
-          },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 5,
-    });
-
-    // Fetch user's stories
-    const stories = await prisma.story.findMany({
-      where: { authorId: session.user.id },
-      select: {
-        id: true,
-        title: true,
-        excerpt: true,
-        category: true,
-        isPublic: true,
-        likes: true,
-        views: true,
-        createdAt: true,
-      },
-      orderBy: { createdAt: "desc" },
-      take: 5,
-    });
-
-    // Calculate stats
-    const [
-      totalApplications,
-      pendingApplications,
-      acceptedApplications,
-      totalStories,
-      likesSum,
-    ] = await Promise.all([
-      prisma.application.count({ where: { userId: session.user.id } }),
-      prisma.application.count({
-        where: { userId: session.user.id, status: "SUBMITTED" },
-      }),
-      prisma.application.count({
-        where: { userId: session.user.id, status: "ACCEPTED" },
-      }),
-      prisma.story.count({ where: { authorId: session.user.id } }),
-      prisma.story.aggregate({
-        where: { authorId: session.user.id },
-        _sum: { likes: true },
-      }),
-    ]);
-
-    return {
-      props: {
-        user,
-        applications: applications.map((app) => ({
-          ...app,
-          createdAt: app.createdAt.toISOString(),
-        })),
-        stories: stories.map((story) => ({
-          ...story,
-          createdAt: story.createdAt.toISOString(),
-        })),
-        stats: {
-          totalApplications,
-          pendingApplications,
-          acceptedApplications,
-          totalStories,
-          totalLikes: likesSum._sum.likes || 0,
-        },
-      },
-    };
-  } catch (error) {
-    console.error("Dashboard data fetch error:", error);
-
-    // Fallback data if database is not available
-    return {
-      props: {
-        user: {
-          id: session.user.id,
-          firstName: session.user.firstName || "User",
-          lastName: session.user.lastName || "",
-          email: session.user.email,
-          nationality: null,
-          homeCountry: null,
-          homeCity: null,
-        },
-        applications: [],
-        stories: [],
-        stats: {
-          totalApplications: 0,
-          pendingApplications: 0,
-          acceptedApplications: 0,
-          totalStories: 0,
-          totalLikes: 0,
-        },
-      },
-    };
-  }
-};
