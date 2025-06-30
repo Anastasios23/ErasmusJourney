@@ -345,6 +345,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "University of Piraeus",
     partnerCity: "Piraeus",
     partnerCountry: "Greece",
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -352,6 +353,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -359,6 +361,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "Siauliu Valstybine Kolegija",
     partnerCity: "Šiauliai",
     partnerCountry: "Lithuania",
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -366,6 +369,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "Vilniaus Kolegija University of Applied Sciences",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
