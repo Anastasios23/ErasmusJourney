@@ -426,6 +426,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
