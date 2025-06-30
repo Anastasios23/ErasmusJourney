@@ -1,16 +1,55 @@
-import { GetStaticProps } from "next";
+import { useState, useMemo } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { prisma } from "../../lib/prisma";
+import { useRouter } from "next/router";
 import Header from "../../components/Header";
+import { Button } from "../../src/components/ui/button";
+import { Input } from "../../src/components/ui/input";
+import { Badge } from "../../src/components/ui/badge";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../../src/components/ui/card";
-import { Badge } from "../../src/components/ui/badge";
-import { Button } from "../../src/components/ui/button";
+import { Skeleton } from "../../src/components/ui/skeleton";
+import { Label } from "../../src/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../src/components/ui/select";
+import { Checkbox } from "../../src/components/ui/checkbox";
+import { Separator } from "../../src/components/ui/separator";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "../../src/components/ui/collapsible";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../src/components/ui/tabs";
+import { useUniversities } from "../../src/hooks/useQueries";
+import {
+  Search,
+  Filter,
+  Map,
+  List,
+  ChevronDown,
+  ChevronUp,
+  MapPin,
+  GraduationCap,
+  Users,
+  Building,
+  Globe,
+  X,
+  SlidersHorizontal,
+} from "lucide-react";
 
 interface University {
   id: string;
