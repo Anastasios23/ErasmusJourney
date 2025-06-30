@@ -392,6 +392,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "TU Wien",
     partnerCity: "Vienna",
     partnerCountry: "Austria",
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -399,6 +400,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "KU Leuven",
     partnerCity: "Leuven",
     partnerCountry: "Belgium",
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9974,7 +9976,7 @@ export const EUC_AGREEMENTS: UniversityAgreement[] = [
     homeUniversity: "EUC",
     homeDepartment: "Business and Administration",
     partnerUniversity:
-      "ISLA - Higher Institute of Management and Administration – Santarém (ISLA Santarém)",
+      "ISLA - Higher Institute of Management and Administration – Santarém (ISLA Santar��m)",
     partnerCity: "Santarém",
     partnerCountry: "Portugal",
   },
