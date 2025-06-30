@@ -390,7 +390,8 @@ export default function CourseMatching() {
                             {availableHostUniversities.length} partner
                             universities
                           </span>{" "}
-                          for {formData.homeDepartment} department from{" "}
+                          for {formData.homeDepartment} department at{" "}
+                          {formData.levelOfStudy} level from{" "}
                           {
                             cyprusUniversities.find(
                               (u) => u.code === formData.homeUniversity,
