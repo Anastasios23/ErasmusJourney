@@ -256,6 +256,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerUniversity: "Polytechnic of Šibenik",
     partnerCity: "Šibenik",
     partnerCountry: "Croatia",
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
