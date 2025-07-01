@@ -4533,6 +4533,430 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerCountry: "Slovakia",
     academicLevel: "master"
   },
+
+  // Engineering Management master
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Engineering Management (MSc)",
+    partnerUniversity: "ESME Sudria Engineering School",
+    partnerCity: "Paris",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Engineering Management (MSc)",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+
+  // Electrical Engineering bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "Technical University of Varna",
+    partnerCity: "Varna",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
+    partnerCity: "Vaasa",
+    partnerCountry: "Finland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "ESME Sudria Engineering School",
+    partnerCity: "Paris",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
+    partnerCity: "Köthen",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "University of Applied Sciences Stralsund",
+    partnerCity: "Stralsund",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "University of Applied Sciences Mittelhessen",
+    partnerCity: "Gießen",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "ASPETE - School of Pedagogical & Technological Education",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "University of Western Macedonia",
+    partnerCity: "Kozani",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "University of Patras",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "Elliniko Mesogeiako Panepistimio",
+    partnerCity: "Heraklion",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "Polytechneio Kritis",
+    partnerCity: "Chania",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "Universita del Salento",
+    partnerCity: "Lecce",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "Universita degli Studi di Perugia",
+    partnerCity: "Perugia",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "Rezeknes Tehnologiju Akademija",
+    partnerCity: "Rezekne",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "Universitatea Tehnica Cluj-Napoca",
+    partnerCity: "Cluj-Napoca",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "Kaunas University of Technology",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "Lublin University of Technology",
+    partnerCity: "Lublin",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "University of Oradea",
+    partnerCity: "Oradea",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "Politehnica University of Bucharest",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "University of Northern Denmark",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
+    partnerCity: "Vaasa",
+    partnerCountry: "Finland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "Slovak University of Agriculture in Nitra",
+    partnerCity: "Nitra",
+    partnerCountry: "Slovakia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "Polytechnic University of Catalonia",
+    partnerCity: "Barcelona",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (BSc)",
+    partnerUniversity: "UNIVERSITATEA NATIONALA DE STIINTA SI TEHNOLOGIE POLITEHNICA BUCURESTI",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+
+  // Electrical Engineering master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "Technical University of Varna",
+    partnerCity: "Varna",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
+    partnerCity: "Vaasa",
+    partnerCountry: "Finland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "ESME Sudria Engineering School",
+    partnerCity: "Paris",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
+    partnerCity: "Köthen",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "University of Applied Sciences Stralsund",
+    partnerCity: "Stralsund",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "University of Applied Sciences Mittelhessen",
+    partnerCity: "Gießen",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "ASPETE - School of Pedagogical & Technological Education",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "University of Western Macedonia",
+    partnerCity: "Kozani",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "University of Patras",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "Elliniko Mesogeiako Panepistimio",
+    partnerCity: "Heraklion",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "Polytechneio Kritis",
+    partnerCity: "Chania",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "Universita del Salento",
+    partnerCity: "Lecce",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "Universita degli Studi di Perugia",
+    partnerCity: "Perugia",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "Rezeknes Tehnologiju Akademija",
+    partnerCity: "Rezekne",
+    partnerCountry: "Latvia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "Universitatea Tehnica Cluj-Napoca",
+    partnerCity: "Cluj-Napoca",
+    partnerCountry: "Romania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "Kaunas University of Technology",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "Lublin University of Technology",
+    partnerCity: "Lublin",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "University of Oradea",
+    partnerCity: "Oradea",
+    partnerCountry: "Romania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "Politehnica University of Bucharest",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "University of Northern Denmark",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
+    partnerCity: "Vaasa",
+    partnerCountry: "Finland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "Slovak University of Agriculture in Nitra",
+    partnerCity: "Nitra",
+    partnerCountry: "Slovakia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "Polytechnic University of Catalonia",
+    partnerCity: "Barcelona",
+    partnerCountry: "Spain",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Electrical Engineering (MSc)",
+    partnerUniversity: "UNIVERSITATEA NATIONALA DE STIINTA SI TEHNOLOGIE POLITEHNICA BUCURESTI",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "master"
+  },
   
   
 
