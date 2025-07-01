@@ -5294,6 +5294,49 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+// Psychology bachelor
+
+ {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Psychology (PhD)",  
+    partnerUniversity: "Université Lumière Lyon 2",  
+    partnerCity: "Lyon",  
+    partnerCountry: "France",  
+    academicLevel: "phd"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Psychology (PhD)",  
+    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",  
+    partnerCity: "Athens",  
+    partnerCountry: "Greece",  
+    academicLevel: "phd"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Psychology (PhD)",  
+    partnerUniversity: "University of Ioannina",  
+    partnerCity: "Ioannina",  
+    partnerCountry: "Greece",  
+    academicLevel: "phd"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Psychology (PhD)",  
+    partnerUniversity: "University American College Skopje",  
+    partnerCity: "Skopje",  
+    partnerCountry: "North Macedonia",  
+    academicLevel: "phd"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Psychology (PhD)",  
+    partnerUniversity: "University of Novi Sad, Faculty of Philosophy",  
+    partnerCity: "Novi Sad",  
+    partnerCountry: "Serbia",  
+    academicLevel: "phd"  
+  }  ,
+
 
 // Psychology phd
 
