@@ -80,9 +80,9 @@ export default function CourseMatching() {
       ? // For UNIC, get unique departments from actual agreement data
         [
           ...new Set(
-            UNIC_COMPREHENSIVE_AGREEMENTS.map((agreement) =>
-              agreement.homeDepartment.trim(),
-            ),
+            UNIC_COMPREHENSIVE_AGREEMENTS.filter(
+              (agreement) => agreement.academicLevel === formData.levelOfStudy,
+            ).map((agreement) => agreement.homeDepartment.trim()),
           ),
         ]
       : selectedHomeUniversityId
@@ -133,7 +133,7 @@ export default function CourseMatching() {
           partnershipAgreements = UNIC_COMPREHENSIVE_AGREEMENTS.filter(
             (agreement) =>
               agreement.homeUniversity === university &&
-              agreement.homeDepartment.trim() === department &&
+              agreement.homeDepartment === department &&
               agreement.academicLevel === level,
           );
         } else {
