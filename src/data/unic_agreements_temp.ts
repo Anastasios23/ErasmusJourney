@@ -5294,6 +5294,50 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+
+//  Public Administration phd
+
+{
+    homeUniversity: "UNIC",
+    homeDepartment: "Public Administration (PhD)",
+    partnerUniversity: "University of Economics in Katowice",
+    partnerCity: "Katowice",
+    partnerCountry: "Poland",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Public Administration (PhD)",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Public Administration (PhD)",
+    partnerUniversity: "Université Lumière Lyon 2",
+    partnerCity: "Lyon",
+    partnerCountry: "France",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Public Administration (PhD)",
+    partnerUniversity: "Panteion University of Social and Political Sciences",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Public Administration (PhD)",
+    partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
+    partnerCity: "Rijeka",
+    partnerCountry: "Croatia",
+    academicLevel: "phd"
+  },
+  
 //Pharmacy (MPharm) bachelor
 
 {
