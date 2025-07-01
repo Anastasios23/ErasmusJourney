@@ -1,3 +1,4 @@
+
 // Temporary file for UNIC comprehensive agreements
 export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   // accounting bachelor
@@ -2634,6 +2635,18 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerCountry: "Netherlands",
     academicLevel: "master"
   },
+
+  // Criminology Master
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Criminology (MSc)",
+    partnerUniversity: "AGH University of Science and Technology",
+    partnerCity: "Krakow",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+
+
 
   // This is just the beginning - I'll need multiple parts due to size
 ];
