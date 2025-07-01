@@ -739,7 +739,1374 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
 
-  //
+  // Business Administration bachelor
+
+
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Applied Sciences BFI Vienna",
+    partnerCity: "Vienna",
+    partnerCountry: "Austria"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "KU Leuven",
+    partnerCity: "Leuven",
+    partnerCountry: "Belgium"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Technical University of Varna",
+    partnerCity: "Varna",
+    partnerCountry: "Bulgaria"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Hogeschool West-Vlaanderen Howest",
+    partnerCity: "Bruges/Kortrijk",
+    partnerCountry: "Belgium"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "VIVES University",
+    partnerCity: "West Flanders",
+    partnerCountry: "Belgium"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Agricultural University of Plovdiv",
+    partnerCity: "Plovdiv",
+    partnerCountry: "Bulgaria"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Libertas Business School",
+    partnerCity: "Zagreb/Dubrovnik",
+    partnerCountry: "Croatia"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
+    partnerCity: "Rijeka",
+    partnerCountry: "Croatia"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Polytechnic of Šibenik",
+    partnerCity: "Šibenik",
+    partnerCountry: "Croatia"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Collegium Fluminense Polytechnic of Rijeka",
+    partnerCity: "Rijeka",
+    partnerCountry: "Croatia"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Metropolitan University Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Brno University of Technology, Faculty of Business and Management",
+    partnerCity: "Brno",
+    partnerCountry: "Czech Republic"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Mendel University in Brno",
+    partnerCity: "Brno",
+    partnerCountry: "Czech Republic"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "VIA University College",
+    partnerCity: "Horsens",
+    partnerCountry: "Denmark"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Copenhagen Business Academy",
+    partnerCity: "Copenhagen",
+    partnerCountry: "Denmark"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University College of Northern Denmark - UCN",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Tallinn University",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Université de Tours",
+    partnerCity: "Tours",
+    partnerCountry: "France"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Institut Limayrac",
+    partnerCity: "Toulouse",
+    partnerCountry: "France"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Université Lumière Lyon 2",
+    partnerCity: "Lyon",
+    partnerCountry: "France"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Haaga-Helia University of Applied Sciences",
+    partnerCity: "Helsinki",
+    partnerCountry: "Finland"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Turun Ammattikorkeakoulu Oy",
+    partnerCity: "Turku",
+    partnerCountry: "Finland"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Tampere University of Applied Sciences",
+    partnerCity: "Tampere",
+    partnerCountry: "Finland"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Groupe ESC Troyes",
+    partnerCity: "Troyes",
+    partnerCountry: "France"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "EDC Business School",
+    partnerCity: "Paris",
+    partnerCountry: "France"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Ecole De Management De Normandie",
+    partnerCity: "Caen",
+    partnerCountry: "France"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Groupe Kedge Business School",
+    partnerCity: "Bordeaux",
+    partnerCountry: "France"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "ESC Rennes - School of Business",
+    partnerCity: "Rennes",
+    partnerCountry: "France"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Skema Business School Association",
+    partnerCity: "Lille",
+    partnerCountry: "France"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "ESCE International Business School",
+    partnerCity: "Paris",
+    partnerCountry: "France"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "IPAG Business School in Paris",
+    partnerCity: "Paris",
+    partnerCountry: "France"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Aalen University",
+    partnerCity: "Aalen",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Hochschule Emden/Leer",
+    partnerCity: "Emden/Leer",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Frankfurt University of Applied Sciences",
+    partnerCity: "Frankfurt",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
+    partnerCity: "Köthen",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Hochschule Merseburg",
+    partnerCity: "Merseburg",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Technische Hochschule Ingolstadt",
+    partnerCity: "Ingolstadt",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "SRH Berlin University of Applied Sciences",
+    partnerCity: "Berlin",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Universität Kassel",
+    partnerCity: "Kassel",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Hochschule Schmalkalden",
+    partnerCity: "Schmalkalden",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Leuphana Universitat Luneburg",
+    partnerCity: "Lüneburg",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Hochschule fur Angewandte Wissenschaften Munchen",
+    partnerCity: "Munich",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Leibniz Universität Hannover",
+    partnerCity: "Hanover",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Hochschule Stralsund",
+    partnerCity: "Stralsund",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Bielefeld",
+    partnerCity: "Bielefeld",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "UNIVERSITY OF PATRAS",
+    partnerCity: "Patras",
+    partnerCountry: "Greece"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Crete",
+    partnerCity: "Rethymno/Heraklion",
+    partnerCountry: "Greece"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Athens University of Economics and Business",
+    partnerCity: "Athens",
+    partnerCountry: "Greece"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of the Aegean ( Mytilene)",
+    partnerCity: "Mytilene",
+    partnerCountry: "Greece"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Hellenic Mediterranean University",
+    partnerCity: "Heraklion",
+    partnerCountry: "Greece"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Hellenic Open University",
+    partnerCity: "Patras",
+    partnerCountry: "Greece"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "UNIVERSITY OF THESSALY",
+    partnerCity: "Volos",
+    partnerCountry: "Greece"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Piraeus",
+    partnerCity: "Piraeus",
+    partnerCountry: "Greece"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "College of Dunaujvaros",
+    partnerCity: "Dunaújváros",
+    partnerCountry: "Hungary"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Haskolinn a Akureyri",
+    partnerCity: "Akureyri",
+    partnerCountry: "Iceland"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Padova",
+    partnerCity: "Padua",
+    partnerCountry: "Italy"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Universita di Pisa",
+    partnerCity: "Pisa",
+    partnerCountry: "Italy"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Universita Telematica Internazionale-Uninettuno",
+    partnerCity: "Rome",
+    partnerCountry: "Italy"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Foggia",
+    partnerCity: "Foggia",
+    partnerCountry: "Italy"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Siena",
+    partnerCity: "Siena",
+    partnerCountry: "Italy"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Salerno",
+    partnerCity: "Salerno",
+    partnerCountry: "Italy"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "RISEBA University of Applied Sciences",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Riga Technical University",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Rezeknes Tehnologiju Akademija",
+    partnerCity: "Rezekne",
+    partnerCountry: "Latvia"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Kaunas University of Technology",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Vilnius Business College",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Vytautas Magnus University Faculty of Economics and Management",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Vilniaus Kolegija University of Applied Sciences",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Vilnius University Business School",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "ISM University of Management and Economics",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Siauliu Valstybine Kolegija",
+    partnerCity: "Šiauliai",
+    partnerCountry: "Lithuania"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Saxion University of Applied Sciences",
+    partnerCity: "Enschede",
+    partnerCountry: "Netherlands"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Agder",
+    partnerCity: "Kristiansand",
+    partnerCountry: "Norway"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "LIEPAJAS UNIVERSITATE",
+    partnerCity: "Liepaja",
+    partnerCountry: "Latvia"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "State University of Applied Sciences in Wloclawek",
+    partnerCity: "Włocławek",
+    partnerCountry: "Poland"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Lodz",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Economics in Katowice",
+    partnerCity: "Katowice",
+    partnerCountry: "Poland"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Szczecin",
+    partnerCity: "Szczecin",
+    partnerCountry: "Poland"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Lazarski University",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "National Defence University Warsaw",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "The General Tadeusz Kościuszko Military Academy of Land Forces",
+    partnerCity: "Wrocław",
+    partnerCountry: "Poland"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Instituto Politecnico de Tomar",
+    partnerCity: "Tomar",
+    partnerCountry: "Portugal"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Instituto Politécnico Da Guarda",
+    partnerCity: "Guarda",
+    partnerCountry: "Portugal"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Instituto Europeu de Estudos Superiores",
+    partnerCity: "Porto",
+    partnerCountry: "Portugal"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "NOVA Lisbon",
+    partnerCity: "Lisbon",
+    partnerCountry: "Portugal"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Spesi - Sociedade de Promoção de Ensino Superior Imobiliário",
+    partnerCity: "Lisbon",
+    partnerCountry: "Portugal"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Academy of Economic Studies in Bucharest",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Romanian-American University",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Slovak University of Agriculture in Nitra",
+    partnerCity: "Nitra",
+    partnerCountry: "Slovakia"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Comenius University in Bratislava",
+    partnerCity: "Bratislava",
+    partnerCountry: "Slovakia"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Economics and Management of Bratislava",
+    partnerCity: "Bratislava",
+    partnerCountry: "Slovakia"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Maribor",
+    partnerCity: "Maribor",
+    partnerCountry: "Slovenia"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "UNIVERSITY OF LJUBLJANA",
+    partnerCity: "Ljubljana",
+    partnerCountry: "Slovenia"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Universitat de Girona",
+    partnerCity: "Girona",
+    partnerCountry: "Spain"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "CUNEF University",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Jaen",
+    partnerCity: "Jaén",
+    partnerCountry: "Spain"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Universidad Francisco de Vitoria",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Orebro University",
+    partnerCity: "Örebro",
+    partnerCountry: "Sweden"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Universidad Francisco de Vitoria (Madrid)",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Vaasa",
+    partnerCity: "Vaasa",
+    partnerCountry: "Finland"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Malta",
+    partnerCity: "Msida",
+    partnerCountry: "Malta"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of San Marino",
+    partnerCity: "San Marino",
+    partnerCountry: "San Marino"
+    academicLevel: "bachelor"
+  },
+
+  //  Business Administration master
+
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Applied Sciences BFI Vienna",
+    partnerCity: "Vienna",
+    partnerCountry: "Austria"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Technical University of Varna",
+    partnerCity: "Varna",
+    partnerCountry: "Bulgaria"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Haute Ecole de la Province de Liege",
+    partnerCity: "Liège",
+    partnerCountry: "Belgium"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Agricultural University of Plovdiv",
+    partnerCity: "Plovdiv",
+    partnerCountry: "Bulgaria"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
+    partnerCity: "Rijeka",
+    partnerCountry: "Croatia"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "International University Libertas",
+    partnerCity: "Zagreb",
+    partnerCountry: "Croatia"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Brno University of Technology, Faculty of Business and Management",
+    partnerCity: "Brno",
+    partnerCountry: "Czech Republic"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "VIA University College",
+    partnerCity: "Vejle",
+    partnerCountry: "Denmark"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University College of Northern Denmark - UCN",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Tallinn University",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Tallinn University of Technology",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "EDC Business School",
+    partnerCity: "Paris",
+    partnerCountry: "France"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Ecole De Management De Normandie",
+    partnerCity: "Caen",
+    partnerCountry: "France"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Groupe Kedge Business School",
+    partnerCity: "Tours",
+    partnerCountry: "France"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Skema Business School Association",
+    partnerCity: "Toulouse",
+    partnerCountry: "France"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Université Lumière Lyon 2",
+    partnerCity: "Troyes",
+    partnerCountry: "France"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "ESC Rennes - School of Business",
+    partnerCity: "Paris",
+    partnerCountry: "France"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Université de Tours",
+    partnerCity: "Tours",
+    partnerCountry: "France"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Institut Limayrac",
+    partnerCity: "Toulouse",
+    partnerCountry: "France"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Groupe ESC Troyes",
+    partnerCity: "Troyes",
+    partnerCountry: "France"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "ESCE International Business School",
+    partnerCity: "Paris",
+    partnerCountry: "France"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Hochschule Stralsund",
+    partnerCity: "Stralsund",
+    partnerCountry: "Germany"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Hochschule Emden/Leer",
+    partnerCity: "Emden",
+    partnerCountry: "Germany"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
+    partnerCity: "Köthen",
+    partnerCountry: "Germany"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "SRH Berlin University of Applied Sciences",
+    partnerCity: "Berlin",
+    partnerCountry: "Germany"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Universität Kassel",
+    partnerCity: "Kassel",
+    partnerCountry: "Germany"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Leuphana Universitat Luneburg",
+    partnerCity: "Lüneburg",
+    partnerCountry: "Germany"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Applied Management Studies",
+    partnerCity: "Mannheim",
+    partnerCountry: "Germany"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Universitry of Applied Sciences Schmalkalden",
+    partnerCity: "Schmalkalden",
+    partnerCountry: "Germany"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Applied Sciences Stralsund",
+    partnerCity: "Stralsund",
+    partnerCountry: "Germany"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Charokopeio Panepistimio",
+    partnerCity: "Athens",
+    partnerCountry: "Greece"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "UNIVERSITY OF THESSALY",
+    partnerCity: "Volos",
+    partnerCountry: "Greece"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of the Aegean ( Mytilene)",
+    partnerCity: "Mytilene",
+    partnerCountry: "Greece"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Hellenic Open University",
+    partnerCity: "Patras",
+    partnerCountry: "Greece"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Crete",
+    partnerCity: "Heraklion",
+    partnerCountry: "Greece"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Hellenic Mediterranean University",
+    partnerCity: "Crete",
+    partnerCountry: "Greece"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Siena",
+    partnerCity: "Siena",
+    partnerCountry: "Italy"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Salerno",
+    partnerCity: "Salerno",
+    partnerCountry: "Italy"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Universita Telematica Internazionale-Uninettuno",
+    partnerCity: "Rome",
+    partnerCountry: "Italy"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Riga Technical University",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Rezeknes Tehnologiju Akademija",
+    partnerCity: "Rezekne",
+    partnerCountry: "Latvia"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "RISEBA University of Applied Sciences",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Vilnius Business College",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "ISM University of Management and Economics",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Kaunas University of Technology",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Vilnius University Business School",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Vytautas Magnus University Faculty of Economics and Management",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Agder",
+    partnerCity: "Kristiansand",
+    partnerCountry: "Norway"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Amsterdam University of Applied Sciences",
+    partnerCity: "Amsterdam",
+    partnerCountry: "Netherlands"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Spesi - Sociedade de Promoção de Ensino Superior Imobiliário",
+    partnerCity: "Lisbon",
+    partnerCountry: "Portugal"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "NOVA Lisbon",
+    partnerCity: "Lisbon",
+    partnerCountry: "Portugal"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Economics in Katowice",
+    partnerCity: "Katowice",
+    partnerCountry: "Poland"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Szczecin",
+    partnerCity: "Szczecin",
+    partnerCountry: "Poland"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "State University of Applied Sciences in Wloclawek",
+    partnerCity: "Włocławek",
+    partnerCountry: "Poland"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Romanian-American University",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Academy of Economic Studies in Bucharest",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Maribor",
+    partnerCity: "Maribor",
+    partnerCountry: "Slovenia"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Slovak University of Agriculture in Nitra",
+    partnerCity: "Nitra",
+    partnerCountry: "Slovakia"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Comenius University in Bratislava",
+    partnerCity: "Bratislava",
+    partnerCountry: "Slovakia"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "UNIVERSITY OF LJUBLJANA",
+    partnerCity: "Ljubljana",
+    partnerCountry: "Slovenia"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Economics and Management of Bratislava",
+    partnerCity: "Bratislava",
+    partnerCountry: "Slovakia"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Universitat de Girona",
+    partnerCity: "Girona",
+    partnerCountry: "Spain"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Orebro University",
+    partnerCity: "Örebro",
+    partnerCountry: "Sweden"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of San Marino",
+    partnerCity: "San Marino",
+    partnerCountry: "San Marino"
+    academicLevel: "master"
+  },
+
+  
 
   // Note: This is a partial implementation. The full dataset would include all agreements for all universities.
   // For brevity, I'm showing the pattern with representative entries from each category.
