@@ -5294,6 +5294,105 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+// Pre-Primary Education bachelor
+
+{  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Pre-Primary Education (BEd)",  
+    partnerUniversity: "Theresianische Militärakademie Fachhochschul-Bachelorstudiengang Militärische Führung",  
+    partnerCity: "Wiener Neustadt",  
+    partnerCountry: "Austria",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Pre-Primary Education (BEd)",  
+    partnerUniversity: "University of the Aegean",  
+    partnerCity: "Mytilene",  
+    partnerCountry: "Greece",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Pre-Primary Education (BEd)",  
+    partnerUniversity: "Aristotle University of Thessaloniki",  
+    partnerCity: "Thessaloniki",  
+    partnerCountry: "Greece",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Pre-Primary Education (BEd)",  
+    partnerUniversity: "University of Patras",  
+    partnerCity: "Patras",  
+    partnerCountry: "Greece",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Pre-Primary Education (BEd)",  
+    partnerUniversity: "University of Crete",  
+    partnerCity: "Heraklion",  
+    partnerCountry: "Greece",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Pre-Primary Education (BEd)",  
+    partnerUniversity: "Hellenic Open University",  
+    partnerCity: "Patras",  
+    partnerCountry: "Greece",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Pre-Primary Education (BEd)",  
+    partnerUniversity: "Haskolinn a Akureyri",  
+    partnerCity: "Akureyri",  
+    partnerCountry: "Iceland",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Pre-Primary Education (BEd)",  
+    partnerUniversity: "Rezeknes Tehnologiju Akademija",  
+    partnerCity: "Rēzekne",  
+    partnerCountry: "Latvia",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Pre-Primary Education (BEd)",  
+    partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",  
+    partnerCity: "Kaunas",  
+    partnerCountry: "Lithuania",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Pre-Primary Education (BEd)",  
+    partnerUniversity: "Instituto Europeu de Estudos Superiores",  
+    partnerCity: "Funchal",  
+    partnerCountry: "Portugal",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Pre-Primary Education (BEd)",  
+    partnerUniversity: "University of Ostrava",  
+    partnerCity: "Ostrava",  
+    partnerCountry: "Czech Republic",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Pre-Primary Education (BEd)",  
+    partnerUniversity: "University of South-Eastern Norway",  
+    partnerCity: "Bø i Telemark",  
+    partnerCountry: "Norway",  
+    academicLevel: "bachelor"  
+  },
+
 // Psychology bachelor
 
  {  
