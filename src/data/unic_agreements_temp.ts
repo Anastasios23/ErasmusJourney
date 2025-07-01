@@ -3609,5 +3609,278 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "bachelor"
   },
 
+  // Computer Science master
+
+{
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "FH Joanneum University of Applied Sciences",
+    partnerCity: "Graz",
+    partnerCountry: "Austria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "Technical University of Varna",
+    partnerCity: "Varna",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "University of Ruse Angel Kanchev",
+    partnerCity: "Ruse",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "Mendel University in Brno",
+    partnerCity: "Brno",
+    partnerCountry: "Czech Republic",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "Czech Technical University in Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "University College of Northern Denmark - UCN",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "VIA University College",
+    partnerCity: "VIA (multiple cities, HQ in Herning)",
+    partnerCountry: "Denmark",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "ESME Sudria Engineering School",
+    partnerCity: "Paris",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "University of Applied Sciences Ingolstadt",
+    partnerCity: "Ingolstadt",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "University of Crete",
+    partnerCity: "Heraklion (Crete)",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "University of Patras",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "Aristotle University of Thessaloniki",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "Universitetet i Sorost-Norge",
+    partnerCity: "Sørøst-Norge",
+    partnerCountry: "Norway",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "Politechnika Warszawska",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "University of Lodz",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "AGH University of Science and Technology",
+    partnerCity: "Kraków",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "Polish-Japanese Academy of Information Technology",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "State University of Applied Sciences in Wloclawek",
+    partnerCity: "Włocławek",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "Politecnic of Coimbra",
+    partnerCity: "Coimbra",
+    partnerCountry: "Portugal",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "University Politehnica of Bucharest",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "Romanian-American University",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "UNIVERSITY OF LJUBLJANA",
+    partnerCity: "Ljubljana",
+    partnerCountry: "Slovenia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (MSc)",
+    partnerUniversity: "NOVA Lisbon",
+    partnerCity: "Lisbon",
+    partnerCountry: "Portugal",
+    academicLevel: "master"
+  },
+
+  //Computer Science phd
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (PhD)",
+    partnerUniversity: "Technical University of Varna",
+    partnerCity: "Varna",
+    partnerCountry: "Bulgaria",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (PhD)",
+    partnerUniversity: "University of Ruse Angel Kanchev",
+    partnerCity: "Ruse",
+    partnerCountry: "Bulgaria",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (PhD)",
+    partnerUniversity: "Czech Technical University in Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (PhD)",
+    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (PhD)",
+    partnerUniversity: "Polish-Japanese Academy of Information Technology",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (PhD)",
+    partnerUniversity: "University of Lodz",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (PhD)",
+    partnerUniversity: "Politechnika Warszawska",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Science (PhD)",
+    partnerUniversity: "University Politehnica of Bucharest",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "phd"
+  },
+
+  
+  
+
   // This is just the beginning - I'll need multiple parts due to size
 ];
