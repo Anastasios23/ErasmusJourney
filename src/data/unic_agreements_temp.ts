@@ -5335,7 +5335,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerCity: "Novi Sad",  
     partnerCountry: "Serbia",  
     academicLevel: "phd"  
-  }  ,
+  },
 
 
 // Psychology phd
