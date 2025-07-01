@@ -2283,7 +2283,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "University of Applied Sciences BFI Vienna",
     partnerCity: "Vienna",
-    partnerCountry: "Austria",,
+    partnerCountry: "Austria",
     academicLevel: "bachelor"
   },
   {
@@ -2291,7 +2291,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
-    partnerCountry: "Bulgaria",,
+    partnerCountry: "Bulgaria",
     academicLevel: "bachelor"
   },
   {
@@ -2299,7 +2299,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
-    partnerCountry: "Bulgaria",,
+    partnerCountry: "Bulgaria",
     academicLevel: "bachelor"
   },
   {
@@ -2307,7 +2307,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Univerity of Liege",
     partnerCity: "Liège",
-    partnerCountry: "Belgium",,
+    partnerCountry: "Belgium",
     academicLevel: "bachelor"
   },
   {
@@ -2315,7 +2315,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Haute École de la Province de Liège",
     partnerCity: "Liège",
-    partnerCountry: "Belgium",,
+    partnerCountry: "Belgium",
     academicLevel: "bachelor"
   },
   {
@@ -2323,7 +2323,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Polytechnic of Šibenik",
     partnerCity: "Šibenik",
-    partnerCountry: "Croatia",,
+    partnerCountry: "Croatia",
     academicLevel: "bachelor"
   },
   {
@@ -2331,7 +2331,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
     partnerCity: "Rijeka",
-    partnerCountry: "Croatia",,
+    partnerCountry: "Croatia",
     academicLevel: "bachelor"
   },
   {
@@ -2339,7 +2339,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Brno University of Technology, Faculty of Business and Management",
     partnerCity: "Brno",
-    partnerCountry: "Czech Republic",,
+    partnerCountry: "Czech Republic",
     academicLevel: "bachelor"
   },
   {
@@ -2347,7 +2347,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
-    partnerCountry: "Denmark",,
+    partnerCountry: "Denmark",
     academicLevel: "bachelor"
   },
   {
@@ -2355,7 +2355,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "VIA University College",
     partnerCity: "VIA University College (Horsens)",
-    partnerCountry: "Denmark",,
+    partnerCountry: "Denmark",
     academicLevel: "bachelor"
   },
   {
@@ -2363,7 +2363,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Copenhagen Business Academy",
     partnerCity: "Copenhagen",
-    partnerCountry: "Denmark",,
+    partnerCountry: "Denmark",
     academicLevel: "bachelor"
   },
   {
@@ -2371,7 +2371,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Tallinn University of Technology",
     partnerCity: "Tallinn",
-    partnerCountry: "Estonia",,
+    partnerCountry: "Estonia",
     academicLevel: "bachelor"
   },
   {
@@ -2379,7 +2379,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Université de Tours",
     partnerCity: "Tours",
-    partnerCountry: "France",,
+    partnerCountry: "France",
     academicLevel: "bachelor"
   },
   {
@@ -2387,7 +2387,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "ESC Rennes - School of Business",
     partnerCity: "Rennes",
-    partnerCountry: "France",,
+    partnerCountry: "France",
     academicLevel: "bachelor"
   },
   {
@@ -2395,7 +2395,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Institut Limayrac",
     partnerCity: "Toulouse",
-    partnerCountry: "France",,
+    partnerCountry: "France",
     academicLevel: "bachelor"
   },
   {
@@ -2403,7 +2403,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "EDC Business School",
     partnerCity: "Paris",
-    partnerCountry: "France",,
+    partnerCountry: "France",
     academicLevel: "bachelor"
   },
   {
@@ -2411,7 +2411,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Bauhaus-Universität Weimar",
     partnerCity: "Weimar",
-    partnerCountry: "Germany",,
+    partnerCountry: "Germany",
     academicLevel: "bachelor"
   },
   {
@@ -2419,7 +2419,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
-    partnerCountry: "Germany",,
+    partnerCountry: "Germany",
     academicLevel: "bachelor"
   },
   {
@@ -2427,7 +2427,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Athens University of Economics and Business - Research Center",
     partnerCity: "Athens",
-    partnerCountry: "Greece",,
+    partnerCountry: "Greece",
     academicLevel: "bachelor"
   },
   {
@@ -2435,7 +2435,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "University of the Aegean ( Mytilene)",
     partnerCity: "Mytilene (Lesbos)",
-    partnerCountry: "Greece",,
+    partnerCountry: "Greece",
     academicLevel: "bachelor"
   },
   {
@@ -2443,7 +2443,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "University of Patras",
     partnerCity: "Patras",
-    partnerCountry: "Greece",,
+    partnerCountry: "Greece",
     academicLevel: "bachelor"
   },
   {
@@ -2451,7 +2451,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Università degli Studi di Modena e Reggio Emilia",
     partnerCity: "Modena",
-    partnerCountry: "Italy",,
+    partnerCountry: "Italy",
     academicLevel: "bachelor"
   },
   {
@@ -2459,7 +2459,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Latvian Academy of Culture",
     partnerCity: "Riga",
-    partnerCountry: "Latvia",,
+    partnerCountry: "Latvia",
     academicLevel: "bachelor"
   },
   {
@@ -2467,7 +2467,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
-    partnerCountry: "Lithuania",,
+    partnerCountry: "Lithuania",
     academicLevel: "bachelor"
   },
   {
@@ -2475,7 +2475,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Vilnius University Business School",
     partnerCity: "Vilnius",
-    partnerCountry: "Lithuania",,
+    partnerCountry: "Lithuania",
     academicLevel: "bachelor"
   },
   {
@@ -2483,7 +2483,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Vilnius Business College",
     partnerCity: "Vilnius",
-    partnerCountry: "Lithuania",,
+    partnerCountry: "Lithuania",
     academicLevel: "bachelor"
   },
   {
@@ -2491,7 +2491,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
     partnerCity: "Kaunas",
-    partnerCountry: "Lithuania",,
+    partnerCountry: "Lithuania",
     academicLevel: "bachelor"
   },
   {
@@ -2499,7 +2499,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Instituto Politécnico Da Guarda",
     partnerCity: "Guarda",
-    partnerCountry: "Portugal",,
+    partnerCountry: "Portugal",
     academicLevel: "bachelor"
   },
   {
@@ -2507,7 +2507,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Universidade de Coimbra",
     partnerCity: "Coimbra",
-    partnerCountry: "Portugal",,
+    partnerCountry: "Portugal",
     academicLevel: "bachelor"
   },
   {
@@ -2515,7 +2515,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Instituto Politecnico de Tomar",
     partnerCity: "Tomar",
-    partnerCountry: "Portugal",,
+    partnerCountry: "Portugal",
     academicLevel: "bachelor"
   },
   {
@@ -2523,7 +2523,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "University of Lodz",
     partnerCity: "Lodz",
-    partnerCountry: "Poland",,
+    partnerCountry: "Poland",
     academicLevel: "bachelor"
   },
   {
@@ -2531,7 +2531,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "National Defence University Warsaw",
     partnerCity: "Warsaw",
-    partnerCountry: "Poland",,
+    partnerCountry: "Poland",
     academicLevel: "bachelor"
   },
   {
@@ -2539,7 +2539,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "The General Tadeusz Kościuszko Military Academy of Land Forces",
     partnerCity: "Warsaw",
-    partnerCountry: "Poland",,
+    partnerCountry: "Poland",
     academicLevel: "bachelor"
   },
   {
@@ -2547,7 +2547,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
-    partnerCountry: "Slovakia",,
+    partnerCountry: "Slovakia",
     academicLevel: "bachelor"
   },
   {
@@ -2555,7 +2555,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "University of Economics and Management of Bratislava",
     partnerCity: "Bratislava",
-    partnerCountry: "Slovakia",,
+    partnerCountry: "Slovakia",
     academicLevel: "bachelor"
   },
   {
@@ -2563,7 +2563,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "Comenius University in Bratislava",
     partnerCity: "Bratislava",
-    partnerCountry: "Slovakia",,
+    partnerCountry: "Slovakia",
     academicLevel: "bachelor"
   },
   {
@@ -2571,7 +2571,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Marketing management (BBA)",
     partnerUniversity: "University of Malta",
     partnerCity: "Valletta",
-    partnerCountry: "Malta",,
+    partnerCountry: "Malta",
     academicLevel: "bachelor"
   },
 
@@ -2582,7 +2582,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Blockchain & Digital Currency(MSc)",
     partnerUniversity: "University Politehnica of Bucharest",
     partnerCity: "Bucharest",
-    partnerCountry: "Romania",,
+    partnerCountry: "Romania",
     academicLevel: "master"
   },
 
@@ -2593,7 +2593,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "FH Joanneum University of Applied Sciences",
     partnerCity: "Graz",
-    partnerCountry: "Austria",,
+    partnerCountry: "Austria",
     academicLevel: "bachelor"
   },
   {
@@ -2601,7 +2601,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
-    partnerCountry: "Bulgaria",,
+    partnerCountry: "Bulgaria",
     academicLevel: "bachelor"
   },
   {
@@ -2609,7 +2609,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "VIA University College",
     partnerCity: "Aarhus",
-    partnerCountry: "Denmark",,
+    partnerCountry: "Denmark",
     academicLevel: "bachelor"
   },
   {
@@ -2617,7 +2617,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
     partnerCity: "Vaasa",
-    partnerCountry: "Finland",,
+    partnerCountry: "Finland",
     academicLevel: "bachelor"
   },
   {
@@ -2625,7 +2625,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "ESME Sudria Engineering School",
     partnerCity: "Paris",
-    partnerCountry: "France",,
+    partnerCountry: "France",
     academicLevel: "bachelor"
   },
   {
@@ -2633,7 +2633,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
-    partnerCountry: "Germany",,
+    partnerCountry: "Germany",
     academicLevel: "bachelor"
   },
   {
@@ -2641,7 +2641,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "Hochschule Schmalkalden",
     partnerCity: "Schmalkalden",
-    partnerCountry: "Germany",,
+    partnerCountry: "Germany",
     academicLevel: "bachelor"
   },
   {
@@ -2649,7 +2649,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "University of Ioannina",
     partnerCity: "Ioannina",
-    partnerCountry: "Greece",,
+    partnerCountry: "Greece",
     academicLevel: "bachelor"
   },
   {
@@ -2657,7 +2657,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
     partnerCity: "Athens",
-    partnerCountry: "Greece",,
+    partnerCountry: "Greece",
     academicLevel: "bachelor"
   },
   {
@@ -2665,7 +2665,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "University of Patras",
     partnerCity: "Patras",
-    partnerCountry: "Greece",,
+    partnerCountry: "Greece",
     academicLevel: "bachelor"
   },
   {
@@ -2673,7 +2673,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "University of Western Macedonia",
     partnerCity: "Kozani",
-    partnerCountry: "Greece",,
+    partnerCountry: "Greece",
     academicLevel: "bachelor"
   },
   {
@@ -2681,7 +2681,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "Polytechneio Kritis",
     partnerCity: "Chania",
-    partnerCountry: "Greece",,
+    partnerCountry: "Greece",
     academicLevel: "bachelor"
   },
   {
@@ -2689,7 +2689,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "Universita del Salento",
     partnerCity: "Lecce",
-    partnerCountry: "Italy",,
+    partnerCountry: "Italy",
     academicLevel: "bachelor"
   },
   {
@@ -2697,7 +2697,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "Universita degli Studi di Perugia",
     partnerCity: "Perugia",
-    partnerCountry: "Italy",,
+    partnerCountry: "Italy",
     academicLevel: "bachelor"
   },
   {
@@ -2705,7 +2705,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "LIEPAJAS UNIVERSITATE",
     partnerCity: "Liepaja",
-    partnerCountry: "Latvia",,
+    partnerCountry: "Latvia",
     academicLevel: "bachelor"
   },
   {
@@ -2713,7 +2713,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "Polish-Japanese Academy of Information Technology",
     partnerCity: "Warsaw",
-    partnerCountry: "Poland",,
+    partnerCountry: "Poland",
     academicLevel: "bachelor"
   },
   {
@@ -2721,7 +2721,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "State University of Applied Sciences in Wloclawek",
     partnerCity: "Wloclawek",
-    partnerCountry: "Poland",,
+    partnerCountry: "Poland",
     academicLevel: "bachelor"
   },
   {
@@ -2729,7 +2729,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "Instituto Europeu de Estudos Superiores",
     partnerCity: "Fafe",
-    partnerCountry: "Portugal",,
+    partnerCountry: "Portugal",
     academicLevel: "bachelor"
   },
   {
@@ -2737,7 +2737,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "Instituto Politécnico Da Guarda",
     partnerCity: "Guarda",
-    partnerCountry: "Portugal",,
+    partnerCountry: "Portugal",
     academicLevel: "bachelor"
   },
   {
@@ -2745,7 +2745,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "University Politehnica of Bucharest",
     partnerCity: "Bucharest",
-    partnerCountry: "Romania",,
+    partnerCountry: "Romania",
     academicLevel: "bachelor"
   },
   {
@@ -2753,7 +2753,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "Universitatea Tehnica Cluj-Napoca",
     partnerCity: "Cluj-Napoca",
-    partnerCountry: "Romania",,
+    partnerCountry: "Romania",
     academicLevel: "bachelor"
   },
   {
@@ -2761,7 +2761,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
-    partnerCountry: "Slovakia",,
+    partnerCountry: "Slovakia",
     academicLevel: "bachelor"
   },
   {
@@ -2769,7 +2769,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "Universidad Complutense de Madrid",
     partnerCity: "Madrid",
-    partnerCountry: "Spain",,
+    partnerCountry: "Spain",
     academicLevel: "bachelor"
   },
   {
@@ -2777,7 +2777,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Computer Engineering (BSc)",
     partnerUniversity: "UNIVERSITETET I SOROST-NORGE",
     partnerCity: "Kongsberg",
-    partnerCountry: "Norway",,
+    partnerCountry: "Norway",
     academicLevel: "bachelor"
   },
 
@@ -2788,7 +2788,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Contemporary Nursing (MSc)",
     partnerUniversity: "Trakia University",
     partnerCity: "Stara Zagora",
-    partnerCountry: "Bulgaria",,
+    partnerCountry: "Bulgaria",
     academicLevel: "master"
   },
   {
@@ -2796,7 +2796,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Contemporary Nursing (MSc)",
     partnerUniversity: "University of Thessaly",
     partnerCity: "Volos",
-    partnerCountry: "Greece",,
+    partnerCountry: "Greece",
     academicLevel: "master"
   },
   {
@@ -2804,7 +2804,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: "Contemporary Nursing (MSc)",
     partnerUniversity: "State University of Applied Sciences in Wloclawek",
     partnerCity: "Wloclawek",
-    partnerCountry: "Poland",,
+    partnerCountry: "Poland",
     academicLevel: "master"
   },
   {
