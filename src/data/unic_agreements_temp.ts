@@ -2646,7 +2646,146 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+  // Civil and Environmental Engineer bachelor
 
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "FH Joanneum University of Applied Sciences",
+    partnerCity: "Graz",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "Technical University of Varna",
+    partnerCity: "Varna",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "University of Northern Denmark",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "VIA University College",
+    partnerCity: "Aarhus",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "University of Western Macedonia",
+    partnerCity: "Kozani",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "Siauliu Valstybine Kolegija",
+    partnerCity: "Šiauliai",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "Kaunas University of Technology",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "Saxion University of Applied Sciences",
+    partnerCity: "Enschede",
+    partnerCountry: "Netherlands",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "Politecnic of Coimbra",
+    partnerCity: "Coimbra",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "Universidade do Porto",
+    partnerCity: "Porto",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "Orebro University",
+    partnerCity: "Örebro",
+    partnerCountry: "Sweden",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "Universitatea Tehnica Cluj-Napoca",
+    partnerCity: "Cluj-Napoca",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "Lublin University of Technology",
+    partnerCity: "Lublin",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "UNIVERSITATEA NATIONALA DE STIINTA SI TEHNOLOGIE POLITEHNICA BUCURESTI",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Civil and Environmental Engineer (BSc)",
+    partnerUniversity: "University of San Marino",
+    partnerCity: "San Marino",
+    partnerCountry: "San Marino",
+    academicLevel: "bachelor"
+  },
+
+  
 
   // This is just the beginning - I'll need multiple parts due to size
 ];
