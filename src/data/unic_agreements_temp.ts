@@ -5295,6 +5295,81 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
 
 
+// Public Administration master
+
+{
+    homeUniversity: "UNIC",
+    homeDepartment: "Public Administration (MPA)",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Public Administration (MPA)",
+    partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
+    partnerCity: "Rijeka",
+    partnerCountry: "Croatia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Public Administration (MPA)",
+    partnerUniversity: "Université de Tours",
+    partnerCity: "Tours",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Public Administration (MPA)",
+    partnerUniversity: "Université Lumière Lyon 2",
+    partnerCity: "Lyon",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Public Administration (MPA)",
+    partnerUniversity: "Panteion University of Social and Political Sciences",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Public Administration (MPA)",
+    partnerUniversity: "Saxion University of Applied Sciences",
+    partnerCity: "Enschede",
+    partnerCountry: "Netherlands",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Public Administration (MPA)",
+    partnerUniversity: "Radboud University Nijmegen",
+    partnerCity: "Nijmegen",
+    partnerCountry: "Netherlands",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Public Administration (MPA)",
+    partnerUniversity: "University of Lodz",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Public Administration (MPA)",
+    partnerUniversity: "University of Economics in Katowice",
+    partnerCity: "Katowice",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+
 //  Public Administration phd
 
 {
@@ -5337,7 +5412,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerCountry: "Croatia",
     academicLevel: "phd"
   },
-  
+
 //Pharmacy (MPharm) bachelor
 
 {
