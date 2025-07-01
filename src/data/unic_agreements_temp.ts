@@ -5294,6 +5294,36 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+
+
+
+//Physiotherapy phd
+
+{
+    homeUniversity: "UNIC",
+    homeDepartment: "Physiotherapy (PhD)",
+    partnerUniversity: "National sports Academy Vassil Levski",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Physiotherapy (PhD)",
+    partnerUniversity: "Trakia University",
+    partnerCity: "Stara Zagora",
+    partnerCountry: "Bulgaria",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Physiotherapy (PhD)",
+    partnerUniversity: "University of Thessaly",
+    partnerCity: "Volos",
+    partnerCountry: "Greece",
+    academicLevel: "phd"
+  },
+
 // Social Work bachelor
 
 {
@@ -5465,7 +5495,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "bachelor"
   },
 
-  
+
 
 // Social Work master
 
