@@ -5294,6 +5294,18 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+
+  //Oil, Gas and Energy Eng phd
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Oil, Gas and Energy Eng (PhD)",
+    partnerUniversity: "Polytechnic Institute of Setúbal",
+    partnerCity: "Setúbal",
+    partnerCountry: "Portugal",
+    academicLevel: "phd"
+  },
+
   // Orthopedic Sc and Rehab master
 
   {
