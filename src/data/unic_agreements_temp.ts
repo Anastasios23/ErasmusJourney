@@ -5294,6 +5294,153 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+  // PR, Advertising and Marketing bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "FHWien der WKW - University of Applied Sciences for Management & Communication",
+    partnerCity: "Vienna",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "Hogeschool West-Vlaanderen Howest",
+    partnerCity: "Kortrijk",
+    partnerCountry: "Belgium",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "Haute Ecole de la Ville de Liege",
+    partnerCity: "Liège",
+    partnerCountry: "Belgium",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "Haute École de la Province de Liège",
+    partnerCity: "Liège",
+    partnerCountry: "Belgium",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
+    partnerCity: "Rijeka",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "Université de Tours",
+    partnerCity: "Tours",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "Aristotle University of Thessaloniki",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "Latvian Academy of Culture",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "Uniwersytet Łódzki",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "AGH University of Science and Technology",
+    partnerCity: "Kraków",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "University of Warsaw",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "Instituto Politécnico Da Guarda",
+    partnerCity: "Guarda",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "Slovak University of Agriculture in Nitra",
+    partnerCity: "Nitra",
+    partnerCountry: "Slovakia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "Univerzita Komenského v Bratislave",
+    partnerCity: "Bratislava",
+    partnerCountry: "Slovakia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "Univerza v Ljubljani",
+    partnerCity: "Ljubljana",
+    partnerCountry: "Slovenia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "PR, Advertising and Marketing (BA)",
+    partnerUniversity: "University of Tallinn",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia",
+    academicLevel: "bachelor"
+  },
+
 // Primary Education bachelor
 
 {  
