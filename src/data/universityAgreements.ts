@@ -2585,7 +2585,8 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
     academicLevel: "master"
-},
+  },
+  
 
   // Note: This is a partial implementation. The full dataset would include all agreements for all universities.
   // For brevity, I'm showing the pattern with representative entries from each category.
