@@ -24,7 +24,7 @@ const ConnectionTester = () => {
         }, 2000);
 
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/health`,
+          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/health`,
           {
             method: "GET",
             signal: controller.signal,
