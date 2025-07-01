@@ -3139,5 +3139,33 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "bachelor"
   },
 
+  // Energy, Oil and Gas Management bachelor
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Energy, Oil and Gas Management (BSc) ",
+    partnerUniversity: "FH JOANNEUM GmbH",
+    partnerCity: "Graz",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Energy, Oil and Gas Management (BSc) ",
+    partnerUniversity: "Politecnico Setubal-Tecnologia Barreiro",
+    partnerCity: "Barreiro (Lavradio)",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Energy, Oil and Gas Management (BSc) ",
+    partnerUniversity: "Diethnes Panepistimio Ellados",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+
+  
+
   // This is just the beginning - I'll need multiple parts due to size
 ];
