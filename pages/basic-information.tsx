@@ -331,6 +331,7 @@ export default function BasicInformation() {
                   <div className="space-y-2">
                     <Label htmlFor="levelOfStudy">Level of Study</Label>
                     <Select
+                      value={formData.levelOfStudy}
                       onValueChange={(value) =>
                         handleInputChange("levelOfStudy", value)
                       }
@@ -344,6 +345,11 @@ export default function BasicInformation() {
                         <SelectItem value="phd">PhD</SelectItem>
                       </SelectContent>
                     </Select>
+                    {!formData.levelOfStudy && (
+                      <p className="text-xs text-blue-600">
+                        Required for UNIC - affects available partnerships
+                      </p>
+                    )}
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
@@ -423,7 +429,7 @@ export default function BasicInformation() {
                   </div>
 
                   {formData.department &&
-                    availableHostUniversities.length > 0 && (
+                    (availableHostUniversities.length > 0 ? (
                       <div className="p-4 bg-green-50 rounded-lg border border-green-200 mb-4">
                         <p className="text-sm text-green-800">
                           <strong>Partnerships Available:</strong> Found{" "}
@@ -431,7 +437,11 @@ export default function BasicInformation() {
                             {availableHostUniversities.length} partner
                             universities
                           </span>{" "}
-                          for {formData.department} department from{" "}
+                          for {formData.department} department
+                          {formData.universityInCyprus === "UNIC" &&
+                            formData.levelOfStudy &&
+                            ` at ${formData.levelOfStudy} level`}{" "}
+                          from{" "}
                           {
                             cyprusUniversities.find(
                               (u) => u.code === formData.universityInCyprus,
@@ -440,7 +450,27 @@ export default function BasicInformation() {
                           .
                         </p>
                       </div>
-                    )}
+                    ) : formData.universityInCyprus === "UNIC" &&
+                      !formData.levelOfStudy ? (
+                      <div className="p-4 bg-amber-50 rounded-lg border border-amber-200 mb-4">
+                        <p className="text-sm text-amber-800">
+                          <strong>Level Required:</strong> Please select your
+                          level of study to see available partnerships for UNIC.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="p-4 bg-red-50 rounded-lg border border-red-200 mb-4">
+                        <p className="text-sm text-red-800">
+                          <strong>No Partnerships Found:</strong> No partner
+                          universities found for {formData.department}{" "}
+                          department
+                          {formData.universityInCyprus === "UNIC" &&
+                            formData.levelOfStudy &&
+                            ` at ${formData.levelOfStudy} level`}
+                          . Please contact your university.
+                        </p>
+                      </div>
+                    ))}
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
