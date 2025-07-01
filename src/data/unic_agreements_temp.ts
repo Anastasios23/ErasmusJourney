@@ -2785,7 +2785,20 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "bachelor"
   },
 
-  
+  // Clinical Dietetics Master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Clinical Dietetics (MSc)",
+    partnerUniversity: "Agricultural University of Athens",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+
+// Clinical Psychology master
+
+
 
   // This is just the beginning - I'll need multiple parts due to size
 ];
