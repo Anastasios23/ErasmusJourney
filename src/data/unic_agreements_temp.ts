@@ -4371,7 +4371,169 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
-  //
+  // Economics and Finance bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
+    partnerCity: "Rijeka",
+    partnerCountry: "Croatia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "Brno University of Technology, Faculty of Business and Management",
+    partnerCity: "Brno",
+    partnerCountry: "Czech Republic",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "International University Libertas",
+    partnerCity: "Zagreb",
+    partnerCountry: "Croatia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "University College of Northern Denmark - UCN",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "Université de Tours",
+    partnerCity: "Tours",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "ESC Rennes - School of Business",
+    partnerCity: "Rennes",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "Universität Kassel",
+    partnerCity: "Kassel",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
+    partnerCity: "Köthen",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "University of Crete",
+    partnerCity: "Heraklion",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "University of Peloponnese",
+    partnerCity: "Tripoli",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "UNIVERSITY OF THESSALY",
+    partnerCity: "Volos",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "Vilnius University Business School",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "Kaunas University of Technology",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "State University of Applied Sciences in Wloclawek",
+    partnerCity: "Włocławek",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "University of Economics in Katowice",
+    partnerCity: "Katowice",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "Instituto Politécnico Da Guarda",
+    partnerCity: "Guarda",
+    partnerCountry: "Portugal",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "Romanian-American University",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Economics and Finance",
+    partnerUniversity: "Slovak University of Agriculture in Nitra",
+    partnerCity: "Nitra",
+    partnerCountry: "Slovakia",
+    academicLevel: "master"
+  },
+  
   
 
   // This is just the beginning - I'll need multiple parts due to size
