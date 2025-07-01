@@ -2781,7 +2781,41 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerCountry: "Norway",
     academicLevel: "bachelor"
   },
-  
+
+  // Contemporary Nursing  master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Contemporary Nursing (MSc)",
+    partnerUniversity: "Trakia University",
+    partnerCity: "Stara Zagora",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Contemporary Nursing (MSc)",
+    partnerUniversity: "University of Thessaly",
+    partnerCity: "Volos",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Contemporary Nursing (MSc)",
+    partnerUniversity: "State University of Applied Sciences in Wloclawek",
+    partnerCity: "Wloclawek",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Contemporary Nursing (MSc)",
+    partnerUniversity: "Instituto Politécnico Da Guarda",
+    partnerCity: "Guarda",
+    partnerCountry: "Portugal",
+    academicLevel: "master"
+  },
 
   // Note: This is a partial implementation. The full dataset would include all agreements for all universities.
   // For brevity, I'm showing the pattern with representative entries from each category.
