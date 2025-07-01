@@ -2106,6 +2106,177 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
 
+  // Business Administration phd
+
+   {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Technical University of Varna",
+    partnerCity: "Varna",
+    partnerCountry: "Bulgaria"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
+    partnerCity: "Rijeka",
+    partnerCountry: "Croatia"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Metropolitan University Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Brno University of Technology, Faculty of Business and Management",
+    partnerCity: "Brno",
+    partnerCountry: "Czech Republic"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Tallinn University",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Tallinn University of Technology",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "ESCE International Business School",
+    partnerCity: "Paris",
+    partnerCountry: "France"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "SRH Berlin University of Applied Sciences",
+    partnerCity: "Berlin",
+    partnerCountry: "Germany"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "UNIVERSITY OF THESSALY",
+    partnerCity: "Volos",
+    partnerCountry: "Greece"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Siena",
+    partnerCity: "Siena",
+    partnerCountry: "Italy"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "RISEBA University of Applied Sciences",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Vytautas Magnus University Agriculture Academy",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Agder",
+    partnerCity: "Kristiansand",
+    partnerCountry: "Norway"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Saxion University of Applied Sciences",
+    partnerCity: "Enschede",
+    partnerCountry: "Netherlands"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Amsterdam University of Applied Sciences",
+    partnerCity: "Amsterdam",
+    partnerCountry: "Netherlands"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Economics in Katowice",
+    partnerCity: "Katowice",
+    partnerCountry: "Poland"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Lodz",
+    partnerCity: "Lodz",
+    partnerCountry: "Poland"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Academy of Economic Studies in Bucharest",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "Slovak University of Agriculture in Nitra",
+    partnerCity: "Nitra",
+    partnerCountry: "Slovakia"
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Business Administration",
+    partnerUniversity: "University of Economics and Management of Bratislava",
+    partnerCity: "Bratislava",
+    partnerCountry: "Slovakia"
+    academicLevel: "phd"
+  },
+
   
 
   // Note: This is a partial implementation. The full dataset would include all agreements for all universities.
