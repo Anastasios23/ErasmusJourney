@@ -30,6 +30,7 @@ import {
   getAgreementsByDepartment,
   getAgreementsByDepartmentAndLevel,
 } from "../src/data/universityAgreements";
+import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp";
 
 interface Course {
   name: string;
@@ -74,10 +75,21 @@ export default function CourseMatching() {
   const cyprusUniversities = CYPRUS_UNIVERSITIES;
 
   // Get departments for selected Cyprus university
-  const homeDepartments = selectedHomeUniversityId
-    ? cyprusUniversities.find((u) => u.code === selectedHomeUniversityId)
-        ?.departments || []
-    : [];
+  const homeDepartments =
+    selectedHomeUniversityId === "UNIC"
+      ? // For UNIC, get unique departments from actual agreement data
+        [
+          ...new Set(
+            UNIC_COMPREHENSIVE_AGREEMENTS.map((agreement) =>
+              agreement.homeDepartment.trim(),
+            ),
+          ),
+        ]
+      : selectedHomeUniversityId
+        ? // For other universities, use the predefined departments
+          cyprusUniversities.find((u) => u.code === selectedHomeUniversityId)
+            ?.departments || []
+        : [];
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -106,13 +118,33 @@ export default function CourseMatching() {
         field === "homeDepartment" ? value : formData.homeDepartment;
       const level = field === "levelOfStudy" ? value : formData.levelOfStudy;
 
-      // Only filter partnerships if all three fields are selected
-      if (university && department && level) {
-        const partnershipAgreements = getAgreementsByDepartmentAndLevel(
-          university,
-          department,
-          level as "bachelor" | "master" | "phd",
-        );
+      // For UNIC, require all three fields (university, department, level)
+      // For other universities, only require university and department
+      const shouldFilter =
+        university === "UNIC"
+          ? university && department && level
+          : university && department;
+
+      if (shouldFilter) {
+        let partnershipAgreements;
+
+        if (university === "UNIC") {
+          // Use UNIC specific data with level filtering
+          partnershipAgreements = UNIC_COMPREHENSIVE_AGREEMENTS.filter(
+            (agreement) =>
+              agreement.homeUniversity === university &&
+              agreement.homeDepartment.trim() === department &&
+              agreement.academicLevel === level,
+          );
+        } else {
+          // Use existing data for other universities
+          partnershipAgreements = getAgreementsByDepartmentAndLevel(
+            university,
+            department,
+            level as "bachelor" | "master" | "phd",
+          );
+        }
+
         const hostUniversities = partnershipAgreements.map((agreement) => ({
           university: agreement.partnerUniversity,
           city: agreement.partnerCity,
@@ -136,7 +168,7 @@ export default function CourseMatching() {
           }));
         }
       } else {
-        // Clear partnerships if not all fields are selected
+        // Clear partnerships if required fields are not selected
         setAvailableHostUniversities([]);
       }
     }
