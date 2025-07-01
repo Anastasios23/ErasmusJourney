@@ -5294,6 +5294,33 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+  // Oil and Gas Engineering bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Oil and Gas Engineering (BSc)",
+    partnerUniversity: "University of Northern Denmark",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Oil and Gas Engineering (BSc)",
+    partnerUniversity: "University of Western Macedonia",
+    partnerCity: "Kozani",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Oil and Gas Engineering (BSc)",
+    partnerUniversity: "Polytechnic Institute of Setúbal",
+    partnerCity: "Setúbal",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+
   // Oil and Gas Engineering master
 
   {
