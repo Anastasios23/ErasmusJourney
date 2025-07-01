@@ -73,7 +73,7 @@ const originalConsoleError = console.error;
 console.error = (...args) => {
   const message = args.join(" ");
   if (
-    !import.meta.env.DEV &&
+    process.env.NODE_ENV !== "development" &&
     (message.includes("Failed to fetch") ||
       message.includes("Backend connection failed") ||
       message.includes("NetworkError") ||
