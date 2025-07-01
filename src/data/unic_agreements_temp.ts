@@ -5294,6 +5294,41 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+  // Oil and Gas Engineering master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Oil and Gas Engineering (MSc)",
+    partnerUniversity: "FH JOANNEUM GmbH",
+    partnerCity: "Graz",
+    partnerCountry: "Austria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Oil and Gas Engineering (MSc)",
+    partnerUniversity: "University of Western Macedonia",
+    partnerCity: "Kozani",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Oil and Gas Engineering (MSc)",
+    partnerUniversity: "University of Stavanger",
+    partnerCity: "Stavanger",
+    partnerCountry: "Norway",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Oil and Gas Engineering (MSc)",
+    partnerUniversity: "Polytechnic Institute of Setúbal",
+    partnerCity: "Setúbal",
+    partnerCountry: "Portugal",
+    academicLevel: "master"
+  },
+
 
   //Oil, Gas and Energy Eng phd
 
