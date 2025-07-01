@@ -5294,6 +5294,41 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+//Pharmacy (MPharm) bachelor
+
+{
+    homeUniversity: "UNIC",
+    homeDepartment: "Pharmacy (MPharm)",
+    partnerUniversity: "University of Patras",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Pharmacy (MPharm)",
+    partnerUniversity: "ARISTOTELIO PANEPISTIMIO THESSALONIKIS",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Pharmacy (MPharm)",
+    partnerUniversity: "University of Peloponnese",
+    partnerCity: "Tripoli",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Pharmacy (MPharm)",
+    partnerUniversity: "Masarykova univerzita",
+    partnerCity: "Brno",
+    partnerCountry: "Czech Republic",
+    academicLevel: "bachelor"
+  },
+
 // Physiotherapy bachelor
 
 {
