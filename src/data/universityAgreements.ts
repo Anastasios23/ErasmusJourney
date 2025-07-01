@@ -405,7 +405,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
   // Architecture bachelor
 
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "TU Wien",
     partnerCity: "Vienna",
@@ -413,7 +413,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "KU Leuven",
     partnerCity: "Leuven",
@@ -421,7 +421,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
@@ -429,7 +429,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "National - Higher School of Architecture- Marseille",
     partnerCity: "Marseille",
@@ -437,7 +437,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Larissa",
@@ -445,7 +445,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "University of West Attica / Panepistimio Dytikis Attikis",
     partnerCity: "Athens",
@@ -453,7 +453,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Aristotle University of Thessaloniki",
     partnerCity: "Thessaloniki",
@@ -461,7 +461,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "National Technical University of Athens",
     partnerCity: "Athens",
@@ -469,7 +469,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Bauhaus-Universität Weimar",
     partnerCity: "Weimar",
@@ -477,7 +477,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Bernburg",
@@ -485,7 +485,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "University of Naples Federico II",
     partnerCity: "Naples",
@@ -493,7 +493,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Universita Iuav di Venezia",
     partnerCity: "Venice",
@@ -501,7 +501,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "University of Trieste",
     partnerCity: "Trieste",
@@ -509,7 +509,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "RISEBA University of Applied Sciences",
     partnerCity: "Riga",
@@ -517,7 +517,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
@@ -525,7 +525,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Universidade do Minho",
     partnerCity: "Braga",
@@ -533,7 +533,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Universitatea Tehnica Cluj-Napoca",
     partnerCity: "Cluj-Napoca",
@@ -541,7 +541,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "UNIVERSITY OF ALICANTE",
     partnerCity: "Alicante",
@@ -549,7 +549,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Technical University of Madrid",
     partnerCity: "Madrid",
@@ -557,7 +557,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Umea School of Architecture",
     partnerCity: "Umeå",
@@ -567,7 +567,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
 
   // Architecture Master
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "TU Wien",
     partnerCity: "Vienna",
@@ -575,7 +575,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "KU Leuven",
     partnerCity: "Leuven",
@@ -583,7 +583,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
@@ -591,7 +591,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "National - Higher School of Architecture- Marseille",
     partnerCity: "Marseille",
@@ -599,7 +599,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Larissa",
@@ -607,7 +607,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "University of West Attica / Panepistimio Dytikis Attikis",
     partnerCity: "Athens",
@@ -615,7 +615,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Aristotle University of Thessaloniki",
     partnerCity: "Thessaloniki",
@@ -623,7 +623,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "National Technical University of Athens",
     partnerCity: "Athens",
@@ -631,7 +631,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Bauhaus-Universität Weimar",
     partnerCity: "Weimar",
@@ -639,7 +639,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Bernburg",
@@ -647,7 +647,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "University of Naples Federico II",
     partnerCity: "Naples",
@@ -655,7 +655,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Universita Iuav di Venezia",
     partnerCity: "Venice",
@@ -663,7 +663,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "RISEBA University of Applied Sciences",
     partnerCity: "Riga",
@@ -671,7 +671,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
@@ -679,7 +679,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Universidade do Minho",
     partnerCity: "Braga",
@@ -687,7 +687,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Universitatea Tehnica Cluj-Napoca",
     partnerCity: "Cluj-Napoca",
@@ -695,7 +695,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "UNIVERSITY OF ALICANTE",
     partnerCity: "Alicante",
@@ -703,7 +703,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Technical University of Madrid",
     partnerCity: "Madrid",
@@ -711,7 +711,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Architecture",
     partnerUniversity: "Umea School of Architecture",
     partnerCity: "Umeå",
@@ -722,7 +722,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
   // Biomedical Sciences master
 
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Biomedical Sciences",
     partnerUniversity: "Trakia University",
     partnerCity: "Stara Zagora",
@@ -730,7 +730,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Biomedical Sciences",
     partnerUniversity: "University of Foggia",
     partnerCity: "Foggia",
@@ -742,7 +742,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
 
 
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Applied Sciences BFI Vienna",
     partnerCity: "Vienna",
@@ -750,7 +750,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "KU Leuven",
     partnerCity: "Leuven",
@@ -758,7 +758,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
@@ -766,7 +766,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Hogeschool West-Vlaanderen Howest",
     partnerCity: "Bruges/Kortrijk",
@@ -774,7 +774,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "VIVES University",
     partnerCity: "West Flanders",
@@ -782,7 +782,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Agricultural University of Plovdiv",
     partnerCity: "Plovdiv",
@@ -790,7 +790,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
@@ -798,7 +798,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Libertas Business School",
     partnerCity: "Zagreb/Dubrovnik",
@@ -806,7 +806,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
     partnerCity: "Rijeka",
@@ -814,7 +814,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Polytechnic of Šibenik",
     partnerCity: "Šibenik",
@@ -822,7 +822,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Collegium Fluminense Polytechnic of Rijeka",
     partnerCity: "Rijeka",
@@ -830,7 +830,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Metropolitan University Prague",
     partnerCity: "Prague",
@@ -838,7 +838,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Brno University of Technology, Faculty of Business and Management",
     partnerCity: "Brno",
@@ -846,7 +846,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Mendel University in Brno",
     partnerCity: "Brno",
@@ -854,7 +854,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "VIA University College",
     partnerCity: "Horsens",
@@ -862,7 +862,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Copenhagen Business Academy",
     partnerCity: "Copenhagen",
@@ -870,7 +870,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
@@ -878,7 +878,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Tallinn University",
     partnerCity: "Tallinn",
@@ -886,7 +886,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Université de Tours",
     partnerCity: "Tours",
@@ -894,7 +894,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Institut Limayrac",
     partnerCity: "Toulouse",
@@ -902,7 +902,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Université Lumière Lyon 2",
     partnerCity: "Lyon",
@@ -910,7 +910,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Haaga-Helia University of Applied Sciences",
     partnerCity: "Helsinki",
@@ -918,7 +918,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Turun Ammattikorkeakoulu Oy",
     partnerCity: "Turku",
@@ -926,7 +926,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Tampere University of Applied Sciences",
     partnerCity: "Tampere",
@@ -934,7 +934,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Groupe ESC Troyes",
     partnerCity: "Troyes",
@@ -942,7 +942,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "EDC Business School",
     partnerCity: "Paris",
@@ -950,7 +950,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Ecole De Management De Normandie",
     partnerCity: "Caen",
@@ -958,7 +958,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Groupe Kedge Business School",
     partnerCity: "Bordeaux",
@@ -966,7 +966,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "ESC Rennes - School of Business",
     partnerCity: "Rennes",
@@ -974,7 +974,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Skema Business School Association",
     partnerCity: "Lille",
@@ -982,7 +982,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "ESCE International Business School",
     partnerCity: "Paris",
@@ -990,7 +990,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "IPAG Business School in Paris",
     partnerCity: "Paris",
@@ -998,7 +998,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Aalen University",
     partnerCity: "Aalen",
@@ -1006,7 +1006,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Hochschule Emden/Leer",
     partnerCity: "Emden/Leer",
@@ -1014,7 +1014,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Frankfurt University of Applied Sciences",
     partnerCity: "Frankfurt",
@@ -1022,7 +1022,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Köthen",
@@ -1030,7 +1030,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Hochschule Merseburg",
     partnerCity: "Merseburg",
@@ -1038,7 +1038,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Technische Hochschule Ingolstadt",
     partnerCity: "Ingolstadt",
@@ -1046,7 +1046,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
@@ -1054,7 +1054,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "SRH Berlin University of Applied Sciences",
     partnerCity: "Berlin",
@@ -1062,7 +1062,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Universität Kassel",
     partnerCity: "Kassel",
@@ -1070,7 +1070,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Hochschule Schmalkalden",
     partnerCity: "Schmalkalden",
@@ -1078,7 +1078,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Leuphana Universitat Luneburg",
     partnerCity: "Lüneburg",
@@ -1086,7 +1086,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Hochschule fur Angewandte Wissenschaften Munchen",
     partnerCity: "Munich",
@@ -1094,7 +1094,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Leibniz Universität Hannover",
     partnerCity: "Hanover",
@@ -1102,7 +1102,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Hochschule Stralsund",
     partnerCity: "Stralsund",
@@ -1110,7 +1110,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Bielefeld",
     partnerCity: "Bielefeld",
@@ -1118,7 +1118,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "UNIVERSITY OF PATRAS",
     partnerCity: "Patras",
@@ -1126,7 +1126,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Crete",
     partnerCity: "Rethymno/Heraklion",
@@ -1134,7 +1134,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Athens University of Economics and Business",
     partnerCity: "Athens",
@@ -1142,7 +1142,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of the Aegean ( Mytilene)",
     partnerCity: "Mytilene",
@@ -1150,7 +1150,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Hellenic Mediterranean University",
     partnerCity: "Heraklion",
@@ -1158,7 +1158,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Hellenic Open University",
     partnerCity: "Patras",
@@ -1166,7 +1166,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Volos",
@@ -1174,7 +1174,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Piraeus",
     partnerCity: "Piraeus",
@@ -1182,7 +1182,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "College of Dunaujvaros",
     partnerCity: "Dunaújváros",
@@ -1190,7 +1190,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Haskolinn a Akureyri",
     partnerCity: "Akureyri",
@@ -1198,7 +1198,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Padova",
     partnerCity: "Padua",
@@ -1206,7 +1206,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Universita di Pisa",
     partnerCity: "Pisa",
@@ -1214,7 +1214,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Universita Telematica Internazionale-Uninettuno",
     partnerCity: "Rome",
@@ -1222,7 +1222,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Foggia",
     partnerCity: "Foggia",
@@ -1230,7 +1230,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Siena",
     partnerCity: "Siena",
@@ -1238,7 +1238,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Salerno",
     partnerCity: "Salerno",
@@ -1246,7 +1246,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "RISEBA University of Applied Sciences",
     partnerCity: "Riga",
@@ -1254,7 +1254,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Riga Technical University",
     partnerCity: "Riga",
@@ -1262,7 +1262,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Rezeknes Tehnologiju Akademija",
     partnerCity: "Rezekne",
@@ -1270,7 +1270,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
@@ -1278,7 +1278,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Vilnius Business College",
     partnerCity: "Vilnius",
@@ -1286,7 +1286,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Vytautas Magnus University Faculty of Economics and Management",
     partnerCity: "Kaunas",
@@ -1294,7 +1294,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Vilniaus Kolegija University of Applied Sciences",
     partnerCity: "Vilnius",
@@ -1302,7 +1302,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Vilnius University Business School",
     partnerCity: "Vilnius",
@@ -1310,7 +1310,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "ISM University of Management and Economics",
     partnerCity: "Vilnius",
@@ -1318,7 +1318,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
     partnerCity: "Kaunas",
@@ -1326,7 +1326,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Siauliu Valstybine Kolegija",
     partnerCity: "Šiauliai",
@@ -1334,7 +1334,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Saxion University of Applied Sciences",
     partnerCity: "Enschede",
@@ -1342,7 +1342,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Agder",
     partnerCity: "Kristiansand",
@@ -1350,7 +1350,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "LIEPAJAS UNIVERSITATE",
     partnerCity: "Liepaja",
@@ -1358,7 +1358,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "State University of Applied Sciences in Wloclawek",
     partnerCity: "Włocławek",
@@ -1366,7 +1366,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Lodz",
     partnerCity: "Łódź",
@@ -1374,7 +1374,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Economics in Katowice",
     partnerCity: "Katowice",
@@ -1382,7 +1382,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Szczecin",
     partnerCity: "Szczecin",
@@ -1390,7 +1390,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Lazarski University",
     partnerCity: "Warsaw",
@@ -1398,7 +1398,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "National Defence University Warsaw",
     partnerCity: "Warsaw",
@@ -1406,7 +1406,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "The General Tadeusz Kościuszko Military Academy of Land Forces",
     partnerCity: "Wrocław",
@@ -1414,7 +1414,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Instituto Politecnico de Tomar",
     partnerCity: "Tomar",
@@ -1422,7 +1422,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Instituto Politécnico Da Guarda",
     partnerCity: "Guarda",
@@ -1430,7 +1430,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Instituto Europeu de Estudos Superiores",
     partnerCity: "Porto",
@@ -1438,7 +1438,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "NOVA Lisbon",
     partnerCity: "Lisbon",
@@ -1446,7 +1446,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Spesi - Sociedade de Promoção de Ensino Superior Imobiliário",
     partnerCity: "Lisbon",
@@ -1454,7 +1454,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Academy of Economic Studies in Bucharest",
     partnerCity: "Bucharest",
@@ -1462,7 +1462,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Romanian-American University",
     partnerCity: "Bucharest",
@@ -1470,7 +1470,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
@@ -1478,7 +1478,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Comenius University in Bratislava",
     partnerCity: "Bratislava",
@@ -1486,7 +1486,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Economics and Management of Bratislava",
     partnerCity: "Bratislava",
@@ -1494,7 +1494,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Maribor",
     partnerCity: "Maribor",
@@ -1502,7 +1502,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "UNIVERSITY OF LJUBLJANA",
     partnerCity: "Ljubljana",
@@ -1510,7 +1510,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Universitat de Girona",
     partnerCity: "Girona",
@@ -1518,7 +1518,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "CUNEF University",
     partnerCity: "Madrid",
@@ -1526,7 +1526,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Jaen",
     partnerCity: "Jaén",
@@ -1534,7 +1534,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Universidad Francisco de Vitoria",
     partnerCity: "Madrid",
@@ -1542,7 +1542,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Orebro University",
     partnerCity: "Örebro",
@@ -1550,7 +1550,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Universidad Francisco de Vitoria (Madrid)",
     partnerCity: "Madrid",
@@ -1558,7 +1558,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Vaasa",
     partnerCity: "Vaasa",
@@ -1566,7 +1566,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Malta",
     partnerCity: "Msida",
@@ -1574,7 +1574,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of San Marino",
     partnerCity: "San Marino",
@@ -1585,7 +1585,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
   //  Business Administration master
 
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Applied Sciences BFI Vienna",
     partnerCity: "Vienna",
@@ -1593,7 +1593,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
@@ -1601,7 +1601,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Haute Ecole de la Province de Liege",
     partnerCity: "Liège",
@@ -1609,7 +1609,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Agricultural University of Plovdiv",
     partnerCity: "Plovdiv",
@@ -1617,7 +1617,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
     partnerCity: "Rijeka",
@@ -1625,7 +1625,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "International University Libertas",
     partnerCity: "Zagreb",
@@ -1633,7 +1633,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Brno University of Technology, Faculty of Business and Management",
     partnerCity: "Brno",
@@ -1641,7 +1641,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "VIA University College",
     partnerCity: "Vejle",
@@ -1649,7 +1649,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
@@ -1657,7 +1657,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Tallinn University",
     partnerCity: "Tallinn",
@@ -1665,7 +1665,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Tallinn University of Technology",
     partnerCity: "Tallinn",
@@ -1673,7 +1673,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "EDC Business School",
     partnerCity: "Paris",
@@ -1681,7 +1681,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Ecole De Management De Normandie",
     partnerCity: "Caen",
@@ -1689,7 +1689,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Groupe Kedge Business School",
     partnerCity: "Tours",
@@ -1697,7 +1697,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Skema Business School Association",
     partnerCity: "Toulouse",
@@ -1705,7 +1705,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Université Lumière Lyon 2",
     partnerCity: "Troyes",
@@ -1713,7 +1713,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "ESC Rennes - School of Business",
     partnerCity: "Paris",
@@ -1721,7 +1721,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Université de Tours",
     partnerCity: "Tours",
@@ -1729,7 +1729,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Institut Limayrac",
     partnerCity: "Toulouse",
@@ -1737,7 +1737,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Groupe ESC Troyes",
     partnerCity: "Troyes",
@@ -1745,7 +1745,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "ESCE International Business School",
     partnerCity: "Paris",
@@ -1753,7 +1753,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Hochschule Stralsund",
     partnerCity: "Stralsund",
@@ -1761,7 +1761,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Hochschule Emden/Leer",
     partnerCity: "Emden",
@@ -1769,7 +1769,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Köthen",
@@ -1777,7 +1777,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
@@ -1785,7 +1785,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "SRH Berlin University of Applied Sciences",
     partnerCity: "Berlin",
@@ -1793,7 +1793,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Universität Kassel",
     partnerCity: "Kassel",
@@ -1801,7 +1801,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Leuphana Universitat Luneburg",
     partnerCity: "Lüneburg",
@@ -1809,7 +1809,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Applied Management Studies",
     partnerCity: "Mannheim",
@@ -1817,7 +1817,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Universitry of Applied Sciences Schmalkalden",
     partnerCity: "Schmalkalden",
@@ -1825,7 +1825,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Applied Sciences Stralsund",
     partnerCity: "Stralsund",
@@ -1833,7 +1833,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Charokopeio Panepistimio",
     partnerCity: "Athens",
@@ -1841,7 +1841,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Volos",
@@ -1849,7 +1849,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of the Aegean ( Mytilene)",
     partnerCity: "Mytilene",
@@ -1857,7 +1857,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Hellenic Open University",
     partnerCity: "Patras",
@@ -1865,7 +1865,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Crete",
     partnerCity: "Heraklion",
@@ -1873,7 +1873,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Hellenic Mediterranean University",
     partnerCity: "Crete",
@@ -1881,7 +1881,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Siena",
     partnerCity: "Siena",
@@ -1889,7 +1889,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Salerno",
     partnerCity: "Salerno",
@@ -1897,7 +1897,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Universita Telematica Internazionale-Uninettuno",
     partnerCity: "Rome",
@@ -1905,7 +1905,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Riga Technical University",
     partnerCity: "Riga",
@@ -1913,7 +1913,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Rezeknes Tehnologiju Akademija",
     partnerCity: "Rezekne",
@@ -1921,7 +1921,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "RISEBA University of Applied Sciences",
     partnerCity: "Riga",
@@ -1929,7 +1929,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Vilnius Business College",
     partnerCity: "Vilnius",
@@ -1937,7 +1937,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "ISM University of Management and Economics",
     partnerCity: "Vilnius",
@@ -1945,7 +1945,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
@@ -1953,7 +1953,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Vilnius University Business School",
     partnerCity: "Vilnius",
@@ -1961,7 +1961,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Vytautas Magnus University Faculty of Economics and Management",
     partnerCity: "Kaunas",
@@ -1969,7 +1969,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Agder",
     partnerCity: "Kristiansand",
@@ -1977,7 +1977,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Amsterdam University of Applied Sciences",
     partnerCity: "Amsterdam",
@@ -1985,7 +1985,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Spesi - Sociedade de Promoção de Ensino Superior Imobiliário",
     partnerCity: "Lisbon",
@@ -1993,7 +1993,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "NOVA Lisbon",
     partnerCity: "Lisbon",
@@ -2001,7 +2001,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Economics in Katowice",
     partnerCity: "Katowice",
@@ -2009,7 +2009,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Szczecin",
     partnerCity: "Szczecin",
@@ -2017,7 +2017,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "State University of Applied Sciences in Wloclawek",
     partnerCity: "Włocławek",
@@ -2025,7 +2025,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Romanian-American University",
     partnerCity: "Bucharest",
@@ -2033,7 +2033,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Academy of Economic Studies in Bucharest",
     partnerCity: "Bucharest",
@@ -2041,7 +2041,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Maribor",
     partnerCity: "Maribor",
@@ -2049,7 +2049,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
@@ -2057,7 +2057,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Comenius University in Bratislava",
     partnerCity: "Bratislava",
@@ -2065,7 +2065,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "UNIVERSITY OF LJUBLJANA",
     partnerCity: "Ljubljana",
@@ -2073,7 +2073,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Economics and Management of Bratislava",
     partnerCity: "Bratislava",
@@ -2081,7 +2081,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Universitat de Girona",
     partnerCity: "Girona",
@@ -2089,7 +2089,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Orebro University",
     partnerCity: "Örebro",
@@ -2097,7 +2097,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "master"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of San Marino",
     partnerCity: "San Marino",
@@ -2108,7 +2108,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
   // Business Administration phd
 
    {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
@@ -2116,7 +2116,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
@@ -2124,7 +2124,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
     partnerCity: "Rijeka",
@@ -2132,7 +2132,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Metropolitan University Prague",
     partnerCity: "Prague",
@@ -2140,7 +2140,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Brno University of Technology, Faculty of Business and Management",
     partnerCity: "Brno",
@@ -2148,7 +2148,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Tallinn University",
     partnerCity: "Tallinn",
@@ -2156,7 +2156,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Tallinn University of Technology",
     partnerCity: "Tallinn",
@@ -2164,7 +2164,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "ESCE International Business School",
     partnerCity: "Paris",
@@ -2172,7 +2172,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "SRH Berlin University of Applied Sciences",
     partnerCity: "Berlin",
@@ -2180,7 +2180,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Volos",
@@ -2188,7 +2188,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Siena",
     partnerCity: "Siena",
@@ -2196,7 +2196,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "RISEBA University of Applied Sciences",
     partnerCity: "Riga",
@@ -2204,7 +2204,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Vytautas Magnus University Agriculture Academy",
     partnerCity: "Kaunas",
@@ -2212,7 +2212,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Agder",
     partnerCity: "Kristiansand",
@@ -2220,7 +2220,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Saxion University of Applied Sciences",
     partnerCity: "Enschede",
@@ -2228,7 +2228,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Amsterdam University of Applied Sciences",
     partnerCity: "Amsterdam",
@@ -2236,7 +2236,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Economics in Katowice",
     partnerCity: "Katowice",
@@ -2244,7 +2244,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Lodz",
     partnerCity: "Lodz",
@@ -2252,7 +2252,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Academy of Economic Studies in Bucharest",
     partnerCity: "Bucharest",
@@ -2260,7 +2260,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
@@ -2268,7 +2268,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Business Administration",
     partnerUniversity: "University of Economics and Management of Bratislava",
     partnerCity: "Bratislava",
@@ -2820,7 +2820,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
   // For brevity, I'm showing the pattern with representative entries from each category.
 ];
 
-// UCY University Agreements - Complete Dataset
+// UNIC University Agreements - Complete Dataset
 export const UCY_AGREEMENTS: UniversityAgreement[] = [
   // English Studies
   {
