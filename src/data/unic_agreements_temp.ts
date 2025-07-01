@@ -5294,6 +5294,129 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+// Primary Education bachelor
+
+{  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Primary Education (BEd)",  
+    partnerUniversity: "Theresianische Militärakademie Fachhochschul-Bachelorstudiengang Militärische Führung",  
+    partnerCity: "Wiener Neustadt",  
+    partnerCountry: "Austria",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Primary Education (BEd)",  
+    partnerUniversity: "Europa-Universität Flensburg",  
+    partnerCity: "Flensburg",  
+    partnerCountry: "Germany",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Primary Education (BEd)",  
+    partnerUniversity: "MARTIN-LUTHER-UNIVERSITÄT HALLE-WITTENBERG",  
+    partnerCity: "Halle (Saale)",  
+    partnerCountry: "Germany",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Primary Education (BEd)",  
+    partnerUniversity: "University of Bielefeld",  
+    partnerCity: "Bielefeld",  
+    partnerCountry: "Germany",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Primary Education (BEd)",  
+    partnerUniversity: "University of the Aegean",  
+    partnerCity: "Mytilene",  
+    partnerCountry: "Greece",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Primary Education (BEd)",  
+    partnerUniversity: "University of Ioannina",  
+    partnerCity: "Ioannina",  
+    partnerCountry: "Greece",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Primary Education (BEd)",  
+    partnerUniversity: "University of Thessaly",  
+    partnerCity: "Volos",  
+    partnerCountry: "Greece",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Primary Education (BEd)",  
+    partnerUniversity: "University of Patras",  
+    partnerCity: "Patras",  
+    partnerCountry: "Greece",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Primary Education (BEd)",  
+    partnerUniversity: "Aristotle University of Thessaloniki",  
+    partnerCity: "Thessaloniki",  
+    partnerCountry: "Greece",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Primary Education (BEd)",  
+    partnerUniversity: "University of Crete",  
+    partnerCity: "Heraklion",  
+    partnerCountry: "Greece",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Primary Education (BEd)",  
+    partnerUniversity: "Hellenic Open University",  
+    partnerCity: "Patras",  
+    partnerCountry: "Greece",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Primary Education (BEd)",  
+    partnerUniversity: "Haskolinn a Akureyri",  
+    partnerCity: "Akureyri",  
+    partnerCountry: "Iceland",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Primary Education (BEd)",  
+    partnerUniversity: "Rezeknes Tehnologiju Akademija",  
+    partnerCity: "Rēzekne",  
+    partnerCountry: "Latvia",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Primary Education (BEd)",  
+    partnerUniversity: "Instituto Europeu de Estudos Superiores",  
+    partnerCity: "Funchal",  
+    partnerCountry: "Portugal",  
+    academicLevel: "bachelor"  
+  },  
+  {  
+    homeUniversity: "UNIC",  
+    homeDepartment: "Primary Education (BEd)",  
+    partnerUniversity: "University of Ostrava",  
+    partnerCity: "Ostrava",  
+    partnerCountry: "Czech Republic",  
+    academicLevel: "bachelor"  
+  },
+
 // Pre-Primary Education bachelor
 
 {  
