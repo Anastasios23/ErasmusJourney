@@ -239,7 +239,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: " Accounting",
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
-    partnerCountry: "Bulgaria"
+    partnerCountry: "Bulgaria",
     academicLevel: "bachelor"
   },
   {
@@ -247,7 +247,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: " Accounting",
     partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
     partnerCity: "Rijeka",
-    partnerCountry: "Croatia"
+    partnerCountry: "Croatia",
     academicLevel: "bachelor"
   },
   {
