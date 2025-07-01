@@ -5273,7 +5273,26 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerCountry: "Romania",
     academicLevel: "bachelor"
   },
-  
+
+
+  // Health services admin master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Health services admin",
+    partnerUniversity: "Trakia University",
+    partnerCity: "Stara Zagora",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Health services admin",
+    partnerUniversity: "Orebro University",
+    partnerCity: "Örebro",
+    partnerCountry: "Sweden",
+    academicLevel: "master"
+  },
 
   
 
