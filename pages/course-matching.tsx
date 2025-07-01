@@ -93,15 +93,23 @@ export default function CourseMatching() {
       setAvailableHostUniversities([]);
     }
 
-    if (field === "homeDepartment" || field === "levelOfStudy") {
-      // Update available host universities based on partnership agreements
+    // Update partnerships when university, department, or level changes
+    if (
+      field === "homeUniversity" ||
+      field === "homeDepartment" ||
+      field === "levelOfStudy"
+    ) {
+      // Get the current values, using the new value for the field being changed
+      const university =
+        field === "homeUniversity" ? value : formData.homeUniversity;
       const department =
         field === "homeDepartment" ? value : formData.homeDepartment;
       const level = field === "levelOfStudy" ? value : formData.levelOfStudy;
 
-      if (formData.homeUniversity && department && level) {
+      // Only filter partnerships if all three fields are selected
+      if (university && department && level) {
         const partnershipAgreements = getAgreementsByDepartmentAndLevel(
-          formData.homeUniversity,
+          university,
           department,
           level as "bachelor" | "master" | "phd",
         );
@@ -118,11 +126,18 @@ export default function CourseMatching() {
         );
 
         setAvailableHostUniversities(uniqueHostUniversities);
-        setFormData((prev) => ({
-          ...prev,
-          hostUniversity: "",
-          hostDepartment: "",
-        }));
+
+        // Reset host university selection when partnerships change
+        if (field !== "homeUniversity") {
+          setFormData((prev) => ({
+            ...prev,
+            hostUniversity: "",
+            hostDepartment: "",
+          }));
+        }
+      } else {
+        // Clear partnerships if not all fields are selected
+        setAvailableHostUniversities([]);
       }
     }
 
