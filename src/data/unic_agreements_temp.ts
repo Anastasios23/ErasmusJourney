@@ -176,7 +176,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
 
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "TU Wien",
     partnerCity: "Vienna",
     partnerCountry: "Austria",
@@ -184,7 +184,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "KU Leuven",
     partnerCity: "Leuven",
     partnerCountry: "Belgium",
@@ -192,7 +192,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
@@ -200,7 +200,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "National - Higher School of Architecture- Marseille",
     partnerCity: "Marseille",
     partnerCountry: "France",
@@ -208,7 +208,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Larissa",
     partnerCountry: "Greece",
@@ -216,7 +216,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity:
       "University of West Attica / Panepistimio Dytikis Attikis",
     partnerCity: "Athens",
@@ -225,7 +225,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Aristotle University of Thessaloniki",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
@@ -233,7 +233,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "National Technical University of Athens",
     partnerCity: "Athens",
     partnerCountry: "Greece",
@@ -241,7 +241,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Bauhaus-Universität Weimar",
     partnerCity: "Weimar",
     partnerCountry: "Germany",
@@ -249,7 +249,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Bernburg",
     partnerCountry: "Germany",
@@ -257,7 +257,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "University of Naples Federico II",
     partnerCity: "Naples",
     partnerCountry: "Italy",
@@ -265,7 +265,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Universita Iuav di Venezia",
     partnerCity: "Venice",
     partnerCountry: "Italy",
@@ -273,7 +273,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "University of Trieste",
     partnerCity: "Trieste",
     partnerCountry: "Italy",
@@ -281,7 +281,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "RISEBA University of Applied Sciences",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
@@ -289,7 +289,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
@@ -297,7 +297,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Universidade do Minho",
     partnerCity: "Braga",
     partnerCountry: "Portugal",
@@ -305,7 +305,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Universitatea Tehnica Cluj-Napoca",
     partnerCity: "Cluj-Napoca",
     partnerCountry: "Romania",
@@ -313,7 +313,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "UNIVERSITY OF ALICANTE",
     partnerCity: "Alicante",
     partnerCountry: "Spain",
@@ -321,7 +321,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Technical University of Madrid",
     partnerCity: "Madrid",
     partnerCountry: "Spain",
@@ -329,7 +329,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Umea School of Architecture",
     partnerCity: "Umeå",
     partnerCountry: "Sweden",
@@ -339,7 +339,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   // Architecture Master
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "TU Wien",
     partnerCity: "Vienna",
     partnerCountry: "Austria",
@@ -347,7 +347,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "KU Leuven",
     partnerCity: "Leuven",
     partnerCountry: "Belgium",
@@ -355,7 +355,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
@@ -363,7 +363,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "National - Higher School of Architecture- Marseille",
     partnerCity: "Marseille",
     partnerCountry: "France",
@@ -371,7 +371,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Larissa",
     partnerCountry: "Greece",
@@ -379,7 +379,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity:
       "University of West Attica / Panepistimio Dytikis Attikis",
     partnerCity: "Athens",
@@ -388,7 +388,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Aristotle University of Thessaloniki",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
@@ -396,7 +396,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "National Technical University of Athens",
     partnerCity: "Athens",
     partnerCountry: "Greece",
@@ -404,7 +404,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Bauhaus-Universität Weimar",
     partnerCity: "Weimar",
     partnerCountry: "Germany",
@@ -412,7 +412,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Bernburg",
     partnerCountry: "Germany",
@@ -420,7 +420,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "University of Naples Federico II",
     partnerCity: "Naples",
     partnerCountry: "Italy",
@@ -428,7 +428,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Universita Iuav di Venezia",
     partnerCity: "Venice",
     partnerCountry: "Italy",
@@ -436,7 +436,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "RISEBA University of Applied Sciences",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
@@ -444,7 +444,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
@@ -452,7 +452,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Universidade do Minho",
     partnerCity: "Braga",
     partnerCountry: "Portugal",
@@ -460,7 +460,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Universitatea Tehnica Cluj-Napoca",
     partnerCity: "Cluj-Napoca",
     partnerCountry: "Romania",
@@ -468,7 +468,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "UNIVERSITY OF ALICANTE",
     partnerCity: "Alicante",
     partnerCountry: "Spain",
@@ -476,7 +476,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Technical University of Madrid",
     partnerCity: "Madrid",
     partnerCountry: "Spain",
@@ -484,7 +484,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Architecture",
+    homeDepartment: "Architecture",
     partnerUniversity: "Umea School of Architecture",
     partnerCity: "Umeå",
     partnerCountry: "Sweden",
@@ -495,7 +495,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
 
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Biomedical Sciences",
+    homeDepartment: "Biomedical Sciences",
     partnerUniversity: "Trakia University",
     partnerCity: "Stara Zagora",
     partnerCountry: "Bulgaria",
@@ -503,7 +503,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Biomedical Sciences",
+    homeDepartment: "Biomedical Sciences",
     partnerUniversity: "University of Foggia",
     partnerCity: "Foggia",
     partnerCountry: "Italy",
@@ -514,7 +514,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
 
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Applied Sciences BFI Vienna",
     partnerCity: "Vienna",
     partnerCountry: "Austria",
@@ -522,7 +522,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "KU Leuven",
     partnerCity: "Leuven",
     partnerCountry: "Belgium",
@@ -530,7 +530,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
     partnerCountry: "Bulgaria",
@@ -538,7 +538,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Hogeschool West-Vlaanderen Howest",
     partnerCity: "Bruges/Kortrijk",
     partnerCountry: "Belgium",
@@ -546,7 +546,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "VIVES University",
     partnerCity: "West Flanders",
     partnerCountry: "Belgium",
@@ -554,7 +554,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Agricultural University of Plovdiv",
     partnerCity: "Plovdiv",
     partnerCountry: "Bulgaria",
@@ -562,7 +562,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
@@ -570,7 +570,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Libertas Business School",
     partnerCity: "Zagreb/Dubrovnik",
     partnerCountry: "Croatia",
@@ -578,7 +578,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity:
       "University of Rijeka, Faculty of Economics and Business",
     partnerCity: "Rijeka",
@@ -587,7 +587,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Polytechnic of Šibenik",
     partnerCity: "Šibenik",
     partnerCountry: "Croatia",
@@ -595,7 +595,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Collegium Fluminense Polytechnic of Rijeka",
     partnerCity: "Rijeka",
     partnerCountry: "Croatia",
@@ -603,7 +603,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Metropolitan University Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
@@ -611,7 +611,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity:
       "Brno University of Technology, Faculty of Business and Management",
     partnerCity: "Brno",
@@ -620,7 +620,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Mendel University in Brno",
     partnerCity: "Brno",
     partnerCountry: "Czech Republic",
@@ -628,7 +628,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "VIA University College",
     partnerCity: "Horsens",
     partnerCountry: "Denmark",
@@ -636,7 +636,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Copenhagen Business Academy",
     partnerCity: "Copenhagen",
     partnerCountry: "Denmark",
@@ -644,7 +644,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
@@ -652,7 +652,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Tallinn University",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
@@ -660,7 +660,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Université de Tours",
     partnerCity: "Tours",
     partnerCountry: "France",
@@ -668,7 +668,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Institut Limayrac",
     partnerCity: "Toulouse",
     partnerCountry: "France",
@@ -676,7 +676,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Université Lumière Lyon 2",
     partnerCity: "Lyon",
     partnerCountry: "France",
@@ -684,7 +684,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Haaga-Helia University of Applied Sciences",
     partnerCity: "Helsinki",
     partnerCountry: "Finland",
@@ -692,7 +692,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Turun Ammattikorkeakoulu Oy",
     partnerCity: "Turku",
     partnerCountry: "Finland",
@@ -700,7 +700,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Tampere University of Applied Sciences",
     partnerCity: "Tampere",
     partnerCountry: "Finland",
@@ -708,7 +708,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Groupe ESC Troyes",
     partnerCity: "Troyes",
     partnerCountry: "France",
@@ -716,7 +716,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "EDC Business School",
     partnerCity: "Paris",
     partnerCountry: "France",
@@ -724,7 +724,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Ecole De Management De Normandie",
     partnerCity: "Caen",
     partnerCountry: "France",
@@ -732,7 +732,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Groupe Kedge Business School",
     partnerCity: "Bordeaux",
     partnerCountry: "France",
@@ -740,7 +740,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "ESC Rennes - School of Business",
     partnerCity: "Rennes",
     partnerCountry: "France",
@@ -748,7 +748,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Skema Business School Association",
     partnerCity: "Lille",
     partnerCountry: "France",
@@ -756,7 +756,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "ESCE International Business School",
     partnerCity: "Paris",
     partnerCountry: "France",
@@ -764,7 +764,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "IPAG Business School in Paris",
     partnerCity: "Paris",
     partnerCountry: "France",
@@ -772,7 +772,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Aalen University",
     partnerCity: "Aalen",
     partnerCountry: "Germany",
@@ -780,7 +780,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Hochschule Emden/Leer",
     partnerCity: "Emden/Leer",
     partnerCountry: "Germany",
@@ -788,7 +788,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Frankfurt University of Applied Sciences",
     partnerCity: "Frankfurt",
     partnerCountry: "Germany",
@@ -796,7 +796,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Köthen",
     partnerCountry: "Germany",
@@ -804,7 +804,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Hochschule Merseburg",
     partnerCity: "Merseburg",
     partnerCountry: "Germany",
@@ -812,7 +812,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Technische Hochschule Ingolstadt",
     partnerCity: "Ingolstadt",
     partnerCountry: "Germany",
@@ -820,7 +820,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity:
       "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
@@ -829,7 +829,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "SRH Berlin University of Applied Sciences",
     partnerCity: "Berlin",
     partnerCountry: "Germany",
@@ -837,7 +837,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Universität Kassel",
     partnerCity: "Kassel",
     partnerCountry: "Germany",
@@ -845,7 +845,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Hochschule Schmalkalden",
     partnerCity: "Schmalkalden",
     partnerCountry: "Germany",
@@ -853,7 +853,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Leuphana Universitat Luneburg",
     partnerCity: "Lüneburg",
     partnerCountry: "Germany",
@@ -861,7 +861,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Hochschule fur Angewandte Wissenschaften Munchen",
     partnerCity: "Munich",
     partnerCountry: "Germany",
@@ -869,7 +869,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Leibniz Universität Hannover",
     partnerCity: "Hanover",
     partnerCountry: "Germany",
@@ -877,7 +877,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Hochschule Stralsund",
     partnerCity: "Stralsund",
     partnerCountry: "Germany",
@@ -885,7 +885,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Bielefeld",
     partnerCity: "Bielefeld",
     partnerCountry: "Germany",
@@ -893,7 +893,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "UNIVERSITY OF PATRAS",
     partnerCity: "Patras",
     partnerCountry: "Greece",
@@ -901,7 +901,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Crete",
     partnerCity: "Rethymno/Heraklion",
     partnerCountry: "Greece",
@@ -909,7 +909,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Athens University of Economics and Business",
     partnerCity: "Athens",
     partnerCountry: "Greece",
@@ -917,7 +917,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of the Aegean ( Mytilene)",
     partnerCity: "Mytilene",
     partnerCountry: "Greece",
@@ -925,7 +925,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Hellenic Mediterranean University",
     partnerCity: "Heraklion",
     partnerCountry: "Greece",
@@ -933,7 +933,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Hellenic Open University",
     partnerCity: "Patras",
     partnerCountry: "Greece",
@@ -941,7 +941,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Volos",
     partnerCountry: "Greece",
@@ -949,7 +949,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Piraeus",
     partnerCity: "Piraeus",
     partnerCountry: "Greece",
@@ -957,7 +957,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "College of Dunaujvaros",
     partnerCity: "Dunaújváros",
     partnerCountry: "Hungary",
@@ -965,7 +965,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Haskolinn a Akureyri",
     partnerCity: "Akureyri",
     partnerCountry: "Iceland",
@@ -973,7 +973,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Padova",
     partnerCity: "Padua",
     partnerCountry: "Italy",
@@ -981,7 +981,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Universita di Pisa",
     partnerCity: "Pisa",
     partnerCountry: "Italy",
@@ -989,7 +989,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Universita Telematica Internazionale-Uninettuno",
     partnerCity: "Rome",
     partnerCountry: "Italy",
@@ -997,7 +997,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Foggia",
     partnerCity: "Foggia",
     partnerCountry: "Italy",
@@ -1005,7 +1005,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Siena",
     partnerCity: "Siena",
     partnerCountry: "Italy",
@@ -1013,7 +1013,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Salerno",
     partnerCity: "Salerno",
     partnerCountry: "Italy",
@@ -1021,7 +1021,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "RISEBA University of Applied Sciences",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
@@ -1029,7 +1029,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Riga Technical University",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
@@ -1037,7 +1037,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Rezeknes Tehnologiju Akademija",
     partnerCity: "Rezekne",
     partnerCountry: "Latvia",
@@ -1045,7 +1045,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
@@ -1053,7 +1053,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Vilnius Business College",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
@@ -1061,7 +1061,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity:
       "Vytautas Magnus University Faculty of Economics and Management",
     partnerCity: "Kaunas",
@@ -1070,7 +1070,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Vilniaus Kolegija University of Applied Sciences",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
@@ -1078,7 +1078,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Vilnius University Business School",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
@@ -1086,7 +1086,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "ISM University of Management and Economics",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
@@ -1094,7 +1094,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
@@ -1102,7 +1102,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Siauliu Valstybine Kolegija",
     partnerCity: "Šiauliai",
     partnerCountry: "Lithuania",
@@ -1110,7 +1110,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Saxion University of Applied Sciences",
     partnerCity: "Enschede",
     partnerCountry: "Netherlands",
@@ -1118,7 +1118,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Agder",
     partnerCity: "Kristiansand",
     partnerCountry: "Norway",
@@ -1126,7 +1126,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "LIEPAJAS UNIVERSITATE",
     partnerCity: "Liepaja",
     partnerCountry: "Latvia",
@@ -1134,7 +1134,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "State University of Applied Sciences in Wloclawek",
     partnerCity: "Włocławek",
     partnerCountry: "Poland",
@@ -1142,7 +1142,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Lodz",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
@@ -1150,7 +1150,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Economics in Katowice",
     partnerCity: "Katowice",
     partnerCountry: "Poland",
@@ -1158,7 +1158,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Szczecin",
     partnerCity: "Szczecin",
     partnerCountry: "Poland",
@@ -1166,7 +1166,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Lazarski University",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
@@ -1174,7 +1174,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "National Defence University Warsaw",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
@@ -1182,7 +1182,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity:
       "The General Tadeusz Kościuszko Military Academy of Land Forces",
     partnerCity: "Wrocław",
@@ -1191,7 +1191,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Instituto Politecnico de Tomar",
     partnerCity: "Tomar",
     partnerCountry: "Portugal",
@@ -1199,7 +1199,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Instituto Politécnico Da Guarda",
     partnerCity: "Guarda",
     partnerCountry: "Portugal",
@@ -1207,7 +1207,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Instituto Europeu de Estudos Superiores",
     partnerCity: "Porto",
     partnerCountry: "Portugal",
@@ -1215,7 +1215,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "NOVA Lisbon",
     partnerCity: "Lisbon",
     partnerCountry: "Portugal",
@@ -1223,7 +1223,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity:
       "Spesi - Sociedade de Promoção de Ensino Superior Imobiliário",
     partnerCity: "Lisbon",
@@ -1232,7 +1232,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Academy of Economic Studies in Bucharest",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
@@ -1240,7 +1240,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Romanian-American University",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
@@ -1248,7 +1248,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
     partnerCountry: "Slovakia",
@@ -1256,7 +1256,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Comenius University in Bratislava",
     partnerCity: "Bratislava",
     partnerCountry: "Slovakia",
@@ -1264,7 +1264,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Economics and Management of Bratislava",
     partnerCity: "Bratislava",
     partnerCountry: "Slovakia",
@@ -1272,7 +1272,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Maribor",
     partnerCity: "Maribor",
     partnerCountry: "Slovenia",
@@ -1280,7 +1280,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "UNIVERSITY OF LJUBLJANA",
     partnerCity: "Ljubljana",
     partnerCountry: "Slovenia",
@@ -1288,7 +1288,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Universitat de Girona",
     partnerCity: "Girona",
     partnerCountry: "Spain",
@@ -1296,7 +1296,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "CUNEF University",
     partnerCity: "Madrid",
     partnerCountry: "Spain",
@@ -1304,7 +1304,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Jaen",
     partnerCity: "Jaén",
     partnerCountry: "Spain",
@@ -1312,7 +1312,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Universidad Francisco de Vitoria",
     partnerCity: "Madrid",
     partnerCountry: "Spain",
@@ -1320,7 +1320,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Orebro University",
     partnerCity: "Örebro",
     partnerCountry: "Sweden",
@@ -1328,7 +1328,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Universidad Francisco de Vitoria (Madrid)",
     partnerCity: "Madrid",
     partnerCountry: "Spain",
@@ -1336,7 +1336,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Vaasa",
     partnerCity: "Vaasa",
     partnerCountry: "Finland",
@@ -1344,7 +1344,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Malta",
     partnerCity: "Msida",
     partnerCountry: "Malta",
@@ -1352,7 +1352,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of San Marino",
     partnerCity: "San Marino",
     partnerCountry: "San Marino",
@@ -1363,7 +1363,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
 
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Applied Sciences BFI Vienna",
     partnerCity: "Vienna",
     partnerCountry: "Austria",
@@ -1371,7 +1371,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
     partnerCountry: "Bulgaria",
@@ -1379,7 +1379,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Haute Ecole de la Province de Liege",
     partnerCity: "Liège",
     partnerCountry: "Belgium",
@@ -1387,7 +1387,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Agricultural University of Plovdiv",
     partnerCity: "Plovdiv",
     partnerCountry: "Bulgaria",
@@ -1395,7 +1395,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity:
       "University of Rijeka, Faculty of Economics and Business",
     partnerCity: "Rijeka",
@@ -1404,7 +1404,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "International University Libertas",
     partnerCity: "Zagreb",
     partnerCountry: "Croatia",
@@ -1412,7 +1412,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity:
       "Brno University of Technology, Faculty of Business and Management",
     partnerCity: "Brno",
@@ -1421,7 +1421,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "VIA University College",
     partnerCity: "Vejle",
     partnerCountry: "Denmark",
@@ -1429,7 +1429,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
@@ -1437,7 +1437,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Tallinn University",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
@@ -1445,7 +1445,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Tallinn University of Technology",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
@@ -1453,7 +1453,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "EDC Business School",
     partnerCity: "Paris",
     partnerCountry: "France",
@@ -1461,7 +1461,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Ecole De Management De Normandie",
     partnerCity: "Caen",
     partnerCountry: "France",
@@ -1469,7 +1469,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Groupe Kedge Business School",
     partnerCity: "Tours",
     partnerCountry: "France",
@@ -1477,7 +1477,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Skema Business School Association",
     partnerCity: "Toulouse",
     partnerCountry: "France",
@@ -1485,7 +1485,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Université Lumière Lyon 2",
     partnerCity: "Troyes",
     partnerCountry: "France",
@@ -1493,7 +1493,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "ESC Rennes - School of Business",
     partnerCity: "Paris",
     partnerCountry: "France",
@@ -1501,7 +1501,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Université de Tours",
     partnerCity: "Tours",
     partnerCountry: "France",
@@ -1509,7 +1509,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Institut Limayrac",
     partnerCity: "Toulouse",
     partnerCountry: "France",
@@ -1517,7 +1517,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Groupe ESC Troyes",
     partnerCity: "Troyes",
     partnerCountry: "France",
@@ -1525,7 +1525,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "ESCE International Business School",
     partnerCity: "Paris",
     partnerCountry: "France",
@@ -1533,7 +1533,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Hochschule Stralsund",
     partnerCity: "Stralsund",
     partnerCountry: "Germany",
@@ -1541,7 +1541,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Hochschule Emden/Leer",
     partnerCity: "Emden",
     partnerCountry: "Germany",
@@ -1549,7 +1549,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Köthen",
     partnerCountry: "Germany",
@@ -1557,7 +1557,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity:
       "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
@@ -1566,7 +1566,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "SRH Berlin University of Applied Sciences",
     partnerCity: "Berlin",
     partnerCountry: "Germany",
@@ -1574,7 +1574,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Universität Kassel",
     partnerCity: "Kassel",
     partnerCountry: "Germany",
@@ -1582,7 +1582,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Leuphana Universitat Luneburg",
     partnerCity: "Lüneburg",
     partnerCountry: "Germany",
@@ -1590,7 +1590,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Applied Management Studies",
     partnerCity: "Mannheim",
     partnerCountry: "Germany",
@@ -1598,7 +1598,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Universitry of Applied Sciences Schmalkalden",
     partnerCity: "Schmalkalden",
     partnerCountry: "Germany",
@@ -1606,7 +1606,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Applied Sciences Stralsund",
     partnerCity: "Stralsund",
     partnerCountry: "Germany",
@@ -1614,7 +1614,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Charokopeio Panepistimio",
     partnerCity: "Athens",
     partnerCountry: "Greece",
@@ -1622,7 +1622,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Volos",
     partnerCountry: "Greece",
@@ -1630,7 +1630,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of the Aegean ( Mytilene)",
     partnerCity: "Mytilene",
     partnerCountry: "Greece",
@@ -1638,7 +1638,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Hellenic Open University",
     partnerCity: "Patras",
     partnerCountry: "Greece",
@@ -1646,7 +1646,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Crete",
     partnerCity: "Heraklion",
     partnerCountry: "Greece",
@@ -1654,7 +1654,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Hellenic Mediterranean University",
     partnerCity: "Crete",
     partnerCountry: "Greece",
@@ -1662,7 +1662,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Siena",
     partnerCity: "Siena",
     partnerCountry: "Italy",
@@ -1670,7 +1670,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Salerno",
     partnerCity: "Salerno",
     partnerCountry: "Italy",
@@ -1678,7 +1678,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Universita Telematica Internazionale-Uninettuno",
     partnerCity: "Rome",
     partnerCountry: "Italy",
@@ -1686,7 +1686,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Riga Technical University",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
@@ -1694,7 +1694,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Rezeknes Tehnologiju Akademija",
     partnerCity: "Rezekne",
     partnerCountry: "Latvia",
@@ -1702,7 +1702,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "RISEBA University of Applied Sciences",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
@@ -1710,7 +1710,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Vilnius Business College",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
@@ -1718,7 +1718,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "ISM University of Management and Economics",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
@@ -1726,7 +1726,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
@@ -1734,7 +1734,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Vilnius University Business School",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
@@ -1742,7 +1742,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity:
       "Vytautas Magnus University Faculty of Economics and Management",
     partnerCity: "Kaunas",
@@ -1751,7 +1751,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Agder",
     partnerCity: "Kristiansand",
     partnerCountry: "Norway",
@@ -1759,7 +1759,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Amsterdam University of Applied Sciences",
     partnerCity: "Amsterdam",
     partnerCountry: "Netherlands",
@@ -1767,7 +1767,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity:
       "Spesi - Sociedade de Promoção de Ensino Superior Imobiliário",
     partnerCity: "Lisbon",
@@ -1776,7 +1776,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "NOVA Lisbon",
     partnerCity: "Lisbon",
     partnerCountry: "Portugal",
@@ -1784,7 +1784,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Economics in Katowice",
     partnerCity: "Katowice",
     partnerCountry: "Poland",
@@ -1792,7 +1792,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Szczecin",
     partnerCity: "Szczecin",
     partnerCountry: "Poland",
@@ -1800,7 +1800,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "State University of Applied Sciences in Wloclawek",
     partnerCity: "Włocławek",
     partnerCountry: "Poland",
@@ -1808,7 +1808,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Romanian-American University",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
@@ -1816,7 +1816,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Academy of Economic Studies in Bucharest",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
@@ -1824,7 +1824,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Maribor",
     partnerCity: "Maribor",
     partnerCountry: "Slovenia",
@@ -1832,7 +1832,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
     partnerCountry: "Slovakia",
@@ -1840,7 +1840,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Comenius University in Bratislava",
     partnerCity: "Bratislava",
     partnerCountry: "Slovakia",
@@ -1848,7 +1848,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "UNIVERSITY OF LJUBLJANA",
     partnerCity: "Ljubljana",
     partnerCountry: "Slovenia",
@@ -1856,7 +1856,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Economics and Management of Bratislava",
     partnerCity: "Bratislava",
     partnerCountry: "Slovakia",
@@ -1864,7 +1864,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Universitat de Girona",
     partnerCity: "Girona",
     partnerCountry: "Spain",
@@ -1872,7 +1872,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Orebro University",
     partnerCity: "Örebro",
     partnerCountry: "Sweden",
@@ -1880,7 +1880,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of San Marino",
     partnerCity: "San Marino",
     partnerCountry: "San Marino",
@@ -1891,7 +1891,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
 
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
@@ -1899,7 +1899,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
     partnerCountry: "Bulgaria",
@@ -1907,7 +1907,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity:
       "University of Rijeka, Faculty of Economics and Business",
     partnerCity: "Rijeka",
@@ -1916,7 +1916,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Metropolitan University Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
@@ -1924,7 +1924,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity:
       "Brno University of Technology, Faculty of Business and Management",
     partnerCity: "Brno",
@@ -1933,7 +1933,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Tallinn University",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
@@ -1941,7 +1941,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "Tallinn University of Technology",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
@@ -1949,7 +1949,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "ESCE International Business School",
     partnerCity: "Paris",
     partnerCountry: "France",
@@ -1957,7 +1957,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "SRH Berlin University of Applied Sciences",
     partnerCity: "Berlin",
     partnerCountry: "Germany",
@@ -1965,7 +1965,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Volos",
     partnerCountry: "Greece",
@@ -1973,7 +1973,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "University of Siena",
     partnerCity: "Siena",
     partnerCountry: "Italy",
@@ -1981,7 +1981,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Business Administration",
+    homeDepartment: "Business Administration",
     partnerUniversity: "RISEBA University of Applied Sciences",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
