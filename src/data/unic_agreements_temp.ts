@@ -5132,7 +5132,149 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "bachelor"
   },
 
+// Family Medicine master
+
+{
+    homeUniversity: "UNIC",
+    homeDepartment: "Family Medicine (MSc)",
+    partnerUniversity: "Trakia University",
+    partnerCity: "Stara Zagora",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Family Medicine (MSc)",
+    partnerUniversity: "Orebro University",
+    partnerCity: "Örebro",
+    partnerCountry: "Sweden",
+    academicLevel: "master"
+  },
+
+  // Graphic & Digital Design bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Graphic & Digital Design",
+    partnerUniversity: "St. Cyril and St. Methodius University of Veliko Turnov",
+    partnerCity: "Veliko Tarnovo",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Graphic & Digital Design",
+    partnerUniversity: "University of Lapland",
+    partnerCity: "Rovaniemi",
+    partnerCountry: "Finland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Graphic & Digital Design",
+    partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
+    partnerCity: "Köthen (Anhalt)",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Graphic & Digital Design",
+    partnerUniversity: "University of West Attica / Panepistimio Dytikis Attikis",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Graphic & Digital Design",
+    partnerUniversity: "University of Naples Federico II",
+    partnerCity: "Naples",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Graphic & Digital Design",
+    partnerUniversity: "Academy of Fine Arts of Macerata",
+    partnerCity: "Macerata",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Graphic & Digital Design",
+    partnerUniversity: "LIEPAJAS UNIVERSITATE",
+    partnerCity: "Liepāja",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Graphic & Digital Design",
+    partnerUniversity: "RISEBA University of Applied Sciences",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Graphic & Digital Design",
+    partnerUniversity: "Vytautas Magnus University",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Graphic & Digital Design",
+    partnerUniversity: "Polish-Japanese Academy of Information Technology",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Graphic & Digital Design",
+    partnerUniversity: "Lci Barcelona Escuela Superior S. L. U",
+    partnerCity: "Barcelona",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Graphic & Digital Design",
+    partnerUniversity: "Escuela Superior de Diseño de Madrid",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Graphic & Digital Design",
+    partnerUniversity: "Escuela de Arte y Superior de Diseño de Alcoy/Escola d'Art i Superior de Disseny d'Alcoi",
+    partnerCity: "Alcoy",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Graphic & Digital Design",
+    partnerUniversity: "University of Ljubljana",
+    partnerCity: "Ljubljana",
+    partnerCountry: "Slovenia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Graphic & Digital Design",
+    partnerUniversity: "„George Enescu” National University of Arts from Iași",
+    partnerCity: "Iași",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
   
+
   
 
   // This is just the beginning - I'll need multiple parts due to size
