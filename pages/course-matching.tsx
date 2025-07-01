@@ -346,10 +346,21 @@ export default function CourseMatching() {
                       onValueChange={(value) =>
                         handleInputChange("homeDepartment", value)
                       }
-                      disabled={!formData.homeUniversity}
+                      disabled={
+                        !formData.homeUniversity ||
+                        (formData.homeUniversity === "UNIC" &&
+                          !formData.levelOfStudy)
+                      }
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select your department" />
+                        <SelectValue
+                          placeholder={
+                            formData.homeUniversity === "UNIC" &&
+                            !formData.levelOfStudy
+                              ? "Select level of study first"
+                              : "Select your department"
+                          }
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {homeDepartments.map((department) => (
