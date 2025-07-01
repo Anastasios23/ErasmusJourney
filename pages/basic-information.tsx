@@ -112,7 +112,7 @@ export default function BasicInformation() {
 
         const uniqueCities = Array.from(
           new Set(hostUniversities.map((u) => u.city)),
-        ).sort();
+        ).sort() as string[];
 
         setAvailableHostUniversities(uniqueHostUniversities);
         setAvailableCities(uniqueCities);
