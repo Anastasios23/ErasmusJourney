@@ -3165,7 +3165,51 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "bachelor"
   },
 
-  
+  // Environmental and Energy Management bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Environmental and Energy Management(BSc) ",
+    partnerUniversity: "Instituto Politecnico de Coimbra",
+    partnerCity: "Coimbra",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+
+// Exercise Sc and Physical Ed master
+
+{
+    homeUniversity: "UNIC",
+    homeDepartment: " Exercise Sc and Physical Ed(MSc) ",
+    partnerUniversity: "National sports Academy Vassil Levski",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Exercise Sc and Physical Ed(MSc) ",
+    partnerUniversity: "National and Kapodistrian University of Athens",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Exercise Sc and Physical Ed(MSc) ",
+    partnerUniversity: "Democritus University of Thrace",
+    partnerCity: "Komotini",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Exercise Sc and Physical Ed(MSc) ",
+    partnerUniversity: "Lithuanian Sports University",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "master"
+  },
 
   // This is just the beginning - I'll need multiple parts due to size
 ];
