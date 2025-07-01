@@ -27,8 +27,11 @@ import {
   CYPRUS_UNIVERSITIES,
   ALL_UNIVERSITY_AGREEMENTS,
   getAgreementsByDepartment,
+  getAgreementsByDepartmentAndLevel,
+  getAgreementsByUniversityAndLevel,
   getPartnerCountries,
 } from "../src/data/universityAgreements";
+import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp";
 
 export default function BasicInformation() {
   const [formData, setFormData] = useState({
@@ -53,35 +56,48 @@ export default function BasicInformation() {
   const [availableCities, setAvailableCities] = useState<string[]>([]);
 
   // Get departments for selected Cyprus university
-  const availableDepartments = formData.universityInCyprus
-    ? cyprusUniversities.find((u) => u.code === formData.universityInCyprus)
-        ?.departments || []
-    : [];
+  const availableDepartments =
+    formData.universityInCyprus === "UNIC"
+      ? // For UNIC, get unique departments from actual agreement data filtered by level
+        formData.levelOfStudy
+        ? [
+            ...new Set(
+              UNIC_COMPREHENSIVE_AGREEMENTS.filter(
+                (agreement) =>
+                  agreement.academicLevel === formData.levelOfStudy,
+              ).map((agreement) => agreement.homeDepartment.trim()),
+            ),
+          ]
+        : []
+      : formData.universityInCyprus
+        ? // For other universities, use the predefined departments
+          cyprusUniversities.find((u) => u.code === formData.universityInCyprus)
+            ?.departments || []
+        : [];
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-    // Reset dependent fields when home university changes
-    if (field === "universityInCyprus") {
-      setFormData((prev) => ({
-        ...prev,
-        department: "",
-        receptionCountry: "",
-        receptionCity: "",
-        foreignUniversity: "",
-        departmentAtHost: "",
-      }));
-      setAvailableHostUniversities([]);
-      setAvailableCities([]);
-    }
-
     // Update available partner universities when department changes
     if (field === "department") {
       if (formData.universityInCyprus) {
-        const partnershipAgreements = getAgreementsByDepartment(
-          formData.universityInCyprus,
-          value,
-        );
+        let partnershipAgreements;
+
+        if (formData.universityInCyprus === "UNIC") {
+          // Use level-aware filtering for UNIC
+          partnershipAgreements = getAgreementsByDepartmentAndLevel(
+            formData.universityInCyprus,
+            value,
+            formData.levelOfStudy as "bachelor" | "master" | "phd",
+          );
+        } else {
+          // Use generic filtering for other universities
+          partnershipAgreements = getAgreementsByDepartment(
+            formData.universityInCyprus,
+            value,
+          );
+        }
+
         const hostUniversities = partnershipAgreements.map((agreement) => ({
           university: agreement.partnerUniversity,
           city: agreement.partnerCity,
@@ -109,6 +125,49 @@ export default function BasicInformation() {
         foreignUniversity: "",
         departmentAtHost: "",
       }));
+    }
+
+    // Clear dependent fields when level changes for UNIC
+    if (field === "levelOfStudy") {
+      if (formData.universityInCyprus === "UNIC") {
+        setFormData((prev) => ({
+          ...prev,
+          department: "",
+          receptionCountry: "",
+          receptionCity: "",
+          foreignUniversity: "",
+          departmentAtHost: "",
+        }));
+        setAvailableHostUniversities([]);
+        setAvailableCities([]);
+      }
+    }
+
+    // Clear dependent fields when university changes
+    if (field === "universityInCyprus") {
+      // Reset level for non-UNIC universities since they don't need it
+      if (value !== "UNIC") {
+        setFormData((prev) => ({
+          ...prev,
+          levelOfStudy: "",
+          department: "",
+          receptionCountry: "",
+          receptionCity: "",
+          foreignUniversity: "",
+          departmentAtHost: "",
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          department: "",
+          receptionCountry: "",
+          receptionCity: "",
+          foreignUniversity: "",
+          departmentAtHost: "",
+        }));
+      }
+      setAvailableHostUniversities([]);
+      setAvailableCities([]);
     }
 
     // Filter cities by country when country changes
@@ -297,9 +356,16 @@ export default function BasicInformation() {
                         onValueChange={(value) =>
                           handleInputChange("universityInCyprus", value)
                         }
+                        disabled={!formData.levelOfStudy}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select your university in Cyprus" />
+                          <SelectValue
+                            placeholder={
+                              !formData.levelOfStudy
+                                ? "Select level of study first"
+                                : "Select your university in Cyprus"
+                            }
+                          />
                         </SelectTrigger>
                         <SelectContent>
                           {cyprusUniversities.map((uni) => (
@@ -321,9 +387,20 @@ export default function BasicInformation() {
                           onValueChange={(value) =>
                             handleInputChange("department", value)
                           }
+                          disabled={
+                            formData.universityInCyprus === "UNIC" &&
+                            !formData.levelOfStudy
+                          }
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select your department" />
+                            <SelectValue
+                              placeholder={
+                                formData.universityInCyprus === "UNIC" &&
+                                !formData.levelOfStudy
+                                  ? "Select level of study first"
+                                  : "Select your department"
+                              }
+                            />
                           </SelectTrigger>
                           <SelectContent>
                             {availableDepartments.map((dept) => (
@@ -336,7 +413,9 @@ export default function BasicInformation() {
                       ) : (
                         <div className="p-3 border border-gray-200 rounded-md bg-gray-50">
                           <p className="text-sm text-gray-600">
-                            Please select your university in Cyprus first
+                            {!formData.levelOfStudy
+                              ? "Please select your level of study first"
+                              : "Please select your university in Cyprus first"}
                           </p>
                         </div>
                       )}
