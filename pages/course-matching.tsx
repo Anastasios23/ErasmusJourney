@@ -402,6 +402,18 @@ export default function CourseMatching() {
                           )}
                         </SelectContent>
                       </Select>
+                      {/* Message when level is required but not selected */}
+                      {formData.homeUniversity === "UNIC" &&
+                        formData.homeDepartment &&
+                        !formData.levelOfStudy && (
+                          <p className="text-sm text-amber-600 bg-amber-50 p-2 rounded">
+                            <strong>Level of Study Required:</strong> Please
+                            select your level of study to see available
+                            partnerships for UNIC.
+                          </p>
+                        )}
+
+                      {/* Message when no partnerships found */}
                       {availableHostUniversities.length === 0 &&
                         formData.homeDepartment &&
                         formData.levelOfStudy && (
