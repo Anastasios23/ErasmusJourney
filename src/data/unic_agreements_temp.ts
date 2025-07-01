@@ -5294,6 +5294,65 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+  // Orthopedic Sc and Rehab master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Orthopedic Sc and Rehab (MSc)",
+    partnerUniversity: "National sports Academy Vassil Levski",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Orthopedic Sc and Rehab (MSc)",
+    partnerUniversity: "Trakia University",
+    partnerCity: "Stara Zagora",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Orthopedic Sc and Rehab (MSc)",
+    partnerUniversity: "University of Peloponnese",
+    partnerCity: "Tripoli",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Orthopedic Sc and Rehab (MSc)",
+    partnerUniversity: "UNIVERSITY OF THESSALY",
+    partnerCity: "Volos",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Orthopedic Sc and Rehab (MSc)",
+    partnerUniversity: "University of West Attica / Panepistimio Dytikis Attikis",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Orthopedic Sc and Rehab (MSc)",
+    partnerUniversity: "Lithuanian Sports University",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Orthopedic Sc and Rehab (MSc)",
+    partnerUniversity: "Siauliu Valstybine Kolegija",
+    partnerCity: "Šiauliai",
+    partnerCountry: "Lithuania",
+    academicLevel: "master"
+  },
+
   // PR, Advertising and Marketing bachelor
 
   {
