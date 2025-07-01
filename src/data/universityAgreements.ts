@@ -2277,7 +2277,304 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "phd"
   },
 
-  
+  // Marketing management bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "University of Applied Sciences BFI Vienna",
+    partnerCity: "Vienna",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Technical University of Varna",
+    partnerCity: "Varna",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Univerity of Liege",
+    partnerCity: "Liège",
+    partnerCountry: "Belgium",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Haute École de la Province de Liège",
+    partnerCity: "Liège",
+    partnerCountry: "Belgium",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Polytechnic of Šibenik",
+    partnerCity: "Šibenik",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
+    partnerCity: "Rijeka",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Brno University of Technology, Faculty of Business and Management",
+    partnerCity: "Brno",
+    partnerCountry: "Czech Republic",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "University College of Northern Denmark - UCN",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "VIA University College",
+    partnerCity: "VIA University College (Horsens)",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Copenhagen Business Academy",
+    partnerCity: "Copenhagen",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Tallinn University of Technology",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Université de Tours",
+    partnerCity: "Tours",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "ESC Rennes - School of Business",
+    partnerCity: "Rennes",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Institut Limayrac",
+    partnerCity: "Toulouse",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "EDC Business School",
+    partnerCity: "Paris",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Bauhaus-Universität Weimar",
+    partnerCity: "Weimar",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Athens University of Economics and Business - Research Center",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "University of the Aegean ( Mytilene)",
+    partnerCity: "Mytilene (Lesbos)",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "University of Patras",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Università degli Studi di Modena e Reggio Emilia",
+    partnerCity: "Modena",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Latvian Academy of Culture",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Kaunas University of Technology",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Vilnius University Business School",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Vilnius Business College",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Instituto Politécnico Da Guarda",
+    partnerCity: "Guarda",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Universidade de Coimbra",
+    partnerCity: "Coimbra",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Instituto Politecnico de Tomar",
+    partnerCity: "Tomar",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "University of Lodz",
+    partnerCity: "Lodz",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "National Defence University Warsaw",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "The General Tadeusz Kościuszko Military Academy of Land Forces",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Slovak University of Agriculture in Nitra",
+    partnerCity: "Nitra",
+    partnerCountry: "Slovakia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "University of Economics and Management of Bratislava",
+    partnerCity: "Bratislava",
+    partnerCountry: "Slovakia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "Comenius University in Bratislava",
+    partnerCity: "Bratislava",
+    partnerCountry: "Slovakia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Marketing management (BBA)",
+    partnerUniversity: "University of Malta",
+    partnerCity: "Valletta",
+    partnerCountry: "Malta",
+    academicLevel: "bachelor"
+  },
 
   // Note: This is a partial implementation. The full dataset would include all agreements for all universities.
   // For brevity, I'm showing the pattern with representative entries from each category.
