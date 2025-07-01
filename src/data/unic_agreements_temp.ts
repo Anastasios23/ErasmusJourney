@@ -3879,7 +3879,499 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "phd"
   },
 
-  
+  // Dance bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Dance",
+    partnerUniversity: "University of Pula",
+    partnerCity: "Pula",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Dance",
+    partnerUniversity: "University of Strasbourg",
+    partnerCity: "Strasbourg",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Dance",
+    partnerUniversity: "National Academy of Dance in Rome",
+    partnerCity: "Rome",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Dance",
+    partnerUniversity: "Latvian Academy of Culture",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Dance",
+    partnerUniversity: "Akademia Humanistyczno-Ekonomiczna w Lodzi",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Dance",
+    partnerUniversity: "Universidad Rey Juan Carlos",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+
+  // Digital Art and Design master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Art and Design",
+    partnerUniversity: "University of Zagreb",
+    partnerCity: "Zagreb",
+    partnerCountry: "Croatia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Art and Design",
+    partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
+    partnerCity: "Köthen",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Art and Design",
+    partnerUniversity: "University of West Attica / Panepistimio Dytikis Attikis",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Art and Design",
+    partnerUniversity: "University of Naples Federico II",
+    partnerCity: "Naples",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Art and Design",
+    partnerUniversity: "Academy of Fine Arts of Macerata",
+    partnerCity: "Macerata",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Art and Design",
+    partnerUniversity: "RISEBA University of Applied Sciences",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Art and Design",
+    partnerUniversity: "Polish-Japanese Academy of Information Technology",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Art and Design",
+    partnerUniversity: "Escuela Superior de Diseño de Madrid",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Art and Design",
+    partnerUniversity: "University of Ljubljana",
+    partnerCity: "Ljubljana",
+    partnerCountry: "Slovenia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Art and Design",
+    partnerUniversity: "University of Applied Sciences BFI Vienna",
+    partnerCity: "Vienna",
+    partnerCountry: "Austria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Art and Design",
+    partnerUniversity: "ACCADEMIA DI BELLE ARTI STATALE DI VERONA",
+    partnerCity: "Verona",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Art and Design",
+    partnerUniversity: "University of Timisoara",
+    partnerCity: "Timișoara",
+    partnerCountry: "Romania",
+    academicLevel: "master"
+  },
+
+  // Digital Communications and Mass Media bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "Haute École de la Province de Liège",
+    partnerCity: "Liège",
+    partnerCountry: "Belgium",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "Metropolitan University Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "Roskilde University",
+    partnerCity: "Roskilde",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "Tartu Ulikool",
+    partnerCity: "Tartu",
+    partnerCountry: "Estonia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "EUROPA-UNIVERSITAET FLENSBURG",
+    partnerCity: "Flensburg",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "University of Aegean",
+    partnerCity: "Mytilene",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "University of Limerick",
+    partnerCity: "Limerick",
+    partnerCountry: "Ireland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "University of Molise",
+    partnerCity: "Campobasso",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "Academy of Fine Arts of Macerata",
+    partnerCity: "Macerata",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "Uniwersytet Łódzki",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "Polish-Japanese Academy of Information Technology",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "Polytechnic Institute of Guarda",
+    partnerCity: "Guarda",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "UNIVERSITATEA DE VEST DIN TIMISOARA",
+    partnerCity: "Timișoara",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "Universitat de Barcelona",
+    partnerCity: "Barcelona",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "Universidad Europea Miguel de Cervantes S. A.",
+    partnerCity: "Valladolid",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "Orebro University",
+    partnerCity: "Örebro",
+    partnerCountry: "Sweden",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "University of Ljubljana",
+    partnerCity: "Ljubljana",
+    partnerCountry: "Slovenia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "ACCADEMIA DI BELLE ARTI STATALE DI VERONA",
+    partnerCity: "Verona",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Communications and Mass Media",
+    partnerUniversity: "University of San Marino",
+    partnerCity: "San Marino",
+    partnerCountry: "San Marino",
+    academicLevel: "bachelor"
+  },
+
+  // Digital Media and Comm master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "Metropolitan University Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "Metropolitan University Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "Roskilde University",
+    partnerCity: "Roskilde",
+    partnerCountry: "Denmark",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "Bauhaus-Universität Weimar",
+    partnerCity: "Weimar",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
+    partnerCity: "Köthen",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "University of Molise",
+    partnerCity: "Campobasso",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "Academy of Fine Arts of Macerata",
+    partnerCity: "Macerata",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "RISEBA University of Applied Sciences",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "Kaunas University of Technology",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "Uniwersytet Łódzki",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "AGH University of Science and Technology",
+    partnerCity: "Kraków",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "Polish-Japanese Academy of Information Technology",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "Adam Mickiewicz University, Poznan",
+    partnerCity: "Poznań",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "Polytechnic Institute of Guarda",
+    partnerCity: "Guarda",
+    partnerCountry: "Portugal",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "UNIVERSITATEA DE VEST DIN TIMISOARA",
+    partnerCity: "Timișoara",
+    partnerCountry: "Romania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
+    partnerCity: "Novi Sad",
+    partnerCountry: "Serbia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "Escuela Superior de Diseño de Madrid",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "University of Ljubljana",
+    partnerCity: "Ljubljana",
+    partnerCountry: "Slovenia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Digital Media and Comm",
+    partnerUniversity: "ACCADEMIA DI BELLE ARTI STATALE DI VERONA",
+    partnerCity: "Verona",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+
+  //
   
 
   // This is just the beginning - I'll need multiple parts due to size
