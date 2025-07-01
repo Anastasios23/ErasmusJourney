@@ -2608,5 +2608,32 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master",
   },
 
+  // Counseling Psychology master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Counseling Psychology (MSc)",
+    partnerUniversity: "Bielefeld University",
+    partnerCity: "Bielefeld",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Counseling Psychology (MSc)",
+    partnerUniversity: "Radboud University Nijmegen",
+    partnerCity: "Nijmegen",
+    partnerCountry: "Netherlands",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Counseling Psychology (MSc)",
+    partnerUniversity: "Universiteit Maastricht",
+    partnerCity: "Maastricht",
+    partnerCountry: "Netherlands",
+    academicLevel: "master"
+  },
+
   // This is just the beginning - I'll need multiple parts due to size
 ];
