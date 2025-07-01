@@ -5296,6 +5296,233 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
 
 
 
+// Tourism, Leisure and Events Management bachelor
+{
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "FH Joanneum University of Applied Sciences",
+    partnerCity: "Graz",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Hogeschool West-Vlaanderen Howest",
+    partnerCity: "Kortrijk",
+    partnerCountry: "Belgium",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "St. Cyril and St. Methodius University of Veliko Turnov",
+    partnerCity: "Veliko Tarnovo",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Agricultural University of Plovdiv",
+    partnerCity: "Plovdiv",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Libertas Business School",
+    partnerCity: "Zagreb",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Rit Croatia",
+    partnerCity: "Dubrovnik",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Metropolitan University Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Copenhagen Business Academy",
+    partnerCity: "Copenhagen",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "University College of Northern Denmark - UCN",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Haaga-Helia University of Applied Sciences",
+    partnerCity: "Helsinki",
+    partnerCountry: "Finland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Institut Limayrac",
+    partnerCity: "Toulouse",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "University of Applied Sciences Stralsund",
+    partnerCity: "Stralsund",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Universitat Trier",
+    partnerCity: "Trier",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "SRH Berlin University of Applied Sciences",
+    partnerCity: "Berlin",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Hellenic Mediterranean University",
+    partnerCity: "Heraklion (Crete)",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "LIEPAJAS UNIVERSITATE",
+    partnerCity: "Liepāja",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Saxion University of Applied Sciences",
+    partnerCity: "Enschede",
+    partnerCountry: "Netherlands",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Instituto Politécnico Da Guarda",
+    partnerCity: "Guarda",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Instituto Europeu de Estudos Superiores",
+    partnerCity: "Penafiel",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Akademia Wychowania Fizycznego we Wrocławiu",
+    partnerCity: "Wrocław",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "The University College of Tourism and Ecology",
+    partnerCity: "Sucha Beskidzka",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Uniwersytet Łódzki",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Romanian-American University",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Universidad Complutense de Madrid",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "Universitat de Lleida",
+    partnerCity: "Lleida",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Tourism, Leisure and Events Management (BBA)",
+    partnerUniversity: "University of Malta",
+    partnerCity: "Msida",
+    partnerCountry: "Malta",
+    academicLevel: "bachelor"
+  },
+
+
   // Veterinary Medicine (DVM) bachelor
 
   {
