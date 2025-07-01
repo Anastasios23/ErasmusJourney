@@ -313,7 +313,10 @@ export default function CourseMatching() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="levelOfStudy">Level of Study</Label>
+                    <Label htmlFor="levelOfStudy">
+                      Level of Study
+                      <span className="text-red-500 ml-1">*</span>
+                    </Label>
                     <Select
                       value={formData.levelOfStudy}
                       onValueChange={(value) =>
@@ -329,6 +332,9 @@ export default function CourseMatching() {
                         <SelectItem value="phd">PhD</SelectItem>
                       </SelectContent>
                     </Select>
+                    <p className="text-xs text-gray-500">
+                      Required for UNIC - affects available partnerships
+                    </p>
                   </div>
 
                   <div className="space-y-2">
