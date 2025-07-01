@@ -2823,6 +2823,148 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+  // Education Sciences master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (MEd)",
+    partnerUniversity: "Theresianische Militärakademie Fachhochschul-Bachelorstudiengang Militärische Führung",
+    partnerCity: "Wiener Neustadt",
+    partnerCountry: "Austria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (MEd)",
+    partnerUniversity: "Ostravska Univerzita",
+    partnerCity: "Ostrava",
+    partnerCountry: "Czech Republic",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (MEd)",
+    partnerUniversity: "Europa-Universität Flensburg",
+    partnerCity: "Flensburg",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (MEd)",
+    partnerUniversity: "MARTIN-LUTHER-UNIVERSITAT HALLE-WITTENBERG",
+    partnerCity: "Halle (Saale)",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (MEd)",
+    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (MEd)",
+    partnerUniversity: "University of Patras",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (MEd)",
+    partnerUniversity: "University of the Aegean",
+    partnerCity: "Mytilene",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (MEd)",
+    partnerUniversity: "University of Crete",
+    partnerCity: "Heraklion",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (MEd)",
+    partnerUniversity: "Hellenic Open University",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (MEd)",
+    partnerUniversity: "University of Salerno",
+    partnerCity: "Salerno",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (MEd)",
+    partnerUniversity: "Instituto Europeu de Estudos Superiores",
+    partnerCity: "Funchal",
+    partnerCountry: "Portugal",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (MEd)",
+    partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
+    partnerCity: "Novi Sad",
+    partnerCountry: "Serbia",
+    academicLevel: "master"
+  },
+
+  //Education Sciences phd
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (PhD)",
+    partnerUniversity: "MARTIN-LUTHER-UNIVERSITAT HALLE-WITTENBERG",
+    partnerCity: "Halle (Saale)",
+    partnerCountry: "Germany",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (PhD)",
+    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (PhD)",
+    partnerUniversity: "University of Patras",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (PhD)",
+    partnerUniversity: "University of the Aegean",
+    partnerCity: "Mytilene",
+    partnerCountry: "Greece",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Education Sciences (PhD)",
+    partnerUniversity: "Universidad de Zaragoza",
+    partnerCity: "Zaragoza",
+    partnerCountry: "Spain",
+    academicLevel: "phd"
+  },
+
   
 
   // This is just the beginning - I'll need multiple parts due to size
