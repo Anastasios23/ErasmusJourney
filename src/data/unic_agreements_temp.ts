@@ -5295,7 +5295,113 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
 
 
+// Sports Management bachelor
 
+{
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Management (BBA)",
+    partnerUniversity: "FH Joanneum University of Applied Sciences",
+    partnerCity: "Graz",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Management (BBA)",
+    partnerUniversity: "Agricultural University of Plovdiv",
+    partnerCity: "Plovdiv",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Management (BBA)",
+    partnerUniversity: "National sports Academy Vassil Levski",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Management (BBA)",
+    partnerUniversity: "International University Libertas",
+    partnerCity: "Zagreb",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Management (BBA)",
+    partnerUniversity: "University College of Northern Denmark - UCN",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Management (BBA)",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Management (BBA)",
+    partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Management (BBA)",
+    partnerUniversity: "Lithuanian Sports University",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Management (BBA)",
+    partnerUniversity: "Amsterdam University of Applied Sciences",
+    partnerCity: "Amsterdam",
+    partnerCountry: "Netherlands",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Management (BBA)",
+    partnerUniversity: "Instituto Europeu de Estudos Superiores",
+    partnerCity: "Fafe",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Management (BBA)",
+    partnerUniversity: "Romanian-American University",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Management (BBA)",
+    partnerUniversity: "Orebro University",
+    partnerCity: "Örebro",
+    partnerCountry: "Sweden",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Management (BBA)",
+    partnerUniversity: "The Hague University of Applied Sciences",
+    partnerCity: "The Hague",
+    partnerCountry: "Netherlands",
+    academicLevel: "bachelor"
+  },
+  
   // Sports Nutrition/Dietetics and Nutrition Intervention master
   {
     homeUniversity: "UNIC",
@@ -5321,7 +5427,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerCountry: "Netherlands",
     academicLevel: "master"
   },
-  
+
 
 // Sports Science bachelor
 
