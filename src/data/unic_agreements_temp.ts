@@ -5294,6 +5294,35 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+
+
+  // Sports Nutrition/Dietetics and Nutrition Intervention master
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Nutrition/Dietetics and Nutrition Intervention (MSc)",
+    partnerUniversity: "Agricultural University of Athens",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Nutrition/Dietetics and Nutrition Intervention (MSc)",
+    partnerUniversity: "Lithuanian Sports University",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Nutrition/Dietetics and Nutrition Intervention (MSc)",
+    partnerUniversity: "Amsterdam University of Applied Sciences",
+    partnerCity: "Amsterdam",
+    partnerCountry: "Netherlands",
+    academicLevel: "master"
+  },
+  
+
 // Sports Science bachelor
 
 {
@@ -5393,7 +5422,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "bachelor"
   },
 
-  
+
 
 // Teaching English to Speakers of Other Languages master
 {
