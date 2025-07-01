@@ -5294,7 +5294,106 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+// Sports Science bachelor
 
+{
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Science (BSc)",
+    partnerUniversity: "National sports Academy Vassil Levski",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Science (BSc)",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Science (BSc)",
+    partnerUniversity: "UNIVERSITY OF THESSALY",
+    partnerCity: "Volos",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Science (BSc)",
+    partnerUniversity: "National and Kapodistrian University of Athens",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Science (BSc)",
+    partnerUniversity: "Democritus University of Thrace",
+    partnerCity: "Komotini",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Science (BSc)",
+    partnerUniversity: "University of Pavia",
+    partnerCity: "Pavia",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Science (BSc)",
+    partnerUniversity: "University of Foggia",
+    partnerCity: "Foggia",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Science (BSc)",
+    partnerUniversity: "Lithuanian Sports University",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Science (BSc)",
+    partnerUniversity: "Akademia Wychowania Fizycznego we Wrocławiu",
+    partnerCity: "Wrocław",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Science (BSc)",
+    partnerUniversity: "Instituto Europeu de Estudos Superiores",
+    partnerCity: "Fafe",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Science (BSc)",
+    partnerUniversity: "UNIVERSIDAD DE CADIZ",
+    partnerCity: "Cádiz",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Sports Science (BSc)",
+    partnerUniversity: "University of Extremadura",
+    partnerCity: "Badajoz",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+
+  
 
 // Teaching English to Speakers of Other Languages master
 {
