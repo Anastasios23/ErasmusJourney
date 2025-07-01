@@ -235,7 +235,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
  // accounting bachelor
 
  {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
@@ -243,7 +243,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
     partnerCity: "Rijeka",
@@ -251,7 +251,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "Polytechnic of Šibenik",
     partnerCity: "Šibenik",
@@ -259,7 +259,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "Brno University of Technology, Faculty of Business and Management",
     partnerCity: "Brno",
@@ -267,7 +267,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
@@ -275,7 +275,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "ESC Rennes - School of Business",
     partnerCity: "Rennes",
@@ -283,7 +283,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "KEDGE",
     partnerCity: "Bordeaux",
@@ -291,7 +291,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "Institut Limayrac",
     partnerCity: "Toulouse",
@@ -299,7 +299,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "University of Rennes",
     partnerCity: "Rennes",
@@ -307,7 +307,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "Frankfurt University of Applied Sciences",
     partnerCity: "Frankfurt",
@@ -315,7 +315,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "University of Peloponnese",
     partnerCity: "Patras",
@@ -323,7 +323,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Larissa",
@@ -331,7 +331,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "University of Crete",
     partnerCity: "Heraklion",
@@ -339,7 +339,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "University of Piraeus",
     partnerCity: "Piraeus",
@@ -347,7 +347,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
     partnerCity: "Kaunas",
@@ -355,7 +355,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "Siauliu Valstybine Kolegija",
     partnerCity: "Šiauliai",
@@ -363,7 +363,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "Vilniaus Kolegija University of Applied Sciences",
     partnerCity: "Vilnius",
@@ -371,7 +371,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "State University of Applied Sciences in Wloclawek",
     partnerCity: "Włocławek",
@@ -379,7 +379,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "Instituto Politécnico Da Guarda",
     partnerCity: "Guarda",
@@ -387,7 +387,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "Romanian-American University",
     partnerCity: "Bucharest",
@@ -395,14 +395,13 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
   {
-    homeUniversity: "UCY",
+    homeUniversity: "UNIC",
     homeDepartment: " Accounting",
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
     partnerCountry: "Slovakia"
     academicLevel: "bachelor"
   },
-
   // Architecture bachelor
 
   {
