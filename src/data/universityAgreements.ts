@@ -2586,6 +2586,201 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     partnerCountry: "Romania",
     academicLevel: "master"
   },
+
+  // Computer Engineering bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "FH Joanneum University of Applied Sciences",
+    partnerCity: "Graz",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "Technical University of Varna",
+    partnerCity: "Varna",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "VIA University College",
+    partnerCity: "Aarhus",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
+    partnerCity: "Vaasa",
+    partnerCountry: "Finland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "ESME Sudria Engineering School",
+    partnerCity: "Paris",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "Hochschule Schmalkalden",
+    partnerCity: "Schmalkalden",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "University of Ioannina",
+    partnerCity: "Ioannina",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "University of Patras",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "University of Western Macedonia",
+    partnerCity: "Kozani",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "Polytechneio Kritis",
+    partnerCity: "Chania",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "Universita del Salento",
+    partnerCity: "Lecce",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "Universita degli Studi di Perugia",
+    partnerCity: "Perugia",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "LIEPAJAS UNIVERSITATE",
+    partnerCity: "Liepaja",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "Polish-Japanese Academy of Information Technology",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "State University of Applied Sciences in Wloclawek",
+    partnerCity: "Wloclawek",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "Instituto Europeu de Estudos Superiores",
+    partnerCity: "Fafe",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "Instituto Politécnico Da Guarda",
+    partnerCity: "Guarda",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "University Politehnica of Bucharest",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "Universitatea Tehnica Cluj-Napoca",
+    partnerCity: "Cluj-Napoca",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "Slovak University of Agriculture in Nitra",
+    partnerCity: "Nitra",
+    partnerCountry: "Slovakia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "Universidad Complutense de Madrid",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Computer Engineering (BSc)",
+    partnerUniversity: "UNIVERSITETET I SOROST-NORGE",
+    partnerCity: "Kongsberg",
+    partnerCountry: "Norway",
+    academicLevel: "bachelor"
+  },
   
 
   // Note: This is a partial implementation. The full dataset would include all agreements for all universities.
