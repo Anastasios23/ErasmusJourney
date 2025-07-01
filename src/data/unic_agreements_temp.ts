@@ -5295,6 +5295,91 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
 
 
+
+// Social Work master
+
+{
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (MSc)",
+    partnerUniversity: "St. Pölten University of Applied Sciences",
+    partnerCity: "St. Pölten",
+    partnerCountry: "Austria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (MSc)",
+    partnerUniversity: "University of Ruse Angel Kanchev",
+    partnerCity: "Ruse",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (MSc)",
+    partnerUniversity: "St. Cyril and St. Methodius University of Veliko Turnov",
+    partnerCity: "Veliko Tarnovo",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (MSc)",
+    partnerUniversity: "University of Ostrava",
+    partnerCity: "Ostrava",
+    partnerCountry: "Czech Republic",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (MSc)",
+    partnerUniversity: "University of Flensburg",
+    partnerCity: "Flensburg",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (MSc)",
+    partnerUniversity: "Hellenic Open University",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (MSc)",
+    partnerUniversity: "LIEPAJAS UNIVERSITATE",
+    partnerCity: "Liepaja",
+    partnerCountry: "Latvia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (MSc)",
+    partnerUniversity: "AGH University of Science and Technology",
+    partnerCity: "Kraków",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (MSc)",
+    partnerUniversity: "Instituto Europeu de Estudos Superiores",
+    partnerCity: "Fafe",
+    partnerCountry: "Portugal",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (MSc)",
+    partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
+    partnerCity: "Novi Sad",
+    partnerCountry: "Serbia",
+    academicLevel: "master"
+  },
+
+
 // Sports Management bachelor
 
 {
@@ -5401,7 +5486,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerCountry: "Netherlands",
     academicLevel: "bachelor"
   },
-  
+
   // Sports Nutrition/Dietetics and Nutrition Intervention master
   {
     homeUniversity: "UNIC",
