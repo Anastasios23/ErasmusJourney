@@ -403,6 +403,344 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     academicLevel: "bachelor"
   },
 
+  // Architecture bachelor
+
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "TU Wien",
+    partnerCity: "Vienna",
+    partnerCountry: "Austria"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "KU Leuven",
+    partnerCity: "Leuven",
+    partnerCountry: "Belgium"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "University College of Northern Denmark - UCN",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "National - Higher School of Architecture- Marseille",
+    partnerCity: "Marseille",
+    partnerCountry: "France"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "UNIVERSITY OF THESSALY",
+    partnerCity: "Larissa",
+    partnerCountry: "Greece"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "University of West Attica / Panepistimio Dytikis Attikis",
+    partnerCity: "Athens",
+    partnerCountry: "Greece"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Aristotle University of Thessaloniki",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "National Technical University of Athens",
+    partnerCity: "Athens",
+    partnerCountry: "Greece"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Bauhaus-Universität Weimar",
+    partnerCity: "Weimar",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
+    partnerCity: "Bernburg",
+    partnerCountry: "Germany"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "University of Naples Federico II",
+    partnerCity: "Naples",
+    partnerCountry: "Italy"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Universita Iuav di Venezia",
+    partnerCity: "Venice",
+    partnerCountry: "Italy"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "University of Trieste",
+    partnerCity: "Trieste",
+    partnerCountry: "Italy"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "RISEBA University of Applied Sciences",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Kaunas University of Technology",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Universidade do Minho",
+    partnerCity: "Braga",
+    partnerCountry: "Portugal"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Universitatea Tehnica Cluj-Napoca",
+    partnerCity: "Cluj-Napoca",
+    partnerCountry: "Romania"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "UNIVERSITY OF ALICANTE",
+    partnerCity: "Alicante",
+    partnerCountry: "Spain"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Technical University of Madrid",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain"
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Umea School of Architecture",
+    partnerCity: "Umeå",
+    partnerCountry: "Sweden"
+    academicLevel: "bachelor"
+  },
+
+  // Architecture Master
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "TU Wien",
+    partnerCity: "Vienna",
+    partnerCountry: "Austria"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "KU Leuven",
+    partnerCity: "Leuven",
+    partnerCountry: "Belgium"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "University College of Northern Denmark - UCN",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "National - Higher School of Architecture- Marseille",
+    partnerCity: "Marseille",
+    partnerCountry: "France"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "UNIVERSITY OF THESSALY",
+    partnerCity: "Larissa",
+    partnerCountry: "Greece"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "University of West Attica / Panepistimio Dytikis Attikis",
+    partnerCity: "Athens",
+    partnerCountry: "Greece"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Aristotle University of Thessaloniki",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "National Technical University of Athens",
+    partnerCity: "Athens",
+    partnerCountry: "Greece"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Bauhaus-Universität Weimar",
+    partnerCity: "Weimar",
+    partnerCountry: "Germany"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
+    partnerCity: "Bernburg",
+    partnerCountry: "Germany"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "University of Naples Federico II",
+    partnerCity: "Naples",
+    partnerCountry: "Italy"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Universita Iuav di Venezia",
+    partnerCity: "Venice",
+    partnerCountry: "Italy"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "RISEBA University of Applied Sciences",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Kaunas University of Technology",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Universidade do Minho",
+    partnerCity: "Braga",
+    partnerCountry: "Portugal"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Universitatea Tehnica Cluj-Napoca",
+    partnerCity: "Cluj-Napoca",
+    partnerCountry: "Romania"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "UNIVERSITY OF ALICANTE",
+    partnerCity: "Alicante",
+    partnerCountry: "Spain"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Technical University of Madrid",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Architecture",
+    partnerUniversity: "Umea School of Architecture",
+    partnerCity: "Umeå",
+    partnerCountry: "Sweden"
+    academicLevel: "master"
+  },
+
+  // Biomedical Sciences master
+
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Biomedical Sciences",
+    partnerUniversity: "Trakia University",
+    partnerCity: "Stara Zagora",
+    partnerCountry: "Bulgaria"
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UCY",
+    homeDepartment: " Biomedical Sciences",
+    partnerUniversity: "University of Foggia",
+    partnerCity: "Foggia",
+    partnerCountry: "Italy"
+    academicLevel: "master"
+  },
+
+  //
+
   // Note: This is a partial implementation. The full dataset would include all agreements for all universities.
   // For brevity, I'm showing the pattern with representative entries from each category.
 ];
