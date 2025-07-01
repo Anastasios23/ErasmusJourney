@@ -95,9 +95,7 @@ export default function Header() {
                   >
                     <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
                       <span className="text-white text-sm font-medium">
-                        {session.user.firstName?.[0] ||
-                          session.user.username?.[0] ||
-                          session.user.email[0]}
+                        {session.user.name?.[0] || session.user.email?.[0]}
                       </span>
                     </div>
                   </Button>
