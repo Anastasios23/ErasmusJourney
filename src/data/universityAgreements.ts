@@ -279,7 +279,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: " Accounting",
     partnerUniversity: "ESC Rennes - School of Business",
     partnerCity: "Rennes",
-    partnerCountry: "France"
+    partnerCountry: "France",
     academicLevel: "bachelor"
   },
   {
@@ -287,7 +287,7 @@ export const UNIC_AGREEMENTS: UniversityAgreement[] = [
     homeDepartment: " Accounting",
     partnerUniversity: "KEDGE",
     partnerCity: "Bordeaux",
-    partnerCountry: "France"
+    partnerCountry: "France",
     academicLevel: "bachelor"
   },
   {
