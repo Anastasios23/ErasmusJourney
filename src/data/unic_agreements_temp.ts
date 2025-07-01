@@ -4957,6 +4957,42 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerCountry: "Romania",
     academicLevel: "master"
   },
+
+  // Exercise Science and Physical Education phd
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Exercise Science and Physical Education (PhD)",
+    partnerUniversity: "Technical University of Varna",
+    partnerCity: "Varna",
+    partnerCountry: "Bulgaria",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Exercise Science and Physical Education (PhD)",
+    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Exercise Science and Physical Education (PhD)",
+    partnerUniversity: "University of Western Macedonia",
+    partnerCity: "Kozani",
+    partnerCountry: "Greece",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Exercise Science and Physical Education (PhD)",
+    partnerUniversity: "Kaunas University of Technology",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "phd"
+  },
+
   
   
 
