@@ -5296,6 +5296,56 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
 
 
 
+// Teaching English to Speakers of Other Languages master
+{
+    homeUniversity: "UNIC",
+    homeDepartment: "Teaching English to Speakers of Other Languages (MA)",
+    partnerUniversity: "University of Erfurt (Universitat Erfurt)",
+    partnerCity: "Erfurt",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Teaching English to Speakers of Other Languages (MA)",
+    partnerUniversity: "Metropolitan University in Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Teaching English to Speakers of Other Languages (MA)",
+    partnerUniversity: "Universita degli Studi di Verona",
+    partnerCity: "Verona",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Teaching English to Speakers of Other Languages (MA)",
+    partnerUniversity: "Adam Mickiewicz University, Poznan",
+    partnerCity: "Poznań",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Teaching English to Speakers of Other Languages (MA)",
+    partnerUniversity: "Universitat Jaume I",
+    partnerCity: "Castellón de la Plana",
+    partnerCountry: "Spain",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Teaching English to Speakers of Other Languages (MA)",
+    partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
+    partnerCity: "Novi Sad",
+    partnerCountry: "Serbia",
+    academicLevel: "master"
+  },
+
 // Tourism, Leisure and Events Management bachelor
 {
     homeUniversity: "UNIC",
