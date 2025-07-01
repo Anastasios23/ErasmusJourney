@@ -29,6 +29,7 @@ import {
   ALL_UNIVERSITY_AGREEMENTS,
   getAgreementsByDepartment,
   getAgreementsByDepartmentAndLevel,
+  getAgreementsByUniversityAndLevel,
 } from "../src/data/universityAgreements";
 import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp";
 
@@ -48,11 +49,11 @@ interface EquivalentCourse {
 
 export default function CourseMatching() {
   const [formData, setFormData] = useState({
+    levelOfStudy: "",
     hostUniversity: "",
     hostDepartment: "",
     homeUniversity: "",
     homeDepartment: "",
-    levelOfStudy: "",
     hostCourseCount: "",
     homeCourseCount: "",
     courseMatchingDifficult: "",
@@ -319,36 +320,7 @@ export default function CourseMatching() {
               <CardContent className="space-y-6">
                 <div className="grid md:grid-cols-3 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="homeUniversity">
-                      Your Home University (Cyprus)
-                    </Label>
-                    <Select
-                      value={formData.homeUniversity}
-                      onValueChange={(value) =>
-                        handleInputChange("homeUniversity", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your Cyprus university" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {cyprusUniversities.map((university) => (
-                          <SelectItem
-                            key={university.code}
-                            value={university.code}
-                          >
-                            {university.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="levelOfStudy">
-                      Level of Study
-                      <span className="text-red-500 ml-1">*</span>
-                    </Label>
+                    <Label htmlFor="levelOfStudy">Level of Study</Label>
                     <Select
                       value={formData.levelOfStudy}
                       onValueChange={(value) =>
@@ -364,9 +336,33 @@ export default function CourseMatching() {
                         <SelectItem value="phd">PhD</SelectItem>
                       </SelectContent>
                     </Select>
-                    <p className="text-xs text-gray-500">
-                      Required for UNIC - affects available partnerships
-                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="homeUniversity">
+                      Your Home University (Cyprus)
+                    </Label>
+                    <Select
+                      value={formData.homeUniversity}
+                      onValueChange={(value) =>
+                        handleInputChange("homeUniversity", value)
+                      }
+                      disabled={!formData.levelOfStudy}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your Cyprus university" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {cyprusUniversities.map((university) => (
+                          <SelectItem
+                            key={university.code}
+                            value={university.code}
+                          >
+                            {university.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="space-y-2">
