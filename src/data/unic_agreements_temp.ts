@@ -5294,7 +5294,178 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+// Social Work bachelor
 
+{
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "St. Pölten University of Applied Sciences",
+    partnerCity: "St. Pölten",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "University of Ruse Angel Kanchev",
+    partnerCity: "Ruse",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "St. Cyril and St. Methodius University of Veliko Turnov",
+    partnerCity: "Veliko Tarnovo",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "Thomas More University",
+    partnerCity: "Mechelen",
+    partnerCountry: "Belgium",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "University of Ostrava",
+    partnerCity: "Ostrava",
+    partnerCountry: "Czech Republic",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "Leibniz Universität Hannover",
+    partnerCity: "Hannover",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "HAWK University of Applied Sciences and Arts",
+    partnerCity: "Hildesheim",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "Frankfurt University of Applied Sciences",
+    partnerCity: "Frankfurt am Main",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "University of Flensburg",
+    partnerCity: "Flensburg",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "University of West Attica / Panepistimio Dytikis Attikis",
+    partnerCity: "Athens (Egaleo)",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "Hellenic Open University",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "Democritus University of Thrace",
+    partnerCity: "Komotini",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "Hellenic Mediterranean University",
+    partnerCity: "Heraklion",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "Universita di Pisa",
+    partnerCity: "Pisa",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "Hogeschool Zuyd",
+    partnerCity: "Heerlen",
+    partnerCountry: "Netherlands",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "State University of Applied Sciences in Wloclawek",
+    partnerCity: "Włocławek",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "AGH University of Science and Technology",
+    partnerCity: "Kraków",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "Instituto Europeu de Estudos Superiores",
+    partnerCity: "Fafe",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
+    partnerCity: "Novi Sad",
+    partnerCountry: "Serbia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Social Work (BSc)",
+    partnerUniversity: "The Hague University of Applied Sciences",
+    partnerCity: "The Hague",
+    partnerCountry: "Netherlands",
+    academicLevel: "bachelor"
+  },
+
+  
 
 // Social Work master
 
