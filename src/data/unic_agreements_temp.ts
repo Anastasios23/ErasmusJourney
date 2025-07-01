@@ -1,4 +1,5 @@
 
+
 // Temporary file for UNIC comprehensive agreements
 export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   // accounting bachelor
@@ -3209,6 +3210,403 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
     academicLevel: "master"
+  },
+
+  // Exercise Sc and Physical Ed phd
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Exercise Sc and Physical Ed(PhD) ",
+    partnerUniversity: "National sports Academy Vassil Levski",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Exercise Sc and Physical Ed(PhD) ",
+    partnerUniversity: "National and Kapodistrian University of Athens",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Exercise Sc and Physical Ed(PhD) ",
+    partnerUniversity: "Democritus University of Thrace",
+    partnerCity: "Komotini",
+    partnerCountry: "Greece",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Exercise Sc and Physical Ed(PhD) ",
+    partnerUniversity: "Lithuanian Sports University",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "phd"
+  },
+
+  // Computer Science bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "FH Joanneum University of Applied Sciences",
+    partnerCity: "Graz",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Technical University of Varna",
+    partnerCity: "Varna",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "University of Ruse Angel Kanchev",
+    partnerCity: "Ruse",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Polytechnic of Šibenik",
+    partnerCity: "Šibenik",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Mendel University in Brno",
+    partnerCity: "Brno",
+    partnerCountry: "Czech Republic",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Czech Technical University in Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Business Academy Aarhus",
+    partnerCity: "Aarhus",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "VIA University College",
+    partnerCity: "Horsens",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "University College of Northern Denmark - UCN",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Vaasa University of Applied Sciences",
+    partnerCity: "Vaasa",
+    partnerCountry: "Finland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "ESME Sudria Engineering School",
+    partnerCity: "Paris",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "University of Nantes",
+    partnerCity: "Nantes",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "University of Applied Sciences Ingolstadt",
+    partnerCity: "Ingolstadt",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "University of Applied Sciences Stralsund",
+    partnerCity: "Stralsund",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "University of Patras",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "University of Crete",
+    partnerCity: "Heraklion",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Panepistimio Ioanninon",
+    partnerCity: "Ioannina",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Aristotle University of Thessaloniki",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Panepistimio Thessalias",
+    partnerCity: "Volos",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "College of Dunaujvaros",
+    partnerCity: "Dunaújváros",
+    partnerCountry: "Hungary",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Universita del Salento",
+    partnerCity: "Lecce",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "UNIVERSITA DEGLI STUDI DI PERUGIA",
+    partnerCity: "Perugia",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "LIEPAJAS UNIVERSITATE",
+    partnerCity: "Liepaja",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Riga Technical University",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Vilniaus Kolegija University of Applied Sciences",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Universitetet i Sorost-Norge",
+    partnerCity: "Kristiansand",
+    partnerCountry: "Norway",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Politechnika Warszawska",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Polish-Japanese Academy of Information Technology",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "State University of Applied Sciences in Wloclawek",
+    partnerCity: "Włocławek",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "POLITECHNIKA WROCLAWSKA",
+    partnerCity: "Wrocław",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "University of Lodz",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "AGH University of Science and Technology",
+    partnerCity: "Kraków",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Lublin University of Technology",
+    partnerCity: "Lublin",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Politecnic of Coimbra",
+    partnerCity: "Coimbra",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "University of Craiova",
+    partnerCity: "Craiova",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Romanian-American University",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "University Politehnica of Bucharest",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Universidad Complutense de Madrid",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Orebro University",
+    partnerCity: "Örebro",
+    partnerCountry: "Sweden",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "UNIVERSITY OF LJUBLJANA",
+    partnerCity: "Ljubljana",
+    partnerCountry: "Slovenia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "NOVA Lisbon",
+    partnerCity: "Lisbon",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "Kauno Kolegija/ University of Applied Sciences",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: " Computer Science (BSc) ",
+    partnerUniversity: "University of Oradea",
+    partnerCity: "Oradea",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
   },
 
   // This is just the beginning - I'll need multiple parts due to size
