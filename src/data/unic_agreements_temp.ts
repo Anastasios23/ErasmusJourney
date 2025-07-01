@@ -5294,7 +5294,72 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+// Physiotherapy bachelor
 
+{
+    homeUniversity: "UNIC",
+    homeDepartment: "Physiotherapy (BSc)",
+    partnerUniversity: "National sports Academy Vassil Levski",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Physiotherapy (BSc)",
+    partnerUniversity: "Trakia University",
+    partnerCity: "Stara Zagora",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Physiotherapy (BSc)",
+    partnerUniversity: "University of Western Attica",
+    partnerCity: "Egaleo",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Physiotherapy (BSc)",
+    partnerUniversity: "University of Thessaly",
+    partnerCity: "Volos",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Physiotherapy (BSc)",
+    partnerUniversity: "University of Peloponnese",
+    partnerCity: "Tripoli",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Physiotherapy (BSc)",
+    partnerUniversity: "University of West Attica / Panepistimio Dytikis Attikis",
+    partnerCity: "Egaleo",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Physiotherapy (BSc)",
+    partnerUniversity: "University of Patras",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Physiotherapy (BSc)",
+    partnerUniversity: "Lithuanian Sports University",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
 
 
 //Physiotherapy phd
