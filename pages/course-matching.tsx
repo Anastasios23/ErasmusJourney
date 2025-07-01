@@ -106,72 +106,55 @@ export default function CourseMatching() {
       setAvailableHostUniversities([]);
     }
 
-    // Update partnerships when university, department, or level changes
-    if (
-      field === "homeUniversity" ||
-      field === "homeDepartment" ||
-      field === "levelOfStudy"
-    ) {
-      // Get the current values, using the new value for the field being changed
-      const university =
-        field === "homeUniversity" ? value : formData.homeUniversity;
-      const department =
-        field === "homeDepartment" ? value : formData.homeDepartment;
-      const level = field === "levelOfStudy" ? value : formData.levelOfStudy;
+    // Handle department selection with level-aware filtering
+    if (field === "homeDepartment") {
+      if (!formData.homeUniversity) return; // guard
 
-      // For UNIC, require all three fields (university, department, level)
-      // For other universities, only require university and department
-      const shouldFilter =
-        university === "UNIC"
-          ? university && department && level
-          : university && department;
-
-      if (shouldFilter) {
-        let partnershipAgreements;
-
-        if (university === "UNIC") {
-          // Use UNIC specific data with level filtering
-          partnershipAgreements = UNIC_COMPREHENSIVE_AGREEMENTS.filter(
-            (agreement) =>
-              agreement.homeUniversity === university &&
-              agreement.homeDepartment === department &&
-              agreement.academicLevel === level,
-          );
-        } else {
-          // Use existing data for other universities
-          partnershipAgreements = getAgreementsByDepartmentAndLevel(
-            university,
-            department,
-            level as "bachelor" | "master" | "phd",
-          );
-        }
-
-        const hostUniversities = partnershipAgreements.map((agreement) => ({
-          university: agreement.partnerUniversity,
-          city: agreement.partnerCity,
-          country: agreement.partnerCountry,
-        }));
-
-        // Remove duplicates
-        const uniqueHostUniversities = hostUniversities.filter(
-          (uni, index, self) =>
-            index === self.findIndex((u) => u.university === uni.university),
+      let partnershipAgreements;
+      if (formData.homeUniversity === "UNIC") {
+        partnershipAgreements = getAgreementsByDepartmentAndLevel(
+          formData.homeUniversity,
+          value, // the department they just chose
+          formData.levelOfStudy as "bachelor" | "master" | "phd",
         );
-
-        setAvailableHostUniversities(uniqueHostUniversities);
-
-        // Reset host university selection when partnerships change
-        if (field !== "homeUniversity") {
-          setFormData((prev) => ({
-            ...prev,
-            hostUniversity: "",
-            hostDepartment: "",
-          }));
-        }
       } else {
-        // Clear partnerships if required fields are not selected
-        setAvailableHostUniversities([]);
+        partnershipAgreements = getAgreementsByDepartment(
+          formData.homeUniversity,
+          value,
+        );
       }
+
+      const hostUniversities = partnershipAgreements.map((agreement) => ({
+        university: agreement.partnerUniversity,
+        city: agreement.partnerCity,
+        country: agreement.partnerCountry,
+      }));
+
+      // Remove duplicates
+      const uniqueHostUniversities = hostUniversities.filter(
+        (uni, index, self) =>
+          index === self.findIndex((u) => u.university === uni.university),
+      );
+
+      setAvailableHostUniversities(uniqueHostUniversities);
+
+      // Reset host university selection
+      setFormData((prev) => ({
+        ...prev,
+        hostUniversity: "",
+        hostDepartment: "",
+      }));
+    }
+
+    // Clear data when level changes for UNIC
+    if (field === "levelOfStudy" && formData.homeUniversity === "UNIC") {
+      setFormData((prev) => ({
+        ...prev,
+        homeDepartment: "",
+        hostUniversity: "",
+        hostDepartment: "",
+      }));
+      setAvailableHostUniversities([]);
     }
 
     if (field === "hostCourseCount") {
