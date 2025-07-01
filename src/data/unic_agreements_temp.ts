@@ -4,7 +4,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
 
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
@@ -12,7 +12,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity:
       "University of Rijeka, Faculty of Economics and Business",
     partnerCity: "Rijeka",
@@ -21,7 +21,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "Polytechnic of Šibenik",
     partnerCity: "Šibenik",
     partnerCountry: "Croatia",
@@ -29,7 +29,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity:
       "Brno University of Technology, Faculty of Business and Management",
     partnerCity: "Brno",
@@ -38,7 +38,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
@@ -46,7 +46,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "ESC Rennes - School of Business",
     partnerCity: "Rennes",
     partnerCountry: "France",
@@ -54,7 +54,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "KEDGE",
     partnerCity: "Bordeaux",
     partnerCountry: "France",
@@ -62,7 +62,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "Institut Limayrac",
     partnerCity: "Toulouse",
     partnerCountry: "France",
@@ -70,7 +70,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "University of Rennes",
     partnerCity: "Rennes",
     partnerCountry: "France",
@@ -78,7 +78,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "Frankfurt University of Applied Sciences",
     partnerCity: "Frankfurt",
     partnerCountry: "Germany",
@@ -86,7 +86,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "University of Peloponnese",
     partnerCity: "Patras",
     partnerCountry: "Greece",
@@ -94,7 +94,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Larissa",
     partnerCountry: "Greece",
@@ -102,7 +102,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "University of Crete",
     partnerCity: "Heraklion",
     partnerCountry: "Greece",
@@ -110,7 +110,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "University of Piraeus",
     partnerCity: "Piraeus",
     partnerCountry: "Greece",
@@ -118,7 +118,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
@@ -126,7 +126,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "Siauliu Valstybine Kolegija",
     partnerCity: "Šiauliai",
     partnerCountry: "Lithuania",
@@ -134,7 +134,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "Vilniaus Kolegija University of Applied Sciences",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
@@ -142,7 +142,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "State University of Applied Sciences in Wloclawek",
     partnerCity: "Włocławek",
     partnerCountry: "Poland",
@@ -150,7 +150,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "Instituto Politécnico Da Guarda",
     partnerCity: "Guarda",
     partnerCountry: "Portugal",
@@ -158,7 +158,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "Romanian-American University",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
@@ -166,7 +166,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: " Accounting",
+    homeDepartment: "Accounting",
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
     partnerCountry: "Slovakia",
