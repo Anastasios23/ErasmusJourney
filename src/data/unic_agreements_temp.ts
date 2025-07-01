@@ -5294,6 +5294,43 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+
+
+  // Veterinary Medicine (DVM) bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Veterinary Medicine (DVM)",
+    partnerUniversity: "Wroclaw University of Environmental and Life Sciences",
+    partnerCity: "Wrocław",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Veterinary Medicine (DVM)",
+    partnerUniversity: "University of Thessaly",
+    partnerCity: "Volos",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Veterinary Medicine (DVM)",
+    partnerUniversity: "UNIVERSITAT AUTONOMA DE BARCELONA",
+    partnerCity: "Barcelona",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Veterinary Medicine (DVM)",
+    partnerUniversity: "Nord University",
+    partnerCity: "Bodø",
+    partnerCountry: "Norway",
+    academicLevel: "bachelor"
+  },
+
   
 
   // This is just the beginning - I'll need multiple parts due to size
