@@ -2798,7 +2798,32 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
 
 // Clinical Psychology master
 
+{
+    homeUniversity: "UNIC",
+    homeDepartment: "Clinical Psychology (MSc)",
+    partnerUniversity: "Bielefeld University",
+    partnerCity: "Bielefeld",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Clinical Psychology (MSc)",
+    partnerUniversity: "Radboud University Nijmegen",
+    partnerCity: "Nijmegen",
+    partnerCountry: "Netherlands",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Clinical Psychology (MSc)",
+    partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
+    partnerCity: "Novi Sad",
+    partnerCountry: "Serbia",
+    academicLevel: "master"
+  },
 
+  
 
   // This is just the beginning - I'll need multiple parts due to size
 ];
