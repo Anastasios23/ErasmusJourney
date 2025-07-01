@@ -2965,7 +2965,179 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "phd"
   },
 
-  
+  // Educ. School Psychology master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Educ. School Psychology (MSc)",
+    partnerUniversity: "Bielefeld University",
+    partnerCity: "Bielefeld",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Educ. School Psychology (MSc)",
+    partnerUniversity: "Radboud University Nijmegen",
+    partnerCity: "Nijmegen",
+    partnerCountry: "Netherlands",
+    academicLevel: "master"
+  },
+
+  // English Language and Literature bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "St. Cyril and St. Methodius University of Veliko Turnov",
+    partnerCity: "Veliko Turnovo",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "Metropolitan University Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "Universite Rennes Ii",
+    partnerCity: "Rennes",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "University of Erfurt (Universitat Erfurt)",
+    partnerCity: "Erfurt",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "University of Verona",
+    partnerCity: "Verona",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "University of Limerick",
+    partnerCity: "Limerick",
+    partnerCountry: "Ireland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "LIEPAJAS UNIVERSITATE",
+    partnerCity: "Liepāja",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "Latvian Academy of Culture",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "Adams Mickiewicz Poznan",
+    partnerCity: "Poznań",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "Katolickl Uniwersytet Lubelski Jana Pawla II",
+    partnerCity: "Lublin",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "Uniwersytet Szczecinski",
+    partnerCity: "Szczecin",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "State University of Applied Sciences in Wloclawek",
+    partnerCity: "Włocławek",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
+    partnerCity: "Novi Sad",
+    partnerCountry: "Serbia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "Universitat Jaume I",
+    partnerCity: "Castelló de la Plana",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "University of New Bulgaria",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "Vilnius Business College",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "Lazarski University",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "English Language and Literature (BA)",
+    partnerUniversity: "Humboldt-Universität zu Berlin",
+    partnerCity: "Berlin",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
 
   // This is just the beginning - I'll need multiple parts due to size
 ];
