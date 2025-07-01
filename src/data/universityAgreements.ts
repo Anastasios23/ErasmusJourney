@@ -1,3 +1,5 @@
+import { UNIC_COMPREHENSIVE_AGREEMENTS } from "./unic_agreements_temp";
+
 export interface UniversityAgreement {
   homeUniversity: string;
   homeDepartment: string;
@@ -13609,6 +13611,16 @@ export function getAgreementsByUniversityAndLevel(
   universityCode: string,
   academicLevel: "bachelor" | "master" | "phd",
 ): UniversityAgreement[] {
+  // For UNIC, use the comprehensive agreements data
+  if (universityCode === "UNIC") {
+    return UNIC_COMPREHENSIVE_AGREEMENTS.filter(
+      (agreement) =>
+        agreement.homeUniversity === universityCode &&
+        agreement.academicLevel === academicLevel,
+    );
+  }
+
+  // For other universities, use existing logic
   return ALL_UNIVERSITY_AGREEMENTS.filter(
     (agreement) =>
       agreement.homeUniversity === universityCode &&
@@ -13623,6 +13635,17 @@ export function getAgreementsByDepartmentAndLevel(
   department: string,
   academicLevel: "bachelor" | "master" | "phd",
 ): UniversityAgreement[] {
+  // For UNIC, use the comprehensive agreements data
+  if (universityCode === "UNIC") {
+    return UNIC_COMPREHENSIVE_AGREEMENTS.filter(
+      (agreement) =>
+        agreement.homeUniversity === universityCode &&
+        agreement.homeDepartment === department &&
+        agreement.academicLevel === academicLevel,
+    );
+  }
+
+  // For other universities, use the existing logic
   return ALL_UNIVERSITY_AGREEMENTS.filter((agreement) => {
     // Basic filters
     if (
@@ -13632,20 +13655,7 @@ export function getAgreementsByDepartmentAndLevel(
       return false;
     }
 
-    // For UNIC, apply strict academic level filtering
-    if (universityCode === "UNIC") {
-      // If agreement has specific level, must match
-      if (agreement.academicLevel) {
-        return (
-          agreement.academicLevel === academicLevel ||
-          agreement.academicLevel === "all"
-        );
-      }
-      // For UNIC agreements without level specified, assign based on partner university type
-      return assignDefaultLevel(agreement, academicLevel);
-    }
-
-    // For other universities, include all agreements regardless of level
+    // Include all agreements regardless of level for non-UNIC universities
     return true;
   });
 }
