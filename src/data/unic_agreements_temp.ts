@@ -4993,6 +4993,145 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "phd"
   },
 
+  // Fine Art bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "University of Applied Arts Vienna",
+    partnerCity: "Vienna",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "Haute Ecole de la Ville de Liege",
+    partnerCity: "Liège",
+    partnerCountry: "Belgium",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "St. Cyril and St. Methodius University of Veliko Turnov",
+    partnerCity: "Veliko Tarnovo",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "University of Zagreb",
+    partnerCity: "Zagreb",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "Universite Rennes Ii",
+    partnerCity: "Rennes",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "University of Lapland",
+    partnerCity: "Rovaniemi",
+    partnerCountry: "Finland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "University of Western Attica",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "ANOTATI SCHOLI KALON TECHNON",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "Academy of Fine Arts of Macerata",
+    partnerCity: "Macerata",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "LIEPAJAS UNIVERSITATE",
+    partnerCity: "Liepaja",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "RISEBA University of Applied Sciences",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "Vytautas Magnus University",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "Polish-Japanese Academy of Information Technology",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "Lci Barcelona Escuela Superior S. L. U",
+    partnerCity: "Barcelona",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "University of Ljubljana",
+    partnerCity: "Ljubljana",
+    partnerCountry: "Slovenia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "ACCADEMIA DI BELLE ARTI STATALE DI VERONA",
+    partnerCity: "Verona",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Fine Art",
+    partnerUniversity: "Universitatea Națională de Arte ,,George Enescu\" din Iasi",
+    partnerCity: "Iași",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+
   
   
 
