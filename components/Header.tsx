@@ -104,8 +104,7 @@ export default function Header() {
                   <div className="flex items-center justify-start gap-2 p-2">
                     <div className="flex flex-col space-y-1 leading-none">
                       <p className="font-medium">
-                        {session.user.username ||
-                          `${session.user.firstName} ${session.user.lastName}`}
+                        {session.user.name || session.user.email}
                       </p>
                       <p className="w-[200px] truncate text-sm text-muted-foreground">
                         {session.user.email}
