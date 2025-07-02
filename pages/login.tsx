@@ -28,6 +28,8 @@ export default function LoginPage() {
     setError("");
     setIsLoading(true);
 
+    console.log("🔑 Attempting login with:", { username, password: "***" });
+
     try {
       const result = await signIn("credentials", {
         email: username, // Use username but send as email field for NextAuth compatibility
@@ -35,16 +37,31 @@ export default function LoginPage() {
         redirect: false,
       });
 
+      console.log("🔐 Login result:", result);
+
       if (result?.error) {
-        setError("Invalid username or password");
-      } else {
+        console.error("❌ Login failed:", result.error);
+        if (result.error === "CredentialsSignin") {
+          setError(
+            "Invalid email/username or password. Please check your credentials and try again.",
+          );
+        } else {
+          setError(`Login failed: ${result.error}`);
+        }
+      } else if (result?.ok) {
+        console.log("✅ Login successful, redirecting...");
         // Redirect to intended page or dashboard
         const redirectUrl =
           (router.query.callbackUrl as string) || "/dashboard";
         router.push(redirectUrl);
+      } else {
+        setError("Login failed. Please try again.");
       }
     } catch (error) {
-      setError("An error occurred. Please try again.");
+      console.error("💥 Login error:", error);
+      setError(
+        "A network error occurred. Please check your connection and try again.",
+      );
     } finally {
       setIsLoading(false);
     }
