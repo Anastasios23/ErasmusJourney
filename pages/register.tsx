@@ -67,9 +67,12 @@ export default function RegisterPage() {
       const data = await response.json();
 
       if (!response.ok) {
+        console.error("Registration failed:", data);
         setError(data.message || "Registration failed");
         return;
       }
+
+      console.log("Registration successful:", data);
 
       // Auto sign in after successful registration
       const signInResult = await signIn("credentials", {
@@ -78,12 +81,16 @@ export default function RegisterPage() {
         redirect: false,
       });
 
+      console.log("Auto-login result:", signInResult);
+
       if (signInResult?.error) {
         setError(
-          "Registration successful but auto-login failed. Please sign in manually.",
+          "Registration successful! Please sign in manually to continue.",
         );
-        router.push("/login");
+        setTimeout(() => router.push("/login"), 2000);
       } else {
+        // Success - redirect to dashboard
+        console.log("Registration and login successful, redirecting...");
         router.push("/dashboard");
       }
     } catch (error) {
