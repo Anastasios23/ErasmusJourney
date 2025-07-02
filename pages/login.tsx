@@ -129,9 +129,11 @@ export default function LoginPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full mt-4"
-                onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-                disabled={isLoading}
+                className="w-full mt-4 opacity-50"
+                onClick={() =>
+                  setError("Google OAuth requires production credentials")
+                }
+                disabled={true}
               >
                 <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                   <path
@@ -151,8 +153,11 @@ export default function LoginPage() {
                     fill="#EA4335"
                   />
                 </svg>
-                Continue with Google
+                Continue with Google (Coming Soon)
               </Button>
+              <p className="text-xs text-center text-gray-500 mt-2">
+                Google OAuth requires production credentials
+              </p>
             </div>
 
             <div className="mt-6 text-center space-y-2">
