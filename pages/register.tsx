@@ -94,7 +94,10 @@ export default function RegisterPage() {
   };
 
   const handleGoogleSignUp = () => {
-    signIn("google", { callbackUrl: "/dashboard" });
+    // Temporarily disabled - needs real Google OAuth credentials
+    setError(
+      "Google OAuth is currently unavailable. Please use email registration instead.",
+    );
   };
 
   return (
