@@ -360,7 +360,7 @@ export default function StudentAccommodations() {
             <div className="flex justify-between items-center mb-6">
               <div>
                 <p className="text-gray-600">
-                  {isLoading ? (
+                  {finalLoading ? (
                     "Loading accommodations..."
                   ) : (
                     <>
@@ -392,7 +392,7 @@ export default function StudentAccommodations() {
             )}
 
             {/* Loading State */}
-            {isLoading && (
+            {finalLoading && (
               <div className="space-y-6">
                 {[...Array(3)].map((_, i) => (
                   <Card key={i}>
@@ -416,7 +416,7 @@ export default function StudentAccommodations() {
             )}
 
             {/* Accommodation Listings */}
-            {!isLoading && !error && (
+            {!finalLoading && !error && (
               <section aria-label="Accommodation listings">
                 <div className="space-y-6">
                   {paginatedAccommodations.map((listing) => (
@@ -733,7 +733,7 @@ export default function StudentAccommodations() {
             )}
 
             {/* No Results */}
-            {!isLoading && !error && accommodations.length === 0 && (
+            {!finalLoading && !error && allAccommodations.length === 0 && (
               <div className="text-center py-12">
                 <Home
                   className="h-12 w-12 text-gray-400 mx-auto mb-4"
