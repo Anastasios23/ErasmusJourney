@@ -1,3 +1,6 @@
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import Header from "../components/Header";
@@ -56,12 +59,36 @@ interface Story {
 }
 
 export default function DashboardPage() {
-  // Mock data for demo
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    } else if (status === "authenticated") {
+      setLoading(false);
+    }
+  }, [status, router]);
+
+  if (status === "loading" || loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    return null;
+  }
+
+  // Use session data or fallback to demo data
   const user = {
-    id: "demo",
-    firstName: "Demo",
-    lastName: "User",
-    email: "demo@erasmus.cy",
+    id: session?.user?.email || "demo",
+    firstName: session?.user?.name?.split(" ")[0] || "Demo",
+    lastName: session?.user?.name?.split(" ")[1] || "User",
+    email: session?.user?.email || "demo@erasmus.cy",
     nationality: "Cypriot",
     homeCountry: "Cyprus",
     homeCity: "Nicosia",
