@@ -654,13 +654,26 @@ export default function BasicInformation() {
                 </Button>
               </Link>
 
-              <Button
-                type="submit"
-                className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
-              >
-                Continue to Course Matching
-                <ArrowRight className="h-4 w-4" />
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleSaveDraft}
+                  className="flex items-center gap-2"
+                >
+                  Save Draft
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
+                >
+                  {isSubmitting
+                    ? "Submitting..."
+                    : "Continue to Course Matching"}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </form>
         </div>
