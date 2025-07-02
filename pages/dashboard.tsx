@@ -85,9 +85,15 @@ export default function DashboardPage() {
 
   // Use session data or fallback to demo data
   const user = {
-    id: session?.user?.email || "demo",
-    firstName: session?.user?.name?.split(" ")[0] || "Demo",
-    lastName: session?.user?.name?.split(" ")[1] || "User",
+    id: session?.user?.id || session?.user?.email || "demo",
+    firstName:
+      (session?.user as any)?.firstName ||
+      session?.user?.name?.split(" ")[0] ||
+      "Demo",
+    lastName:
+      (session?.user as any)?.lastName ||
+      session?.user?.name?.split(" ")[1] ||
+      "User",
     email: session?.user?.email || "demo@erasmus.cy",
     nationality: "Cypriot",
     homeCountry: "Cyprus",
