@@ -148,14 +148,8 @@ export default function AdminDashboard() {
       return;
     }
 
-    // Check if user is admin (simple email check for demo)
-    const adminEmails = [
-      "admin@unic.ac.cy",
-      "admin@erasmus.cy",
-      session?.user?.email, // Allow current user for demo
-    ];
-
-    if (session && !adminEmails.includes(session.user?.email || "")) {
+    // Check if user is admin using role field
+    if (session && (session.user as any)?.role !== "ADMIN") {
       router.push("/dashboard");
       return;
     }
