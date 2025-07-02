@@ -26,7 +26,7 @@ interface FormStep {
   title: string;
   description: string;
   url: string;
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
   status: "not_started" | "in_progress" | "completed";
   estimatedTime: string;
 }
