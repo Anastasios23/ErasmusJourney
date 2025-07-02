@@ -87,14 +87,36 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
-        return {
-          ...token,
-          id: user.id,
-          firstName: (user as any).firstName,
-          lastName: (user as any).lastName,
-        };
+        // For credentials login, role is already included
+        if (account?.provider === "credentials") {
+          return {
+            ...token,
+            id: user.id,
+            firstName: (user as any).firstName,
+            lastName: (user as any).lastName,
+            role: (user as any).role,
+          };
+        }
+
+        // For OAuth providers, fetch user from database to get role
+        if (account?.provider === "google") {
+          const dbUser = await prisma.user.findUnique({
+            where: { email: user.email! },
+          });
+
+          return {
+            ...token,
+            id: user.id,
+            firstName: dbUser?.firstName || user.name?.split(" ")[0] || "",
+            lastName:
+              dbUser?.lastName ||
+              user.name?.split(" ").slice(1).join(" ") ||
+              "",
+            role: dbUser?.role || "USER",
+          };
+        }
       }
       return token;
     },
@@ -106,6 +128,7 @@ export const authOptions: NextAuthOptions = {
           id: token.id as string,
           firstName: token.firstName as string,
           lastName: token.lastName as string,
+          role: token.role as string,
         },
       };
     },
