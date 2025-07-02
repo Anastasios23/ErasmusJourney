@@ -5469,7 +5469,528 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "bachelor"
   },
 
-  
+  // HR master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "University of Applied Sciences BFI Vienna",
+    partnerCity: "Vienna",
+    partnerCountry: "Austria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Technical University of Varna",
+    partnerCity: "Varna",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Univerity of Liege",
+    partnerCity: "Liège",
+    partnerCountry: "Belgium",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Haute Ecole de la Province de Liege",
+    partnerCity: "Liège",
+    partnerCountry: "Belgium",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Agricultural University of Plovdiv",
+    partnerCity: "Plovdiv",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
+    partnerCity: "Rijeka",
+    partnerCountry: "Croatia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "International University Libertas",
+    partnerCity: "Zagreb",
+    partnerCountry: "Croatia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Mendel University in Brno",
+    partnerCity: "Brno",
+    partnerCountry: "Czech Republic",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Brno University of Technology, Faculty of Business and Management",
+    partnerCity: "Brno",
+    partnerCountry: "Czech Republic",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "VIA University College",
+    partnerCity: "Horsens",
+    partnerCountry: "Denmark",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "University College of Northern Denmark - UCN",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Tallinn University",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Tallinn University of Technology",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "EDC Business School",
+    partnerCity: "Paris",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Ecole De Management De Normandie",
+    partnerCity: "Caen",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Groupe Kedge Business School",
+    partnerCity: "Bordeaux",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Skema Business School Association",
+    partnerCity: "Lille",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Université Lumière Lyon 2",
+    partnerCity: "Lyon",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "ESC Rennes - School of Business",
+    partnerCity: "Rennes",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Université de Tours",
+    partnerCity: "Tours",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Institut Limayrac",
+    partnerCity: "Toulouse",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Groupe ESC Troyes",
+    partnerCity: "Troyes",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "ESCE International Business School",
+    partnerCity: "Paris",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Hochschule Stralsund",
+    partnerCity: "Stralsund",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Hochschule Emden/Leer",
+    partnerCity: "Emden",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
+    partnerCity: "Köthen (Anhalt)",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "SRH Berlin University of Applied Sciences",
+    partnerCity: "Berlin",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Universität Kassel",
+    partnerCity: "Kassel",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Leuphana Universität Lüneburg",
+    partnerCity: "Lüneburg",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "University of Applied Management Studies",
+    partnerCity: "Mannheim",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "University of Applied Sciences Schmalkalden",
+    partnerCity: "Schmalkalden",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "University of Applied Sciences Stralsund",
+    partnerCity: "Stralsund",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Technische Hochschule Ingolstadt",
+    partnerCity: "Ingolstadt",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Charokopeio Panepistimio",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "UNIVERSITY OF THESSALY",
+    partnerCity: "Volos",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "University of the Aegean (Mytilene)",
+    partnerCity: "Mytilene",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Hellenic Open University",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "University of Crete",
+    partnerCity: "Heraklion",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Hellenic Mediterranean University",
+    partnerCity: "Crete",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "University of Siena",
+    partnerCity: "Siena",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "University of Salerno",
+    partnerCity: "Salerno",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Universita Telematica Internazionale-Uninettuno",
+    partnerCity: "Rome",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Riga Technical University",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Rezeknes Tehnologiju Akademija",
+    partnerCity: "Rezekne",
+    partnerCountry: "Latvia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "RISEBA University of Applied Sciences",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Vilnius Business College",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "ISM University of Management and Economics",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Kaunas University of Technology",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Vilnius University Business School",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Vytautas Magnus University Faculty of Economics and Management",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Amsterdam University of Applied Sciences",
+    partnerCity: "Amsterdam",
+    partnerCountry: "Netherlands",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Spesi - Sociedade de Promoção de Ensino Superior Imobiliário",
+    partnerCity: "Lisbon",
+    partnerCountry: "Portugal",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "University of Lodz",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "University of Economics in Katowice",
+    partnerCity: "Katowice",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "University of Szczecin",
+    partnerCity: "Szczecin",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "State University of Applied Sciences in Wloclawek",
+    partnerCity: "Włocławek",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Romanian-American University",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Academy of Economic Studies in Bucharest",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "University of Maribor",
+    partnerCity: "Maribor",
+    partnerCountry: "Slovenia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Slovak University of Agriculture in Nitra",
+    partnerCity: "Nitra",
+    partnerCountry: "Slovakia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "UNIVERSITY OF LJUBLJANA",
+    partnerCity: "Ljubljana",
+    partnerCountry: "Slovenia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "University of Economics and Management of Bratislava",
+    partnerCity: "Bratislava",
+    partnerCountry: "Slovakia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Universitat de Girona",
+    partnerCity: "Girona",
+    partnerCountry: "Spain",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "HR (MBA)",
+    partnerUniversity: "Orebro University",
+    partnerCity: "Örebro",
+    partnerCountry: "Sweden",
+    academicLevel: "master"
+  },
   
 
 
