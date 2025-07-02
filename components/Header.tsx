@@ -110,9 +110,17 @@ export default function Header() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <div className="flex items-center justify-start gap-2 p-2">
+                    <div className="h-10 w-10 bg-blue-600 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">
+                        {session.user.name?.[0] || session.user.email?.[0]}
+                      </span>
+                    </div>
                     <div className="flex flex-col space-y-1 leading-none">
-                      <p className="font-medium">
-                        {session.user.name || session.user.email}
+                      <p className="font-medium text-gray-900">
+                        Welcome,{" "}
+                        {session.user.name?.split(" ")[0] ||
+                          session.user.email?.split("@")[0]}
+                        !
                       </p>
                       <p className="w-[200px] truncate text-sm text-muted-foreground">
                         {session.user.email}
