@@ -36,8 +36,10 @@ import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp"
 import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
 
 export default function BasicInformation() {
+  const { data: session, status } = useSession();
   const { submitForm, getDraftData, saveDraft } = useFormSubmissions();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     firstName: "",
