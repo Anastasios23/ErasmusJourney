@@ -5433,6 +5433,43 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerCountry: "Malta",
     academicLevel: "bachelor"
   },
+
+  // Human Biology bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Human Biology",
+    partnerUniversity: "University of Crete",
+    partnerCity: "Heraklion",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Human Biology",
+    partnerUniversity: "University of Foggia",
+    partnerCity: "Foggia",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Human Biology",
+    partnerUniversity: "University of Lodz",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Human Biology",
+    partnerUniversity: "University of Maribor",
+    partnerCity: "Maribor",
+    partnerCountry: "Slovenia",
+    academicLevel: "bachelor"
+  },
+
+  
   
 
 
