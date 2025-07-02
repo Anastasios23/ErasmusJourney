@@ -24,6 +24,7 @@ import {
   PaginationPrevious,
 } from "../src/components/ui/pagination";
 import { useStories, useLikeStory } from "../src/hooks/useQueries";
+import { useGeneratedContent } from "../src/hooks/useFormSubmissions";
 import {
   Search,
   Heart,
@@ -67,10 +68,19 @@ export default function StudentStoriesPage() {
   const { data: stories = [], isLoading, error } = useStories(filters);
   const likeMutation = useLikeStory();
 
+  // Get generated content from user submissions
+  const { content: generatedContent, loading: contentLoading } =
+    useGeneratedContent("stories");
+
+  // Combine generated content with existing data
+  const allStories = [...(generatedContent?.stories || []), ...stories];
+
+  const finalLoading = isLoading || contentLoading;
+
   // Pagination
-  const totalPages = Math.ceil(stories.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(allStories.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedStories = stories.slice(
+  const paginatedStories = allStories.slice(
     startIndex,
     startIndex + ITEMS_PER_PAGE,
   );
@@ -191,7 +201,7 @@ export default function StudentStoriesPage() {
             <div className="flex justify-between items-center mb-6">
               <div>
                 <p className="text-gray-600">
-                  {isLoading ? (
+                  {finalLoading ? (
                     "Loading stories..."
                   ) : (
                     <>
