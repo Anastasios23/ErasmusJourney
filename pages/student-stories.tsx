@@ -262,7 +262,7 @@ export default function StudentStoriesPage() {
             )}
 
             {/* Stories Grid */}
-            {!isLoading && !error && (
+            {!finalLoading && !error && (
               <section aria-label="Student stories">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                   {paginatedStories.map((story) => (
@@ -447,7 +447,7 @@ export default function StudentStoriesPage() {
             )}
 
             {/* No Results */}
-            {!isLoading && !error && stories.length === 0 && (
+            {!finalLoading && !error && allStories.length === 0 && (
               <div className="text-center py-12">
                 <BookOpen
                   className="h-12 w-12 text-gray-400 mx-auto mb-4"
