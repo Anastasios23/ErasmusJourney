@@ -1,4 +1,4 @@
-
+ 
 
 // Temporary file for UNIC comprehensive agreements
 export const UNIC_COMPREHENSIVE_AGREEMENTS = [
@@ -6026,6 +6026,212 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerCity: "Łódź",
     partnerCountry: "Poland",
     academicLevel: "phd"
+  },
+
+  // Interior Design bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interior Design",
+    partnerUniversity: "KU Leuven",
+    partnerCity: "Leuven",
+    partnerCountry: "Belgium",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interior Design",
+    partnerUniversity: "University of Lapland",
+    partnerCity: "Rovaniemi",
+    partnerCountry: "Finland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interior Design",
+    partnerUniversity: "Y SCHOOLS",
+    partnerCity: "Paris",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interior Design",
+    partnerUniversity: "Bauhaus-Universität Weimar",
+    partnerCity: "Weimar",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interior Design",
+    partnerUniversity: "UNIVERSITY OF THESSALY",
+    partnerCity: "Volos",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interior Design",
+    partnerUniversity: "University of West Attica / Panepistimio Dytikis Attikis",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interior Design",
+    partnerUniversity: "Academy of Fine Arts of Macerata",
+    partnerCity: "Macerata",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interior Design",
+    partnerUniversity: "Rezeknes Tehnologiju Akademija",
+    partnerCity: "Rēzekne",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interior Design",
+    partnerUniversity: "Polish-Japanese Academy of Information Technology",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interior Design",
+    partnerUniversity: "Escuela Superior de Diseño de Madrid",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interior Design",
+    partnerUniversity: "Escuela de Arte y Superior de Diseño de Alcoy/Escola d'Art i Superior de Disseny d'Alcoi",
+    partnerCity: "Alcoy (Alcoi)",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+
+  // Interactive media & animation  bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interactive media & animation",
+    partnerUniversity: "FH Joanneum University of Applied Sciences",
+    partnerCity: "Graz",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interactive media & animation",
+    partnerUniversity: "Uniwersytet Łódzki",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interactive media & animation",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interactive media & animation",
+    partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
+    partnerCity: "Köthen",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interactive media & animation",
+    partnerUniversity: "Academy of Fine Arts of Macerata",
+    partnerCity: "Macerata",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interactive media & animation",
+    partnerUniversity: "Vilnius Business College",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interactive media & animation",
+    partnerUniversity: "Siauliu Valstybine Kolegija",
+    partnerCity: "Šiauliai",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interactive media & animation",
+    partnerUniversity: "LIEPAJAS UNIVERSITATE",
+    partnerCity: "Liepāja",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interactive media & animation",
+    partnerUniversity: "Polish-Japanese Academy of Information Technology",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interactive media & animation",
+    partnerUniversity: "Adam Mickiewicz University in Poznań",
+    partnerCity: "Poznań",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interactive media & animation",
+    partnerUniversity: "Lci Barcelona Escuela Superior S. L. U",
+    partnerCity: "Barcelona",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interactive media & animation",
+    partnerUniversity: "Universitat de Barcelona",
+    partnerCity: "Barcelona",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interactive media & animation",
+    partnerUniversity: "Escuela de Arte y Superior de Diseño de Alcoy/Escola d'Art i Superior de Disseny d'Alcoi",
+    partnerCity: "Alcoy (Alcoi)",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Interactive media & animation",
+    partnerUniversity: "Universidad Europea Miguel de Cervantes S. A.",
+    partnerCity: "Valladolid",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
   },
 
   
