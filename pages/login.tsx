@@ -48,6 +48,10 @@ export default function LoginPage() {
       });
 
       console.log("🔐 Login result:", result);
+      console.log("🔐 Login result.ok:", result?.ok);
+      console.log("🔐 Login result.error:", result?.error);
+      console.log("🔐 Login result.status:", result?.status);
+      console.log("🔐 Login result.url:", result?.url);
 
       if (result?.error) {
         console.error("❌ Login failed:", result.error);
@@ -60,11 +64,19 @@ export default function LoginPage() {
         }
       } else if (result?.ok) {
         console.log("✅ Login successful, redirecting...");
-        // Redirect to intended page or dashboard
-        const redirectUrl =
-          (router.query.callbackUrl as string) || "/dashboard";
-        router.push(redirectUrl);
+
+        // Clear any previous errors
+        setError("");
+
+        // Small delay to ensure session is established
+        setTimeout(() => {
+          const redirectUrl =
+            (router.query.callbackUrl as string) || "/dashboard";
+          console.log("🔗 Redirecting to:", redirectUrl);
+          router.push(redirectUrl);
+        }, 100);
       } else {
+        console.log("⚠️ Unexpected login result:", result);
         setError("Login failed. Please try again.");
       }
     } catch (error) {
