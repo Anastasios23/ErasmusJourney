@@ -6234,6 +6234,727 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "bachelor"
   },
 
+  //  International Relations and European Studies bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "St. Cyril and St. Methodius University of Veliko Turnov",
+    partnerCity: "Veliko Tarnovo",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Polytechnic of Šibenik",
+    partnerCity: "Šibenik",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "International University Libertas",
+    partnerCity: "Dubrovnik",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Masaryk University",
+    partnerCity: "Brno",
+    partnerCountry: "Czech Republic",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Metropolitan University Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Tallinn University",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Université Lumière Lyon 2",
+    partnerCity: "Lyon",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Universite de Bordeaux",
+    partnerCity: "Bordeaux",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "ICES",
+    partnerCity: "La Roche-sur-Yon",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Goethe Universitat Frankfurt",
+    partnerCity: "Frankfurt am Main",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Freiburg",
+    partnerCity: "Freiburg im Breisgau",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Flensburg",
+    partnerCity: "Flensburg",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Erfurt",
+    partnerCity: "Erfurt",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Piraeus",
+    partnerCity: "Piraeus",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "UNIVERSITY OF MACEDONIA",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Democritus University of Thrace",
+    partnerCity: "Komotini",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Panteion University of Social and Political Sciences",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Haskolinn a Akureyri",
+    partnerCity: "Akureyri",
+    partnerCountry: "Iceland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Naples Federico II",
+    partnerCity: "Naples",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Universita degli Studi di Salerno",
+    partnerCity: "Salerno",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Padova",
+    partnerCity: "Padua",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Verona",
+    partnerCity: "Verona",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Latvian Academy of Culture",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Malta",
+    partnerCity: "Msida",
+    partnerCountry: "Malta",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "The Hague University of Applied Sciences",
+    partnerCity: "The Hague",
+    partnerCountry: "Netherlands",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Radboud University NIjmegen",
+    partnerCity: "Nijmegen",
+    partnerCountry: "Netherlands",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University American College Skopje",
+    partnerCity: "Skopje",
+    partnerCountry: "North Macedonia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Polonia University",
+    partnerCity: "Częstochowa",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Katolickl Uniwersytet Lubelski Jana Pawla II",
+    partnerCity: "Lublin",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Collegium Civitas",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Warsaw",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "National Defence University Warsaw",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Adam Mickiewicz University in Poznań",
+    partnerCity: "Poznań",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Lodz",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University Institute of Lisbon",
+    partnerCity: "Lisbon",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Ljubljana",
+    partnerCity: "Ljubljana",
+    partnerCountry: "Slovenia",
+    academicLevel: "bachelor"
+  },
+
+  // International Relations and European Studies master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Metropolitan University Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Masaryk University",
+    partnerCity: "Brno",
+    partnerCountry: "Czech Republic",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "International University Libertas",
+    partnerCity: "Dubrovnik",
+    partnerCountry: "Croatia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Tallinn University",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Université Lumière Lyon 2",
+    partnerCity: "Lyon",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Universite de Bordeaux",
+    partnerCity: "Bordeaux",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Freiburg",
+    partnerCity: "Freiburg im Breisgau",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Erfurt",
+    partnerCity: "Erfurt",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Democritus University of Thrace",
+    partnerCity: "Komotini",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Panteion University Social and Political Sciences",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "UNIVERSITY OF MACEDONIA",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Naples Federico II",
+    partnerCity: "Naples",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Padova",
+    partnerCity: "Padua",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Verona",
+    partnerCity: "Verona",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Universita degli Studi di Salerno",
+    partnerCity: "Salerno",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Radboud University NIjmegen",
+    partnerCity: "Nijmegen",
+    partnerCountry: "Netherlands",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University American College Skopje",
+    partnerCity: "Skopje",
+    partnerCountry: "North Macedonia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Warsaw",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "Adam Mickiewicz University in Poznań",
+    partnerCity: "Poznań",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University of Lodz",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "University Institute of Lisbon",
+    partnerCity: "Lisbon",
+    partnerCountry: "Portugal",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies",
+    partnerUniversity: "ICES",
+    partnerCity: "La Roche-sur-Yon",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+
+
+  // International Relations and European Studies phd
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies (PhD)",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies (PhD)",
+    partnerUniversity: "Metropolitan University Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies (PhD)",
+    partnerUniversity: "Tallinn University",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies (PhD)",
+    partnerUniversity: "Université Lumière Lyon 2",
+    partnerCity: "Lyon",
+    partnerCountry: "France",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies (PhD)",
+    partnerUniversity: "Democritus University of Thrace",
+    partnerCity: "Komotini",
+    partnerCountry: "Greece",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies (PhD)",
+    partnerUniversity: "Panteion University of Social and Political Sciences",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies (PhD)",
+    partnerUniversity: "UNIVERSITY OF MACEDONIA",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies (PhD)",
+    partnerUniversity: "University of Padova",
+    partnerCity: "Padua",
+    partnerCountry: "Italy",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies (PhD)",
+    partnerUniversity: "University of Verona",
+    partnerCity: "Verona",
+    partnerCountry: "Italy",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies (PhD)",
+    partnerUniversity: "University American College Skopje",
+    partnerCity: "Skopje",
+    partnerCountry: "North Macedonia",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "International Relations and European Studies (PhD)",
+    partnerUniversity: "Adam Mickiewicz University in Poznań",
+    partnerCity: "Poznań",
+    partnerCountry: "Poland",
+    academicLevel: "phd"
+  },
+
+  // Law (LLB)
+
+  // Law (LLM)
+
+  // Law (PhD)
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Metropolitan University Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Tallinn University",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Tallinn University of Technology",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Université Lumière Lyon 2",
+    partnerCity: "Lyon",
+    partnerCountry: "France",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Democritus University of Thrace",
+    partnerCity: "Komotini",
+    partnerCountry: "Greece",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "UNIVERSITY OF MACEDONIA",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Verona",
+    partnerCity: "Verona",
+    partnerCountry: "Italy",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Macerata",
+    partnerCity: "Macerata",
+    partnerCountry: "Italy",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Agder",
+    partnerCity: "Kristiansand",
+    partnerCountry: "Norway",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University American College Skopje",
+    partnerCity: "Skopje",
+    partnerCountry: "North Macedonia",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Universidad de Burgos",
+    partnerCity: "Burgos",
+    partnerCountry: "Spain",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Oviedo",
+    partnerCity: "Oviedo",
+    partnerCountry: "Spain",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Slovak University of Agriculture in Nitra",
+    partnerCity: "Nitra",
+    partnerCountry: "Slovakia",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Adam Mickiewicz University in Poznań",
+    partnerCity: "Poznań",
+    partnerCountry: "Poland",
+    academicLevel: "phd"
+  },
+
   
 
   // Oil and Gas Engineering bachelor
