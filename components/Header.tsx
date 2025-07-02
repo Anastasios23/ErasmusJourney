@@ -202,7 +202,10 @@ export default function Header() {
                   <div className="space-y-1">
                     <div className="px-3 py-2">
                       <div className="text-base font-medium text-gray-800">
-                        {session.user.name || session.user.email}
+                        Welcome,{" "}
+                        {session.user.name?.split(" ")[0] ||
+                          session.user.email?.split("@")[0]}
+                        !
                       </div>
                       <div className="text-sm text-gray-500">
                         {session.user.email}
