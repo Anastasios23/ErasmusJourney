@@ -72,7 +72,10 @@ export default function RegisterPage() {
         return;
       }
 
-      console.log("Registration successful:", data);
+      console.log("✅ Registration successful:", data);
+
+      // Show success message briefly
+      setError(""); // Clear any previous errors
 
       // Auto sign in after successful registration
       const signInResult = await signIn("credentials", {
@@ -81,17 +84,26 @@ export default function RegisterPage() {
         redirect: false,
       });
 
-      console.log("Auto-login result:", signInResult);
+      console.log("🔐 Auto-login result:", signInResult);
 
       if (signInResult?.error) {
+        console.error("❌ Auto-login failed:", signInResult.error);
         setError(
-          "Registration successful! Please sign in manually to continue.",
+          "✅ Account created successfully! Redirecting to login page...",
         );
-        setTimeout(() => router.push("/login"), 2000);
-      } else {
+        setTimeout(() => {
+          router.push("/login?message=account_created");
+        }, 2000);
+      } else if (signInResult?.ok) {
         // Success - redirect to dashboard
-        console.log("Registration and login successful, redirecting...");
+        console.log(
+          "🎉 Registration and login successful, redirecting to dashboard...",
+        );
+        setError(""); // Clear any error state
         router.push("/dashboard");
+      } else {
+        setError("Account created but login failed. Please sign in manually.");
+        setTimeout(() => router.push("/login"), 2000);
       }
     } catch (error) {
       setError("An error occurred. Please try again.");
