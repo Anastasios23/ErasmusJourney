@@ -1,25 +1,22 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
+import { getServerAuthSession } from "../../../lib/auth";
+import { prisma } from "../../../lib/prisma";
+import { FormType, SubmissionStatus } from "@prisma/client";
 
-interface FormSubmission {
-  id: string;
-  userId: string;
-  type:
-    | "basic-info"
-    | "course-matching"
-    | "accommodation"
-    | "story"
-    | "experience";
-  title: string;
-  data: any;
-  status: "draft" | "submitted" | "published";
-  createdAt: string;
-  updatedAt: string;
-}
+const typeMapping: Record<string, FormType> = {
+  "basic-info": "BASIC_INFO",
+  "course-matching": "COURSE_MATCHING",
+  accommodation: "ACCOMMODATION",
+  story: "STORY",
+  experience: "EXPERIENCE",
+};
 
-// In a real application, this would be stored in a database
-// For now, we'll use in-memory storage (this will reset on server restart)
-let formSubmissions: FormSubmission[] = [];
+const statusMapping: Record<string, SubmissionStatus> = {
+  draft: "DRAFT",
+  submitted: "SUBMITTED",
+  published: "PUBLISHED",
+  rejected: "REJECTED",
+};
 
 export default async function handler(
   req: NextApiRequest,
@@ -29,8 +26,8 @@ export default async function handler(
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const session = await getSession({ req });
-  if (!session) {
+  const session = await getServerAuthSession(req, res);
+  if (!session?.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
@@ -41,22 +38,49 @@ export default async function handler(
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const submission: FormSubmission = {
-      id: Date.now().toString(), // In production, use proper UUID
-      userId: session.user?.email || "unknown",
-      type,
-      title,
-      data,
-      status,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    // Map string types to enum values
+    const formType = typeMapping[type];
+    const submissionStatus = statusMapping[status];
 
-    formSubmissions.push(submission);
+    if (!formType) {
+      return res.status(400).json({ message: "Invalid form type" });
+    }
+
+    if (!submissionStatus) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
+    // Create form submission in database
+    const submission = await prisma.formSubmission.create({
+      data: {
+        userId: session.user.id,
+        type: formType,
+        title,
+        data,
+        status: submissionStatus,
+      },
+      include: {
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+      },
+    });
 
     res.status(201).json({
       message: "Form submitted successfully",
       submissionId: submission.id,
+      submission: {
+        id: submission.id,
+        type: submission.type,
+        title: submission.title,
+        status: submission.status,
+        createdAt: submission.createdAt,
+        user: submission.user,
+      },
     });
   } catch (error) {
     console.error("Error submitting form:", error);
