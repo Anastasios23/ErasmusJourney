@@ -49,6 +49,20 @@ interface EquivalentCourse {
 }
 
 export default function CourseMatching() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  // Authentication check
+  useEffect(() => {
+    if (status === "loading") return; // Still loading
+    if (status === "unauthenticated") {
+      router.push(
+        "/login?callbackUrl=" + encodeURIComponent("/course-matching"),
+      );
+      return;
+    }
+  }, [status, router]);
+
   const [formData, setFormData] = useState({
     levelOfStudy: "",
     hostUniversity: "",
