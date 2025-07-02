@@ -42,6 +42,7 @@ import {
   AlertDialogTrigger,
 } from "../src/components/ui/alert-dialog";
 import { useAccommodations, useContactStudent } from "../src/hooks/useQueries";
+import { useGeneratedContent } from "../src/hooks/useFormSubmissions";
 import {
   Search,
   Star,
@@ -101,19 +102,33 @@ export default function StudentAccommodations() {
   } = useAccommodations(filters);
   const contactMutation = useContactStudent();
 
+  // Get generated content from user submissions
+  const { content: generatedContent, loading: contentLoading } =
+    useGeneratedContent("accommodations");
+
+  // Combine generated content with existing data
+  const allAccommodations = [
+    ...(generatedContent?.accommodations || []),
+    ...accommodations,
+  ];
+
+  const finalLoading = isLoading || contentLoading;
+
   // Pagination
-  const totalPages = Math.ceil(accommodations.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(allAccommodations.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedAccommodations = accommodations.slice(
+  const paginatedAccommodations = allAccommodations.slice(
     startIndex,
     startIndex + ITEMS_PER_PAGE,
   );
 
   // Filter options derived from data
-  const cities = [...new Set(accommodations.map((a) => a.city))].sort();
-  const countries = [...new Set(accommodations.map((a) => a.country))].sort();
+  const cities = [...new Set(allAccommodations.map((a) => a.city))].sort();
+  const countries = [
+    ...new Set(allAccommodations.map((a) => a.country)),
+  ].sort();
   const types = [
-    ...new Set(accommodations.map((a) => a.accommodationType)),
+    ...new Set(allAccommodations.map((a) => a.accommodationType || a.type)),
   ].sort();
 
   const handleContactStudent = async (accommodation: any) => {
