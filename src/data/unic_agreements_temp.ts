@@ -6830,9 +6830,598 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
 
   // Law (LLB)
 
-  // Law (LLM)
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Haute École de la Province de Liège",
+    partnerCity: "Liège",
+    partnerCountry: "Belgium",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Hasselt",
+    partnerCity: "Hasselt",
+    partnerCountry: "Belgium",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Metropolitan University Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Polytechnic of Sibenik",
+    partnerCity: "Šibenik",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "International University Libertas",
+    partnerCity: "Dubrovnik",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Tallinn University of Technology",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Tallinn University",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Strasbourg",
+    partnerCity: "Strasbourg",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Université Lumière Lyon 2",
+    partnerCity: "Lyon",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Universite de Bordeaux",
+    partnerCity: "Bordeaux",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Universitry of Applied Sciences Schmalkalden",
+    partnerCity: "Schmalkalden",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "ALBERT-LUDWIGS-UNIVERSITAET FREIBURG",
+    partnerCity: "Freiburg",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Europa-Universität Flensburg",
+    partnerCity: "Flensburg",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
+    partnerCity: "Köthen",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "ARISTOTELIO PANEPISTIMIO THESSALONIKIS",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "UNIVERSITY OF MACEDONIA",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "National and Kapodistrian University of Athens",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Hellenic Open University",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Panteion University of Social and Political Sciences",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Democritus University of Thrace",
+    partnerCity: "Komotini",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "National University of Public Service",
+    partnerCity: "Budapest",
+    partnerCountry: "Hungary",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Universita degli studi di Sassari",
+    partnerCity: "Sassari",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Macerata",
+    partnerCity: "Macerata",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Verona",
+    partnerCity: "Verona",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Universita Degli Studi Di Urbino Carlo Bo",
+    partnerCity: "Urbino",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Padova",
+    partnerCity: "Padua",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Universita Telematica Internazionale-Uninettuno",
+    partnerCity: "Rome",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "UNIVERSITA DEGLI STUDI DI MESSINA - University of Messina",
+    partnerCity: "Messina",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Limerick",
+    partnerCity: "Limerick",
+    partnerCountry: "Ireland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Agder",
+    partnerCity: "Kristiansand",
+    partnerCountry: "Norway",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University American College Skopje",
+    partnerCity: "Skopje",
+    partnerCountry: "North Macedonia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Universiteit Maastricht",
+    partnerCity: "Maastricht",
+    partnerCountry: "Netherlands",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "National Defence University Warsaw",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Adam Mickiewicz University in Poznań",
+    partnerCity: "Poznań",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Katolickl Uniwersytet Lubelski Jana Pawla II",
+    partnerCity: "Lublin",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Lazarski University",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Lodz",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Slovak University of Agriculture in Nitra",
+    partnerCity: "Nitra",
+    partnerCountry: "Slovakia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Universidad de Burgos",
+    partnerCity: "Burgos",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Oviedo",
+    partnerCity: "Oviedo",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Orebro University",
+    partnerCity: "Örebro",
+    partnerCountry: "Sweden",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Freiburg",
+    partnerCity: "Freiburg",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
 
-  // Law (PhD)
+
+
+  // Law (LLM) master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "International University Libertas",
+    partnerCity: "Dubrovnik",
+    partnerCountry: "Croatia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Polytechnic of Sibenik",
+    partnerCity: "Šibenik",
+    partnerCountry: "Croatia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Metropolitan University Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Tallinn University",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Tallinn University of Technology",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Hellenic Open University",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Panteion University of Social and Political Sciences",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Democritus University of Thrace",
+    partnerCity: "Komotini",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "UNIVERSITY OF MACEDONIA",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "ARISTOTELIO PANEPISTIMIO THESSALONIKIS",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Universitry of Applied Sciences Schmalkalden",
+    partnerCity: "Schmalkalden",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Europa-Universität Flensburg",
+    partnerCity: "Flensburg",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
+    partnerCity: "Köthen",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Universita Telematica Internazionale-Uninettuno",
+    partnerCity: "Rome",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Padova",
+    partnerCity: "Padua",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Lodz",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Université Lumière Lyon 2",
+    partnerCity: "Lyon",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Universite de Bordeaux",
+    partnerCity: "Bordeaux",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Universita degli studi di Sassari",
+    partnerCity: "Sassari",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Macerata",
+    partnerCity: "Macerata",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Universita Degli Studi Di Urbino Carlo Bo",
+    partnerCity: "Urbino",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Agder",
+    partnerCity: "Kristiansand",
+    partnerCountry: "Norway",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Universiteit Maastricht",
+    partnerCity: "Maastricht",
+    partnerCountry: "Netherlands",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University American College Skopje",
+    partnerCity: "Skopje",
+    partnerCountry: "North Macedonia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Slovak University of Agriculture in Nitra",
+    partnerCity: "Nitra",
+    partnerCountry: "Slovakia",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Orebro University",
+    partnerCity: "Örebro",
+    partnerCountry: "Sweden",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "Adam Mickiewicz University in Poznań",
+    partnerCity: "Poznań",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "University of Verona",
+    partnerCity: "Verona",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Law",
+    partnerUniversity: "ALBERT-LUDWIGS-UNIVERSITAET FREIBURG",
+    partnerCity: "Freiburg",
+    partnerCountry: "Germany",
+    academicLevel: "master"
+  },
+
+
+  // Law phd
 
   {
     homeUniversity: "UNIC",
@@ -7592,7 +8181,171 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
-  
+  // Nursing bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nursing",
+    partnerUniversity: "Haute École de la Province de Liège",
+    partnerCity: "Liège",
+    partnerCountry: "Belgium",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nursing",
+    partnerUniversity: "Trakia University",
+    partnerCity: "Stara Zagora",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nursing",
+    partnerUniversity: "Polytechnic of Šibenik",
+    partnerCity: "Šibenik",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nursing",
+    partnerUniversity: "UNIVERSITY OF THESSALY",
+    partnerCity: "Volos",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nursing",
+    partnerUniversity: "University of Naples Federico II",
+    partnerCity: "Naples",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nursing",
+    partnerUniversity: "University of Foggia",
+    partnerCity: "Foggia",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nursing",
+    partnerUniversity: "Šiauliai State University",
+    partnerCity: "Šiauliai",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nursing",
+    partnerUniversity: "University of Agder",
+    partnerCity: "Kristiansand",
+    partnerCountry: "Norway",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nursing",
+    partnerUniversity: "State University of Applied Sciences in Wloclawek",
+    partnerCity: "Włocławek",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nursing",
+    partnerUniversity: "Instituto Politécnico Da Guarda",
+    partnerCity: "Guarda",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nursing",
+    partnerUniversity: "University of the Peloponnese",
+    partnerCity: "Tripoli",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nursing",
+    partnerUniversity: "Medical University of Silesia",
+    partnerCity: "Katowice",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+
+
+  // Nursing phd
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nursing",
+    partnerUniversity: "Trakia University",
+    partnerCity: "Stara Zagora",
+    partnerCountry: "Bulgaria",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nursing",
+    partnerUniversity: "Instituto Politécnico Da Guarda",
+    partnerCity: "Guarda",
+    partnerCountry: "Portugal",
+    academicLevel: "phd"
+  },
+
+
+  // Nutrition and Dietetics bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nutrition and Dietetics",
+    partnerUniversity: "Polytechnic of Šibenik",
+    partnerCity: "Šibenik",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nutrition and Dietetics",
+    partnerUniversity: "Agricultural University of Athens",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nutrition and Dietetics",
+    partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
+    partnerCity: "Köthen",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nutrition and Dietetics",
+    partnerUniversity: "Amsterdam University of Applied Sciences",
+    partnerCity: "Amsterdam",
+    partnerCountry: "Netherlands",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Nutrition and Dietetics",
+    partnerUniversity: "UNIVERSITY OF PELOPONNESE",
+    partnerCity: "Tripoli",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+
+
+
 
   // Oil and Gas Engineering bachelor
 
