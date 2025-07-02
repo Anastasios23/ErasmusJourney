@@ -5993,6 +5993,42 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
   
 
+// HUMAN RIGHTS phd
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Human Rights",
+    partnerUniversity: "Tallinn University",
+    partnerCity: "Tallinn",
+    partnerCountry: "Estonia",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Human Rights",
+    partnerUniversity: "Université Lumière Lyon 2",
+    partnerCity: "Lyon",
+    partnerCountry: "France",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Human Rights",
+    partnerUniversity: "University of Padova",
+    partnerCity: "Padua",
+    partnerCountry: "Italy",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Human Rights",
+    partnerUniversity: "University of Lodz",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "phd"
+  },
+
+  
 
   // Oil and Gas Engineering bachelor
 
