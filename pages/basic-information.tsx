@@ -32,8 +32,12 @@ import {
   getPartnerCountries,
 } from "../src/data/universityAgreements";
 import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp";
+import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
 
 export default function BasicInformation() {
+  const { submitForm, getDraftData, saveDraft } = useFormSubmissions();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -47,6 +51,14 @@ export default function BasicInformation() {
     foreignUniversity: "",
     departmentAtHost: "",
   });
+
+  // Load draft data on component mount
+  useEffect(() => {
+    const draftData = getDraftData("basic-info");
+    if (draftData) {
+      setFormData(draftData);
+    }
+  }, []);
 
   const router = useRouter();
   const cyprusUniversities = CYPRUS_UNIVERSITIES;
@@ -196,9 +208,37 @@ export default function BasicInformation() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    router.push("/course-matching");
+    setIsSubmitting(true);
+
+    try {
+      await submitForm(
+        "basic-info",
+        "Basic Information Form",
+        formData,
+        "submitted",
+      );
+
+      // Show success message and redirect
+      alert("Basic information submitted successfully!");
+      router.push("/course-matching");
+    } catch (error) {
+      console.error("Failed to submit form:", error);
+      alert("Failed to submit form. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSaveDraft = async () => {
+    try {
+      await saveDraft("basic-info", "Basic Information Form", formData);
+      alert("Draft saved successfully!");
+    } catch (error) {
+      console.error("Failed to save draft:", error);
+      alert("Failed to save draft. Please try again.");
+    }
   };
 
   return (
