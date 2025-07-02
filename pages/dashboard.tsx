@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import Header from "../components/Header";
+import FormProgress from "../components/FormProgress";
 import {
   Card,
   CardContent,
