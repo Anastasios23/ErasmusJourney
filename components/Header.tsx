@@ -29,10 +29,11 @@ export default function Header() {
   const userNavigation = session
     ? [
         { name: "Dashboard", href: "/dashboard", icon: User },
+        { name: "My Profile", href: "/profile", icon: Settings },
         {
           name: "Basic Information",
           href: "/basic-information",
-          icon: Settings,
+          icon: FileText,
         },
         { name: "Course Matching", href: "/course-matching", icon: BookOpen },
       ]
