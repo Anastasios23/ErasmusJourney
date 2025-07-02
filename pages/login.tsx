@@ -103,6 +103,14 @@ export default function LoginPage() {
                 </Alert>
               )}
 
+              {successMessage && (
+                <Alert className="border-green-200 bg-green-50">
+                  <AlertDescription className="text-green-800">
+                    {successMessage}
+                  </AlertDescription>
+                </Alert>
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="username">Email or Username</Label>
                 <Input
