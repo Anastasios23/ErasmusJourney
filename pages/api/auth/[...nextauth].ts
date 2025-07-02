@@ -70,12 +70,17 @@ export const authOptions: NextAuthOptions = {
             name: `${user.firstName} ${user.lastName}`,
             firstName: user.firstName,
             lastName: user.lastName,
+            role: user.role,
           };
         } catch (error) {
           console.error("Auth error:", error);
           return null;
         }
       },
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
   session: {
