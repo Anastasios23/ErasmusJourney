@@ -139,27 +139,10 @@ export default function AdminDashboard() {
   ];
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-      return;
-    }
-
-    if (status === "loading") {
-      return;
-    }
-
-    // Check if user is admin using role field
-    if (session && (session.user as any)?.role !== "ADMIN") {
-      router.push("/dashboard");
-      return;
-    }
-
-    if (session) {
-      setSubmissions(mockSubmissions);
-      setFilteredSubmissions(mockSubmissions);
-      setLoading(false);
-    }
-  }, [session, status, router]);
+    setSubmissions(mockSubmissions);
+    setFilteredSubmissions(mockSubmissions);
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
     let filtered = submissions;
