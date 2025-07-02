@@ -66,8 +66,10 @@ export default function LoginPage() {
       } else if (result?.ok) {
         console.log("✅ Login successful, redirecting...");
 
-        // Clear any previous errors
+        // Clear any previous errors and show success
         setError("");
+        setSuccessMessage("Login successful! Redirecting...");
+        setIsRedirecting(true);
 
         // Small delay to ensure session is established
         setTimeout(() => {
@@ -75,7 +77,7 @@ export default function LoginPage() {
             (router.query.callbackUrl as string) || "/dashboard";
           console.log("🔗 Redirecting to:", redirectUrl);
           router.push(redirectUrl);
-        }, 100);
+        }, 500);
       } else {
         console.log("⚠️ Unexpected login result:", result);
         setError("Login failed. Please try again.");
