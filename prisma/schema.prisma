@@ -29,6 +29,7 @@ model User {
   // Erasmus application data
   applications Application[]
   stories      Story[]
+  formSubmissions FormSubmission[]
 
   @@map("users")
 }
