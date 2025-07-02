@@ -269,8 +269,6 @@ export default function CourseMatching() {
     setEquivalentCourses(updatedCourses);
   };
 
-  const router = useRouter();
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Course Matching Form submitted:", {
