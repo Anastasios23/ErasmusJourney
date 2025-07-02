@@ -306,12 +306,12 @@ export default function DashboardPage() {
                         📝 Update Profile
                       </Button>
                     </Link>
-                    <Link href="/universities" className="block">
+                    <Link href="/destinations" className="block">
                       <Button
                         variant="outline"
                         className="w-full justify-start"
                       >
-                        🏫 Browse Universities
+                        🏫 Browse Destinations
                       </Button>
                     </Link>
                     <Link href="/destinations" className="block">
