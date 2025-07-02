@@ -55,13 +55,26 @@ export default function BasicInformation() {
     departmentAtHost: "",
   });
 
+  // Authentication check
+  useEffect(() => {
+    if (status === "loading") return; // Still loading
+    if (status === "unauthenticated") {
+      router.push(
+        "/login?callbackUrl=" + encodeURIComponent("/basic-information"),
+      );
+      return;
+    }
+  }, [status, router]);
+
   // Load draft data on component mount
   useEffect(() => {
-    const draftData = getDraftData("basic-info");
-    if (draftData) {
-      setFormData(draftData);
+    if (status === "authenticated") {
+      const draftData = getDraftData("basic-info");
+      if (draftData) {
+        setFormData(draftData);
+      }
     }
-  }, []);
+  }, [status]);
 
   const router = useRouter();
   const cyprusUniversities = CYPRUS_UNIVERSITIES;
