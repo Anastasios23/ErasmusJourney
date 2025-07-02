@@ -144,8 +144,22 @@ export default function AdminDashboard() {
       return;
     }
 
-    // In a real app, you'd check if user is admin
-    // For demo, we'll allow any logged-in user
+    if (status === "loading") {
+      return;
+    }
+
+    // Check if user is admin (simple email check for demo)
+    const adminEmails = [
+      "admin@unic.ac.cy",
+      "admin@erasmus.cy",
+      session?.user?.email, // Allow current user for demo
+    ];
+
+    if (session && !adminEmails.includes(session.user?.email || "")) {
+      router.push("/dashboard");
+      return;
+    }
+
     if (session) {
       setSubmissions(mockSubmissions);
       setFilteredSubmissions(mockSubmissions);
