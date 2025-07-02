@@ -65,24 +65,8 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    } else if (status === "authenticated") {
-      setLoading(false);
-    }
-  }, [status, router]);
-
-  if (status === "loading" || loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (status === "unauthenticated") {
-    return null;
-  }
+    setLoading(false);
+  }, []);
 
   // Use session data or fallback to demo data
   const user = {
