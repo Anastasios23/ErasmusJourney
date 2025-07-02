@@ -16,6 +16,7 @@ model User {
   firstName String
   lastName  String
   password  String
+  role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -30,6 +31,11 @@ model User {
   stories      Story[]
 
   @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model University {
