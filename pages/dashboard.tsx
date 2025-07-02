@@ -138,43 +138,10 @@ export default function DashboardPage() {
               </p>
             </div>
 
-            {/* Profile Completion Card */}
-            <Card className="mb-8">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  Profile Completion
-                  <Badge variant="outline" className="ml-2">
-                    {profileCompletion}% Complete
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Progress value={profileCompletion} className="w-full mb-4" />
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <Link href="/basic-information">
-                    <Button variant="outline" size="sm">
-                      Complete Profile
-                    </Button>
-                  </Link>
-                  <Link href="/course-matching">
-                    <Button variant="outline" size="sm">
-                      Course Matching
-                    </Button>
-                  </Link>
-                  <Link href="/accommodation">
-                    <Button variant="outline" size="sm">
-                      Find Housing
-                    </Button>
-                  </Link>
-                </div>
-                {profileCompletion < 100 && (
-                  <p className="text-sm text-gray-600">
-                    Complete your profile to unlock personalized recommendations
-                    and connect with universities.
-                  </p>
-                )}
-              </CardContent>
-            </Card>
+            {/* Form Progress Card */}
+            <div className="mb-8">
+              <FormProgress />
+            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Left Column - Applications & Quick Actions */}
