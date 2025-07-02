@@ -19,7 +19,6 @@ export default function Header() {
 
   const navigation = [
     { name: "Home", href: "/" },
-    { name: "Universities", href: "/universities" },
     { name: "Destinations", href: "/destinations" },
     { name: "Experiences", href: "/experiences" },
     { name: "Stories", href: "/student-stories" },
