@@ -45,8 +45,7 @@ export default function Header() {
         },
         { name: "Course Matching", href: "/course-matching", icon: BookOpen },
         // Add admin link for admin users
-        ...(session.user?.email === "admin@unic.ac.cy" ||
-        session.user?.email === "admin@erasmus.cy"
+        ...((session.user as any)?.role === "ADMIN"
           ? [{ name: "Admin Panel", href: "/admin", icon: Settings }]
           : []),
       ]
