@@ -186,9 +186,13 @@ export default function LoginPage() {
                 Demo Credentials:
               </h4>
               <p className="text-xs text-gray-600">
-                Demo: demo / demo
+                <strong>Demo User:</strong> demo / demo
                 <br />
-                Admin: admin@erasmus.cy / admin123
+                <strong>Admin:</strong> admin@erasmus.cy / admin123
+                <br />
+                <span className="text-gray-500 italic">
+                  (Use email or username to login)
+                </span>
               </p>
             </div>
           </CardContent>
