@@ -6955,6 +6955,600 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "phd"
   },
 
+  // Management Information Systems bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "FH Joanneum University of Applied Sciences",
+    partnerCity: "Graz",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "FHWien der WKW - University of Applied Sciences for Management & Communication",
+    partnerCity: "Vienna",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "University of Applied Sciences BFI Vienna",
+    partnerCity: "Vienna",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "Brno University of Technology, Faculty of Business and Management",
+    partnerCity: "Brno",
+    partnerCountry: "Czech Republic",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "University College of Northern Denmark - UCN",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
+    partnerCity: "Vaasa",
+    partnerCountry: "Finland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "Aalen University",
+    partnerCity: "Aalen",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "Athens University of Economics and Business",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "Hellenic Open University",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "UNIVERSITY OF PATRAS",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "Aristotle University of Thessaloniki",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "College of Dunaujvaros",
+    partnerCity: "Dunaújváros",
+    partnerCountry: "Hungary",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "Universita Telematica Internazionale-Uninettuno",
+    partnerCity: "Rome",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "Kaunas University of Technology",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "Instituto Politécnico Da Guarda",
+    partnerCity: "Guarda",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "University of Szczecin",
+    partnerCity: "Szczecin",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "Polish-Japanese Academy of Information Technology",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "Romanian-American University",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Management Information Systems",
+    partnerUniversity: "Universidad Complutense de Madrid",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+
+  // Mathematics bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mathematics",
+    partnerUniversity: "University of Crete",
+    partnerCity: "Crete",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mathematics",
+    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mathematics",
+    partnerUniversity: "University of Lodz",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+
+  // Mechanical Engineering bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mechanical Engineering",
+    partnerUniversity: "Technical University of Varna",
+    partnerCity: "Varna",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mechanical Engineering",
+    partnerUniversity: "Hochschule Emden/Leer",
+    partnerCity: "Emden/Leer",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mechanical Engineering",
+    partnerUniversity: "University of Applied Sciences Stralsund",
+    partnerCity: "Stralsund",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mechanical Engineering",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mechanical Engineering",
+    partnerUniversity: "University of Patra",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mechanical Engineering",
+    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mechanical Engineering",
+    partnerUniversity: "Elliniko Mesogeiako Panepistimio",
+    partnerCity: "Heraklion",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mechanical Engineering",
+    partnerUniversity: "Politecnic of Coimbra",
+    partnerCity: "Coimbra",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mechanical Engineering",
+    partnerUniversity: "Orebro University",
+    partnerCity: "Örebro",
+    partnerCountry: "Sweden",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mechanical Engineering",
+    partnerUniversity: "Universitatea Tehnica Cluj-Napoca",
+    partnerCity: "Cluj-Napoca",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mechanical Engineering",
+    partnerUniversity: "Lublin University of Technology",
+    partnerCity: "Lublin",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mechanical Engineering",
+    partnerUniversity: "Politehnica University of Bucharest",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mechanical Engineering",
+    partnerUniversity: "Polytechnic University of Catalonia",
+    partnerCity: "Barcelona",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+
+  // Medicine master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Medicine",
+    partnerUniversity: "Trakia University",
+    partnerCity: "Stara Zagora",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Medicine",
+    partnerUniversity: "University of Patras",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Medicine",
+    partnerUniversity: "University of Crete",
+    partnerCity: "Heraklion",
+    partnerCountry: "Greece",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Medicine",
+    partnerUniversity: "University of Foggia",
+    partnerCity: "Foggia",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Medicine",
+    partnerUniversity: "Leiden University Medical Centre",
+    partnerCity: "Leiden",
+    partnerCountry: "Netherlands",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Medicine",
+    partnerUniversity: "Univeristy of Oviedo",
+    partnerCity: "Oviedo",
+    partnerCountry: "Spain",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Medicine",
+    partnerUniversity: "Orebro University",
+    partnerCity: "Örebro",
+    partnerCountry: "Sweden",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Medicine",
+    partnerUniversity: "KARL LANDSTEINER PRIVATUNIVERSITAT FUR GESUNDHEITSWISSEN­SCHAFTEN GMBH",
+    partnerCity: "Krems an der Donau",
+    partnerCountry: "Austria",
+    academicLevel: "master"
+  },
+
+  // Medical Sciences php
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Medical Sciences",
+    partnerUniversity: "Orebro University",
+    partnerCity: "Örebro",
+    partnerCountry: "Sweden",
+    academicLevel: "phd"
+  },
+
+  // Mental Health Nurs. master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Mental Health Nurs.",
+    partnerUniversity: "Trakia University",
+    partnerCity: "Stara Zagora",
+    partnerCountry: "Bulgaria",
+    academicLevel: "master"
+  },
+
+  // Media and Communications phd
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Media and Communications",
+    partnerUniversity: "University of National and World Economy",
+    partnerCity: "Sofia",
+    partnerCountry: "Bulgaria",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Media and Communications",
+    partnerUniversity: "Metropolitan University Prague",
+    partnerCity: "Prague",
+    partnerCountry: "Czech Republic",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Media and Communications",
+    partnerUniversity: "RISEBA University of Applied Sciences",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Media and Communications",
+    partnerUniversity: "Roskilde University",
+    partnerCity: "Roskilde",
+    partnerCountry: "Denmark",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Media and Communications",
+    partnerUniversity: "UNIVERSITA' DEGLI STUDI DEL MOLISE",
+    partnerCity: "Campobasso",
+    partnerCountry: "Italy",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Media and Communications",
+    partnerUniversity: "University of Lodz",
+    partnerCity: "Łódź",
+    partnerCountry: "Poland",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Media and Communications",
+    partnerUniversity: "Polish-Japanese Academy of Information Technology",
+    partnerCity: "Warsaw",
+    partnerCountry: "Poland",
+    academicLevel: "phd"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Media and Communications",
+    partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
+    partnerCity: "Novi Sad",
+    partnerCountry: "Serbia",
+    academicLevel: "phd"
+  },
+
+
+  // Music bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "University of Osijek",
+    partnerCity: "Osijek",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "University of Pula",
+    partnerCity: "Pula",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "Universite Rennes Ii",
+    partnerCity: "Rennes",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "University of Burgundy",
+    partnerCity: "Dijon",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "University of Strasbourg",
+    partnerCity: "Strasbourg",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "Hochschule für Musik Würzburg",
+    partnerCity: "Würzburg",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "National and Kapodistrian University of Athens",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "Ionian University",
+    partnerCity: "Corfu",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "University of Macedonia",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "University of Szeged",
+    partnerCity: "Szeged",
+    partnerCountry: "Hungary",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "Conservatorio di Musica \"G.Verdi\" di Como",
+    partnerCity: "Como",
+    partnerCountry: "Italy",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "Latvian Academy of Culture",
+    partnerCity: "Riga",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "Stichting Hanzehogeschool Groningen",
+    partnerCity: "Groningen",
+    partnerCountry: "Netherlands",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "Akademia Muzyczna im. I.J. Paderewskiego w Poznaniu",
+    partnerCity: "Poznań",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "The Krzysztof Penderecki Academy of Music in Krakow",
+    partnerCity: "Kraków",
+    partnerCountry: "Poland",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "Universidade de Aveiro",
+    partnerCity: "Aveiro",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+
+
   
 
   // Oil and Gas Engineering bachelor
