@@ -10,7 +10,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../src/components/ui/dropdown-menu";
-import { Menu, X, User, LogOut, Settings, BookOpen } from "lucide-react";
+import {
+  Menu,
+  X,
+  User,
+  LogOut,
+  Settings,
+  BookOpen,
+  FileText,
+} from "lucide-react";
 
 export default function Header() {
   const { data: session, status } = useSession();
