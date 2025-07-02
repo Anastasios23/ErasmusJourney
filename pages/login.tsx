@@ -20,8 +20,18 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  // Check for success messages from registration
+  useEffect(() => {
+    if (router.query.message === "account_created") {
+      setSuccessMessage(
+        "Account created successfully! Please sign in with your credentials.",
+      );
+    }
+  }, [router.query]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
