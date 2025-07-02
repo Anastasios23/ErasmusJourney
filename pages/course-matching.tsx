@@ -48,33 +48,7 @@ interface EquivalentCourse {
 }
 
 export default function CourseMatching() {
-  const { data: session, status } = useSession();
   const router = useRouter();
-
-  // Authentication check
-  useEffect(() => {
-    if (status === "loading") return; // Still loading
-    if (status === "unauthenticated") {
-      router.push(
-        "/login?callbackUrl=" + encodeURIComponent("/course-matching"),
-      );
-      return;
-    }
-  }, [status, router]);
-
-  // Show loading spinner while checking authentication
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  // Don't render anything if not authenticated (will redirect)
-  if (status === "unauthenticated") {
-    return null;
-  }
 
   const [formData, setFormData] = useState({
     levelOfStudy: "",
