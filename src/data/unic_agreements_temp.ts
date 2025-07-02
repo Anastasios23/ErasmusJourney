@@ -5294,6 +5294,148 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     academicLevel: "master"
   },
 
+
+// Hospitality Management bachelor
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "University of Applied Sciences BFI Vienna",
+    partnerCity: "Vienna",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "FH Joanneum University of Applied Sciences",
+    partnerCity: "Graz",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "Agricultural University of Plovdiv",
+    partnerCity: "Plovdiv",
+    partnerCountry: "Bulgaria",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "International University Libertas",
+    partnerCity: "Dubrovnik",
+    partnerCountry: "Croatia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "Copenhagen Business Academy",
+    partnerCity: "Copenhagen",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "University College of Northern Denmark - UCN",
+    partnerCity: "Aalborg",
+    partnerCountry: "Denmark",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "Institut Limayrac",
+    partnerCity: "Albi",
+    partnerCountry: "France",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerCity: "Deggendorf",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "LIEPAJAS UNIVERSITATE",
+    partnerCity: "Liepāja",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "Vilnius Business College",
+    partnerCity: "Vilnius",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "Saxion University of Applied Sciences",
+    partnerCity: "Enschede",
+    partnerCountry: "Netherlands",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "Polytechnic Institute of Guarda",
+    partnerCity: "Guarda",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "Instituto Europeu de Estudos Superiores",
+    partnerCity: "Lisbon",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "Romanian-American University",
+    partnerCity: "Bucharest",
+    partnerCountry: "Romania",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "UNIVERSIDAD COMPLUTENSE DE MADRID",
+    partnerCity: "Madrid",
+    partnerCountry: "Spain",
+    academicLevel: "bachelor"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Hospitality Management",
+    partnerUniversity: "University of Malta",
+    partnerCity: "Msida",
+    partnerCountry: "Malta",
+    academicLevel: "bachelor"
+  },
+  
+
+
   // Oil and Gas Engineering bachelor
 
   {
