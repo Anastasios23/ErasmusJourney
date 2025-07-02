@@ -226,8 +226,8 @@ export default function DashboardPage() {
                         <p className="text-gray-500 mb-4">
                           No applications yet. Start your journey!
                         </p>
-                        <Link href="/universities">
-                          <Button>Explore Universities</Button>
+                        <Link href="/destinations">
+                          <Button>Explore Destinations</Button>
                         </Link>
                       </div>
                     )}
@@ -319,7 +319,7 @@ export default function DashboardPage() {
                         variant="outline"
                         className="w-full justify-start"
                       >
-                        🌍 Find Destinations
+                        �� Find Destinations
                       </Button>
                     </Link>
                     <Link href="/student-accommodations" className="block">
