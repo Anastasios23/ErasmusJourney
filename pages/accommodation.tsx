@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -26,6 +27,32 @@ import Header from "../components/Header";
 import { ArrowRight, ArrowLeft, Home, Star, Euro } from "lucide-react";
 
 export default function Accommodation() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  // Authentication check
+  useEffect(() => {
+    if (status === "loading") return;
+    if (status === "unauthenticated") {
+      router.push("/login?callbackUrl=" + encodeURIComponent("/accommodation"));
+      return;
+    }
+  }, [status, router]);
+
+  // Show loading while checking authentication
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated
+  if (status === "unauthenticated") {
+    return null;
+  }
+
   const [formData, setFormData] = useState({
     accommodationAddress: "",
     accommodationType: "",
