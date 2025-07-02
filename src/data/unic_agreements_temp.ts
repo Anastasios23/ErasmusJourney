@@ -7549,6 +7549,49 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   },
 
 
+  // Music master
+
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "Universite Rennes Ii",
+    partnerCity: "Rennes",
+    partnerCountry: "France",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "University of Szeged",
+    partnerCity: "Szeged",
+    partnerCountry: "Hungary",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "Conservatorio di Musica \"G.Verdi\" di Como",
+    partnerCity: "Como",
+    partnerCountry: "Italy",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "Akademia Muzyczna im. I.J. Paderewskiego w Poznaniu",
+    partnerCity: "Poznań",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Music",
+    partnerUniversity: "The Krzysztof Penderecki Academy of Music in Krakow",
+    partnerCity: "Kraków",
+    partnerCountry: "Poland",
+    academicLevel: "master"
+  },
+
   
 
   // Oil and Gas Engineering bachelor
