@@ -39,7 +39,20 @@ export default function BasicInformation() {
   const { data: session, status } = useSession();
   const { submitForm, getDraftData, saveDraft } = useFormSubmissions();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const router = useRouter();
+
+  // Show loading spinner while checking authentication
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not authenticated (will redirect)
+  if (status === "unauthenticated") {
+    return null;
+  }
 
   const [formData, setFormData] = useState({
     firstName: "",
