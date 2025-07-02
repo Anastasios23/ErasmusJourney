@@ -93,8 +93,6 @@ export default function HelpFutureStudents() {
     nickname: "",
   });
 
-  const router = useRouter();
-
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
