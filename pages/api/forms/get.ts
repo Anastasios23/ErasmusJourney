@@ -1,8 +1,23 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
+import { getServerAuthSession, isAdmin } from "../../../lib/auth";
+import { prisma } from "../../../lib/prisma";
+import { FormType, SubmissionStatus } from "@prisma/client";
 
-// This would be imported from the same storage as submit.ts
-// In a real app, this would be a database query
+const typeMapping: Record<string, FormType> = {
+  "basic-info": "BASIC_INFO",
+  "course-matching": "COURSE_MATCHING",
+  accommodation: "ACCOMMODATION",
+  story: "STORY",
+  experience: "EXPERIENCE",
+};
+
+const statusMapping: Record<string, SubmissionStatus> = {
+  draft: "DRAFT",
+  submitted: "SUBMITTED",
+  published: "PUBLISHED",
+  rejected: "REJECTED",
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -11,107 +26,74 @@ export default async function handler(
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const session = await getSession({ req });
-  if (!session) {
+  const session = await getServerAuthSession(req, res);
+  if (!session?.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
   try {
     const { type, status, userId } = req.query;
 
-    // In production, this would be a database query
-    // For now, return mock data based on the user's submissions
-    let submissions = [
-      {
-        id: "1",
-        userId: session.user?.email || "unknown",
-        type: "basic-info",
-        title: "Basic Information Form",
-        data: {
-          firstName: "John",
-          lastName: "Doe",
-          university: "UNIC",
-          department: "Computer Science",
-          levelOfStudy: "bachelor",
-        },
-        status: "published",
-        createdAt: "2024-01-15T10:00:00Z",
-        updatedAt: "2024-01-16T10:00:00Z",
-      },
-      {
-        id: "2",
-        userId: session.user?.email || "unknown",
-        type: "course-matching",
-        title: "Course Matching - Fall 2024",
-        data: {
-          hostUniversity: "University of Barcelona",
-          hostDepartment: "Computer Science",
-          courses: [
-            {
-              name: "Advanced Algorithms",
-              code: "CS401",
-              ects: "6",
-              difficulty: "4",
-            },
-          ],
-        },
-        status: "submitted",
-        createdAt: "2024-01-18T10:00:00Z",
-        updatedAt: "2024-01-20T10:00:00Z",
-      },
-      {
-        id: "3",
-        userId: session.user?.email || "unknown",
-        type: "accommodation",
-        title: "Student Housing in Barcelona",
-        data: {
-          type: "University Dormitory",
-          location: "Barcelona, Spain",
-          rating: 4,
-          description: "Great location near campus with excellent facilities.",
-        },
-        status: "published",
-        createdAt: "2024-01-22T10:00:00Z",
-        updatedAt: "2024-01-22T10:00:00Z",
-      },
-      {
-        id: "4",
-        userId: session.user?.email || "unknown",
-        type: "story",
-        title: "My Amazing Erasmus Experience in Barcelona",
-        data: {
-          content:
-            "Living in Barcelona was a life-changing experience. The culture, food, and people were incredible...",
-          tags: ["barcelona", "erasmus", "culture"],
-          destination: "Barcelona, Spain",
-        },
-        status: "published",
-        createdAt: "2024-01-25T10:00:00Z",
-        updatedAt: "2024-01-25T10:00:00Z",
-      },
-    ];
+    // Build query conditions
+    const whereClause: any = {};
 
     // Filter by user
     if (userId && userId !== "all") {
-      submissions = submissions.filter((s) => s.userId === userId);
-    } else if (!userId) {
-      // If no userId specified, return current user's submissions
-      submissions = submissions.filter(
-        (s) => s.userId === (session.user?.email || "unknown"),
-      );
+      // Only admins can view other users' submissions
+      if (!isAdmin(session)) {
+        whereClause.userId = session.user.id;
+      } else {
+        whereClause.userId = userId as string;
+      }
+    } else {
+      // Default to current user's submissions unless admin viewing all
+      if (!isAdmin(session) || !userId) {
+        whereClause.userId = session.user.id;
+      }
     }
 
     // Filter by type
-    if (type && type !== "all") {
-      submissions = submissions.filter((s) => s.type === type);
+    if (type && type !== "all" && typeMapping[type as string]) {
+      whereClause.type = typeMapping[type as string];
     }
 
     // Filter by status
-    if (status && status !== "all") {
-      submissions = submissions.filter((s) => s.status === status);
+    if (status && status !== "all" && statusMapping[status as string]) {
+      whereClause.status = statusMapping[status as string];
     }
 
-    res.status(200).json({ submissions });
+    // Fetch submissions from database
+    const submissions = await prisma.formSubmission.findMany({
+      where: whereClause,
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+
+    // Transform to match expected format
+    const transformedSubmissions = submissions.map((submission) => ({
+      id: submission.id,
+      userId: submission.user.email,
+      type: submission.type.toLowerCase().replace("_", "-"),
+      title: submission.title,
+      data: submission.data,
+      status: submission.status.toLowerCase(),
+      createdAt: submission.createdAt.toISOString(),
+      updatedAt: submission.updatedAt.toISOString(),
+      user: submission.user,
+    }));
+
+    res.status(200).json({ submissions: transformedSubmissions });
   } catch (error) {
     console.error("Error fetching submissions:", error);
     res.status(500).json({ message: "Internal server error" });
