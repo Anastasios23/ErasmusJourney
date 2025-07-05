@@ -1,262 +1,115 @@
-import { useState, useEffect } from "react";
-import { signIn } from "next-auth/react";
+import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/router";
-import Head from "next/head";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { Button } from "../src/components/ui/button";
-import { Input } from "../src/components/ui/input";
-import { Label } from "../src/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../src/components/ui/card";
-import { Alert, AlertDescription } from "../src/components/ui/alert";
-import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Alert } from "@/components/ui/alert";
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false);
   const router = useRouter();
+  const { error: errorCode, message } = router.query as {
+    error?: string;
+    message?: string;
+  };
 
-  // Check for success messages from registration
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    if (router.query.message === "account_created") {
-      setSuccessMessage(
-        "Account created successfully! Please sign in with your credentials.",
-      );
+    // Success banner after registration
+    if (message === "account_created") {
+      setSuccessMessage("Account created! Please sign in.");
     }
-  }, [router.query]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
-
-    console.log("🔑 Attempting login with:", { username, password: "***" });
-
-    try {
-      const result = await signIn("credentials", {
-        email: username, // Use username but send as email field for NextAuth compatibility
-        password,
-        redirect: false,
-      });
-
-      console.log("🔐 Login result:", result);
-      console.log("🔐 Login result.ok:", result?.ok);
-      console.log("🔐 Login result.error:", result?.error);
-      console.log("🔐 Login result.status:", result?.status);
-      console.log("🔐 Login result.url:", result?.url);
-
-      if (result?.error) {
-        console.error("❌ Login failed:", result.error);
-        if (result.error === "CredentialsSignin") {
-          setError(
-            "Invalid email/username or password. Please check your credentials and try again.",
-          );
-        } else {
-          setError(`Login failed: ${result.error}`);
-        }
-      } else if (result?.ok) {
-        console.log("✅ Login successful, redirecting...");
-
-        // Clear any previous errors and show success
-        setError("");
-        setSuccessMessage("Login successful! Redirecting...");
-        setIsRedirecting(true);
-
-        // Small delay to ensure session is established
-        setTimeout(() => {
-          const redirectUrl =
-            (router.query.callbackUrl as string) || "/dashboard";
-          console.log("🔗 Redirecting to:", redirectUrl);
-          router.push(redirectUrl);
-        }, 500);
-      } else {
-        console.log("⚠️ Unexpected login result:", result);
-        setError("Login failed. Please try again.");
+    // NextAuth errors
+    if (errorCode) {
+      switch (errorCode) {
+        case "CredentialsSignin":
+          setErrorMessage("Invalid email or password.");
+          break;
+        case "OAuthAccountNotLinked":
+          setErrorMessage("This email is already linked to another provider.");
+          break;
+        case "OAuthSignin":
+        case "OAuthCallback":
+          setErrorMessage("OAuth error. Please try again.");
+          break;
+        default:
+          setErrorMessage("Sign-in error: " + errorCode);
       }
-    } catch (error) {
-      console.error("💥 Login error:", error);
-      setError(
-        "A network error occurred. Please check your connection and try again.",
-      );
-    } finally {
-      setIsLoading(false);
     }
+  }, [errorCode, message]);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    // This will redirect automatically:
+    await signIn("credentials", {
+      email,
+      password,
+      callbackUrl: (router.query.callbackUrl as string) || "/basic-information",
+    });
+    // no need to handle the result here — NextAuth will redirect back to /login?error=… on failure
+    setLoading(false);
   };
 
   return (
-    <>
-      <Head>
-        <title>Login - Erasmus Journey Platform</title>
-        <meta
-          name="description"
-          content="Login to your Erasmus Journey account"
-        />
-      </Head>
+    <div className="max-w-md mx-auto py-12">
+      {successMessage && (
+        <Alert variant="success" className="mb-4">
+          {successMessage}
+        </Alert>
+      )}
+      {errorMessage && (
+        <Alert variant="destructive" className="mb-4">
+          {errorMessage}
+        </Alert>
+      )}
 
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-            <CardDescription>
-              Sign in to your Erasmus Journey account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium">
+            Email
+          </label>
+          <Input
+            id="email"
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+          />
+        </div>
 
-              {successMessage && (
-                <Alert className="border-green-200 bg-green-50">
-                  <AlertDescription className="text-green-800">
-                    {successMessage}
-                  </AlertDescription>
-                </Alert>
-              )}
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium">
+            Password
+          </label>
+          <Input
+            id="password"
+            type="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+          />
+        </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="username">Email or Username</Label>
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="Enter your email or username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
-              </div>
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? "Signing in…" : "Sign In"}
+        </Button>
+      </form>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isLoading || isRedirecting}
-              >
-                {isRedirecting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Redirecting...
-                  </>
-                ) : isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  "Sign In"
-                )}
-              </Button>
-            </form>
-
-            <div className="mt-4">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
-                    Or continue with
-                  </span>
-                </div>
-              </div>
-
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full mt-4 opacity-50"
-                onClick={() =>
-                  setError("Google OAuth requires production credentials")
-                }
-                disabled={true}
-              >
-                <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
-                  <path
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                    fill="#4285F4"
-                  />
-                  <path
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                    fill="#34A853"
-                  />
-                  <path
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                    fill="#FBBC05"
-                  />
-                  <path
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                    fill="#EA4335"
-                  />
-                </svg>
-                Continue with Google (Coming Soon)
-              </Button>
-              <p className="text-xs text-center text-gray-500 mt-2">
-                Google OAuth requires production credentials
-              </p>
-            </div>
-
-            <div className="mt-6 text-center space-y-2">
-              <p className="text-sm text-gray-600">
-                Don't have an account?{" "}
-                <Link
-                  href="/register"
-                  className="font-medium text-blue-600 hover:text-blue-500"
-                >
-                  Sign up
-                </Link>
-              </p>
-              <p className="text-sm text-gray-600">
-                <Link
-                  href="/"
-                  className="font-medium text-blue-600 hover:text-blue-500"
-                >
-                  Back to Home
-                </Link>
-              </p>
-            </div>
-
-            {/* Demo credentials */}
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <h4 className="text-sm font-medium text-gray-900 mb-2">
-                Demo Credentials:
-              </h4>
-              <p className="text-xs text-gray-600">
-                <strong>Demo User:</strong> demo / demo
-                <br />
-                <strong>Admin:</strong> admin@erasmus.cy / admin123
-                <br />
-                <span className="text-gray-500 italic">
-                  (Use email or username to login)
-                </span>
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </>
+      <p className="mt-6 text-center text-sm">
+        Don’t have an account?{" "}
+        <Link href="/register" className="text-blue-600 hover:underline">
+          Register here
+        </Link>
+      </p>
+    </div>
   );
 }
