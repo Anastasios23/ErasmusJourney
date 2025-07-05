@@ -456,8 +456,9 @@ export default function StudentAccommodations() {
                                       id={`accommodation-${listing.id}-title`}
                                       className="text-xl font-semibold mb-1"
                                     >
-                                      {listing.accommodationType} in{" "}
-                                      {listing.neighborhood}
+                                      {listing.accommodationType ||
+                                        "Accommodation"}{" "}
+                                      in {listing.neighborhood || "Area"}
                                     </h2>
                                     <div className="flex items-center gap-2 text-gray-600 mb-2">
                                       <MapPin
@@ -465,7 +466,8 @@ export default function StudentAccommodations() {
                                         aria-hidden="true"
                                       />
                                       <span>
-                                        {listing.city}, {listing.country}
+                                        {listing.city || "City"},{" "}
+                                        {listing.country || "Country"}
                                       </span>
                                       {listing.verified && (
                                         <CheckCircle
@@ -482,9 +484,9 @@ export default function StudentAccommodations() {
                                     />
                                     <span
                                       className="font-medium"
-                                      aria-label={`${listing.rating} out of 5 stars`}
+                                      aria-label={`${listing.rating || 0} out of 5 stars`}
                                     >
-                                      {listing.rating}
+                                      {listing.rating || 0}
                                     </span>
                                   </div>
                                 </div>
@@ -499,7 +501,7 @@ export default function StudentAccommodations() {
                                   role="list"
                                   aria-label="Accommodation highlights"
                                 >
-                                  {listing.highlights.map(
+                                  {(listing.highlights || []).map(
                                     (highlight, index) => (
                                       <Badge
                                         key={index}
@@ -519,7 +521,7 @@ export default function StudentAccommodations() {
                                   role="list"
                                   aria-label="Available facilities"
                                 >
-                                  {listing.facilities
+                                  {(listing.facilities || [])
                                     .slice(0, 4)
                                     .map((facility) => (
                                       <div
@@ -548,9 +550,10 @@ export default function StudentAccommodations() {
                                         <span>{facility}</span>
                                       </div>
                                     ))}
-                                  {listing.facilities.length > 4 && (
+                                  {(listing.facilities || []).length > 4 && (
                                     <span className="text-blue-600">
-                                      +{listing.facilities.length - 4} more
+                                      +{(listing.facilities || []).length - 4}{" "}
+                                      more
                                     </span>
                                   )}
                                 </div>
@@ -561,7 +564,7 @@ export default function StudentAccommodations() {
                             <div className="lg:col-span-1 flex flex-col justify-between">
                               <div>
                                 <div className="text-2xl font-bold text-green-600 mb-1">
-                                  €{listing.monthlyRent}
+                                  €{listing.monthlyRent || 0}
                                   <span className="text-sm text-gray-500">
                                     /month
                                   </span>
@@ -607,7 +610,7 @@ export default function StudentAccommodations() {
                                   View Details
                                 </Button>
 
-                                {listing.contact.allowContact && (
+                                {listing.contact?.allowContact && (
                                   <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                       <Button
