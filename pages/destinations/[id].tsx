@@ -253,11 +253,14 @@ export default function DestinationDetailPage({
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Main Image */}
                 <div className="lg:col-span-2">
-                  <div className="aspect-video overflow-hidden rounded-lg mb-4">
-                    <img
+                  <div className="aspect-video overflow-hidden rounded-lg mb-4 relative">
+                    <Image
                       src={destination.image}
-                      alt={`${destination.city}, ${destination.country}`}
-                      className="w-full h-full object-cover"
+                      alt={`${destination.city}, ${destination.country} - Beautiful cityscape showing iconic landmarks and architecture perfect for Erasmus students`}
+                      fill
+                      className="object-cover"
+                      priority
+                      sizes="(max-width: 1024px) 100vw, 66vw"
                     />
                   </div>
                 </div>
@@ -315,11 +318,18 @@ export default function DestinationDetailPage({
                       <Separator />
 
                       <div className="flex gap-2">
-                        <Button className="flex-1">
+                        <Button
+                          className="flex-1"
+                          aria-label={`Add ${destination.city} to favorites`}
+                        >
                           <Heart className="h-4 w-4 mr-2" />
                           Save
                         </Button>
-                        <Button variant="outline" className="flex-1">
+                        <Button
+                          variant="outline"
+                          className="flex-1"
+                          aria-label={`Share ${destination.city} destination page`}
+                        >
                           <Share2 className="h-4 w-4 mr-2" />
                           Share
                         </Button>
