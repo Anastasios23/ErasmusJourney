@@ -36,6 +36,8 @@ import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp"
 import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
 
 export default function BasicInformation() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const { submitForm, getDraftData, saveDraft } = useFormSubmissions();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -52,6 +54,14 @@ export default function BasicInformation() {
     foreignUniversity: "",
     departmentAtHost: "",
   });
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (status === "loading") return; // Still loading
+    if (!session) {
+      router.push("/login?callbackUrl=/basic-information");
+    }
+  }, [session, status, router]);
 
   // Load draft data on component mount
   useEffect(() => {
