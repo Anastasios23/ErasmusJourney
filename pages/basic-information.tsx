@@ -4,6 +4,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Header from "../components/Header";
+import Breadcrumb from "../components/Breadcrumb";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
 import { Label } from "../src/components/ui/label";
@@ -280,6 +281,7 @@ export default function BasicInformation() {
         {/* Progress Header */}
         <div className="bg-white border-b">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <Breadcrumb />
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Badge
