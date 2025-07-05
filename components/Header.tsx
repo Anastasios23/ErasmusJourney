@@ -29,7 +29,7 @@ export default function Header() {
   const navigation = [
     { name: "Home", href: "/" },
     { name: "Destinations", href: "/destinations" },
-    { name: "Experiences", href: "/experiences" },
+    { name: "Exchanges", href: "/university-exchanges" },
     { name: "Stories", href: "/student-stories" },
     { name: "Community", href: "/community" },
     { name: "Accommodations", href: "/student-accommodations" },
