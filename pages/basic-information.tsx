@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-
-// Force dynamic rendering for this page since it requires session
-export const dynamic = "force-dynamic";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -38,6 +35,9 @@ import {
 } from "../src/data/universityAgreements";
 import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp";
 import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
+
+// Force dynamic rendering for this page since it requires session
+export const dynamic = "force-dynamic";
 
 export default function BasicInformation() {
   const { data: session, status } = useSession();
