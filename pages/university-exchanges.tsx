@@ -363,16 +363,13 @@ const cyprusUniversities = [
   ...CYPRUS_UNIVERSITIES.map((uni) => uni.name),
 ];
 
-const countries = [
-  "All Countries",
-  "Germany",
-  "Sweden",
-  "Italy",
-  "Netherlands",
-  "France",
-  "Spain",
-  "United Kingdom",
-];
+// Get all unique countries from actual agreements
+const allCountries = [
+  ...new Set(
+    ALL_UNIVERSITY_AGREEMENTS.map((agreement) => agreement.partnerCountry),
+  ),
+].sort();
+const countries = ["All Countries", ...allCountries];
 
 // Get all unique departments from all Cyprus universities
 const allDepartments = CYPRUS_UNIVERSITIES.reduce((deps, uni) => {
