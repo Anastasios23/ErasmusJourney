@@ -348,11 +348,14 @@ export default function Destinations() {
                   className="hover:shadow-lg transition-shadow cursor-pointer"
                   onClick={() => handleDestinationClick(destination.id)}
                 >
-                  <div className="aspect-video overflow-hidden rounded-t-lg">
-                    <img
+                  <div className="aspect-video overflow-hidden rounded-t-lg relative">
+                    <Image
                       src={destination.image}
-                      alt={destination.city}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform"
+                      alt={`${destination.city}, ${destination.country} - Beautiful cityscape showing iconic landmarks and architecture perfect for Erasmus students`}
+                      fill
+                      className="object-cover hover:scale-105 transition-transform"
+                      priority={filteredDestinations.indexOf(destination) < 3}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
                   </div>
                   <CardHeader>
