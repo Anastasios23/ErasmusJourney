@@ -1,7 +1,9 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import { Button } from "../../src/components/ui/button";
 import { Badge } from "../../src/components/ui/badge";
@@ -32,6 +34,9 @@ import {
   Train,
   Heart,
   Share2,
+  BookOpen,
+  ExternalLink,
+  List,
 } from "lucide-react";
 
 interface Destination {
@@ -92,6 +97,80 @@ interface Destination {
 interface DestinationDetailPageProps {
   destination: Destination | null;
 }
+
+// Table of Contents Component
+const TableOfContents = ({ destination }: { destination: Destination }) => {
+  const [activeSection, setActiveSection] = useState("overview");
+
+  const sections = [
+    { id: "overview", title: "Overview" },
+    { id: "universities", title: "Universities" },
+    { id: "costs", title: "Living Costs" },
+    { id: "student-life", title: "Student Life" },
+    { id: "practical-info", title: "Practical Info" },
+    { id: "accommodation-links", title: "Where to Stay" },
+    { id: "course-links", title: "Course Planning" },
+  ];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = document.querySelectorAll("[data-section]");
+      const scrollTop = window.scrollY + 100;
+
+      sections.forEach((section) => {
+        const element = section as HTMLElement;
+        const offsetTop = element.offsetTop;
+        const height = element.offsetHeight;
+        const id = element.getAttribute("data-section");
+
+        if (scrollTop >= offsetTop && scrollTop < offsetTop + height) {
+          setActiveSection(id || "overview");
+        }
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.querySelector(`[data-section="${sectionId}"]`);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  return (
+    <Card className="sticky top-24 self-start">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg flex items-center gap-2">
+          <List className="h-5 w-5" />
+          Table of Contents
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <nav aria-label="Page contents">
+          <ul className="space-y-2">
+            {sections.map((section) => (
+              <li key={section.id}>
+                <button
+                  onClick={() => scrollToSection(section.id)}
+                  className={`text-left w-full px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeSection === section.id
+                      ? "bg-blue-100 text-blue-700 font-medium"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  }`}
+                >
+                  {section.title}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </CardContent>
+    </Card>
+  );
+};
 
 export default function DestinationDetailPage({
   destination,
