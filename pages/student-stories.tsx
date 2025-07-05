@@ -285,7 +285,7 @@ export default function StudentStoriesPage() {
                         <CardHeader className="pb-2 flex-none">
                           <div className="flex justify-between items-start mb-2">
                             <Badge variant="secondary">
-                              {story.category.toLowerCase()}
+                              {story.category?.toLowerCase() || "experience"}
                             </Badge>
                             <div className="flex items-center text-xs text-gray-500 gap-1">
                               <Calendar
