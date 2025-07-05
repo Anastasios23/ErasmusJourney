@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
+import BackButton from "../components/BackButton";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
 import { Alert } from "../src/components/ui/alert";
@@ -61,6 +62,10 @@ export default function LoginPage() {
       </Head>
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <div className="w-full max-w-md space-y-6">
+          {/* Back Button */}
+          <div className="flex justify-start">
+            <BackButton fallbackUrl="/" variant="outline" />
+          </div>
           {successMessage && (
             <Alert variant="success">
               <p>{successMessage}</p>
