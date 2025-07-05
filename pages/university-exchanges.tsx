@@ -35,9 +35,153 @@ import {
   Filter,
   ExternalLink,
 } from "lucide-react";
+import {
+  CYPRUS_UNIVERSITIES,
+  ALL_UNIVERSITY_AGREEMENTS,
+  getAgreementsByDepartment,
+  getAgreementsByDepartmentAndLevel,
+} from "../src/data/universityAgreements";
+import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp";
 
-// Sample data for students who have completed exchanges
-const exchangeHistory = [
+// Function to generate exchange history from actual agreement data
+const generateExchangeHistoryFromAgreements = () => {
+  const sampleStudentNames = [
+    "Maria Constantinou",
+    "Andreas Georgiou",
+    "Elena Pavlou",
+    "Dimitris Christou",
+    "Sofia Ioannou",
+    "Georgios Nicolaou",
+    "Christina Andreou",
+    "Michalis Petrou",
+    "Alexia Demetriou",
+    "Panayiotis Vasiliou",
+    "Despina Christofi",
+    "Stavros Louca",
+  ];
+
+  const academicYears = ["2022-2023", "2023-2024", "2024-2025"];
+  const semesters = ["Fall 2022", "Spring 2023", "Fall 2023", "Spring 2024"];
+
+  // Sample courses for different departments
+  const departmentCourses = {
+    "Computer Science": [
+      {
+        code: "CS301",
+        name: "Database Systems",
+        credits: 6,
+        cyprusCode: "CS350",
+      },
+      {
+        code: "CS425",
+        name: "Machine Learning",
+        credits: 6,
+        cyprusCode: "CS450",
+      },
+      {
+        code: "CS380",
+        name: "Software Engineering",
+        credits: 8,
+        cyprusCode: "CS370",
+      },
+    ],
+    "Business Administration": [
+      {
+        code: "BUS301",
+        name: "International Marketing",
+        credits: 6,
+        cyprusCode: "BUS380",
+      },
+      {
+        code: "FIN350",
+        name: "Corporate Finance",
+        credits: 6,
+        cyprusCode: "FIN350",
+      },
+      {
+        code: "MGT450",
+        name: "Strategic Management",
+        credits: 6,
+        cyprusCode: "BUS450",
+      },
+    ],
+    Architecture: [
+      {
+        code: "ARC350",
+        name: "Architectural Design",
+        credits: 10,
+        cyprusCode: "ARC350",
+      },
+      {
+        code: "ARC320",
+        name: "Urban Planning",
+        credits: 5,
+        cyprusCode: "ARC320",
+      },
+      {
+        code: "ARC310",
+        name: "Building Technology",
+        credits: 5,
+        cyprusCode: "ARC310",
+      },
+    ],
+  };
+
+  const generated = [];
+
+  // Take a sample of agreements to generate realistic exchange history
+  const sampleAgreements = ALL_UNIVERSITY_AGREEMENTS.filter(
+    (agreement) => agreement.partnerCountry && agreement.partnerCity,
+  ).slice(0, 20); // Take first 20 for demo
+
+  sampleAgreements.forEach((agreement, index) => {
+    if (index < sampleStudentNames.length) {
+      const studentName = sampleStudentNames[index];
+      const cyprusUni = CYPRUS_UNIVERSITIES.find(
+        (uni) => uni.code === agreement.homeUniversity,
+      );
+      const department = agreement.homeDepartment.trim();
+      const courses =
+        departmentCourses[department] || departmentCourses["Computer Science"];
+
+      generated.push({
+        id: `generated-${index}`,
+        student: {
+          name: studentName,
+          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${studentName.replace(" ", "")}`,
+          cyprusUniversity: cyprusUni
+            ? cyprusUni.name
+            : agreement.homeUniversity,
+          department: department,
+          year: academicYears[index % academicYears.length],
+        },
+        exchange: {
+          university: agreement.partnerUniversity,
+          country: agreement.partnerCountry,
+          city: agreement.partnerCity,
+          duration: Math.random() > 0.5 ? "1 Semester" : "2 Semesters",
+          period: semesters[index % semesters.length],
+        },
+        courses: courses.map((course) => ({
+          ...course,
+          grade: ["A", "A-", "B+", "A"][Math.floor(Math.random() * 4)],
+          cyprusEquivalent: `${course.cyprusCode} - ${course.name}`,
+        })),
+        rating: parseFloat((4.0 + Math.random() * 1.0).toFixed(1)),
+        review:
+          "Great experience! The courses were excellent and the university facilities were world-class.",
+      });
+    }
+  });
+
+  return generated;
+};
+
+// Generate exchange history from actual agreements
+const exchangeHistory = generateExchangeHistoryFromAgreements();
+
+// Original sample data for demonstration - keeping some for variety
+const originalSampleData = [
   {
     id: "1",
     student: {
@@ -214,11 +358,7 @@ const exchangeHistory = [
 
 const cyprusUniversities = [
   "All Universities",
-  "University of Cyprus (UCY)",
-  "Cyprus University of Technology (CUT)",
-  "University of Nicosia (UNIC)",
-  "Frederick University",
-  "European University Cyprus (EUC)",
+  ...CYPRUS_UNIVERSITIES.map((uni) => uni.name),
 ];
 
 const countries = [
@@ -232,16 +372,12 @@ const countries = [
   "United Kingdom",
 ];
 
-const departments = [
-  "All Departments",
-  "Computer Science",
-  "Mechanical Engineering",
-  "Business Administration",
-  "Architecture",
-  "Civil Engineering",
-  "Medicine",
-  "Psychology",
-];
+// Get all unique departments from all Cyprus universities
+const allDepartments = CYPRUS_UNIVERSITIES.reduce((deps, uni) => {
+  return [...deps, ...uni.departments];
+}, [] as string[]);
+const uniqueDepartments = [...new Set(allDepartments)].sort();
+const departments = ["All Departments", ...uniqueDepartments];
 
 export default function UniversityExchanges() {
   const router = useRouter();
@@ -251,8 +387,49 @@ export default function UniversityExchanges() {
   const [selectedCountry, setSelectedCountry] = useState("All Countries");
   const [selectedDepartment, setSelectedDepartment] =
     useState("All Departments");
+  const [selectedLevel, setSelectedLevel] = useState("All Levels");
 
-  // Filter the exchange history based on search criteria
+  // Get available destinations based on selected filters
+  const availableDestinations = useMemo(() => {
+    if (
+      selectedCyprusUni === "All Universities" ||
+      selectedDepartment === "All Departments"
+    ) {
+      return [];
+    }
+
+    const cyprusUni = CYPRUS_UNIVERSITIES.find(
+      (uni) => uni.name === selectedCyprusUni,
+    );
+    if (!cyprusUni) return [];
+
+    let agreements;
+    if (cyprusUni.code === "UNIC" && selectedLevel !== "All Levels") {
+      const level = selectedLevel.toLowerCase() as
+        | "bachelor"
+        | "master"
+        | "phd";
+      agreements = getAgreementsByDepartmentAndLevel(
+        cyprusUni.code,
+        selectedDepartment,
+        level,
+      );
+    } else {
+      agreements = getAgreementsByDepartment(
+        cyprusUni.code,
+        selectedDepartment,
+      );
+    }
+
+    return agreements.map((agreement) => ({
+      university: agreement.partnerUniversity,
+      city: agreement.partnerCity,
+      country: agreement.partnerCountry,
+      level: agreement.academicLevel || "all",
+    }));
+  }, [selectedCyprusUni, selectedDepartment, selectedLevel]);
+
+  // Filter the exchange history based on search criteria and available agreements
   const filteredHistory = useMemo(() => {
     return exchangeHistory.filter((exchange) => {
       const matchesSearch =
@@ -286,11 +463,31 @@ export default function UniversityExchanges() {
         selectedDepartment === "All Departments" ||
         exchange.student.department === selectedDepartment;
 
+      // Check if this exchange destination is available based on actual agreements
+      const matchesAgreements =
+        availableDestinations.length === 0 ||
+        availableDestinations.some(
+          (dest) =>
+            dest.university === exchange.exchange.university &&
+            dest.city === exchange.exchange.city &&
+            dest.country === exchange.exchange.country,
+        );
+
       return (
-        matchesSearch && matchesCyprusUni && matchesCountry && matchesDepartment
+        matchesSearch &&
+        matchesCyprusUni &&
+        matchesCountry &&
+        matchesDepartment &&
+        matchesAgreements
       );
     });
-  }, [searchTerm, selectedCyprusUni, selectedCountry, selectedDepartment]);
+  }, [
+    searchTerm,
+    selectedCyprusUni,
+    selectedCountry,
+    selectedDepartment,
+    availableDestinations,
+  ]);
 
   // Statistics
   const stats = useMemo(() => {
@@ -411,7 +608,7 @@ export default function UniversityExchanges() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
                   <div className="relative">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
@@ -470,6 +667,21 @@ export default function UniversityExchanges() {
                     </SelectContent>
                   </Select>
 
+                  <Select
+                    value={selectedLevel}
+                    onValueChange={setSelectedLevel}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Level of Study" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="All Levels">All Levels</SelectItem>
+                      <SelectItem value="Bachelor">Bachelor</SelectItem>
+                      <SelectItem value="Master">Master</SelectItem>
+                      <SelectItem value="PhD">PhD</SelectItem>
+                    </SelectContent>
+                  </Select>
+
                   <Button
                     variant="outline"
                     onClick={() => {
@@ -477,6 +689,7 @@ export default function UniversityExchanges() {
                       setSelectedCyprusUni("All Universities");
                       setSelectedCountry("All Countries");
                       setSelectedDepartment("All Departments");
+                      setSelectedLevel("All Levels");
                     }}
                   >
                     Clear All
