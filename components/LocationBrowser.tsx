@@ -160,11 +160,33 @@ const LocationBrowser = () => {
               </div>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {results.map((entry) => (
+                {results.map((entry, index) => (
                   <Card
                     key={entry.id}
-                    className="group hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105"
+                    className="group hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     onClick={() => handleEntryClick(entry)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        handleEntryClick(entry);
+                      } else if (
+                        e.key === "ArrowRight" &&
+                        index < results.length - 1
+                      ) {
+                        e.preventDefault();
+                        const nextCard = e.currentTarget.parentElement
+                          ?.children[index + 1] as HTMLElement;
+                        nextCard?.focus();
+                      } else if (e.key === "ArrowLeft" && index > 0) {
+                        e.preventDefault();
+                        const prevCard = e.currentTarget.parentElement
+                          ?.children[index - 1] as HTMLElement;
+                        prevCard?.focus();
+                      }
+                    }}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={`${entry.type === "story" ? "Read story" : "View accommodation"}: ${entry.title} by ${entry.studentName} in ${entry.city}`}
                   >
                     <CardContent className="p-0">
                       <div className="aspect-video relative overflow-hidden rounded-t-lg">
