@@ -251,6 +251,9 @@ export default function HomePage({
         {/* Teaser Gallery */}
         <TeaserGallery />
 
+        {/* Exchange Highlights */}
+        <ExchangeHighlights />
+
         {/* Location Browser */}
         <LocationBrowser />
 
