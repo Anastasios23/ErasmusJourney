@@ -6,6 +6,7 @@ import Header from "../components/Header";
 import StepCard from "../components/StepCard";
 import TeaserGallery from "../components/TeaserGallery";
 import LocationBrowser from "../components/LocationBrowser";
+import ExchangeHighlights from "../components/ExchangeHighlights";
 import { Button } from "../src/components/ui/button";
 import { Badge } from "../src/components/ui/badge";
 import {
