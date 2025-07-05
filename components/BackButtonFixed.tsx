@@ -7,7 +7,7 @@ interface BackButtonFixedProps {
   children?: React.ReactNode;
 }
 
-export default function BackButtonFixed({
+export default function BackButton({
   fallbackUrl = "/",
   className = "",
   children,
