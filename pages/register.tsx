@@ -35,27 +35,22 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setIsLoading(true);
 
-    // Validation
+    // Client-side validations
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
-      setIsLoading(false);
       return;
     }
-
     if (formData.password.length < 6) {
       setError("Password must be at least 6 characters");
-      setIsLoading(false);
       return;
     }
 
+    setIsLoading(true);
     try {
       const response = await fetch("/api/auth/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           firstName: formData.firstName,
           lastName: formData.lastName,
@@ -63,51 +58,19 @@ export default function RegisterPage() {
           password: formData.password,
         }),
       });
-
       const data = await response.json();
 
       if (!response.ok) {
-        console.error("Registration failed:", data);
         setError(data.message || "Registration failed");
+        setIsLoading(false);
         return;
       }
 
-      console.log("✅ Registration successful:", data);
-
-      // Show success message briefly
-      setError(""); // Clear any previous errors
-
-      // Auto sign in after successful registration
-      const signInResult = await signIn("credentials", {
-        email: formData.email,
-        password: formData.password,
-        redirect: false,
-      });
-
-      console.log("🔐 Auto-login result:", signInResult);
-
-      if (signInResult?.error) {
-        console.error("❌ Auto-login failed:", signInResult.error);
-        setError(
-          "✅ Account created successfully! Redirecting to login page...",
-        );
-        setTimeout(() => {
-          router.push("/login?message=account_created");
-        }, 2000);
-      } else if (signInResult?.ok) {
-        // Success - redirect to dashboard
-        console.log(
-          "🎉 Registration and login successful, redirecting to dashboard...",
-        );
-        setError(""); // Clear any error state
-        router.push("/dashboard");
-      } else {
-        setError("Account created but login failed. Please sign in manually.");
-        setTimeout(() => router.push("/login"), 2000);
-      }
-    } catch (error) {
-      setError("An error occurred. Please try again.");
-    } finally {
+      // On success, send them to login with a success message
+      router.push("/login?message=account_created");
+    } catch (err) {
+      console.error("Registration error:", err);
+      setError("An unexpected error occurred. Please try again.");
       setIsLoading(false);
     }
   };

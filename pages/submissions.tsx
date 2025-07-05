@@ -1,23 +1,6 @@
 import { useEffect, useState } from "react";
-import Head from "next/head";
-import Header from "../components/Header";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../src/components/ui/card";
-import { Badge } from "../src/components/ui/badge";
-import { Button } from "../src/components/ui/button";
-import { Input } from "../src/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../src/components/ui/select";
-import { Search, Download, Filter, Users, FileText } from "lucide-react";
+import { useRequireAuth } from "@/src/hooks/useRequireAuth"; // or wherever your hook lives
+import { Spinner } from "@/components/ui/spinner"; // optional loading indicator
 
 type Submission = {
   id: string;
@@ -25,156 +8,30 @@ type Submission = {
   lastName: string;
   email: string;
   course: string;
-  level: string;
-  homeUniversity: string;
-  partnerUniversity: string;
-  partnerCity: string;
-  partnerCountry: string;
-  status: string;
-  semester: string | null;
-  academicYear: string | null;
   createdAt: string;
-  updatedAt: string;
 };
 
 export default function SubmissionsPage() {
+  const { session, loading: authLoading } = useRequireAuth();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
-  const [filteredSubmissions, setFilteredSubmissions] = useState<Submission[]>(
-    [],
-  );
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [universityFilter, setUniversityFilter] = useState("all");
 
   useEffect(() => {
+    if (authLoading) return;
+    // Once authenticated, fetch
     fetch("/api/submissions")
       .then((res) => res.json())
-      .then(({ submissions }) => {
-        setSubmissions(submissions);
-        setFilteredSubmissions(submissions);
-      })
-      .catch((err) => console.error("Error fetching submissions:", err))
+      .then(({ submissions }) => setSubmissions(submissions))
+      .catch((err) => console.error(err))
       .finally(() => setLoading(false));
-  }, []);
+  }, [authLoading]);
 
-  // Filter submissions based on search and filters
-  useEffect(() => {
-    let filtered = submissions;
-
-    // Search filter
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (submission) =>
-          submission.firstName
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          submission.lastName
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          submission.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          submission.course.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          submission.partnerUniversity
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()),
-      );
-    }
-
-    // Status filter
-    if (statusFilter !== "all") {
-      filtered = filtered.filter(
-        (submission) => submission.status === statusFilter,
-      );
-    }
-
-    // University filter
-    if (universityFilter !== "all") {
-      filtered = filtered.filter(
-        (submission) => submission.homeUniversity === universityFilter,
-      );
-    }
-
-    setFilteredSubmissions(filtered);
-  }, [submissions, searchTerm, statusFilter, universityFilter]);
-
-  const getStatusBadge = (status: string) => {
-    const statusColors = {
-      DRAFT: "bg-gray-100 text-gray-800",
-      SUBMITTED: "bg-blue-100 text-blue-800",
-      UNDER_REVIEW: "bg-yellow-100 text-yellow-800",
-      ACCEPTED: "bg-green-100 text-green-800",
-      REJECTED: "bg-red-100 text-red-800",
-      COMPLETED: "bg-purple-100 text-purple-800",
-    };
-
+  if (authLoading || loading) {
     return (
-      <Badge className={statusColors[status as keyof typeof statusColors]}>
-        {status.replace("_", " ")}
-      </Badge>
-    );
-  };
-
-  const uniqueUniversities = [
-    ...new Set(submissions.map((s) => s.homeUniversity)),
-  ];
-
-  const exportToCSV = () => {
-    const headers = [
-      "ID",
-      "First Name",
-      "Last Name",
-      "Email",
-      "Course",
-      "Level",
-      "Home University",
-      "Partner University",
-      "Partner City",
-      "Partner Country",
-      "Status",
-      "Semester",
-      "Academic Year",
-      "Submitted Date",
-    ];
-
-    const csvContent = [
-      headers.join(","),
-      ...filteredSubmissions.map((s) =>
-        [
-          s.id,
-          s.firstName,
-          s.lastName,
-          s.email,
-          s.course,
-          s.level,
-          s.homeUniversity,
-          s.partnerUniversity,
-          s.partnerCity,
-          s.partnerCountry,
-          s.status,
-          s.semester || "",
-          s.academicYear || "",
-          new Date(s.createdAt).toLocaleDateString(),
-        ].join(","),
-      ),
-    ].join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `erasmus-submissions-${new Date().toISOString().split("T")[0]}.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
-  };
-
-  if (loading) {
-    return (
-      <>
-        <Header />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-        </div>
-      </>
+      <div className="flex items-center justify-center h-64">
+        <Spinner />
+        <span className="ml-2">Loading submissions…</span>
+      </div>
     );
   }
 
