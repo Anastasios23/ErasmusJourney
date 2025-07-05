@@ -38,13 +38,14 @@ export default function Header() {
   const userNavigation = session
     ? [
         { name: "Dashboard", href: "/dashboard", icon: User },
-        { name: "My Profile", href: "/profile", icon: Settings },
+        { name: "My Profile", href: "/profile", icon: User },
         {
           name: "Basic Information",
           href: "/basic-information",
           icon: FileText,
         },
         { name: "Course Matching", href: "/course-matching", icon: BookOpen },
+        { name: "Settings", href: "/settings", icon: Settings },
         // Add admin link for admin users
         ...((session.user as any)?.role === "ADMIN"
           ? [{ name: "Admin Panel", href: "/admin", icon: Settings }]
