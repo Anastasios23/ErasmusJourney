@@ -28,7 +28,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error("CredentialsSignin");
         }
         // verify password
-        const isValid = await bcrypt.compare(credentials.password, user.password);
+        const isValid = await bcrypt.compare(
+          credentials.password,
+          user.password,
+        );
         if (!isValid) {
           throw new Error("CredentialsSignin");
         }
@@ -78,6 +81,29 @@ export const authOptions: NextAuthOptions = {
         /* ignore invalid URLs */
       }
       return baseUrl;
+    },
+  },
+
+  // Session configuration
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+
+  // Cookie configuration
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        domain:
+          process.env.NODE_ENV === "production"
+            ? process.env.NEXTAUTH_URL_DOMAIN
+            : undefined,
+      },
     },
   },
 

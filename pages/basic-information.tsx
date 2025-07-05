@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+
+// Force dynamic rendering for this page since it requires session
+export const dynamic = "force-dynamic";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
