@@ -432,8 +432,11 @@ export default function StudentAccommodations() {
                             <div className="lg:col-span-1">
                               <div className="aspect-video overflow-hidden rounded-lg">
                                 <img
-                                  src={listing.photos[0]}
-                                  alt={`${listing.accommodationType} in ${listing.city}`}
+                                  src={
+                                    listing.photos?.[0] ||
+                                    "/placeholder-room.jpg"
+                                  }
+                                  alt={`${listing.accommodationType || "Accommodation"} in ${listing.city || "City"}`}
                                   className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                                 />
                               </div>
@@ -572,7 +575,7 @@ export default function StudentAccommodations() {
                                       alt={`${listing.studentName}'s avatar`}
                                     />
                                     <AvatarFallback>
-                                      {listing.studentName
+                                      {(listing.studentName || "Anonymous User")
                                         .split(" ")
                                         .map((n) => n[0])
                                         .join("")}
