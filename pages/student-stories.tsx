@@ -72,8 +72,26 @@ export default function StudentStoriesPage() {
   const { content: generatedContent, loading: contentLoading } =
     useGeneratedContent("stories");
 
-  // Combine generated content with existing data
-  const allStories = [...(generatedContent?.stories || []), ...stories];
+  // Combine generated content with existing data, ensuring unique IDs
+  const allStories = useMemo(() => {
+    const generated = generatedContent?.stories || [];
+    const existing = stories || [];
+
+    // Create a Map to ensure unique IDs, prioritizing generated content
+    const storiesMap = new Map();
+
+    // Add existing stories first
+    existing.forEach((story) => {
+      storiesMap.set(story.id, story);
+    });
+
+    // Add generated stories, potentially overwriting existing ones with same ID
+    generated.forEach((story) => {
+      storiesMap.set(story.id, story);
+    });
+
+    return Array.from(storiesMap.values());
+  }, [generatedContent?.stories, stories]);
 
   const finalLoading = isLoading || contentLoading;
 
