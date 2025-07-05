@@ -312,16 +312,20 @@ export default function StudentStoriesPage() {
                           {/* Author Info */}
                           <div className="flex items-center gap-3 mb-3">
                             <img
-                              src={story.author.avatar}
-                              alt={`${story.author.firstName} ${story.author.lastName}`}
+                              src={
+                                story.author?.avatar ||
+                                "/placeholder-avatar.png"
+                              }
+                              alt={`${story.author?.firstName || "Anonymous"} ${story.author?.lastName || "User"}`}
                               className="w-8 h-8 rounded-full"
                             />
                             <div className="flex-1 min-w-0">
                               <div className="text-sm font-medium truncate">
-                                {story.author.firstName} {story.author.lastName}
+                                {story.author?.firstName || "Anonymous"}{" "}
+                                {story.author?.lastName || "User"}
                               </div>
                               <div className="text-xs text-gray-500 truncate">
-                                {story.university}
+                                {story.university || "University"}
                               </div>
                             </div>
                           </div>
@@ -330,7 +334,8 @@ export default function StudentStoriesPage() {
                           <div className="flex items-center gap-1 text-sm text-blue-600 mb-3">
                             <MapPin className="h-3 w-3" aria-hidden="true" />
                             <span>
-                              {story.city}, {story.country}
+                              {story.city || "City"},{" "}
+                              {story.country || "Country"}
                             </span>
                           </div>
 
