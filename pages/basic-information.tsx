@@ -70,8 +70,6 @@ export default function BasicInformation() {
       setFormData(draftData);
     }
   }, []);
-
-  const router = useRouter();
   const cyprusUniversities = CYPRUS_UNIVERSITIES;
   const [availableHostUniversities, setAvailableHostUniversities] = useState<
     Array<{ university: string; city: string; country: string }>
