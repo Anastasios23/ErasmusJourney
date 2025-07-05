@@ -440,7 +440,7 @@ export default function StudentAccommodations() {
                                 <img
                                   src={
                                     listing.photos?.[0] ||
-                                    "/placeholder-room.jpg"
+                                    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop"
                                   }
                                   alt={`${listing.accommodationType || "Accommodation"} in ${listing.city || "City"}`}
                                   className="w-full h-full object-cover group-hover:scale-105 transition-transform"
