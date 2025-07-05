@@ -49,7 +49,44 @@ interface EquivalentCourse {
 }
 
 export default function CourseMatching() {
+  const { data: session, status } = useSession();
   const router = useRouter();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (status === "loading") return; // Still loading
+    if (!session) {
+      router.replace("/login");
+      return;
+    }
+  }, [session, status, router]);
+
+  // Show loading while checking authentication
+  if (status === "loading") {
+    return (
+      <>
+        <Head>
+          <title>Course Matching - Erasmus Journey Platform</title>
+        </Head>
+        <div className="min-h-screen bg-gray-50">
+          <Header />
+          <div className="pt-20 pb-16 px-4">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+                <p className="mt-4 text-gray-600">Loading...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Don't render if no session
+  if (!session) {
+    return null;
+  }
 
   const [formData, setFormData] = useState({
     levelOfStudy: "",
