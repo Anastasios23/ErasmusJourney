@@ -378,7 +378,7 @@ export default function DestinationDetailPage({
                     <TabsTrigger value="practical">Practical Info</TabsTrigger>
                   </TabsList>
 
-              <TabsContent value="overview" className="space-y-6">
+              <TabsContent value="overview" className="space-y-6" data-section="overview">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <Card>
                     <CardHeader>
@@ -461,7 +461,7 @@ export default function DestinationDetailPage({
                 </Card>
               </TabsContent>
 
-              <TabsContent value="universities">
+              <TabsContent value="universities" data-section="universities">
                 <div className="space-y-4">
                   {destination.popularUniversities.map((uni, index) => (
                     <Card key={index}>
@@ -490,7 +490,7 @@ export default function DestinationDetailPage({
                 </div>
               </TabsContent>
 
-              <TabsContent value="costs">
+              <TabsContent value="costs" data-section="costs">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <Card>
                     <CardHeader>
@@ -585,7 +585,7 @@ export default function DestinationDetailPage({
                 </div>
               </TabsContent>
 
-              <TabsContent value="life">
+              <TabsContent value="life" data-section="student-life">
                 <Card>
                   <CardHeader>
                     <CardTitle>Student Life Quality</CardTitle>
@@ -613,7 +613,7 @@ export default function DestinationDetailPage({
                 </Card>
               </TabsContent>
 
-              <TabsContent value="practical">
+              <TabsContent value="practical" data-section="practical-info">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {Object.entries(destination.practicalInfo).map(
                     ([key, value]) => (
