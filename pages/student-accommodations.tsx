@@ -106,10 +106,16 @@ export default function StudentAccommodations() {
   const { content: generatedContent, loading: contentLoading } =
     useGeneratedContent("accommodations");
 
-  // Combine generated content with existing data
+  // Combine generated content with existing data, ensuring unique IDs
   const allAccommodations = [
-    ...(generatedContent?.accommodations || []),
-    ...accommodations,
+    ...(generatedContent?.accommodations || []).map((item, index) => ({
+      ...item,
+      id: item.id ? `generated-${item.id}` : `generated-${index}`,
+    })),
+    ...(accommodations || []).map((item, index) => ({
+      ...item,
+      id: item.id ? `api-${item.id}` : `api-${index}`,
+    })),
   ];
 
   const finalLoading = isLoading || contentLoading;
