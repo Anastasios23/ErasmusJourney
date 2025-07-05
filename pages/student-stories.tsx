@@ -352,11 +352,11 @@ export default function StudentStoriesPage() {
                                 aria-label={`Like story: ${story.title}`}
                               >
                                 <Heart className="h-3 w-3" />
-                                <span>{story.likes}</span>
+                                <span>{story.likes || 0}</span>
                               </button>
                               <span className="flex items-center gap-1">
                                 <Eye className="h-3 w-3" aria-hidden="true" />
-                                <span>{story.views}</span>
+                                <span>{story.views || 0}</span>
                               </span>
                             </div>
                             <Button
