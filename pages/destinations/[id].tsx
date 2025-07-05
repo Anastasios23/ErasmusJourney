@@ -114,14 +114,14 @@ const TableOfContents = ({ destination }: { destination: Destination }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = document.querySelectorAll('[data-section]');
+      const sections = document.querySelectorAll("[data-section]");
       const scrollTop = window.scrollY + 100;
 
       sections.forEach((section) => {
         const element = section as HTMLElement;
         const offsetTop = element.offsetTop;
         const height = element.offsetHeight;
-        const id = element.getAttribute('data-section');
+        const id = element.getAttribute("data-section");
 
         if (scrollTop >= offsetTop && scrollTop < offsetTop + height) {
           setActiveSection(id || "overview");
@@ -129,14 +129,14 @@ const TableOfContents = ({ destination }: { destination: Destination }) => {
       });
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.querySelector(`[data-section="${sectionId}"]`);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
@@ -378,260 +378,366 @@ export default function DestinationDetailPage({
                     <TabsTrigger value="practical">Practical Info</TabsTrigger>
                   </TabsList>
 
-              <TabsContent value="overview" className="space-y-6" data-section="overview">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>City Information</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="flex justify-between">
-                        <span>Population:</span>
-                        <span>
-                          {destination.details.population.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Climate:</span>
-                        <span>{destination.details.climate}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Currency:</span>
-                        <span>{destination.details.currency}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Timezone:</span>
-                        <span>{destination.details.timezone}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <TabsContent
+                    value="overview"
+                    className="space-y-6"
+                    data-section="overview"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>City Information</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          <div className="flex justify-between">
+                            <span>Population:</span>
+                            <span>
+                              {destination.details.population.toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Climate:</span>
+                            <span>{destination.details.climate}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Currency:</span>
+                            <span>{destination.details.currency}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Timezone:</span>
+                            <span>{destination.details.timezone}</span>
+                          </div>
+                        </CardContent>
+                      </Card>
 
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Transportation</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="flex justify-between">
-                        <span>Public Transport:</span>
-                        <span>
-                          {destination.transportation.publicTransport}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Bike Rentals:</span>
-                        <span>
-                          {destination.transportation.bikeRentals
-                            ? "Available"
-                            : "Limited"}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Walkability:</span>
-                        <span>{destination.transportation.walkability}/10</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Nearest Airport:</span>
-                        <span>{destination.transportation.nearestAirport}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Top Attractions</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {destination.attractions.map((attraction, index) => (
-                        <div key={index} className="border rounded-lg p-4">
-                          <h4 className="font-semibold mb-1">
-                            {attraction.name}
-                          </h4>
-                          <p className="text-sm text-blue-600 mb-2">
-                            {attraction.type}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {attraction.description}
-                          </p>
-                        </div>
-                      ))}
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Transportation</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          <div className="flex justify-between">
+                            <span>Public Transport:</span>
+                            <span>
+                              {destination.transportation.publicTransport}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Bike Rentals:</span>
+                            <span>
+                              {destination.transportation.bikeRentals
+                                ? "Available"
+                                : "Limited"}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Walkability:</span>
+                            <span>
+                              {destination.transportation.walkability}/10
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Nearest Airport:</span>
+                            <span>
+                              {destination.transportation.nearestAirport}
+                            </span>
+                          </div>
+                        </CardContent>
+                      </Card>
                     </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
 
-              <TabsContent value="universities" data-section="universities">
-                <div className="space-y-4">
-                  {destination.popularUniversities.map((uni, index) => (
-                    <Card key={index}>
+                    <Card>
                       <CardHeader>
-                        <CardTitle className="flex items-center justify-between">
-                          <span>{uni.name}</span>
-                          <Badge variant="outline">{uni.type}</Badge>
-                        </CardTitle>
+                        <CardTitle>Top Attractions</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div>
-                          <h4 className="font-medium mb-2">
-                            Popular Programs:
-                          </h4>
-                          <div className="flex flex-wrap gap-2">
-                            {uni.programs.map((program, i) => (
-                              <Badge key={i} variant="secondary">
-                                {program}
-                              </Badge>
-                            ))}
-                          </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {destination.attractions.map((attraction, index) => (
+                            <div key={index} className="border rounded-lg p-4">
+                              <h4 className="font-semibold mb-1">
+                                {attraction.name}
+                              </h4>
+                              <p className="text-sm text-blue-600 mb-2">
+                                {attraction.type}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                {attraction.description}
+                              </p>
+                            </div>
+                          ))}
                         </div>
                       </CardContent>
                     </Card>
-                  ))}
-                </div>
-              </TabsContent>
+                  </TabsContent>
 
-              <TabsContent value="costs" data-section="costs">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Monthly Living Costs</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <span>Accommodation</span>
-                          <span className="font-medium">
-                            €{destination.livingCosts.accommodation.min} - €
-                            {destination.livingCosts.accommodation.max}
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div
-                            className="bg-blue-600 h-2 rounded-full"
-                            style={{ width: "60%" }}
-                          />
-                        </div>
-                      </div>
+                  <TabsContent value="universities" data-section="universities">
+                    <div className="space-y-4">
+                      {destination.popularUniversities.map((uni, index) => (
+                        <Card key={index}>
+                          <CardHeader>
+                            <CardTitle className="flex items-center justify-between">
+                              <span>{uni.name}</span>
+                              <Badge variant="outline">{uni.type}</Badge>
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div>
+                              <h4 className="font-medium mb-2">
+                                Popular Programs:
+                              </h4>
+                              <div className="flex flex-wrap gap-2">
+                                {uni.programs.map((program, i) => (
+                                  <Badge key={i} variant="secondary">
+                                    {program}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </TabsContent>
 
-                      <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <span>Food</span>
-                          <span className="font-medium">
-                            €{destination.livingCosts.food.min} - €
-                            {destination.livingCosts.food.max}
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div
-                            className="bg-green-600 h-2 rounded-full"
-                            style={{ width: "40%" }}
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <span>Transport</span>
-                          <span className="font-medium">
-                            €{destination.livingCosts.transport}
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div
-                            className="bg-yellow-600 h-2 rounded-full"
-                            style={{ width: "20%" }}
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <span>Entertainment</span>
-                          <span className="font-medium">
-                            €{destination.livingCosts.entertainment.min} - €
-                            {destination.livingCosts.entertainment.max}
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div
-                            className="bg-purple-600 h-2 rounded-full"
-                            style={{ width: "30%" }}
-                          />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Cost Comparison</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-center">
-                        <div className="text-3xl font-bold text-green-600 mb-2">
-                          €{destination.avgCostPerMonth}
-                        </div>
-                        <div className="text-sm text-gray-600 mb-4">
-                          Average monthly cost
-                        </div>
-                        <Badge
-                          className={getCostBadgeColor(destination.costLevel)}
-                        >
-                          {destination.costLevel.toUpperCase()} COST CITY
-                        </Badge>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="life" data-section="student-life">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Student Life Quality</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {Object.entries(destination.studentLife).map(
-                      ([key, value]) => (
-                        <div key={key}>
-                          <div className="flex justify-between items-center mb-2">
-                            <span className="capitalize">
-                              {key.replace(/([A-Z])/g, " $1")}
-                            </span>
-                            <span className="font-medium">{value}/10</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div
-                              className="bg-blue-600 h-2 rounded-full transition-all"
-                              style={{ width: `${value * 10}%` }}
-                            />
-                          </div>
-                        </div>
-                      ),
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="practical" data-section="practical-info">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {Object.entries(destination.practicalInfo).map(
-                    ([key, value]) => (
-                      <Card key={key}>
+                  <TabsContent value="costs" data-section="costs">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <Card>
                         <CardHeader>
-                          <CardTitle className="capitalize">
-                            {key === "simCard" ? "SIM Card" : key}
-                          </CardTitle>
+                          <CardTitle>Monthly Living Costs</CardTitle>
                         </CardHeader>
-                        <CardContent>
-                          <p className="text-gray-700">{value}</p>
+                        <CardContent className="space-y-4">
+                          <div>
+                            <div className="flex justify-between items-center mb-2">
+                              <span>Accommodation</span>
+                              <span className="font-medium">
+                                €{destination.livingCosts.accommodation.min} - €
+                                {destination.livingCosts.accommodation.max}
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div
+                                className="bg-blue-600 h-2 rounded-full"
+                                style={{ width: "60%" }}
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="flex justify-between items-center mb-2">
+                              <span>Food</span>
+                              <span className="font-medium">
+                                €{destination.livingCosts.food.min} - €
+                                {destination.livingCosts.food.max}
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div
+                                className="bg-green-600 h-2 rounded-full"
+                                style={{ width: "40%" }}
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="flex justify-between items-center mb-2">
+                              <span>Transport</span>
+                              <span className="font-medium">
+                                €{destination.livingCosts.transport}
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div
+                                className="bg-yellow-600 h-2 rounded-full"
+                                style={{ width: "20%" }}
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="flex justify-between items-center mb-2">
+                              <span>Entertainment</span>
+                              <span className="font-medium">
+                                €{destination.livingCosts.entertainment.min} - €
+                                {destination.livingCosts.entertainment.max}
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div
+                                className="bg-purple-600 h-2 rounded-full"
+                                style={{ width: "30%" }}
+                              />
+                            </div>
+                          </div>
                         </CardContent>
                       </Card>
-                    ),
-                  )}
+
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Cost Comparison</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-center">
+                            <div className="text-3xl font-bold text-green-600 mb-2">
+                              €{destination.avgCostPerMonth}
+                            </div>
+                            <div className="text-sm text-gray-600 mb-4">
+                              Average monthly cost
+                            </div>
+                            <Badge
+                              className={getCostBadgeColor(
+                                destination.costLevel,
+                              )}
+                            >
+                              {destination.costLevel.toUpperCase()} COST CITY
+                            </Badge>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="life" data-section="student-life">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Student Life Quality</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-6">
+                        {Object.entries(destination.studentLife).map(
+                          ([key, value]) => (
+                            <div key={key}>
+                              <div className="flex justify-between items-center mb-2">
+                                <span className="capitalize">
+                                  {key.replace(/([A-Z])/g, " $1")}
+                                </span>
+                                <span className="font-medium">{value}/10</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div
+                                  className="bg-blue-600 h-2 rounded-full transition-all"
+                                  style={{ width: `${value * 10}%` }}
+                                />
+                              </div>
+                            </div>
+                          ),
+                        )}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+
+                  <TabsContent value="practical" data-section="practical-info">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {Object.entries(destination.practicalInfo).map(
+                        ([key, value]) => (
+                          <Card key={key}>
+                            <CardHeader>
+                              <CardTitle className="capitalize">
+                                {key === "simCard" ? "SIM Card" : key}
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <p className="text-gray-700">{value}</p>
+                            </CardContent>
+                          </Card>
+                        ),
+                      )}
+                    </div>
+                  </TabsContent>
+                </Tabs>
+
+                {/* Cross-links Section */}
+                <div className="space-y-6 mt-8">
+                  {/* Accommodation Links */}
+                  <Card data-section="accommodation-links">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Home className="h-5 w-5" />
+                        Where to Stay in {destination.city}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-600 mb-4">
+                        Find the perfect accommodation for your stay in{" "}
+                        {destination.city}. Browse student housing options and
+                        get insider tips from other Erasmus students.
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        <Link
+                          href={`/student-accommodations?city=${destination.city}`}
+                        >
+                          <Button
+                            variant="outline"
+                            className="flex items-center gap-2"
+                          >
+                            <Home className="h-4 w-4" />
+                            Browse Housing
+                            <ExternalLink className="h-3 w-3" />
+                          </Button>
+                        </Link>
+                        <Link href={`/accommodation?city=${destination.city}`}>
+                          <Button
+                            variant="outline"
+                            className="flex items-center gap-2"
+                          >
+                            <Utensils className="h-4 w-4" />
+                            Share Your Experience
+                            <ExternalLink className="h-3 w-3" />
+                          </Button>
+                        </Link>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Course Links */}
+                  <Card data-section="course-links">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <BookOpen className="h-5 w-5" />
+                        Course Planning for {destination.city}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-600 mb-4">
+                        Plan your academic journey with course matching tools
+                        and see what other students have studied at universities
+                        in {destination.city}.
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        <Link
+                          href={`/course-matching?city=${destination.city}`}
+                        >
+                          <Button
+                            variant="outline"
+                            className="flex items-center gap-2"
+                          >
+                            <BookOpen className="h-4 w-4" />
+                            Match Courses
+                            <ExternalLink className="h-3 w-3" />
+                          </Button>
+                        </Link>
+                        <Link
+                          href={`/university-exchanges?country=${destination.country}`}
+                        >
+                          <Button
+                            variant="outline"
+                            className="flex items-center gap-2"
+                          >
+                            <GraduationCap className="h-4 w-4" />
+                            Student Experiences
+                            <ExternalLink className="h-3 w-3" />
+                          </Button>
+                        </Link>
+                        <Link href="/basic-information">
+                          <Button className="flex items-center gap-2">
+                            <Users className="h-4 w-4" />
+                            Start Application
+                            <ExternalLink className="h-3 w-3" />
+                          </Button>
+                        </Link>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
-              </TabsContent>
-            </Tabs>
+              </div>
+            </div>
 
             {/* CTA Section */}
             <Card className="mt-12 bg-blue-50 border-blue-200">
