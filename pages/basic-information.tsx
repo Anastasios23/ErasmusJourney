@@ -59,13 +59,7 @@ export default function BasicInformation() {
     departmentAtHost: "",
   });
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (status === "loading") return; // Still loading
-    if (!session) {
-      router.push("/login?callbackUrl=/basic-information");
-    }
-  }, [session, status, router]);
+  // Authentication temporarily disabled - all users can access
 
   // Load draft data on component mount
   useEffect(() => {
