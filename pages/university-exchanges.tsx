@@ -383,6 +383,7 @@ const departments = ["All Departments", ...uniqueDepartments];
 
 export default function UniversityExchanges() {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCyprusUni, setSelectedCyprusUni] =
     useState("All Universities");
@@ -390,6 +391,11 @@ export default function UniversityExchanges() {
   const [selectedDepartment, setSelectedDepartment] =
     useState("All Departments");
   const [selectedLevel, setSelectedLevel] = useState("All Levels");
+
+  // Ensure component is mounted to prevent hydration mismatches
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Get available destinations based on selected filters
   const availableDestinations = useMemo(() => {
@@ -506,6 +512,36 @@ export default function UniversityExchanges() {
 
     return { totalStudents, uniqueUniversities, uniqueCountries, avgRating };
   }, []);
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <>
+        <Head>
+          <title>University Exchange History - Erasmus Journey Platform</title>
+          <meta
+            name="description"
+            content="Explore the exchange history of Cyprus students and the courses they studied abroad"
+          />
+        </Head>
+        <div className="min-h-screen bg-gray-50">
+          <Header />
+          <div className="pt-20 pb-16 px-4">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-12">
+                <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                  University Exchange History
+                </h1>
+                <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                  Loading exchange history...
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
