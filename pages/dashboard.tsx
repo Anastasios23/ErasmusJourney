@@ -1,101 +1,119 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import Header from "../components/Header";
-import FormProgress from "../components/FormProgress";
+import { Button } from "../src/components/ui/button";
+import { Progress } from "../src/components/ui/progress";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../src/components/ui/card";
-import { Button } from "../src/components/ui/button";
 import { Badge } from "../src/components/ui/badge";
-import { Progress } from "../src/components/ui/progress";
+import {
+  User,
+  BookOpen,
+  Home,
+  Euro,
+  FileText,
+  CheckCircle,
+  Clock,
+  ArrowRight,
+  Settings,
+} from "lucide-react";
 
-interface UserData {
+interface ApplicationStep {
   id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  nationality: string | null;
-  homeCountry: string | null;
-  homeCity: string | null;
+  name: string;
+  href: string;
+  icon: any;
+  completed: boolean;
+  description: string;
 }
 
-interface Application {
-  id: string;
-  status: string;
-  semester: string | null;
-  academicYear: string | null;
-  createdAt: string;
-  homeUniversity: {
-    name: string;
-    shortName: string;
-  };
-  program: {
-    name: string;
-    level: string;
-  };
-  agreement: {
-    partnerUniversity: {
-      name: string;
-      city: string;
-      country: string;
-    };
-  };
-}
-
-interface Story {
-  id: string;
-  title: string;
-  excerpt: string | null;
-  category: string;
-  isPublic: boolean;
-  likes: number;
-  views: number;
-  createdAt: string;
-}
-
-export default function DashboardPage() {
+export default function Dashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
 
+  // Redirect to login if not authenticated
   useEffect(() => {
-    setLoading(false);
-  }, []);
+    if (status === "loading") return;
+    if (!session) {
+      router.replace("/login");
+      return;
+    }
+  }, [session, status, router]);
 
-  // Use session data or fallback to demo data
-  const user = {
-    id: session?.user?.id || session?.user?.email || "demo",
-    firstName:
-      (session?.user as any)?.firstName ||
-      session?.user?.name?.split(" ")[0] ||
-      "Demo",
-    lastName:
-      (session?.user as any)?.lastName ||
-      session?.user?.name?.split(" ")[1] ||
-      "User",
-    email: session?.user?.email || "demo@erasmus.cy",
-    nationality: "Cypriot",
-    homeCountry: "Cyprus",
-    homeCity: "Nicosia",
-  };
+  // Show loading while checking authentication
+  if (status === "loading") {
+    return (
+      <>
+        <Head>
+          <title>Dashboard - Erasmus Journey Platform</title>
+        </Head>
+        <div className="min-h-screen bg-gray-50">
+          <Header />
+          <div className="pt-20 pb-16 px-4">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+                <p className="mt-4 text-gray-600">Loading...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
-  const applications: Application[] = [];
-  const stories: Story[] = [];
-  const stats = {
-    totalApplications: 0,
-    pendingApplications: 0,
-    acceptedApplications: 0,
-    totalStories: 0,
-    totalLikes: 0,
-  };
+  // Don't render if no session
+  if (!session) {
+    return null;
+  }
 
-  const profileCompletion = calculateProfileCompletion(user);
+  // Mock application progress - in a real app, this would come from your database
+  const applicationSteps: ApplicationStep[] = [
+    {
+      id: "basic-info",
+      name: "Personal Information",
+      href: "/basic-information",
+      icon: User,
+      completed: false, // This would be determined from your database
+      description: "Complete your personal and academic information",
+    },
+    {
+      id: "course-matching",
+      name: "Course Matching",
+      href: "/course-matching",
+      icon: BookOpen,
+      completed: false,
+      description: "Select and match courses with your home university",
+    },
+    {
+      id: "accommodation",
+      name: "Accommodation Details",
+      href: "/accommodation",
+      icon: Home,
+      completed: false,
+      description: "Provide information about your accommodation preferences",
+    },
+    {
+      id: "living-expenses",
+      name: "Living Expenses",
+      href: "/living-expenses",
+      icon: Euro,
+      completed: false,
+      description: "Estimate and plan your living expenses abroad",
+    },
+  ];
+
+  const completedSteps = applicationSteps.filter(
+    (step) => step.completed,
+  ).length;
+  const progressPercentage = (completedSteps / applicationSteps.length) * 100;
 
   return (
     <>
@@ -103,280 +121,254 @@ export default function DashboardPage() {
         <title>Dashboard - Erasmus Journey Platform</title>
         <meta
           name="description"
-          content="Your personal Erasmus journey dashboard"
+          content="Track your Erasmus application progress and manage your profile"
         />
       </Head>
 
       <div className="min-h-screen bg-gray-50">
         <Header />
 
-        <main className="pt-20 pb-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="pt-20 pb-16 px-4">
+          <div className="max-w-7xl mx-auto">
             {/* Welcome Section */}
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900">
-                Welcome back, {user.firstName}! 👋
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                Welcome back, {session.user?.name?.split(" ")[0] || "User"}!
               </h1>
-              <p className="mt-2 text-gray-600">
-                Track your Erasmus journey and discover new opportunities.
+              <p className="text-gray-600">
+                Track your Erasmus application progress and explore new
+                opportunities.
               </p>
             </div>
 
-            {/* Form Progress Card */}
-            <div className="mb-8">
-              <FormProgress />
-            </div>
-
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Left Column - Applications & Quick Actions */}
+              {/* Application Progress */}
               <div className="lg:col-span-2 space-y-6">
-                {/* Quick Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <Card>
-                    <CardContent className="p-4 text-center">
-                      <div className="text-2xl font-bold text-blue-600">
-                        {stats.totalApplications}
-                      </div>
-                      <div className="text-sm text-gray-600">Applications</div>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardContent className="p-4 text-center">
-                      <div className="text-2xl font-bold text-yellow-600">
-                        {stats.pendingApplications}
-                      </div>
-                      <div className="text-sm text-gray-600">Pending</div>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardContent className="p-4 text-center">
-                      <div className="text-2xl font-bold text-green-600">
-                        {stats.acceptedApplications}
-                      </div>
-                      <div className="text-sm text-gray-600">Accepted</div>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardContent className="p-4 text-center">
-                      <div className="text-2xl font-bold text-purple-600">
-                        {stats.totalStories}
-                      </div>
-                      <div className="text-sm text-gray-600">Stories</div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Applications Section */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Recent Applications</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {applications.length > 0 ? (
-                      <div className="space-y-4">
-                        {applications.map((application) => (
-                          <div
-                            key={application.id}
-                            className="flex items-center justify-between p-4 border rounded-lg"
-                          >
-                            <div>
-                              <h4 className="font-medium">
-                                {application.program.name}
-                              </h4>
-                              <p className="text-sm text-gray-600">
-                                {application.agreement.partnerUniversity.name},{" "}
-                                {application.agreement.partnerUniversity.city}
-                              </p>
-                              <p className="text-xs text-gray-500">
-                                {application.semester}{" "}
-                                {application.academicYear}
-                              </p>
-                            </div>
-                            <Badge
-                              variant={
-                                application.status === "ACCEPTED"
-                                  ? "default"
-                                  : application.status === "SUBMITTED"
-                                    ? "secondary"
-                                    : "outline"
-                              }
-                            >
-                              {application.status}
-                            </Badge>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8">
-                        <p className="text-gray-500 mb-4">
-                          No applications yet. Start your journey!
-                        </p>
-                        <Link href="/destinations">
-                          <Button>Explore Destinations</Button>
-                        </Link>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Your Stories */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      Your Stories
-                      <Link href="/share-story">
-                        <Button variant="outline" size="sm">
-                          Share Story
-                        </Button>
-                      </Link>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-5 w-5" />
+                      Application Progress
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {stories.length > 0 ? (
-                      <div className="space-y-4">
-                        {stories.map((story) => (
-                          <div key={story.id} className="border rounded-lg p-4">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <h4 className="font-medium mb-1">
-                                  {story.title}
-                                </h4>
-                                <p className="text-sm text-gray-600 mb-2">
-                                  {story.excerpt}
-                                </p>
-                                <div className="flex items-center space-x-4 text-xs text-gray-500">
-                                  <span>❤️ {story.likes} likes</span>
-                                  <span>👁️ {story.views} views</span>
-                                  <Badge variant="outline" className="text-xs">
-                                    {story.category}
-                                  </Badge>
-                                </div>
-                              </div>
-                              <Badge
-                                variant={story.isPublic ? "default" : "outline"}
-                              >
-                                {story.isPublic ? "Public" : "Private"}
-                              </Badge>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">
+                          {completedSteps} of {applicationSteps.length} steps
+                          completed
+                        </span>
+                        <span className="text-sm text-gray-600">
+                          {Math.round(progressPercentage)}%
+                        </span>
+                      </div>
+                      <Progress value={progressPercentage} className="h-2" />
+                    </div>
+
+                    <div className="mt-6 space-y-4">
+                      {applicationSteps.map((step) => (
+                        <div
+                          key={step.id}
+                          className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div
+                              className={`p-2 rounded-lg ${
+                                step.completed
+                                  ? "bg-green-100 text-green-600"
+                                  : "bg-gray-100 text-gray-600"
+                              }`}
+                            >
+                              {step.completed ? (
+                                <CheckCircle className="h-5 w-5" />
+                              ) : (
+                                <step.icon className="h-5 w-5" />
+                              )}
+                            </div>
+                            <div>
+                              <h3 className="font-medium text-gray-900">
+                                {step.name}
+                              </h3>
+                              <p className="text-sm text-gray-600">
+                                {step.description}
+                              </p>
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8">
-                        <p className="text-gray-500 mb-4">
-                          Share your Erasmus experience with others!
-                        </p>
-                        <Link href="/share-story">
-                          <Button>Write Your First Story</Button>
-                        </Link>
-                      </div>
-                    )}
+                          <div className="flex items-center gap-3">
+                            {step.completed ? (
+                              <Badge
+                                variant="secondary"
+                                className="bg-green-100 text-green-800"
+                              >
+                                Complete
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline">
+                                <Clock className="h-3 w-3 mr-1" />
+                                Pending
+                              </Badge>
+                            )}
+                            <Link href={step.href}>
+                              <Button size="sm" variant="outline">
+                                {step.completed ? "Review" : "Continue"}
+                                <ArrowRight className="h-4 w-4 ml-2" />
+                              </Button>
+                            </Link>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
-              </div>
 
-              {/* Right Column - Quick Actions & Recommendations */}
-              <div className="space-y-6">
                 {/* Quick Actions */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Quick Actions</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3">
-                    <Link href="/basic-information" className="block">
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                      >
-                        📝 Update Profile
-                      </Button>
-                    </Link>
-                    <Link href="/destinations" className="block">
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                      >
-                        🏫 Browse Destinations
-                      </Button>
-                    </Link>
-                    <Link href="/destinations" className="block">
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                      >
-                        �� Find Destinations
-                      </Button>
-                    </Link>
-                    <Link href="/student-accommodations" className="block">
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                      >
-                        🏠 Find Housing
-                      </Button>
-                    </Link>
-                    <Link href="/student-stories" className="block">
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                      >
-                        📖 Read Stories
-                      </Button>
-                    </Link>
-                    <Link href="/community" className="block">
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                      >
-                        👥 Join Community
-                      </Button>
-                    </Link>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <Link href="/university-exchanges">
+                        <Button
+                          variant="outline"
+                          className="w-full h-20 flex-col gap-2"
+                        >
+                          <BookOpen className="h-5 w-5" />
+                          <span className="text-xs">Browse Exchanges</span>
+                        </Button>
+                      </Link>
+                      <Link href="/student-stories">
+                        <Button
+                          variant="outline"
+                          className="w-full h-20 flex-col gap-2"
+                        >
+                          <FileText className="h-5 w-5" />
+                          <span className="text-xs">Read Stories</span>
+                        </Button>
+                      </Link>
+                      <Link href="/student-accommodations">
+                        <Button
+                          variant="outline"
+                          className="w-full h-20 flex-col gap-2"
+                        >
+                          <Home className="h-5 w-5" />
+                          <span className="text-xs">Find Housing</span>
+                        </Button>
+                      </Link>
+                      <Link href="/profile">
+                        <Button
+                          variant="outline"
+                          className="w-full h-20 flex-col gap-2"
+                        >
+                          <Settings className="h-5 w-5" />
+                          <span className="text-xs">Edit Profile</span>
+                        </Button>
+                      </Link>
+                    </div>
                   </CardContent>
                 </Card>
+              </div>
 
-                {/* Recommended for You */}
+              {/* Sidebar */}
+              <div className="space-y-6">
+                {/* Profile Summary */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Recommended for You</CardTitle>
+                    <CardTitle className="text-lg">Profile Summary</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div className="border rounded-lg p-4">
-                        <h4 className="font-medium mb-2">
-                          Complete Your Profile
-                        </h4>
-                        <p className="text-sm text-gray-600 mb-3">
-                          Add more details to get personalized recommendations.
-                        </p>
-                        <Link href="/basic-information">
-                          <Button size="sm">Complete Now</Button>
-                        </Link>
+                      <div className="flex items-center gap-3">
+                        <div className="h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center">
+                          <span className="text-white font-bold">
+                            {session.user?.name?.[0] ||
+                              session.user?.email?.[0]}
+                          </span>
+                        </div>
+                        <div>
+                          <h3 className="font-medium">
+                            {session.user?.name || "User"}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {session.user?.email}
+                          </p>
+                        </div>
                       </div>
+                      <Link href="/profile">
+                        <Button variant="outline" className="w-full">
+                          Edit Profile
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
 
-                      <div className="border rounded-lg p-4">
-                        <h4 className="font-medium mb-2">
-                          Explore Popular Destinations
-                        </h4>
-                        <p className="text-sm text-gray-600 mb-3">
-                          Discover the most popular study abroad destinations.
-                        </p>
-                        <Link href="/destinations">
-                          <Button size="sm" variant="outline">
-                            Explore
+                {/* Application Status */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">
+                      Application Status
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Status:</span>
+                        <Badge variant="outline">In Progress</Badge>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">
+                          Completion:
+                        </span>
+                        <span className="text-sm font-medium">
+                          {Math.round(progressPercentage)}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">
+                          Last Updated:
+                        </span>
+                        <span className="text-sm">
+                          {new Date().toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Help & Support */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Need Help?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <p className="text-sm text-gray-600">
+                        Get support with your application or explore resources.
+                      </p>
+                      <div className="space-y-2">
+                        <Link href="/university-exchanges">
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start text-sm"
+                          >
+                            View Exchange Examples
                           </Button>
                         </Link>
-                      </div>
-
-                      <div className="border rounded-lg p-4">
-                        <h4 className="font-medium mb-2">Share Your Story</h4>
-                        <p className="text-sm text-gray-600 mb-3">
-                          Help future students by sharing your experience.
-                        </p>
-                        <Link href="/share-story">
-                          <Button size="sm" variant="outline">
-                            Share
+                        <Link href="/student-stories">
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start text-sm"
+                          >
+                            Read Student Stories
                           </Button>
                         </Link>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-sm"
+                        >
+                          Contact Support
+                        </Button>
                       </div>
                     </div>
                   </CardContent>
@@ -384,22 +376,8 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-        </main>
+        </div>
       </div>
     </>
   );
-}
-
-function calculateProfileCompletion(user: UserData): number {
-  const fields = [
-    user.firstName,
-    user.lastName,
-    user.email,
-    user.nationality,
-    user.homeCountry,
-    user.homeCity,
-  ];
-
-  const completed = fields.filter(Boolean).length;
-  return Math.round((completed / fields.length) * 100);
 }
