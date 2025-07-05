@@ -35,10 +35,18 @@ import {
 import { toast } from "sonner";
 
 export default function Profile() {
-  const { data: session, status, update } = useSession();
+  const { data: session, update } = useSession();
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Authentication temporarily disabled - mock session
+  const mockSession = session || {
+    user: {
+      name: "Demo User",
+      email: "demo@example.com",
+    },
+  };
 
   const [profileData, setProfileData] = useState({
     name: "",
@@ -49,51 +57,17 @@ export default function Profile() {
     dateOfBirth: "",
   });
 
-  // Redirect to login if not authenticated
+  // Initialize form with session data
   useEffect(() => {
-    if (status === "loading") return;
-    if (!session) {
-      router.replace("/login");
-      return;
-    }
-
-    // Initialize form with session data
     setProfileData({
-      name: session.user?.name || "",
-      email: session.user?.email || "",
-      phone: (session.user as any)?.phone || "",
-      address: (session.user as any)?.address || "",
-      bio: (session.user as any)?.bio || "",
-      dateOfBirth: (session.user as any)?.dateOfBirth || "",
+      name: mockSession.user?.name || "",
+      email: mockSession.user?.email || "",
+      phone: (mockSession.user as any)?.phone || "",
+      address: (mockSession.user as any)?.address || "",
+      bio: (mockSession.user as any)?.bio || "",
+      dateOfBirth: (mockSession.user as any)?.dateOfBirth || "",
     });
-  }, [session, status, router]);
-
-  // Show loading while checking authentication
-  if (status === "loading") {
-    return (
-      <>
-        <Head>
-          <title>My Profile - Erasmus Journey Platform</title>
-        </Head>
-        <div className="min-h-screen bg-gray-50">
-          <Header />
-          <div className="pt-20 pb-16 px-4">
-            <div className="max-w-4xl mx-auto">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="mt-4 text-gray-600">Loading...</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  // Don't render if no session
-  if (!session) {
-    return null;
-  }
+  }, [mockSession]);
 
   const handleInputChange = (field: string, value: string) => {
     setProfileData((prev) => ({ ...prev, [field]: value }));
@@ -170,16 +144,17 @@ export default function Profile() {
                 <Card>
                   <CardHeader className="text-center">
                     <Avatar className="h-24 w-24 mx-auto mb-4">
-                      <AvatarImage src={(session.user as any)?.image} />
+                      <AvatarImage src={(mockSession.user as any)?.image} />
                       <AvatarFallback className="text-2xl">
-                        {session.user?.name?.[0] || session.user?.email?.[0]}
+                        {mockSession.user?.name?.[0] ||
+                          mockSession.user?.email?.[0]}
                       </AvatarFallback>
                     </Avatar>
                     <CardTitle className="text-xl">
-                      {session.user?.name || "User"}
+                      {mockSession.user?.name || "User"}
                     </CardTitle>
                     <p className="text-gray-600 text-sm">
-                      {session.user?.email}
+                      {mockSession.user?.email}
                     </p>
                   </CardHeader>
                   <CardContent>

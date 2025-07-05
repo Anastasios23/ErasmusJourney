@@ -6,11 +6,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const session = await getServerSession(req, res, authOptions);
-
-  if (!session) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
+  // Authentication temporarily disabled - allow all access
+  // const session = await getServerSession(req, res, authOptions);
 
   if (req.method === "GET") {
     // Get user profile
