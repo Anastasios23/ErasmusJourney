@@ -161,15 +161,15 @@ const generateExchangeHistoryFromAgreements = () => {
           university: agreement.partnerUniversity,
           country: agreement.partnerCountry,
           city: agreement.partnerCity,
-          duration: Math.random() > 0.5 ? "1 Semester" : "2 Semesters",
+          duration: index % 2 === 0 ? "1 Semester" : "2 Semesters",
           period: semesters[index % semesters.length],
         },
-        courses: courses.map((course) => ({
+        courses: courses.map((course, courseIndex) => ({
           ...course,
-          grade: ["A", "A-", "B+", "A"][Math.floor(Math.random() * 4)],
+          grade: ["A", "A-", "B+", "A"][(index + courseIndex) % 4],
           cyprusEquivalent: `${course.cyprusCode} - ${course.name}`,
         })),
-        rating: parseFloat((4.0 + Math.random() * 1.0).toFixed(1)),
+        rating: parseFloat((4.0 + (index % 10) * 0.1).toFixed(1)),
         review:
           "Great experience! The courses were excellent and the university facilities were world-class.",
       });
