@@ -1,6 +1,22 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useFormSubmissions } from "./useFormSubmissions";
-import { debounce } from "lodash-es";
+
+// Simple debounce implementation to avoid external dependency
+function debounce<T extends (...args: any[]) => any>(
+  func: T,
+  delay: number,
+): T & { cancel: () => void } {
+  let timeoutId: NodeJS.Timeout;
+
+  const debounced = ((...args: Parameters<T>) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  }) as T & { cancel: () => void };
+
+  debounced.cancel = () => clearTimeout(timeoutId);
+
+  return debounced;
+}
 
 interface AutosaveOptions {
   formType: string;
@@ -79,7 +95,7 @@ export function useAutosave<T extends Record<string, any>>(
       if (!mountedRef.current) return;
 
       const dataString = JSON.stringify(data);
-      
+
       // Skip if data hasn't changed
       if (dataString === lastSavedDataRef.current) {
         return;
@@ -125,10 +141,10 @@ export function useAutosave<T extends Record<string, any>>(
   );
 
   // Debounced save function
-  const debouncedSave = useCallback(
-    debounce(saveData, debounceMs),
-    [saveData, debounceMs],
-  );
+  const debouncedSave = useCallback(debounce(saveData, debounceMs), [
+    saveData,
+    debounceMs,
+  ]);
 
   // Manual save function for immediate saves
   const manualSave = useCallback(
@@ -143,7 +159,7 @@ export function useAutosave<T extends Record<string, any>>(
   // Effect to trigger autosave when form data changes
   useEffect(() => {
     const dataString = JSON.stringify(formData);
-    
+
     // Check if data has actually changed
     if (dataString !== lastSavedDataRef.current) {
       setAutosaveState((prev) => ({
@@ -162,7 +178,7 @@ export function useAutosave<T extends Record<string, any>>(
       if (autosaveState.hasUnsavedChanges || autosaveState.isSaving) {
         // Save to localStorage immediately
         saveToLocalStorage(formData);
-        
+
         // Show confirmation dialog
         e.preventDefault();
         e.returnValue = "";
@@ -174,7 +190,12 @@ export function useAutosave<T extends Record<string, any>>(
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [autosaveState.hasUnsavedChanges, autosaveState.isSaving, formData, saveToLocalStorage]);
+  }, [
+    autosaveState.hasUnsavedChanges,
+    autosaveState.isSaving,
+    formData,
+    saveToLocalStorage,
+  ]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -214,47 +235,15 @@ export function useAutosave<T extends Record<string, any>>(
       const now = new Date();
       const diffMs = now.getTime() - autosaveState.lastSaved.getTime();
       const diffMinutes = Math.floor(diffMs / (1000 * 60));
-      
+
       if (diffMinutes < 1) return "Saved just now";
       if (diffMinutes < 60) return `Saved ${diffMinutes}m ago`;
-      if (diffMinutes < 1440) return `Saved ${Math.floor(diffMinutes / 60)}h ago`;
+      if (diffMinutes < 1440)
+        return `Saved ${Math.floor(diffMinutes / 60)}h ago`;
       return `Saved ${Math.floor(diffMinutes / 1440)}d ago`;
     },
   };
 }
 
-// Helper component for displaying autosave status
-export function AutosaveIndicator({ 
-  autosaveState, 
-  lastSavedText 
-}: { 
-  autosaveState: AutosaveState; 
-  lastSavedText: string | null;
-}) {
-  if (autosaveState.isSaving) {
-    return (
-      <div className="flex items-center gap-2 text-blue-600 text-sm">
-        <div className="animate-spin w-3 h-3 border border-blue-600 border-t-transparent rounded-full" />
-        <span>Saving...</span>
-      </div>
-    );
-  }
-
-  if (autosaveState.saveError) {
-    return (
-      <div className="flex items-center gap-2 text-red-600 text-sm">
-        <span>⚠️ Save failed</span>
-      </div>
-    );
-  }
-
-  if (lastSavedText) {
-    return (
-      <div className="flex items-center gap-2 text-green-600 text-sm">
-        <span>✓ {lastSavedText}</span>
-      </div>
-    );
-  }
-
-  return null;
-}
+// Export state type for use in components
+export type { AutosaveState };
