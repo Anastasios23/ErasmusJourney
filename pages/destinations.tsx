@@ -453,15 +453,19 @@ export default function Destinations() {
                 <div className="text-gray-500 text-lg mb-4">
                   No destinations found matching your criteria.
                 </div>
+                <p className="text-gray-400 mb-6">
+                  Try adjusting your search terms or filters to find more
+                  destinations.
+                </p>
                 <Button
                   variant="outline"
                   onClick={() => {
                     setSearchTerm("");
-                    setSelectedCountry("");
+                    setSelectedRegion("");
                     setSelectedCostLevel("");
                   }}
                 >
-                  Clear Filters
+                  Clear All Filters
                 </Button>
               </div>
             )}
