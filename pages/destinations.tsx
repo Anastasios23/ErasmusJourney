@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import Fuse from "fuse.js";
 import { Badge } from "../src/components/ui/badge";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
@@ -43,6 +45,7 @@ const destinations = [
     id: "barcelona",
     city: "Barcelona",
     country: "Spain",
+    region: "Southern Europe",
     image:
       "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&h=300&fit=crop",
     description:
@@ -66,6 +69,7 @@ const destinations = [
     id: "prague",
     city: "Prague",
     country: "Czech Republic",
+    region: "Central Europe",
     image:
       "https://images.unsplash.com/photo-1542324151-ee2b73cb0d95?w=400&h=300&fit=crop",
     description:
@@ -89,6 +93,7 @@ const destinations = [
     id: "paris",
     city: "Paris",
     country: "France",
+    region: "Western Europe",
     image:
       "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=300&fit=crop",
     description:
@@ -112,6 +117,7 @@ const destinations = [
     id: "berlin",
     city: "Berlin",
     country: "Germany",
+    region: "Central Europe",
     image:
       "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=400&h=300&fit=crop",
     description:
@@ -131,6 +137,7 @@ const destinations = [
     id: "amsterdam",
     city: "Amsterdam",
     country: "Netherlands",
+    region: "Western Europe",
     image:
       "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=400&h=300&fit=crop",
     description:
@@ -150,6 +157,7 @@ const destinations = [
     id: "rome",
     city: "Rome",
     country: "Italy",
+    region: "Southern Europe",
     image:
       "https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=400&h=300&fit=crop",
     description:
