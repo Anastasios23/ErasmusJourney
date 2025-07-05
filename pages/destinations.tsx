@@ -268,32 +268,30 @@ export default function Destinations() {
 
             {/* Search and Filters */}
             <div className="mb-8">
-              <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div className="relative flex-1 max-w-md">
+              <div className="flex flex-col gap-4">
+                <div className="relative flex-1 max-w-md mx-auto">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
-                    placeholder="Search cities, countries, or universities..."
+                    placeholder="Search cities, countries, universities, or highlights..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
                   />
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex flex-wrap gap-4 justify-center">
                   <Select
-                    value={selectedCountry}
-                    onValueChange={setSelectedCountry}
+                    value={selectedRegion}
+                    onValueChange={setSelectedRegion}
                   >
                     <SelectTrigger className="w-48">
-                      <SelectValue placeholder="All Countries" />
+                      <SelectValue placeholder="All Regions" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all-countries">
-                        All Countries
-                      </SelectItem>
-                      {countries.map((country) => (
-                        <SelectItem key={country} value={country}>
-                          {country}
+                      <SelectItem value="all-regions">All Regions</SelectItem>
+                      {regions.map((region) => (
+                        <SelectItem key={region} value={region}>
+                          {region}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -315,7 +313,30 @@ export default function Destinations() {
                       ))}
                     </SelectContent>
                   </Select>
+
+                  {/* Clear Filters Button */}
+                  {(searchTerm || selectedRegion || selectedCostLevel) && (
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSearchTerm("");
+                        setSelectedRegion("");
+                        setSelectedCostLevel("");
+                      }}
+                    >
+                      Clear Filters
+                    </Button>
+                  )}
                 </div>
+              </div>
+
+              {/* Results count */}
+              <div className="text-center mt-4">
+                <p className="text-sm text-gray-600">
+                  Showing {filteredDestinations.length} of {destinations.length}{" "}
+                  destinations
+                  {searchTerm && ` for "${searchTerm}"`}
+                </p>
               </div>
             </div>
 
