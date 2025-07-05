@@ -189,10 +189,7 @@ export default function Header() {
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200">
               {/* Mobile Back Button */}
               <div className="px-3 py-2">
-                <BackButton
-                  variant="outline"
-                  className="w-full justify-center"
-                />
+                <BackButtonFixed className="w-full justify-center" />
               </div>
               {navigation.map((item) => (
                 <Link
