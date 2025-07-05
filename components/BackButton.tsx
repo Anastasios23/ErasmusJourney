@@ -18,11 +18,13 @@ export default function BackButton({
   const router = useRouter();
 
   const handleBack = () => {
-    // Check if there's browser history to go back to
-    if (window.history.length > 1) {
+    // Check if there's a previous page in the session
+    const canGoBack = window.history.length > 1 && document.referrer !== "";
+
+    if (canGoBack) {
       router.back();
     } else {
-      // If no history, go to fallback URL
+      // If no history or came from external site, go to fallback URL
       router.push(fallbackUrl);
     }
   };
