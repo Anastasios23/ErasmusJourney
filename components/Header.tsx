@@ -19,6 +19,8 @@ import {
   Settings,
   BookOpen,
   FileText,
+  Home,
+  Euro,
 } from "lucide-react";
 
 export default function Header() {
@@ -45,6 +47,8 @@ export default function Header() {
           icon: FileText,
         },
         { name: "Course Matching", href: "/course-matching", icon: BookOpen },
+        { name: "Accommodation", href: "/accommodation", icon: Home },
+        { name: "Living Expenses", href: "/living-expenses", icon: Euro },
         { name: "Settings", href: "/settings", icon: Settings },
         // Add admin link for admin users
         ...((session.user as any)?.role === "ADMIN"
