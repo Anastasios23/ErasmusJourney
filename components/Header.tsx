@@ -3,6 +3,7 @@ import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Button } from "../src/components/ui/button";
+import BackButton from "./BackButton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -63,8 +64,9 @@ export default function Header() {
     <header className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-gray-200 z-50">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <div className="flex-shrink-0">
+          {/* Logo and Back Button */}
+          <div className="flex items-center space-x-4">
+            <BackButton />
             <Link href="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">EJ</span>
@@ -185,6 +187,13 @@ export default function Header() {
         {isMobileMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200">
+              {/* Mobile Back Button */}
+              <div className="px-3 py-2">
+                <BackButton
+                  variant="outline"
+                  className="w-full justify-center"
+                />
+              </div>
               {navigation.map((item) => (
                 <Link
                   key={item.name}
