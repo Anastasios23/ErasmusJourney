@@ -24,6 +24,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "../src/components/ui/avatar";
+import AgreementDetails from "../components/AgreementDetails";
 import {
   Search,
   MapPin,
