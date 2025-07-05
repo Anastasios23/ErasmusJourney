@@ -3,7 +3,7 @@ import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Button } from "../src/components/ui/button";
-import BackButtonFixed from "./BackButtonFixed";
+import BackButton from "./BackButton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -66,7 +66,7 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo and Back Button */}
           <div className="flex items-center space-x-4">
-            <BackButtonFixed className="hidden md:block" />
+            <BackButton className="hidden md:block" />
             <Link href="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">EJ</span>
@@ -189,7 +189,7 @@ export default function Header() {
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200">
               {/* Mobile Back Button */}
               <div className="px-3 py-2">
-                <BackButtonFixed className="w-full justify-center" />
+                <BackButton className="w-full justify-center" />
               </div>
               {navigation.map((item) => (
                 <Link

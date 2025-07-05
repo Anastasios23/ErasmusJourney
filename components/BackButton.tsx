@@ -1,85 +1,37 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { Button } from "../src/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
-interface BackButtonProps {
+interface BackButtonFixedProps {
   fallbackUrl?: string;
   className?: string;
-  variant?: "default" | "outline" | "ghost";
-  size?: "sm" | "md" | "lg";
+  children?: React.ReactNode;
 }
 
 export default function BackButton({
   fallbackUrl = "/",
   className = "",
-  variant = "ghost",
-  size = "sm",
-}: BackButtonProps) {
+  children,
+}: BackButtonFixedProps) {
   const router = useRouter();
-  const [isClient, setIsClient] = useState(false);
 
-  // Ensure we're on the client side
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  const handleBack = async () => {
-    try {
-      console.log("Back button clicked"); // Debug log
-
-      // Check if there's a previous page in the session
-      const canGoBack =
-        typeof window !== "undefined" &&
-        window.history.length > 1 &&
-        document.referrer !== "" &&
-        document.referrer.includes(window.location.origin);
-
-      console.log("Can go back:", canGoBack); // Debug log
-
-      if (canGoBack) {
-        router.back();
-      } else {
-        // If no history or came from external site, go to fallback URL
-        await router.push(fallbackUrl);
-      }
-    } catch (error) {
-      console.error("Error in back navigation:", error);
-      // Fallback to home page if there's an error
-      router.push("/");
-    }
+  const handleClick = () => {
+    // Simple approach: always go to fallback URL for reliability
+    router.push(fallbackUrl);
   };
 
-  // Don't show back button on home page
+  // Don't show on home page
   if (router.pathname === "/") {
     return null;
   }
 
-  // Don't render until client-side hydration is complete
-  if (!isClient) {
-    return (
-      <Button
-        variant={variant}
-        size={size}
-        className={`flex items-center gap-2 ${className} opacity-50`}
-        disabled
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back
-      </Button>
-    );
-  }
-
   return (
-    <Button
-      onClick={handleBack}
-      variant={variant}
-      size={size}
-      className={`flex items-center gap-2 ${className}`}
+    <button
+      onClick={handleClick}
+      className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors ${className}`}
       type="button"
     >
       <ArrowLeft className="h-4 w-4" />
-      Back
-    </Button>
+      {children || "Back"}
+    </button>
   );
 }
