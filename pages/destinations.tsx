@@ -178,37 +178,50 @@ const destinations = [
 export default function Destinations() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedCostLevel, setSelectedCostLevel] = useState("");
 
+  // Configure Fuse.js for fuzzy search
+  const fuseOptions = {
+    keys: [
+      { name: "city", weight: 0.3 },
+      { name: "country", weight: 0.3 },
+      { name: "description", weight: 0.2 },
+      { name: "popularUniversities", weight: 0.1 },
+      { name: "highlights", weight: 0.1 },
+    ],
+    threshold: 0.3,
+    includeScore: true,
+  };
+
+  const fuse = useMemo(() => new Fuse(destinations, fuseOptions), []);
+
   // Get unique values for filters
-  const countries = [
-    ...new Set(destinations.map((dest) => dest.country)),
-  ].sort();
+  const regions = [...new Set(destinations.map((dest) => dest.region))].sort();
   const costLevels = ["low", "medium", "high"];
 
-  // Filter destinations based on search criteria
-  const filteredDestinations = destinations.filter((dest) => {
-    const matchesSearch =
-      searchTerm === "" ||
-      dest.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      dest.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      dest.popularUniversities.some((uni) =>
-        uni.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
+  // Filter destinations using Fuse.js and other filters
+  const filteredDestinations = useMemo(() => {
+    let results = destinations;
 
-    const matchesCountry =
-      selectedCountry === "" ||
-      selectedCountry === "all-countries" ||
-      dest.country === selectedCountry;
+    // Apply fuzzy search if search term exists
+    if (searchTerm.trim()) {
+      const fuseResults = fuse.search(searchTerm.trim());
+      results = fuseResults.map((result) => result.item);
+    }
 
-    const matchesCost =
-      selectedCostLevel === "" ||
-      selectedCostLevel === "all-costs" ||
-      dest.costLevel === selectedCostLevel;
+    // Apply region filter
+    if (selectedRegion && selectedRegion !== "all-regions") {
+      results = results.filter((dest) => dest.region === selectedRegion);
+    }
 
-    return matchesSearch && matchesCountry && matchesCost;
-  });
+    // Apply cost filter
+    if (selectedCostLevel && selectedCostLevel !== "all-costs") {
+      results = results.filter((dest) => dest.costLevel === selectedCostLevel);
+    }
+
+    return results;
+  }, [searchTerm, selectedRegion, selectedCostLevel, fuse]);
 
   const getCostBadgeColor = (cost: string) => {
     switch (cost) {
