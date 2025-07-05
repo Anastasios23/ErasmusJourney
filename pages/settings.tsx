@@ -37,9 +37,17 @@ import {
 import { toast } from "sonner";
 
 export default function SettingsPage() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+
+  // Authentication temporarily disabled - mock session
+  const mockSession = session || {
+    user: {
+      name: "Demo User",
+      email: "demo@example.com",
+    },
+  };
 
   const [settings, setSettings] = useState({
     emailNotifications: true,
@@ -51,17 +59,10 @@ export default function SettingsPage() {
     twoFactorAuth: false,
   });
 
-  // Redirect to login if not authenticated
+  // Load user settings from API or local storage
   useEffect(() => {
-    if (status === "loading") return;
-    if (!session) {
-      router.replace("/login");
-      return;
-    }
-
-    // Load user settings from API or local storage
     loadUserSettings();
-  }, [session, status, router]);
+  }, []);
 
   const loadUserSettings = async () => {
     try {
@@ -75,32 +76,7 @@ export default function SettingsPage() {
     }
   };
 
-  // Show loading while checking authentication
-  if (status === "loading") {
-    return (
-      <>
-        <Head>
-          <title>Settings - Erasmus Journey Platform</title>
-        </Head>
-        <div className="min-h-screen bg-gray-50">
-          <Header />
-          <div className="pt-20 pb-16 px-4">
-            <div className="max-w-4xl mx-auto">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="mt-4 text-gray-600">Loading...</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  // Don't render if no session
-  if (!session) {
-    return null;
-  }
+  // Authentication temporarily disabled
 
   const handleSettingChange = (key: string, value: any) => {
     const newSettings = { ...settings, [key]: value };

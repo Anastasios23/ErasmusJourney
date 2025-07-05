@@ -38,44 +38,17 @@ interface ApplicationStep {
 }
 
 export default function Dashboard() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (status === "loading") return;
-    if (!session) {
-      router.replace("/login");
-      return;
-    }
-  }, [session, status, router]);
-
-  // Show loading while checking authentication
-  if (status === "loading") {
-    return (
-      <>
-        <Head>
-          <title>Dashboard - Erasmus Journey Platform</title>
-        </Head>
-        <div className="min-h-screen bg-gray-50">
-          <Header />
-          <div className="pt-20 pb-16 px-4">
-            <div className="max-w-7xl mx-auto">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="mt-4 text-gray-600">Loading...</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  // Don't render if no session
-  if (!session) {
-    return null;
-  }
+  // Authentication temporarily disabled - all users can access
+  // Mock session for display purposes
+  const mockSession = session || {
+    user: {
+      name: "Demo User",
+      email: "demo@example.com",
+    },
+  };
 
   // Mock application progress - in a real app, this would come from your database
   const applicationSteps: ApplicationStep[] = [
@@ -136,7 +109,7 @@ export default function Dashboard() {
             {/* Welcome Section */}
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Welcome back, {session.user?.name?.split(" ")[0] || "User"}!
+                Welcome back, {mockSession.user?.name?.split(" ")[0] || "User"}!
               </h1>
               <p className="text-gray-600">
                 Track your Erasmus application progress and explore new
@@ -284,16 +257,16 @@ export default function Dashboard() {
                       <div className="flex items-center gap-3">
                         <div className="h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center">
                           <span className="text-white font-bold">
-                            {session.user?.name?.[0] ||
-                              session.user?.email?.[0]}
+                            {mockSession.user?.name?.[0] ||
+                              mockSession.user?.email?.[0]}
                           </span>
                         </div>
                         <div>
                           <h3 className="font-medium">
-                            {session.user?.name || "User"}
+                            {mockSession.user?.name || "User"}
                           </h3>
                           <p className="text-sm text-gray-600">
-                            {session.user?.email}
+                            {mockSession.user?.email}
                           </p>
                         </div>
                       </div>
