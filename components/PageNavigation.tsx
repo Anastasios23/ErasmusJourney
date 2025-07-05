@@ -22,7 +22,7 @@ export default function PageNavigation({
       <Breadcrumb items={breadcrumbItems} />
       {showBackButton && (
         <div className="md:hidden">
-          <BackButton variant="outline" size="sm" />
+          <BackButton className="text-sm" />
         </div>
       )}
     </div>
