@@ -34,6 +34,7 @@ import {
   TrendingUp,
   Filter,
   ExternalLink,
+  CheckCircle,
 } from "lucide-react";
 import {
   CYPRUS_UNIVERSITIES,
