@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { ArrowLeft } from "lucide-react";
 
-interface BackButtonFixedProps {
+interface BackButtonProps {
   fallbackUrl?: string;
   className?: string;
   children?: React.ReactNode;
@@ -11,7 +11,7 @@ export default function BackButton({
   fallbackUrl = "/",
   className = "",
   children,
-}: BackButtonFixedProps) {
+}: BackButtonProps) {
   const router = useRouter();
 
   const handleClick = () => {
