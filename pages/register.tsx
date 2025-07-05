@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import BackButton from "../components/BackButton";
+import BackButtonFixed from "../components/BackButtonFixed";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
 import { Label } from "../src/components/ui/label";
@@ -97,7 +97,7 @@ export default function RegisterPage() {
         <div className="w-full max-w-md space-y-4">
           {/* Back Button */}
           <div className="flex justify-start">
-            <BackButton fallbackUrl="/" variant="outline" />
+            <BackButtonFixed fallbackUrl="/">← Back to Home</BackButtonFixed>
           </div>
           <Card className="w-full">
             <CardHeader className="text-center">
