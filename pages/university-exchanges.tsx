@@ -599,6 +599,27 @@ export default function UniversityExchanges() {
               </Card>
             </div>
 
+            {/* Available Agreements Info */}
+            {availableDestinations.length > 0 && (
+              <Card className="mb-6 bg-blue-50 border-blue-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 text-blue-800">
+                    <CheckCircle className="h-5 w-5" />
+                    <span className="font-medium">
+                      {availableDestinations.length} Available Exchange
+                      Destinations
+                    </span>
+                  </div>
+                  <p className="text-sm text-blue-600 mt-1">
+                    Based on official agreements for {selectedDepartment} at{" "}
+                    {selectedCyprusUni}
+                    {selectedLevel !== "All Levels" &&
+                      ` (${selectedLevel} level)`}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Search and Filters */}
             <Card className="mb-8">
               <CardHeader>
