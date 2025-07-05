@@ -268,8 +268,8 @@ export default function Destinations() {
 
             {/* Search and Filters */}
             <div className="mb-8">
-              <div className="flex flex-col gap-4">
-                <div className="relative flex-1 max-w-md mx-auto">
+              <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div className="relative flex-1 max-w-md">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
                     placeholder="Search cities, countries, universities, or highlights..."
@@ -279,16 +279,18 @@ export default function Destinations() {
                   />
                 </div>
 
-                <div className="flex flex-wrap gap-4 justify-center">
+                <div className="flex gap-4">
                   <Select
                     value={selectedRegion}
                     onValueChange={setSelectedRegion}
                   >
                     <SelectTrigger className="w-48">
-                      <SelectValue placeholder="All Regions" />
+                      <SelectValue placeholder="All European Regions" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all-regions">All Regions</SelectItem>
+                      <SelectItem value="all-regions">
+                        All European Regions
+                      </SelectItem>
                       {regions.map((region) => (
                         <SelectItem key={region} value={region}>
                           {region}
@@ -331,10 +333,10 @@ export default function Destinations() {
               </div>
 
               {/* Results count */}
-              <div className="text-center mt-4">
+              <div className="text-left mt-4">
                 <p className="text-sm text-gray-600">
                   Showing {filteredDestinations.length} of {destinations.length}{" "}
-                  destinations
+                  European destinations
                   {searchTerm && ` for "${searchTerm}"`}
                 </p>
               </div>
