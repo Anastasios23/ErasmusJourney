@@ -1,6 +1,7 @@
+// /pages/api/auth/[...nextauth].ts
+
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "../../../lib/prisma";
 import bcrypt from "bcryptjs";
@@ -9,135 +10,79 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
-      name: "credentials",
+      name: "Credentials",
       credentials: {
-        email: { label: "Username", type: "text" },
+        email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null;
+          throw new Error("CredentialsSignin");
         }
-
-        try {
-          // Handle username or email login
-          let user;
-
-          // First try to find by username (for demo user)
-          if (credentials.email === "demo") {
-            user = await prisma.user.findUnique({
-              where: {
-                email: "demo",
-              },
-            });
-          } else {
-            // Try to find by email first, then by username if not found
-            user = await prisma.user.findUnique({
-              where: {
-                email: credentials.email,
-              },
-            });
-
-            // If not found by email, try searching by username in firstName field (temporary solution)
-            if (!user) {
-              user = await prisma.user.findFirst({
-                where: {
-                  OR: [
-                    { firstName: credentials.email },
-                    { lastName: credentials.email },
-                  ],
-                },
-              });
-            }
-          }
-
-          if (!user) {
-            return null;
-          }
-
-          const isPasswordValid = await bcrypt.compare(
-            credentials.password,
-            user.password,
-          );
-
-          if (!isPasswordValid) {
-            return null;
-          }
-
-          return {
-            id: user.id,
-            email: user.email,
-            name: `${user.firstName} ${user.lastName}`,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            role: user.role,
-          };
-        } catch (error) {
-          console.error("Auth error:", error);
-          return null;
+        // look up user in your database
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
+        if (!user) {
+          // NextAuth will redirect to /login?error=CredentialsSignin
+          throw new Error("CredentialsSignin");
         }
+        // verify password
+        const isValid = await bcrypt.compare(credentials.password, user.password);
+        if (!isValid) {
+          throw new Error("CredentialsSignin");
+        }
+        // return the minimal user object
+        return {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          role: user.role,
+        };
       },
     }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
+    // …other providers if you have them…
   ],
-  session: {
-    strategy: "jwt",
+
+  pages: {
+    // Redirect all sign-in and error flows back to your custom login page
+    signIn: "/login",
+    error: "/login",
   },
+
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
+      // On sign-in, persist id/firstName/role into the token
       if (user) {
-        // For credentials login, role is already included
-        if (account?.provider === "credentials") {
-          return {
-            ...token,
-            id: user.id,
-            firstName: (user as any).firstName,
-            lastName: (user as any).lastName,
-            role: (user as any).role,
-          };
-        }
-
-        // For OAuth providers, fetch user from database to get role
-        if (account?.provider === "google") {
-          const dbUser = await prisma.user.findUnique({
-            where: { email: user.email! },
-          });
-
-          return {
-            ...token,
-            id: user.id,
-            firstName: dbUser?.firstName || user.name?.split(" ")[0] || "",
-            lastName:
-              dbUser?.lastName ||
-              user.name?.split(" ").slice(1).join(" ") ||
-              "",
-            role: dbUser?.role || "USER",
-          };
-        }
+        token.id = user.id;
+        token.firstName = (user as any).firstName;
+        token.role = (user as any).role;
       }
       return token;
     },
     async session({ session, token }) {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.id as string,
-          firstName: token.firstName as string,
-          lastName: token.lastName as string,
-          role: token.role as string,
-        },
-      };
+      // Expose those properties client-side via session.user
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.firstName = token.firstName as string;
+        session.user.role = token.role as string;
+      }
+      return session;
+    },
+    async redirect({ url, baseUrl }) {
+      // Allow relative callbackUrls or same-origin
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      try {
+        if (new URL(url).origin === baseUrl) return url;
+      } catch {
+        /* ignore invalid URLs */
+      }
+      return baseUrl;
     },
   },
-  pages: {
-    signIn: "/login",
-     error: "/login", 
-  },
-  secret: process.env.NEXTAUTH_SECRET,
+
+  // Enable debug logs during development
+  debug: process.env.NODE_ENV === "development",
 };
 
 export default NextAuth(authOptions);
