@@ -114,14 +114,14 @@ const TableOfContents = ({ destination }: { destination: Destination }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = document.querySelectorAll("[data-section]");
+      const sections = document.querySelectorAll('[data-section]');
       const scrollTop = window.scrollY + 100;
 
       sections.forEach((section) => {
         const element = section as HTMLElement;
         const offsetTop = element.offsetTop;
         const height = element.offsetHeight;
-        const id = element.getAttribute("data-section");
+        const id = element.getAttribute('data-section');
 
         if (scrollTop >= offsetTop && scrollTop < offsetTop + height) {
           setActiveSection(id || "overview");
@@ -129,14 +129,14 @@ const TableOfContents = ({ destination }: { destination: Destination }) => {
       });
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.querySelector(`[data-section="${sectionId}"]`);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
@@ -359,15 +359,24 @@ export default function DestinationDetailPage({
               </div>
             </div>
 
-            {/* Tabs Content */}
-            <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="grid w-full grid-cols-5">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="universities">Universities</TabsTrigger>
-                <TabsTrigger value="costs">Living Costs</TabsTrigger>
-                <TabsTrigger value="life">Student Life</TabsTrigger>
-                <TabsTrigger value="practical">Practical Info</TabsTrigger>
-              </TabsList>
+            {/* Main Content with Table of Contents */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Table of Contents - Sidebar */}
+              <div className="lg:col-span-1 order-2 lg:order-1">
+                <TableOfContents destination={destination} />
+              </div>
+
+              {/* Main Content */}
+              <div className="lg:col-span-3 order-1 lg:order-2">
+                {/* Tabs Content */}
+                <Tabs defaultValue="overview" className="w-full">
+                  <TabsList className="grid w-full grid-cols-5 mb-6">
+                    <TabsTrigger value="overview">Overview</TabsTrigger>
+                    <TabsTrigger value="universities">Universities</TabsTrigger>
+                    <TabsTrigger value="costs">Living Costs</TabsTrigger>
+                    <TabsTrigger value="life">Student Life</TabsTrigger>
+                    <TabsTrigger value="practical">Practical Info</TabsTrigger>
+                  </TabsList>
 
               <TabsContent value="overview" className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
