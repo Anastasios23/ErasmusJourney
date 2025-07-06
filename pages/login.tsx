@@ -2,7 +2,7 @@
 
 import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/router";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, useSession, getSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import BackButton from "../components/BackButton";
@@ -60,12 +60,16 @@ export default function LoginPage() {
       return;
     }
 
-    // On success, trigger session update and redirect
+    // On success, update session and redirect
     const callbackUrl = (router.query.callbackUrl as string) || "/";
 
-    // Force a page refresh to ensure session is updated throughout the app
-    // This ensures the Header component will show the correct authentication state
-    window.location.href = callbackUrl;
+    // Trigger session update to refresh the Header component
+    await getSession();
+
+    // Small delay to ensure session update propagates
+    setTimeout(() => {
+      router.push(callbackUrl);
+    }, 100);
   };
 
   // Show loading state while checking session
