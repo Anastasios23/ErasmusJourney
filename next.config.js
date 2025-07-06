@@ -1,26 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Fix HMR issues in cloud environment
-  webpack: (config, { dev, isServer, webpack }) => {
+  // Minimal webpack config for cloud environment stability
+  webpack: (config, { dev, isServer }) => {
     if (dev && !isServer) {
-      // Configure for cloud environment - reduce HMR aggressiveness
+      // Reduce file watching aggressiveness
       config.watchOptions = {
+        aggregateTimeout: 2000,
         poll: false,
-        aggregateTimeout: 1000,
-        ignored: ["**/node_modules/**", "**/.git/**"],
+        ignored: /node_modules/,
       };
-
-      // Add error suppression for cloud environments
-      config.infrastructureLogging = {
-        level: "error",
-        debug: false,
-      };
-
-      // Modify HMR configuration for cloud environment
-      if (config.entry && config.entry["main.js"]) {
-        config.entry["main.js"].push("./scripts/fix-hmr.js");
-      }
     }
     return config;
   },
@@ -33,6 +22,8 @@ const nextConfig = {
     workerThreads: false,
     cpus: 1,
   },
+  // Disable fast refresh in cloud environment to prevent HMR errors
+  reactStrictMode: process.env.NODE_ENV === "development" ? false : true,
   images: {
     remotePatterns: [
       {
