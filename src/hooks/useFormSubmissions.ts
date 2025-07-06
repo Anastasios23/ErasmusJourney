@@ -215,9 +215,8 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
   };
 
   useEffect(() => {
-    if (session) {
-      fetchSubmissions();
-    }
+    // Always fetch submissions (handles both authenticated and unauthenticated cases)
+    fetchSubmissions();
   }, [session]);
 
   return {
