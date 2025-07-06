@@ -4,33 +4,52 @@ import { useEffect } from "react";
 
 export default function HMRErrorSuppressor() {
   useEffect(() => {
-    // Suppress HMR-related fetch errors in cloud environments
-    const originalFetch = window.fetch;
+    // Suppress only console errors related to HMR, not actual fetch requests
+    const originalConsoleError = console.error;
 
-    window.fetch = async (...args) => {
-      try {
-        return await originalFetch(...args);
-      } catch (error) {
-        const url = args[0]?.toString() || "";
+    console.error = (...args) => {
+      const message = args.join(" ");
 
-        // Suppress webpack HMR update errors
-        if (url.includes("webpack.hot-update.json") || url.includes("hmr")) {
-          console.warn("HMR update failed (suppressed):", url);
-          // Return a dummy response to prevent the error from propagating
-          return new Response(JSON.stringify({}), {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-          });
+      // Suppress specific HMR-related errors that don't affect functionality
+      if (
+        message.includes("Failed to fetch") &&
+        (message.includes("webpack.hot-update") ||
+          message.includes("hmrM") ||
+          message.includes("_next/static/webpack/"))
+      ) {
+        // Silently ignore these HMR errors
+        return;
+      }
+
+      // Log all other errors normally
+      originalConsoleError.apply(console, args);
+    };
+
+    // Also suppress unhandled promise rejections for HMR
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      const error = event.reason;
+      if (error && typeof error === "object" && error.message) {
+        const message = error.message.toString();
+        if (
+          message.includes("Failed to fetch") &&
+          (message.includes("webpack.hot-update") ||
+            message.includes("_next/static/webpack/"))
+        ) {
+          event.preventDefault(); // Prevent the error from appearing in console
+          return;
         }
-
-        // Re-throw other errors
-        throw error;
       }
     };
 
+    window.addEventListener("unhandledrejection", handleUnhandledRejection);
+
     // Cleanup on unmount
     return () => {
-      window.fetch = originalFetch;
+      console.error = originalConsoleError;
+      window.removeEventListener(
+        "unhandledrejection",
+        handleUnhandledRejection,
+      );
     };
   }, []);
 
