@@ -28,13 +28,7 @@ export default function Header() {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Authentication temporarily disabled - create mock session for UI
-  const mockSession = session || {
-    user: {
-      name: "Demo User",
-      email: "demo@example.com",
-    },
-  };
+  // Use actual session data for proper authentication
 
   const navigation = [
     { name: "Home", href: "/" },
@@ -45,7 +39,7 @@ export default function Header() {
     { name: "Accommodations", href: "/student-accommodations" },
   ];
 
-  const userNavigation = mockSession
+  const userNavigation = session
     ? [
         { name: "Dashboard", href: "/dashboard", icon: User },
         { name: "My Profile", href: "/profile", icon: User },
@@ -59,7 +53,7 @@ export default function Header() {
         { name: "Living Expenses", href: "/living-expenses", icon: Euro },
         { name: "Settings", href: "/settings", icon: Settings },
         // Add admin link for admin users
-        ...((mockSession.user as any)?.role === "ADMIN"
+        ...((session.user as any)?.role === "ADMIN"
           ? [{ name: "Admin Panel", href: "/admin", icon: Settings }]
           : []),
       ]
@@ -111,7 +105,7 @@ export default function Header() {
 
           {/* User Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            {mockSession ? (
+            {session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -120,8 +114,7 @@ export default function Header() {
                   >
                     <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
                       <span className="text-white text-sm font-medium">
-                        {mockSession.user.name?.[0] ||
-                          mockSession.user.email?.[0]}
+                        {session.user.name?.[0] || session.user.email?.[0]}
                       </span>
                     </div>
                   </Button>
@@ -130,19 +123,18 @@ export default function Header() {
                   <div className="flex items-center justify-start gap-2 p-2">
                     <div className="h-10 w-10 bg-blue-600 rounded-full flex items-center justify-center">
                       <span className="text-white text-sm font-bold">
-                        {mockSession.user.name?.[0] ||
-                          mockSession.user.email?.[0]}
+                        {session.user.name?.[0] || session.user.email?.[0]}
                       </span>
                     </div>
                     <div className="flex flex-col space-y-1 leading-none">
                       <p className="font-medium text-gray-900">
                         Welcome,{" "}
-                        {mockSession.user.name?.split(" ")[0] ||
-                          mockSession.user.email?.split("@")[0]}
+                        {session.user.name?.split(" ")[0] ||
+                          session.user.email?.split("@")[0]}
                         !
                       </p>
                       <p className="w-[200px] truncate text-sm text-muted-foreground">
-                        {mockSession.user.email}
+                        {session.user.email}
                       </p>
                     </div>
                   </div>

@@ -111,13 +111,22 @@ export default function HomePage({
                 </Badge>
                 <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
                   Your Complete{" "}
-                  <span className="text-blue-600">Erasmus Journey</span>
+                  <span className="text-blue-600">Erasmus Journey</span>{" "}
+                  Platform
                 </h1>
-                <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                  Connect with thousands of students, find the perfect
-                  accommodation, and get insider tips for your study abroad
-                  adventure.
+                <p className="text-xl text-gray-600 mb-6 leading-relaxed">
+                  The ultimate guide for Cyprus students planning their Erasmus
+                  exchange. From university partnerships to accommodation, we
+                  simplify your study abroad experience.
                 </p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
+                  <p className="text-blue-800 font-medium">
+                    🎯 <strong>For Cyprus Students:</strong> Access verified
+                    partnerships between your university and 500+ European
+                    destinations. Get step-by-step guidance from application to
+                    arrival.
+                  </p>
+                </div>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link href="/destinations">
                     <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
