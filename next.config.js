@@ -4,11 +4,19 @@ const nextConfig = {
   // Fix HMR issues in cloud environment
   webpack: (config, { dev, isServer }) => {
     if (dev && !isServer) {
-      // Disable HMR polling which can cause issues in cloud environments
+      // Configure for cloud environment
       config.watchOptions = {
         poll: false,
         aggregateTimeout: 300,
+        ignored: /node_modules/,
       };
+
+      // Disable problematic HMR features in cloud environment
+      if (config.plugins) {
+        config.plugins = config.plugins.filter((plugin) => {
+          return plugin.constructor.name !== "HotModuleReplacementPlugin";
+        });
+      }
     }
     return config;
   },
