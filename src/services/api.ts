@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export interface BasicInformationData {
   userId: number;
@@ -113,7 +113,7 @@ class ApiService {
       this.isBackendAvailable = false;
 
       // Only log in development mode
-      if (import.meta.env.DEV) {
+      if (process.env.NODE_ENV === "development") {
         console.warn(`Backend connection failed for ${endpoint}:`, error);
       }
 
