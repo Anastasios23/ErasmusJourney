@@ -60,15 +60,12 @@ export default function LoginPage() {
       return;
     }
 
-    // On success, trigger session update and redirect
+    // On success, redirect with a full page reload to ensure session consistency
     const callbackUrl = (router.query.callbackUrl as string) || "/";
 
-    // Force session refetch by focusing the window (triggers refetchOnWindowFocus)
-    window.blur();
-    window.focus();
-
-    // Use router.push for smooth client-side navigation
-    router.push(callbackUrl);
+    // For authentication state changes, a full page reload is most reliable
+    // This ensures all components (especially Header) get the updated session
+    window.location.href = callbackUrl;
   };
 
   // Show loading state while checking session
