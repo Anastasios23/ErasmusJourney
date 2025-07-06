@@ -39,7 +39,6 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id,
           email: user.email,
-          firstName: user.firstName,
           role: user.role,
         };
       },
@@ -55,10 +54,9 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async jwt({ token, user }) {
-      // On sign-in, persist id/firstName/role into the token
+      // On sign-in, persist id/role into the token
       if (user) {
         token.id = user.id;
-        token.firstName = (user as any).firstName;
         token.role = (user as any).role;
       }
       return token;
@@ -67,7 +65,6 @@ export const authOptions: NextAuthOptions = {
       // Expose those properties client-side via session.user
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.firstName = token.firstName as string;
         session.user.role = token.role as string;
       }
       return session;
