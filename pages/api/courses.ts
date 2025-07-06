@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "./auth/[...nextauth]";
+import { getServerAuthSession } from "../../lib/auth";
 
 interface Course {
   code: string;
@@ -14,8 +13,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  // Authentication temporarily disabled - allow all access
-  // const session = await getServerSession(req, res, authOptions);
+  // Verify authentication
+  const session = await getServerAuthSession(req, res);
+  if (!session?.user) {
+    return res.status(401).json({
+      error: "Authentication required",
+      message: "Please sign in to access course data",
+    });
+  }
 
   if (req.method === "GET") {
     try {

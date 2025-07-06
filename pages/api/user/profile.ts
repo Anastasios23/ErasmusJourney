@@ -1,19 +1,23 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { getServerAuthSession } from "../../../lib/auth";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  // Authentication temporarily disabled - allow all access
-  // const session = await getServerSession(req, res, authOptions);
+  // Verify authentication
+  const session = await getServerAuthSession(req, res);
+  if (!session?.user) {
+    return res.status(401).json({
+      error: "Authentication required",
+      message: "Please sign in to access your profile",
+    });
+  }
 
   if (req.method === "GET") {
     // Get user profile
     try {
-      // In a real app, you'd fetch from your database
-      // For now, return session data
+      // Return session data - in production, fetch from database
       return res.status(200).json({
         name: session.user?.name,
         email: session.user?.email,
@@ -35,7 +39,10 @@ export default async function handler(
 
       // Validate input
       if (!name || name.trim().length === 0) {
-        return res.status(400).json({ error: "Name is required" });
+        return res.status(400).json({
+          error: "Validation failed",
+          message: "Name is required",
+        });
       }
 
       // In a real app, you'd update your database here
