@@ -26,11 +26,11 @@ import {
 } from "lucide-react";
 
 export default function Header() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Use actual session data for proper authentication
+  // Reactive session handling for live updates
 
   const navigation = [
     { name: "Home", href: "/" },
