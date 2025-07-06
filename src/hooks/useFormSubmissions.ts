@@ -205,8 +205,20 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
   };
 
   const deleteDraft = async (id: string) => {
-    // In a real app, this would call an API endpoint
-    // For now, we'll just remove it from the local state
+    if (id.startsWith("local_")) {
+      // Local draft: remove from localStorage
+      const type = id.replace("local_", "");
+      const draftKey = `erasmus_draft_${type}`;
+      if (typeof window !== "undefined") {
+        localStorage.removeItem(draftKey);
+      }
+    } else if (session) {
+      // Server draft: would call API endpoint in production
+      // For now, just remove from local state
+      console.log("Would delete server draft:", id);
+    }
+
+    // Remove from local state
     setSubmissions((prev) => prev.filter((s) => s.id !== id));
   };
 
