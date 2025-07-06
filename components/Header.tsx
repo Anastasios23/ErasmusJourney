@@ -108,7 +108,10 @@ export default function Header() {
 
           {/* User Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            {session ? (
+            {status === "loading" ? (
+              // Loading skeleton
+              <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
+            ) : status === "authenticated" && session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
