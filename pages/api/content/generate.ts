@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { getServerAuthSession } from "../../../lib/auth";
 
 interface ContentData {
   accommodations: any[];
@@ -12,7 +13,19 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   if (req.method !== "GET") {
-    return res.status(405).json({ message: "Method not allowed" });
+    return res.status(405).json({
+      error: "Method not allowed",
+      message: "Only GET requests are supported",
+    });
+  }
+
+  // Verify authentication
+  const session = await getServerAuthSession(req, res);
+  if (!session?.user) {
+    return res.status(401).json({
+      error: "Authentication required",
+      message: "Please sign in to access generated content",
+    });
   }
 
   try {
