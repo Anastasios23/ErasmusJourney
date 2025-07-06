@@ -219,7 +219,12 @@ export default function Header() {
 
               {/* Mobile User Actions */}
               <div className="pt-4 pb-3 border-t border-gray-200">
-                {session ? (
+                {status === "loading" ? (
+                  <div className="px-3 py-2">
+                    <div className="h-4 bg-gray-200 rounded animate-pulse mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded animate-pulse w-2/3"></div>
+                  </div>
+                ) : status === "authenticated" && session ? (
                   <div className="space-y-1">
                     <div className="px-3 py-2">
                       <div className="text-base font-medium text-gray-800">
@@ -249,7 +254,7 @@ export default function Header() {
                       Sign out
                     </button>
                   </div>
-                ) : (
+                ) : status === "unauthenticated" ? (
                   <div className="space-y-1">
                     <Link
                       href="/login"
@@ -266,7 +271,7 @@ export default function Header() {
                       Sign Up
                     </Link>
                   </div>
-                )}
+                ) : null}
               </div>
             </div>
           </div>
