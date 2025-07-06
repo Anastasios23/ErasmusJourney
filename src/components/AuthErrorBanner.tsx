@@ -33,7 +33,7 @@ export default function AuthErrorBanner({
       <AlertCircle className="h-4 w-4 text-orange-600" />
       <AlertDescription className="text-orange-800">
         <div className="flex items-center justify-between">
-          <span>{message}</div>
+          <span>{message}</span>
           <div className="flex items-center gap-2 ml-4">
             {showSignIn && (
               <Button
