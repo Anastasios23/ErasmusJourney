@@ -5,6 +5,7 @@ import { Toaster } from "../src/components/ui/toaster";
 import { Toaster as Sonner } from "../src/components/ui/sonner";
 import { TooltipProvider } from "../src/components/ui/tooltip";
 import ErrorBoundary from "../src/components/ErrorBoundary";
+import HMRErrorSuppressor from "../src/components/HMRErrorSuppressor";
 import "../src/index.css";
 
 const queryClient = new QueryClient({
@@ -22,6 +23,7 @@ export default function App({
 }: AppProps) {
   return (
     <ErrorBoundary>
+      <HMRErrorSuppressor />
       <SessionProvider
         session={session}
         refetchInterval={5 * 60} // Refetch session every 5 minutes
