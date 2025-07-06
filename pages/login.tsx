@@ -41,31 +41,18 @@ export default function LoginPage() {
     setErrorMessage(null);
     setSuccessMessage(null);
 
-    // Attempt sign in without redirect
-    const result = await signIn("credentials", {
-      redirect: false,
+    // Let NextAuth handle the entire sign-in flow including redirects
+    // This automatically handles session updates and navigation
+    await signIn("credentials", {
       email,
       password,
+      callbackUrl: (router.query.callbackUrl as string) || "/dashboard",
     });
 
+    // Note: If we reach this point, it means there was an error
+    // NextAuth will have already redirected on success
     setLoading(false);
-
-    if (result?.error) {
-      // Map known error codes
-      if (result.error === "CredentialsSignin") {
-        setErrorMessage("Invalid email or password.");
-      } else {
-        setErrorMessage(`Sign-in error: ${result.error}`);
-      }
-      return;
-    }
-
-    // On success, redirect with a full page reload to ensure session consistency
-    const callbackUrl = (router.query.callbackUrl as string) || "/";
-
-    // For authentication state changes, a full page reload is most reliable
-    // This ensures all components (especially Header) get the updated session
-    window.location.href = callbackUrl;
+    setErrorMessage("Invalid email or password. Please try again.");
   };
 
   // Show loading state while checking session
