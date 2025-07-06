@@ -221,6 +221,7 @@ model Story {
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
 
+  @@index([city, country])
   @@map("stories")
 }
 
