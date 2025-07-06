@@ -169,12 +169,81 @@ export default function HomePage({
           </div>
         </section>
 
+        {/* Getting Started Section */}
+        <section className="py-16 bg-blue-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+                🚀 Getting Started
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+                New to Erasmus? Start here to understand the platform and
+                discover what's possible for your study abroad journey.
+              </p>
+              <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div className="bg-white p-6 rounded-xl shadow-sm">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">🎯</span>
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    1. Explore Destinations
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Browse 500+ partner universities and discover where you can
+                    study
+                  </p>
+                </div>
+                <div className="bg-white p-6 rounded-xl shadow-sm">
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">📚</span>
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    2. Read Student Stories
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Get insights from students who've studied at your target
+                    destinations
+                  </p>
+                </div>
+                <div className="bg-white p-6 rounded-xl shadow-sm">
+                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">📝</span>
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    3. Start Your Application
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Use our step-by-step guide to complete your Erasmus
+                    application
+                  </p>
+                </div>
+              </div>
+              <div className="mt-8">
+                <Link href="/destinations">
+                  <Button
+                    size="lg"
+                    className="bg-blue-600 hover:bg-blue-700 mr-4"
+                  >
+                    Start Exploring
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link href="/student-stories">
+                  <Button variant="outline" size="lg">
+                    Read Stories First
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Essential Steps Section */}
         <section className="py-16 lg:py-24 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
-                Essential Steps
+                Your Application Journey
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                 Follow our comprehensive guide to make your Erasmus journey
