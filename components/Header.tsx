@@ -30,6 +30,9 @@ export default function Header() {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Debug session state (remove in production)
+  console.log("Header session status:", status, "session:", session);
+
   // Reactive session handling for live updates
 
   const navigation = [
@@ -109,8 +112,11 @@ export default function Header() {
           {/* User Actions */}
           <div className="hidden md:flex items-center space-x-4">
             {status === "loading" ? (
-              // Loading skeleton
-              <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
+              // Loading skeleton with text for debugging
+              <div className="flex items-center space-x-2">
+                <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
+                <span className="text-sm text-gray-500">Loading...</span>
+              </div>
             ) : status === "authenticated" && session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
