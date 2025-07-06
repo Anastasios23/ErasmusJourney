@@ -166,7 +166,7 @@ export default function Header() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
+            ) : status === "unauthenticated" ? (
               <div className="flex items-center space-x-4">
                 <Link href="/login">
                   <Button variant="ghost">Sign In</Button>
@@ -175,7 +175,7 @@ export default function Header() {
                   <Button>Sign Up</Button>
                 </Link>
               </div>
-            )}
+            ) : null}
           </div>
 
           {/* Mobile menu button */}
