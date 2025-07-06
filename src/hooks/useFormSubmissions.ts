@@ -191,6 +191,9 @@ export function useGeneratedContent(type?: string) {
       if (response.ok) {
         const data = await response.json();
         setContent(data);
+      } else if (response.status === 401) {
+        const errorData = await response.json();
+        setError(errorData.message || "Please sign in again to access content");
       } else {
         setError("Failed to fetch content");
       }
