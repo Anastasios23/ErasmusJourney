@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import BackButton from "../components/BackButton";
@@ -18,6 +18,9 @@ import { Alert, AlertDescription } from "../src/components/ui/alert";
 import { Loader2 } from "lucide-react";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const { data: session, status } = useSession();
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -27,7 +30,13 @@ export default function RegisterPage() {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+
+  useEffect(() => {
+    // Redirect if already authenticated
+    if (status === "authenticated" && session) {
+      router.push("/dashboard");
+    }
+  }, [session, status, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -82,6 +91,80 @@ export default function RegisterPage() {
       "Google OAuth is currently unavailable. Please use email registration instead.",
     );
   };
+
+  // Show loading state while checking session
+  if (status === "loading") {
+    return (
+      <>
+        <Head>
+          <title>Register - Erasmus Journey Platform</title>
+        </Head>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Checking authentication...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Show already logged in message if authenticated
+  if (status === "authenticated" && session) {
+    return (
+      <>
+        <Head>
+          <title>Already Logged In - Erasmus Journey Platform</title>
+        </Head>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
+          <div className="w-full max-w-md space-y-6 text-center">
+            <Card className="w-full">
+              <CardContent className="p-6">
+                <div className="text-center space-y-4">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                    <svg
+                      className="w-8 h-8 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    You're already registered!
+                  </h2>
+                  <p className="text-gray-600">
+                    Welcome back, {session.user?.name || session.user?.email}
+                  </p>
+                  <div className="space-y-2 pt-4">
+                    <Button
+                      onClick={() => router.push("/dashboard")}
+                      className="w-full"
+                    >
+                      Go to Dashboard
+                    </Button>
+                    <Button
+                      onClick={() => router.push("/")}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      Go to Home
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
