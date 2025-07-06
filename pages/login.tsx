@@ -60,9 +60,12 @@ export default function LoginPage() {
       return;
     }
 
-    // On success, redirect to callbackUrl or to home page '/'
+    // On success, trigger session update and redirect
     const callbackUrl = (router.query.callbackUrl as string) || "/";
-    router.push(callbackUrl);
+
+    // Force a page refresh to ensure session is updated throughout the app
+    // This ensures the Header component will show the correct authentication state
+    window.location.href = callbackUrl;
   };
 
   // Show loading state while checking session
