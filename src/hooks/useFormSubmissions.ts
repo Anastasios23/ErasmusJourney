@@ -45,12 +45,51 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
   const [error, setError] = useState<string | null>(null);
 
   const fetchSubmissions = async () => {
-    if (!session) return;
-
     try {
       setLoading(true);
-      const data = await apiRequest("/api/forms/get");
-      setSubmissions(data.submissions || []);
+
+      if (session) {
+        // Authenticated user: fetch from server
+        const data = await apiRequest("/api/forms/get");
+        setSubmissions(data.submissions || []);
+      } else {
+        // Unauthenticated user: load from localStorage
+        if (typeof window !== "undefined") {
+          const localDrafts: FormSubmission[] = [];
+          const formTypes = [
+            "basic-info",
+            "course-matching",
+            "accommodation",
+            "story",
+            "experience",
+          ];
+
+          formTypes.forEach((type) => {
+            const draftKey = `erasmus_draft_${type}`;
+            const localDraft = localStorage.getItem(draftKey);
+            if (localDraft) {
+              try {
+                const parsed = JSON.parse(localDraft);
+                localDrafts.push({
+                  id: `local_${type}`,
+                  userId: "local",
+                  type: type as any,
+                  title: parsed.title,
+                  data: parsed.data,
+                  status: "draft",
+                  createdAt: parsed.timestamp,
+                  updatedAt: parsed.timestamp,
+                });
+              } catch (err) {
+                console.error(`Error parsing local draft for ${type}:`, err);
+                localStorage.removeItem(draftKey);
+              }
+            }
+          });
+
+          setSubmissions(localDrafts);
+        }
+      }
     } catch (err) {
       const errorInfo = handleApiError(err as Error);
       setError(errorInfo.message);
@@ -90,22 +129,48 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
   };
 
   const saveDraft = async (type: string, title: string, data: any) => {
-    if (!session) {
-      throw new AuthenticationError("Must be logged in to save drafts");
-    }
-
     try {
-      await apiRequest("/api/forms/saveDraft", {
-        method: "POST",
-        body: JSON.stringify({
+      if (session) {
+        // Authenticated user: save to server
+        await apiRequest("/api/forms/saveDraft", {
+          method: "POST",
+          body: JSON.stringify({
+            type,
+            title,
+            data,
+          }),
+        });
+
+        // Refresh submissions after successful save
+        await fetchSubmissions();
+      } else {
+        // Unauthenticated user: save to localStorage
+        const draftKey = `erasmus_draft_${type}`;
+        const draftData = {
           type,
           title,
           data,
-        }),
-      });
+          timestamp: new Date().toISOString(),
+        };
+        localStorage.setItem(draftKey, JSON.stringify(draftData));
 
-      // Refresh submissions after successful save
-      await fetchSubmissions();
+        // Update local state to reflect the saved draft
+        const localDraft = {
+          id: `local_${type}`,
+          userId: "local",
+          type: type as any,
+          title,
+          data,
+          status: "draft" as const,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        setSubmissions((prev) => {
+          const filtered = prev.filter((s) => s.id !== localDraft.id);
+          return [...filtered, localDraft];
+        });
+      }
     } catch (err) {
       console.error("Error saving draft:", err);
       throw err;
@@ -113,10 +178,30 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
   };
 
   const getDraftData = (type: string): any | null => {
-    const draft = submissions.find(
+    // First check server drafts (for authenticated users)
+    const serverDraft = submissions.find(
       (s) => s.type === type && s.status === "draft",
     );
-    return draft ? draft.data : null;
+    if (serverDraft) {
+      return serverDraft.data;
+    }
+
+    // Fallback to localStorage draft (for unauthenticated users)
+    if (typeof window !== "undefined") {
+      const draftKey = `erasmus_draft_${type}`;
+      const localDraft = localStorage.getItem(draftKey);
+      if (localDraft) {
+        try {
+          const parsed = JSON.parse(localDraft);
+          return parsed.data;
+        } catch (err) {
+          console.error("Error parsing local draft:", err);
+          localStorage.removeItem(draftKey);
+        }
+      }
+    }
+
+    return null;
   };
 
   const deleteDraft = async (id: string) => {
