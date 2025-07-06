@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -30,8 +30,10 @@ export default function Header() {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Debug session state (remove in production)
-  console.log("Header session status:", status, "session:", session);
+  // Debug session state changes
+  useEffect(() => {
+    console.log("Session status changed:", status, "Session data:", session);
+  }, [status, session]);
 
   // Reactive session handling for live updates
 
