@@ -48,6 +48,11 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
       if (response.ok) {
         const data = await response.json();
         setSubmissions(data.submissions || []);
+      } else if (response.status === 401) {
+        const errorData = await response.json();
+        setError(
+          errorData.message || "Please sign in again to access your data",
+        );
       } else {
         setError("Failed to fetch submissions");
       }
@@ -85,6 +90,11 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
 
       if (!response.ok) {
         const errorData = await response.json();
+        if (response.status === 401) {
+          throw new Error(
+            errorData.message || "Please sign in again to submit forms",
+          );
+        }
         throw new Error(errorData.message || "Failed to submit form");
       }
 
@@ -97,7 +107,39 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
   };
 
   const saveDraft = async (type: string, title: string, data: any) => {
-    return submitForm(type, title, data, "draft");
+    if (!session) {
+      throw new Error("Must be logged in to save drafts");
+    }
+
+    try {
+      const response = await fetch("/api/forms/saveDraft", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type,
+          title,
+          data,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (response.status === 401) {
+          throw new Error(
+            errorData.message || "Please sign in again to save drafts",
+          );
+        }
+        throw new Error(errorData.message || "Failed to save draft");
+      }
+
+      // Refresh submissions after successful save
+      await fetchSubmissions();
+    } catch (err) {
+      console.error("Error saving draft:", err);
+      throw err;
+    }
   };
 
   const getDraftData = (type: string): any | null => {
