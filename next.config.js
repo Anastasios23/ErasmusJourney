@@ -10,6 +10,17 @@ const nextConfig = {
         aggregateTimeout: 1000,
         ignored: ["**/node_modules/**", "**/.git/**"],
       };
+
+      // Add error suppression for cloud environments
+      config.infrastructureLogging = {
+        level: "error",
+        debug: false,
+      };
+
+      // Modify HMR configuration for cloud environment
+      if (config.entry && config.entry["main.js"]) {
+        config.entry["main.js"].push("./scripts/fix-hmr.js");
+      }
     }
     return config;
   },
