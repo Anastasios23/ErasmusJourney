@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "./auth/[...nextauth]";
-import { prisma } from "../../lib/prisma"; // adjust path if your prisma client is elsewhere
+import { getServerAuthSession, isAdmin } from "../../lib/auth";
+import { prisma } from "../../lib/prisma";
 
 export default async function handler(
   req: NextApiRequest,
@@ -9,19 +8,27 @@ export default async function handler(
 ) {
   if (req.method !== "GET") {
     res.setHeader("Allow", ["GET"]);
-    return res.status(405).json({ message: "Method not allowed" });
+    return res.status(405).json({
+      error: "Method not allowed",
+      message: "Only GET requests are supported",
+    });
   }
 
   // Check authentication
-  const session = await getServerSession(req, res, authOptions);
-  if (!session) {
-    return res.status(401).json({ message: "Unauthorized" });
+  const session = await getServerAuthSession(req, res);
+  if (!session?.user) {
+    return res.status(401).json({
+      error: "Authentication required",
+      message: "Please sign in to access submissions",
+    });
   }
 
-  // Check if user is admin (optional - comment out if all authenticated users should access)
-  const user = session.user as any;
-  if (user.role !== "ADMIN") {
-    return res.status(403).json({ message: "Admin access required" });
+  // Check if user is admin - only admins can view all submissions
+  if (!isAdmin(session)) {
+    return res.status(403).json({
+      error: "Authorization failed",
+      message: "Admin access required to view all submissions",
+    });
   }
 
   try {
@@ -31,6 +38,9 @@ export default async function handler(
     return res.status(200).json({ submissions });
   } catch (error) {
     console.error("❌ Error fetching submissions:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({
+      error: "Internal server error",
+      message: "Failed to fetch submissions. Please try again.",
+    });
   }
 }
