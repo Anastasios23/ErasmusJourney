@@ -52,7 +52,7 @@ export default function LoginPage() {
     // Note: If we reach this point, it means there was an error
     // NextAuth will have already redirected on success
     setLoading(false);
-    setErrorMessage("Invalid email or password. Please try again.");
+   
   };
 
   // Show loading state while checking session
