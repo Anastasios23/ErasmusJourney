@@ -41,18 +41,14 @@ export default function LoginPage() {
     setErrorMessage(null);
     setSuccessMessage(null);
 
-    // Let NextAuth handle the entire sign-in flow including redirects
-    // This automatically handles session updates and navigation
+    // Attempt sign in and allow next-auth to handle redirect
     await signIn("credentials", {
       email,
       password,
       callbackUrl: (router.query.callbackUrl as string) || "/dashboard",
     });
 
-    // Note: If we reach this point, it means there was an error
-    // NextAuth will have already redirected on success
     setLoading(false);
-   
   };
 
   // Show loading state while checking session
@@ -122,7 +118,7 @@ export default function LoginPage() {
             <BackButton fallbackUrl="/">← Back to Home</BackButton>
           </div>
           {successMessage && (
-            <Alert variant="success">
+            <Alert variant="default">
               <p>{successMessage}</p>
             </Alert>
           )}
