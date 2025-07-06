@@ -22,3 +22,19 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Next.js build output
+.next
+
+# Next.js cache
+.next/cache/
+
+# Specific files to ignore
+.next/trace
+.next/cache/.rscinfo
+.next/cache/webpack/client-development/0.pack.gz
+.next/cache/webpack/client-development/index.pack.gz
+.next/static/chunks/polyfills.js
+
+# Ignore all files in .next/cache
+.next/cache/**/*
