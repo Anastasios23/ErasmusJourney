@@ -24,8 +24,9 @@ export default function App({
     <ErrorBoundary>
       <SessionProvider
         session={session}
-        refetchInterval={5 * 60} // Refetch session every 5 minutes
+        refetchInterval={60} // Refetch session every minute for better responsiveness
         refetchOnWindowFocus={true} // Refetch when window regains focus
+        refetchWhenOffline={false} // Don't refetch when offline
       >
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
