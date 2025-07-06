@@ -1,6 +1,6 @@
 import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/router";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import BackButton from "../components/BackButton";
@@ -10,6 +10,7 @@ import { Alert } from "../src/components/ui/alert";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const { message } = router.query as { message?: string };
 
   const [email, setEmail] = useState("");
@@ -19,11 +20,18 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Redirect if already authenticated
+    if (status === "authenticated" && session) {
+      const callbackUrl = (router.query.callbackUrl as string) || "/dashboard";
+      router.push(callbackUrl);
+      return;
+    }
+
     // Show success banner if coming from registration
     if (message === "account_created") {
       setSuccessMessage("Account created! Please sign in.");
     }
-  }, [message]);
+  }, [message, session, status, router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -54,6 +62,61 @@ export default function LoginPage() {
     const callbackUrl = (router.query.callbackUrl as string) || "/";
     router.push(callbackUrl);
   };
+
+  // Show loading state while checking session
+  if (status === "loading") {
+    return (
+      <>
+        <Head>
+          <title>Login - Erasmus Journey</title>
+        </Head>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Checking authentication...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Show already logged in message if authenticated
+  if (status === "authenticated" && session) {
+    return (
+      <>
+        <Head>
+          <title>Already Logged In - Erasmus Journey</title>
+        </Head>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+          <div className="w-full max-w-md space-y-6 text-center">
+            <div className="p-6 bg-green-50 border border-green-200 rounded-lg">
+              <h2 className="text-xl font-semibold text-green-800 mb-2">
+                You're already logged in!
+              </h2>
+              <p className="text-green-700 mb-4">
+                Welcome back, {session.user?.name || session.user?.email}
+              </p>
+              <div className="space-y-2">
+                <Button
+                  onClick={() => router.push("/dashboard")}
+                  className="w-full"
+                >
+                  Go to Dashboard
+                </Button>
+                <Button
+                  onClick={() => router.push("/")}
+                  variant="outline"
+                  className="w-full"
+                >
+                  Go to Home
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
