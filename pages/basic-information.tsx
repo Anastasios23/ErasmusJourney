@@ -36,9 +36,6 @@ import {
 import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp";
 import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
 
-// Force dynamic rendering for this page since it requires session
-export const dynamic = "force-dynamic";
-
 export default function BasicInformation() {
   const { data: session } = useSession();
   const router = useRouter();
