@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import {
+  apiRequest,
+  handleApiError,
+  AuthenticationError,
+} from "../utils/apiErrorHandler";
 
 interface FormSubmission {
   id: string;
@@ -44,20 +49,11 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
 
     try {
       setLoading(true);
-      const response = await fetch("/api/forms/get");
-      if (response.ok) {
-        const data = await response.json();
-        setSubmissions(data.submissions || []);
-      } else if (response.status === 401) {
-        const errorData = await response.json();
-        setError(
-          errorData.message || "Please sign in again to access your data",
-        );
-      } else {
-        setError("Failed to fetch submissions");
-      }
+      const data = await apiRequest("/api/forms/get");
+      setSubmissions(data.submissions || []);
     } catch (err) {
-      setError("Error fetching submissions");
+      const errorInfo = handleApiError(err as Error);
+      setError(errorInfo.message);
       console.error(err);
     } finally {
       setLoading(false);
@@ -71,15 +67,12 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     status: string = "submitted",
   ) => {
     if (!session) {
-      throw new Error("Must be logged in to submit forms");
+      throw new AuthenticationError("Must be logged in to submit forms");
     }
 
     try {
-      const response = await fetch("/api/forms/submit", {
+      await apiRequest("/api/forms/submit", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           type,
           title,
@@ -87,16 +80,6 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
           status,
         }),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        if (response.status === 401) {
-          throw new Error(
-            errorData.message || "Please sign in again to submit forms",
-          );
-        }
-        throw new Error(errorData.message || "Failed to submit form");
-      }
 
       // Refresh submissions after successful submission
       await fetchSubmissions();
@@ -108,31 +91,18 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
 
   const saveDraft = async (type: string, title: string, data: any) => {
     if (!session) {
-      throw new Error("Must be logged in to save drafts");
+      throw new AuthenticationError("Must be logged in to save drafts");
     }
 
     try {
-      const response = await fetch("/api/forms/saveDraft", {
+      await apiRequest("/api/forms/saveDraft", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           type,
           title,
           data,
         }),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        if (response.status === 401) {
-          throw new Error(
-            errorData.message || "Please sign in again to save drafts",
-          );
-        }
-        throw new Error(errorData.message || "Failed to save draft");
-      }
 
       // Refresh submissions after successful save
       await fetchSubmissions();
