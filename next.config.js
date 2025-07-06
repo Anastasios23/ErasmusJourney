@@ -18,6 +18,10 @@ const nextConfig = {
     workerThreads: false,
     cpus: 1,
   },
+  // Development server configuration
+  devIndicators: {
+    buildActivity: false, // Disable build activity indicator to reduce console noise
+  },
   images: {
     remotePatterns: [
       {
