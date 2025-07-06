@@ -60,19 +60,12 @@ export default function LoginPage() {
       return;
     }
 
-    // On success, update session and redirect
+    // On success, use full page navigation to ensure session is updated
     const callbackUrl = (router.query.callbackUrl as string) || "/";
 
-    // Force session update by triggering a custom event
-    // This will cause all useSession hooks to re-fetch
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new Event("visibilitychange"));
-    }
-
-    // Wait a moment for session to update, then redirect
-    setTimeout(() => {
-      router.push(callbackUrl);
-    }, 200);
+    // Use window.location.href to ensure the Header gets the updated session
+    // This is more reliable than router.push for authentication state changes
+    window.location.href = callbackUrl;
   };
 
   // Show loading state while checking session
