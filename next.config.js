@@ -1,15 +1,28 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  // Enable React Strict Mode only in production to reduce dev noise
+  reactStrictMode: process.env.NODE_ENV === "production",
   // Minimal webpack config for cloud environment stability
   webpack: (config, { dev, isServer }) => {
     if (dev && !isServer) {
-      // Reduce file watching aggressiveness
+      // Reduce file watching aggressiveness and HMR frequency
       config.watchOptions = {
-        aggregateTimeout: 2000,
+        aggregateTimeout: 3000, // Increased delay
         poll: false,
         ignored: /node_modules/,
       };
+
+      // Reduce HMR noise in cloud environments
+      if (config.devServer) {
+        config.devServer.client = {
+          ...config.devServer.client,
+          logging: "warn", // Reduce logging verbosity
+          overlay: {
+            errors: true,
+            warnings: false, // Hide warning overlays
+          },
+        };
+      }
     }
     return config;
   },
@@ -22,8 +35,6 @@ const nextConfig = {
     workerThreads: false,
     cpus: 1,
   },
-  // Disable fast refresh in cloud environment to prevent HMR errors
-  reactStrictMode: process.env.NODE_ENV === "development" ? false : true,
   images: {
     remotePatterns: [
       {
