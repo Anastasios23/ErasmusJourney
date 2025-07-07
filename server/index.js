@@ -222,6 +222,11 @@ db.serialize(() => {
       stmt.finalize();
     }
   });
+
+  // Run password migration after database setup
+  migratePlainTextPasswords().catch((err) => {
+    console.error("Password migration failed:", err);
+  });
 });
 
 // API Routes
