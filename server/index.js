@@ -185,9 +185,7 @@ app.post("/api/register", (req, res) => {
 
   // Validate password strength
   if (password.length < 8) {
-    return res
-      .status(400)
-      .json({ error: "Password must be at least 8 characters long" });
+    return res.status(400).json({ error: "Password must be at least 8 characters long" });
   }
 
   // Check if user already exists
@@ -243,29 +241,38 @@ app.post("/api/login", (req, res) => {
     return res.status(400).json({ error: "Email and password are required" });
   }
 
-  db.get("SELECT * FROM users WHERE email = ?", [email], (err, row) => {
+  db.get("SELECT * FROM users WHERE email = ?", [email], async (err, row) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
 
-    if (!row || row.password !== password) {
+    if (!row) {
       res.status(401).json({ error: "Invalid email or password" });
       return;
     }
 
-    // Update last login
-    db.run("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?", [
-      row.id,
-    ]);
+    try {
+      // Compare the provided password with the hashed password
+      const passwordMatch = await bcrypt.compare(password, row.password);
 
-    // Return user data without password
-    res.json({
-      id: row.id,
-      firstName: row.firstName,
-      lastName: row.lastName,
-      email: row.email,
-      role: row.role,
+      if (!passwordMatch) {
+        res.status(401).json({ error: "Invalid email or password" });
+        return;
+      }
+
+      // Update last login
+      db.run("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?", [
+        row.id,
+      ]);
+
+      // Return user data without password
+      res.json({
+        id: row.id,
+        firstName: row.firstName,
+        lastName: row.lastName,
+        email: row.email,
+        role: row.role,
       message: "Login successful",
     });
   });
