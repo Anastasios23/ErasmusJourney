@@ -36,17 +36,15 @@ interface ApplicationStep {
 }
 
 export default function Dashboard() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
-  // Authentication temporarily disabled - all users can access
-  // Mock session for display purposes
-  const mockSession = session || {
-    user: {
-      name: "Demo User",
-      email: "demo@example.com",
-    },
-  };
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login?callbackUrl=/dashboard");
+    }
+  }, [status, router]);
 
   // Mock application progress - in a real app, this would come from your database
   const applicationSteps: ApplicationStep[] = [
@@ -89,6 +87,47 @@ export default function Dashboard() {
   ).length;
   const progressPercentage = (completedSteps / applicationSteps.length) * 100;
 
+  // Show loading state while checking authentication
+  if (status === "loading") {
+    return (
+      <>
+        <Head>
+          <title>Dashboard - Erasmus Journey Platform</title>
+          <meta
+            name="description"
+            content="Track your Erasmus application progress and manage your profile"
+          />
+        </Head>
+        <div className="min-h-screen bg-gray-50">
+          <Header />
+          <div className="pt-20 pb-16 px-4">
+            <div className="max-w-7xl mx-auto">
+              <div className="animate-pulse space-y-6">
+                <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-2 space-y-6">
+                    <div className="h-64 bg-gray-200 rounded"></div>
+                    <div className="h-48 bg-gray-200 rounded"></div>
+                  </div>
+                  <div className="space-y-6">
+                    <div className="h-32 bg-gray-200 rounded"></div>
+                    <div className="h-32 bg-gray-200 rounded"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Don't render if not authenticated (will redirect)
+  if (!session) {
+    return null;
+  }
+
   return (
     <>
       <Head>
@@ -107,7 +146,11 @@ export default function Dashboard() {
             {/* Welcome Section */}
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Welcome back, {mockSession.user?.name?.split(" ")[0] || "User"}!
+                Welcome back,{" "}
+                {session.user?.name?.split(" ")[0] ||
+                  session.user?.email?.split("@")[0] ||
+                  "User"}
+                !
               </h1>
               <p className="text-gray-600">
                 Track your Erasmus application progress and explore new
@@ -255,16 +298,16 @@ export default function Dashboard() {
                       <div className="flex items-center gap-3">
                         <div className="h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center">
                           <span className="text-white font-bold">
-                            {mockSession.user?.name?.[0] ||
-                              mockSession.user?.email?.[0]}
+                            {session.user?.name?.[0] ||
+                              session.user?.email?.[0]}
                           </span>
                         </div>
                         <div>
                           <h3 className="font-medium">
-                            {mockSession.user?.name || "User"}
+                            {session.user?.name || "User"}
                           </h3>
                           <p className="text-sm text-gray-600">
-                            {mockSession.user?.email}
+                            {session.user?.email}
                           </p>
                         </div>
                       </div>
