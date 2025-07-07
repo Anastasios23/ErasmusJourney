@@ -183,8 +183,15 @@ app.post("/api/register", (req, res) => {
     return res.status(400).json({ error: "All fields are required" });
   }
 
+  // Validate password strength
+  if (password.length < 8) {
+    return res
+      .status(400)
+      .json({ error: "Password must be at least 8 characters long" });
+  }
+
   // Check if user already exists
-  db.get("SELECT * FROM users WHERE email = ?", [email], (err, row) => {
+  db.get("SELECT * FROM users WHERE email = ?", [email], async (err, row) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
@@ -195,29 +202,37 @@ app.post("/api/register", (req, res) => {
       return;
     }
 
-    // Insert new user (in production, hash the password!)
-    const stmt = db.prepare(`
-      INSERT INTO users (firstName, lastName, email, password)
-      VALUES (?, ?, ?, ?)
-    `);
+    try {
+      // Hash the password before storing
+      const saltRounds = 12;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    stmt.run([firstName, lastName, email, password], function (err) {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
+      // Insert new user with hashed password
+      const stmt = db.prepare(`
+        INSERT INTO users (firstName, lastName, email, password)
+        VALUES (?, ?, ?, ?)
+      `);
 
-      // Return user data without password
-      res.json({
-        id: this.lastID,
-        firstName,
-        lastName,
-        email,
-        message: "User registered successfully",
+      stmt.run([firstName, lastName, email, hashedPassword], function (err) {
+        if (err) {
+          res.status(500).json({ error: err.message });
+          return;
+        }
+
+        // Return user data without password
+        res.json({
+          id: this.lastID,
+          firstName,
+          lastName,
+          email,
+          message: "User registered successfully",
+        });
       });
-    });
 
-    stmt.finalize();
+      stmt.finalize();
+    } catch (hashError) {
+      res.status(500).json({ error: "Error processing password" });
+    }
   });
 });
 
