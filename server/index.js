@@ -141,14 +141,17 @@ db.serialize(() => {
     }
 
     if (!row) {
-      // Create default admin user
+      // Create default admin user with hashed password
+      const saltRounds = 12;
+      const hashedPassword = bcrypt.hashSync("admin123", saltRounds);
+
       const stmt = db.prepare(`
         INSERT INTO users (firstName, lastName, email, password, role)
         VALUES (?, ?, ?, ?, ?)
       `);
 
       stmt.run(
-        ["Admin", "User", "admin@erasmusjourney.com", "admin123", "admin"],
+        ["Admin", "User", "admin@erasmusjourney.com", hashedPassword, "admin"],
         function (err) {
           if (err) {
             console.error("Error creating admin user:", err);
