@@ -41,14 +41,27 @@ export default function LoginPage() {
     setErrorMessage(null);
     setSuccessMessage(null);
 
-    // Attempt sign in and allow next-auth to handle redirect
-    await signIn("credentials", {
-      email,
-      password,
-      callbackUrl: (router.query.callbackUrl as string) || "/dashboard",
-    });
+    try {
+      // Attempt sign in
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false, // Don't auto-redirect, handle manually
+      });
 
-    setLoading(false);
+      if (result?.error) {
+        setErrorMessage("Invalid email or password. Please try again.");
+        setLoading(false);
+      } else if (result?.ok) {
+        // On success, redirect with a full page reload to ensure session consistency
+        const callbackUrl =
+          (router.query.callbackUrl as string) || "/dashboard";
+        window.location.href = callbackUrl;
+      }
+    } catch (error) {
+      setErrorMessage("An error occurred. Please try again.");
+      setLoading(false);
+    }
   };
 
   // Show loading state while checking session
