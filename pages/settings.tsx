@@ -35,17 +35,16 @@ import {
 import { toast } from "sonner";
 
 export default function SettingsPage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Authentication temporarily disabled - mock session
-  const mockSession = session || {
-    user: {
-      name: "Demo User",
-      email: "demo@example.com",
-    },
-  };
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login?callbackUrl=/settings");
+    }
+  }, [status, router]);
 
   const [settings, setSettings] = useState({
     emailNotifications: true,
@@ -138,6 +137,43 @@ export default function SettingsPage() {
       }
     }
   };
+
+  // Show loading state while checking authentication
+  if (status === "loading") {
+    return (
+      <>
+        <Head>
+          <title>Settings - Erasmus Journey Platform</title>
+          <meta
+            name="description"
+            content="Manage your account settings and preferences"
+          />
+        </Head>
+        <div className="min-h-screen bg-gray-50">
+          <Header />
+          <div className="pt-20 pb-16 px-4">
+            <div className="max-w-4xl mx-auto">
+              <div className="animate-pulse space-y-6">
+                <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                <div className="space-y-8">
+                  <div className="h-64 bg-gray-200 rounded"></div>
+                  <div className="h-48 bg-gray-200 rounded"></div>
+                  <div className="h-48 bg-gray-200 rounded"></div>
+                  <div className="h-32 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Don't render if not authenticated (will redirect)
+  if (!session) {
+    return null;
+  }
 
   return (
     <>
