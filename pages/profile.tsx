@@ -33,18 +33,17 @@ import {
 import { toast } from "sonner";
 
 export default function Profile() {
-  const { data: session, update } = useSession();
+  const { data: session, update, status } = useSession();
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Authentication temporarily disabled - mock session
-  const mockSession = session || {
-    user: {
-      name: "Demo User",
-      email: "demo@example.com",
-    },
-  };
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login?callbackUrl=/profile");
+    }
+  }, [status, router]);
 
   const [profileData, setProfileData] = useState({
     name: "",
@@ -57,15 +56,17 @@ export default function Profile() {
 
   // Initialize form with session data
   useEffect(() => {
-    setProfileData({
-      name: mockSession.user?.name || "",
-      email: mockSession.user?.email || "",
-      phone: (mockSession.user as any)?.phone || "",
-      address: (mockSession.user as any)?.address || "",
-      bio: (mockSession.user as any)?.bio || "",
-      dateOfBirth: (mockSession.user as any)?.dateOfBirth || "",
-    });
-  }, [mockSession]);
+    if (session?.user) {
+      setProfileData({
+        name: session.user?.name || "",
+        email: session.user?.email || "",
+        phone: (session.user as any)?.phone || "",
+        address: (session.user as any)?.address || "",
+        bio: (session.user as any)?.bio || "",
+        dateOfBirth: (session.user as any)?.dateOfBirth || "",
+      });
+    }
+  }, [session]);
 
   const handleInputChange = (field: string, value: string) => {
     setProfileData((prev) => ({ ...prev, [field]: value }));
@@ -100,16 +101,53 @@ export default function Profile() {
 
   const handleCancel = () => {
     // Reset form data to original session data
-    setProfileData({
-      name: session.user?.name || "",
-      email: session.user?.email || "",
-      phone: (session.user as any)?.phone || "",
-      address: (session.user as any)?.address || "",
-      bio: (session.user as any)?.bio || "",
-      dateOfBirth: (session.user as any)?.dateOfBirth || "",
-    });
+    if (session?.user) {
+      setProfileData({
+        name: session.user?.name || "",
+        email: session.user?.email || "",
+        phone: (session.user as any)?.phone || "",
+        address: (session.user as any)?.address || "",
+        bio: (session.user as any)?.bio || "",
+        dateOfBirth: (session.user as any)?.dateOfBirth || "",
+      });
+    }
     setIsEditing(false);
   };
+
+  // Show loading state while checking authentication
+  if (status === "loading") {
+    return (
+      <>
+        <Head>
+          <title>My Profile - Erasmus Journey Platform</title>
+          <meta
+            name="description"
+            content="Manage your personal information and profile settings"
+          />
+        </Head>
+        <div className="min-h-screen bg-gray-50">
+          <Header />
+          <div className="pt-20 pb-16 px-4">
+            <div className="max-w-4xl mx-auto">
+              <div className="animate-pulse space-y-6">
+                <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="h-64 bg-gray-200 rounded"></div>
+                  <div className="lg:col-span-2 h-96 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Don't render if not authenticated (will redirect)
+  if (!session) {
+    return null;
+  }
 
   return (
     <>
@@ -142,17 +180,16 @@ export default function Profile() {
                 <Card>
                   <CardHeader className="text-center">
                     <Avatar className="h-24 w-24 mx-auto mb-4">
-                      <AvatarImage src={(mockSession.user as any)?.image} />
+                      <AvatarImage src={(session.user as any)?.image} />
                       <AvatarFallback className="text-2xl">
-                        {mockSession.user?.name?.[0] ||
-                          mockSession.user?.email?.[0]}
+                        {session.user?.name?.[0] || session.user?.email?.[0]}
                       </AvatarFallback>
                     </Avatar>
                     <CardTitle className="text-xl">
-                      {mockSession.user?.name || "User"}
+                      {session.user?.name || "User"}
                     </CardTitle>
                     <p className="text-gray-600 text-sm">
-                      {mockSession.user?.email}
+                      {session.user?.email}
                     </p>
                   </CardHeader>
                   <CardContent>
