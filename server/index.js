@@ -185,7 +185,9 @@ app.post("/api/register", (req, res) => {
 
   // Validate password strength
   if (password.length < 8) {
-    return res.status(400).json({ error: "Password must be at least 8 characters long" });
+    return res
+      .status(400)
+      .json({ error: "Password must be at least 8 characters long" });
   }
 
   // Check if user already exists
@@ -273,8 +275,11 @@ app.post("/api/login", (req, res) => {
         lastName: row.lastName,
         email: row.email,
         role: row.role,
-      message: "Login successful",
-    });
+        message: "Login successful",
+      });
+    } catch (compareError) {
+      res.status(500).json({ error: "Error during authentication" });
+    }
   });
 });
 
