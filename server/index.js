@@ -15,6 +15,62 @@ app.use(express.json());
 const dbPath = path.join(__dirname, "erasmus.db");
 const db = new sqlite3.Database(dbPath);
 
+// Migration function to hash existing plain text passwords
+async function migratePlainTextPasswords() {
+  return new Promise((resolve, reject) => {
+    db.all("SELECT id, password FROM users", [], async (err, rows) => {
+      if (err) {
+        console.error("Error fetching users for migration:", err);
+        reject(err);
+        return;
+      }
+
+      const saltRounds = 12;
+      const updates = [];
+
+      for (const row of rows) {
+        // Check if password is already hashed (bcrypt hashes start with $2b$)
+        if (!row.password.startsWith("$2b$")) {
+          try {
+            const hashedPassword = await bcrypt.hash(row.password, saltRounds);
+            updates.push({ id: row.id, hashedPassword });
+          } catch (hashError) {
+            console.error(
+              `Error hashing password for user ${row.id}:`,
+              hashError,
+            );
+          }
+        }
+      }
+
+      // Update passwords in database
+      if (updates.length > 0) {
+        const stmt = db.prepare("UPDATE users SET password = ? WHERE id = ?");
+
+        for (const update of updates) {
+          stmt.run([update.hashedPassword, update.id], (updateErr) => {
+            if (updateErr) {
+              console.error(
+                `Error updating password for user ${update.id}:`,
+                updateErr,
+              );
+            }
+          });
+        }
+
+        stmt.finalize();
+        console.log(
+          `Migrated ${updates.length} plain text passwords to hashed passwords`,
+        );
+      } else {
+        console.log("No plain text passwords found to migrate");
+      }
+
+      resolve();
+    });
+  });
+}
+
 // Initialize database tables
 db.serialize(() => {
   // Users table for authentication
