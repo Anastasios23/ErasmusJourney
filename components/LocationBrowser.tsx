@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { Card, CardContent } from "../src/components/ui/card";
 import { Button } from "../src/components/ui/button";
 import { Badge } from "../src/components/ui/badge";
@@ -330,7 +331,7 @@ const LocationBrowser = () => {
                   <Button
                     onClick={() => {
                       setShowEmailCapture(false);
-                      window.location.href = "/login";
+                      router.push("/login");
                     }}
                     className="flex-1"
                   >
