@@ -119,6 +119,36 @@ const HMRErrorHandler = () => {
       }
     };
 
+    // Patch Next.js PageLoader to handle fetch errors gracefully
+    const patchPageLoader = () => {
+      try {
+        // Access Next.js internals carefully
+        const nextRouter = (window as any).__NEXT_DATA__?.router;
+        if (nextRouter && (window as any).__NEXT_P) {
+          const pageLoader = (window as any).__NEXT_P;
+
+          // Patch the PageLoader fetch methods
+          if (pageLoader && typeof pageLoader.getPageList === "function") {
+            const originalGetPageList = pageLoader.getPageList;
+            pageLoader.getPageList = function (...args: any[]) {
+              try {
+                return originalGetPageList.apply(this, args);
+              } catch (error) {
+                console.warn("PageLoader.getPageList error suppressed:", error);
+                return Promise.resolve([]);
+              }
+            };
+          }
+        }
+      } catch (error) {
+        // Silently ignore patching errors
+        console.warn("Could not patch PageLoader:", error);
+      }
+    };
+
+    // Apply patches after a short delay to ensure Next.js is loaded
+    setTimeout(patchPageLoader, 1000);
+
     // Add event listeners
     window.addEventListener("unhandledrejection", handleUnhandledRejection);
     window.addEventListener("error", handleWindowError);
