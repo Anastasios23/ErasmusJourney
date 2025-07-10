@@ -254,14 +254,29 @@ export function useGeneratedContent(type?: string) {
       setLoading(true);
       const url = `/api/content/generate${type ? `?type=${type}` : ""}`;
       const response = await fetch(url);
+
       if (response.ok) {
         const data = await response.json();
         setContent(data);
-      } else if (response.status === 401) {
-        const errorData = await response.json();
-        setError(errorData.message || "Please sign in again to access content");
       } else {
-        setError("Failed to fetch content");
+        // Only parse JSON once for error responses
+        try {
+          const errorData = await response.json();
+          if (response.status === 401) {
+            setError(
+              errorData.message || "Please sign in again to access content",
+            );
+          } else {
+            setError(errorData.message || "Failed to fetch content");
+          }
+        } catch (parseError) {
+          // If JSON parsing fails, use generic error message
+          if (response.status === 401) {
+            setError("Please sign in again to access content");
+          } else {
+            setError("Failed to fetch content");
+          }
+        }
       }
     } catch (err) {
       setError("Error fetching content");
