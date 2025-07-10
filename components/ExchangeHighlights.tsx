@@ -12,13 +12,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "../src/components/ui/avatar";
-import {
-  ArrowRight,
-  GraduationCap,
-  MapPin,
-  BookOpen,
-  TrendingUp,
-} from "lucide-react";
+import { ArrowRight, GraduationCap } from "lucide-react";
 
 // Sample featured exchanges for homepage
 const featuredExchanges = [
