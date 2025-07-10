@@ -96,8 +96,10 @@ const LocationBrowser = () => {
     }
 
     // Navigate to browse page with city filter
-    window.location.href = `/destinations?city=${encodeURIComponent(city)}`;
+    router.push(`/destinations?city=${encodeURIComponent(city)}`);
   };
+
+  const router = useRouter();
 
   const handleEntryClick = (entry: BrowseEntry) => {
     if (!session) {
@@ -106,9 +108,9 @@ const LocationBrowser = () => {
     }
 
     if (entry.type === "story") {
-      window.location.href = `/student-stories`;
+      router.push("/student-stories");
     } else {
-      window.location.href = `/student-accommodations`;
+      router.push("/student-accommodations");
     }
   };
 
