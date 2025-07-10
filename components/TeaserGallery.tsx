@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Card, CardContent } from "../src/components/ui/card";
@@ -29,10 +28,8 @@ interface PreviewEntry {
 }
 
 const TeaserGallery = () => {
-  const { data: session } = useSession();
   const [previews, setPreviews] = useState<PreviewEntry[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showEmailCapture, setShowEmailCapture] = useState(false);
 
   useEffect(() => {
     // Generate sample preview data
