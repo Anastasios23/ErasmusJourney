@@ -97,8 +97,31 @@ const HMRErrorHandler = () => {
       }
     };
 
-    // Add event listener for unhandled promise rejections
+    // Handle window errors from development tools
+    const handleWindowError = (event: ErrorEvent) => {
+      const error = event.error;
+      const errorMessage = event.message || error?.message || "";
+
+      // Check if it's a development-related error
+      const isDevelopmentError =
+        errorMessage.includes("Failed to fetch") ||
+        errorMessage.includes("webpack") ||
+        errorMessage.includes("chunk") ||
+        errorMessage.includes("_next/static") ||
+        errorMessage.includes("PageLoader") ||
+        errorMessage.includes("Router.change") ||
+        (errorMessage.includes("TypeError") && errorMessage.includes("fetch"));
+
+      if (isDevelopmentError) {
+        console.warn("Development window error suppressed:", errorMessage);
+        event.preventDefault();
+        return false;
+      }
+    };
+
+    // Add event listeners
     window.addEventListener("unhandledrejection", handleUnhandledRejection);
+    window.addEventListener("error", handleWindowError);
 
     // Cleanup function
     return () => {
@@ -107,6 +130,7 @@ const HMRErrorHandler = () => {
         "unhandledrejection",
         handleUnhandledRejection,
       );
+      window.removeEventListener("error", handleWindowError);
     };
   }, []);
 
