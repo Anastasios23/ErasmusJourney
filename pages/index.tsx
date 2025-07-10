@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "../lib/prisma";
 import Header from "../components/Header";
-import StepCard from "../components/StepCard";
 import TeaserGallery from "../components/TeaserGallery";
 import LocationBrowser from "../components/LocationBrowser";
 import ExchangeHighlights from "../components/ExchangeHighlights";
