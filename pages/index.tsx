@@ -134,11 +134,14 @@ export default function HomePage({ totalUniversities }: HomePageProps) {
                 </div>
               </div>
 
-              <div className="relative">
-                <img
+              <div className="relative aspect-[3/2] rounded-2xl shadow-2xl overflow-hidden">
+                <Image
                   src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=400&fit=crop"
                   alt="Students studying abroad"
-                  className="rounded-2xl shadow-2xl"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  priority
                 />
                 <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg border">
                   <div className="flex items-center space-x-3">
