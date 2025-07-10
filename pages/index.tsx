@@ -364,38 +364,6 @@ export default function HomePage({ totalUniversities }: HomePageProps) {
           </div>
         </section>
 
-        {/* Connect and Help Others Section */}
-        <section className="py-16 lg:py-24 bg-gray-900 text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-6">
-              Connect and Help Others
-            </h2>
-            <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              Join our community of Erasmus students and help others make the
-              most of their study abroad experience.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/community">
-                <Button
-                  size="lg"
-                  className="bg-white text-gray-900 hover:bg-gray-100 px-8"
-                >
-                  Join Community
-                </Button>
-              </Link>
-              <Link href="/share-story">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-white text-white hover:bg-white hover:text-gray-900 px-8"
-                >
-                  Share Your Story
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-
         {/* Footer */}
         <footer className="bg-white border-t">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
