@@ -31,6 +31,17 @@ const StepCard = ({
     return `Step ${step}`;
   };
 
+  const getStepColor = (colorClass: string) => {
+    // Map color props to safe Tailwind classes
+    const colorMap: { [key: string]: string } = {
+      "bg-blue-500": "bg-blue-500",
+      "bg-green-500": "bg-green-500",
+      "bg-orange-500": "bg-orange-500",
+      "bg-purple-500": "bg-purple-500",
+    };
+    return colorMap[colorClass] || "bg-gray-500";
+  };
+
   return (
     <Link
       href={href}
@@ -54,7 +65,7 @@ const StepCard = ({
           <div className="absolute top-4 left-4 flex items-center gap-2">
             <Badge
               variant="secondary"
-              className={`${color} text-white border-0 flex items-center gap-1`}
+              className={`text-white border-0 flex items-center gap-1 ${getStepColor(color)}`}
             >
               {completed && (
                 <CheckCircle className="w-3 h-3" aria-hidden="true" />
