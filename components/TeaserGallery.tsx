@@ -50,19 +50,6 @@ const TeaserGallery = () => {
         studentName: "Maria K.",
       },
       {
-        id: "accommodation_1",
-        type: "accommodation",
-        title: "Student Apartment in City Center",
-        excerpt:
-          "Amazing location right in the heart of the city. Walking distance to university and all amenities...",
-        imageUrl:
-          "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&h=250&fit=crop",
-        city: "Barcelona",
-        rating: 4,
-        studentName: "Alex M.",
-        price: "€650/mo",
-      },
-      {
         id: "story_2",
         type: "story",
         title: "My semester in Vienna was life-changing",
@@ -73,19 +60,6 @@ const TeaserGallery = () => {
         city: "Vienna",
         rating: 5,
         studentName: "John D.",
-      },
-      {
-        id: "accommodation_2",
-        type: "accommodation",
-        title: "Cozy Studio near University",
-        excerpt:
-          "Perfect for students! This studio has everything you need and is very close to campus...",
-        imageUrl:
-          "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=250&fit=crop",
-        city: "Vienna",
-        rating: 4,
-        studentName: "Emma S.",
-        price: "€520/mo",
       },
       {
         id: "story_3",
@@ -100,17 +74,40 @@ const TeaserGallery = () => {
         studentName: "Lisa T.",
       },
       {
-        id: "accommodation_3",
-        type: "accommodation",
-        title: "Shared Flat in Historic District",
+        id: "story_4",
+        type: "story",
+        title: "Amsterdam: A city that stole my heart",
         excerpt:
-          "Living with other international students in the most beautiful part of the city...",
+          "From the beautiful canals to the vibrant nightlife, Amsterdam offered everything I could want...",
         imageUrl:
-          "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=250&fit=crop",
-        city: "Prague",
-        rating: 4,
-        studentName: "Carlos R.",
-        price: "€400/mo",
+          "https://images.unsplash.com/photo-1512470876302-972faa2aa9a4?w=400&h=250&fit=crop",
+        city: "Amsterdam",
+        rating: 5,
+        studentName: "Sofia R.",
+      },
+      {
+        id: "story_5",
+        type: "story",
+        title: "Berlin experience: Creative and inspiring",
+        excerpt:
+          "The energy in Berlin is unlike anywhere else. Street art, amazing food, and incredible people...",
+        imageUrl:
+          "https://images.unsplash.com/photo-1587330979470-3a2b6d2f3e6a?w=400&h=250&fit=crop",
+        city: "Berlin",
+        rating: 5,
+        studentName: "Marcus T.",
+      },
+      {
+        id: "story_6",
+        type: "story",
+        title: "Lisbon: Perfect weather, perfect people",
+        excerpt:
+          "Lisbon surprised me with its warmth - both the weather and the people. Every day was an adventure...",
+        imageUrl:
+          "https://images.unsplash.com/photo-1588616574146-ad5dd7d74063?w=400&h=250&fit=crop",
+        city: "Lisbon",
+        rating: 5,
+        studentName: "Ana M.",
       },
     ];
 
@@ -120,17 +117,8 @@ const TeaserGallery = () => {
   const router = useRouter();
 
   const handleReadMore = (entry: PreviewEntry) => {
-    if (!session) {
-      setShowEmailCapture(true);
-      return;
-    }
-
-    // Navigate to the appropriate page
-    if (entry.type === "story") {
-      router.push("/student-stories");
-    } else {
-      router.push("/student-accommodations");
-    }
+    // Direct navigation to stories page
+    router.push("/student-stories");
   };
 
   const nextSlide = () => {
@@ -158,12 +146,12 @@ const TeaserGallery = () => {
               ✨ Sneak Peek
             </Badge>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Stories & Stays from Real Students
+              Real Student Stories
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Get inspired by authentic experiences and find your perfect
-              accommodation. Join our community to access the full library of
-              student insights.
+              Get inspired by authentic experiences from students who have lived
+              their Erasmus dreams. Discover what makes each destination special
+              through their eyes.
             </p>
           </div>
 
@@ -290,71 +278,21 @@ const TeaserGallery = () => {
 
           {/* Call to Action */}
           <div className="text-center mt-8">
-            <Link href={session ? "/experiences" : "/login"}>
+            <Link href="/student-stories">
               <Button
                 size="lg"
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
-                Explore All Stories & Stays
+                Read All Stories
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <p className="text-sm text-gray-500 mt-2">
-              {session
-                ? "Access our full library"
-                : "Sign up to access our full library of experiences"}
+              Discover hundreds of authentic student experiences
             </p>
           </div>
         </div>
       </section>
-
-      {/* Email Capture Modal */}
-      {showEmailCapture && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-md mx-4">
-            <CardContent className="p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">
-                Join Our Community
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Get access to hundreds of authentic student experiences and
-                accommodation reviews.
-              </p>
-              <div className="space-y-4">
-                <input
-                  type="email"
-                  placeholder="Your email address"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <select className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="">Select your university</option>
-                  <option value="ucy">University of Cyprus</option>
-                  <option value="cut">Cyprus University of Technology</option>
-                  <option value="other">Other</option>
-                </select>
-                <div className="flex space-x-3">
-                  <Button
-                    onClick={() => {
-                      setShowEmailCapture(false);
-                      router.push("/login");
-                    }}
-                    className="flex-1"
-                  >
-                    Sign Up & Continue
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowEmailCapture(false)}
-                    className="flex-1"
-                  >
-                    Maybe Later
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
     </>
   );
 };
