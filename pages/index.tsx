@@ -475,41 +475,12 @@ export default function HomePage({ totalUniversities }: HomePageProps) {
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    // Fetch latest 3 stories for display
-    const latestStories = await prisma.story.findMany({
-      take: 3,
-      orderBy: { createdAt: "desc" },
-      where: { isPublic: true },
-      include: {
-        author: {
-          select: {
-            firstName: true,
-            lastName: true,
-          },
-        },
-        university: {
-          select: {
-            name: true,
-            country: true,
-          },
-        },
-      },
-    });
-
-    // Get total counts for stats
-    const [totalUniversities, totalPartnerships] = await Promise.all([
-      prisma.university.count(),
-      prisma.agreement.count({ where: { isActive: true } }),
-    ]);
+    // Get total universities count for stats
+    const totalUniversities = await prisma.university.count();
 
     return {
       props: {
-        latestStories: latestStories.map((story) => ({
-          ...story,
-          createdAt: story.createdAt.toISOString(),
-        })),
         totalUniversities,
-        totalPartnerships,
       },
     };
   } catch (error) {
