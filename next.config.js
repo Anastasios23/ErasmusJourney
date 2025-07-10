@@ -18,50 +18,20 @@ const nextConfig = {
         moduleIds: "named", // More stable module IDs
       };
 
-      // Add error handling for HMR fetch failures
-      config.plugins = config.plugins || [];
-      config.plugins.push({
-        apply: (compiler) => {
-          compiler.hooks.afterEnvironment.tap("HMRErrorHandler", () => {
-            // Add global error handler for fetch failures
-            if (typeof window !== "undefined") {
-              const originalFetch = window.fetch;
-              window.fetch = async (...args) => {
-                try {
-                  return await originalFetch(...args);
-                } catch (error) {
-                  // Silently ignore HMR-related fetch errors
-                  if (
-                    args[0] &&
-                    typeof args[0] === "string" &&
-                    (args[0].includes("_next/static") ||
-                      args[0].includes("webpack"))
-                  ) {
-                    console.warn(
-                      "HMR fetch failed, continuing...",
-                      error.message,
-                    );
-                    return new Response("{}", { status: 200 });
-                  }
-                  throw error;
-                }
-              };
-            }
-          });
-        },
-      });
+      // Disable problematic HMR features in cloud environment
+      config.devtool = "eval-cheap-module-source-map";
 
-      // Reduce HMR noise in cloud environments
-      if (config.devServer) {
-        config.devServer.client = {
-          ...config.devServer.client,
-          logging: "error", // Only show errors
-          overlay: {
-            errors: false, // Disable error overlays for HMR issues
-            warnings: false,
-          },
-          reconnect: 3, // Limit reconnection attempts
-        };
+      // Add custom HMR configuration
+      if (config.entry && typeof config.entry === "object") {
+        Object.keys(config.entry).forEach((key) => {
+          if (Array.isArray(config.entry[key])) {
+            config.entry[key] = config.entry[key].filter(
+              (entry) =>
+                !entry.includes("webpack-hot-middleware") &&
+                !entry.includes("webpack/hot"),
+            );
+          }
+        });
       }
     }
     return config;
