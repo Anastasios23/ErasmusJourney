@@ -5,8 +5,6 @@ import Image from "next/image";
 import { prisma } from "../lib/prisma";
 import Header from "../components/Header";
 import TeaserGallery from "../components/TeaserGallery";
-import LocationBrowser from "../components/LocationBrowser";
-import ExchangeHighlights from "../components/ExchangeHighlights";
 import { Button } from "../src/components/ui/button";
 import { Badge } from "../src/components/ui/badge";
 import { Card } from "../src/components/ui/card";
@@ -295,12 +293,6 @@ export default function HomePage({ totalUniversities }: HomePageProps) {
 
         {/* Teaser Gallery */}
         <TeaserGallery />
-
-        {/* Exchange Highlights */}
-        <ExchangeHighlights />
-
-        {/* Location Browser */}
-        <LocationBrowser />
 
         {/* University Partnerships Section */}
         <section className="py-16 bg-gradient-to-br from-slate-50 to-blue-50">
