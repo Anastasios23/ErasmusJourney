@@ -114,8 +114,8 @@ const TeaserGallery = () => {
   const router = useRouter();
 
   const handleReadMore = (entry: PreviewEntry) => {
-    // Direct navigation to stories page
-    router.push("/student-stories");
+    // Navigate to individual story page
+    router.push(`/stories/${entry.id}`);
   };
 
   const nextSlide = () => {
