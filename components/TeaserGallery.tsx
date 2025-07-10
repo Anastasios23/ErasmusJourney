@@ -35,11 +35,11 @@ const TeaserGallery = () => {
     // Generate sample preview data
     const samplePreviews: PreviewEntry[] = [
       {
-        id: "story_1",
+        id: "1",
         type: "story",
-        title: "How I survived Spring 2024 in Barcelona",
+        title: "My Amazing Semester in Barcelona",
         excerpt:
-          "Barcelona exceeded all my expectations. The city has incredible energy and the university...",
+          "A life-changing experience studying at UPC Barcelona and discovering Spanish culture...",
         imageUrl:
           "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&h=250&fit=crop",
         city: "Barcelona",
@@ -47,64 +47,28 @@ const TeaserGallery = () => {
         studentName: "Maria K.",
       },
       {
-        id: "story_2",
+        id: "2",
         type: "story",
-        title: "My semester in Vienna was life-changing",
+        title: "Finding the Perfect Student Accommodation in Prague",
         excerpt:
-          "Vienna is a perfect blend of history and modernity. The coffee culture, the architecture...",
+          "Tips and tricks for finding affordable, comfortable housing in Prague. From dorms to shared apartments...",
         imageUrl:
-          "https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=400&h=250&fit=crop",
-        city: "Vienna",
-        rating: 5,
-        studentName: "John D.",
-      },
-      {
-        id: "story_3",
-        type: "story",
-        title: "Erasmus in Prague: Best decision ever",
-        excerpt:
-          "Prague is absolutely magical. The old town, the nightlife, the friendly people...",
-        imageUrl:
-          "https://images.unsplash.com/photo-1541849546-216549ae216d?w=400&h=250&fit=crop",
+          "https://images.unsplash.com/photo-1542324151-ee2b73cb0d95?w=400&h=250&fit=crop",
         city: "Prague",
         rating: 5,
-        studentName: "Lisa T.",
+        studentName: "Andreas M.",
       },
       {
-        id: "story_4",
+        id: "3",
         type: "story",
-        title: "Amsterdam: A city that stole my heart",
+        title: "Navigating Academic Life at Sorbonne University",
         excerpt:
-          "From the beautiful canals to the vibrant nightlife, Amsterdam offered everything I could want...",
+          "Everything you need to know about the academic system in France and making the most of your time in Paris...",
         imageUrl:
-          "https://images.unsplash.com/photo-1512470876302-972faa2aa9a4?w=400&h=250&fit=crop",
-        city: "Amsterdam",
+          "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=250&fit=crop",
+        city: "Paris",
         rating: 5,
-        studentName: "Sofia R.",
-      },
-      {
-        id: "story_5",
-        type: "story",
-        title: "Berlin experience: Creative and inspiring",
-        excerpt:
-          "The energy in Berlin is unlike anywhere else. Street art, amazing food, and incredible people...",
-        imageUrl:
-          "https://images.unsplash.com/photo-1587330979470-3a2b6d2f3e6a?w=400&h=250&fit=crop",
-        city: "Berlin",
-        rating: 5,
-        studentName: "Marcus T.",
-      },
-      {
-        id: "story_6",
-        type: "story",
-        title: "Lisbon: Perfect weather, perfect people",
-        excerpt:
-          "Lisbon surprised me with its warmth - both the weather and the people. Every day was an adventure...",
-        imageUrl:
-          "https://images.unsplash.com/photo-1588616574146-ad5dd7d74063?w=400&h=250&fit=crop",
-        city: "Lisbon",
-        rating: 5,
-        studentName: "Ana M.",
+        studentName: "Elena P.",
       },
     ];
 
