@@ -9,15 +9,7 @@ import LocationBrowser from "../components/LocationBrowser";
 import ExchangeHighlights from "../components/ExchangeHighlights";
 import { Button } from "../src/components/ui/button";
 import { Badge } from "../src/components/ui/badge";
-import {
-  ArrowRight,
-  Users,
-  BookOpen,
-  Home,
-  DollarSign,
-  Heart,
-  Globe,
-} from "lucide-react";
+import { ArrowRight, Users, BookOpen, Home, Heart, Globe } from "lucide-react";
 
 interface Story {
   id: string;
