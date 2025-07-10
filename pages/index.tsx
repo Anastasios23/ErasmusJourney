@@ -171,57 +171,59 @@ export default function HomePage({ totalUniversities }: HomePageProps) {
                 discover what's possible for your study abroad journey.
               </p>
               <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-                <div className="bg-white p-6 rounded-xl shadow-sm">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <span className="text-2xl">🎯</span>
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">
-                    1. Explore Destinations
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    Browse 500+ partner universities and discover where you can
-                    study
-                  </p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-sm">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <span className="text-2xl">📚</span>
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">
-                    2. Read Student Stories
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    Get insights from students who've studied at your target
-                    destinations
-                  </p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-sm">
-                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <span className="text-2xl">📝</span>
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">
-                    3. Start Your Application
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    Use our step-by-step guide to complete your Erasmus
-                    application
-                  </p>
-                </div>
-              </div>
-              <div className="mt-8">
                 <Link href="/destinations">
-                  <Button
-                    size="lg"
-                    className="bg-blue-600 hover:bg-blue-700 mr-4"
-                  >
-                    Start Exploring
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+                  <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
+                      <Globe className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                      Explore Destinations
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Browse 500+ partner universities and discover where you
+                      can study abroad
+                    </p>
+                    <div className="flex items-center justify-center mt-4 text-blue-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                      Learn more
+                      <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </div>
+                  </div>
                 </Link>
-                <Link href="/student-stories">
-                  <Button variant="outline" size="lg">
-                    Read Stories First
-                  </Button>
+                <Link href="/student-accommodations">
+                  <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition-colors">
+                      <Home className="h-6 w-6 text-green-600" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">
+                      Accommodation
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Find student housing, dormitories, and accommodation
+                      options at your destination
+                    </p>
+                    <div className="flex items-center justify-center mt-4 text-green-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                      Learn more
+                      <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </div>
+                  </div>
+                </Link>
+                <Link href="/university-exchanges">
+                  <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-200 transition-colors">
+                      <BookOpen className="h-6 w-6 text-orange-600" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
+                      Exchanges
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Discover university exchange programs and academic
+                      opportunities worldwide
+                    </p>
+                    <div className="flex items-center justify-center mt-4 text-orange-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                      Learn more
+                      <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </div>
+                  </div>
                 </Link>
               </div>
             </div>
