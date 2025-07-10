@@ -117,6 +117,8 @@ const TeaserGallery = () => {
     setPreviews(samplePreviews);
   }, []);
 
+  const router = useRouter();
+
   const handleReadMore = (entry: PreviewEntry) => {
     if (!session) {
       setShowEmailCapture(true);
@@ -125,9 +127,9 @@ const TeaserGallery = () => {
 
     // Navigate to the appropriate page
     if (entry.type === "story") {
-      window.location.href = `/student-stories`;
+      router.push("/student-stories");
     } else {
-      window.location.href = `/student-accommodations`;
+      router.push("/student-accommodations");
     }
   };
 
