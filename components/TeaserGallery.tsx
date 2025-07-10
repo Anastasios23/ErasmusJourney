@@ -333,7 +333,7 @@ const TeaserGallery = () => {
                   <Button
                     onClick={() => {
                       setShowEmailCapture(false);
-                      window.location.href = "/login";
+                      router.push("/login");
                     }}
                     className="flex-1"
                   >
