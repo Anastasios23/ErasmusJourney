@@ -31,16 +31,10 @@ interface Story {
 }
 
 interface HomePageProps {
-  latestStories: Story[];
   totalUniversities: number;
-  totalPartnerships: number;
 }
 
-export default function HomePage({
-  latestStories,
-  totalUniversities,
-  totalPartnerships,
-}: HomePageProps) {
+export default function HomePage({ totalUniversities }: HomePageProps) {
   const steps = [
     {
       step: 1,
@@ -524,9 +518,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     // Fallback data if database is not available
     return {
       props: {
-        latestStories: [],
         totalUniversities: 5,
-        totalPartnerships: 1000,
       },
     };
   }
