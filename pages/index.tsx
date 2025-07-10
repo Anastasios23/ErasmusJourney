@@ -1,6 +1,7 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import Image from "next/image";
 import { prisma } from "../lib/prisma";
 import Header from "../components/Header";
 import StepCard from "../components/StepCard";
