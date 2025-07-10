@@ -5,6 +5,7 @@ import { Toaster } from "../src/components/ui/toaster";
 import { Toaster as Sonner } from "../src/components/ui/sonner";
 import { TooltipProvider } from "../src/components/ui/tooltip";
 import ErrorBoundary from "../src/components/ErrorBoundary";
+import HMRErrorHandler from "../src/components/HMRErrorHandler";
 import "../src/index.css";
 
 const queryClient = new QueryClient({
@@ -30,6 +31,7 @@ export default function App({
       >
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
+            <HMRErrorHandler />
             <Toaster />
             <Sonner />
             <Component {...pageProps} />
