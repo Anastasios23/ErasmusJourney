@@ -245,8 +245,50 @@ export default function HomePage({ totalUniversities }: HomePageProps) {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {steps.map((step) => (
-                <StepCard key={step.step} {...step} />
+                <div
+                  key={step.step}
+                  className="bg-white rounded-xl shadow-sm overflow-hidden"
+                >
+                  <div className="aspect-video relative">
+                    <Image
+                      src={step.image}
+                      alt={`${step.title} - Step ${step.step}`}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                    />
+                    <div className="absolute top-4 left-4">
+                      <div
+                        className={`${step.color} text-white px-3 py-1 rounded-full text-sm font-medium`}
+                      >
+                        Step {step.step}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      {step.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm">{step.description}</p>
+                  </div>
+                </div>
               ))}
+            </div>
+
+            {/* Start Application Button */}
+            <div className="text-center mt-12">
+              <Link href="/basic-information">
+                <Button
+                  size="lg"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-medium"
+                >
+                  Start Your Application Journey
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <p className="text-gray-600 text-sm mt-3">
+                Begin with Step 1: Personal Information
+              </p>
             </div>
           </div>
         </section>
