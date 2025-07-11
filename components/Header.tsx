@@ -152,7 +152,7 @@ export default function Header() {
                         href={item.href}
                         className="flex items-center gap-2 w-full"
                       >
-                        <item.icon className="h-4 w-4" />
+                        <item.icon className="h-4 w-4" aria-hidden="true" />
                         {item.name}
                       </Link>
                     </DropdownMenuItem>
@@ -162,7 +162,7 @@ export default function Header() {
                     className="flex items-center gap-2 cursor-pointer"
                     onClick={handleSignOut}
                   >
-                    <LogOut className="h-4 w-4" />
+                    <LogOut className="h-4 w-4" aria-hidden="true" />
                     Sign out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -185,11 +185,12 @@ export default function Header() {
               variant="ghost"
               size="sm"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             >
               {isMobileMenuOpen ? (
-                <X className="h-6 w-6" />
+                <X className="h-6 w-6" aria-hidden="true" />
               ) : (
-                <Menu className="h-6 w-6" />
+                <Menu className="h-6 w-6" aria-hidden="true" />
               )}
             </Button>
           </div>
