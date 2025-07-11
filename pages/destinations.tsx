@@ -215,7 +215,7 @@ export default function Destinations() {
     }
 
     return results;
-  }, [searchTerm, selectedRegion, selectedCostLevel, fuse]);
+  }, [searchTerm, selectedCostLevel, fuse]);
 
   const getCostBadgeColor = (cost: string) => {
     switch (cost) {
