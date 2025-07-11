@@ -384,6 +384,9 @@ export default function UniversityExchanges() {
   const [selectedDepartment, setSelectedDepartment] =
     useState("All Departments");
   const [selectedLevel, setSelectedLevel] = useState("All Levels");
+  const [selectedHostUniversity, setSelectedHostUniversity] = useState(
+    "All Host Universities",
+  );
 
   // Ensure component is mounted to prevent hydration mismatches
   useEffect(() => {
@@ -425,6 +428,42 @@ export default function UniversityExchanges() {
       country: agreement.partnerCountry,
       level: agreement.academicLevel || "all",
     }));
+  }, [selectedCyprusUni, selectedDepartment, selectedLevel]);
+
+  // Get available host universities based on selected filters
+  const availableHostUniversities = useMemo(() => {
+    if (!selectedCyprusUni || selectedDepartment === "All Departments") {
+      return [];
+    }
+
+    const cyprusUni = CYPRUS_UNIVERSITIES.find(
+      (uni) => uni.name === selectedCyprusUni,
+    );
+    if (!cyprusUni) return [];
+
+    let agreements;
+    if (cyprusUni.code === "UNIC" && selectedLevel !== "All Levels") {
+      const level = selectedLevel.toLowerCase() as
+        | "bachelor"
+        | "master"
+        | "phd";
+      agreements = getAgreementsByDepartmentAndLevel(
+        cyprusUni.code,
+        selectedDepartment,
+        level,
+      );
+    } else {
+      agreements = getAgreementsByDepartment(
+        cyprusUni.code,
+        selectedDepartment,
+      );
+    }
+
+    // Get unique host universities from agreements
+    const hostUniversities = [
+      ...new Set(agreements.map((agreement) => agreement.partnerUniversity)),
+    ];
+    return hostUniversities.sort();
   }, [selectedCyprusUni, selectedDepartment, selectedLevel]);
 
   // Filter the exchange history based on search criteria and available agreements
