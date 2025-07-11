@@ -297,7 +297,6 @@ export default function Destinations() {
                       variant="outline"
                       onClick={() => {
                         setSearchTerm("");
-                        setSelectedRegion("");
                         setSelectedCostLevel("");
                       }}
                     >
