@@ -309,53 +309,12 @@ const LocationBrowser = () => {
         </div>
       </section>
 
-      {/* Email Capture Modal */}
-      {showEmailCapture && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-md mx-4">
-            <CardContent className="p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">
-                Unlock Full Access
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Join our community to explore all stories and accommodations in{" "}
-                {selectedCity}.
-              </p>
-              <div className="space-y-4">
-                <input
-                  type="email"
-                  placeholder="Your email address"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <select className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="">Select your university</option>
-                  <option value="ucy">University of Cyprus</option>
-                  <option value="cut">Cyprus University of Technology</option>
-                  <option value="other">Other</option>
-                </select>
-                <div className="flex space-x-3">
-                  <Button
-                    onClick={() => {
-                      setShowEmailCapture(false);
-                      router.push("/login");
-                    }}
-                    className="flex-1"
-                  >
-                    Sign Up & Explore
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowEmailCapture(false)}
-                    className="flex-1"
-                  >
-                    Close
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      <EmailCaptureModal
+        isOpen={showEmailCapture}
+        onClose={() => setShowEmailCapture(false)}
+        title="Unlock Full Access"
+        description={`Join our community to explore all stories and accommodations in ${selectedCity}.`}
+      />
     </>
   );
 };
