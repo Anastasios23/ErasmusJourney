@@ -99,7 +99,16 @@ export default function LivingExpenses() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Living Expenses Form submitted:", { formData, expenses });
-    router.push("/help-future-students");
+
+    // Show success message
+    toast.success(
+      "🎉 Thank you! Your living expenses data has been saved and will help future students plan their budgets.",
+    );
+
+    // Navigate after a brief delay to show the success message
+    setTimeout(() => {
+      router.push("/help-future-students");
+    }, 2000);
   };
 
   const expenseCategories = [
