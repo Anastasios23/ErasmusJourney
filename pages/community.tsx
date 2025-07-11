@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "../src/components/ui/badge";
 import { Button } from "../src/components/ui/button";
@@ -283,11 +284,13 @@ export default function Community() {
                   href={`/destinations/${destination.id}`}
                 >
                   <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                    <div className="aspect-video overflow-hidden rounded-t-lg">
-                      <img
+                    <div className="aspect-video overflow-hidden rounded-t-lg relative">
+                      <Image
                         src={destination.image}
                         alt={destination.city}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform"
+                        fill
+                        className="object-cover hover:scale-105 transition-transform"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     </div>
                     <CardContent className="pt-4">
