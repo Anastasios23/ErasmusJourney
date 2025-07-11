@@ -211,6 +211,7 @@ export default function RegisterPage() {
                       placeholder="John"
                       value={formData.firstName}
                       onChange={handleChange}
+                      autoComplete="given-name"
                       required
                       disabled={isLoading}
                     />
@@ -224,6 +225,7 @@ export default function RegisterPage() {
                       placeholder="Doe"
                       value={formData.lastName}
                       onChange={handleChange}
+                      autoComplete="family-name"
                       required
                       disabled={isLoading}
                     />
@@ -239,6 +241,7 @@ export default function RegisterPage() {
                     placeholder="john.doe@example.com"
                     value={formData.email}
                     onChange={handleChange}
+                    autoComplete="email"
                     required
                     disabled={isLoading}
                   />
@@ -253,6 +256,7 @@ export default function RegisterPage() {
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleChange}
+                    autoComplete="new-password"
                     required
                     disabled={isLoading}
                   />
@@ -267,6 +271,7 @@ export default function RegisterPage() {
                     placeholder="Confirm your password"
                     value={formData.confirmPassword}
                     onChange={handleChange}
+                    autoComplete="new-password"
                     required
                     disabled={isLoading}
                   />
