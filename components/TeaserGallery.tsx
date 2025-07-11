@@ -126,16 +126,18 @@ const TeaserGallery = () => {
                   size="sm"
                   className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white shadow-lg"
                   onClick={prevSlide}
+                  aria-label="Previous stories"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4" aria-hidden="true" />
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white shadow-lg"
                   onClick={nextSlide}
+                  aria-label="Next stories"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </>
             )}
@@ -220,7 +222,10 @@ const TeaserGallery = () => {
                             </div>
                             {entry.city && (
                               <div className="flex items-center">
-                                <MapPin className="h-3 w-3 mr-1" />
+                                <MapPin
+                                  className="h-3 w-3 mr-1"
+                                  aria-hidden="true"
+                                />
                                 {entry.city}
                               </div>
                             )}
@@ -233,7 +238,10 @@ const TeaserGallery = () => {
                           className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                         >
                           Read More
-                          <ArrowRight className="h-3 w-3 ml-1" />
+                          <ArrowRight
+                            className="h-3 w-3 ml-1"
+                            aria-hidden="true"
+                          />
                         </Button>
                       </div>
                     </div>
