@@ -334,11 +334,13 @@ export default function StoryDetailPage({ story }: StoryDetailPageProps) {
                       className="hover:shadow-lg transition-shadow cursor-pointer"
                       onClick={() => router.push(`/stories/${relatedStory.id}`)}
                     >
-                      <div className="aspect-video overflow-hidden rounded-t-lg">
-                        <img
+                      <div className="aspect-video overflow-hidden rounded-t-lg relative">
+                        <Image
                           src={relatedStory.image}
                           alt={relatedStory.title}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform"
+                          fill
+                          className="object-cover hover:scale-105 transition-transform"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                       </div>
                       <CardContent className="pt-4">
