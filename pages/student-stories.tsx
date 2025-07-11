@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Header from "../components/Header";
@@ -293,11 +294,13 @@ export default function StudentStoriesPage() {
                         className="hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col"
                         onClick={() => router.push(`/stories/${story.id}`)}
                       >
-                        <div className="aspect-video overflow-hidden rounded-t-lg">
-                          <img
+                        <div className="aspect-video overflow-hidden rounded-t-lg relative">
+                          <Image
                             src={story.image}
                             alt={story.title}
-                            className="w-full h-full object-cover hover:scale-105 transition-transform"
+                            fill
+                            className="object-cover hover:scale-105 transition-transform"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           />
                         </div>
                         <CardHeader className="pb-2 flex-none">
