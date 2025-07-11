@@ -387,18 +387,10 @@ export default function HomePage({ totalUniversities }: HomePageProps) {
                 <ul className="space-y-2 text-gray-600">
                   <li>
                     <a
-                      href="#"
+                      href="mailto:support@erasmusjourney.com?subject=Help Request"
                       className="hover:text-gray-900 transition-colors"
                     >
-                      Help Center
-                    </a>
-                  </li>
-                  <li className="mt-2">
-                    <a
-                      href="#"
-                      className="hover:text-gray-900 transition-colors"
-                    >
-                      Contact
+                      Email Support
                     </a>
                   </li>
                   <li className="mt-2">
@@ -406,7 +398,15 @@ export default function HomePage({ totalUniversities }: HomePageProps) {
                       href="/community"
                       className="hover:text-gray-900 transition-colors"
                     >
-                      Community
+                      Community Help
+                    </Link>
+                  </li>
+                  <li className="mt-2">
+                    <Link
+                      href="/student-stories"
+                      className="hover:text-gray-900 transition-colors"
+                    >
+                      Student Stories
                     </Link>
                   </li>
                 </ul>
