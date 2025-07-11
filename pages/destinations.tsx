@@ -209,11 +209,6 @@ export default function Destinations() {
       results = fuseResults.map((result) => result.item);
     }
 
-    // Apply region filter
-    if (selectedRegion && selectedRegion !== "all-regions") {
-      results = results.filter((dest) => dest.region === selectedRegion);
-    }
-
     // Apply cost filter
     if (selectedCostLevel && selectedCostLevel !== "all-costs") {
       results = results.filter((dest) => dest.costLevel === selectedCostLevel);
