@@ -500,6 +500,10 @@ export default function UniversityExchanges() {
         selectedDepartment === "All Departments" ||
         exchange.student.department === selectedDepartment;
 
+      const matchesHostUniversity =
+        selectedHostUniversity === "All Host Universities" ||
+        exchange.exchange.university === selectedHostUniversity;
+
       // Check if this exchange destination is available based on actual agreements
       const matchesAgreements =
         availableDestinations.length === 0 ||
@@ -515,6 +519,7 @@ export default function UniversityExchanges() {
         matchesCyprusUni &&
         matchesCountry &&
         matchesDepartment &&
+        matchesHostUniversity &&
         matchesAgreements
       );
     });
