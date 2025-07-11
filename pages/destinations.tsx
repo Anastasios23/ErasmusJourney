@@ -285,7 +285,7 @@ export default function Destinations() {
                     onValueChange={setSelectedRegion}
                   >
                     <SelectTrigger className="w-48">
-                      <SelectValue placeholder="All European Regions" />
+                      <SelectValue placeholder="Select Region" />
                     </SelectTrigger>
                     <SelectContent>
                       {regions.map((region) => (
