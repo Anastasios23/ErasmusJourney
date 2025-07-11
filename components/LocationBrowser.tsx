@@ -141,7 +141,7 @@ const LocationBrowser = () => {
                   {availableCities.map((city) => (
                     <SelectItem key={city} value={city}>
                       <div className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-2" />
+                        <MapPin className="h-4 w-4 mr-2" aria-hidden="true" />
                         {city}
                       </div>
                     </SelectItem>
@@ -239,7 +239,10 @@ const LocationBrowser = () => {
                             {entry.title}
                           </h3>
                           <div className="flex items-center ml-2">
-                            <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                            <Star
+                              className="h-4 w-4 text-yellow-400 fill-current"
+                              aria-hidden="true"
+                            />
                             <span className="text-sm font-medium ml-1">
                               {entry.rating}
                             </span>
@@ -273,7 +276,10 @@ const LocationBrowser = () => {
                             className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                           >
                             Read More
-                            <ArrowRight className="h-3 w-3 ml-1" />
+                            <ArrowRight
+                              className="h-3 w-3 ml-1"
+                              aria-hidden="true"
+                            />
                           </Button>
                         </div>
                       </div>
@@ -288,9 +294,9 @@ const LocationBrowser = () => {
                   onClick={() => handleViewAll(selectedCity)}
                   className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
-                  <Users className="mr-2 h-5 w-5" />
+                  <Users className="mr-2 h-5 w-5" aria-hidden="true" />
                   View All in {selectedCity}
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
                 </Button>
                 <p className="text-sm text-gray-500 mt-2">
                   {session
