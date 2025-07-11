@@ -453,7 +453,7 @@ export default function UniversityExchanges() {
         );
 
       const matchesCyprusUni =
-        selectedCyprusUni === "All Universities" ||
+        !selectedCyprusUni ||
         exchange.student.cyprusUniversity === selectedCyprusUni;
 
       const matchesCountry =
@@ -738,7 +738,7 @@ export default function UniversityExchanges() {
                     variant="outline"
                     onClick={() => {
                       setSearchTerm("");
-                      setSelectedCyprusUni("All Universities");
+                      setSelectedCyprusUni("");
                       setSelectedCountry("All Countries");
                       setSelectedDepartment("All Departments");
                       setSelectedLevel("All Levels");
