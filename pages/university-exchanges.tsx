@@ -528,6 +528,7 @@ export default function UniversityExchanges() {
     selectedCyprusUni,
     selectedCountry,
     selectedDepartment,
+    selectedHostUniversity,
     availableDestinations,
   ]);
 
