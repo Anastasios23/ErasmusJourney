@@ -275,22 +275,6 @@ export default function Destinations() {
 
                 <div className="flex gap-4">
                   <Select
-                    value={selectedRegion}
-                    onValueChange={setSelectedRegion}
-                  >
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder="Select Region" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {regions.map((region) => (
-                        <SelectItem key={region} value={region}>
-                          {region}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select
                     value={selectedCostLevel}
                     onValueChange={setSelectedCostLevel}
                   >
