@@ -494,6 +494,16 @@ export default function LivingExpenses() {
               </Card>
             )}
 
+            {/* Data Collection Notice */}
+            <div className="bg-blue-50 p-4 rounded-lg mt-6">
+              <p className="text-sm text-gray-700">
+                <strong>Note:</strong> Your expense data will be used to help
+                future students better plan their budgets. This information
+                contributes to our community knowledge base and may be shown in
+                aggregate form to guide other students.
+              </p>
+            </div>
+
             {/* Navigation */}
             <div className="flex justify-between items-center pt-8">
               <Link href="/accommodation">
