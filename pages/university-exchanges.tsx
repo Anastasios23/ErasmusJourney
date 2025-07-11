@@ -673,7 +673,7 @@ export default function UniversityExchanges() {
                     onValueChange={setSelectedCyprusUni}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Cyprus University" />
+                      <SelectValue placeholder="👆 Select Your University First" />
                     </SelectTrigger>
                     <SelectContent>
                       {cyprusUniversities.map((uni) => (
