@@ -86,17 +86,21 @@ const HMRErrorHandler = () => {
         errorMessage.includes("chunk") ||
         errorMessage.includes("Loading chunk") ||
         errorMessage.includes("Loading CSS chunk") ||
+        errorMessage.includes("fly.dev") ||
+        errorMessage.includes("?reload=") ||
         // Handle Next.js router errors
         errorMessage.includes("Router.change") ||
         errorMessage.includes("getPageList") ||
         // Handle network errors in development
         (errorMessage.includes("NetworkError") &&
-          process.env.NODE_ENV === "development");
+          process.env.NODE_ENV === "development") ||
+        // Handle cloud environment specific errors
+        (errorMessage.includes("TypeError") && errorMessage.includes("fetch"));
 
       if (isDevelopmentError) {
         // Prevent the error from being logged to console
         event.preventDefault();
-        console.warn("Development error suppressed:", errorMessage);
+        // Don't log to avoid console spam
       }
     };
 
