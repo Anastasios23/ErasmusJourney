@@ -178,7 +178,6 @@ const destinations = [
 export default function Destinations() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedCostLevel, setSelectedCostLevel] = useState("");
 
   // Configure Fuse.js for fuzzy search
