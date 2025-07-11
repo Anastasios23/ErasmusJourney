@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import { useDestinationSearch } from "../src/hooks/useDestinations";
 import { useRouter } from "next/router";
 import Fuse from "fuse.js";
 import { Badge } from "../src/components/ui/badge";
