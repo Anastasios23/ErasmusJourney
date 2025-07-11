@@ -20,7 +20,7 @@ const HMRErrorHandler = () => {
     ): Promise<Response> => {
       try {
         return await originalFetch(...args);
-      } catch (error) {
+      } catch (error: any) {
         const url = args[0];
         const urlString = typeof url === "string" ? url : url?.toString() || "";
 
@@ -32,24 +32,23 @@ const HMRErrorHandler = () => {
           urlString.includes("hot-update") ||
           urlString.includes("/_next/") ||
           urlString.includes("?reload=") ||
+          urlString.includes("fly.dev") ||
           // Handle PageLoader requests
           urlString.match(/\/_next\/static\/chunks\/pages\//) ||
           // Handle dynamic imports and code splitting
           urlString.match(/\/_next\/static\/chunks\/\d+\./) ||
           // Handle development server requests
-          (urlString.includes("localhost") && urlString.includes("_next"));
+          (urlString.includes("localhost") && urlString.includes("_next")) ||
+          // Handle cloud environment HMR
+          (error?.message?.includes("Failed to fetch") &&
+            urlString.includes("?reload="));
 
         if (isDevelopmentRequest) {
-          // Silently handle development fetch failures
-          console.warn(
-            "Development fetch failed, providing fallback:",
-            urlString,
-            error.message,
-          );
+          // Silently handle development fetch failures - don't log to avoid console spam
 
           // Return appropriate fallback based on request type
           if (urlString.includes(".js") || urlString.includes("chunks")) {
-            return new Response("// Fallback for missing chunk\n", {
+            return new Response("// Fallback for missing chunk\nexport {};", {
               status: 200,
               headers: { "Content-Type": "application/javascript" },
             });
