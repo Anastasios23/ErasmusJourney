@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Header from "../../components/Header";
@@ -155,11 +156,14 @@ export default function StoryDetailPage({ story }: StoryDetailPageProps) {
             {/* Article Header */}
             <article className="bg-white rounded-lg shadow-sm overflow-hidden">
               {/* Hero Image */}
-              <div className="aspect-video overflow-hidden">
-                <img
+              <div className="aspect-video overflow-hidden relative">
+                <Image
                   src={story.image}
                   alt={story.title}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="100vw"
+                  priority
                 />
               </div>
 
