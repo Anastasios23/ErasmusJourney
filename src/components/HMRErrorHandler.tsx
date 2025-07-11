@@ -164,6 +164,7 @@ const HMRErrorHandler = () => {
         handleUnhandledRejection,
       );
       window.removeEventListener("error", handleWindowError);
+      delete (window as any).__HMR_ERROR_HANDLER_INITIALIZED;
     };
   }, []);
 
