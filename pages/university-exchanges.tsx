@@ -749,7 +749,27 @@ export default function UniversityExchanges() {
 
             {/* Exchange History List */}
             <div className="space-y-6">
-              {filteredHistory.length === 0 ? (
+              {!selectedCyprusUni ? (
+                <Card>
+                  <CardContent className="p-12 text-center">
+                    <GraduationCap className="h-12 w-12 text-blue-500 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      Select Your Home University
+                    </h3>
+                    <p className="text-gray-600 mb-6">
+                      Please select your Cyprus university above to view
+                      relevant exchange records and course mappings.
+                    </p>
+                    <div className="bg-blue-50 p-4 rounded-lg">
+                      <p className="text-sm text-blue-800">
+                        💡 This helps us show you the most relevant exchange
+                        opportunities and course equivalencies for your academic
+                        program.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : filteredHistory.length === 0 ? (
                 <Card>
                   <CardContent className="p-12 text-center">
                     <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
