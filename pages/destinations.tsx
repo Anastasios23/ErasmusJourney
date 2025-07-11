@@ -292,7 +292,7 @@ export default function Destinations() {
                   </Select>
 
                   {/* Clear Filters Button */}
-                  {(searchTerm || selectedRegion || selectedCostLevel) && (
+                  {(searchTerm || selectedCostLevel) && (
                     <Button
                       variant="outline"
                       onClick={() => {
