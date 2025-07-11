@@ -92,13 +92,6 @@ export default function HubPage({ stats }: HubPageProps) {
       color: "bg-pink-500",
     },
     {
-      title: "Rate Accommodations",
-      description: "Review places where you've stayed",
-      icon: Star,
-      href: "/rate-accommodation",
-      color: "bg-indigo-500",
-    },
-    {
       title: "Join Community",
       description: "Connect with other Erasmus students",
       icon: Heart,
