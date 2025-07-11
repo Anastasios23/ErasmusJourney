@@ -84,8 +84,10 @@ export default function HelpFutureStudents() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Help Future Students Form submitted:", formData);
-    alert("Thank you for joining our mentor community! 🎉");
-    router.push("/community");
+    toast.success("Thank you for joining our mentor community! 🎉");
+    setTimeout(() => {
+      router.push("/community");
+    }, 2000);
   };
 
   const languages = [
