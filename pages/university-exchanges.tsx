@@ -392,10 +392,7 @@ export default function UniversityExchanges() {
 
   // Get available destinations based on selected filters
   const availableDestinations = useMemo(() => {
-    if (
-      selectedCyprusUni === "All Universities" ||
-      selectedDepartment === "All Departments"
-    ) {
+    if (!selectedCyprusUni || selectedDepartment === "All Departments") {
       return [];
     }
 
