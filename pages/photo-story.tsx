@@ -438,11 +438,13 @@ export default function PhotoStory() {
                                 <Label>Photo</Label>
                                 <div className="mt-2">
                                   {photo.imagePreview ? (
-                                    <div className="relative">
-                                      <img
+                                    <div className="relative w-full h-48">
+                                      <Image
                                         src={photo.imagePreview}
                                         alt={`Photo ${index + 1}`}
-                                        className="w-full h-48 object-cover rounded-lg"
+                                        fill
+                                        className="object-cover rounded-lg"
+                                        sizes="(max-width: 1024px) 100vw, 50vw"
                                       />
                                       <Button
                                         variant="secondary"
