@@ -211,9 +211,15 @@ const LocationBrowser = () => {
                             }
                           >
                             {entry.type === "story" ? (
-                              <BookOpen className="h-3 w-3 mr-1" />
+                              <BookOpen
+                                className="h-3 w-3 mr-1"
+                                aria-hidden="true"
+                              />
                             ) : (
-                              <Home className="h-3 w-3 mr-1" />
+                              <Home
+                                className="h-3 w-3 mr-1"
+                                aria-hidden="true"
+                              />
                             )}
                             {entry.type === "story" ? "Story" : "Stay"}
                           </Badge>
@@ -297,7 +303,10 @@ const LocationBrowser = () => {
 
           {selectedCity && results.length === 0 && (
             <div className="text-center py-12">
-              <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <MapPin
+                className="h-12 w-12 text-gray-400 mx-auto mb-4"
+                aria-hidden="true"
+              />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
                 No experiences found in {selectedCity}
               </h3>
