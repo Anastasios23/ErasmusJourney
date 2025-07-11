@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { Card, CardContent } from "../src/components/ui/card";
 import { Button } from "../src/components/ui/button";
@@ -149,10 +150,12 @@ const TeaserGallery = () => {
                 >
                   <CardContent className="p-0">
                     <div className="aspect-video relative overflow-hidden rounded-t-lg">
-                      <img
-                        src={entry.imageUrl}
+                      <Image
+                        src={entry.imageUrl || "/placeholder-image.jpg"}
                         alt={entry.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-300"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                       <div className="absolute top-3 left-3">
                         <Badge
@@ -163,9 +166,12 @@ const TeaserGallery = () => {
                           }
                         >
                           {entry.type === "story" ? (
-                            <BookOpen className="h-3 w-3 mr-1" />
+                            <BookOpen
+                              className="h-3 w-3 mr-1"
+                              aria-hidden="true"
+                            />
                           ) : (
-                            <Home className="h-3 w-3 mr-1" />
+                            <Home className="h-3 w-3 mr-1" aria-hidden="true" />
                           )}
                           {entry.type === "story" ? "Story" : "Stay"}
                         </Badge>
@@ -245,7 +251,7 @@ const TeaserGallery = () => {
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
                 Read All Stories
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
               </Button>
             </Link>
             <p className="text-sm text-gray-500 mt-2">
