@@ -7,6 +7,10 @@ const HMRErrorHandler = () => {
     // Only run in development environment
     if (process.env.NODE_ENV !== "development") return;
 
+    // Prevent multiple initializations
+    if ((window as any).__HMR_ERROR_HANDLER_INITIALIZED) return;
+    (window as any).__HMR_ERROR_HANDLER_INITIALIZED = true;
+
     // Store original fetch function
     const originalFetch = window.fetch;
 
