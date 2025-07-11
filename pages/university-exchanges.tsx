@@ -802,6 +802,7 @@ export default function UniversityExchanges() {
                       setSearchTerm("");
                       setSelectedCyprusUni("");
                       setSelectedCountry("All Countries");
+                      setSelectedHostUniversity("All Host Universities");
                       setSelectedDepartment("All Departments");
                       setSelectedLevel("All Levels");
                     }}
