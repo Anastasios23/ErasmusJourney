@@ -358,10 +358,7 @@ const originalSampleData = [
   },
 ];
 
-const cyprusUniversities = [
-  "All Universities",
-  ...CYPRUS_UNIVERSITIES.map((uni) => uni.name),
-];
+const cyprusUniversities = [...CYPRUS_UNIVERSITIES.map((uni) => uni.name)];
 
 // Get all unique countries from actual agreements
 const allCountries = [
@@ -382,8 +379,7 @@ export default function UniversityExchanges() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCyprusUni, setSelectedCyprusUni] =
-    useState("All Universities");
+  const [selectedCyprusUni, setSelectedCyprusUni] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("All Countries");
   const [selectedDepartment, setSelectedDepartment] =
     useState("All Departments");
