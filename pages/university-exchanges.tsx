@@ -746,6 +746,26 @@ export default function UniversityExchanges() {
                   </Select>
 
                   <Select
+                    value={selectedHostUniversity}
+                    onValueChange={setSelectedHostUniversity}
+                    disabled={availableHostUniversities.length === 0}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Host University" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="All Host Universities">
+                        All Host Universities
+                      </SelectItem>
+                      {availableHostUniversities.map((university) => (
+                        <SelectItem key={university} value={university}>
+                          {university}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select
                     value={selectedDepartment}
                     onValueChange={setSelectedDepartment}
                   >
