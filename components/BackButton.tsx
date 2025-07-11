@@ -15,8 +15,12 @@ export default function BackButton({
   const router = useRouter();
 
   const handleClick = () => {
-    // Simple approach: always go to fallback URL for reliability
-    router.push(fallbackUrl);
+    // Try to go back in history, fallback to specified URL
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push(fallbackUrl);
+    }
   };
 
   // Don't show on home page
@@ -29,8 +33,9 @@ export default function BackButton({
       onClick={handleClick}
       className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors ${className}`}
       type="button"
+      aria-label="Go back"
     >
-      <ArrowLeft className="h-4 w-4" />
+      <ArrowLeft className="h-4 w-4" aria-hidden="true" />
       {children || "Back"}
     </button>
   );
