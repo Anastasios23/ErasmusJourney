@@ -288,9 +288,6 @@ export default function Destinations() {
                       <SelectValue placeholder="All European Regions" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all-regions">
-                        All European Regions
-                      </SelectItem>
                       {regions.map((region) => (
                         <SelectItem key={region} value={region}>
                           {region}
