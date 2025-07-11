@@ -332,14 +332,18 @@ export default function StudentStoriesPage() {
 
                           {/* Author Info */}
                           <div className="flex items-center gap-3 mb-3">
-                            <img
-                              src={
-                                story.author?.avatar ||
-                                "/placeholder-avatar.png"
-                              }
-                              alt={`${story.author?.firstName || "Anonymous"} ${story.author?.lastName || "User"}`}
-                              className="w-8 h-8 rounded-full"
-                            />
+                            <div className="relative w-8 h-8">
+                              <Image
+                                src={
+                                  story.author?.avatar ||
+                                  "/placeholder-avatar.png"
+                                }
+                                alt={`${story.author?.firstName || "Anonymous"} ${story.author?.lastName || "User"}`}
+                                fill
+                                className="rounded-full object-cover"
+                                sizes="32px"
+                              />
+                            </div>
                             <div className="flex-1 min-w-0">
                               <div className="text-sm font-medium truncate">
                                 {story.author?.firstName || "Anonymous"}{" "}
