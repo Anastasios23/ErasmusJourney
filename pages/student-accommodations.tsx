@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Header from "../components/Header";
@@ -332,7 +333,7 @@ export default function StudentAccommodations() {
                             <SelectItem value="no-limit">No Limit</SelectItem>
                             <SelectItem value="500">€500</SelectItem>
                             <SelectItem value="700">€700</SelectItem>
-                            <SelectItem value="1000">€1000</SelectItem>
+                            <SelectItem value="1000">��1000</SelectItem>
                             <SelectItem value="1500">€1500</SelectItem>
                           </SelectContent>
                         </Select>
@@ -436,14 +437,16 @@ export default function StudentAccommodations() {
                           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                             {/* Image */}
                             <div className="lg:col-span-1">
-                              <div className="aspect-video overflow-hidden rounded-lg">
-                                <img
+                              <div className="aspect-video overflow-hidden rounded-lg relative">
+                                <Image
                                   src={
                                     listing.photos?.[0] ||
                                     "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop"
                                   }
                                   alt={`${listing.accommodationType || "Accommodation"} in ${listing.city || "City"}`}
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                  fill
+                                  className="object-cover group-hover:scale-105 transition-transform"
+                                  sizes="(max-width: 1024px) 100vw, 25vw"
                                 />
                               </div>
                               {listing.featured && (
