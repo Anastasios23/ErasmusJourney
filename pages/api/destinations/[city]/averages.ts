@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { getTestDataByCity } from "../../test-data/form-submissions";
 
 interface SubmissionData {
   id: string;
@@ -79,9 +80,17 @@ export default async function handler(
 async function getDestinationAverages(
   city: string,
 ): Promise<DestinationAverages> {
-  // This would normally query your database for submissions related to this city
-  // For now, we'll return realistic sample data based on the city
+  // Get test data based on actual form submissions
+  const testData = getTestDataByCity(city);
 
+  if (testData) {
+    return {
+      city,
+      ...testData,
+    };
+  }
+
+  // Fallback to hardcoded data for cities without test submissions
   const cityAveragesMap: Record<string, Partial<DestinationAverages>> = {
     berlin: {
       totalSubmissions: 47,
