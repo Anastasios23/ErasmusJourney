@@ -317,18 +317,6 @@ export default function BasicInformation() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="dateOfBirth">Date of Birth *</Label>
-                      <Input
-                        id="dateOfBirth"
-                        type="date"
-                        value={formData.dateOfBirth}
-                        onChange={(e) =>
-                          handleInputChange("dateOfBirth", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
                       <Label htmlFor="nationality">Nationality *</Label>
                       <Input
                         id="nationality"
