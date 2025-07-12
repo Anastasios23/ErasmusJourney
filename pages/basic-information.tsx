@@ -328,69 +328,6 @@ export default function BasicInformation() {
                       />
                     </div>
                   </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="address">Home Address *</Label>
-                    <Textarea
-                      id="address"
-                      value={formData.address}
-                      onChange={(e) =>
-                        handleInputChange("address", e.target.value)
-                      }
-                      required
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="emergencyContactName">
-                        Emergency Contact Name *
-                      </Label>
-                      <Input
-                        id="emergencyContactName"
-                        value={formData.emergencyContactName}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "emergencyContactName",
-                            e.target.value,
-                          )
-                        }
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="emergencyContactPhone">
-                        Emergency Contact Phone *
-                      </Label>
-                      <Input
-                        id="emergencyContactPhone"
-                        value={formData.emergencyContactPhone}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "emergencyContactPhone",
-                            e.target.value,
-                          )
-                        }
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="emergencyContactRelation">
-                        Relationship *
-                      </Label>
-                      <Input
-                        id="emergencyContactRelation"
-                        value={formData.emergencyContactRelation}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "emergencyContactRelation",
-                            e.target.value,
-                          )
-                        }
-                        required
-                      />
-                    </div>
-                  </div>
                 </CardContent>
               </Card>
 
