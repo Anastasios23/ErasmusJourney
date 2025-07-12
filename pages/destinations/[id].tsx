@@ -354,9 +354,10 @@ export default function DestinationDetailPage() {
             {/* Main Content */}
             <div className="lg:col-span-3 order-1 lg:order-2">
               <Tabs defaultValue="overview" className="w-full">
-                <TabsList className="grid w-full grid-cols-5 mb-6">
+                <TabsList className="grid w-full grid-cols-6 mb-6">
                   <TabsTrigger value="overview">Overview</TabsTrigger>
                   <TabsTrigger value="universities">Universities</TabsTrigger>
+                  <TabsTrigger value="student-data">Student Data</TabsTrigger>
                   <TabsTrigger value="costs">Living Costs</TabsTrigger>
                   <TabsTrigger value="life">Student Life</TabsTrigger>
                   <TabsTrigger value="practical">Practical Info</TabsTrigger>
