@@ -4,7 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Header from "../../components/Header";
-import { useDestination } from "../../src/hooks/useDestinations";
+import {
+  useDestination,
+  useDestinationAverages,
+} from "../../src/hooks/useDestinations";
 import { useGeneratedContent } from "../../src/hooks/useFormSubmissions";
 import { Button } from "../../src/components/ui/button";
 import { Badge } from "../../src/components/ui/badge";
