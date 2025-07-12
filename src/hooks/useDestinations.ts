@@ -144,3 +144,61 @@ export function useDestinationSearch(searchParams: {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
+
+// Types for destination averages
+export interface DestinationAverages {
+  city: string;
+  totalSubmissions: number;
+  averages: {
+    livingCosts: {
+      rent: number | null;
+      food: number | null;
+      transport: number | null;
+      entertainment: number | null;
+      total: number | null;
+    };
+    ratings: {
+      overall: number | null;
+      accommodation: number | null;
+      socialLife: number | null;
+      academics: number | null;
+      costOfLiving: number | null;
+    };
+    recommendations: {
+      wouldRecommend: number;
+      totalResponses: number;
+    };
+  };
+  recentSubmissions: Array<{
+    id: string;
+    type: string;
+    title: string;
+    excerpt: string;
+    author: string;
+    createdAt: string;
+  }>;
+  topTips: string[];
+  accommodationTypes: Array<{
+    type: string;
+    count: number;
+    averageRent: number | null;
+  }>;
+}
+
+// Hook to fetch destination averages based on student submissions
+export function useDestinationAverages(city: string) {
+  return useQuery<DestinationAverages>({
+    queryKey: ["destination-averages", city],
+    queryFn: async () => {
+      const response = await fetch(
+        `/api/destinations/${encodeURIComponent(city)}/averages`,
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch destination averages");
+      }
+      return response.json();
+    },
+    enabled: !!city,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  });
+}
