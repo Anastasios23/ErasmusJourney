@@ -59,16 +59,16 @@ export default async function handler(
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const { city } = req.query;
+  const { id } = req.query;
 
-  if (!city || typeof city !== "string") {
-    return res.status(400).json({ message: "Invalid city parameter" });
+  if (!id || typeof id !== "string") {
+    return res.status(400).json({ message: "Invalid id parameter" });
   }
 
   try {
     // In a real application, you would fetch this from your database
     // For now, we'll simulate data based on the city
-    const cityData = await getDestinationAverages(city);
+    const cityData = await getDestinationAverages(id);
 
     res.status(200).json(cityData);
   } catch (error) {
