@@ -548,35 +548,6 @@ export default function BasicInformation() {
                       </Select>
                     </div>
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="exchangeStartDate">
-                        Preferred Start Date
-                      </Label>
-                      <Input
-                        id="exchangeStartDate"
-                        type="date"
-                        value={formData.exchangeStartDate}
-                        onChange={(e) =>
-                          handleInputChange("exchangeStartDate", e.target.value)
-                        }
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="exchangeEndDate">
-                        Preferred End Date
-                      </Label>
-                      <Input
-                        id="exchangeEndDate"
-                        type="date"
-                        value={formData.exchangeEndDate}
-                        onChange={(e) =>
-                          handleInputChange("exchangeEndDate", e.target.value)
-                        }
-                      />
-                    </div>
-                  </div>
                 </CardContent>
               </Card>
 
