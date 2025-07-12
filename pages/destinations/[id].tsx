@@ -467,6 +467,302 @@ export default function DestinationDetailPage() {
                   </Card>
                 </TabsContent>
 
+                <TabsContent value="student-data" data-section="student-data">
+                  {averagesLoading ? (
+                    <div className="space-y-4">
+                      <Skeleton className="h-48 w-full" />
+                      <Skeleton className="h-32 w-full" />
+                    </div>
+                  ) : averagesData?.totalSubmissions > 0 ? (
+                    <div className="space-y-6">
+                      {/* Overview Stats */}
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2">
+                            <Users className="h-5 w-5" />
+                            Student Data Overview
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="text-center">
+                              <div className="text-2xl font-bold text-blue-600">
+                                {averagesData.totalSubmissions}
+                              </div>
+                              <div className="text-sm text-gray-600">
+                                Total Submissions
+                              </div>
+                            </div>
+                            {averagesData.averages.ratings.overall && (
+                              <div className="text-center">
+                                <div className="text-2xl font-bold text-green-600">
+                                  {averagesData.averages.ratings.overall}/5
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                  Overall Rating
+                                </div>
+                              </div>
+                            )}
+                            <div className="text-center">
+                              <div className="text-2xl font-bold text-purple-600">
+                                {
+                                  averagesData.averages.recommendations
+                                    .wouldRecommend
+                                }
+                                %
+                              </div>
+                              <div className="text-sm text-gray-600">
+                                Would Recommend
+                              </div>
+                            </div>
+                            {averagesData.averages.livingCosts.total && (
+                              <div className="text-center">
+                                <div className="text-2xl font-bold text-orange-600">
+                                  €{averagesData.averages.livingCosts.total}
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                  Avg Monthly Cost
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      {/* Living Costs from Students */}
+                      {averagesData.averages.livingCosts.rent && (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>
+                              Average Living Costs (Student Reported)
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-3">
+                              <div className="flex justify-between items-center">
+                                <span>Rent</span>
+                                <span className="font-medium">
+                                  €{averagesData.averages.livingCosts.rent}
+                                  /month
+                                </span>
+                              </div>
+                              {averagesData.averages.livingCosts.food && (
+                                <div className="flex justify-between items-center">
+                                  <span>Food</span>
+                                  <span className="font-medium">
+                                    €{averagesData.averages.livingCosts.food}
+                                    /month
+                                  </span>
+                                </div>
+                              )}
+                              {averagesData.averages.livingCosts.transport && (
+                                <div className="flex justify-between items-center">
+                                  <span>Transport</span>
+                                  <span className="font-medium">
+                                    €
+                                    {
+                                      averagesData.averages.livingCosts
+                                        .transport
+                                    }
+                                    /month
+                                  </span>
+                                </div>
+                              )}
+                              {averagesData.averages.livingCosts
+                                .entertainment && (
+                                <div className="flex justify-between items-center">
+                                  <span>Entertainment</span>
+                                  <span className="font-medium">
+                                    €
+                                    {
+                                      averagesData.averages.livingCosts
+                                        .entertainment
+                                    }
+                                    /month
+                                  </span>
+                                </div>
+                              )}
+                              <Separator />
+                              <div className="flex justify-between items-center font-semibold">
+                                <span>Total Monthly</span>
+                                <span>
+                                  €{averagesData.averages.livingCosts.total}
+                                  /month
+                                </span>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
+
+                      {/* Student Ratings */}
+                      {averagesData.averages.ratings.overall && (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Student Ratings</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-4">
+                              {Object.entries(
+                                averagesData.averages.ratings,
+                              ).map(
+                                ([key, value]) =>
+                                  value && (
+                                    <div
+                                      key={key}
+                                      className="flex justify-between items-center"
+                                    >
+                                      <span className="capitalize">
+                                        {key.replace(/([A-Z])/g, " $1")}
+                                      </span>
+                                      <div className="flex items-center gap-2">
+                                        <div className="flex">
+                                          {[...Array(5)].map((_, i) => (
+                                            <Star
+                                              key={i}
+                                              className={`h-4 w-4 ${
+                                                i < Math.round(value as number)
+                                                  ? "text-yellow-400 fill-current"
+                                                  : "text-gray-300"
+                                              }`}
+                                            />
+                                          ))}
+                                        </div>
+                                        <span className="text-sm text-gray-600">
+                                          {value}/5
+                                        </span>
+                                      </div>
+                                    </div>
+                                  ),
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
+
+                      {/* Top Tips from Students */}
+                      {averagesData.topTips.length > 0 && (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Top Tips from Students</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <ul className="space-y-2">
+                              {averagesData.topTips.map((tip, index) => (
+                                <li
+                                  key={index}
+                                  className="flex items-start gap-2"
+                                >
+                                  <span className="text-blue-600 font-medium">
+                                    •
+                                  </span>
+                                  <span>{tip}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </CardContent>
+                        </Card>
+                      )}
+
+                      {/* Accommodation Types */}
+                      {averagesData.accommodationTypes.length > 0 && (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Popular Accommodation Types</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-3">
+                              {averagesData.accommodationTypes.map(
+                                (accommodation, index) => (
+                                  <div
+                                    key={index}
+                                    className="flex justify-between items-center"
+                                  >
+                                    <div>
+                                      <span className="font-medium">
+                                        {accommodation.type}
+                                      </span>
+                                      <span className="text-sm text-gray-600 ml-2">
+                                        ({accommodation.count} students)
+                                      </span>
+                                    </div>
+                                    {accommodation.averageRent && (
+                                      <span className="font-medium">
+                                        €{accommodation.averageRent}/month
+                                      </span>
+                                    )}
+                                  </div>
+                                ),
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
+
+                      {/* Recent Submissions */}
+                      {averagesData.recentSubmissions.length > 0 && (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Recent Student Experiences</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-4">
+                              {averagesData.recentSubmissions.map(
+                                (submission) => (
+                                  <div
+                                    key={submission.id}
+                                    className="border-l-4 border-blue-500 pl-4"
+                                  >
+                                    <h4 className="font-medium">
+                                      {submission.title}
+                                    </h4>
+                                    <p className="text-sm text-gray-600 mt-1">
+                                      {submission.excerpt}
+                                    </p>
+                                    <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
+                                      <span>By {submission.author}</span>
+                                      <span>
+                                        {new Date(
+                                          submission.createdAt,
+                                        ).toLocaleDateString()}
+                                      </span>
+                                      <Badge
+                                        variant="outline"
+                                        className="text-xs"
+                                      >
+                                        {submission.type.replace("-", " ")}
+                                      </Badge>
+                                    </div>
+                                  </div>
+                                ),
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
+                    </div>
+                  ) : (
+                    <Card>
+                      <CardContent className="text-center py-12">
+                        <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">
+                          No Student Data Yet
+                        </h3>
+                        <p className="text-gray-600 mb-6">
+                          Be the first to share your experience in{" "}
+                          {destination?.city}!
+                        </p>
+                        <Link href="/basic-information">
+                          <Button>
+                            Share Your Experience
+                            <ArrowRight className="h-4 w-4 ml-2" />
+                          </Button>
+                        </Link>
+                      </CardContent>
+                    </Card>
+                  )}
+                </TabsContent>
+
                 <TabsContent value="costs" data-section="costs">
                   {destination.livingCosts && (
                     <Card>
