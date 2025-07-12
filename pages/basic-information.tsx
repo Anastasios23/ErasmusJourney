@@ -421,54 +421,6 @@ export default function BasicInformation() {
                         </p>
                       </div>
                     )}
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="currentYear">
-                        Current Year of Study *
-                      </Label>
-                      <Select
-                        value={formData.currentYear}
-                        onValueChange={(value) =>
-                          handleInputChange("currentYear", value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select year" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1">1st Year</SelectItem>
-                          <SelectItem value="2">2nd Year</SelectItem>
-                          <SelectItem value="3">3rd Year</SelectItem>
-                          <SelectItem value="4">4th Year</SelectItem>
-                          <SelectItem value="5">5th Year</SelectItem>
-                          <SelectItem value="graduate">Graduate</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="gpa">GPA</Label>
-                      <Input
-                        id="gpa"
-                        value={formData.gpa}
-                        onChange={(e) =>
-                          handleInputChange("gpa", e.target.value)
-                        }
-                        placeholder="e.g., 3.5"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="studentId">Student ID *</Label>
-                      <Input
-                        id="studentId"
-                        value={formData.studentId}
-                        onChange={(e) =>
-                          handleInputChange("studentId", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
-                  </div>
                 </CardContent>
               </Card>
 
