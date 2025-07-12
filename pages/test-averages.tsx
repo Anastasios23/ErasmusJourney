@@ -28,21 +28,21 @@ import {
   ExternalLink,
 } from "lucide-react";
 
-const TEST_CITIES = [
-  "Berlin",
-  "Barcelona",
-  "Prague",
-  "Amsterdam",
-  "Madrid", // This one has no data to test empty state
+const TEST_DESTINATIONS = [
+  { id: "berlin_germany", label: "Berlin, Germany" },
+  { id: "barcelona_spain", label: "Barcelona, Spain" },
+  { id: "prague_czech", label: "Prague, Czech Republic" },
+  { id: "amsterdam_netherlands", label: "Amsterdam, Netherlands" },
+  { id: "madrid_spain", label: "Madrid, Spain" }, // This one has no data to test empty state
 ];
 
 export default function TestAveragesPage() {
-  const [selectedCity, setSelectedCity] = useState<string>("");
+  const [selectedDestination, setSelectedDestination] = useState<string>("");
   const {
     data: averagesData,
     isLoading,
     error,
-  } = useDestinationAverages(selectedCity);
+  } = useDestinationAverages(selectedDestination);
 
   return (
     <>
@@ -70,14 +70,17 @@ export default function TestAveragesPage() {
             </p>
 
             <div className="max-w-md mx-auto">
-              <Select value={selectedCity} onValueChange={setSelectedCity}>
+              <Select
+                value={selectedDestination}
+                onValueChange={setSelectedDestination}
+              >
                 <SelectTrigger>
-                  <SelectValue placeholder="🏙️ Select a city to test" />
+                  <SelectValue placeholder="🏙️ Select a destination to test" />
                 </SelectTrigger>
                 <SelectContent>
-                  {TEST_CITIES.map((city) => (
-                    <SelectItem key={city} value={city}>
-                      {city}
+                  {TEST_DESTINATIONS.map((destination) => (
+                    <SelectItem key={destination.id} value={destination.id}>
+                      {destination.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -86,16 +89,16 @@ export default function TestAveragesPage() {
           </div>
 
           {/* Content */}
-          {!selectedCity ? (
+          {!selectedDestination ? (
             <Card className="max-w-2xl mx-auto">
               <CardContent className="text-center py-12">
                 <MapPin className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-xl font-medium text-gray-900 mb-2">
-                  Select a City Above
+                  Select a Destination Above
                 </h3>
                 <p className="text-gray-600">
-                  Choose a city from the dropdown to see how our destination
-                  averages system works with real student data.
+                  Choose a destination from the dropdown to see how our
+                  destination averages system works with real student data.
                 </p>
               </CardContent>
             </Card>
