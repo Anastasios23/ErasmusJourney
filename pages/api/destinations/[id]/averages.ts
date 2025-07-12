@@ -78,8 +78,11 @@ export default async function handler(
 }
 
 async function getDestinationAverages(
-  city: string,
+  destinationId: string,
 ): Promise<DestinationAverages> {
+  // Extract city name from destination ID (e.g., "berlin_germany" -> "berlin")
+  const city = destinationId.split("_")[0];
+
   // Get test data based on actual form submissions
   const testData = getTestDataByCity(city);
 
