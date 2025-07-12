@@ -84,8 +84,9 @@ function TableOfContents({ destination }: TableOfContentsProps) {
   const sections = [
     { id: "overview", label: "Overview", icon: Globe },
     { id: "universities", label: "Universities", icon: GraduationCap },
+    { id: "student-data", label: "Student Data", icon: Users },
     { id: "costs", label: "Living Costs", icon: Euro },
-    { id: "life", label: "Student Life", icon: Users },
+    { id: "life", label: "Student Life", icon: Star },
     { id: "practical", label: "Practical Info", icon: List },
   ];
 
