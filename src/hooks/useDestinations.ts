@@ -186,19 +186,19 @@ export interface DestinationAverages {
 }
 
 // Hook to fetch destination averages based on student submissions
-export function useDestinationAverages(city: string) {
+export function useDestinationAverages(destinationId: string) {
   return useQuery<DestinationAverages>({
-    queryKey: ["destination-averages", city],
+    queryKey: ["destination-averages", destinationId],
     queryFn: async () => {
       const response = await fetch(
-        `/api/destinations/${encodeURIComponent(city)}/averages`,
+        `/api/destinations/${encodeURIComponent(destinationId)}/averages`,
       );
       if (!response.ok) {
         throw new Error("Failed to fetch destination averages");
       }
       return response.json();
     },
-    enabled: !!city,
+    enabled: !!destinationId,
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
 }
