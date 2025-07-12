@@ -363,11 +363,9 @@ export default function TestAveragesPage() {
                     to see this integrated.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Link
-                      href={`/destinations/${selectedCity.toLowerCase()}_${averagesData?.recentSubmissions[0]?.type === "basic-info" ? "country" : "city"}`}
-                    >
+                    <Link href={`/destinations/${selectedDestination}`}>
                       <Button>
-                        View {selectedCity} Destination Page
+                        View {averagesData?.city} Destination Page
                         <ExternalLink className="h-4 w-4 ml-2" />
                       </Button>
                     </Link>
