@@ -313,17 +313,6 @@ export default function BasicInformation() {
                         required
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phoneNumber">Phone Number *</Label>
-                      <Input
-                        id="phoneNumber"
-                        value={formData.phoneNumber}
-                        onChange={(e) =>
-                          handleInputChange("phoneNumber", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
