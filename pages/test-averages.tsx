@@ -126,11 +126,15 @@ export default function TestAveragesPage() {
               <CardContent className="text-center py-12">
                 <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-xl font-medium text-gray-900 mb-2">
-                  No Data for {selectedCity}
+                  No Data for{" "}
+                  {
+                    TEST_DESTINATIONS.find((d) => d.id === selectedDestination)
+                      ?.label
+                  }
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  This city doesn't have any student submission data yet. This
-                  demonstrates how the system handles empty states.
+                  This destination doesn't have any student submission data yet.
+                  This demonstrates how the system handles empty states.
                 </p>
                 <Badge variant="outline">Empty State Test ✅</Badge>
               </CardContent>
@@ -142,7 +146,7 @@ export default function TestAveragesPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <TrendingUp className="h-5 w-5" />
-                    📊 {selectedCity} - Student Data Overview
+                    📊 {averagesData?.city} - Student Data Overview
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
