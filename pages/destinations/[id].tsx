@@ -124,7 +124,7 @@ export default function DestinationDetailPage() {
 
   const { data: destination, isLoading, error } = useDestination(id as string);
   const { data: averagesData, isLoading: averagesLoading } =
-    useDestinationAverages(destination?.city || "");
+    useDestinationAverages(id as string);
   const { content: userGeneratedContent } = useGeneratedContent();
 
   // Filter user content relevant to this destination
