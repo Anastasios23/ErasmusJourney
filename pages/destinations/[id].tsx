@@ -122,6 +122,8 @@ export default function DestinationDetailPage() {
   const { id } = router.query;
 
   const { data: destination, isLoading, error } = useDestination(id as string);
+  const { data: averagesData, isLoading: averagesLoading } =
+    useDestinationAverages(destination?.city || "");
   const { content: userGeneratedContent } = useGeneratedContent();
 
   // Filter user content relevant to this destination
