@@ -669,7 +669,9 @@ export default function DestinationDetailPage() {
                       {averagesData.accommodationTypes.length > 0 && (
                         <Card>
                           <CardHeader>
-                            <CardTitle>Popular Accommodation Types</CardTitle>
+                            <CardTitle>
+                              🏠 Popular Accommodation Types
+                            </CardTitle>
                           </CardHeader>
                           <CardContent>
                             <div className="space-y-3">
@@ -704,7 +706,7 @@ export default function DestinationDetailPage() {
                       {averagesData.recentSubmissions.length > 0 && (
                         <Card>
                           <CardHeader>
-                            <CardTitle>Recent Student Experiences</CardTitle>
+                            <CardTitle>📝 Recent Student Experiences</CardTitle>
                           </CardHeader>
                           <CardContent>
                             <div className="space-y-4">
@@ -712,7 +714,7 @@ export default function DestinationDetailPage() {
                                 (submission) => (
                                   <div
                                     key={submission.id}
-                                    className="border-l-4 border-blue-500 pl-4"
+                                    className="border-l-4 border-green-500 pl-4 py-2"
                                   >
                                     <h4 className="font-medium">
                                       {submission.title}
@@ -721,8 +723,9 @@ export default function DestinationDetailPage() {
                                       {submission.excerpt}
                                     </p>
                                     <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
-                                      <span>By {submission.author}</span>
+                                      <span>👤 {submission.author}</span>
                                       <span>
+                                        📅{" "}
                                         {new Date(
                                           submission.createdAt,
                                         ).toLocaleDateString()}
