@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useDestinationSearch } from "../src/hooks/useDestinations";
 import { useRouter } from "next/router";
 import Fuse from "fuse.js";
+import { ERASMUS_DESTINATIONS } from "../src/data/destinations";
 import { Badge } from "../src/components/ui/badge";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
