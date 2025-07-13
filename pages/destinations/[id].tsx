@@ -550,7 +550,7 @@ export default function DestinationDetailPage() {
                               </div>
                               {averagesData.averages.livingCosts.food && (
                                 <div className="flex justify-between items-center">
-                                  <span>Food</span>
+                                  <span>🍽️ Food</span>
                                   <span className="font-medium">
                                     €{averagesData.averages.livingCosts.food}
                                     /month
@@ -559,7 +559,7 @@ export default function DestinationDetailPage() {
                               )}
                               {averagesData.averages.livingCosts.transport && (
                                 <div className="flex justify-between items-center">
-                                  <span>Transport</span>
+                                  <span>🚇 Transport</span>
                                   <span className="font-medium">
                                     €
                                     {
@@ -573,7 +573,7 @@ export default function DestinationDetailPage() {
                               {averagesData.averages.livingCosts
                                 .entertainment && (
                                 <div className="flex justify-between items-center">
-                                  <span>Entertainment</span>
+                                  <span>🎉 Entertainment</span>
                                   <span className="font-medium">
                                     €
                                     {
