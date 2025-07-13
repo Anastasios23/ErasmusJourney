@@ -600,7 +600,7 @@ export default function DestinationDetailPage() {
                       {averagesData.averages.ratings.overall && (
                         <Card>
                           <CardHeader>
-                            <CardTitle>Student Ratings</CardTitle>
+                            <CardTitle>⭐ Student Ratings</CardTitle>
                           </CardHeader>
                           <CardContent>
                             <div className="space-y-4">
