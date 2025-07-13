@@ -645,22 +645,22 @@ export default function DestinationDetailPage() {
                       {averagesData.topTips.length > 0 && (
                         <Card>
                           <CardHeader>
-                            <CardTitle>Top Tips from Students</CardTitle>
+                            <CardTitle>💡 Top Tips from Students</CardTitle>
                           </CardHeader>
                           <CardContent>
-                            <ul className="space-y-2">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               {averagesData.topTips.map((tip, index) => (
-                                <li
+                                <div
                                   key={index}
-                                  className="flex items-start gap-2"
+                                  className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg"
                                 >
-                                  <span className="text-blue-600 font-medium">
-                                    •
+                                  <span className="text-blue-600 font-bold text-lg">
+                                    💭
                                   </span>
-                                  <span>{tip}</span>
-                                </li>
+                                  <span className="text-sm">{tip}</span>
+                                </div>
                               ))}
-                            </ul>
+                            </div>
                           </CardContent>
                         </Card>
                       )}
