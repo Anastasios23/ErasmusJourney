@@ -42,6 +42,7 @@ import {
   BookOpen,
   ExternalLink,
   List,
+  TrendingUp,
 } from "lucide-react";
 
 interface TableOfContentsProps {
