@@ -81,8 +81,16 @@ export default async function handler(
 async function getDestinationAverages(
   destinationId: string,
 ): Promise<DestinationAverages> {
-  // Extract city name from destination ID (e.g., "berlin_germany" -> "berlin")
-  const city = destinationId.split("_")[0];
+  // Look up the destination by ID to get the actual city name
+  const destination = ERASMUS_DESTINATIONS.find(
+    (dest) => dest.id === destinationId,
+  );
+
+  if (!destination) {
+    throw new Error(`Destination with id "${destinationId}" not found`);
+  }
+
+  const city = destination.city.toLowerCase();
 
   // Get test data based on actual form submissions
   const testData = getTestDataByCity(city);
