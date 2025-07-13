@@ -41,141 +41,29 @@ import {
   Calendar,
 } from "lucide-react";
 
-// Sample data - in production this would come from your database
-const destinations = [
-  {
-    id: "barcelona",
-    city: "Barcelona",
-    country: "Spain",
-    region: "Southern Europe",
-    image:
-      "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&h=300&fit=crop",
-    description:
-      "A vibrant Mediterranean city perfect for students seeking culture, beaches, and excellent universities.",
-    costLevel: "medium",
-    rating: 4.8,
-    studentCount: 1200,
-    popularUniversities: [
-      "Universitat Politècnica de Catalunya",
-      "Universitat de Barcelona",
-      "Universitat Pompeu Fabra",
-    ],
-    highlights: [
-      "Beautiful architecture",
-      "Beach proximity",
-      "Rich cultural scene",
-    ],
-    avgCostPerMonth: 800,
-  },
-  {
-    id: "prague",
-    city: "Prague",
-    country: "Czech Republic",
-    region: "Central Europe",
-    image:
-      "https://images.unsplash.com/photo-1542324151-ee2b73cb0d95?w=400&h=300&fit=crop",
-    description:
-      "A historic gem in Central Europe offering affordable living and world-class education.",
-    costLevel: "low",
-    rating: 4.6,
-    studentCount: 800,
-    popularUniversities: [
-      "Charles University",
-      "Czech Technical University",
-      "University of Economics",
-    ],
-    highlights: [
-      "Historic architecture",
-      "Affordable living",
-      "Central European culture",
-    ],
-    avgCostPerMonth: 600,
-  },
-  {
-    id: "paris",
-    city: "Paris",
-    country: "France",
-    region: "Western Europe",
-    image:
-      "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=300&fit=crop",
-    description:
-      "The City of Light offers unparalleled cultural experiences and prestigious universities.",
-    costLevel: "high",
-    rating: 4.7,
-    studentCount: 2000,
-    popularUniversities: [
-      "Sorbonne University",
-      "École Normale Supérieure",
-      "Sciences Po",
-    ],
-    highlights: [
-      "World-class museums",
-      "Fashion capital",
-      "Culinary excellence",
-    ],
-    avgCostPerMonth: 1200,
-  },
-  {
-    id: "berlin",
-    city: "Berlin",
-    country: "Germany",
-    region: "Central Europe",
-    image:
-      "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=400&h=300&fit=crop",
-    description:
-      "A dynamic city with rich history, vibrant nightlife, and excellent educational opportunities.",
-    costLevel: "medium",
-    rating: 4.5,
-    studentCount: 1500,
-    popularUniversities: [
-      "Humboldt University",
-      "Technical University of Berlin",
-      "Free University of Berlin",
-    ],
-    highlights: ["Rich history", "Vibrant nightlife", "Tech hub"],
-    avgCostPerMonth: 900,
-  },
-  {
-    id: "amsterdam",
-    city: "Amsterdam",
-    country: "Netherlands",
-    region: "Western Europe",
-    image:
-      "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=400&h=300&fit=crop",
-    description:
-      "Liberal, multicultural city known for its canals, bikes, and innovative universities.",
-    costLevel: "high",
-    rating: 4.6,
-    studentCount: 900,
-    popularUniversities: [
-      "University of Amsterdam",
-      "VU Amsterdam",
-      "Amsterdam University of Applied Sciences",
-    ],
-    highlights: ["Canal system", "Bike-friendly", "Liberal culture"],
-    avgCostPerMonth: 1100,
-  },
-  {
-    id: "rome",
-    city: "Rome",
-    country: "Italy",
-    region: "Southern Europe",
-    image:
-      "https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=400&h=300&fit=crop",
-    description:
-      "The Eternal City combines ancient history with modern student life and amazing cuisine.",
-    costLevel: "medium",
-    rating: 4.4,
-    studentCount: 700,
-    popularUniversities: [
-      "Sapienza University of Rome",
-      "Roma Tre University",
-      "LUISS University",
-    ],
-    highlights: ["Ancient history", "Amazing cuisine", "Art everywhere"],
-    avgCostPerMonth: 750,
-  },
-];
+// Transform centralized destinations data for display compatibility
+const destinations = ERASMUS_DESTINATIONS.map((dest) => ({
+  id: dest.id,
+  city: dest.city,
+  country: dest.country,
+  region:
+    dest.country === "Germany" || dest.country === "Czech Republic"
+      ? "Central Europe"
+      : dest.country === "Spain" || dest.country === "Italy"
+        ? "Southern Europe"
+        : "Western Europe",
+  image: dest.imageUrl,
+  description: dest.description,
+  costLevel: dest.costOfLiving,
+  rating: 4.5, // Default rating - this would come from averages in production
+  studentCount: 800, // Default student count - this would come from averages in production
+  popularUniversities: [
+    dest.university,
+    ...dest.partnerUniversities.slice(0, 2),
+  ],
+  highlights: dest.popularWith.slice(0, 3),
+  avgCostPerMonth: dest.averageRent * 1.5, // Rough estimate of total monthly cost
+}));
 
 export default function Destinations() {
   const router = useRouter();
