@@ -537,14 +537,12 @@ export default function DestinationDetailPage() {
                       {averagesData.averages.livingCosts.rent && (
                         <Card>
                           <CardHeader>
-                            <CardTitle>
-                              Average Living Costs (Student Reported)
-                            </CardTitle>
+                            <CardTitle>💰 Average Living Costs</CardTitle>
                           </CardHeader>
                           <CardContent>
                             <div className="space-y-3">
                               <div className="flex justify-between items-center">
-                                <span>Rent</span>
+                                <span>🏠 Rent</span>
                                 <span className="font-medium">
                                   €{averagesData.averages.livingCosts.rent}
                                   /month
@@ -778,7 +776,7 @@ export default function DestinationDetailPage() {
                           <div className="flex justify-between items-center">
                             <span>Accommodation</span>
                             <span>
-                              ���{destination.livingCosts.accommodation.min} - €
+                              €{destination.livingCosts.accommodation.min} - €
                               {destination.livingCosts.accommodation.max}/month
                             </span>
                           </div>
