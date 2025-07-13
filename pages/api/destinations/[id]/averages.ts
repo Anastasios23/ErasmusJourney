@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getTestDataByCity } from "../../test-data/form-submissions";
+import { ERASMUS_DESTINATIONS } from "../../../../src/data/destinations";
 
 interface SubmissionData {
   id: string;
