@@ -481,24 +481,25 @@ export default function DestinationDetailPage() {
                       <Card>
                         <CardHeader>
                           <CardTitle className="flex items-center gap-2">
-                            <Users className="h-5 w-5" />
-                            Student Data Overview
+                            <TrendingUp className="h-5 w-5" />
+                            📊 {averagesData.city} - Student Data Overview
                           </CardTitle>
                         </CardHeader>
                         <CardContent>
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                             <div className="text-center">
-                              <div className="text-2xl font-bold text-blue-600">
+                              <div className="text-3xl font-bold text-blue-600">
                                 {averagesData.totalSubmissions}
                               </div>
                               <div className="text-sm text-gray-600">
-                                Total Submissions
+                                Student Submissions
                               </div>
                             </div>
                             {averagesData.averages.ratings.overall && (
                               <div className="text-center">
-                                <div className="text-2xl font-bold text-green-600">
-                                  {averagesData.averages.ratings.overall}/5
+                                <div className="text-3xl font-bold text-green-600 flex items-center justify-center gap-1">
+                                  {averagesData.averages.ratings.overall}
+                                  <Star className="h-5 w-5 text-yellow-400 fill-current" />
                                 </div>
                                 <div className="text-sm text-gray-600">
                                   Overall Rating
@@ -506,7 +507,7 @@ export default function DestinationDetailPage() {
                               </div>
                             )}
                             <div className="text-center">
-                              <div className="text-2xl font-bold text-purple-600">
+                              <div className="text-3xl font-bold text-purple-600">
                                 {
                                   averagesData.averages.recommendations
                                     .wouldRecommend
@@ -519,11 +520,12 @@ export default function DestinationDetailPage() {
                             </div>
                             {averagesData.averages.livingCosts.total && (
                               <div className="text-center">
-                                <div className="text-2xl font-bold text-orange-600">
-                                  €{averagesData.averages.livingCosts.total}
+                                <div className="text-3xl font-bold text-orange-600 flex items-center justify-center gap-1">
+                                  <Euro className="h-5 w-5" />
+                                  {averagesData.averages.livingCosts.total}
                                 </div>
                                 <div className="text-sm text-gray-600">
-                                  Avg Monthly Cost
+                                  Monthly Cost
                                 </div>
                               </div>
                             )}
@@ -776,7 +778,7 @@ export default function DestinationDetailPage() {
                           <div className="flex justify-between items-center">
                             <span>Accommodation</span>
                             <span>
-                              €{destination.livingCosts.accommodation.min} - €
+                              ���{destination.livingCosts.accommodation.min} - €
                               {destination.livingCosts.accommodation.max}/month
                             </span>
                           </div>
