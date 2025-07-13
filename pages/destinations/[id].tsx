@@ -584,12 +584,11 @@ export default function DestinationDetailPage() {
                                   </span>
                                 </div>
                               )}
-                              <Separator />
-                              <div className="flex justify-between items-center font-semibold">
-                                <span>Total Monthly</span>
+                              <hr />
+                              <div className="flex justify-between items-center font-semibold text-lg">
+                                <span>💸 Total Monthly</span>
                                 <span>
                                   €{averagesData.averages.livingCosts.total}
-                                  /month
                                 </span>
                               </div>
                             </div>
