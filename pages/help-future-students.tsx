@@ -124,7 +124,7 @@ export default function HelpFutureStudents() {
       };
 
       await submitForm(
-        "help-future-students", // This will be converted to "HELP_FUTURE_STUDENTS" enum by the API
+        "experience", // This will be converted to "EXPERIENCE" enum by the API
         `Mentorship Application - ${formData.nickname || "Anonymous"}`,
         submissionData,
         formData.publicProfile === "yes" ? "published" : "submitted", // Public mentors get published status
