@@ -133,7 +133,7 @@ export default function UniversitySubmissions({
   // Group submissions by type
   const submissionsByType = data.submissions.reduce(
     (acc, submission) => {
-      const type = submission.type;
+      const type = submission?.type || "unknown";
       if (!acc[type]) {
         acc[type] = [];
       }
@@ -142,6 +142,23 @@ export default function UniversitySubmissions({
     },
     {} as Record<string, Submission[]>,
   );
+
+  // Ensure we have at least one type to prevent tabs error
+  if (Object.keys(submissionsByType).length === 0) {
+    return (
+      <Card>
+        <CardContent className="p-12 text-center">
+          <MessageCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No Valid Submissions
+          </h3>
+          <p className="text-gray-600">
+            The submissions data appears to be malformed.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const getTypeIcon = (type: string) => {
     switch (type) {
