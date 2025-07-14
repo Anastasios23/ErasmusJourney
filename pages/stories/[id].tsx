@@ -333,48 +333,6 @@ export default function StoryDetailPage({ story }: StoryDetailPageProps) {
               </div>
             </article>
 
-            {/* Related Stories */}
-            {story.relatedStories.length > 0 && (
-              <div className="mt-12">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  Related Stories
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {story.relatedStories.map((relatedStory) => (
-                    <Card
-                      key={relatedStory.id}
-                      className="hover:shadow-lg transition-shadow cursor-pointer"
-                      onClick={() => router.push(`/stories/${relatedStory.id}`)}
-                    >
-                      <div className="aspect-video overflow-hidden rounded-t-lg relative">
-                        <Image
-                          src={relatedStory.image}
-                          alt={relatedStory.title}
-                          fill
-                          className="object-cover hover:scale-105 transition-transform"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
-                      </div>
-                      <CardContent className="pt-4">
-                        <Badge variant="secondary" className="mb-2">
-                          {relatedStory.category}
-                        </Badge>
-                        <h3 className="font-semibold mb-2 line-clamp-2">
-                          {relatedStory.title}
-                        </h3>
-                        <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-                          {relatedStory.excerpt}
-                        </p>
-                        <div className="text-xs text-gray-500">
-                          by {relatedStory.author}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* CTA Section */}
             <Card className="mt-12 bg-blue-50 border-blue-200">
               <CardContent className="pt-8 pb-8 text-center">
