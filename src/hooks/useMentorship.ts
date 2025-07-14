@@ -47,16 +47,23 @@ export function useMentorshipMembers() {
       setLoading(true);
       setError(null);
 
+      // Add timeout to prevent hanging requests
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
       const response = await fetch("/api/mentorship/members", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(
-          `Failed to fetch mentors: ${response.status} ${response.statusText}`,
+          `API responded with ${response.status}: ${response.statusText}`,
         );
       }
 
@@ -64,8 +71,23 @@ export function useMentorshipMembers() {
       setMentors(data.mentors || []);
     } catch (err) {
       console.error("Error fetching mentors:", err);
-      setError(err instanceof Error ? err.message : "Failed to load mentors");
-      // Fallback to empty array on error
+
+      // Provide more specific error messages
+      let errorMessage = "Failed to load mentors";
+      if (err instanceof Error) {
+        if (err.name === "AbortError") {
+          errorMessage = "Request timed out. Please check your connection.";
+        } else if (err.message.includes("Failed to fetch")) {
+          errorMessage =
+            "Unable to connect to server. Please check your internet connection.";
+        } else {
+          errorMessage = err.message;
+        }
+      }
+
+      setError(errorMessage);
+
+      // Fallback to mock data if available or empty array
       setMentors([]);
     } finally {
       setLoading(false);
