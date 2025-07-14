@@ -91,12 +91,9 @@ export default async function handler(
         funFact: data.funFact || null,
 
         // Academic information
-        universityInCyprus:
-          submission.user?.universityInCyprus || "University in Cyprus",
+        universityInCyprus: data.universityInCyprus || "University in Cyprus",
         studyProgram:
-          submission.user?.studyProgram ||
-          data.specializations?.[0] ||
-          "Student",
+          data.studyProgram || data.specializations?.[0] || "Student",
 
         // Host experience information - extract from form data or user profile
         hostUniversity: data.hostUniversity || "Various Universities",
