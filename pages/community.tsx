@@ -54,62 +54,11 @@ import {
   getAgreementsByDepartmentAndLevel,
 } from "../src/data/universityAgreements";
 
-const cyprusUniversities = [
-  "All Universities",
-  ...CYPRUS_UNIVERSITIES.map((uni) => uni.name),
-];
-
-// Common European countries for host destinations
-const hostCountries = [
-  "All Countries",
-  "Austria",
-  "Belgium",
-  "Czech Republic",
-  "Denmark",
-  "Estonia",
-  "Finland",
-  "France",
-  "Germany",
-  "Greece",
-  "Hungary",
-  "Ireland",
-  "Italy",
-  "Latvia",
-  "Lithuania",
-  "Luxembourg",
-  "Netherlands",
-  "Poland",
-  "Portugal",
-  "Slovakia",
-  "Slovenia",
-  "Spain",
-  "Sweden",
-];
-
 // Get all unique departments from all Cyprus universities
 const allDepartments = CYPRUS_UNIVERSITIES.reduce((deps, uni) => {
   return [...deps, ...uni.departments];
 }, [] as string[]);
 const uniqueDepartments = [...new Set(allDepartments)].sort();
-const departments = ["All Departments", ...uniqueDepartments];
-
-// Academic specializations
-const specializations = [
-  "All Specializations",
-  "Engineering",
-  "Business",
-  "Medicine",
-  "Computer Science",
-  "Arts & Design",
-  "Law",
-  "Psychology",
-  "Languages",
-  "Sciences",
-  "Architecture",
-  "Education",
-  "Social Work",
-  "Other",
-];
 
 export default function Community() {
   const router = useRouter();
