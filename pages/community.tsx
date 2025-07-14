@@ -660,6 +660,16 @@ export default function Community() {
                               {mentor.studyProgram || "N/A"}
                             </span>
                           </div>
+
+                          {/* Level of Study */}
+                          {mentor.levelOfStudy && (
+                            <div className="text-sm">
+                              <span className="text-gray-600">Level: </span>
+                              <span className="font-semibold text-gray-900 capitalize">
+                                {mentor.levelOfStudy}
+                              </span>
+                            </div>
+                          )}
                         </div>
 
                         {/* Host University Experience */}
