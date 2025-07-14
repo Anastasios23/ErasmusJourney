@@ -158,7 +158,11 @@ export default function StoryDetailPage({ story }: StoryDetailPageProps) {
               {/* Hero Image */}
               <div className="aspect-video overflow-hidden relative">
                 <Image
-                  src={story.image}
+                  src={
+                    story.imageUrl ||
+                    story.photos?.[0]?.image ||
+                    "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop"
+                  }
                   alt={story.title}
                   fill
                   className="object-cover"
