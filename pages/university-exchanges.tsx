@@ -388,6 +388,10 @@ export default function UniversityExchanges() {
   const [selectedHostUniversity, setSelectedHostUniversity] = useState(
     "All Host Universities",
   );
+  const [
+    selectedUniversityForSubmissions,
+    setSelectedUniversityForSubmissions,
+  ] = useState<string | null>(null);
 
   // Ensure component is mounted to prevent hydration mismatches
   useEffect(() => {
