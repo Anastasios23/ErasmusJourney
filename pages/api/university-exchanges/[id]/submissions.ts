@@ -67,7 +67,7 @@ export default async function handler(
     });
 
     // Remove grades and any sensitive info before sending to frontend
-    const cleaned = submissions.map((sub) => {
+    const cleaned = universitySubmissions.map((sub) => {
       const {
         grades,
         grade,
