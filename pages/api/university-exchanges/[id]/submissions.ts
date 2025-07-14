@@ -62,17 +62,68 @@ export default async function handler(
     const cleanedSubmissions = universitySubmissions.map((submission) => {
       const { data, ...rest } = submission;
 
-      // Remove sensitive fields from data
+      // Remove ALL sensitive and personal fields from data
       const {
         grades,
+        grade,
         studentId,
         emergencyContact,
         phoneNumber,
         address,
         passportNumber,
         personalDocument,
+        email,
+        firstName,
+        lastName,
+        dateOfBirth,
+        academicLevel,
+        gpa,
+        transcripts,
+        personalStatement,
+        financialDocuments,
+        visaInformation,
         ...cleanData
       } = data || {};
+
+      // Also remove any nested course grades from course arrays
+      if (cleanData.courses) {
+        cleanData.courses = cleanData.courses.map((course: any) => {
+          const {
+            grade: courseGrade,
+            finalGrade,
+            marks,
+            ...safeCourse
+          } = course;
+          return safeCourse;
+        });
+      }
+
+      // Remove grades from hostCourses and recognizedCourses for course-matching submissions
+      if (cleanData.hostCourses) {
+        cleanData.hostCourses = cleanData.hostCourses.map((course: any) => {
+          const {
+            grade: courseGrade,
+            finalGrade,
+            marks,
+            ...safeCourse
+          } = course;
+          return safeCourse;
+        });
+      }
+
+      if (cleanData.recognizedCourses) {
+        cleanData.recognizedCourses = cleanData.recognizedCourses.map(
+          (course: any) => {
+            const {
+              grade: courseGrade,
+              finalGrade,
+              marks,
+              ...safeCourse
+            } = course;
+            return safeCourse;
+          },
+        );
+      }
 
       return {
         ...rest,
