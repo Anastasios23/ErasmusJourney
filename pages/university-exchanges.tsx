@@ -931,6 +931,10 @@ export default function UniversityExchanges() {
                                 size="sm"
                                 onClick={(e) => {
                                   e.stopPropagation();
+                                  console.log(
+                                    "Selected university:",
+                                    exchange.exchange.university,
+                                  );
                                   setSelectedUniversityForSubmissions(
                                     exchange.exchange.university,
                                   );
