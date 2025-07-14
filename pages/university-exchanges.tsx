@@ -758,11 +758,7 @@ export default function UniversityExchanges() {
                         {/* Information */}
                         <div className="space-y-4">
                           <h4 className="font-semibold text-gray-900">
-                            {exchange.submissionType === "COURSE_MATCHING"
-                              ? "Course Information"
-                              : exchange.submissionType === "ACCOMMODATION"
-                                ? "Housing Details"
-                                : "Experience Details"}
+                            Course Matching Information
                           </h4>
                           <div className="space-y-3">
                             {exchange.submissionType === "COURSE_MATCHING" &&
