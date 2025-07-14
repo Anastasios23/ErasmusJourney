@@ -361,7 +361,6 @@ export default function StudentStoriesPage() {
                                   handleLikeStory(story.id);
                                 }}
                                 className="flex items-center gap-1 hover:text-red-500 transition-colors"
-                                disabled={likeMutation.isPending}
                                 aria-label={`Like story: ${story.title}`}
                               >
                                 <Heart className="h-3 w-3" />
