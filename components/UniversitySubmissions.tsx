@@ -396,7 +396,7 @@ export default function UniversitySubmissions({
       </CardHeader>
       <CardContent>
         <Tabs
-          defaultValue={Object.keys(submissionsByType)[0]}
+          defaultValue={Object.keys(submissionsByType)[0] || "default"}
           className="w-full"
         >
           <TabsList
