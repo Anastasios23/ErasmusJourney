@@ -315,7 +315,12 @@ export default function UniversitySubmissions({
           defaultValue={Object.keys(submissionsByType)[0]}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-auto">
+          <TabsList
+            className="grid w-full"
+            style={{
+              gridTemplateColumns: `repeat(${Object.keys(submissionsByType).length}, minmax(0, 1fr))`,
+            }}
+          >
             {Object.keys(submissionsByType).map((type) => (
               <TabsTrigger
                 key={type}
