@@ -42,7 +42,7 @@ export default async function handler(
         // This assumes that "universityId" is stored inside the "data" JSON of each submission.
         // If you have a direct universityId field, use that instead!
         data: {
-          path: ["universityId"],
+          path: "$.universityId",
           equals: id,
         },
       },
