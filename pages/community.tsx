@@ -137,6 +137,40 @@ export default function Community() {
 
   const { mentors, loading, error } = useMentorshipMembers();
 
+  // Get available host universities based on selected Cyprus university
+  const availableHostUniversities = useMemo(() => {
+    if (selectedCyprusUni === "All Universities") {
+      // If no specific Cyprus university is selected, get all unique host universities from mentors
+      const allHostUniversities = [
+        ...new Set(mentors.map((mentor) => mentor.hostUniversity)),
+      ];
+      return ["All Host Universities", ...allHostUniversities.sort()];
+    }
+
+    // Find the selected Cyprus university
+    const cyprusUni = CYPRUS_UNIVERSITIES.find(
+      (uni) => uni.name === selectedCyprusUni,
+    );
+
+    if (!cyprusUni) {
+      return ["All Host Universities"];
+    }
+
+    // Get agreements for this Cyprus university
+    // Note: We'll use all departments since we don't have department filtering here
+    const agreements = getAgreementsByDepartment(
+      cyprusUni.code,
+      "All Departments",
+    );
+
+    // Get unique host universities from agreements
+    const hostUniversities = [
+      ...new Set(agreements.map((agreement) => agreement.partnerUniversity)),
+    ];
+
+    return ["All Host Universities", ...hostUniversities.sort()];
+  }, [selectedCyprusUni, mentors]);
+
   // Filter mentors based on search criteria
   const filteredMentors = useMemo(() => {
     return mentors.filter((mentor) => {
