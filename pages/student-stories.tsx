@@ -94,7 +94,7 @@ export default function StudentStoriesPage() {
 
   const handleLikeStory = async (storyId: string) => {
     try {
-      await likeMutation.mutateAsync({ storyId });
+      await likeStory(storyId);
     } catch (error) {
       console.error("Failed to like story:", error);
     }
