@@ -85,9 +85,9 @@ export default function StudentStoriesPage() {
   const finalLoading = loading;
 
   // Pagination
-  const totalPages = Math.ceil(allStories.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredStories.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedStories = allStories.slice(
+  const paginatedStories = filteredStories.slice(
     startIndex,
     startIndex + ITEMS_PER_PAGE,
   );
