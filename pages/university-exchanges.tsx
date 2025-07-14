@@ -787,18 +787,11 @@ export default function UniversityExchanges() {
                             ) : (
                               <div className="p-3 bg-gray-50 rounded-lg">
                                 <p className="text-sm text-gray-600">
-                                  {exchange.submissionType === "EXPERIENCE"
-                                    ? "🌟 Shared their overall exchange experience"
-                                    : exchange.submissionType ===
-                                        "ACCOMMODATION"
-                                      ? "🏠 Shared housing and accommodation tips"
-                                      : exchange.submissionType === "STORY"
-                                        ? "📝 Shared their personal story"
-                                        : "📋 Shared their exchange information"}
+                                  📚 Course matching data submitted
                                 </p>
                                 <p className="text-xs text-gray-500 mt-1">
-                                  Click "View All Experiences" to see full
-                                  details
+                                  Click "View Course Details" to see full course
+                                  mapping
                                 </p>
                               </div>
                             )}
