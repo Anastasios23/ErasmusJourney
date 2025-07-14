@@ -234,70 +234,65 @@ export default function UniversitySubmissions({
               🎓 Courses at Partner University
             </h5>
             {data.hostCourses && data.hostCourses.length > 0 ? (
-              <div className="bg-indigo-50 p-3 rounded-lg">
-                <h5 className="font-medium text-indigo-900 mb-2">
-                  📚 Courses Taken
-                </h5>
-                <div className="space-y-2">
-                  {data.hostCourses
-                    .slice(0, 3)
-                    .map((course: any, index: number) => (
-                      <div key={index} className="text-sm text-indigo-700">
-                        <div className="font-medium">
-                          {(course.code || "Unknown") +
-                            " - " +
-                            (course.name || "Unknown Course")}
-                        </div>
-                        {course.credits && (
-                          <div className="text-xs">
-                            Credits: {course.credits}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  {data.hostCourses.length > 3 && (
-                    <div className="text-xs text-indigo-600">
-                      +{data.hostCourses.length - 3} more courses
+              <div className="space-y-3">
+                {data.hostCourses.map((course: any, index: number) => (
+                  <div
+                    key={index}
+                    className="border-l-4 border-indigo-400 pl-3"
+                  >
+                    <div className="font-medium text-indigo-900">
+                      {course.code || "Unknown"} -{" "}
+                      {course.name || "Unknown Course"}
                     </div>
-                  )}
-                </div>
+                    <div className="text-sm text-indigo-700">
+                      {course.credits} ECTS
+                    </div>
+                    {course.description && (
+                      <div className="text-xs text-indigo-600 mt-1">
+                        {course.description}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-sm text-indigo-700">
+                No host courses listed
               </div>
             )}
+          </div>
 
-            {data.recognizedCourses && data.recognizedCourses.length > 0 && (
-              <div className="bg-green-50 p-3 rounded-lg">
-                <h5 className="font-medium text-green-900 mb-2">
-                  ✅ Recognized Courses
-                </h5>
-                <div className="space-y-2">
-                  {data.recognizedCourses
-                    .slice(0, 3)
-                    .map((course: any, index: number) => (
-                      <div key={index} className="text-sm text-green-700">
-                        <div className="font-medium">
-                          {(course.cyprusCode || "Unknown") +
-                            " - " +
-                            (course.cyprusName || "Unknown Course")}
-                        </div>
-                        {course.equivalentCredits && (
-                          <div className="text-xs">
-                            Credits: {course.equivalentCredits}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  {data.recognizedCourses.length > 3 && (
-                    <div className="text-xs text-green-600">
-                      +{data.recognizedCourses.length - 3} more courses
+          {/* Recognized Cyprus Courses */}
+          <div className="bg-green-50 p-4 rounded-lg">
+            <h5 className="font-medium text-green-900 mb-3">
+              ✅ Recognized at Cyprus University
+            </h5>
+            {data.recognizedCourses && data.recognizedCourses.length > 0 ? (
+              <div className="space-y-3">
+                {data.recognizedCourses.map((course: any, index: number) => (
+                  <div key={index} className="border-l-4 border-green-400 pl-3">
+                    <div className="font-medium text-green-900">
+                      {course.cyprusCode || "Unknown"} -{" "}
+                      {course.cyprusName || "Unknown Course"}
                     </div>
-                  )}
-                </div>
+                    <div className="text-sm text-green-700">
+                      {course.equivalentCredits} ECTS
+                    </div>
+                    {course.recognitionStatus && (
+                      <div className="text-xs text-green-600 mt-1">
+                        Status: {course.recognitionStatus}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-sm text-green-700">
+                No recognized courses listed
               </div>
             )}
-          </>
-        )}
-
-
+          </div>
+        </div>
       </div>
     );
   };
