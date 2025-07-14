@@ -212,8 +212,8 @@ export default function StudentStoriesPage() {
                     "Loading stories..."
                   ) : (
                     <>
-                      Found {stories.length}{" "}
-                      {stories.length === 1 ? "story" : "stories"}
+                      Found {filteredStories.length}{" "}
+                      {filteredStories.length === 1 ? "story" : "stories"}
                       {currentPage > 1 &&
                         ` (Page ${currentPage} of ${totalPages})`}
                     </>
