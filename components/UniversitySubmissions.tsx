@@ -135,8 +135,8 @@ export default function UniversitySubmissions({
     );
   }
 
-  // Group submissions by type
-  const submissionsByType = data.submissions.reduce(
+  // Group submissions by type (only course matching now)
+  const submissionsByType = courseMatchingSubmissions.reduce(
     (acc, submission) => {
       const type = submission?.type || "unknown";
       if (!acc[type]) {
