@@ -458,25 +458,54 @@ export default function Community() {
                           {mentor.bio}
                         </p>
 
-                        {/* Experience Location */}
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <MapPin className="h-4 w-4 text-blue-500" />
-                          <span>
-                            {mentor.hostCity}, {mentor.hostCountry}
-                          </span>
+                        {/* University Information - Clearly Distinguished */}
+                        <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                          {/* University in Cyprus (Home) */}
+                          <div className="text-sm">
+                            <span className="text-gray-600">
+                              University in Cyprus:{" "}
+                            </span>
+                            <span className="font-semibold text-gray-900">
+                              {mentor.universityInCyprus || "N/A"}
+                            </span>
+                          </div>
+
+                          {/* Department/Study Program */}
+                          <div className="text-sm">
+                            <span className="text-gray-600">Department: </span>
+                            <span className="font-semibold text-gray-900">
+                              {mentor.studyProgram || "N/A"}
+                            </span>
+                          </div>
                         </div>
 
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <GraduationCap className="h-4 w-4 text-purple-500" />
-                          <span className="truncate">
-                            {mentor.hostUniversity}
-                          </span>
-                        </div>
+                        {/* Host University Experience */}
+                        <div className="bg-blue-50 rounded-lg p-3 space-y-2">
+                          <div className="flex items-center gap-2 text-sm font-medium text-blue-900">
+                            <GraduationCap className="h-4 w-4" />
+                            <span>Exchange Experience</span>
+                          </div>
 
-                        {/* Exchange Period */}
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <Calendar className="h-4 w-4 text-green-500" />
-                          <span>{mentor.exchangePeriod}</span>
+                          <div className="text-sm">
+                            <span className="text-blue-700">
+                              Host University:{" "}
+                            </span>
+                            <span className="font-semibold text-blue-900">
+                              {mentor.hostUniversity || "N/A"}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 text-sm text-blue-700">
+                            <MapPin className="h-4 w-4" />
+                            <span>
+                              {mentor.hostCity}, {mentor.hostCountry}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 text-sm text-blue-700">
+                            <Calendar className="h-4 w-4" />
+                            <span>{mentor.exchangePeriod}</span>
+                          </div>
                         </div>
 
                         {/* Specializations */}
