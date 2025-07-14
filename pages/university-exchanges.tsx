@@ -317,7 +317,7 @@ export default function UniversityExchanges() {
   }, [exchangeHistory]);
 
   // Prevent hydration mismatch by not rendering until mounted
-  if (!mounted) {
+  if (!mounted || submissionsLoading) {
     return (
       <>
         <Head>
