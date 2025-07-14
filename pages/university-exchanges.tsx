@@ -349,10 +349,10 @@ export default function UniversityExchanges() {
   return (
     <>
       <Head>
-        <title>University Exchange History - Erasmus Journey Platform</title>
+        <title>University Course Matching - Erasmus Journey Platform</title>
         <meta
           name="description"
-          content="Explore the exchange history of Cyprus students and the courses they studied abroad"
+          content="Explore course matching between partner universities and Cyprus institutions"
         />
       </Head>
 
