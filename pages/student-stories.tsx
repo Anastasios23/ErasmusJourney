@@ -343,8 +343,8 @@ export default function StudentStoriesPage() {
                           <div className="flex items-center gap-1 text-sm text-blue-600 mb-3">
                             <MapPin className="h-3 w-3" aria-hidden="true" />
                             <span>
-                              {story.city || "City"},{" "}
-                              {story.country || "Country"}
+                              {story.location.city || "City"},{" "}
+                              {story.location.country || "Country"}
                             </span>
                           </div>
 
