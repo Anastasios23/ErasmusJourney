@@ -199,51 +199,32 @@ export default function UniversitySubmissions({
     const { data } = submission;
 
     return (
-      <div className="space-y-3">
-        {/* Basic Information */}
-        {(data.firstName || data.lastName) && (
-          <div>
-            <span className="font-medium text-gray-900">
-              {[data.firstName, data.lastName].filter(Boolean).join(" ")}
-            </span>
-            {data.nationality && (
-              <span className="text-gray-600"> • {data.nationality}</span>
-            )}
+      <div className="space-y-4">
+        {/* Student and Exchange Info */}
+        <div className="bg-blue-50 p-4 rounded-lg">
+          <h5 className="font-medium text-blue-900 mb-2">
+            📚 Exchange Details
+          </h5>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+            <div>
+              <span className="font-medium">Student:</span>{" "}
+              {[data.firstName, data.lastName].filter(Boolean).join(" ") ||
+                "Anonymous"}
+            </div>
+            <div>
+              <span className="font-medium">Cyprus University:</span>{" "}
+              {data.universityInCyprus || "Not specified"}
+            </div>
+            <div>
+              <span className="font-medium">Department:</span>{" "}
+              {data.departmentInCyprus || "Not specified"}
+            </div>
+            <div>
+              <span className="font-medium">Exchange Period:</span>{" "}
+              {data.exchangePeriod || "Not specified"}
+            </div>
           </div>
-        )}
-
-        {/* Academic Info */}
-        {data.universityInCyprus && (
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4 text-blue-600" />
-            <span className="text-sm text-gray-600">
-              {data.universityInCyprus}
-            </span>
-          </div>
-        )}
-
-        {data.departmentInCyprus && (
-          <div className="text-sm text-gray-600">
-            Department: {data.departmentInCyprus}
-          </div>
-        )}
-
-        {/* Exchange Details */}
-        {data.hostCity && (
-          <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-red-600" />
-            <span className="text-sm text-gray-600">
-              {data.hostCity}, {data.hostCountry}
-            </span>
-          </div>
-        )}
-
-        {data.exchangePeriod && (
-          <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-green-600" />
-            <span className="text-sm text-gray-600">{data.exchangePeriod}</span>
-          </div>
-        )}
+        </div>
 
         {/* Living Costs */}
         {submission.type === "living-expenses" && (
