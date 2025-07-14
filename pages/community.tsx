@@ -104,23 +104,6 @@ const specializations = [
   "Other",
 ];
 
-// Help topics
-const helpTopics = [
-  "All Topics",
-  "Accommodation Search",
-  "University Application",
-  "Visa Requirements",
-  "Course Selection",
-  "Budget Planning",
-  "Cultural Adaptation",
-  "Language Learning",
-  "Social Activities",
-  "Travel Tips",
-  "Academic Support",
-  "Career Guidance",
-  "Emergency Situations",
-];
-
 export default function Community() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
