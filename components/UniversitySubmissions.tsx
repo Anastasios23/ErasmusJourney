@@ -124,10 +124,11 @@ export default function UniversitySubmissions({
         <CardContent className="p-12 text-center">
           <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">
-            No Student Experiences Yet
+            No Course Matching Data Yet
           </h3>
           <p className="text-gray-600">
-            Be the first to share your experience at {universityName}!
+            Be the first to share course mapping information for{" "}
+            {universityName}!
           </p>
         </CardContent>
       </Card>
