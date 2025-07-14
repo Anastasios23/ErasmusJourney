@@ -36,10 +36,14 @@ export default async function handler(
   }
 
   try {
+    console.log(`Fetching submissions for university: ${id}`);
+
     // First try to fetch submissions by universityId in the data field
     let submissions = await prisma.formSubmission.findMany({
       orderBy: { createdAt: "desc" },
     });
+
+    console.log(`Found ${submissions.length} total submissions in database`);
 
     // Filter submissions manually since SQLite JSON querying is limited
     // In production with PostgreSQL, you'd use proper JSON path queries
