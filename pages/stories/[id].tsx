@@ -388,232 +388,32 @@ export default function StoryDetailPage({ story }: StoryDetailPageProps) {
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { id } = params!;
 
-  // Sample story data (in production this would come from your database)
-  const sampleStories: Record<string, StoryDetail> = {
-    "1": {
-      id: "1",
-      title: "My Amazing Semester in Barcelona: A Life-Changing Experience",
-      excerpt:
-        "Studying at UPC Barcelona was a life-changing experience. The city's vibrant culture, amazing architecture, and friendly locals made my Erasmus journey unforgettable.",
-      content: `When I first stepped off the plane in Barcelona, I had no idea that this city would become my second home and that this semester would completely change my perspective on life.
+  try {
+    // Fetch story from our API
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const response = await fetch(`${baseUrl}/api/stories/${id}`);
 
-**The First Weeks: Culture Shock and Adaptation**
+    if (!response.ok) {
+      return {
+        props: {
+          story: null,
+        },
+      };
+    }
 
-The first few weeks were a whirlwind of emotions. Everything was new - the language, the food, the academic system, and even the way people socialized. I remember feeling overwhelmed but excited at the same time. The orientation week at UPC (Universitat Politècnica de Catalunya) was incredibly well-organized, and I met students from all over Europe.
+    const story = await response.json();
 
-**Academic Life at UPC**
-
-The academic system in Spain was quite different from what I was used to back home. Professors were more approachable, and there was a strong emphasis on group work and practical applications. My favorite course was "Sustainable Urban Development," which included field trips around Barcelona to study the city's innovative urban planning solutions.
-
-The engineering labs were state-of-the-art, and I had access to equipment that wasn't available at my home university. This hands-on experience was invaluable for my thesis project.
-
-**Discovering Barcelona's Culture**
-
-Barcelona is a city that never sleeps. From the architectural marvels of Gaudí to the vibrant nightlife in El Born, there was always something to explore. I spent countless hours wandering through Park Güell, and each visit revealed something new.
-
-The food culture was another revelation. Tapas weren't just a meal - they were a social experience. I learned to appreciate the Spanish concept of "sobremesa" - the time spent talking after a meal, which often lasted longer than the meal itself.
-
-**Building Lifelong Friendships**
-
-One of the most unexpected aspects of my Erasmus experience was the deep friendships I formed. My flatmates came from Germany, Italy, and France, and we created our own little international family. We cooked together, traveled together, and supported each other through the challenges of living abroad.
-
-I also joined the ESN (Erasmus Student Network) Barcelona, which organized trips and events. Through ESN, I traveled to Valencia, Sevilla, and even made it to Morocco for a weekend trip.
-
-**Challenges and Growth**
-
-Of course, it wasn't all sunshine and sangria. I faced homesickness, language barriers, and the stress of navigating a different academic system. There were moments when I questioned whether I had made the right decision.
-
-But these challenges pushed me to grow in ways I never expected. I became more independent, more adaptable, and more confident in my ability to handle uncertainty. I learned to communicate in Spanish (and picked up some Catalan too!), and I developed a global perspective that has influenced my career choices.
-
-**The Impact on My Future**
-
-My semester in Barcelona didn't just expand my academic knowledge - it shaped who I am today. I returned home with a broader worldview, increased cultural sensitivity, and a network of international friends and professional contacts.
-
-The experience also influenced my career path. I'm now working for a multinational company, and the cross-cultural communication skills I developed during my Erasmus have been invaluable.
-
-**Advice for Future Erasmus Students**
-
-If you're considering an Erasmus exchange, my advice is simple: do it. Don't let fear or uncertainty hold you back. Yes, there will be challenges, but the personal and professional growth you'll experience is worth every moment of discomfort.
-
-Be open to new experiences, embrace the differences you encounter, and remember that feeling lost or confused is part of the journey. Some of my best memories came from situations that initially seemed overwhelming.
-
-**Final Thoughts**
-
-Barcelona will always have a special place in my heart. It's where I discovered my passion for sustainable urban development, where I learned to appreciate different cultures, and where I realized that home isn't just a place - it's the people you surround yourself with.
-
-If you're thinking about studying abroad, don't hesitate. The world is waiting for you to explore it.`,
-      author: {
-        firstName: "Maria",
-        lastName: "K.",
-        avatar:
-          "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=100&h=100&fit=crop&crop=face",
-        bio: "Environmental Engineering student passionate about sustainable urban development",
-        university: "Universitat Politècnica de Catalunya",
-        program: "Environmental Engineering",
+    return {
+      props: {
+        story,
       },
-      university: "Universitat Politècnica de Catalunya",
-      country: "Spain",
-      city: "Barcelona",
-      category: "EXPERIENCE",
-      tags: [
-        "Barcelona",
-        "Engineering",
-        "Culture",
-        "Personal Growth",
-        "Travel",
-        "ESN",
-      ],
-      likes: 45,
-      views: 230,
-      comments: 12,
-      createdAt: "2024-01-15",
-      updatedAt: "2024-01-15",
-      image:
-        "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&h=400&fit=crop",
-      readingTime: 8,
-      featured: true,
-      relatedStories: [
-        {
-          id: "2",
-          title: "Finding the Perfect Student Accommodation in Prague",
-          excerpt:
-            "Tips and tricks for finding affordable, comfortable housing in Prague.",
-          author: "Andreas M.",
-          image:
-            "https://images.unsplash.com/photo-1542324151-ee2b73cb0d95?w=400&h=200&fit=crop",
-          category: "ACCOMMODATION",
-        },
-        {
-          id: "3",
-          title: "Navigating Academic Life at Sorbonne University",
-          excerpt:
-            "Everything you need to know about the academic system in France.",
-          author: "Elena P.",
-          image:
-            "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=200&fit=crop",
-          category: "ACADEMICS",
-        },
-      ],
-    },
-    "2": {
-      id: "2",
-      title: "Finding the Perfect Student Accommodation in Prague",
-      excerpt:
-        "Tips and tricks for finding affordable, comfortable housing in Prague. From dorms to shared apartments, here's what I learned during my search.",
-      content: `Finding accommodation in Prague as an international student can seem daunting, but with the right approach and timing, you can find a great place to call home during your exchange.
-
-**Starting Your Search Early**
-
-The key to finding good accommodation in Prague is starting early. I began my search three months before my arrival, which gave me a good selection of options. Most student residences have application deadlines in spring for the autumn semester.
-
-**Types of Accommodation Available**
-
-Prague offers several types of student accommodation:
-
-1. **University Dormitories**: The most affordable option, usually ranging from 150-300 EUR per month. Charles University has several dormitories, with Hvězda and Kajetánka being popular among international students.
-
-2. **Private Student Residences**: More expensive (400-600 EUR) but often include better facilities and are located closer to the city center.
-
-3. **Shared Apartments**: The middle ground (250-450 EUR), offering more independence while keeping costs reasonable.
-
-4. **Studio Apartments**: The most expensive option (500-800 EUR) but gives you complete privacy and independence.
-
-**My Experience with Student Residence**
-
-I chose to stay at the Hvězda dormitory, and it was one of the best decisions I made. The building was recently renovated, and I had my own room with a shared kitchen and bathroom. The best part was the international community - students from over 20 countries lived there.
-
-The residence organized regular events, from movie nights to city tours, which made it easy to meet people and settle in. The location was also perfect - just 15 minutes to the city center by tram.
-
-**What to Look for When Choosing**
-
-Based on my experience and that of my friends, here are the key factors to consider:
-
-- **Location and Transport**: Prague has an excellent public transport system. Even if you're not in the center, make sure you're near a tram or metro line.
-- **Included Amenities**: Check what's included - internet, utilities, cleaning services, kitchen equipment.
-- **Community**: If you want to meet other students, choose residences or shared apartments with common areas.
-- **Budget**: Remember to factor in utilities if they're not included.
-
-**Practical Tips for Your Search**
-
-1. **Use Multiple Platforms**: Don't rely on just one website. I used the university housing portal, Facebook groups, and local websites like Sreality.cz.
-
-2. **Join Facebook Groups**: Groups like "Prague Housing for Students" and "Erasmus Prague" are goldmines for finding rooms and getting advice.
-
-3. **Be Prepared for Quick Decisions**: Good places go fast, especially affordable ones near the center. Have your documents ready.
-
-4. **Visit if Possible**: If you can visit Prague before moving, do it. Seeing places in person helps you make better decisions.
-
-**Red Flags to Avoid**
-
-During my search, I encountered some situations that taught me what to avoid:
-- Requests for large deposits before viewing
-- Properties significantly below market price (usually scams)
-- Landlords who refuse to show the property via video call
-- Contracts that seem too good to be true
-
-**Budget Breakdown**
-
-Here's what I spent monthly on accommodation-related expenses:
-- Dormitory rent: 280 EUR
-- Internet (included): 0 EUR
-- Utilities (included): 0 EUR
-- Laundry: 15 EUR
-- Total: 295 EUR
-
-**Living in Prague: Beyond Accommodation**
-
-Prague quickly became one of my favorite cities. The historic center is breathtaking, but don't miss the local neighborhoods like Vinohrady and Karlín. The city has a vibrant student life, with numerous cafes, bars, and cultural events.
-
-The cost of living is very reasonable compared to Western European capitals. A meal at a student restaurant costs around 3-5 EUR, and a beer is often cheaper than water!
-
-**Final Advice**
-
-Don't stress too much about finding the "perfect" place. Prague is a compact city with great public transport, so even if your first choice doesn't work out, you can always move later. The important thing is to have a place secured before you arrive.
-
-Focus on finding somewhere safe, affordable, and well-connected to your university. The rest - the friends, the experiences, the memories - will follow naturally in this beautiful city.`,
-      author: {
-        firstName: "Andreas",
-        lastName: "M.",
-        avatar:
-          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
-        bio: "Business student who loves exploring new cities and cultures",
-        university: "Charles University",
-        program: "International Business",
+    };
+  } catch (error) {
+    console.error("Error fetching story:", error);
+    return {
+      props: {
+        story: null,
       },
-      university: "Charles University",
-      country: "Czech Republic",
-      city: "Prague",
-      category: "ACCOMMODATION",
-      tags: ["Prague", "Housing", "Budget", "Student Life", "Tips"],
-      likes: 32,
-      views: 145,
-      comments: 8,
-      createdAt: "2024-01-10",
-      updatedAt: "2024-01-10",
-      image:
-        "https://images.unsplash.com/photo-1542324151-ee2b73cb0d95?w=800&h=400&fit=crop",
-      readingTime: 6,
-      featured: false,
-      relatedStories: [
-        {
-          id: "1",
-          title: "My Amazing Semester in Barcelona",
-          excerpt:
-            "A life-changing experience studying at UPC Barcelona and discovering Spanish culture.",
-          author: "Maria K.",
-          image:
-            "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&h=200&fit=crop",
-          category: "EXPERIENCE",
-        },
-      ],
-    },
-  };
-
-  const story = sampleStories[id as string] || null;
-
-  return {
-    props: {
-      story,
-    },
-  };
+    };
+  }
 };
