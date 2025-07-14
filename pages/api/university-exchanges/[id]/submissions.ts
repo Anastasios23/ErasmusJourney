@@ -36,8 +36,18 @@ export default async function handler(
   }
 
   try {
-    // For now, we'll use the test data and filter by host university
-    // In production, this would query the database by university ID
+    // PRODUCTION DATABASE QUERY (when ready):
+    // const universitySubmissions = await prisma.formSubmission.findMany({
+    //   where: {
+    //     data: {
+    //       path: ["universityId"],
+    //       equals: id,
+    //     },
+    //   },
+    //   orderBy: { createdAt: "desc" },
+    // });
+
+    // CURRENT: Using test data and filtering by host university name
 
     // Filter submissions for this university
     const universitySubmissions = TEST_FORM_SUBMISSIONS.filter((submission) => {
