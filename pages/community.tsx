@@ -244,6 +244,7 @@ export default function Community() {
     mentors,
     searchTerm,
     selectedCyprusUni,
+    selectedDepartment,
     selectedHostCountry,
     selectedSpecialization,
     selectedHostUniversity,
