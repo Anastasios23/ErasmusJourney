@@ -41,13 +41,8 @@ async function debugCourseData() {
       `"COURSE_MATCHING" (uppercase): ${courseMatchingUppercase.length} submissions`,
     );
 
-    const courseMatchingLowercase = await prisma.formSubmission.findMany({
-      where: { type: "course-matching" },
-      select: { id: true, title: true, data: true },
-    });
-    console.log(
-      `"course-matching" (lowercase): ${courseMatchingLowercase.length} submissions`,
-    );
+    // Note: "course-matching" is not a valid enum value in Prisma schema
+    console.log(`"course-matching" (lowercase): Not valid in database schema`);
 
     // 3. Check data structure of first course matching submission
     const firstCourseSubmission =
