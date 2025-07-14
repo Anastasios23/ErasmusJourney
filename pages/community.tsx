@@ -376,10 +376,20 @@ export default function Community() {
             {/* Error State */}
             {error && (
               <Card className="mb-8 bg-red-50 border-red-200">
-                <CardContent className="pt-6">
-                  <p className="text-red-800">
-                    Failed to load mentors. Please try again later.
-                  </p>
+                <CardContent className="pt-6 text-center">
+                  <div className="text-red-800 mb-4">
+                    <h3 className="text-lg font-semibold mb-2">
+                      Unable to Load Mentors
+                    </h3>
+                    <p className="text-sm">{error}</p>
+                  </div>
+                  <Button
+                    onClick={() => window.location.reload()}
+                    variant="outline"
+                    className="border-red-300 text-red-700 hover:bg-red-100"
+                  >
+                    Try Again
+                  </Button>
                 </CardContent>
               </Card>
             )}
