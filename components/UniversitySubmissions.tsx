@@ -285,6 +285,69 @@ export default function UniversitySubmissions({
           </div>
         )}
 
+        {/* Course Information for Course Matching */}
+        {submission.type === "course-matching" && (
+          <>
+            {data.hostCourses && data.hostCourses.length > 0 && (
+              <div className="bg-indigo-50 p-3 rounded-lg">
+                <h5 className="font-medium text-indigo-900 mb-2">
+                  📚 Courses Taken
+                </h5>
+                <div className="space-y-2">
+                  {data.hostCourses
+                    .slice(0, 3)
+                    .map((course: any, index: number) => (
+                      <div key={index} className="text-sm text-indigo-700">
+                        <div className="font-medium">
+                          {course.code} - {course.name}
+                        </div>
+                        {course.credits && (
+                          <div className="text-xs">
+                            Credits: {course.credits}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  {data.hostCourses.length > 3 && (
+                    <div className="text-xs text-indigo-600">
+                      +{data.hostCourses.length - 3} more courses
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {data.recognizedCourses && data.recognizedCourses.length > 0 && (
+              <div className="bg-green-50 p-3 rounded-lg">
+                <h5 className="font-medium text-green-900 mb-2">
+                  ✅ Recognized Courses
+                </h5>
+                <div className="space-y-2">
+                  {data.recognizedCourses
+                    .slice(0, 3)
+                    .map((course: any, index: number) => (
+                      <div key={index} className="text-sm text-green-700">
+                        <div className="font-medium">
+                          {course.cyprusCode} - {course.cyprusName}
+                        </div>
+                        {course.equivalentCredits && (
+                          <div className="text-xs">
+                            Credits: {course.equivalentCredits}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  {data.recognizedCourses.length > 3 && (
+                    <div className="text-xs text-green-600">
+                      +{data.recognizedCourses.length - 3} more courses
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
         {/* Personal Experience */}
         {data.personalExperience && (
           <div className="bg-purple-50 p-3 rounded-lg">
