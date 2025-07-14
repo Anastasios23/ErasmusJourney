@@ -47,11 +47,7 @@ import {
   Calendar,
   Award,
 } from "lucide-react";
-import {
-  CYPRUS_UNIVERSITIES,
-  getAgreementsByDepartment,
-  getAgreementsByDepartmentAndLevel,
-} from "../src/data/universityAgreements";
+import { CYPRUS_UNIVERSITIES } from "../src/data/universityAgreements";
 
 // Get all unique departments from all Cyprus universities
 const allDepartments = CYPRUS_UNIVERSITIES.reduce((deps, uni) => {
