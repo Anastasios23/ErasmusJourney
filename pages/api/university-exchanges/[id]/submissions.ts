@@ -36,17 +36,34 @@ export default async function handler(
   }
 
   try {
-    // Fetch all form submissions where data.universityId matches the id
-    const submissions = await prisma.formSubmission.findMany({
-      where: {
-        // This assumes that "universityId" is stored inside the "data" JSON of each submission.
-        // If you have a direct universityId field, use that instead!
-        data: {
-          path: "$.universityId",
-          equals: id,
-        },
-      },
+    // First try to fetch submissions by universityId in the data field
+    let submissions = await prisma.formSubmission.findMany({
       orderBy: { createdAt: "desc" },
+    });
+
+    // Filter submissions manually since SQLite JSON querying is limited
+    // In production with PostgreSQL, you'd use proper JSON path queries
+    const universitySubmissions = submissions.filter((submission) => {
+      const data = submission.data as any;
+      if (!data) return false;
+
+      // Match by universityId if it exists in the data
+      if (data.universityId === id) return true;
+
+      // Fallback: match by university name for existing test data
+      const hostUniversity = data.hostUniversity;
+      if (!hostUniversity) return false;
+
+      // Exact match first
+      if (hostUniversity === id) return true;
+
+      // Partial match (case insensitive)
+      if (hostUniversity.toLowerCase().includes(id.toLowerCase())) return true;
+
+      // Reverse partial match (id contains university name)
+      if (id.toLowerCase().includes(hostUniversity.toLowerCase())) return true;
+
+      return false;
     });
 
     // Remove grades and any sensitive info before sending to frontend
