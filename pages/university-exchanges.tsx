@@ -364,12 +364,12 @@ export default function UniversityExchanges() {
             {/* Header Section */}
             <div className="text-center mb-12">
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                University Exchange History
+                University Course Matching
               </h1>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Real experiences from Cyprus students who studied abroad.
-                Explore their stories, course information, and practical tips to
-                guide your academic journey.
+                Discover how courses from partner universities map to Cyprus
+                university programs. Real course matching data from students who
+                completed their exchanges.
               </p>
             </div>
 
