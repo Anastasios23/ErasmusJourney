@@ -234,6 +234,7 @@ export default function Community() {
       return (
         matchesSearch &&
         matchesCyprusUni &&
+        matchesDepartment &&
         matchesHostCountry &&
         matchesSpecialization &&
         matchesHostUniversity
