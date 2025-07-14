@@ -187,8 +187,9 @@ export function useMentorshipMembers() {
 
       setError(errorMessage);
 
-      // Fallback to mock data if available or empty array
-      setMentors([]);
+      // Fallback to mock data when API is unavailable
+      console.log("Using mock data fallback due to API error");
+      setMentors(mockMentors);
     } finally {
       setLoading(false);
     }
