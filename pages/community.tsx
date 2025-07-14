@@ -131,7 +131,9 @@ export default function Community() {
   const [selectedSpecialization, setSelectedSpecialization] = useState(
     "All Specializations",
   );
-  const [selectedHelpTopic, setSelectedHelpTopic] = useState("All Topics");
+  const [selectedHostUniversity, setSelectedHostUniversity] = useState(
+    "All Host Universities",
+  );
 
   const { mentors, loading, error } = useMentorshipMembers();
 
