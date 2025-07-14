@@ -33,35 +33,35 @@ interface StoryDetail {
   title: string;
   content: string;
   excerpt: string;
+  imageUrl: string | null;
+  photos: Array<{
+    id: string;
+    image: string;
+    caption: string;
+    location: string;
+    description: string;
+  }>;
+  location: {
+    city?: string;
+    country?: string;
+    university?: string;
+  };
   author: {
-    firstName: string;
-    lastName: string;
+    name: string;
+    university?: string;
     avatar: string;
     bio: string;
-    university: string;
     program: string;
   };
-  university: string;
-  country: string;
-  city: string;
-  category: string;
+  period?: string;
   tags: string[];
   likes: number;
   views: number;
   comments: number;
   createdAt: string;
   updatedAt: string;
-  image: string;
   readingTime: number;
   featured: boolean;
-  relatedStories: Array<{
-    id: string;
-    title: string;
-    excerpt: string;
-    author: string;
-    image: string;
-    category: string;
-  }>;
 }
 
 interface StoryDetailPageProps {
