@@ -331,11 +331,10 @@ export default function StudentStoriesPage() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="text-sm font-medium truncate">
-                                {story.author?.firstName || "Anonymous"}{" "}
-                                {story.author?.lastName || "User"}
+                                {story.author?.name || "Anonymous User"}
                               </div>
                               <div className="text-xs text-gray-500 truncate">
-                                {story.university || "University"}
+                                {story.author?.university || "University"}
                               </div>
                             </div>
                           </div>
