@@ -918,7 +918,7 @@ export default function UniversityExchanges() {
                                 {exchange.exchange.city},{" "}
                                 {exchange.exchange.country}
                               </div>
-                              <div className="flex gap-2">
+                              <div className="flex gap-2 mb-2">
                                 <Badge variant="secondary">
                                   {exchange.exchange.duration}
                                 </Badge>
@@ -926,6 +926,18 @@ export default function UniversityExchanges() {
                                   {exchange.exchange.period}
                                 </Badge>
                               </div>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedUniversityForSubmissions(
+                                    exchange.exchange.university,
+                                  );
+                                }}
+                              >
+                                View All Experiences
+                              </Button>
                             </div>
                           </div>
 
