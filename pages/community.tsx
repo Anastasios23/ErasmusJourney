@@ -439,16 +439,16 @@ export default function Community() {
                   </Select>
 
                   <Select
-                    value={selectedHelpTopic}
-                    onValueChange={setSelectedHelpTopic}
+                    value={selectedHostUniversity}
+                    onValueChange={setSelectedHostUniversity}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Help Topic" />
+                      <SelectValue placeholder="Host University" />
                     </SelectTrigger>
                     <SelectContent>
-                      {helpTopics.map((topic) => (
-                        <SelectItem key={topic} value={topic}>
-                          {topic}
+                      {availableHostUniversities.map((university) => (
+                        <SelectItem key={university} value={university}>
+                          {university}
                         </SelectItem>
                       ))}
                     </SelectContent>
