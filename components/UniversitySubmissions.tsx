@@ -167,13 +167,13 @@ export default function UniversitySubmissions({
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case "accommodation":
+      case "ACCOMMODATION":
         return <Home className="h-4 w-4" />;
-      case "course-matching":
+      case "COURSE_MATCHING":
         return <BookOpen className="h-4 w-4" />;
-      case "story":
+      case "STORY":
         return <MessageCircle className="h-4 w-4" />;
-      case "living-expenses":
+      case "EXPERIENCE":
         return <Euro className="h-4 w-4" />;
       default:
         return <TrendingUp className="h-4 w-4" />;
