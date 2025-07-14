@@ -219,7 +219,7 @@ export default function Community() {
     selectedCyprusUni,
     selectedHostCountry,
     selectedSpecialization,
-    selectedHelpTopic,
+    selectedHostUniversity,
   ]);
 
   // Statistics
