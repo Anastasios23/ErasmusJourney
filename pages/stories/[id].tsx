@@ -176,13 +176,15 @@ export default function StoryDetailPage({ story }: StoryDetailPageProps) {
                 {/* Meta Info */}
                 <div className="mb-6">
                   <div className="flex flex-wrap items-center gap-2 mb-4">
-                    <Badge variant="secondary">{story.category}</Badge>
+                    <Badge variant="secondary">
+                      {story.tags[0] || "Story"}
+                    </Badge>
                     {story.featured && (
                       <Badge className="bg-yellow-100 text-yellow-800">
                         Featured
                       </Badge>
                     )}
-                    {story.tags.map((tag, index) => (
+                    {story.tags.slice(1).map((tag, index) => (
                       <Badge key={index} variant="outline" className="text-xs">
                         {tag}
                       </Badge>
