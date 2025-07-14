@@ -226,68 +226,6 @@ export default function UniversitySubmissions({
           </div>
         </div>
 
-        {/* Living Costs */}
-        {submission.type === "living-expenses" && (
-          <div className="bg-green-50 p-3 rounded-lg">
-            <h5 className="font-medium text-green-900 mb-2">
-              💰 Monthly Expenses
-            </h5>
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              {data.monthlyRent && <div>🏠 Rent: €{data.monthlyRent}</div>}
-              {data.monthlyFood && <div>🍽️ Food: €{data.monthlyFood}</div>}
-              {data.monthlyTransport && (
-                <div>🚇 Transport: €{data.monthlyTransport}</div>
-              )}
-              {data.monthlyEntertainment && (
-                <div>🎉 Entertainment: €{data.monthlyEntertainment}</div>
-              )}
-            </div>
-            {data.accommodationType && (
-              <div className="mt-2 text-sm text-green-700">
-                Accommodation: {data.accommodationType}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Ratings */}
-        {data.overallRating && (
-          <div className="bg-blue-50 p-3 rounded-lg">
-            <h5 className="font-medium text-blue-900 mb-2">⭐ Ratings</h5>
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div>Overall: {data.overallRating}/5</div>
-              {data.accommodationRating && (
-                <div>Accommodation: {data.accommodationRating}/5</div>
-              )}
-              {data.socialLifeRating && (
-                <div>Social Life: {data.socialLifeRating}/5</div>
-              )}
-              {data.academicsRating && (
-                <div>Academics: {data.academicsRating}/5</div>
-              )}
-            </div>
-            {data.wouldRecommend !== undefined && (
-              <div className="mt-2 text-sm">
-                Would recommend: {data.wouldRecommend ? "✅ Yes" : "❌ No"}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Tips */}
-        {data.topTips && data.topTips.length > 0 && (
-          <div className="bg-yellow-50 p-3 rounded-lg">
-            <h5 className="font-medium text-yellow-900 mb-2">💡 Tips</h5>
-            <ul className="text-sm space-y-1">
-              {data.topTips.slice(0, 3).map((tip: string, index: number) => (
-                <li key={index} className="text-yellow-700">
-                  • {tip}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
         {/* Course Information for Course Matching */}
         {submission.type === "course-matching" && (
           <>
