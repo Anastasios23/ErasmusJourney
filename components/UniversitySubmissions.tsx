@@ -392,7 +392,7 @@ export default function UniversitySubmissions({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Users className="h-5 w-5" />
-          Student Experiences at {data.university?.name || universityName}
+          Course Matching for {data.university?.name || universityName}
         </CardTitle>
         <p className="text-sm text-gray-600">
           {data.totalSubmissions} student
