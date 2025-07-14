@@ -43,10 +43,19 @@ export default async function handler(
     const universitySubmissions = TEST_FORM_SUBMISSIONS.filter((submission) => {
       // Match by university name for test data compatibility
       // In production, you would match by universityId field in the data
-      return (
-        submission.data.hostUniversity === id ||
-        submission.data.hostUniversity?.toLowerCase().includes(id.toLowerCase())
-      );
+      const hostUniversity = submission.data.hostUniversity;
+      if (!hostUniversity) return false;
+
+      // Exact match first
+      if (hostUniversity === id) return true;
+
+      // Partial match (case insensitive)
+      if (hostUniversity.toLowerCase().includes(id.toLowerCase())) return true;
+
+      // Reverse partial match (id contains university name)
+      if (id.toLowerCase().includes(hostUniversity.toLowerCase())) return true;
+
+      return false;
     });
 
     // Remove sensitive data from all submissions
