@@ -400,7 +400,7 @@ export default function UniversityExchanges() {
                     <GraduationCap className="h-8 w-8 text-green-600" />
                     <div className="ml-4">
                       <p className="text-sm font-medium text-gray-600">
-                        Universities
+                        Partner Universities
                       </p>
                       <p className="text-2xl font-bold text-gray-900">
                         {stats.uniqueUniversities}
