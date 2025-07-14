@@ -277,99 +277,77 @@ export default function Community() {
                   Find Your Ideal Mentor
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Search Bar */}
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <CardContent>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                  {/* University in Cyprus */}
+                  <Select
+                    value={universityInCyprus}
+                    onValueChange={setUniversityInCyprus}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="University in Cyprus" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">All</SelectItem>
+                      {CYPRUS_UNIVERSITIES.map((uni) => (
+                        <SelectItem key={uni.name} value={uni.name}>
+                          {uni.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {/* Department in Cyprus */}
+                  <Select
+                    value={departmentInCyprus}
+                    onValueChange={setDepartmentInCyprus}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Department in Cyprus" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">All</SelectItem>
+                      {uniqueDepartments.map((dep) => (
+                        <SelectItem key={dep} value={dep}>
+                          {dep}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {/* Level of Study */}
+                  <Select value={levelOfStudy} onValueChange={setLevelOfStudy}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Level of Study" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">All</SelectItem>
+                      <SelectItem value="Bachelor">Bachelor</SelectItem>
+                      <SelectItem value="Master">Master</SelectItem>
+                      <SelectItem value="PhD">PhD</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {/* Host University */}
                   <Input
-                    placeholder="Search by name, university, city, or expertise..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    value={hostUniversity}
+                    onChange={(e) => setHostUniversity(e.target.value)}
+                    placeholder="Host University"
                   />
-                </div>
 
-                {/* Filter Dropdowns */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                  <Select
-                    value={selectedCyprusUni}
-                    onValueChange={setSelectedCyprusUni}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Cyprus University" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {cyprusUniversities.map((uni) => (
-                        <SelectItem key={uni} value={uni}>
-                          {uni}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {/* Host Country */}
+                  <Input
+                    value={hostCountry}
+                    onChange={(e) => setHostCountry(e.target.value)}
+                    placeholder="Host Country"
+                  />
 
-                  <Select
-                    value={selectedDepartment}
-                    onValueChange={setSelectedDepartment}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Department" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {departments.map((dept) => (
-                        <SelectItem key={dept} value={dept}>
-                          {dept}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select
-                    value={selectedHostCountry}
-                    onValueChange={setSelectedHostCountry}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Host Country" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {hostCountries.map((country) => (
-                        <SelectItem key={country} value={country}>
-                          {country}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select
-                    value={selectedSpecialization}
-                    onValueChange={setSelectedSpecialization}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Specialization" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {specializations.map((spec) => (
-                        <SelectItem key={spec} value={spec}>
-                          {spec}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select
-                    value={selectedHostUniversity}
-                    onValueChange={setSelectedHostUniversity}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Host University" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableHostUniversities.map((university) => (
-                        <SelectItem key={university} value={university}>
-                          {university}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {/* Host City */}
+                  <Input
+                    value={hostCity}
+                    onChange={(e) => setHostCity(e.target.value)}
+                    placeholder="Host City"
+                  />
                 </div>
               </CardContent>
             </Card>
