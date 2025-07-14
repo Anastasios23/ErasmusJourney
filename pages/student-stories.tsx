@@ -465,7 +465,7 @@ export default function StudentStoriesPage() {
             )}
 
             {/* No Results */}
-            {!finalLoading && !error && allStories.length === 0 && (
+            {!finalLoading && !error && filteredStories.length === 0 && (
               <div className="text-center py-12">
                 <BookOpen
                   className="h-12 w-12 text-gray-400 mx-auto mb-4"
