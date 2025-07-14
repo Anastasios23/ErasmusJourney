@@ -395,8 +395,8 @@ export default function UniversitySubmissions({
           Course Matching for {data.university?.name || universityName}
         </CardTitle>
         <p className="text-sm text-gray-600">
-          {data.totalSubmissions} student
-          {data.totalSubmissions === 1 ? "" : "s"} shared their experience
+          {courseMatchingSubmissions.length} course matching submission
+          {courseMatchingSubmissions.length === 1 ? "" : "s"} available
         </p>
       </CardHeader>
       <CardContent>
