@@ -563,12 +563,9 @@ export default function Community() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Universities</SelectItem>
-                      {availableHostUniversities.map((host, index) => (
-                        <SelectItem
-                          key={`${host.university}-${index}`}
-                          value={host.university}
-                        >
-                          {host.university} ({host.city})
+                      {availableHostUniversities.map((university) => (
+                        <SelectItem key={university} value={university}>
+                          {university}
                         </SelectItem>
                       ))}
                     </SelectContent>
