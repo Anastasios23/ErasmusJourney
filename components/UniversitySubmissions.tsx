@@ -330,7 +330,9 @@ export default function UniversitySubmissions({
                     .map((course: any, index: number) => (
                       <div key={index} className="text-sm text-green-700">
                         <div className="font-medium">
-                          {course.cyprusCode} - {course.cyprusName}
+                          {(course.cyprusCode || "Unknown") +
+                            " - " +
+                            (course.cyprusName || "Unknown Course")}
                         </div>
                         {course.equivalentCredits && (
                           <div className="text-xs">
