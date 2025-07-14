@@ -406,7 +406,7 @@ export default function Community() {
                 </div>
 
                 {/* Filter Dropdowns */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                   <Select
                     value={selectedCyprusUni}
                     onValueChange={setSelectedCyprusUni}
@@ -418,6 +418,22 @@ export default function Community() {
                       {cyprusUniversities.map((uni) => (
                         <SelectItem key={uni} value={uni}>
                           {uni}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select
+                    value={selectedDepartment}
+                    onValueChange={setSelectedDepartment}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Department" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {departments.map((dept) => (
+                        <SelectItem key={dept} value={dept}>
+                          {dept}
                         </SelectItem>
                       ))}
                     </SelectContent>
