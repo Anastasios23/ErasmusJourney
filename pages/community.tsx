@@ -210,7 +210,7 @@ export default function Community() {
         matchesCyprusUni &&
         matchesHostCountry &&
         matchesSpecialization &&
-        matchesHelpTopic
+        matchesHostUniversity
       );
     });
   }, [
