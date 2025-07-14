@@ -293,6 +293,15 @@ export default function UniversityExchanges() {
 
   // Statistics
   const stats = useMemo(() => {
+    if (exchangeHistory.length === 0) {
+      return {
+        totalStudents: 0,
+        uniqueUniversities: 0,
+        uniqueCountries: 0,
+        avgRating: "0",
+      };
+    }
+
     const totalStudents = exchangeHistory.length;
     const uniqueUniversities = new Set(
       exchangeHistory.map((e) => e.exchange.university),
@@ -305,7 +314,7 @@ export default function UniversityExchanges() {
     ).toFixed(1);
 
     return { totalStudents, uniqueUniversities, uniqueCountries, avgRating };
-  }, []);
+  }, [exchangeHistory]);
 
   // Prevent hydration mismatch by not rendering until mounted
   if (!mounted) {
