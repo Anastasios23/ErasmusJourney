@@ -182,16 +182,16 @@ export default function UniversitySubmissions({
 
   const getTypeName = (type: string) => {
     switch (type) {
-      case "accommodation":
+      case "ACCOMMODATION":
         return "Accommodation";
-      case "course-matching":
+      case "COURSE_MATCHING":
         return "Course Matching";
-      case "story":
+      case "STORY":
         return "Stories";
-      case "living-expenses":
-        return "Living Expenses";
+      case "EXPERIENCE":
+        return "Experience";
       default:
-        return type.charAt(0).toUpperCase() + type.slice(1);
+        return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
     }
   };
 
