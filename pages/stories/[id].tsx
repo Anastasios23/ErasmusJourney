@@ -229,8 +229,11 @@ export default function StoryDetailPage({ story }: StoryDetailPageProps) {
                     <Avatar className="h-16 w-16">
                       <AvatarImage src={story.author.avatar} />
                       <AvatarFallback>
-                        {story.author.firstName[0]}
-                        {story.author.lastName[0]}
+                        {story.author.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <div>
