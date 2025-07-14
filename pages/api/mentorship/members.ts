@@ -85,6 +85,7 @@ export default async function handler(
         universityInCyprus: data.universityInCyprus || "University in Cyprus",
         studyProgram:
           data.studyProgram || data.specializations?.[0] || "Student",
+        levelOfStudy: data.levelOfStudy || null,
 
         // Host experience information - extract from form data or user profile
         hostUniversity: data.hostUniversity || "Various Universities",
