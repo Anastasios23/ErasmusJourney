@@ -10,6 +10,8 @@ export default async function handler(
   }
 
   try {
+    console.log("Fetching mentorship submissions...");
+
     // Fetch all mentorship submissions from database - use EXPERIENCE type for now
     const allSubmissions = await prisma.formSubmission.findMany({
       where: {
@@ -30,11 +32,18 @@ export default async function handler(
       orderBy: { createdAt: "desc" },
     });
 
+    console.log(`Found ${allSubmissions.length} EXPERIENCE submissions`);
+
     // Filter to only mentorship submissions
     const mentorshipSubmissions = allSubmissions.filter((submission) => {
       const data = submission.data as any;
+      console.log(
+        `Checking submission ${submission.id}, submissionType: ${data.submissionType}`,
+      );
       return data.submissionType === "mentorship";
     });
+
+    console.log(`Found ${mentorshipSubmissions.length} mentorship submissions`);
 
     // Transform to public mentor format, removing sensitive data
     const publicMentors = mentorshipSubmissions.map((submission) => {
