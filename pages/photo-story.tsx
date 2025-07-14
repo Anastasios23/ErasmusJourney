@@ -62,6 +62,8 @@ interface PhotoStoryEntry {
 
 export default function PhotoStory() {
   const router = useRouter();
+  const { submitForm } = useFormSubmissions();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     studentName: "",
