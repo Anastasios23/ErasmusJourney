@@ -283,7 +283,7 @@ export default function Community() {
                       <SelectValue placeholder="University in Cyprus" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All</SelectItem>
+                      <SelectItem value="all">All</SelectItem>
                       {CYPRUS_UNIVERSITIES.map((uni) => (
                         <SelectItem key={uni.name} value={uni.name}>
                           {uni.name}
@@ -301,7 +301,7 @@ export default function Community() {
                       <SelectValue placeholder="Department in Cyprus" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All</SelectItem>
+                      <SelectItem value="all">All</SelectItem>
                       {uniqueDepartments.map((dep) => (
                         <SelectItem key={dep} value={dep}>
                           {dep}
@@ -316,7 +316,7 @@ export default function Community() {
                       <SelectValue placeholder="Level of Study" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All</SelectItem>
+                      <SelectItem value="all">All</SelectItem>
                       <SelectItem value="Bachelor">Bachelor</SelectItem>
                       <SelectItem value="Master">Master</SelectItem>
                       <SelectItem value="PhD">PhD</SelectItem>
