@@ -25,6 +25,7 @@ import {
   AvatarImage,
 } from "../src/components/ui/avatar";
 import AgreementDetails from "../components/AgreementDetails";
+import UniversitySubmissions from "../components/UniversitySubmissions";
 import {
   Search,
   MapPin,
