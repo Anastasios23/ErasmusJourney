@@ -48,7 +48,11 @@ import {
   Calendar,
   Award,
 } from "lucide-react";
-import { CYPRUS_UNIVERSITIES } from "../src/data/universityAgreements";
+import {
+  CYPRUS_UNIVERSITIES,
+  getAgreementsByDepartment,
+  getAgreementsByDepartmentAndLevel,
+} from "../src/data/universityAgreements";
 
 const cyprusUniversities = [
   "All Universities",
