@@ -128,7 +128,7 @@ export default function Community() {
 
           // Add level if it's UNIC and level is selected
           if (
-            universityInCyprus.includes("UNIC") &&
+            universityInCyprus.includes("Nicosia") &&
             levelOfStudy &&
             levelOfStudy !== "all"
           ) {
@@ -198,7 +198,7 @@ export default function Community() {
 
   // Reset level of study when department changes or when switching from UNIC
   useEffect(() => {
-    if (!universityInCyprus?.includes("UNIC")) {
+    if (!universityInCyprus?.includes("Nicosia")) {
       setLevelOfStudy("");
     }
   }, [universityInCyprus, departmentInCyprus]);
