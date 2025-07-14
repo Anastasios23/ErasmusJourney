@@ -322,11 +322,8 @@ export default function StudentStoriesPage() {
                           <div className="flex items-center gap-3 mb-3">
                             <div className="relative w-8 h-8">
                               <Image
-                                src={
-                                  story.author?.avatar ||
-                                  "/placeholder-avatar.png"
-                                }
-                                alt={`${story.author?.firstName || "Anonymous"} ${story.author?.lastName || "User"}`}
+                                src="/placeholder-avatar.png"
+                                alt={story.author?.name || "Anonymous User"}
                                 fill
                                 className="rounded-full object-cover"
                                 sizes="32px"
