@@ -43,6 +43,7 @@ import {
 
 export default function HelpFutureStudents() {
   const router = useRouter();
+  const { submitForm, isSubmitting } = useFormSubmissions();
 
   const [formData, setFormData] = useState({
     wantToHelp: "",
