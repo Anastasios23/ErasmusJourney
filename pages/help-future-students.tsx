@@ -84,13 +84,62 @@ export default function HelpFutureStudents() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Help Future Students Form submitted:", formData);
-    toast.success("Thank you for joining our mentor community! 🎉");
-    setTimeout(() => {
-      router.push("/community");
-    }, 2000);
+
+    // Validate required fields
+    if (!formData.wantToHelp) {
+      toast.error("Please indicate if you want to help future students");
+      return;
+    }
+
+    if (formData.wantToHelp === "yes") {
+      if (!formData.contactMethod) {
+        toast.error("Please select a preferred contact method");
+        return;
+      }
+
+      if (formData.contactMethod === "email" && !formData.email) {
+        toast.error("Please provide your email address");
+        return;
+      }
+
+      if (formData.helpTopics.length === 0) {
+        toast.error("Please select at least one topic you can help with");
+        return;
+      }
+
+      if (!formData.availabilityLevel) {
+        toast.error("Please select your availability level");
+        return;
+      }
+    }
+
+    try {
+      // Prepare submission data
+      const submissionData = {
+        ...formData,
+        submissionType: "mentorship",
+        wantToHelp: formData.wantToHelp === "yes",
+      };
+
+      await submitForm(
+        "mentorship", // This will be converted to "MENTORSHIP" enum by the API
+        `Mentorship Application - ${formData.nickname || "Anonymous"}`,
+        submissionData,
+        formData.publicProfile === "yes" ? "published" : "submitted", // Public mentors get published status
+      );
+
+      toast.success("Thank you for joining our mentor community! 🎉");
+
+      // Redirect to community page after a short delay
+      setTimeout(() => {
+        router.push("/community");
+      }, 2000);
+    } catch (error) {
+      console.error("Error submitting mentorship form:", error);
+      toast.error("Failed to submit your application. Please try again.");
+    }
   };
 
   const languages = [
