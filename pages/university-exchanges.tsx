@@ -367,9 +367,9 @@ export default function UniversityExchanges() {
                 University Exchange History
               </h1>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Discover where Cyprus students have studied abroad, what courses
-                they took, and how their experiences can guide your academic
-                journey.
+                Real experiences from Cyprus students who studied abroad.
+                Explore their stories, course information, and practical tips to
+                guide your academic journey.
               </p>
             </div>
 
