@@ -226,10 +226,14 @@ export default function UniversitySubmissions({
           </div>
         </div>
 
-        {/* Course Information for Course Matching */}
-        {submission.type === "course-matching" && (
-          <>
-            {data.hostCourses && data.hostCourses.length > 0 && (
+        {/* Course Matching Information */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Host University Courses */}
+          <div className="bg-indigo-50 p-4 rounded-lg">
+            <h5 className="font-medium text-indigo-900 mb-3">
+              🎓 Courses at Partner University
+            </h5>
+            {data.hostCourses && data.hostCourses.length > 0 ? (
               <div className="bg-indigo-50 p-3 rounded-lg">
                 <h5 className="font-medium text-indigo-900 mb-2">
                   📚 Courses Taken
@@ -292,6 +296,8 @@ export default function UniversitySubmissions({
             )}
           </>
         )}
+
+
       </div>
     );
   };
