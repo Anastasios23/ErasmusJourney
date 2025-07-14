@@ -21,11 +21,17 @@ export interface Story {
   author: {
     name: string;
     university?: string;
+    avatar: string;
+    bio: string;
+    program: string;
   };
   period?: string;
   tags: string[];
   likes: number;
   views: number;
+  comments: number;
+  readingTime: number;
+  featured: boolean;
   createdAt: string;
   updatedAt: string;
 }
