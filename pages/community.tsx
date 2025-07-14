@@ -129,8 +129,14 @@ export default function Community() {
 
   const { mentors, loading, error } = useMentorshipMembers();
 
-  // Reset host university filter when Cyprus university changes
+  // Reset host university filter when Cyprus university or department changes
   useEffect(() => {
+    setSelectedHostUniversity("All Host Universities");
+  }, [selectedCyprusUni, selectedDepartment]);
+
+  // Reset department when Cyprus university changes
+  useEffect(() => {
+    setSelectedDepartment("All Departments");
     setSelectedHostUniversity("All Host Universities");
   }, [selectedCyprusUni]);
 
