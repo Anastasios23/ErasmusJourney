@@ -84,6 +84,94 @@ export default function Community() {
 
   const { mentors, loading, error } = useMentorshipMembers();
 
+  // Update available departments when Cyprus university changes (same logic as basic-information)
+  useEffect(() => {
+    if (universityInCyprus) {
+      const selectedUni = CYPRUS_UNIVERSITIES.find(
+        (uni) => uni.name === universityInCyprus,
+      );
+      if (selectedUni) {
+        setAvailableDepartments(selectedUni.departments);
+      } else {
+        setAvailableDepartments([]);
+      }
+    } else {
+      setAvailableDepartments([]);
+    }
+
+    // Reset dependent fields
+    setDepartmentInCyprus("");
+    setLevelOfStudy("");
+    setHostUniversity("");
+    setHostCountry("");
+    setHostCity("");
+  }, [universityInCyprus]);
+
+  // Update available host options when university, department, or level changes (same logic as basic-information)
+  useEffect(() => {
+    if (universityInCyprus && departmentInCyprus) {
+      let agreements: any[] = [];
+
+      const selectedUni = CYPRUS_UNIVERSITIES.find(
+        (uni) => uni.name === universityInCyprus,
+      );
+
+      if (selectedUni) {
+        if (selectedUni.code === "UNIC" && levelOfStudy) {
+          // For UNIC, use level-specific agreements
+          agreements = getAgreementsByDepartmentAndLevel(
+            selectedUni.code,
+            departmentInCyprus,
+            levelOfStudy as "bachelor" | "master" | "phd",
+          );
+        } else if (selectedUni.code !== "UNIC") {
+          // For other universities, use general department agreements
+          agreements = getAgreementsByDepartment(
+            selectedUni.code,
+            departmentInCyprus,
+          );
+        }
+      }
+
+      const uniqueHostUniversities = agreements.map((agreement) => ({
+        university: agreement.partnerUniversity,
+        city: agreement.partnerCity,
+        country: agreement.partnerCountry,
+      }));
+
+      const uniqueCountries = [
+        ...new Set(agreements.map((agreement) => agreement.partnerCountry)),
+      ].sort();
+
+      const uniqueCities = [
+        ...new Set(agreements.map((agreement) => agreement.partnerCity)),
+      ].sort();
+
+      setAvailableHostUniversities(uniqueHostUniversities);
+      setAvailableCountries(uniqueCountries);
+      setAvailableCities(uniqueCities);
+    } else {
+      setAvailableHostUniversities([]);
+      setAvailableCountries([]);
+      setAvailableCities([]);
+    }
+
+    // Reset dependent fields
+    setHostUniversity("");
+    setHostCountry("");
+    setHostCity("");
+  }, [universityInCyprus, departmentInCyprus, levelOfStudy]);
+
+  // Reset level of study when department changes or when switching from UNIC
+  useEffect(() => {
+    const selectedUni = CYPRUS_UNIVERSITIES.find(
+      (uni) => uni.name === universityInCyprus,
+    );
+    if (selectedUni?.code !== "UNIC") {
+      setLevelOfStudy("");
+    }
+  }, [universityInCyprus, departmentInCyprus]);
+
   // Filter mentors based on the 6 specific criteria
   const filteredMentors = useMemo(() => {
     return mentors.filter((mentor) => {
