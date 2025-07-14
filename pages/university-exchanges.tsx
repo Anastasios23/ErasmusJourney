@@ -724,7 +724,7 @@ export default function UniversityExchanges() {
                                   );
                                 }}
                               >
-                                View All Experiences
+                                View Course Details
                               </Button>
                             </div>
                           </div>
