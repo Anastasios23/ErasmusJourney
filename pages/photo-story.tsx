@@ -192,9 +192,50 @@ export default function PhotoStory() {
     }
   };
 
-  const handleSubmit = () => {
-    console.log("Photo Story submitted:", { formData, photos });
-    // Handle submission
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
+
+    try {
+      setIsSubmitting(true);
+
+      // Validate required fields
+      if (!formData.storyTitle || !formData.overallDescription) {
+        toast.error("Please fill in the story title and description");
+        return;
+      }
+
+      if (photos.filter((photo) => photo.image).length === 0) {
+        toast.error("Please add at least one photo to your story");
+        return;
+      }
+
+      // Prepare submission data
+      const submissionData = {
+        ...formData,
+        photos: photos.filter((photo) => photo.image), // Only include photos with images
+        submissionType: "photo-story",
+        allowPublicUse: formData.allowPublicUse || false,
+      };
+
+      await submitForm(
+        "story", // This will be converted to "STORY" enum by the API
+        formData.storyTitle,
+        submissionData,
+        "published", // Make stories public by default
+      );
+
+      toast.success("Your photo story has been submitted successfully!");
+
+      // Redirect to stories page after a short delay
+      setTimeout(() => {
+        router.push("/student-stories");
+      }, 2000);
+    } catch (error) {
+      console.error("Error submitting photo story:", error);
+      toast.error("Failed to submit your story. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const getCompletionPercentage = () => {
