@@ -193,12 +193,17 @@ export default function StoryDetailPage({ story }: StoryDetailPageProps) {
                     <div className="flex items-center gap-1">
                       <MapPin className="h-4 w-4" />
                       <span>
-                        {story.city}, {story.country}
+                        {story.location.city || "City"},{" "}
+                        {story.location.country || "Country"}
                       </span>
                     </div>
                     <div className="flex items-center gap-1">
                       <GraduationCap className="h-4 w-4" />
-                      <span>{story.university}</span>
+                      <span>
+                        {story.location.university ||
+                          story.author.university ||
+                          "University"}
+                      </span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="h-4 w-4" />
