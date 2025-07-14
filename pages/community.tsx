@@ -198,13 +198,44 @@ export default function Community() {
 
   // Reset level of study when department changes or when switching from UNIC
   useEffect(() => {
-    const selectedUni = CYPRUS_UNIVERSITIES.find(
-      (uni) => uni.name === universityInCyprus,
-    );
-    if (selectedUni?.code !== "UNIC") {
+    if (!universityInCyprus?.includes("UNIC")) {
       setLevelOfStudy("");
     }
   }, [universityInCyprus, departmentInCyprus]);
+
+  // Update available countries and cities when host university is selected
+  useEffect(() => {
+    if (
+      hostUniversity &&
+      hostUniversity !== "all" &&
+      availableAgreements.length > 0
+    ) {
+      // Filter agreements by selected host university
+      const filteredAgreements = availableAgreements.filter(
+        (agreement) => agreement.partnerUniversity.name === hostUniversity,
+      );
+
+      // Extract unique countries and cities for this host university
+      const uniqueCountries = [
+        ...new Set(
+          filteredAgreements.map((agreement) => agreement.partnerCountry),
+        ),
+      ].sort();
+
+      const uniqueCities = [
+        ...new Set(
+          filteredAgreements.map((agreement) => agreement.partnerCity),
+        ),
+      ].sort();
+
+      setAvailableCountries(uniqueCountries);
+      setAvailableCities(uniqueCities);
+
+      // Reset dependent fields
+      setHostCountry("");
+      setHostCity("");
+    }
+  }, [hostUniversity, availableAgreements]);
 
   // Filter mentors based on the 6 specific criteria
   const filteredMentors = useMemo(() => {
