@@ -200,6 +200,22 @@ export function useMentorshipMembers() {
     fetchMentors();
   }, []);
 
+  // Auto-retry mechanism
+  useEffect(() => {
+    if (error && retryCount < 2) {
+      const timeoutId = setTimeout(
+        () => {
+          console.log(`Retrying fetch, attempt ${retryCount + 1}`);
+          setRetryCount((prev) => prev + 1);
+          fetchMentors();
+        },
+        2000 * (retryCount + 1),
+      ); // Exponential backoff: 2s, 4s
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [error, retryCount]);
+
   return {
     mentors,
     loading,
