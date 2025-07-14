@@ -210,6 +210,15 @@ export default function Community() {
         selectedCyprusUni === "All Universities" ||
         mentor.universityInCyprus === selectedCyprusUni;
 
+      const matchesDepartment =
+        selectedDepartment === "All Departments" ||
+        mentor.studyProgram.includes(selectedDepartment) ||
+        mentor.specializations.some(
+          (spec) =>
+            spec.toLowerCase().includes(selectedDepartment.toLowerCase()) ||
+            selectedDepartment.toLowerCase().includes(spec.toLowerCase()),
+        );
+
       const matchesHostCountry =
         selectedHostCountry === "All Countries" ||
         mentor.hostCountry === selectedHostCountry;
