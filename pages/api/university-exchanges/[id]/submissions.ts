@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { TEST_FORM_SUBMISSIONS } from "../../test-data/form-submissions";
+import { prisma } from "../../../../lib/prisma";
 
 interface UniversitySubmissionsResponse {
   submissions: Array<{
@@ -17,7 +17,7 @@ interface UniversitySubmissionsResponse {
     name: string;
     city?: string;
     country?: string;
-  };
+  } | null;
   totalSubmissions: number;
 }
 
@@ -36,48 +36,21 @@ export default async function handler(
   }
 
   try {
-    // PRODUCTION DATABASE QUERY (when ready):
-    // const universitySubmissions = await prisma.formSubmission.findMany({
-    //   where: {
-    //     data: {
-    //       path: ["universityId"],
-    //       equals: id,
-    //     },
-    //   },
-    //   orderBy: { createdAt: "desc" },
-    // });
-
-    // CURRENT: Using test data and filtering by host university name
-
-    // Filter submissions for this university
-    const universitySubmissions = TEST_FORM_SUBMISSIONS.filter((submission) => {
-      const data = submission.data;
-      if (!data) return false;
-
-      // PRODUCTION: Match by universityId (when using real database)
-      // if (data.universityId === id) return true;
-
-      // TEST DATA: Match by university name (current implementation)
-      const hostUniversity = data.hostUniversity;
-      if (!hostUniversity) return false;
-
-      // Exact match first
-      if (hostUniversity === id) return true;
-
-      // Partial match (case insensitive)
-      if (hostUniversity.toLowerCase().includes(id.toLowerCase())) return true;
-
-      // Reverse partial match (id contains university name)
-      if (id.toLowerCase().includes(hostUniversity.toLowerCase())) return true;
-
-      return false;
+    // Fetch all form submissions where data.universityId matches the id
+    const submissions = await prisma.formSubmission.findMany({
+      where: {
+        // This assumes that "universityId" is stored inside the "data" JSON of each submission.
+        // If you have a direct universityId field, use that instead!
+        data: {
+          path: ["universityId"],
+          equals: id,
+        },
+      },
+      orderBy: { createdAt: "desc" },
     });
 
-    // Remove sensitive data from all submissions
-    const cleanedSubmissions = universitySubmissions.map((submission) => {
-      const { data, ...rest } = submission;
-
-      // Remove ALL sensitive and personal fields from data
+    // Remove grades and any sensitive info before sending to frontend
+    const cleaned = submissions.map((sub) => {
       const {
         grades,
         grade,
@@ -97,12 +70,12 @@ export default async function handler(
         personalStatement,
         financialDocuments,
         visaInformation,
-        ...cleanData
-      } = data || {};
+        ...safeData
+      } = (sub.data as any) || {};
 
       // Also remove any nested course grades from course arrays
-      if (cleanData.courses) {
-        cleanData.courses = cleanData.courses.map((course: any) => {
+      if (safeData.courses) {
+        safeData.courses = safeData.courses.map((course: any) => {
           const {
             grade: courseGrade,
             finalGrade,
@@ -114,8 +87,8 @@ export default async function handler(
       }
 
       // Remove grades from hostCourses and recognizedCourses for course-matching submissions
-      if (cleanData.hostCourses) {
-        cleanData.hostCourses = cleanData.hostCourses.map((course: any) => {
+      if (safeData.hostCourses) {
+        safeData.hostCourses = safeData.hostCourses.map((course: any) => {
           const {
             grade: courseGrade,
             finalGrade,
@@ -126,8 +99,8 @@ export default async function handler(
         });
       }
 
-      if (cleanData.recognizedCourses) {
-        cleanData.recognizedCourses = cleanData.recognizedCourses.map(
+      if (safeData.recognizedCourses) {
+        safeData.recognizedCourses = safeData.recognizedCourses.map(
           (course: any) => {
             const {
               grade: courseGrade,
@@ -141,24 +114,21 @@ export default async function handler(
       }
 
       return {
-        ...rest,
-        data: cleanData,
+        ...sub,
+        data: safeData,
       };
     });
 
-    // Get university info from the first submission or create default
-    const firstSubmission = universitySubmissions[0];
-    const universityInfo = {
-      id,
-      name: firstSubmission?.data.hostUniversity || id,
-      city: firstSubmission?.data.hostCity,
-      country: firstSubmission?.data.hostCountry,
-    };
+    // Optionally fetch university info to return
+    const university = await prisma.university.findUnique({
+      where: { id },
+      select: { id: true, name: true, city: true, country: true },
+    });
 
     const response: UniversitySubmissionsResponse = {
-      submissions: cleanedSubmissions,
-      university: universityInfo,
-      totalSubmissions: cleanedSubmissions.length,
+      submissions: cleaned,
+      university,
+      totalSubmissions: cleaned.length,
     };
 
     res.status(200).json(response);
