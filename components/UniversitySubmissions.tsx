@@ -11,24 +11,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "../src/components/ui/avatar";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../src/components/ui/tabs";
-import {
-  Users,
-  BookOpen,
-  MapPin,
-  Calendar,
-  Star,
-  Euro,
-  Home,
-  MessageCircle,
-  TrendingUp,
-  Loader2,
-} from "lucide-react";
+import { Users, Loader2 } from "lucide-react";
 
 interface UniversitySubmissionsProps {
   universityId: string;
