@@ -141,6 +141,7 @@ export function useMentorshipMembers() {
   const [mentors, setMentors] = useState<MentorshipMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   const fetchMentors = async () => {
     try {
