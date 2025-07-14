@@ -190,7 +190,7 @@ export default function Community() {
       const matchesLevelOfStudy =
         !levelOfStudy ||
         levelOfStudy === "all" ||
-        mentor.studyProgram.toLowerCase().includes(levelOfStudy.toLowerCase());
+        mentor.levelOfStudy === levelOfStudy;
 
       const matchesHostUniversity =
         !hostUniversity ||
