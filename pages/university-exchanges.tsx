@@ -688,6 +688,24 @@ export default function UniversityExchanges() {
                                 <Badge variant="outline">
                                   {exchange.exchange.period}
                                 </Badge>
+                                <Badge
+                                  variant={
+                                    exchange.submissionType ===
+                                    "COURSE_MATCHING"
+                                      ? "default"
+                                      : "secondary"
+                                  }
+                                  className="text-xs"
+                                >
+                                  {exchange.submissionType === "COURSE_MATCHING"
+                                    ? "📚 Courses"
+                                    : exchange.submissionType ===
+                                        "ACCOMMODATION"
+                                      ? "🏠 Housing"
+                                      : exchange.submissionType === "EXPERIENCE"
+                                        ? "⭐ Experience"
+                                        : "📝 Story"}
+                                </Badge>
                               </div>
                               <Button
                                 variant="outline"
