@@ -390,10 +390,10 @@ export default function Community() {
                       <SelectValue placeholder="University in Cyprus" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      {CYPRUS_UNIVERSITIES.map((uni) => (
-                        <SelectItem key={uni.name} value={uni.name}>
-                          {uni.name}
+                      <SelectItem value="all">All Universities</SelectItem>
+                      {cyprusUniversities.map((uni) => (
+                        <SelectItem key={uni} value={uni}>
+                          {uni}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -403,13 +403,16 @@ export default function Community() {
                   <Select
                     value={departmentInCyprus}
                     onValueChange={setDepartmentInCyprus}
+                    disabled={
+                      !universityInCyprus || universityInCyprus === "all"
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Department in Cyprus" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      {uniqueDepartments.map((dep) => (
+                      <SelectItem value="all">All Departments</SelectItem>
+                      {availableDepartments.map((dep) => (
                         <SelectItem key={dep} value={dep}>
                           {dep}
                         </SelectItem>
@@ -417,39 +420,91 @@ export default function Community() {
                     </SelectContent>
                   </Select>
 
-                  {/* Level of Study */}
-                  <Select value={levelOfStudy} onValueChange={setLevelOfStudy}>
+                  {/* Level of Study - Only for UNIC */}
+                  <Select
+                    value={levelOfStudy}
+                    onValueChange={setLevelOfStudy}
+                    disabled={
+                      !universityInCyprus ||
+                      !universityInCyprus.includes("UNIC")
+                    }
+                  >
                     <SelectTrigger>
-                      <SelectValue placeholder="Level of Study" />
+                      <SelectValue
+                        placeholder={
+                          universityInCyprus?.includes("UNIC")
+                            ? "Level of Study"
+                            : "Level (UNIC only)"
+                        }
+                      />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="Bachelor">Bachelor</SelectItem>
-                      <SelectItem value="Master">Master</SelectItem>
-                      <SelectItem value="PhD">PhD</SelectItem>
+                      <SelectItem value="all">All Levels</SelectItem>
+                      <SelectItem value="bachelor">Bachelor</SelectItem>
+                      <SelectItem value="master">Master</SelectItem>
+                      <SelectItem value="phd">PhD</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {/* Host Country */}
+                  <Select
+                    value={hostCountry}
+                    onValueChange={setHostCountry}
+                    disabled={availableCountries.length === 0}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Host Country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Countries</SelectItem>
+                      {availableCountries.map((country) => (
+                        <SelectItem key={country} value={country}>
+                          {country}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {/* Host City */}
+                  <Select
+                    value={hostCity}
+                    onValueChange={setHostCity}
+                    disabled={availableCities.length === 0}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Host City" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Cities</SelectItem>
+                      {availableCities.map((city) => (
+                        <SelectItem key={city} value={city}>
+                          {city}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
 
                   {/* Host University */}
-                  <Input
+                  <Select
                     value={hostUniversity}
-                    onChange={(e) => setHostUniversity(e.target.value)}
-                    placeholder="Host University"
-                  />
-
-                  {/* Host Country */}
-                  <Input
-                    value={hostCountry}
-                    onChange={(e) => setHostCountry(e.target.value)}
-                    placeholder="Host Country"
-                  />
-
-                  {/* Host City */}
-                  <Input
-                    value={hostCity}
-                    onChange={(e) => setHostCity(e.target.value)}
-                    placeholder="Host City"
-                  />
+                    onValueChange={setHostUniversity}
+                    disabled={availableHostUniversities.length === 0}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Host University" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Universities</SelectItem>
+                      {availableHostUniversities.map((host, index) => (
+                        <SelectItem
+                          key={`${host.university}-${index}`}
+                          value={host.university}
+                        >
+                          {host.university} ({host.city})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </CardContent>
             </Card>
