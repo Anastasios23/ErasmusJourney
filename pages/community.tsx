@@ -373,8 +373,8 @@ export default function Community() {
               </Link>
             </div>
 
-            {/* Error State */}
-            {error && (
+            {/* Error State - Only show if no mentors are available */}
+            {error && mentors.length === 0 && (
               <Card className="mb-8 bg-red-50 border-red-200">
                 <CardContent className="pt-6 text-center">
                   <div className="text-red-800 mb-4">
@@ -390,6 +390,21 @@ export default function Community() {
                   >
                     Try Again
                   </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Warning for fallback data */}
+            {error && mentors.length > 0 && (
+              <Card className="mb-4 bg-yellow-50 border-yellow-200">
+                <CardContent className="pt-4">
+                  <div className="flex items-center text-yellow-800 text-sm">
+                    <span className="mr-2">⚠️</span>
+                    <span>
+                      Showing sample data due to connectivity issues. Please
+                      refresh to try loading live data.
+                    </span>
+                  </div>
                 </CardContent>
               </Card>
             )}
