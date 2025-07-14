@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Header from "../../components/Header";
+import { useStory } from "../../src/hooks/useStories";
 import { Button } from "../../src/components/ui/button";
 import { Badge } from "../../src/components/ui/badge";
 import { Card, CardContent } from "../../src/components/ui/card";
@@ -13,7 +13,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "../../src/components/ui/avatar";
-import { Separator } from "../../src/components/ui/separator";
+import { Skeleton } from "../../src/components/ui/skeleton";
 import {
   ArrowLeft,
   Heart,
@@ -28,52 +28,108 @@ import {
   Clock,
 } from "lucide-react";
 
-interface StoryDetail {
-  id: string;
-  title: string;
-  content: string;
-  excerpt: string;
-  imageUrl: string | null;
-  photos: Array<{
-    id: string;
-    image: string;
-    caption: string;
-    location: string;
-    description: string;
-  }>;
-  location: {
-    city?: string;
-    country?: string;
-    university?: string;
-  };
-  author: {
-    name: string;
-    university?: string;
-    avatar: string;
-    bio: string;
-    program: string;
-  };
-  period?: string;
-  tags: string[];
-  likes: number;
-  views: number;
-  comments: number;
-  createdAt: string;
-  updatedAt: string;
-  readingTime: number;
-  featured: boolean;
-}
-
-interface StoryDetailPageProps {
-  story: StoryDetail | null;
-}
-
-export default function StoryDetailPage({ story }: StoryDetailPageProps) {
+export default function StoryDetailPage() {
   const router = useRouter();
+  const { id } = router.query;
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
 
-  if (!story) {
+  const { story, loading, error } = useStory(id as string);
+
+  const handleShare = async () => {
+    if (navigator.share && story) {
+      try {
+        await navigator.share({
+          title: story.title,
+          text: story.excerpt,
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.log("Error sharing:", err);
+      }
+    } else if (story) {
+      navigator.clipboard.writeText(window.location.href);
+    }
+  };
+
+  const formatContent = (content: string) => {
+    return content.split("\n\n").map((paragraph, index) => (
+      <p key={index} className="mb-4 leading-relaxed">
+        {paragraph}
+      </p>
+    ));
+  };
+
+  if (loading) {
+    return (
+      <>
+        <Head>
+          <title>Loading Story - Erasmus Journey Platform</title>
+        </Head>
+        <div className="min-h-screen bg-gray-50">
+          <Header />
+          <div className="pt-20 pb-16 px-4">
+            <div className="max-w-4xl mx-auto">
+              {/* Back Navigation Skeleton */}
+              <div className="mb-6">
+                <Skeleton className="h-10 w-32" />
+              </div>
+
+              {/* Article Skeleton */}
+              <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                {/* Hero Image Skeleton */}
+                <Skeleton className="aspect-video w-full" />
+
+                {/* Content Skeleton */}
+                <div className="p-8">
+                  {/* Meta Info Skeleton */}
+                  <div className="mb-6">
+                    <div className="flex flex-wrap items-center gap-2 mb-4">
+                      <Skeleton className="h-6 w-20" />
+                      <Skeleton className="h-6 w-16" />
+                      <Skeleton className="h-6 w-24" />
+                    </div>
+                    <div className="flex items-center gap-4 text-sm mb-4">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-4 w-28" />
+                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className="h-4 w-24" />
+                    </div>
+                  </div>
+
+                  {/* Title Skeleton */}
+                  <Skeleton className="h-10 w-full mb-6" />
+
+                  {/* Author Info Skeleton */}
+                  <div className="flex items-center justify-between mb-8 pb-6 border-b">
+                    <div className="flex items-center gap-4">
+                      <Skeleton className="h-16 w-16 rounded-full" />
+                      <div>
+                        <Skeleton className="h-6 w-32 mb-1" />
+                        <Skeleton className="h-4 w-48 mb-1" />
+                        <Skeleton className="h-4 w-40" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Content Skeleton */}
+                  <div className="space-y-4 mb-8">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-5/6" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (error || !story) {
     return (
       <>
         <Head>
@@ -102,30 +158,6 @@ export default function StoryDetailPage({ story }: StoryDetailPageProps) {
     );
   }
 
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: story.title,
-          text: story.excerpt,
-          url: window.location.href,
-        });
-      } catch (err) {
-        console.log("Error sharing:", err);
-      }
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-    }
-  };
-
-  const formatContent = (content: string) => {
-    return content.split("\n\n").map((paragraph, index) => (
-      <p key={index} className="mb-4 leading-relaxed">
-        {paragraph}
-      </p>
-    ));
-  };
-
   return (
     <>
       <Head>
@@ -133,7 +165,7 @@ export default function StoryDetailPage({ story }: StoryDetailPageProps) {
         <meta name="description" content={story.excerpt} />
         <meta property="og:title" content={story.title} />
         <meta property="og:description" content={story.excerpt} />
-        <meta property="og:image" content={story.image} />
+        <meta property="og:image" content={story.imageUrl || ""} />
       </Head>
 
       <div className="min-h-screen bg-gray-50">
@@ -287,6 +319,48 @@ export default function StoryDetailPage({ story }: StoryDetailPageProps) {
                   {formatContent(story.content)}
                 </div>
 
+                {/* Photos Section */}
+                {story.photos && story.photos.length > 0 && (
+                  <div className="mb-8">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">
+                      Photo Gallery
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {story.photos.map((photo, index) => (
+                        <div key={index} className="relative group">
+                          <div className="aspect-video overflow-hidden rounded-lg relative">
+                            <Image
+                              src={photo.image}
+                              alt={photo.caption || `Photo ${index + 1}`}
+                              fill
+                              className="object-cover group-hover:scale-105 transition-transform"
+                              sizes="(max-width: 768px) 100vw, 50vw"
+                            />
+                          </div>
+                          {photo.caption && (
+                            <div className="mt-2">
+                              <p className="text-sm font-medium text-gray-900">
+                                {photo.caption}
+                              </p>
+                              {photo.location && (
+                                <p className="text-xs text-gray-600 flex items-center gap-1">
+                                  <MapPin className="h-3 w-3" />
+                                  {photo.location}
+                                </p>
+                              )}
+                              {photo.description && (
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {photo.description}
+                                </p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Stats */}
                 <div className="flex items-center gap-6 text-sm text-gray-600 mb-8">
                   <div className="flex items-center gap-1">
@@ -345,7 +419,7 @@ export default function StoryDetailPage({ story }: StoryDetailPageProps) {
                   Have an amazing experience to share? Help future students by
                   sharing your insights, tips, and memorable moments.
                 </p>
-                <Link href="/share-story">
+                <Link href="/photo-story">
                   <Button size="lg">Share Your Story</Button>
                 </Link>
               </CardContent>
@@ -356,42 +430,3 @@ export default function StoryDetailPage({ story }: StoryDetailPageProps) {
     </>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async ({
-  params,
-  req,
-}) => {
-  const { id } = params!;
-
-  try {
-    // Determine the base URL for server-side requests
-    const protocol = req.headers["x-forwarded-proto"] || "http";
-    const host = req.headers.host || "localhost:3000";
-    const baseUrl = `${protocol}://${host}`;
-
-    const response = await fetch(`${baseUrl}/api/stories/${id}`);
-
-    if (!response.ok) {
-      return {
-        props: {
-          story: null,
-        },
-      };
-    }
-
-    const story = await response.json();
-
-    return {
-      props: {
-        story,
-      },
-    };
-  } catch (error) {
-    console.error("Error fetching story:", error);
-    return {
-      props: {
-        story: null,
-      },
-    };
-  }
-};
