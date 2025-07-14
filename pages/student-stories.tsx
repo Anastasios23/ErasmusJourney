@@ -57,43 +57,32 @@ export default function StudentStoriesPage() {
   const [showFilters, setShowFilters] = useState(false);
 
   // React Query for data fetching with caching
-  const filters = useMemo(
-    () => ({
-      search: searchTerm,
-      category: selectedCategory === "all" ? undefined : selectedCategory,
-    }),
-    [searchTerm, selectedCategory],
-  );
+  const { stories, loading, error } = useStories();
+  const { likeStory } = useLikeStory();
 
-  const { data: stories = [], isLoading, error } = useStories(filters);
-  const likeMutation = useLikeStory();
+  // Filter stories based on search and category
+  const filteredStories = useMemo(() => {
+    return stories.filter((story) => {
+      const matchesSearch =
+        searchTerm === "" ||
+        story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        story.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        story.location.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        story.location.country
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase());
 
-  // Get generated content from user submissions
-  const { content: generatedContent, loading: contentLoading } =
-    useGeneratedContent("stories");
+      const matchesCategory =
+        selectedCategory === "all" ||
+        story.tags.some(
+          (tag) => tag.toLowerCase() === selectedCategory.toLowerCase(),
+        );
 
-  // Combine generated content with existing data, ensuring unique IDs
-  const allStories = useMemo(() => {
-    const generated = generatedContent?.stories || [];
-    const existing = stories || [];
-
-    // Create a Map to ensure unique IDs, prioritizing generated content
-    const storiesMap = new Map();
-
-    // Add existing stories first
-    existing.forEach((story) => {
-      storiesMap.set(story.id, story);
+      return matchesSearch && matchesCategory;
     });
+  }, [stories, searchTerm, selectedCategory]);
 
-    // Add generated stories, potentially overwriting existing ones with same ID
-    generated.forEach((story) => {
-      storiesMap.set(story.id, story);
-    });
-
-    return Array.from(storiesMap.values());
-  }, [generatedContent?.stories, stories]);
-
-  const finalLoading = isLoading || contentLoading;
+  const finalLoading = loading;
 
   // Pagination
   const totalPages = Math.ceil(allStories.length / ITEMS_PER_PAGE);
