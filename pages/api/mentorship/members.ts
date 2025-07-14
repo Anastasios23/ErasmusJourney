@@ -24,8 +24,6 @@ export default async function handler(
             firstName: true,
             lastName: true,
             email: true,
-            universityInCyprus: true,
-            studyProgram: true,
           },
         },
       },
