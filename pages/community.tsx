@@ -78,20 +78,30 @@ export default function Community() {
 
   const { mentors, loading, error } = useMentorshipMembers();
 
-  // Update available departments when Cyprus university changes (same logic as basic-information)
+  // Fetch available departments when Cyprus university changes
   useEffect(() => {
-    if (universityInCyprus) {
-      const selectedUni = CYPRUS_UNIVERSITIES.find(
-        (uni) => uni.name === universityInCyprus,
-      );
-      if (selectedUni) {
-        setAvailableDepartments(selectedUni.departments);
+    const fetchDepartments = async () => {
+      if (universityInCyprus && universityInCyprus !== "all") {
+        try {
+          const response = await fetch(
+            `/api/universities/${encodeURIComponent(universityInCyprus)}/departments`,
+          );
+          if (response.ok) {
+            const data = await response.json();
+            setAvailableDepartments(data.departments || []);
+          } else {
+            setAvailableDepartments([]);
+          }
+        } catch (error) {
+          console.error("Error fetching departments:", error);
+          setAvailableDepartments([]);
+        }
       } else {
         setAvailableDepartments([]);
       }
-    } else {
-      setAvailableDepartments([]);
-    }
+    };
+
+    fetchDepartments();
 
     // Reset dependent fields
     setDepartmentInCyprus("");
