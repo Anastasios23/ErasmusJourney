@@ -70,10 +70,13 @@ export default function Community() {
   const filteredMentors = useMemo(() => {
     return mentors.filter((mentor) => {
       const matchesUniversityInCyprus =
-        !universityInCyprus || mentor.universityInCyprus === universityInCyprus;
+        !universityInCyprus ||
+        universityInCyprus === "all" ||
+        mentor.universityInCyprus === universityInCyprus;
 
       const matchesDepartmentInCyprus =
         !departmentInCyprus ||
+        departmentInCyprus === "all" ||
         mentor.studyProgram.includes(departmentInCyprus) ||
         mentor.specializations.some(
           (spec) =>
@@ -83,6 +86,7 @@ export default function Community() {
 
       const matchesLevelOfStudy =
         !levelOfStudy ||
+        levelOfStudy === "all" ||
         mentor.studyProgram.toLowerCase().includes(levelOfStudy.toLowerCase());
 
       const matchesHostUniversity =
