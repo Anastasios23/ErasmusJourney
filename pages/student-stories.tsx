@@ -284,7 +284,10 @@ export default function StudentStoriesPage() {
                       >
                         <div className="aspect-video overflow-hidden rounded-t-lg relative">
                           <Image
-                            src={story.imageUrl || "/placeholder-story.jpg"}
+                            src={
+                              story.imageUrl ||
+                              "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop"
+                            }
                             alt={story.title}
                             fill
                             className="object-cover hover:scale-105 transition-transform"
