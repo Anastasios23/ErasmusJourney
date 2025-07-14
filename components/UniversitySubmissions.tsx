@@ -6,11 +6,6 @@ import {
   CardTitle,
 } from "../src/components/ui/card";
 import { Badge } from "../src/components/ui/badge";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "../src/components/ui/avatar";
 import { Users, Loader2 } from "lucide-react";
 
 interface UniversitySubmissionsProps {
@@ -64,7 +59,7 @@ export default function UniversitySubmissions({
         setData(result);
       } catch (error) {
         console.error("Error fetching submissions:", error);
-        setError("Failed to load student experiences");
+        setError("Failed to load course matching data");
       } finally {
         setLoading(false);
       }
@@ -80,7 +75,7 @@ export default function UniversitySubmissions({
       <Card>
         <CardContent className="p-12 text-center">
           <Loader2 className="h-8 w-8 animate-spin text-blue-500 mx-auto mb-4" />
-          <p className="text-gray-600">Loading student experiences...</p>
+          <p className="text-gray-600">Loading course matching data...</p>
         </CardContent>
       </Card>
     );
@@ -90,7 +85,7 @@ export default function UniversitySubmissions({
     return (
       <Card>
         <CardContent className="p-12 text-center">
-          <MessageCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-600">{error}</p>
         </CardContent>
       </Card>
@@ -117,168 +112,6 @@ export default function UniversitySubmissions({
       </Card>
     );
   }
-
-  // Group submissions by type (only course matching now)
-  const submissionsByType = courseMatchingSubmissions.reduce(
-    (acc, submission) => {
-      const type = submission?.type || "unknown";
-      if (!acc[type]) {
-        acc[type] = [];
-      }
-      acc[type].push(submission);
-      return acc;
-    },
-    {} as Record<string, Submission[]>,
-  );
-
-  // Ensure we have at least one type to prevent tabs error
-  if (Object.keys(submissionsByType).length === 0) {
-    return (
-      <Card>
-        <CardContent className="p-12 text-center">
-          <MessageCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
-            No Valid Submissions
-          </h3>
-          <p className="text-gray-600">
-            The submissions data appears to be malformed.
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case "ACCOMMODATION":
-        return <Home className="h-4 w-4" />;
-      case "COURSE_MATCHING":
-        return <BookOpen className="h-4 w-4" />;
-      case "STORY":
-        return <MessageCircle className="h-4 w-4" />;
-      case "EXPERIENCE":
-        return <Euro className="h-4 w-4" />;
-      default:
-        return <TrendingUp className="h-4 w-4" />;
-    }
-  };
-
-  const getTypeName = (type: string) => {
-    switch (type) {
-      case "ACCOMMODATION":
-        return "Accommodation";
-      case "COURSE_MATCHING":
-        return "Course Matching";
-      case "STORY":
-        return "Stories";
-      case "EXPERIENCE":
-        return "Experience";
-      default:
-        return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
-    }
-  };
-
-  const formatSubmissionData = (submission: Submission) => {
-    const { data } = submission;
-
-    return (
-      <div className="space-y-4">
-        {/* Student and Exchange Info */}
-        <div className="bg-blue-50 p-4 rounded-lg">
-          <h5 className="font-medium text-blue-900 mb-2">
-            📚 Exchange Details
-          </h5>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-            <div>
-              <span className="font-medium">Student:</span>{" "}
-              {[data.firstName, data.lastName].filter(Boolean).join(" ") ||
-                "Anonymous"}
-            </div>
-            <div>
-              <span className="font-medium">Cyprus University:</span>{" "}
-              {data.universityInCyprus || "Not specified"}
-            </div>
-            <div>
-              <span className="font-medium">Department:</span>{" "}
-              {data.departmentInCyprus || "Not specified"}
-            </div>
-            <div>
-              <span className="font-medium">Exchange Period:</span>{" "}
-              {data.exchangePeriod || "Not specified"}
-            </div>
-          </div>
-        </div>
-
-        {/* Course Matching Information */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Host University Courses */}
-          <div className="bg-indigo-50 p-4 rounded-lg">
-            <h5 className="font-medium text-indigo-900 mb-3">
-              🎓 Courses at Partner University
-            </h5>
-            {data.hostCourses && data.hostCourses.length > 0 ? (
-              <div className="space-y-3">
-                {data.hostCourses.map((course: any, index: number) => (
-                  <div
-                    key={index}
-                    className="border-l-4 border-indigo-400 pl-3"
-                  >
-                    <div className="font-medium text-indigo-900">
-                      {course.code || "Unknown"} -{" "}
-                      {course.name || "Unknown Course"}
-                    </div>
-                    <div className="text-sm text-indigo-700">
-                      {course.credits} ECTS
-                    </div>
-                    {course.description && (
-                      <div className="text-xs text-indigo-600 mt-1">
-                        {course.description}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-sm text-indigo-700">
-                No host courses listed
-              </div>
-            )}
-          </div>
-
-          {/* Recognized Cyprus Courses */}
-          <div className="bg-green-50 p-4 rounded-lg">
-            <h5 className="font-medium text-green-900 mb-3">
-              ✅ Recognized at Cyprus University
-            </h5>
-            {data.recognizedCourses && data.recognizedCourses.length > 0 ? (
-              <div className="space-y-3">
-                {data.recognizedCourses.map((course: any, index: number) => (
-                  <div key={index} className="border-l-4 border-green-400 pl-3">
-                    <div className="font-medium text-green-900">
-                      {course.cyprusCode || "Unknown"} -{" "}
-                      {course.cyprusName || "Unknown Course"}
-                    </div>
-                    <div className="text-sm text-green-700">
-                      {course.equivalentCredits} ECTS
-                    </div>
-                    {course.recognitionStatus && (
-                      <div className="text-xs text-green-600 mt-1">
-                        Status: {course.recognitionStatus}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-sm text-green-700">
-                No recognized courses listed
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   return (
     <Card>
