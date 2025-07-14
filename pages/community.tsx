@@ -86,6 +86,13 @@ const hostCountries = [
   "Sweden",
 ];
 
+// Get all unique departments from all Cyprus universities
+const allDepartments = CYPRUS_UNIVERSITIES.reduce((deps, uni) => {
+  return [...deps, ...uni.departments];
+}, [] as string[]);
+const uniqueDepartments = [...new Set(allDepartments)].sort();
+const departments = ["All Departments", ...uniqueDepartments];
+
 // Academic specializations
 const specializations = [
   "All Specializations",
