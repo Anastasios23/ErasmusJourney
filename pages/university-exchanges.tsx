@@ -336,7 +336,7 @@ export default function UniversityExchanges() {
                   University Exchange History
                 </h1>
                 <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                  Loading exchange history...
+                  Loading student experiences from forms...
                 </p>
               </div>
             </div>
