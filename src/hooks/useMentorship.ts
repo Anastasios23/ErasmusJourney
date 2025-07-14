@@ -216,10 +216,17 @@ export function useMentorshipMembers() {
     }
   }, [error, retryCount]);
 
+  const manualRetry = () => {
+    setRetryCount(0);
+    setError(null);
+    fetchMentors();
+  };
+
   return {
     mentors,
     loading,
     error,
     refetch: fetchMentors,
+    retry: manualRetry,
   };
 }
