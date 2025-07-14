@@ -47,14 +47,14 @@ import {
   Calendar,
   Award,
 } from "lucide-react";
-import {
-  CYPRUS_UNIVERSITIES,
-  getAgreementsByDepartment,
-  getAgreementsByDepartmentAndLevel,
-} from "../src/data/universityAgreements";
-
-// Cyprus universities from agreements data
-const cyprusUniversities = CYPRUS_UNIVERSITIES.map((uni) => uni.name);
+// Cyprus universities - these will be fetched from the database
+const cyprusUniversities = [
+  "University of Cyprus",
+  "University of Nicosia",
+  "Cyprus University of Technology",
+  "Frederick University",
+  "European University Cyprus",
+];
 
 export default function Community() {
   const router = useRouter();
