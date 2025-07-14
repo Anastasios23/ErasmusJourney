@@ -761,8 +761,7 @@ export default function UniversityExchanges() {
                             Course Matching Information
                           </h4>
                           <div className="space-y-3">
-                            {exchange.submissionType === "COURSE_MATCHING" &&
-                            exchange.courses?.length > 0 ? (
+                            {exchange.courses?.length > 0 ? (
                               exchange.courses
                                 .slice(0, 3)
                                 .map((course, index) => (
