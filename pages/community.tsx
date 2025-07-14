@@ -111,6 +111,8 @@ export default function Community() {
     useState("All Universities");
   const [selectedHostCountry, setSelectedHostCountry] =
     useState("All Countries");
+  const [selectedDepartment, setSelectedDepartment] =
+    useState("All Departments");
   const [selectedSpecialization, setSelectedSpecialization] = useState(
     "All Specializations",
   );
