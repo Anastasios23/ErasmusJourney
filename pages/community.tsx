@@ -27,7 +27,6 @@ import {
 } from "../src/components/ui/avatar";
 import { Skeleton } from "../src/components/ui/skeleton";
 import {
-  Search,
   MapPin,
   GraduationCap,
   Users,
