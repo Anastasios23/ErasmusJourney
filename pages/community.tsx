@@ -111,54 +111,84 @@ export default function Community() {
     setHostCity("");
   }, [universityInCyprus]);
 
-  // Update available host options when university, department, or level changes (same logic as basic-information)
+  // Fetch available agreements when university, department, or level changes
   useEffect(() => {
-    if (universityInCyprus && departmentInCyprus) {
-      let agreements: any[] = [];
+    const fetchAgreements = async () => {
+      if (
+        universityInCyprus &&
+        departmentInCyprus &&
+        universityInCyprus !== "all" &&
+        departmentInCyprus !== "all"
+      ) {
+        try {
+          const params = new URLSearchParams({
+            homeUniversity: universityInCyprus,
+            department: departmentInCyprus,
+          });
 
-      const selectedUni = CYPRUS_UNIVERSITIES.find(
-        (uni) => uni.name === universityInCyprus,
-      );
+          // Add level if it's UNIC and level is selected
+          if (
+            universityInCyprus.includes("UNIC") &&
+            levelOfStudy &&
+            levelOfStudy !== "all"
+          ) {
+            params.append("level", levelOfStudy);
+          }
 
-      if (selectedUni) {
-        if (selectedUni.code === "UNIC" && levelOfStudy) {
-          // For UNIC, use level-specific agreements
-          agreements = getAgreementsByDepartmentAndLevel(
-            selectedUni.code,
-            departmentInCyprus,
-            levelOfStudy as "bachelor" | "master" | "phd",
-          );
-        } else if (selectedUni.code !== "UNIC") {
-          // For other universities, use general department agreements
-          agreements = getAgreementsByDepartment(
-            selectedUni.code,
-            departmentInCyprus,
-          );
+          const response = await fetch(`/api/agreements?${params.toString()}`);
+          if (response.ok) {
+            const data = await response.json();
+            setAvailableAgreements(data.agreements || []);
+
+            // Extract unique host universities
+            const uniqueHostUniversities = [
+              ...new Set(
+                data.agreements.map(
+                  (agreement: any) => agreement.partnerUniversity.name,
+                ),
+              ),
+            ].sort();
+
+            // Extract unique countries and cities
+            const uniqueCountries = [
+              ...new Set(
+                data.agreements.map(
+                  (agreement: any) => agreement.partnerCountry,
+                ),
+              ),
+            ].sort();
+
+            const uniqueCities = [
+              ...new Set(
+                data.agreements.map((agreement: any) => agreement.partnerCity),
+              ),
+            ].sort();
+
+            setAvailableHostUniversities(uniqueHostUniversities);
+            setAvailableCountries(uniqueCountries);
+            setAvailableCities(uniqueCities);
+          } else {
+            setAvailableAgreements([]);
+            setAvailableHostUniversities([]);
+            setAvailableCountries([]);
+            setAvailableCities([]);
+          }
+        } catch (error) {
+          console.error("Error fetching agreements:", error);
+          setAvailableAgreements([]);
+          setAvailableHostUniversities([]);
+          setAvailableCountries([]);
+          setAvailableCities([]);
         }
+      } else {
+        setAvailableAgreements([]);
+        setAvailableHostUniversities([]);
+        setAvailableCountries([]);
+        setAvailableCities([]);
       }
+    };
 
-      const uniqueHostUniversities = agreements.map((agreement) => ({
-        university: agreement.partnerUniversity,
-        city: agreement.partnerCity,
-        country: agreement.partnerCountry,
-      }));
-
-      const uniqueCountries = [
-        ...new Set(agreements.map((agreement) => agreement.partnerCountry)),
-      ].sort();
-
-      const uniqueCities = [
-        ...new Set(agreements.map((agreement) => agreement.partnerCity)),
-      ].sort();
-
-      setAvailableHostUniversities(uniqueHostUniversities);
-      setAvailableCountries(uniqueCountries);
-      setAvailableCities(uniqueCities);
-    } else {
-      setAvailableHostUniversities([]);
-      setAvailableCountries([]);
-      setAvailableCities([]);
-    }
+    fetchAgreements();
 
     // Reset dependent fields
     setHostUniversity("");
