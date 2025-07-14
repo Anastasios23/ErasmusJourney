@@ -752,35 +752,63 @@ export default function UniversityExchanges() {
                           </div>
                         </div>
 
-                        {/* Courses */}
+                        {/* Information */}
                         <div className="space-y-4">
                           <h4 className="font-semibold text-gray-900">
-                            Courses Taken
+                            {exchange.submissionType === "COURSE_MATCHING"
+                              ? "Course Information"
+                              : exchange.submissionType === "ACCOMMODATION"
+                                ? "Housing Details"
+                                : "Experience Details"}
                           </h4>
                           <div className="space-y-3">
-                            {exchange.courses.map((course, index) => (
-                              <div
-                                key={index}
-                                className="p-3 bg-gray-50 rounded-lg"
-                              >
-                                <div className="flex justify-between items-start mb-2">
-                                  <div>
-                                    <h5 className="text-sm font-medium text-gray-900">
-                                      {course.code} - {course.name}
-                                    </h5>
-                                    <p className="text-xs text-gray-500">
-                                      {course.credits} ECTS • Grade:{" "}
-                                      {course.grade}
-                                    </p>
+                            {exchange.submissionType === "COURSE_MATCHING" &&
+                            exchange.courses?.length > 0 ? (
+                              exchange.courses
+                                .slice(0, 3)
+                                .map((course, index) => (
+                                  <div
+                                    key={index}
+                                    className="p-3 bg-blue-50 rounded-lg"
+                                  >
+                                    <div>
+                                      <h5 className="text-sm font-medium text-blue-900">
+                                        {course.code} - {course.name}
+                                      </h5>
+                                      <p className="text-xs text-blue-600">
+                                        {course.credits} ECTS
+                                      </p>
+                                      {course.description && (
+                                        <p className="text-xs text-blue-700 mt-1">
+                                          {course.description}
+                                        </p>
+                                      )}
+                                    </div>
                                   </div>
-                                </div>
-                                <div className="mt-2">
-                                  <p className="text-xs text-blue-600">
-                                    Cyprus Equivalent: {course.cyprusEquivalent}
-                                  </p>
-                                </div>
+                                ))
+                            ) : (
+                              <div className="p-3 bg-gray-50 rounded-lg">
+                                <p className="text-sm text-gray-600">
+                                  {exchange.submissionType === "EXPERIENCE"
+                                    ? "🌟 Shared their overall exchange experience"
+                                    : exchange.submissionType ===
+                                        "ACCOMMODATION"
+                                      ? "🏠 Shared housing and accommodation tips"
+                                      : exchange.submissionType === "STORY"
+                                        ? "📝 Shared their personal story"
+                                        : "📋 Shared their exchange information"}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  Click "View All Experiences" to see full
+                                  details
+                                </p>
                               </div>
-                            ))}
+                            )}
+                            {exchange.courses?.length > 3 && (
+                              <p className="text-xs text-blue-600">
+                                +{exchange.courses.length - 3} more courses
+                              </p>
+                            )}
                           </div>
                         </div>
                       </div>
