@@ -10,11 +10,16 @@ export default async function handler(
   }
 
   try {
-    // Fetch all mentorship submissions from database
+    // Fetch all mentorship submissions from database - use EXPERIENCE type for now
     const mentorshipSubmissions = await prisma.formSubmission.findMany({
       where: {
-        type: "HELP_FUTURE_STUDENTS",
+        type: "EXPERIENCE",
         status: "PUBLISHED", // Only show public mentors
+        // Filter by submissions that have mentorship data
+        data: {
+          path: ["submissionType"],
+          equals: "mentorship",
+        },
       },
       include: {
         user: {
