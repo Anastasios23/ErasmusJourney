@@ -93,6 +93,8 @@ export default function UniversityExchanges() {
     selectedUniversityForSubmissions,
     setSelectedUniversityForSubmissions,
   ] = useState<string | null>(null);
+  const [formSubmissions, setFormSubmissions] = useState<FormSubmission[]>([]);
+  const [submissionsLoading, setSubmissionsLoading] = useState(true);
 
   // Ensure component is mounted to prevent hydration mismatches
   useEffect(() => {
