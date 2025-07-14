@@ -24,8 +24,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../src/components/ui/pagination";
-import { useStories, useLikeStory } from "../src/hooks/useQueries";
-import { useGeneratedContent } from "../src/hooks/useFormSubmissions";
+import { useStories, useLikeStory } from "../src/hooks/useStories";
 import {
   Search,
   Heart,
