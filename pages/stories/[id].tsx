@@ -235,7 +235,7 @@ export default function StoryDetailPage({ story }: StoryDetailPageProps) {
                     </Avatar>
                     <div>
                       <div className="font-semibold text-lg">
-                        {story.author.firstName} {story.author.lastName}
+                        {story.author.name}
                       </div>
                       <div className="text-sm text-gray-600">
                         {story.author.program} at {story.author.university}
