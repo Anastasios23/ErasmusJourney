@@ -822,9 +822,15 @@ export default function PhotoStory() {
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 ) : (
-                  <Button onClick={handleSubmit}>
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={isSubmitting}
+                    className={
+                      isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                    }
+                  >
                     <CheckCircle className="w-4 h-4 mr-2" />
-                    Submit Photo Story
+                    {isSubmitting ? "Submitting..." : "Submit Photo Story"}
                   </Button>
                 )}
               </div>
