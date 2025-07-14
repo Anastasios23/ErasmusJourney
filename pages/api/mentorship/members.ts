@@ -30,6 +30,12 @@ export default async function handler(
       orderBy: { createdAt: "desc" },
     });
 
+    // Filter to only mentorship submissions
+    const mentorshipSubmissions = allSubmissions.filter((submission) => {
+      const data = submission.data as any;
+      return data.submissionType === "mentorship";
+    });
+
     // Transform to public mentor format, removing sensitive data
     const publicMentors = mentorshipSubmissions.map((submission) => {
       const data = submission.data as any;
