@@ -292,16 +292,6 @@ export default function UniversitySubmissions({
             )}
           </>
         )}
-
-        {/* Personal Experience */}
-        {data.personalExperience && (
-          <div className="bg-purple-50 p-3 rounded-lg">
-            <h5 className="font-medium text-purple-900 mb-2">📝 Experience</h5>
-            <p className="text-sm text-purple-700 italic">
-              "{data.personalExperience.slice(0, 200)}..."
-            </p>
-          </div>
-        )}
       </div>
     );
   };
