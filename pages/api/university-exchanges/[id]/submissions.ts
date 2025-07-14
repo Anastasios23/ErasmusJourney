@@ -70,6 +70,10 @@ export default async function handler(
       return false;
     });
 
+    console.log(
+      `Filtered to ${universitySubmissions.length} submissions for university: ${id}`,
+    );
+
     // Remove grades and any sensitive info before sending to frontend
     const cleaned = universitySubmissions.map((sub) => {
       const {
