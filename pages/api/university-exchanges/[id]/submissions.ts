@@ -41,9 +41,14 @@ export default async function handler(
 
     // Filter submissions for this university
     const universitySubmissions = TEST_FORM_SUBMISSIONS.filter((submission) => {
-      // Match by university name for test data compatibility
-      // In production, you would match by universityId field in the data
-      const hostUniversity = submission.data.hostUniversity;
+      const data = submission.data;
+      if (!data) return false;
+
+      // PRODUCTION: Match by universityId (when using real database)
+      // if (data.universityId === id) return true;
+
+      // TEST DATA: Match by university name (current implementation)
+      const hostUniversity = data.hostUniversity;
       if (!hostUniversity) return false;
 
       // Exact match first
