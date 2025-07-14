@@ -201,9 +201,9 @@ export default function Community() {
         selectedSpecialization === "All Specializations" ||
         mentor.specializations.includes(selectedSpecialization);
 
-      const matchesHelpTopic =
-        selectedHelpTopic === "All Topics" ||
-        mentor.helpTopics.includes(selectedHelpTopic);
+      const matchesHostUniversity =
+        selectedHostUniversity === "All Host Universities" ||
+        mentor.hostUniversity === selectedHostUniversity;
 
       return (
         matchesSearch &&
