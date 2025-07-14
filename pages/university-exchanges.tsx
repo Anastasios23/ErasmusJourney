@@ -122,34 +122,37 @@ export default function UniversityExchanges() {
   }, []);
 
   // Convert form submissions to exchange history format for display
+  // Only show COURSE_MATCHING submissions
   const exchangeHistory = useMemo(() => {
-    return formSubmissions.map((submission) => {
-      const data = submission.data;
-      return {
-        id: submission.id,
-        student: {
-          name:
-            `${data.firstName || ""} ${data.lastName || ""}`.trim() ||
-            "Anonymous Student",
-          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${submission.id}`,
-          cyprusUniversity: data.universityInCyprus || "Cyprus University",
-          department: data.departmentInCyprus || "Unknown Department",
-          year: data.exchangePeriod || "2024",
-        },
-        exchange: {
-          university: data.hostUniversity || "Unknown University",
-          country: data.hostCountry || "Unknown Country",
-          city: data.hostCity || "Unknown City",
-          duration: "1 Semester", // Default duration
-          period: data.exchangePeriod || "2024",
-        },
-        courses: data.hostCourses || [],
-        rating: data.overallRating || 4.0,
-        review: data.personalExperience || submission.title,
-        submissionType: submission.type,
-        submissionTitle: submission.title,
-      };
-    });
+    return formSubmissions
+      .filter((submission) => submission.type === "COURSE_MATCHING")
+      .map((submission) => {
+        const data = submission.data;
+        return {
+          id: submission.id,
+          student: {
+            name:
+              `${data.firstName || ""} ${data.lastName || ""}`.trim() ||
+              "Anonymous Student",
+            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${submission.id}`,
+            cyprusUniversity: data.universityInCyprus || "Cyprus University",
+            department: data.departmentInCyprus || "Unknown Department",
+            year: data.exchangePeriod || "2024",
+          },
+          exchange: {
+            university: data.hostUniversity || "Unknown University",
+            country: data.hostCountry || "Unknown Country",
+            city: data.hostCity || "Unknown City",
+            duration: "1 Semester", // Default duration
+            period: data.exchangePeriod || "2024",
+          },
+          courses: data.hostCourses || [],
+          rating: data.overallRating || 4.0,
+          review: data.personalExperience || submission.title,
+          submissionType: submission.type,
+          submissionTitle: submission.title,
+        };
+      });
   }, [formSubmissions]);
 
   // Get available destinations based on selected filters
