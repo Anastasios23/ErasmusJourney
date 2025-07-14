@@ -27,6 +27,7 @@ import {
 import { Skeleton } from "../../src/components/ui/skeleton";
 import {
   ArrowLeft,
+  ArrowRight,
   MapPin,
   Star,
   Euro,
