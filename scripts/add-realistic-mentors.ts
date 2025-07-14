@@ -2,29 +2,14 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-async function updateMentorData() {
-  console.log("Clearing existing mentorship data...");
-
-  // Remove existing mentorship submissions
-  await prisma.formSubmission.deleteMany({
-    where: {
-      type: "EXPERIENCE",
-      data: {
-        path: ["submissionType"],
-        equals: "mentorship",
-      },
-    },
-  });
+async function addRealisticMentors() {
+  console.log("Adding realistic mentor data based on university agreements...");
 
   const user = await prisma.user.findFirst();
   if (!user) {
     console.error("No user found. Please create a user first.");
     return;
   }
-
-  console.log(
-    "Adding updated mentor data based on real university agreements...",
-  );
 
   const realisticMentors = [
     {
@@ -55,12 +40,8 @@ async function updateMentorData() {
         nickname: "Elena Martinez",
         preferredContactTime: "flexible",
         submissionType: "mentorship",
-
-        // Cyprus university info
         universityInCyprus: "University of Nicosia",
         studyProgram: "Business Administration",
-
-        // Host university info
         hostUniversity: "ESADE Business School",
         hostCity: "Barcelona",
         hostCountry: "Spain",
@@ -94,7 +75,6 @@ async function updateMentorData() {
         nickname: "Andreas Nicolaou",
         preferredContactTime: "weekends",
         submissionType: "mentorship",
-
         universityInCyprus: "Cyprus University of Technology",
         studyProgram: "Electrical Engineering",
         hostUniversity: "Technical University of Munich",
@@ -132,88 +112,12 @@ async function updateMentorData() {
         nickname: "Sofia Papadopoulos",
         preferredContactTime: "evenings",
         submissionType: "mentorship",
-
         universityInCyprus: "University of Cyprus",
         studyProgram: "Psychology",
         hostUniversity: "University of Vienna",
         hostCity: "Vienna",
         hostCountry: "Austria",
         exchangePeriod: "Fall 2022",
-      },
-    },
-    {
-      title: "Mentorship Application - Dimitris Constantinou",
-      data: {
-        wantToHelp: "yes",
-        contactMethod: "email",
-        email: "dimitris.constantinou@example.com",
-        linkedinProfile: "https://linkedin.com/in/dimitrisconstantinou",
-        languagesSpoken: ["English", "Greek", "Swedish"],
-        helpTopics: [
-          "Academic Support",
-          "Course Selection",
-          "Career Guidance",
-          "Tech Industry",
-        ],
-        availabilityLevel: "moderate",
-        mentorshipExperience:
-          "I guide Frederick University CS students through the Nordic tech education system and startup opportunities.",
-        additionalAdvice:
-          "Studying computer science at KTH Stockholm was incredible. Sweden's tech innovation and startup culture is world-leading. The work-life balance and approach to technology for social good really shaped my perspective.",
-        publicProfile: "yes",
-        allowPublicContact: "yes",
-        responseTime: "within-week",
-        specializations: ["Computer Science", "Information Technology"],
-        funFact:
-          "I learned Swedish and now work remotely for a Stockholm-based AI startup!",
-        nickname: "Dimitris Constantinou",
-        preferredContactTime: "mornings",
-        submissionType: "mentorship",
-
-        universityInCyprus: "Frederick University",
-        studyProgram: "Computer Science",
-        hostUniversity: "KTH Royal Institute of Technology",
-        hostCity: "Stockholm",
-        hostCountry: "Sweden",
-        exchangePeriod: "Spring 2024",
-      },
-    },
-    {
-      title: "Mentorship Application - Christina Ioannou",
-      data: {
-        wantToHelp: "yes",
-        contactMethod: "email",
-        email: "christina.ioannou@example.com",
-        instagramUsername: "christina_in_milan",
-        linkedinProfile: "https://linkedin.com/in/christinaioannou",
-        languagesSpoken: ["English", "Greek", "Italian"],
-        helpTopics: [
-          "University Application",
-          "Accommodation Search",
-          "Internship Opportunities",
-          "Cultural Adaptation",
-        ],
-        availabilityLevel: "high",
-        mentorshipExperience:
-          "I help EUC economics students navigate Italian business education and internship opportunities.",
-        additionalAdvice:
-          "My economics studies at Bocconi University in Milan were exceptional. Italy's blend of traditional business practices and modern innovation provided unique insights. Milan's fashion and finance sectors offer amazing internship opportunities.",
-        publicProfile: "yes",
-        allowPublicContact: "yes",
-        responseTime: "within-day",
-        specializations: ["Economics", "Business Administration"],
-        funFact:
-          "I interned at a luxury fashion house and learned about sustainable business practices!",
-        nickname: "Christina Ioannou",
-        preferredContactTime: "flexible",
-        submissionType: "mentorship",
-
-        universityInCyprus: "European University Cyprus",
-        studyProgram: "Economics",
-        hostUniversity: "Bocconi University",
-        hostCity: "Milan",
-        hostCountry: "Italy",
-        exchangePeriod: "Fall 2023",
       },
     },
   ];
@@ -238,12 +142,10 @@ async function updateMentorData() {
     }
   }
 
-  console.log(
-    "Finished updating mentor data to align with university agreements.",
-  );
+  console.log("Finished adding realistic mentor data.");
 }
 
-updateMentorData()
+addRealisticMentors()
   .catch((e) => {
     console.error(e);
     process.exit(1);
