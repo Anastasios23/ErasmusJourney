@@ -1005,6 +1005,27 @@ export default function UniversityExchanges() {
               )}
             </div>
 
+            {/* University Submissions Section */}
+            {selectedUniversityForSubmissions && (
+              <div className="mt-12">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Student Experiences
+                  </h2>
+                  <Button
+                    variant="outline"
+                    onClick={() => setSelectedUniversityForSubmissions(null)}
+                  >
+                    Close
+                  </Button>
+                </div>
+                <UniversitySubmissions
+                  universityId={selectedUniversityForSubmissions}
+                  universityName={selectedUniversityForSubmissions}
+                />
+              </div>
+            )}
+
             {/* Call to Action */}
             <section className="mt-16">
               <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
