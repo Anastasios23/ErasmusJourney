@@ -494,13 +494,14 @@ export default function Community() {
                     onValueChange={setLevelOfStudy}
                     disabled={
                       !universityInCyprus ||
-                      !universityInCyprus.includes("UNIC")
+                      universityInCyprus === "all" ||
+                      !universityInCyprus.includes("Nicosia")
                     }
                   >
                     <SelectTrigger>
                       <SelectValue
                         placeholder={
-                          universityInCyprus?.includes("UNIC")
+                          universityInCyprus?.includes("Nicosia")
                             ? "Level of Study"
                             : "Level (UNIC only)"
                         }
