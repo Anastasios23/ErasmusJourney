@@ -53,11 +53,8 @@ import {
   getAgreementsByDepartmentAndLevel,
 } from "../src/data/universityAgreements";
 
-// Get all unique departments from all Cyprus universities
-const allDepartments = CYPRUS_UNIVERSITIES.reduce((deps, uni) => {
-  return [...deps, ...uni.departments];
-}, [] as string[]);
-const uniqueDepartments = [...new Set(allDepartments)].sort();
+// Cyprus universities from agreements data
+const cyprusUniversities = CYPRUS_UNIVERSITIES.map((uni) => uni.name);
 
 export default function Community() {
   const router = useRouter();
