@@ -59,7 +59,6 @@ async function addTestMentorshipData() {
         preferredContactTime: "evenings",
         submissionType: "mentorship",
 
-        // Host university experience
         hostUniversity: "Technische Universität Berlin",
         hostCity: "Berlin",
         hostCountry: "Germany",
@@ -141,115 +140,6 @@ async function addTestMentorshipData() {
         exchangePeriod: "Fall 2022",
       },
     },
-    {
-      title: "Mentorship Application - Thomas M.",
-      data: {
-        wantToHelp: "yes",
-        contactMethod: "email",
-        email: "thomas.m@example.com",
-        linkedinProfile: "https://linkedin.com/in/thomasm",
-        languagesSpoken: ["English", "Greek", "French", "German"],
-        helpTopics: [
-          "University Application",
-          "Academic Support",
-          "Research Opportunities",
-          "Career Guidance",
-          "Emergency Situations",
-        ],
-        availabilityLevel: "moderate",
-        mentorshipExperience:
-          "I help students with academic planning and research opportunities. Having navigated the French higher education system, I understand the bureaucracy challenges.",
-        additionalAdvice:
-          "Paris can be intimidating but it's the most rewarding academic experience you'll ever have. The libraries, the lectures, the intellectual discussions - everything pushes you to think differently. Embrace the French way of academic debate!",
-        publicProfile: "yes",
-        allowPublicContact: "yes",
-        responseTime: "within-week",
-        specializations: ["Law", "Political Science", "Philosophy"],
-        funFact:
-          "I attended a lecture by a Nobel Prize winner at the Sorbonne - sitting in the same amphitheater where Marie Curie once taught!",
-        nickname: "Thomas M.",
-        preferredContactTime: "mornings",
-        submissionType: "mentorship",
-
-        hostUniversity: "Sorbonne University",
-        hostCity: "Paris",
-        hostCountry: "France",
-        exchangePeriod: "Fall 2023",
-      },
-    },
-    {
-      title: "Mentorship Application - Sophia Chen",
-      data: {
-        wantToHelp: "yes",
-        contactMethod: "email",
-        email: "sophia.chen@example.com",
-        instagramUsername: "sophia_in_amsterdam",
-        languagesSpoken: ["English", "Greek", "Dutch", "Mandarin"],
-        helpTopics: [
-          "Accommodation Search",
-          "Visa Requirements",
-          "Cultural Adaptation",
-          "Social Activities",
-          "Language Learning",
-        ],
-        availabilityLevel: "high",
-        mentorshipExperience:
-          "I love helping students with practical matters like housing and visas. I remember how stressful the preparation was, so I try to make it easier for others.",
-        additionalAdvice:
-          "Amsterdam is perfect for students - bike everywhere, embrace the Dutch directness, and definitely join some student associations. The international community there is amazing and very welcoming.",
-        publicProfile: "yes",
-        allowPublicContact: "yes",
-        responseTime: "within-day",
-        specializations: ["Medicine", "Psychology", "Sciences"],
-        funFact:
-          "I learned to ice skate on Amsterdam's frozen canals during an unexpected cold winter!",
-        nickname: "Sophia Chen",
-        preferredContactTime: "evenings",
-        submissionType: "mentorship",
-
-        hostUniversity: "University of Amsterdam",
-        hostCity: "Amsterdam",
-        hostCountry: "Netherlands",
-        exchangePeriod: "Spring 2024",
-      },
-    },
-    {
-      title: "Mentorship Application - David K.",
-      data: {
-        wantToHelp: "yes",
-        contactMethod: "email",
-        email: "david.k@example.com",
-        linkedinProfile: "https://linkedin.com/in/davidk",
-        personalWebsite: "https://davidkphotography.com",
-        languagesSpoken: ["English", "Greek", "Czech", "German"],
-        helpTopics: [
-          "Budget Planning",
-          "Travel Tips",
-          "Cultural Adaptation",
-          "Photography",
-          "Social Activities",
-        ],
-        availabilityLevel: "moderate",
-        mentorshipExperience:
-          "I help students make the most of their exchange experience, especially with travel and cultural exploration. I believe studying abroad is about more than just academics.",
-        additionalAdvice:
-          "Prague is incredibly affordable and beautiful. Take weekend trips to other Czech cities, learn some basic Czech phrases, and definitely try the local beer culture (responsibly!). The city has so much history to discover.",
-        publicProfile: "yes",
-        allowPublicContact: "yes",
-        responseTime: "within-week",
-        specializations: ["Architecture", "Arts & Design", "History"],
-        funFact:
-          "I documented my entire exchange through photography and now sell prints to raise money for student scholarships!",
-        nickname: "David K.",
-        preferredContactTime: "weekends",
-        submissionType: "mentorship",
-
-        hostUniversity: "Charles University",
-        hostCity: "Prague",
-        hostCountry: "Czech Republic",
-        exchangePeriod: "Fall 2022",
-      },
-    },
   ];
 
   for (const mentorData of testMentors) {
@@ -257,7 +147,7 @@ async function addTestMentorshipData() {
       await prisma.formSubmission.create({
         data: {
           title: mentorData.title,
-          type: "MENTORSHIP",
+          type: "HELP_FUTURE_STUDENTS", // Use the correct enum value
           status: "PUBLISHED",
           userId: user.id,
           data: mentorData.data,
