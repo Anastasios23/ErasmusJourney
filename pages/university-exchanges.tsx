@@ -384,7 +384,7 @@ export default function UniversityExchanges() {
                     <Users className="h-8 w-8 text-blue-600" />
                     <div className="ml-4">
                       <p className="text-sm font-medium text-gray-600">
-                        Students
+                        Course Matches
                       </p>
                       <p className="text-2xl font-bold text-gray-900">
                         {stats.totalStudents}
