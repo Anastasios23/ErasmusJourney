@@ -120,6 +120,11 @@ export default function Community() {
 
   const { mentors, loading, error } = useMentorshipMembers();
 
+  // Reset host university filter when Cyprus university changes
+  useEffect(() => {
+    setSelectedHostUniversity("All Host Universities");
+  }, [selectedCyprusUni]);
+
   // Get available host universities based on selected Cyprus university
   const availableHostUniversities = useMemo(() => {
     if (selectedCyprusUni === "All Universities") {
