@@ -45,17 +45,28 @@ export function useMentorshipMembers() {
   const fetchMentors = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/mentorship/members");
+      setError(null);
+
+      const response = await fetch("/api/mentorship/members", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch mentors: ${response.status}`);
+        throw new Error(
+          `Failed to fetch mentors: ${response.status} ${response.statusText}`,
+        );
       }
 
       const data: MentorshipResponse = await response.json();
-      setMentors(data.mentors);
+      setMentors(data.mentors || []);
     } catch (err) {
       console.error("Error fetching mentors:", err);
       setError(err instanceof Error ? err.message : "Failed to load mentors");
+      // Fallback to empty array on error
+      setMentors([]);
     } finally {
       setLoading(false);
     }
