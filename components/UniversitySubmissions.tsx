@@ -114,7 +114,11 @@ export default function UniversitySubmissions({
     );
   }
 
-  if (!data || !data.submissions || data.submissions.length === 0) {
+  // Filter to only show COURSE_MATCHING submissions
+  const courseMatchingSubmissions =
+    data?.submissions?.filter((sub) => sub.type === "COURSE_MATCHING") || [];
+
+  if (!data || courseMatchingSubmissions.length === 0) {
     return (
       <Card>
         <CardContent className="p-12 text-center">
