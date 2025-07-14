@@ -45,8 +45,7 @@ async function debugCourseData() {
     console.log(`"course-matching" (lowercase): Not valid in database schema`);
 
     // 3. Check data structure of first course matching submission
-    const firstCourseSubmission =
-      courseMatchingUppercase[0] || courseMatchingLowercase[0];
+    const firstCourseSubmission = courseMatchingUppercase[0];
     if (firstCourseSubmission) {
       console.log("\n3️⃣ SAMPLE COURSE MATCHING SUBMISSION:");
       console.log(`Title: ${firstCourseSubmission.title}`);
