@@ -134,10 +134,13 @@ export default function Community() {
     setSelectedHostUniversity("All Host Universities");
   }, [selectedCyprusUni]);
 
-  // Get available host universities based on selected Cyprus university
+  // Get available host universities based on selected Cyprus university and department (same logic as basic-information form)
   const availableHostUniversities = useMemo(() => {
-    if (selectedCyprusUni === "All Universities") {
-      // If no specific Cyprus university is selected, get all unique host universities from mentors
+    if (
+      selectedCyprusUni === "All Universities" ||
+      selectedDepartment === "All Departments"
+    ) {
+      // If no specific university and department are selected, get all unique host universities from mentors
       const allHostUniversities = [
         ...new Set(mentors.map((mentor) => mentor.hostUniversity)),
       ];
@@ -153,12 +156,23 @@ export default function Community() {
       return ["All Host Universities"];
     }
 
-    // Get agreements for this Cyprus university
-    // Note: We'll use all departments since we don't have department filtering here
-    const agreements = getAgreementsByDepartment(
-      cyprusUni.code,
-      "All Departments",
-    );
+    // Use the same logic as basic-information form
+    let agreements: any[] = [];
+
+    if (cyprusUni.code === "UNIC") {
+      // For UNIC, we could use level-specific agreements, but for simplicity we'll use department-only
+      // In the future, you could add level filtering here if needed
+      agreements = getAgreementsByDepartment(
+        cyprusUni.code,
+        selectedDepartment,
+      );
+    } else {
+      // For other universities, use general department agreements
+      agreements = getAgreementsByDepartment(
+        cyprusUni.code,
+        selectedDepartment,
+      );
+    }
 
     // Get unique host universities from agreements
     const hostUniversities = [
@@ -166,7 +180,7 @@ export default function Community() {
     ];
 
     return ["All Host Universities", ...hostUniversities.sort()];
-  }, [selectedCyprusUni, mentors]);
+  }, [selectedCyprusUni, selectedDepartment, mentors]);
 
   // Filter mentors based on search criteria
   const filteredMentors = useMemo(() => {
