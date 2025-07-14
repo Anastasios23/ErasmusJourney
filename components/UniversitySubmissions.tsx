@@ -114,7 +114,7 @@ export default function UniversitySubmissions({
     );
   }
 
-  if (!data || data.submissions.length === 0) {
+  if (!data || !data.submissions || data.submissions.length === 0) {
     return (
       <Card>
         <CardContent className="p-12 text-center">
