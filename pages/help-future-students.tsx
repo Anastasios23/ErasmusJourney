@@ -823,10 +823,11 @@ export default function HelpFutureStudents() {
 
               <Button
                 type="submit"
+                disabled={isSubmitting}
                 className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2 px-8"
               >
                 <CheckCircle className="h-4 w-4" />
-                Complete Application
+                {isSubmitting ? "Submitting..." : "Complete Application"}
               </Button>
             </div>
           </form>
