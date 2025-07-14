@@ -113,19 +113,12 @@ const specializations = [
 
 export default function Community() {
   const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCyprusUni, setSelectedCyprusUni] =
-    useState("All Universities");
-  const [selectedHostCountry, setSelectedHostCountry] =
-    useState("All Countries");
-  const [selectedDepartment, setSelectedDepartment] =
-    useState("All Departments");
-  const [selectedSpecialization, setSelectedSpecialization] = useState(
-    "All Specializations",
-  );
-  const [selectedHostUniversity, setSelectedHostUniversity] = useState(
-    "All Host Universities",
-  );
+  const [universityInCyprus, setUniversityInCyprus] = useState("");
+  const [departmentInCyprus, setDepartmentInCyprus] = useState("");
+  const [levelOfStudy, setLevelOfStudy] = useState("");
+  const [hostUniversity, setHostUniversity] = useState("");
+  const [hostCountry, setHostCountry] = useState("");
+  const [hostCity, setHostCity] = useState("");
 
   const { mentors, loading, error } = useMentorshipMembers();
 
