@@ -10,8 +10,6 @@ export default async function handler(
   }
 
   try {
-    console.log("Fetching mentorship submissions...");
-
     // Fetch all mentorship submissions from database - use EXPERIENCE type for now
     const allSubmissions = await prisma.formSubmission.findMany({
       where: {
