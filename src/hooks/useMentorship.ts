@@ -116,6 +116,7 @@ const mockMentors: MentorshipMember[] = [
       "I learned Swedish and now work remotely for a Stockholm-based AI startup!",
     universityInCyprus: "Frederick University",
     studyProgram: "Computer Science",
+    levelOfStudy: "bachelor",
     hostUniversity: "KTH Royal Institute of Technology",
     hostCity: "Stockholm",
     hostCountry: "Sweden",
@@ -150,6 +151,7 @@ const mockMentors: MentorshipMember[] = [
       "I interned at a luxury fashion house and learned about sustainable business practices!",
     universityInCyprus: "European University Cyprus",
     studyProgram: "Economics",
+    levelOfStudy: "bachelor",
     hostUniversity: "Bocconi University",
     hostCity: "Milan",
     hostCountry: "Italy",
@@ -186,6 +188,7 @@ export interface MentorshipMember {
   funFact?: string;
   universityInCyprus: string;
   studyProgram: string;
+  levelOfStudy?: string;
   hostUniversity: string;
   hostCity: string;
   hostCountry: string;
