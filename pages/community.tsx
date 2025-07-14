@@ -71,65 +71,6 @@ export default function Community() {
 
   const { mentors, loading, error } = useMentorshipMembers();
 
-  // Reset host university filter when Cyprus university or department changes
-  useEffect(() => {
-    setSelectedHostUniversity("All Host Universities");
-  }, [selectedCyprusUni, selectedDepartment]);
-
-  // Reset department when Cyprus university changes
-  useEffect(() => {
-    setSelectedDepartment("All Departments");
-    setSelectedHostUniversity("All Host Universities");
-  }, [selectedCyprusUni]);
-
-  // Get available host universities based on selected Cyprus university and department (same logic as basic-information form)
-  const availableHostUniversities = useMemo(() => {
-    if (
-      selectedCyprusUni === "All Universities" ||
-      selectedDepartment === "All Departments"
-    ) {
-      // If no specific university and department are selected, get all unique host universities from mentors
-      const allHostUniversities = [
-        ...new Set(mentors.map((mentor) => mentor.hostUniversity)),
-      ];
-      return ["All Host Universities", ...allHostUniversities.sort()];
-    }
-
-    // Find the selected Cyprus university
-    const cyprusUni = CYPRUS_UNIVERSITIES.find(
-      (uni) => uni.name === selectedCyprusUni,
-    );
-
-    if (!cyprusUni) {
-      return ["All Host Universities"];
-    }
-
-    // Use the same logic as basic-information form
-    let agreements: any[] = [];
-
-    if (cyprusUni.code === "UNIC") {
-      // For UNIC, we could use level-specific agreements, but for simplicity we'll use department-only
-      // In the future, you could add level filtering here if needed
-      agreements = getAgreementsByDepartment(
-        cyprusUni.code,
-        selectedDepartment,
-      );
-    } else {
-      // For other universities, use general department agreements
-      agreements = getAgreementsByDepartment(
-        cyprusUni.code,
-        selectedDepartment,
-      );
-    }
-
-    // Get unique host universities from agreements
-    const hostUniversities = [
-      ...new Set(agreements.map((agreement) => agreement.partnerUniversity)),
-    ];
-
-    return ["All Host Universities", ...hostUniversities.sort()];
-  }, [selectedCyprusUni, selectedDepartment, mentors]);
-
   // Filter mentors based on search criteria
   const filteredMentors = useMemo(() => {
     return mentors.filter((mentor) => {
