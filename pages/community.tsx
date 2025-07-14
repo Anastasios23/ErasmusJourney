@@ -68,6 +68,20 @@ export default function Community() {
   const [hostCountry, setHostCountry] = useState("");
   const [hostCity, setHostCity] = useState("");
 
+  // Available options based on agreements (same logic as basic-information)
+  const [availableDepartments, setAvailableDepartments] = useState<string[]>(
+    [],
+  );
+  const [availableHostUniversities, setAvailableHostUniversities] = useState<
+    Array<{
+      university: string;
+      city: string;
+      country: string;
+    }>
+  >([]);
+  const [availableCountries, setAvailableCountries] = useState<string[]>([]);
+  const [availableCities, setAvailableCities] = useState<string[]>([]);
+
   const { mentors, loading, error } = useMentorshipMembers();
 
   // Filter mentors based on the 6 specific criteria
