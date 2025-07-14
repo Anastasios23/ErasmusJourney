@@ -611,10 +611,12 @@ export default function UniversityExchanges() {
                   <CardContent className="p-12 text-center">
                     <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No exchange records found
+                      No course matching records found
                     </h3>
                     <p className="text-gray-600">
-                      Try adjusting your search criteria or filters.
+                      No course mapping data available for the selected
+                      criteria. Try adjusting your filters or check other
+                      universities.
                     </p>
                   </CardContent>
                 </Card>
