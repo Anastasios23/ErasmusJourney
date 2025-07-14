@@ -355,12 +355,18 @@ export default function StoryDetailPage({ story }: StoryDetailPageProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  req,
+}) => {
   const { id } = params!;
 
   try {
-    // Fetch story from our API
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    // Determine the base URL for server-side requests
+    const protocol = req.headers["x-forwarded-proto"] || "http";
+    const host = req.headers.host || "localhost:3000";
+    const baseUrl = `${protocol}://${host}`;
+
     const response = await fetch(`${baseUrl}/api/stories/${id}`);
 
     if (!response.ok) {
