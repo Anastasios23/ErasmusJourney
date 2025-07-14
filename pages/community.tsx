@@ -71,66 +71,56 @@ export default function Community() {
 
   const { mentors, loading, error } = useMentorshipMembers();
 
-  // Filter mentors based on search criteria
+  // Filter mentors based on the 6 specific criteria
   const filteredMentors = useMemo(() => {
     return mentors.filter((mentor) => {
-      const matchesSearch =
-        searchTerm === "" ||
-        mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        mentor.hostCity.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        mentor.hostUniversity
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        mentor.bio.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        mentor.specializations.some((spec) =>
-          spec.toLowerCase().includes(searchTerm.toLowerCase()),
-        ) ||
-        mentor.helpTopics.some((topic) =>
-          topic.toLowerCase().includes(searchTerm.toLowerCase()),
-        );
+      const matchesUniversityInCyprus =
+        !universityInCyprus || mentor.universityInCyprus === universityInCyprus;
 
-      const matchesCyprusUni =
-        selectedCyprusUni === "All Universities" ||
-        mentor.universityInCyprus === selectedCyprusUni;
-
-      const matchesDepartment =
-        selectedDepartment === "All Departments" ||
-        mentor.studyProgram.includes(selectedDepartment) ||
+      const matchesDepartmentInCyprus =
+        !departmentInCyprus ||
+        mentor.studyProgram.includes(departmentInCyprus) ||
         mentor.specializations.some(
           (spec) =>
-            spec.toLowerCase().includes(selectedDepartment.toLowerCase()) ||
-            selectedDepartment.toLowerCase().includes(spec.toLowerCase()),
+            spec.toLowerCase().includes(departmentInCyprus.toLowerCase()) ||
+            departmentInCyprus.toLowerCase().includes(spec.toLowerCase()),
         );
 
-      const matchesHostCountry =
-        selectedHostCountry === "All Countries" ||
-        mentor.hostCountry === selectedHostCountry;
-
-      const matchesSpecialization =
-        selectedSpecialization === "All Specializations" ||
-        mentor.specializations.includes(selectedSpecialization);
+      const matchesLevelOfStudy =
+        !levelOfStudy ||
+        mentor.studyProgram.toLowerCase().includes(levelOfStudy.toLowerCase());
 
       const matchesHostUniversity =
-        selectedHostUniversity === "All Host Universities" ||
-        mentor.hostUniversity === selectedHostUniversity;
+        !hostUniversity ||
+        mentor.hostUniversity
+          .toLowerCase()
+          .includes(hostUniversity.toLowerCase());
+
+      const matchesHostCountry =
+        !hostCountry ||
+        mentor.hostCountry.toLowerCase().includes(hostCountry.toLowerCase());
+
+      const matchesHostCity =
+        !hostCity ||
+        mentor.hostCity.toLowerCase().includes(hostCity.toLowerCase());
 
       return (
-        matchesSearch &&
-        matchesCyprusUni &&
-        matchesDepartment &&
+        matchesUniversityInCyprus &&
+        matchesDepartmentInCyprus &&
+        matchesLevelOfStudy &&
+        matchesHostUniversity &&
         matchesHostCountry &&
-        matchesSpecialization &&
-        matchesHostUniversity
+        matchesHostCity
       );
     });
   }, [
     mentors,
-    searchTerm,
-    selectedCyprusUni,
-    selectedDepartment,
-    selectedHostCountry,
-    selectedSpecialization,
-    selectedHostUniversity,
+    universityInCyprus,
+    departmentInCyprus,
+    levelOfStudy,
+    hostUniversity,
+    hostCountry,
+    hostCity,
   ]);
 
   // Statistics
