@@ -71,6 +71,52 @@ export function useStories() {
   };
 }
 
+export function useStory(id: string | undefined) {
+  const [story, setStory] = useState<Story | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!id) {
+      setLoading(false);
+      return;
+    }
+
+    const fetchStory = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch(`/api/stories/${id}`);
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            setStory(null);
+            return;
+          }
+          throw new Error(`Failed to fetch story: ${response.status}`);
+        }
+
+        const storyData = await response.json();
+        setStory(storyData);
+      } catch (err) {
+        console.error("Error fetching story:", err);
+        setError(err instanceof Error ? err.message : "Failed to load story");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStory();
+  }, [id]);
+
+  return {
+    story,
+    loading,
+    error,
+  };
+}
+
 export function useLikeStory() {
   const likeStory = async (storyId: string) => {
     // Placeholder for future like functionality
