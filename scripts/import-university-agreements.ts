@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import {
-  ALL_AGREEMENTS,
+  ALL_UNIVERSITY_AGREEMENTS,
   CYPRUS_UNIVERSITIES,
 } from "../src/data/universityAgreements";
 
