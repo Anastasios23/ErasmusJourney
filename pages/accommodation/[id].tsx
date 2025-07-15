@@ -698,11 +698,7 @@ export default function AccommodationDetailPage() {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const { id } = params!;
-
-  // Sample accommodation data (in production this would come from your database)
-  const sampleAccommodations: Record<string, AccommodationDetail> = {
+// Sample accommodation data moved to API endpoint for better performance
     "1": {
       id: "1",
       studentName: "Maria S.",
