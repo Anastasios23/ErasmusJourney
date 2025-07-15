@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Header from "../../components/Header";
-import { useAccommodation } from "../../src/hooks/useQueries";
 import { useGeneratedContent } from "../../src/hooks/useFormSubmissions";
 import { Button } from "../../src/components/ui/button";
 import { Badge } from "../../src/components/ui/badge";
@@ -102,15 +101,12 @@ export default function AccommodationDetailPage() {
   const { id } = router.query;
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
+  const [accommodation, setAccommodation] =
+    useState<AccommodationDetail | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Fetch accommodation data
-  const {
-    data: accommodation,
-    isLoading,
-    error,
-  } = useAccommodation(id as string);
-
-  // Get user's form submissions for personalization
+  // Get user's form submissions for personalization (like destinations page)
   const { content: userGeneratedContent } = useGeneratedContent();
 
   // Filter user content relevant to this accommodation location
@@ -126,6 +122,96 @@ export default function AccommodationDetailPage() {
         content.data?.hostCountry?.toLowerCase() ===
           accommodation?.country?.toLowerCase(),
     ) || [];
+
+  // Load accommodation data when component mounts
+  useState(() => {
+    if (id) {
+      // Simulate API call with sample data (in real app, this would be an API call)
+      setTimeout(() => {
+        const sampleAccommodations: Record<string, AccommodationDetail> = {
+          "1": {
+            id: "1",
+            studentName: "Maria S.",
+            accommodationType: "Private Apartment",
+            city: "Barcelona",
+            country: "Spain",
+            neighborhood: "Eixample",
+            address: "Carrer de Mallorca, 123, 08037 Barcelona, Spain",
+            monthlyRent: 850,
+            billsIncluded: false,
+            utilityCosts: 80,
+            rating: 5,
+            datePosted: "2024-01-15",
+            description:
+              "Beautiful 1-bedroom apartment in the heart of Barcelona, 10 minutes walk to UPC. Fully furnished with modern amenities. Great neighborhood with lots of cafes and restaurants. The apartment is on the 3rd floor with elevator access and gets plenty of natural light throughout the day.",
+            highlights: [
+              "Close to university",
+              "Modern furnishing",
+              "Great location",
+              "Quiet neighborhood",
+              "Natural light",
+              "Elevator access",
+            ],
+            contact: {
+              email: "maria.s@university.edu",
+              allowContact: true,
+              bookingLink: "https://booking-platform.com/apartment-123",
+            },
+            landlord: {
+              name: "Carlos Martinez",
+              email: "carlos.martinez@apartments.es",
+              phone: "+34 612 345 678",
+            },
+            facilities: [
+              "Wifi",
+              "Kitchen",
+              "Washing Machine",
+              "Air Conditioning",
+              "Private Bathroom",
+              "Balcony",
+            ],
+            nearbyAmenities: [
+              "Supermarket",
+              "Metro Station",
+              "Restaurants",
+              "Pharmacy",
+              "ATM",
+              "Gym",
+            ],
+            transportLinks:
+              "Metro L2 - 5 min walk (Sagrada Familia), Bus 24 - 2 min walk. Direct connection to UPC in 15 minutes.",
+            photos: [
+              "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&h=600&fit=crop",
+              "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop",
+              "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
+              "https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=800&h=600&fit=crop",
+            ],
+            verified: true,
+            featured: true,
+            roomDetails: {
+              bedrooms: 1,
+              bathrooms: 1,
+              totalArea: 45,
+              furnished: true,
+            },
+            evaluation: {
+              findingDifficulty: 3,
+              wouldRecommend: true,
+              tips: "Contact landlord early as good apartments go fast. Visit in person if possible. The area is safe and very well connected to the university.",
+            },
+          },
+        };
+
+        const foundAccommodation = sampleAccommodations[id as string];
+        if (foundAccommodation) {
+          setAccommodation(foundAccommodation);
+        } else {
+          setError("Accommodation not found");
+        }
+        setIsLoading(false);
+      }, 500);
+    }
+  });
 
   // Loading state
   if (isLoading) {
@@ -194,24 +280,10 @@ export default function AccommodationDetailPage() {
   };
 
   const handleContactStudent = () => {
-    if (accommodation.contact.allowContact && accommodation.contact.email) {
-      window.location.href = `mailto:${accommodation.contact.email}?subject=Question about your accommodation in ${accommodation.city}`;
-    }
-  };
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `${accommodation.accommodationType} in ${accommodation.neighborhood}`,
-          text: `Check out this accommodation in ${accommodation.city}`,
-          url: window.location.href,
-        });
-      } catch (err) {
-        console.log("Error sharing:", err);
-      }
-    } else {
-      navigator.clipboard.writeText(window.location.href);
+    if (accommodation.contact.email) {
+      const subject = `Inquiry about accommodation in ${accommodation.city}`;
+      const body = `Hi ${accommodation.studentName},\n\nI'm interested in your accommodation listing in ${accommodation.neighborhood}, ${accommodation.city}. Could you please provide more information?\n\nThanks!`;
+      window.location.href = `mailto:${accommodation.contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     }
   };
 
@@ -219,12 +291,12 @@ export default function AccommodationDetailPage() {
     <>
       <Head>
         <title>
-          {accommodation.accommodationType} in {accommodation.neighborhood} -{" "}
-          {accommodation.city} | Erasmus Journey
+          {accommodation.accommodationType} in {accommodation.city} - Erasmus
+          Journey Platform
         </title>
         <meta
           name="description"
-          content={`${accommodation.accommodationType} in ${accommodation.city} for €${accommodation.monthlyRent}/month. Shared by ${accommodation.studentName}.`}
+          content={accommodation.description.substring(0, 160)}
         />
       </Head>
 
@@ -235,138 +307,95 @@ export default function AccommodationDetailPage() {
           <div className="max-w-6xl mx-auto">
             {/* Back Navigation */}
             <div className="mb-6">
-              <Button
-                variant="ghost"
-                onClick={() => router.back()}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Accommodations
-              </Button>
-            </div>
-
-            {/* Header Section */}
-            <div className="mb-8">
-              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    {accommodation.featured && (
-                      <Badge className="bg-yellow-100 text-yellow-800">
-                        Featured
-                      </Badge>
-                    )}
-                    {accommodation.verified && (
-                      <Badge className="bg-green-100 text-green-800">
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                        Verified
-                      </Badge>
-                    )}
-                  </div>
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                    {accommodation.accommodationType} in{" "}
-                    {accommodation.neighborhood}
-                  </h1>
-                  <div className="flex items-center gap-4 text-gray-600 mb-4">
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      <span>
-                        {accommodation.city}, {accommodation.country}
-                      </span>
-                    </div>
-                    {/* Improved rating display with better contrast */}
-                    <div className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-md">
-                      <Star className="h-4 w-4 text-yellow-600 fill-current" />
-                      <span className="font-medium text-gray-900">
-                        {accommodation.rating}/5
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      <span>
-                        {new Date(
-                          accommodation.datePosted,
-                        ).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsLiked(!isLiked)}
-                    className={isLiked ? "text-red-500 border-red-500" : ""}
-                    aria-label={`${isLiked ? "Remove from" : "Add to"} favorites`}
-                  >
-                    <Heart
-                      className={`h-4 w-4 mr-1 ${isLiked ? "fill-current" : ""}`}
-                    />
-                    Save
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleShare}
-                    aria-label="Share this accommodation"
-                  >
-                    <Share2 className="h-4 w-4 mr-1" />
-                    Share
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    aria-label="Report this accommodation"
-                  >
-                    <Flag className="h-4 w-4 mr-1" />
-                    Report
-                  </Button>
-                </div>
-              </div>
+              <Link href="/student-accommodations">
+                <Button variant="outline">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Accommodations
+                </Button>
+              </Link>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Main Content */}
-              <div className="lg:col-span-2 space-y-8">
-                {/* Photo Gallery */}
-                <Card>
-                  <CardContent className="p-0">
-                    <div className="aspect-video overflow-hidden rounded-t-lg relative">
+              <div className="lg:col-span-2 space-y-6">
+                {/* Header */}
+                <div>
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h1 className="text-3xl font-bold mb-2">
+                        {accommodation.accommodationType} in{" "}
+                        {accommodation.neighborhood}
+                      </h1>
+                      <div className="flex items-center gap-4 text-gray-600 mb-2">
+                        <div className="flex items-center gap-1">
+                          <MapPin className="h-4 w-4" />
+                          <span>
+                            {accommodation.city}, {accommodation.country}
+                          </span>
+                        </div>
+                        {accommodation.verified && (
+                          <div className="flex items-center gap-1 text-green-600">
+                            <CheckCircle className="h-4 w-4" />
+                            <span className="text-sm">Verified</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          <Star className="h-5 w-5 text-yellow-400 fill-current" />
+                          <span className="font-medium">
+                            {accommodation.rating}
+                          </span>
+                        </div>
+                        {accommodation.featured && (
+                          <Badge className="bg-yellow-100 text-yellow-800">
+                            Featured
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsLiked(!isLiked)}
+                      >
+                        <Heart
+                          className={`h-4 w-4 ${isLiked ? "fill-current text-red-500" : ""}`}
+                        />
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Share2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Photo Gallery */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div className="md:col-span-1">
                       <Image
                         src={accommodation.photos[selectedPhotoIndex]}
-                        alt={`${accommodation.accommodationType} in ${accommodation.neighborhood} - Interior view showing room layout and furnishing`}
-                        fill
-                        className="object-cover"
-                        priority
-                        sizes="(max-width: 1024px) 100vw, 66vw"
+                        alt="Accommodation"
+                        width={600}
+                        height={400}
+                        className="w-full h-64 object-cover rounded-lg"
                       />
                     </div>
-                    {accommodation.photos.length > 1 && (
-                      <div className="p-4 flex gap-2 overflow-x-auto">
-                        {accommodation.photos.map((photo, index) => (
-                          <button
-                            key={index}
-                            onClick={() => setSelectedPhotoIndex(index)}
-                            className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 relative ${
-                              selectedPhotoIndex === index
-                                ? "border-blue-500"
-                                : "border-gray-200"
-                            }`}
-                            aria-label={`View photo ${index + 1} of ${accommodation.accommodationType}`}
-                          >
-                            <Image
-                              src={photo}
-                              alt={`Accommodation thumbnail ${index + 1}`}
-                              fill
-                              className="object-cover"
-                              sizes="80px"
-                            />
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                    <div className="grid grid-cols-2 gap-2">
+                      {accommodation.photos.slice(1, 5).map((photo, index) => (
+                        <Image
+                          key={index}
+                          src={photo}
+                          alt={`View ${index + 2}`}
+                          width={200}
+                          height={150}
+                          className="w-full h-28 object-cover rounded-lg cursor-pointer hover:opacity-80"
+                          onClick={() => setSelectedPhotoIndex(index + 1)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
 
                 {/* Tabs Content */}
                 <Tabs defaultValue="overview" className="w-full">
@@ -380,20 +409,14 @@ export default function AccommodationDetailPage() {
                   <TabsContent value="overview" className="space-y-6">
                     <Card>
                       <CardContent className="pt-6">
-                        <h3 className="text-lg font-semibold mb-4">
+                        <h3 className="text-lg font-semibold mb-3">
                           Description
                         </h3>
-                        <p className="text-gray-700 leading-relaxed">
+                        <p className="text-gray-700 mb-4">
                           {accommodation.description}
                         </p>
-                      </CardContent>
-                    </Card>
 
-                    <Card>
-                      <CardContent className="pt-6">
-                        <h3 className="text-lg font-semibold mb-4">
-                          Highlights
-                        </h3>
+                        <h4 className="font-semibold mb-2">Highlights</h4>
                         <div className="flex flex-wrap gap-2">
                           {accommodation.highlights.map((highlight, index) => (
                             <Badge key={index} variant="secondary">
@@ -404,47 +427,45 @@ export default function AccommodationDetailPage() {
                       </CardContent>
                     </Card>
 
-                    <Card>
-                      <CardContent className="pt-6">
-                        <h3 className="text-lg font-semibold mb-4">
-                          Room Details
-                        </h3>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                          <div>
-                            <div className="text-2xl font-bold text-blue-600">
-                              {accommodation.roomDetails.bedrooms}
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Bedrooms
-                            </div>
+                    {/* User-generated content relevant to this location */}
+                    {relevantUserContent.length > 0 && (
+                      <Card>
+                        <CardContent className="pt-6">
+                          <h3 className="text-lg font-semibold mb-3">
+                            From Other Students in {accommodation.city}
+                          </h3>
+                          <div className="space-y-4">
+                            {relevantUserContent
+                              .slice(0, 2)
+                              .map((content: any, index: number) => (
+                                <div
+                                  key={index}
+                                  className="bg-blue-50 p-4 rounded-lg"
+                                >
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <Avatar className="h-6 w-6">
+                                      <AvatarFallback className="text-xs">
+                                        {content.user?.name?.charAt(0) || "U"}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <span className="text-sm font-medium">
+                                      {content.user?.name || "Student"}
+                                    </span>
+                                    <span className="text-xs text-gray-500">
+                                      {content.data?.universityInCyprus} →{" "}
+                                      {content.data?.city}
+                                    </span>
+                                  </div>
+                                  <p className="text-sm text-gray-700">
+                                    {content.data?.accommodationTips ||
+                                      content.data?.additionalAdvice}
+                                  </p>
+                                </div>
+                              ))}
                           </div>
-                          <div>
-                            <div className="text-2xl font-bold text-blue-600">
-                              {accommodation.roomDetails.bathrooms}
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Bathrooms
-                            </div>
-                          </div>
-                          <div>
-                            <div className="text-2xl font-bold text-blue-600">
-                              {accommodation.roomDetails.totalArea}m²
-                            </div>
-                            <div className="text-sm text-gray-600">Area</div>
-                          </div>
-                          <div>
-                            <div className="text-2xl font-bold text-blue-600">
-                              {accommodation.roomDetails.furnished
-                                ? "Yes"
-                                : "No"}
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Furnished
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                        </CardContent>
+                      </Card>
+                    )}
                   </TabsContent>
 
                   <TabsContent value="facilities">
@@ -453,16 +474,16 @@ export default function AccommodationDetailPage() {
                         <h3 className="text-lg font-semibold mb-4">
                           Available Facilities
                         </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {accommodation.facilities.map((facility, index) => (
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {accommodation.facilities.map((facility) => (
                             <div
-                              key={index}
-                              className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+                              key={facility}
+                              className="flex items-center gap-2"
                             >
                               {facilityIcons[facility] || (
-                                <Home className="h-4 w-4" />
+                                <CheckCircle className="h-4 w-4" />
                               )}
-                              <span>{facility}</span>
+                              <span className="text-sm">{facility}</span>
                             </div>
                           ))}
                         </div>
@@ -472,44 +493,38 @@ export default function AccommodationDetailPage() {
 
                   <TabsContent value="location">
                     <Card>
-                      <CardContent className="pt-6 space-y-6">
-                        <div>
-                          <h3 className="text-lg font-semibold mb-4">
-                            Address
-                          </h3>
-                          <p className="text-gray-700">
-                            {accommodation.address}
-                          </p>
-                          <p className="text-gray-600">
-                            {accommodation.neighborhood}, {accommodation.city}
-                          </p>
-                        </div>
-
-                        <Separator />
-
-                        <div>
-                          <h3 className="text-lg font-semibold mb-4">
-                            Transportation
-                          </h3>
-                          <p className="text-gray-700">
-                            {accommodation.transportLinks}
-                          </p>
-                        </div>
-
-                        <Separator />
-
-                        <div>
-                          <h3 className="text-lg font-semibold mb-4">
-                            Nearby Amenities
-                          </h3>
-                          <div className="flex flex-wrap gap-2">
-                            {accommodation.nearbyAmenities.map(
-                              (amenity, index) => (
-                                <Badge key={index} variant="outline">
-                                  {amenity}
-                                </Badge>
-                              ),
-                            )}
+                      <CardContent className="pt-6">
+                        <h3 className="text-lg font-semibold mb-4">
+                          Location & Transport
+                        </h3>
+                        <div className="space-y-4">
+                          <div>
+                            <h4 className="font-semibold mb-2">Address</h4>
+                            <p className="text-gray-700">
+                              {accommodation.address}
+                            </p>
+                          </div>
+                          <div>
+                            <h4 className="font-semibold mb-2">
+                              Transport Links
+                            </h4>
+                            <p className="text-gray-700">
+                              {accommodation.transportLinks}
+                            </p>
+                          </div>
+                          <div>
+                            <h4 className="font-semibold mb-2">
+                              Nearby Amenities
+                            </h4>
+                            <div className="flex flex-wrap gap-2">
+                              {accommodation.nearbyAmenities.map(
+                                (amenity, index) => (
+                                  <Badge key={index} variant="outline">
+                                    {amenity}
+                                  </Badge>
+                                ),
+                              )}
+                            </div>
                           </div>
                         </div>
                       </CardContent>
@@ -524,49 +539,44 @@ export default function AccommodationDetailPage() {
                         </h3>
                         <div className="space-y-4">
                           <div>
-                            <div className="flex justify-between items-center mb-2">
-                              <span className="text-sm font-medium">
-                                Finding Difficulty
-                              </span>
-                              <div className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-md">
-                                <Star className="h-3 w-3 text-yellow-600 fill-current" />
-                                <span className="text-sm font-medium text-gray-900">
-                                  {accommodation.evaluation.findingDifficulty}/5
-                                </span>
-                              </div>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
-                              <div
-                                className="bg-blue-600 h-2 rounded-full"
-                                style={{
-                                  width: `${(accommodation.evaluation.findingDifficulty / 5) * 100}%`,
-                                }}
-                              />
-                            </div>
-                          </div>
-
-                          <div>
-                            <span className="text-sm font-medium">
-                              Would Recommend:{" "}
-                            </span>
-                            <Badge
-                              variant={
-                                accommodation.evaluation.wouldRecommend
-                                  ? "default"
-                                  : "secondary"
-                              }
-                            >
-                              {accommodation.evaluation.wouldRecommend
-                                ? "Yes"
-                                : "No"}
-                            </Badge>
-                          </div>
-
-                          <div>
-                            <h4 className="text-sm font-medium mb-2">
-                              Tips from Student
+                            <h4 className="font-semibold mb-2">
+                              Finding Difficulty
                             </h4>
-                            <p className="text-gray-700 text-sm">
+                            <div className="flex items-center gap-2">
+                              <div className="flex">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <Star
+                                    key={star}
+                                    className={`h-4 w-4 ${
+                                      star <=
+                                      accommodation.evaluation.findingDifficulty
+                                        ? "text-yellow-400 fill-current"
+                                        : "text-gray-300"
+                                    }`}
+                                  />
+                                ))}
+                              </div>
+                              <span className="text-sm text-gray-600">
+                                ({accommodation.evaluation.findingDifficulty}/5
+                                difficulty)
+                              </span>
+                            </div>
+                          </div>
+                          <div>
+                            <h4 className="font-semibold mb-2">
+                              Recommendation
+                            </h4>
+                            <p className="text-gray-700">
+                              {accommodation.evaluation.wouldRecommend
+                                ? "✅ Would recommend"
+                                : "❌ Would not recommend"}
+                            </p>
+                          </div>
+                          <div>
+                            <h4 className="font-semibold mb-2">
+                              Tips for Future Students
+                            </h4>
+                            <p className="text-gray-700">
                               {accommodation.evaluation.tips}
                             </p>
                           </div>
@@ -578,113 +588,123 @@ export default function AccommodationDetailPage() {
               </div>
 
               {/* Sidebar */}
-              <div className="space-y-6">
-                {/* Price Card */}
-                <Card>
+              <div className="lg:col-span-1">
+                <Card className="sticky top-24">
                   <CardContent className="pt-6">
-                    <div className="text-center mb-6">
-                      <div className="text-3xl font-bold text-green-600 mb-1">
-                        €{accommodation.monthlyRent}
-                        <span className="text-lg text-gray-500">/month</span>
-                      </div>
-                      {accommodation.billsIncluded ? (
-                        <Badge className="bg-green-100 text-green-800">
-                          Bills Included
-                        </Badge>
-                      ) : (
-                        <div className="text-sm text-gray-600">
-                          + €{accommodation.utilityCosts} utilities/month
+                    <div className="space-y-4">
+                      {/* Price */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Euro className="h-5 w-5 text-green-600" />
+                          <span className="text-2xl font-bold">
+                            €{accommodation.monthlyRent}
+                          </span>
+                          <span className="text-gray-600">/ month</span>
                         </div>
-                      )}
-                    </div>
+                        {!accommodation.billsIncluded && (
+                          <p className="text-sm text-gray-600">
+                            + €{accommodation.utilityCosts} utilities
+                          </p>
+                        )}
+                        {accommodation.billsIncluded && (
+                          <p className="text-sm text-green-600">
+                            All bills included
+                          </p>
+                        )}
+                      </div>
 
-                    <div className="space-y-3">
-                      {accommodation.contact.allowContact && (
-                        <Button
-                          className="w-full"
-                          onClick={handleContactStudent}
-                        >
-                          <Mail className="h-4 w-4 mr-2" />
-                          Contact Student
+                      <Separator />
+
+                      {/* Room Details */}
+                      <div>
+                        <h4 className="font-semibold mb-2">Room Details</h4>
+                        <div className="space-y-1 text-sm">
+                          <div className="flex justify-between">
+                            <span>Bedrooms:</span>
+                            <span>{accommodation.roomDetails.bedrooms}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Bathrooms:</span>
+                            <span>{accommodation.roomDetails.bathrooms}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Area:</span>
+                            <span>{accommodation.roomDetails.totalArea}m²</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Furnished:</span>
+                            <span>
+                              {accommodation.roomDetails.furnished
+                                ? "Yes"
+                                : "No"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      {/* Contact */}
+                      <div className="space-y-3">
+                        <h4 className="font-semibold">Contact Student</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Avatar className="h-8 w-8">
+                              <AvatarFallback>
+                                {accommodation.studentName.charAt(0)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-medium text-sm">
+                                {accommodation.studentName}
+                              </p>
+                              <p className="text-xs text-gray-600">
+                                Posted{" "}
+                                {new Date(
+                                  accommodation.datePosted,
+                                ).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+
+                          {accommodation.contact.allowContact && (
+                            <div className="space-y-2">
+                              <Button
+                                className="w-full"
+                                onClick={handleContactStudent}
+                              >
+                                <Mail className="h-4 w-4 mr-2" />
+                                Contact Student
+                              </Button>
+                              {accommodation.contact.bookingLink && (
+                                <Button
+                                  variant="outline"
+                                  className="w-full"
+                                  asChild
+                                >
+                                  <a
+                                    href={accommodation.contact.bookingLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    <ExternalLink className="h-4 w-4 mr-2" />
+                                    Book Online
+                                  </a>
+                                </Button>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      {/* Actions */}
+                      <div className="space-y-2">
+                        <Button variant="outline" className="w-full">
+                          <Flag className="h-4 w-4 mr-2" />
+                          Report Listing
                         </Button>
-                      )}
-
-                      {accommodation.contact.bookingLink && (
-                        <Button variant="outline" className="w-full" asChild>
-                          <a
-                            href={accommodation.contact.bookingLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <ExternalLink className="h-4 w-4 mr-2" />
-                            Booking Link
-                          </a>
-                        </Button>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Student Info */}
-                <Card>
-                  <CardContent className="pt-6">
-                    <h3 className="text-lg font-semibold mb-4">Shared by</h3>
-                    <div className="flex items-center gap-3 mb-4">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage
-                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${accommodation.studentName}`}
-                        />
-                        <AvatarFallback>
-                          {accommodation.studentName
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="font-medium">
-                          {accommodation.studentName}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          Erasmus Student
-                        </div>
-                      </div>
-                    </div>
-                    <Button variant="outline" className="w-full">
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      View Profile
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                {/* Landlord Info */}
-                <Card>
-                  <CardContent className="pt-6">
-                    <h3 className="text-lg font-semibold mb-4">
-                      Landlord Contact
-                    </h3>
-                    <div className="space-y-2 text-sm">
-                      <div>
-                        <span className="font-medium">Name:</span>{" "}
-                        {accommodation.landlord.name}
-                      </div>
-                      <div>
-                        <span className="font-medium">Email:</span>{" "}
-                        <a
-                          href={`mailto:${accommodation.landlord.email}`}
-                          className="text-blue-600 hover:underline"
-                        >
-                          {accommodation.landlord.email}
-                        </a>
-                      </div>
-                      <div>
-                        <span className="font-medium">Phone:</span>{" "}
-                        <a
-                          href={`tel:${accommodation.landlord.phone}`}
-                          className="text-blue-600 hover:underline"
-                        >
-                          {accommodation.landlord.phone}
-                        </a>
                       </div>
                     </div>
                   </CardContent>
@@ -697,147 +717,3 @@ export default function AccommodationDetailPage() {
     </>
   );
 }
-
-// Sample accommodation data moved to API endpoint for better performance
-    "1": {
-      id: "1",
-      studentName: "Maria S.",
-      accommodationType: "Private Apartment",
-      city: "Barcelona",
-      country: "Spain",
-      neighborhood: "Eixample",
-      address: "Carrer de Mallorca, 123, 08037 Barcelona, Spain",
-      monthlyRent: 850,
-      billsIncluded: false,
-      utilityCosts: 80,
-      rating: 5,
-      datePosted: "2024-01-15",
-      description:
-        "Beautiful 1-bedroom apartment in the heart of Barcelona, 10 minutes walk to UPC. Fully furnished with modern amenities. Great neighborhood with lots of cafes and restaurants. The apartment is on the 3rd floor with elevator access and gets plenty of natural light throughout the day.",
-      highlights: [
-        "Close to university",
-        "Modern furnishing",
-        "Great location",
-        "Quiet neighborhood",
-        "Natural light",
-        "Elevator access",
-      ],
-      contact: {
-        email: "maria.s@university.edu",
-        allowContact: true,
-        bookingLink: "https://booking-platform.com/apartment-123",
-      },
-      landlord: {
-        name: "Carlos Martinez",
-        email: "carlos.martinez@apartments.es",
-        phone: "+34 612 345 678",
-      },
-      facilities: [
-        "Wifi",
-        "Kitchen",
-        "Washing Machine",
-        "Air Conditioning",
-        "Private Bathroom",
-        "Balcony",
-      ],
-      nearbyAmenities: [
-        "Supermarket",
-        "Metro Station",
-        "Restaurants",
-        "Pharmacy",
-        "ATM",
-        "Gym",
-      ],
-      transportLinks:
-        "Metro L2 - 5 min walk (Sagrada Familia), Bus 24 - 2 min walk. Direct connection to UPC in 15 minutes.",
-      photos: [
-        "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&h=600&fit=crop",
-        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop",
-        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
-        "https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=800&h=600&fit=crop",
-      ],
-      verified: true,
-      featured: true,
-      roomDetails: {
-        bedrooms: 1,
-        bathrooms: 1,
-        totalArea: 45,
-        furnished: true,
-      },
-      evaluation: {
-        findingDifficulty: 3,
-        wouldRecommend: true,
-        tips: "Contact landlord early as good apartments go fast. Visit in person if possible. The area is safe and very well connected to the university.",
-      },
-    },
-    "2": {
-      id: "2",
-      studentName: "Andreas M.",
-      accommodationType: "Student Residence",
-      city: "Prague",
-      country: "Czech Republic",
-      neighborhood: "New Town",
-      address: "Wenceslas Square 15, 110 00 Prague, Czech Republic",
-      monthlyRent: 450,
-      billsIncluded: true,
-      utilityCosts: 0,
-      rating: 4,
-      datePosted: "2024-01-12",
-      description:
-        "Modern student residence with great facilities and international community. 15 minutes to Charles University by tram. Includes gym and study rooms. Perfect for students who want to be part of an international community.",
-      highlights: [
-        "Student community",
-        "Affordable price",
-        "Good facilities",
-        "International environment",
-        "All bills included",
-        "24/7 security",
-      ],
-      contact: {
-        email: "andreas.m@uni.cz",
-        allowContact: true,
-      },
-      landlord: {
-        name: "Student Housing Prague",
-        email: "info@studenthousing.cz",
-        phone: "+420 224 123 456",
-      },
-      facilities: [
-        "Wifi",
-        "Shared Kitchen",
-        "Gym",
-        "Study Room",
-        "Laundry",
-        "Common Room",
-      ],
-      nearbyAmenities: [
-        "Tram Stop",
-        "Shopping Center",
-        "Park",
-        "Library",
-        "Restaurants",
-        "Bank",
-      ],
-      transportLinks:
-        "Tram 22 - direct to university (15 min), Metro A line - 10 min walk",
-      photos: [
-        "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&h=600&fit=crop",
-        "https://images.unsplash.com/photo-1571055107559-3e67626fa8be?w=800&h=600&fit=crop",
-      ],
-      verified: true,
-      featured: false,
-      roomDetails: {
-        bedrooms: 1,
-        bathrooms: 1,
-        totalArea: 20,
-        furnished: true,
-      },
-      evaluation: {
-        findingDifficulty: 2,
-        wouldRecommend: true,
-        tips: "Great choice for first-time exchange students. Apply early for better room selection. The community events are amazing for meeting people.",
-      },
-    },
-  };
-
-// Now using client-side data fetching with React Query for better performance and real-time updates
