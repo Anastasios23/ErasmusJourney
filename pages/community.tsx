@@ -601,14 +601,14 @@ export default function Community() {
                   <Select
                     value={hostUniversity}
                     onValueChange={setHostUniversity}
-                    disabled={availableHostUniversities.length === 0}
+                    disabled={filteredHostUniversities.length === 0}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Host University" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Universities</SelectItem>
-                      {availableHostUniversities.map((university) => (
+                      {filteredHostUniversities.map((university) => (
                         <SelectItem key={university} value={university}>
                           {university}
                         </SelectItem>
