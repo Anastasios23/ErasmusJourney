@@ -639,30 +639,32 @@ export default function Community() {
                   <Select
                     value={hostCity}
                     onValueChange={setHostCity}
-                    disabled={!hostCountry || hostCountry === "all"}
+                    disabled={availableCities.length === 0}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Host City" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Cities</SelectItem>
-                      {availableAgreements
-                        .filter(
-                          (agreement) =>
-                            !hostCountry ||
-                            hostCountry === "all" ||
-                            agreement.partnerCountry === hostCountry,
-                        )
-                        .map((agreement) => agreement.partnerCity)
-                        .filter(
-                          (city, index, arr) => arr.indexOf(city) === index,
-                        ) // Remove duplicates
-                        .sort()
-                        .map((city) => (
-                          <SelectItem key={city} value={city}>
-                            {city}
-                          </SelectItem>
-                        ))}
+                      {(hostCountry && hostCountry !== "all"
+                        ? // If country is selected, show only cities in that country
+                          availableAgreements
+                            .filter(
+                              (agreement) =>
+                                agreement.partnerCountry === hostCountry,
+                            )
+                            .map((agreement) => agreement.partnerCity)
+                            .filter(
+                              (city, index, arr) => arr.indexOf(city) === index,
+                            )
+                            .sort()
+                        : // If no country selected, show all cities
+                          availableCities
+                      ).map((city) => (
+                        <SelectItem key={city} value={city}>
+                          {city}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
 
