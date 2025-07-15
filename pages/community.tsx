@@ -670,18 +670,46 @@ export default function Community() {
                   <Select
                     value={hostUniversity}
                     onValueChange={setHostUniversity}
-                    disabled={filteredHostUniversities.length === 0}
+                    disabled={availableHostUniversities.length === 0}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Host University" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Universities</SelectItem>
-                      {filteredHostUniversities.map((university) => (
-                        <SelectItem key={university} value={university}>
-                          {university}
-                        </SelectItem>
-                      ))}
+                      {availableHostUniversities
+                        .filter((university) => {
+                          // Filter universities based on selected country and city
+                          const universityAgreements =
+                            availableAgreements.filter(
+                              (agreement) =>
+                                agreement.partnerUniversity.name === university,
+                            );
+
+                          // Check if this university exists in the selected country (if any)
+                          if (hostCountry && hostCountry !== "all") {
+                            const hasCountryMatch = universityAgreements.some(
+                              (agreement) =>
+                                agreement.partnerCountry === hostCountry,
+                            );
+                            if (!hasCountryMatch) return false;
+                          }
+
+                          // Check if this university exists in the selected city (if any)
+                          if (hostCity && hostCity !== "all") {
+                            const hasCityMatch = universityAgreements.some(
+                              (agreement) => agreement.partnerCity === hostCity,
+                            );
+                            if (!hasCityMatch) return false;
+                          }
+
+                          return true;
+                        })
+                        .map((university) => (
+                          <SelectItem key={university} value={university}>
+                            {university}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>
