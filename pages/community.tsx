@@ -252,6 +252,35 @@ export default function Community() {
     }
   }, [hostUniversity, availableAgreements]);
 
+  // Get filtered host universities based on selected country and city
+  const filteredHostUniversities = useMemo(() => {
+    if (!availableAgreements.length) return [];
+
+    return availableAgreements
+      .filter((agreement) => {
+        // Filter by country if selected
+        if (
+          hostCountry &&
+          hostCountry !== "all" &&
+          agreement.partnerCountry !== hostCountry
+        ) {
+          return false;
+        }
+        // Filter by city if selected
+        if (
+          hostCity &&
+          hostCity !== "all" &&
+          agreement.partnerCity !== hostCity
+        ) {
+          return false;
+        }
+        return true;
+      })
+      .map((agreement) => agreement.partnerUniversity.name)
+      .filter((university, index, arr) => arr.indexOf(university) === index) // Remove duplicates
+      .sort();
+  }, [availableAgreements, hostCountry, hostCity]);
+
   // Filter mentors based on the 6 specific criteria
   const filteredMentors = useMemo(() => {
     return mentors.filter((mentor) => {
