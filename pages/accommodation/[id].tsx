@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Header from "../../components/Header";
+import { useAccommodation } from "../../src/hooks/useQueries";
+import { useGeneratedContent } from "../../src/hooks/useFormSubmissions";
 import { Button } from "../../src/components/ui/button";
 import { Badge } from "../../src/components/ui/badge";
 import { Card, CardContent } from "../../src/components/ui/card";
