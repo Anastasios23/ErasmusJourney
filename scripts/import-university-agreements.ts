@@ -69,7 +69,7 @@ async function importUniversityAgreements() {
     const partnerUniversities = new Map();
     const uniquePartners = new Set();
 
-    for (const agreement of ALL_AGREEMENTS) {
+    for (const agreement of ALL_UNIVERSITY_AGREEMENTS) {
       const key = `${agreement.partnerUniversity}-${agreement.partnerCountry}-${agreement.partnerCity}`;
       if (!uniquePartners.has(key)) {
         uniquePartners.add(key);
@@ -103,8 +103,8 @@ async function importUniversityAgreements() {
     console.log("Creating agreements...");
     let agreementCount = 0;
 
-    for (const agreement of ALL_AGREEMENTS) {
-      try {
+    for (const agreement of ALL_UNIVERSITY_AGREEMENTS) {
+      try:
         // Find home university
         const homeUni = createdUniversities.get(agreement.homeUniversity);
         if (!homeUni) {
