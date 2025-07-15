@@ -51,7 +51,13 @@ export default function SmartRecommendations({
 
   useEffect(() => {
     fetchRecommendations();
-  }, [userProfile]);
+  }, [
+    userProfile?.university,
+    userProfile?.hostCountry,
+    userProfile?.hostCity,
+    userProfile?.hostUniversity,
+    userProfile?.budget,
+  ]);
 
   const fetchRecommendations = async () => {
     setLoading(true);

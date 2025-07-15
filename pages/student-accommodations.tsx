@@ -157,7 +157,7 @@ export default function StudentAccommodations() {
         setWishlist(new Set(JSON.parse(savedWishlist)));
       }
     }
-  }, [getDraftData]);
+  }, []); // Remove getDraftData dependency to prevent infinite loop
 
   // Fetch accommodation experiences
   useEffect(() => {
