@@ -7,7 +7,12 @@ import Header from "../components/Header";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
 import { Badge } from "../src/components/ui/badge";
-import { Card, CardContent } from "../src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../src/components/ui/card";
 import { Skeleton } from "../src/components/ui/skeleton";
 import {
   Avatar,
