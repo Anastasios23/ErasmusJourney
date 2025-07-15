@@ -109,19 +109,41 @@ export default function AccommodationDetailPage() {
   // Get user's form submissions for personalization (like destinations page)
   const { content: userGeneratedContent } = useGeneratedContent();
 
-  // Filter user content relevant to this accommodation location
+  // Filter user content relevant to this accommodation location (similar to destinations page)
   const relevantUserContent =
     userGeneratedContent?.filter(
       (content: any) =>
+        // Match exact city/country
         content.data?.city?.toLowerCase() ===
           accommodation?.city?.toLowerCase() ||
         content.data?.country?.toLowerCase() ===
           accommodation?.country?.toLowerCase() ||
+        // Match host destination from basic-information form
         content.data?.hostCity?.toLowerCase() ===
           accommodation?.city?.toLowerCase() ||
         content.data?.hostCountry?.toLowerCase() ===
+          accommodation?.country?.toLowerCase() ||
+        // Match preferred destination from form submissions
+        content.data?.preferredHostCity?.toLowerCase() ===
+          accommodation?.city?.toLowerCase() ||
+        content.data?.preferredHostCountry?.toLowerCase() ===
           accommodation?.country?.toLowerCase(),
     ) || [];
+
+  // Check if user has form data matching this accommodation location
+  const userHasMatchingDestination = relevantUserContent.some(
+    (content: any) =>
+      content.data?.hostCity?.toLowerCase() ===
+        accommodation?.city?.toLowerCase() ||
+      content.data?.preferredHostCity?.toLowerCase() ===
+        accommodation?.city?.toLowerCase(),
+  );
+
+  // Extract user's academic info for better recommendations
+  const userAcademicInfo = userGeneratedContent?.find(
+    (content: any) =>
+      content.data?.universityInCyprus || content.data?.departmentInCyprus,
+  )?.data;
 
   // Load accommodation data when component mounts
   useState(() => {
