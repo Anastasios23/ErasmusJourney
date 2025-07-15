@@ -97,16 +97,35 @@ interface AccommodationDetail {
   };
 }
 
-interface AccommodationDetailPageProps {
-  accommodation: AccommodationDetail | null;
-}
-
-export default function AccommodationDetailPage({
-  accommodation,
-}: AccommodationDetailPageProps) {
+export default function AccommodationDetailPage() {
   const router = useRouter();
+  const { id } = router.query;
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
+
+  // Fetch accommodation data
+  const {
+    data: accommodation,
+    isLoading,
+    error,
+  } = useAccommodation(id as string);
+
+  // Get user's form submissions for personalization
+  const { content: userGeneratedContent } = useGeneratedContent();
+
+  // Filter user content relevant to this accommodation location
+  const relevantUserContent =
+    userGeneratedContent?.filter(
+      (content: any) =>
+        content.data?.city?.toLowerCase() ===
+          accommodation?.city?.toLowerCase() ||
+        content.data?.country?.toLowerCase() ===
+          accommodation?.country?.toLowerCase() ||
+        content.data?.hostCity?.toLowerCase() ===
+          accommodation?.city?.toLowerCase() ||
+        content.data?.hostCountry?.toLowerCase() ===
+          accommodation?.country?.toLowerCase(),
+    ) || [];
 
   if (!accommodation) {
     return (
