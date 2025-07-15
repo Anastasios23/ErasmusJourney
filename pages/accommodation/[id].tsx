@@ -340,6 +340,29 @@ export default function AccommodationDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Main Content */}
               <div className="lg:col-span-2 space-y-6">
+                {/* Personalized Alert */}
+                {userHasMatchingDestination && (
+                  <Card className="mb-6 bg-green-50 border-green-200">
+                    <CardContent className="pt-4">
+                      <div className="flex items-center gap-2 text-green-800">
+                        <CheckCircle className="h-5 w-5" />
+                        <span className="font-semibold">Perfect Match!</span>
+                      </div>
+                      <p className="text-green-700 mt-1 text-sm">
+                        This accommodation is in {accommodation.city}, which
+                        matches your selected exchange destination.
+                        {userAcademicInfo?.universityInCyprus && (
+                          <span>
+                            {" "}
+                            As a {userAcademicInfo.universityInCyprus} student,
+                            this could be ideal for your exchange.
+                          </span>
+                        )}
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+
                 {/* Header */}
                 <div>
                   <div className="flex items-start justify-between mb-4">
