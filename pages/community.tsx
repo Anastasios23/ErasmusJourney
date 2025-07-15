@@ -215,23 +215,38 @@ export default function Community() {
         (agreement) => agreement.partnerUniversity.name === hostUniversity,
       );
 
-      // Extract unique countries and cities for this host university
-      const uniqueCountries = [
-        ...new Set(
-          filteredAgreements.map((agreement) => agreement.partnerCountry),
-        ),
-      ].sort();
+      if (filteredAgreements.length > 0) {
+        // Extract unique countries and cities for this host university
+        const uniqueCountries = [
+          ...new Set(
+            filteredAgreements.map((agreement) => agreement.partnerCountry),
+          ),
+        ].sort();
 
-      const uniqueCities = [
-        ...new Set(
-          filteredAgreements.map((agreement) => agreement.partnerCity),
-        ),
-      ].sort();
+        const uniqueCities = [
+          ...new Set(
+            filteredAgreements.map((agreement) => agreement.partnerCity),
+          ),
+        ].sort();
 
-      setAvailableCountries(uniqueCountries);
-      setAvailableCities(uniqueCities);
+        setAvailableCountries(uniqueCountries);
+        setAvailableCities(uniqueCities);
 
-      // Reset dependent fields
+        // Auto-select country and city if there's only one option (which is typical for a specific university)
+        if (uniqueCountries.length === 1) {
+          setHostCountry(uniqueCountries[0]);
+        } else {
+          setHostCountry("");
+        }
+
+        if (uniqueCities.length === 1) {
+          setHostCity(uniqueCities[0]);
+        } else {
+          setHostCity("");
+        }
+      }
+    } else {
+      // Reset when no host university is selected
       setHostCountry("");
       setHostCity("");
     }
