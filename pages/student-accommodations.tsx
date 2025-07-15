@@ -446,8 +446,30 @@ export default function StudentAccommodations() {
               </div>
             )}
 
+            {/* Student Accommodation Experiences Loading */}
+            {experiencesLoading && (
+              <section className="mb-12">
+                <div className="mb-6">
+                  <Skeleton className="h-8 w-64 mb-2" />
+                  <Skeleton className="h-4 w-96" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {[...Array(3)].map((_, i) => (
+                    <Card key={i}>
+                      <CardContent className="pt-6">
+                        <Skeleton className="h-6 w-3/4 mb-2" />
+                        <Skeleton className="h-4 w-1/2 mb-4" />
+                        <Skeleton className="h-12 w-full mb-4" />
+                        <Skeleton className="h-8 w-full" />
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Student Accommodation Experiences */}
-            {accommodationExperiences.length > 0 && (
+            {!experiencesLoading && accommodationExperiences.length > 0 && (
               <section className="mb-12">
                 <div className="flex items-center justify-between mb-6">
                   <div>
