@@ -43,7 +43,15 @@ import {
   AlertDialogTrigger,
 } from "../src/components/ui/alert-dialog";
 import { useAccommodations, useContactStudent } from "../src/hooks/useQueries";
-import { useGeneratedContent } from "../src/hooks/useFormSubmissions";
+import {
+  useGeneratedContent,
+  useFormSubmissions,
+} from "../src/hooks/useFormSubmissions";
+import BudgetCalculator from "../components/accommodation/BudgetCalculator";
+import SmartRecommendations from "../components/accommodation/SmartRecommendations";
+import ContactIntegration from "../components/accommodation/ContactIntegration";
+import PlatformLinks from "../components/accommodation/PlatformLinks";
+import UniversityHousing from "../components/accommodation/UniversityHousing";
 import {
   Search,
   Star,
@@ -60,6 +68,12 @@ import {
   X,
   ChevronDown,
   Users,
+  Calculator,
+  Globe,
+  MessageCircle,
+  GraduationCap,
+  Lightbulb,
+  Heart,
 } from "lucide-react";
 
 const ITEMS_PER_PAGE = 6;
@@ -111,6 +125,34 @@ export default function StudentAccommodations() {
   // Get real accommodation experiences from form submissions (like destinations page)
   const [accommodationExperiences, setAccommodationExperiences] = useState([]);
   const [experiencesLoading, setExperiencesLoading] = useState(false);
+
+  // User profile and preferences
+  const { getDraftData } = useFormSubmissions();
+  const [userProfile, setUserProfile] = useState(null);
+  const [wishlist, setWishlist] = useState(new Set());
+  const [activeSection, setActiveSection] = useState("accommodations");
+
+  // Load user profile from form data
+  useEffect(() => {
+    const basicInfoData = getDraftData("basic-info");
+    if (basicInfoData) {
+      setUserProfile({
+        university: basicInfoData.universityInCyprus,
+        hostCountry: basicInfoData.hostCountry,
+        hostCity: basicInfoData.hostCity,
+        hostUniversity: basicInfoData.hostUniversity,
+        budget: basicInfoData.monthlyBudget,
+      });
+    }
+
+    // Load wishlist from localStorage
+    if (typeof window !== "undefined") {
+      const savedWishlist = localStorage.getItem("accommodation_wishlist");
+      if (savedWishlist) {
+        setWishlist(new Set(JSON.parse(savedWishlist)));
+      }
+    }
+  }, [getDraftData]);
 
   // Fetch accommodation experiences
   useEffect(() => {
@@ -181,6 +223,23 @@ export default function StudentAccommodations() {
     router.push(`/accommodation/${id}`);
   };
 
+  const toggleWishlist = (accommodationId: string) => {
+    const newWishlist = new Set(wishlist);
+    if (newWishlist.has(accommodationId)) {
+      newWishlist.delete(accommodationId);
+    } else {
+      newWishlist.add(accommodationId);
+    }
+    setWishlist(newWishlist);
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem(
+        "accommodation_wishlist",
+        JSON.stringify([...newWishlist]),
+      );
+    }
+  };
+
   const clearFilters = () => {
     setSearchTerm("");
     setSelectedCity("");
@@ -216,7 +275,7 @@ export default function StudentAccommodations() {
         <main className="pt-20 pb-16 px-4">
           <div className="max-w-7xl mx-auto">
             {/* Header Section */}
-            <header className="text-center mb-12">
+            <header className="text-center mb-8">
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
                 Student Accommodations
               </h1>
@@ -226,778 +285,1015 @@ export default function StudentAccommodations() {
               </p>
             </header>
 
-            {/* Search and Filters */}
-            <section aria-label="Search and filter accommodations">
-              <Card className="mb-8">
-                <CardContent className="pt-6">
-                  {/* Search Bar */}
-                  <div className="mb-4">
-                    <Label htmlFor="search" className="sr-only">
-                      Search accommodations
-                    </Label>
-                    <div className="relative">
-                      <Search
-                        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4"
-                        aria-hidden="true"
-                      />
-                      <Input
-                        id="search"
-                        placeholder="Search by city, student, or area..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10"
-                        aria-describedby="search-help"
-                      />
-                      <div id="search-help" className="sr-only">
-                        Search for accommodations by city, student name, or
-                        neighborhood
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Filters Toggle */}
-                  <div className="flex items-center justify-between">
-                    <Button
-                      variant="outline"
-                      onClick={() => setShowFilters(!showFilters)}
-                      aria-expanded={showFilters}
-                      aria-controls="filter-section"
-                    >
-                      <SlidersHorizontal className="h-4 w-4 mr-2" />
-                      Filters
-                      <ChevronDown
-                        className={`h-4 w-4 ml-2 transition-transform ${showFilters ? "rotate-180" : ""}`}
-                        aria-hidden="true"
-                      />
-                    </Button>
-                    {hasActiveFilters && (
-                      <Button variant="ghost" size="sm" onClick={clearFilters}>
-                        <X className="h-4 w-4 mr-2" />
-                        Clear all
-                      </Button>
-                    )}
-                  </div>
-
-                  {/* Expandable Filters */}
-                  {showFilters && (
-                    <div
-                      id="filter-section"
-                      className="grid grid-cols-1 lg:grid-cols-5 gap-4 mt-4 pt-4 border-t"
-                    >
-                      <div>
-                        <Label htmlFor="country">Country</Label>
-                        <Select
-                          value={selectedCountry}
-                          onValueChange={setSelectedCountry}
-                        >
-                          <SelectTrigger id="country">
-                            <SelectValue placeholder="All Countries" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all-countries">
-                              All Countries
-                            </SelectItem>
-                            {countries.map((country) => (
-                              <SelectItem key={country} value={country}>
-                                {country}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="city">City</Label>
-                        <Select
-                          value={selectedCity}
-                          onValueChange={setSelectedCity}
-                        >
-                          <SelectTrigger id="city">
-                            <SelectValue placeholder="All Cities" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all-cities">
-                              All Cities
-                            </SelectItem>
-                            {cities.map((city) => (
-                              <SelectItem key={city} value={city}>
-                                {city}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="type">Type</Label>
-                        <Select
-                          value={selectedType}
-                          onValueChange={setSelectedType}
-                        >
-                          <SelectTrigger id="type">
-                            <SelectValue placeholder="All Types" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all-types">All Types</SelectItem>
-                            {types.map((type) => (
-                              <SelectItem key={type} value={type}>
-                                {type}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="budget">Max Budget</Label>
-                        <Select value={maxBudget} onValueChange={setMaxBudget}>
-                          <SelectTrigger id="budget">
-                            <SelectValue placeholder="No Limit" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="no-limit">No Limit</SelectItem>
-                            <SelectItem value="500">€500</SelectItem>
-                            <SelectItem value="700">€700</SelectItem>
-                            <SelectItem value="1000">��1000</SelectItem>
-                            <SelectItem value="1500">€1500</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="rating">Min Rating</Label>
-                        <Select
-                          value={selectedRating}
-                          onValueChange={setSelectedRating}
-                        >
-                          <SelectTrigger id="rating">
-                            <SelectValue placeholder="Any Rating" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all-ratings">
-                              Any Rating
-                            </SelectItem>
-                            <SelectItem value="4">4+ Stars</SelectItem>
-                            <SelectItem value="5">5 Stars</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </section>
-
-            {/* Results Summary */}
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <p className="text-gray-600">
-                  {finalLoading ? (
-                    "Loading accommodations..."
-                  ) : (
-                    <>
-                      Found {accommodations.length} accommodation{" "}
-                      {accommodations.length === 1 ? "listing" : "listings"}
-                      {currentPage > 1 &&
-                        ` (Page ${currentPage} of ${totalPages})`}
-                    </>
-                  )}
-                </p>
+            {/* Section Navigation */}
+            <nav className="mb-8">
+              <div className="flex justify-center">
+                <div className="bg-white rounded-lg border p-1 inline-flex">
+                  <button
+                    onClick={() => setActiveSection("accommodations")}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      activeSection === "accommodations"
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    <Home className="h-4 w-4 inline mr-2" />
+                    Accommodations
+                  </button>
+                  <button
+                    onClick={() => setActiveSection("platforms")}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      activeSection === "platforms"
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    <Globe className="h-4 w-4 inline mr-2" />
+                    Platforms
+                  </button>
+                  <button
+                    onClick={() => setActiveSection("university")}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      activeSection === "university"
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    <GraduationCap className="h-4 w-4 inline mr-2" />
+                    University Housing
+                  </button>
+                  <button
+                    onClick={() => setActiveSection("tools")}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      activeSection === "tools"
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    <Calculator className="h-4 w-4 inline mr-2" />
+                    Tools
+                  </button>
+                  <button
+                    onClick={() => setActiveSection("support")}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      activeSection === "support"
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    <MessageCircle className="h-4 w-4 inline mr-2" />
+                    Support
+                  </button>
+                </div>
               </div>
-              <Link href="/accommodation">
-                <Button variant="outline">
-                  <Home className="h-4 w-4 mr-2" />
-                  Share Your Accommodation
-                </Button>
-              </Link>
-            </div>
+            </nav>
 
-            {/* Error State */}
-            {error && (
-              <Card className="mb-8 bg-red-50 border-red-200">
-                <CardContent className="pt-6">
-                  <p className="text-red-800">
-                    Failed to load accommodations. Please try again later.
-                  </p>
-                </CardContent>
-              </Card>
+            {/* Conditional Section Content */}
+            {activeSection === "platforms" && (
+              <section className="mb-12">
+                <PlatformLinks
+                  userCountry={userProfile?.hostCountry}
+                  userCity={userProfile?.hostCity}
+                />
+              </section>
             )}
 
-            {/* Loading State */}
-            {finalLoading && (
-              <div className="space-y-6">
-                {[...Array(3)].map((_, i) => (
-                  <Card key={i}>
+            {activeSection === "university" && (
+              <section className="mb-12">
+                <UniversityHousing
+                  userCountry={userProfile?.hostCountry}
+                  userCity={userProfile?.hostCity}
+                  userUniversity={userProfile?.hostUniversity}
+                />
+              </section>
+            )}
+
+            {activeSection === "tools" && (
+              <section className="mb-12 space-y-8">
+                <BudgetCalculator />
+                <SmartRecommendations userProfile={userProfile} />
+              </section>
+            )}
+
+            {activeSection === "support" && (
+              <section className="mb-12">
+                <ContactIntegration
+                  userCity={userProfile?.hostCity}
+                  userCountry={userProfile?.hostCountry}
+                />
+              </section>
+            )}
+
+            {activeSection === "accommodations" && (
+              <>
+                {/* Search and Filters */}
+                <section aria-label="Search and filter accommodations">
+                  <Card className="mb-8">
                     <CardContent className="pt-6">
-                      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                        <Skeleton className="h-40 w-full" />
-                        <div className="lg:col-span-2 space-y-4">
-                          <Skeleton className="h-6 w-3/4" />
-                          <Skeleton className="h-4 w-full" />
-                          <Skeleton className="h-4 w-2/3" />
-                        </div>
-                        <div className="space-y-4">
-                          <Skeleton className="h-8 w-24" />
-                          <Skeleton className="h-10 w-full" />
+                      {/* Search Bar */}
+                      <div className="mb-4">
+                        <Label htmlFor="search" className="sr-only">
+                          Search accommodations
+                        </Label>
+                        <div className="relative">
+                          <Search
+                            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4"
+                            aria-hidden="true"
+                          />
+                          <Input
+                            id="search"
+                            placeholder="Search by city, student, or area..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="pl-10"
+                            aria-describedby="search-help"
+                          />
+                          <div id="search-help" className="sr-only">
+                            Search for accommodations by city, student name, or
+                            neighborhood
+                          </div>
                         </div>
                       </div>
+
+                      {/* Filters Toggle */}
+                      <div className="flex items-center justify-between">
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowFilters(!showFilters)}
+                          aria-expanded={showFilters}
+                          aria-controls="filter-section"
+                        >
+                          <SlidersHorizontal className="h-4 w-4 mr-2" />
+                          Filters
+                          <ChevronDown
+                            className={`h-4 w-4 ml-2 transition-transform ${showFilters ? "rotate-180" : ""}`}
+                            aria-hidden="true"
+                          />
+                        </Button>
+                        {hasActiveFilters && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={clearFilters}
+                          >
+                            <X className="h-4 w-4 mr-2" />
+                            Clear all
+                          </Button>
+                        )}
+                      </div>
+
+                      {/* Expandable Filters */}
+                      {showFilters && (
+                        <div
+                          id="filter-section"
+                          className="grid grid-cols-1 lg:grid-cols-5 gap-4 mt-4 pt-4 border-t"
+                        >
+                          <div>
+                            <Label htmlFor="country">Country</Label>
+                            <Select
+                              value={selectedCountry}
+                              onValueChange={setSelectedCountry}
+                            >
+                              <SelectTrigger id="country">
+                                <SelectValue placeholder="All Countries" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all-countries">
+                                  All Countries
+                                </SelectItem>
+                                {countries.map((country) => (
+                                  <SelectItem key={country} value={country}>
+                                    {country}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div>
+                            <Label htmlFor="city">City</Label>
+                            <Select
+                              value={selectedCity}
+                              onValueChange={setSelectedCity}
+                            >
+                              <SelectTrigger id="city">
+                                <SelectValue placeholder="All Cities" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all-cities">
+                                  All Cities
+                                </SelectItem>
+                                {cities.map((city) => (
+                                  <SelectItem key={city} value={city}>
+                                    {city}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div>
+                            <Label htmlFor="type">Type</Label>
+                            <Select
+                              value={selectedType}
+                              onValueChange={setSelectedType}
+                            >
+                              <SelectTrigger id="type">
+                                <SelectValue placeholder="All Types" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all-types">
+                                  All Types
+                                </SelectItem>
+                                {types.map((type) => (
+                                  <SelectItem key={type} value={type}>
+                                    {type}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div>
+                            <Label htmlFor="budget">Max Budget</Label>
+                            <Select
+                              value={maxBudget}
+                              onValueChange={setMaxBudget}
+                            >
+                              <SelectTrigger id="budget">
+                                <SelectValue placeholder="No Limit" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="no-limit">
+                                  No Limit
+                                </SelectItem>
+                                <SelectItem value="500">€500</SelectItem>
+                                <SelectItem value="700">€700</SelectItem>
+                                <SelectItem value="1000">��1000</SelectItem>
+                                <SelectItem value="1500">€1500</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div>
+                            <Label htmlFor="rating">Min Rating</Label>
+                            <Select
+                              value={selectedRating}
+                              onValueChange={setSelectedRating}
+                            >
+                              <SelectTrigger id="rating">
+                                <SelectValue placeholder="Any Rating" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all-ratings">
+                                  Any Rating
+                                </SelectItem>
+                                <SelectItem value="4">4+ Stars</SelectItem>
+                                <SelectItem value="5">5 Stars</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
-                ))}
-              </div>
-            )}
+                </section>
 
-            {/* Student Accommodation Experiences Loading */}
-            {experiencesLoading && (
-              <section className="mb-12">
-                <div className="mb-6">
-                  <Skeleton className="h-8 w-64 mb-2" />
-                  <Skeleton className="h-4 w-96" />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[...Array(3)].map((_, i) => (
-                    <Card key={i}>
-                      <CardContent className="pt-6">
-                        <Skeleton className="h-6 w-3/4 mb-2" />
-                        <Skeleton className="h-4 w-1/2 mb-4" />
-                        <Skeleton className="h-12 w-full mb-4" />
-                        <Skeleton className="h-8 w-full" />
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Student Accommodation Experiences */}
-            {!experiencesLoading && accommodationExperiences.length > 0 && (
-              <section className="mb-12">
-                <div className="flex items-center justify-between mb-6">
+                {/* Results Summary */}
+                <div className="flex justify-between items-center mb-6">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900">
-                      Real Student Experiences
-                    </h2>
                     <p className="text-gray-600">
-                      Accommodation reviews and tips from actual exchange
-                      students
+                      {finalLoading ? (
+                        "Loading accommodations..."
+                      ) : (
+                        <>
+                          Found {accommodations.length} accommodation{" "}
+                          {accommodations.length === 1 ? "listing" : "listings"}
+                          {currentPage > 1 &&
+                            ` (Page ${currentPage} of ${totalPages})`}
+                        </>
+                      )}
                     </p>
                   </div>
-                  <Badge
-                    variant="outline"
-                    className="text-blue-600 border-blue-600"
-                  >
-                    {accommodationExperiences.length} Experience
-                    {accommodationExperiences.length === 1 ? "" : "s"}
-                  </Badge>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {accommodationExperiences.slice(0, 6).map((experience) => (
-                    <Card
-                      key={experience.id}
-                      className="hover:shadow-lg transition-shadow"
-                    >
-                      <CardContent className="pt-6">
-                        <div className="space-y-4">
-                          {/* Header */}
-                          <div>
-                            <div className="flex items-start justify-between mb-2">
-                              <h3 className="font-semibold text-lg">
-                                {experience.accommodationType}
-                              </h3>
-                              {experience.rating && (
-                                <div className="flex items-center gap-1">
-                                  <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                                  <span className="text-sm font-medium">
-                                    {experience.rating}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-2 text-gray-600 text-sm">
-                              <MapPin className="h-4 w-4" />
-                              <span>
-                                {experience.city}, {experience.country}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Student Info */}
-                          <div className="bg-blue-50 rounded-lg p-3">
-                            <div className="flex items-center gap-2 mb-1">
-                              <Users className="h-4 w-4 text-blue-600" />
-                              <span className="text-sm font-medium text-blue-900">
-                                {experience.studentName}
-                              </span>
-                            </div>
-                            {experience.universityInCyprus && (
-                              <p className="text-xs text-blue-700">
-                                {experience.universityInCyprus} →{" "}
-                                {experience.university}
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Financial Info */}
-                          {experience.monthlyRent && (
-                            <div className="flex items-center justify-between py-2 border-t border-gray-100">
-                              <span className="text-sm text-gray-600">
-                                Monthly Rent:
-                              </span>
-                              <span className="font-semibold text-green-600">
-                                €{experience.monthlyRent}
-                                {experience.billsIncluded && (
-                                  <span className="text-xs text-green-500 ml-1">
-                                    (bills incl.)
-                                  </span>
-                                )}
-                              </span>
-                            </div>
-                          )}
-
-                          {/* Experience Highlights */}
-                          {experience.pros && experience.pros.length > 0 && (
-                            <div>
-                              <h4 className="text-sm font-medium text-gray-900 mb-2">
-                                Pros:
-                              </h4>
-                              <div className="space-y-1">
-                                {experience.pros
-                                  .slice(0, 2)
-                                  .map((pro, index) => (
-                                    <div
-                                      key={index}
-                                      className="flex items-start gap-2"
-                                    >
-                                      <CheckCircle className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
-                                      <span className="text-xs text-gray-700">
-                                        {pro}
-                                      </span>
-                                    </div>
-                                  ))}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Tips */}
-                          {experience.tips && (
-                            <div className="bg-yellow-50 rounded-lg p-3">
-                              <h4 className="text-sm font-medium text-yellow-900 mb-1">
-                                Tip:
-                              </h4>
-                              <p className="text-xs text-yellow-800 line-clamp-2">
-                                {experience.tips}
-                              </p>
-                            </div>
-                          )}
-
-                          {/* Recommendation */}
-                          {experience.wouldRecommend !== undefined && (
-                            <div className="flex items-center gap-2 text-sm">
-                              <span className="text-gray-600">
-                                Would recommend:
-                              </span>
-                              <span
-                                className={
-                                  experience.wouldRecommend
-                                    ? "text-green-600"
-                                    : "text-red-600"
-                                }
-                              >
-                                {experience.wouldRecommend ? "✅ Yes" : "❌ No"}
-                              </span>
-                            </div>
-                          )}
-
-                          {/* Date */}
-                          <div className="text-xs text-gray-500 pt-2 border-t border-gray-100">
-                            Shared{" "}
-                            {new Date(
-                              experience.createdAt,
-                            ).toLocaleDateString()}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-
-                {accommodationExperiences.length > 6 && (
-                  <div className="text-center mt-6">
+                  <Link href="/accommodation">
                     <Button variant="outline">
-                      View All {accommodationExperiences.length} Experiences
+                      <Home className="h-4 w-4 mr-2" />
+                      Share Your Accommodation
                     </Button>
-                  </div>
-                )}
-              </section>
-            )}
+                  </Link>
+                </div>
 
-            {/* Accommodation Listings */}
-            {!finalLoading && !error && (
-              <section aria-label="Accommodation listings">
-                <div className="space-y-6">
-                  {paginatedAccommodations.map((listing) => (
-                    <article
-                      key={listing.id}
-                      className="group"
-                      aria-labelledby={`accommodation-${listing.id}-title`}
-                    >
-                      <Card className="hover:shadow-lg transition-shadow">
+                {/* Error State */}
+                {error && (
+                  <Card className="mb-8 bg-red-50 border-red-200">
+                    <CardContent className="pt-6">
+                      <p className="text-red-800">
+                        Failed to load accommodations. Please try again later.
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Loading State */}
+                {finalLoading && (
+                  <div className="space-y-6">
+                    {[...Array(3)].map((_, i) => (
+                      <Card key={i}>
                         <CardContent className="pt-6">
                           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                            {/* Image */}
-                            <div className="lg:col-span-1">
-                              <div className="aspect-video overflow-hidden rounded-lg relative">
-                                <Image
-                                  src={
-                                    listing.photos?.[0] ||
-                                    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop"
-                                  }
-                                  alt={`${listing.accommodationType || "Accommodation"} in ${listing.city || "City"}`}
-                                  fill
-                                  className="object-cover group-hover:scale-105 transition-transform"
-                                  sizes="(max-width: 1024px) 100vw, 25vw"
-                                />
-                              </div>
-                              {listing.featured && (
-                                <Badge className="mt-2 bg-yellow-100 text-yellow-800">
-                                  Featured
-                                </Badge>
-                              )}
-                            </div>
-
-                            {/* Content */}
+                            <Skeleton className="h-40 w-full" />
                             <div className="lg:col-span-2 space-y-4">
-                              <div>
-                                <div className="flex items-start justify-between">
-                                  <div>
-                                    <h2
-                                      id={`accommodation-${listing.id}-title`}
-                                      className="text-xl font-semibold mb-1"
-                                    >
-                                      {listing.accommodationType ||
-                                        "Accommodation"}{" "}
-                                      in {listing.neighborhood || "Area"}
-                                    </h2>
-                                    <div className="flex items-center gap-2 text-gray-600 mb-2">
-                                      <MapPin
-                                        className="h-4 w-4"
-                                        aria-hidden="true"
-                                      />
-                                      <span>
-                                        {listing.city || "City"},{" "}
-                                        {listing.country || "Country"}
-                                      </span>
-                                      {listing.verified && (
-                                        <CheckCircle
-                                          className="h-4 w-4 text-green-500"
-                                          aria-label="Verified listing"
-                                        />
-                                      )}
-                                    </div>
-                                  </div>
-                                  <div className="flex items-center gap-1">
-                                    <Star
-                                      className="h-4 w-4 text-yellow-400 fill-current"
-                                      aria-hidden="true"
-                                    />
-                                    <span
-                                      className="font-medium"
-                                      aria-label={`${listing.rating || 0} out of 5 stars`}
-                                    >
-                                      {listing.rating || 0}
-                                    </span>
-                                  </div>
-                                </div>
-
-                                <p className="text-gray-700 mb-4">
-                                  {listing.description}
-                                </p>
-
-                                {/* Highlights */}
-                                <div
-                                  className="flex flex-wrap gap-2 mb-4"
-                                  role="list"
-                                  aria-label="Accommodation highlights"
-                                >
-                                  {(listing.highlights || []).map(
-                                    (highlight, index) => (
-                                      <Badge
-                                        key={index}
-                                        variant="secondary"
-                                        className="text-xs"
-                                        role="listitem"
-                                      >
-                                        {highlight}
-                                      </Badge>
-                                    ),
-                                  )}
-                                </div>
-
-                                {/* Facilities */}
-                                <div
-                                  className="flex flex-wrap gap-3 text-sm text-gray-600"
-                                  role="list"
-                                  aria-label="Available facilities"
-                                >
-                                  {(listing.facilities || [])
-                                    .slice(0, 4)
-                                    .map((facility) => (
-                                      <div
-                                        key={facility}
-                                        className="flex items-center gap-1"
-                                        role="listitem"
-                                      >
-                                        {facility === "Wifi" && (
-                                          <Wifi
-                                            className="h-3 w-3"
-                                            aria-hidden="true"
-                                          />
-                                        )}
-                                        {facility === "Kitchen" && (
-                                          <Utensils
-                                            className="h-3 w-3"
-                                            aria-hidden="true"
-                                          />
-                                        )}
-                                        {facility === "Parking" && (
-                                          <Car
-                                            className="h-3 w-3"
-                                            aria-hidden="true"
-                                          />
-                                        )}
-                                        <span>{facility}</span>
-                                      </div>
-                                    ))}
-                                  {(listing.facilities || []).length > 4 && (
-                                    <span className="text-blue-600">
-                                      +{(listing.facilities || []).length - 4}{" "}
-                                      more
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
+                              <Skeleton className="h-6 w-3/4" />
+                              <Skeleton className="h-4 w-full" />
+                              <Skeleton className="h-4 w-2/3" />
                             </div>
-
-                            {/* Price and Actions */}
-                            <div className="lg:col-span-1 flex flex-col justify-between">
-                              <div>
-                                <div className="text-2xl font-bold text-green-600 mb-1">
-                                  €{listing.monthlyRent || 0}
-                                  <span className="text-sm text-gray-500">
-                                    /month
-                                  </span>
-                                </div>
-
-                                {/* Student Info */}
-                                <div className="flex items-center gap-2 mb-4">
-                                  <Avatar className="h-8 w-8">
-                                    <AvatarImage
-                                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${listing.studentName}`}
-                                      alt={`${listing.studentName}'s avatar`}
-                                    />
-                                    <AvatarFallback>
-                                      {(listing.studentName || "Anonymous User")
-                                        .split(" ")
-                                        .map((n) => n[0])
-                                        .join("")}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <div>
-                                    <div className="text-sm font-medium">
-                                      {listing.studentName}
-                                    </div>
-                                    <div className="text-xs text-gray-500">
-                                      {new Date(
-                                        listing.datePosted,
-                                      ).toLocaleDateString()}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="space-y-2">
-                                <Button
-                                  className="w-full"
-                                  onClick={() => handleViewDetails(listing.id)}
-                                  aria-describedby={`accommodation-${listing.id}-title`}
-                                >
-                                  <ExternalLink
-                                    className="h-4 w-4 mr-2"
-                                    aria-hidden="true"
-                                  />
-                                  View Details
-                                </Button>
-
-                                {listing.contact?.allowContact && (
-                                  <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                      <Button
-                                        variant="outline"
-                                        className="w-full"
-                                        disabled={contactMutation.isPending}
-                                      >
-                                        <Mail
-                                          className="h-4 w-4 mr-2"
-                                          aria-hidden="true"
-                                        />
-                                        {contactMutation.isPending
-                                          ? "Contacting..."
-                                          : "Contact Student"}
-                                      </Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                      <AlertDialogHeader>
-                                        <AlertDialogTitle>
-                                          Contact Student
-                                        </AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                          This will open your email client to
-                                          send a message to{" "}
-                                          {listing.studentName} about their
-                                          accommodation in {listing.city}.
-                                        </AlertDialogDescription>
-                                      </AlertDialogHeader>
-                                      <AlertDialogFooter>
-                                        <AlertDialogCancel>
-                                          Cancel
-                                        </AlertDialogCancel>
-                                        <AlertDialogAction
-                                          onClick={() =>
-                                            handleContactStudent(listing)
-                                          }
-                                        >
-                                          Open Email
-                                        </AlertDialogAction>
-                                      </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                  </AlertDialog>
-                                )}
-                              </div>
+                            <div className="space-y-4">
+                              <Skeleton className="h-8 w-24" />
+                              <Skeleton className="h-10 w-full" />
                             </div>
                           </div>
                         </CardContent>
                       </Card>
-                    </article>
-                  ))}
-                </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="mt-8 flex justify-center">
-                    <Pagination>
-                      <PaginationContent>
-                        <PaginationItem>
-                          <PaginationPrevious
-                            onClick={() =>
-                              setCurrentPage(Math.max(1, currentPage - 1))
-                            }
-                            className={
-                              currentPage === 1
-                                ? "pointer-events-none opacity-50"
-                                : "cursor-pointer"
-                            }
-                            aria-disabled={currentPage === 1}
-                          />
-                        </PaginationItem>
-
-                        {[...Array(totalPages)].map((_, i) => {
-                          const page = i + 1;
-                          if (
-                            page === 1 ||
-                            page === totalPages ||
-                            (page >= currentPage - 1 && page <= currentPage + 1)
-                          ) {
-                            return (
-                              <PaginationItem key={page}>
-                                <PaginationLink
-                                  onClick={() => setCurrentPage(page)}
-                                  isActive={currentPage === page}
-                                  className="cursor-pointer"
-                                  aria-current={
-                                    currentPage === page ? "page" : undefined
-                                  }
-                                >
-                                  {page}
-                                </PaginationLink>
-                              </PaginationItem>
-                            );
-                          } else if (
-                            page === currentPage - 2 ||
-                            page === currentPage + 2
-                          ) {
-                            return (
-                              <PaginationItem key={page}>
-                                <PaginationEllipsis />
-                              </PaginationItem>
-                            );
-                          }
-                          return null;
-                        })}
-
-                        <PaginationItem>
-                          <PaginationNext
-                            onClick={() =>
-                              setCurrentPage(
-                                Math.min(totalPages, currentPage + 1),
-                              )
-                            }
-                            className={
-                              currentPage === totalPages
-                                ? "pointer-events-none opacity-50"
-                                : "cursor-pointer"
-                            }
-                            aria-disabled={currentPage === totalPages}
-                          />
-                        </PaginationItem>
-                      </PaginationContent>
-                    </Pagination>
+                    ))}
                   </div>
                 )}
+
+                {/* Student Accommodation Experiences Loading */}
+                {experiencesLoading && (
+                  <section className="mb-12">
+                    <div className="mb-6">
+                      <Skeleton className="h-8 w-64 mb-2" />
+                      <Skeleton className="h-4 w-96" />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {[...Array(3)].map((_, i) => (
+                        <Card key={i}>
+                          <CardContent className="pt-6">
+                            <Skeleton className="h-6 w-3/4 mb-2" />
+                            <Skeleton className="h-4 w-1/2 mb-4" />
+                            <Skeleton className="h-12 w-full mb-4" />
+                            <Skeleton className="h-8 w-full" />
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* Student Accommodation Experiences */}
+                {!experiencesLoading && accommodationExperiences.length > 0 && (
+                  <section className="mb-12">
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <h2 className="text-2xl font-bold text-gray-900">
+                          Real Student Experiences
+                        </h2>
+                        <p className="text-gray-600">
+                          Accommodation reviews and tips from actual exchange
+                          students
+                        </p>
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className="text-blue-600 border-blue-600"
+                      >
+                        {accommodationExperiences.length} Experience
+                        {accommodationExperiences.length === 1 ? "" : "s"}
+                      </Badge>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {accommodationExperiences
+                        .slice(0, 6)
+                        .map((experience) => (
+                          <Card
+                            key={experience.id}
+                            className="hover:shadow-lg transition-shadow"
+                          >
+                            <CardContent className="pt-6">
+                              <div className="space-y-4">
+                                {/* Header */}
+                                <div>
+                                  <div className="flex items-start justify-between mb-2">
+                                    <h3 className="font-semibold text-lg">
+                                      {experience.accommodationType}
+                                    </h3>
+                                    {experience.rating && (
+                                      <div className="flex items-center gap-1">
+                                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                                        <span className="text-sm font-medium">
+                                          {experience.rating}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-2 text-gray-600 text-sm">
+                                    <MapPin className="h-4 w-4" />
+                                    <span>
+                                      {experience.city}, {experience.country}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {/* Student Info */}
+                                <div className="bg-blue-50 rounded-lg p-3">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <Users className="h-4 w-4 text-blue-600" />
+                                    <span className="text-sm font-medium text-blue-900">
+                                      {experience.studentName}
+                                    </span>
+                                  </div>
+                                  {experience.universityInCyprus && (
+                                    <p className="text-xs text-blue-700">
+                                      {experience.universityInCyprus} →{" "}
+                                      {experience.university}
+                                    </p>
+                                  )}
+                                </div>
+
+                                {/* Financial Info */}
+                                {experience.monthlyRent && (
+                                  <div className="flex items-center justify-between py-2 border-t border-gray-100">
+                                    <span className="text-sm text-gray-600">
+                                      Monthly Rent:
+                                    </span>
+                                    <span className="font-semibold text-green-600">
+                                      €{experience.monthlyRent}
+                                      {experience.billsIncluded && (
+                                        <span className="text-xs text-green-500 ml-1">
+                                          (bills incl.)
+                                        </span>
+                                      )}
+                                    </span>
+                                  </div>
+                                )}
+
+                                {/* Experience Highlights */}
+                                {experience.pros &&
+                                  experience.pros.length > 0 && (
+                                    <div>
+                                      <h4 className="text-sm font-medium text-gray-900 mb-2">
+                                        Pros:
+                                      </h4>
+                                      <div className="space-y-1">
+                                        {experience.pros
+                                          .slice(0, 2)
+                                          .map((pro, index) => (
+                                            <div
+                                              key={index}
+                                              className="flex items-start gap-2"
+                                            >
+                                              <CheckCircle className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
+                                              <span className="text-xs text-gray-700">
+                                                {pro}
+                                              </span>
+                                            </div>
+                                          ))}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                {/* Tips */}
+                                {experience.tips && (
+                                  <div className="bg-yellow-50 rounded-lg p-3">
+                                    <h4 className="text-sm font-medium text-yellow-900 mb-1">
+                                      Tip:
+                                    </h4>
+                                    <p className="text-xs text-yellow-800 line-clamp-2">
+                                      {experience.tips}
+                                    </p>
+                                  </div>
+                                )}
+
+                                {/* Recommendation */}
+                                {experience.wouldRecommend !== undefined && (
+                                  <div className="flex items-center gap-2 text-sm">
+                                    <span className="text-gray-600">
+                                      Would recommend:
+                                    </span>
+                                    <span
+                                      className={
+                                        experience.wouldRecommend
+                                          ? "text-green-600"
+                                          : "text-red-600"
+                                      }
+                                    >
+                                      {experience.wouldRecommend
+                                        ? "✅ Yes"
+                                        : "❌ No"}
+                                    </span>
+                                  </div>
+                                )}
+
+                                {/* Date */}
+                                <div className="text-xs text-gray-500 pt-2 border-t border-gray-100">
+                                  Shared{" "}
+                                  {new Date(
+                                    experience.createdAt,
+                                  ).toLocaleDateString()}
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                    </div>
+
+                    {accommodationExperiences.length > 6 && (
+                      <div className="text-center mt-6">
+                        <Button variant="outline">
+                          View All {accommodationExperiences.length} Experiences
+                        </Button>
+                      </div>
+                    )}
+                  </section>
+                )}
+
+                {/* Accommodation Listings */}
+                {!finalLoading && !error && (
+                  <section aria-label="Accommodation listings">
+                    <div className="space-y-6">
+                      {paginatedAccommodations.map((listing) => (
+                        <article
+                          key={listing.id}
+                          className="group"
+                          aria-labelledby={`accommodation-${listing.id}-title`}
+                        >
+                          <Card className="hover:shadow-lg transition-shadow">
+                            <CardContent className="pt-6">
+                              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                                {/* Image */}
+                                <div className="lg:col-span-1">
+                                  <div className="aspect-video overflow-hidden rounded-lg relative">
+                                    <Image
+                                      src={
+                                        listing.photos?.[0] ||
+                                        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop"
+                                      }
+                                      alt={`${listing.accommodationType || "Accommodation"} in ${listing.city || "City"}`}
+                                      fill
+                                      className="object-cover group-hover:scale-105 transition-transform"
+                                      sizes="(max-width: 1024px) 100vw, 25vw"
+                                    />
+                                  </div>
+                                  {listing.featured && (
+                                    <Badge className="mt-2 bg-yellow-100 text-yellow-800">
+                                      Featured
+                                    </Badge>
+                                  )}
+                                </div>
+
+                                {/* Content */}
+                                <div className="lg:col-span-2 space-y-4">
+                                  <div>
+                                    <div className="flex items-start justify-between">
+                                      <div>
+                                        <h2
+                                          id={`accommodation-${listing.id}-title`}
+                                          className="text-xl font-semibold mb-1"
+                                        >
+                                          {listing.accommodationType ||
+                                            "Accommodation"}{" "}
+                                          in {listing.neighborhood || "Area"}
+                                        </h2>
+                                        <div className="flex items-center gap-2 text-gray-600 mb-2">
+                                          <MapPin
+                                            className="h-4 w-4"
+                                            aria-hidden="true"
+                                          />
+                                          <span>
+                                            {listing.city || "City"},{" "}
+                                            {listing.country || "Country"}
+                                          </span>
+                                          {listing.verified && (
+                                            <CheckCircle
+                                              className="h-4 w-4 text-green-500"
+                                              aria-label="Verified listing"
+                                            />
+                                          )}
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center gap-1">
+                                        <Star
+                                          className="h-4 w-4 text-yellow-400 fill-current"
+                                          aria-hidden="true"
+                                        />
+                                        <span
+                                          className="font-medium"
+                                          aria-label={`${listing.rating || 0} out of 5 stars`}
+                                        >
+                                          {listing.rating || 0}
+                                        </span>
+                                      </div>
+                                    </div>
+
+                                    <p className="text-gray-700 mb-4">
+                                      {listing.description}
+                                    </p>
+
+                                    {/* Highlights */}
+                                    <div
+                                      className="flex flex-wrap gap-2 mb-4"
+                                      role="list"
+                                      aria-label="Accommodation highlights"
+                                    >
+                                      {(listing.highlights || []).map(
+                                        (highlight, index) => (
+                                          <Badge
+                                            key={index}
+                                            variant="secondary"
+                                            className="text-xs"
+                                            role="listitem"
+                                          >
+                                            {highlight}
+                                          </Badge>
+                                        ),
+                                      )}
+                                    </div>
+
+                                    {/* Facilities */}
+                                    <div
+                                      className="flex flex-wrap gap-3 text-sm text-gray-600"
+                                      role="list"
+                                      aria-label="Available facilities"
+                                    >
+                                      {(listing.facilities || [])
+                                        .slice(0, 4)
+                                        .map((facility) => (
+                                          <div
+                                            key={facility}
+                                            className="flex items-center gap-1"
+                                            role="listitem"
+                                          >
+                                            {facility === "Wifi" && (
+                                              <Wifi
+                                                className="h-3 w-3"
+                                                aria-hidden="true"
+                                              />
+                                            )}
+                                            {facility === "Kitchen" && (
+                                              <Utensils
+                                                className="h-3 w-3"
+                                                aria-hidden="true"
+                                              />
+                                            )}
+                                            {facility === "Parking" && (
+                                              <Car
+                                                className="h-3 w-3"
+                                                aria-hidden="true"
+                                              />
+                                            )}
+                                            <span>{facility}</span>
+                                          </div>
+                                        ))}
+                                      {(listing.facilities || []).length >
+                                        4 && (
+                                        <span className="text-blue-600">
+                                          +
+                                          {(listing.facilities || []).length -
+                                            4}{" "}
+                                          more
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Price and Actions */}
+                                <div className="lg:col-span-1 flex flex-col justify-between">
+                                  <div>
+                                    <div className="text-2xl font-bold text-green-600 mb-1">
+                                      €{listing.monthlyRent || 0}
+                                      <span className="text-sm text-gray-500">
+                                        /month
+                                      </span>
+                                    </div>
+
+                                    {/* Student Info */}
+                                    <div className="flex items-center gap-2 mb-4">
+                                      <Avatar className="h-8 w-8">
+                                        <AvatarImage
+                                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${listing.studentName}`}
+                                          alt={`${listing.studentName}'s avatar`}
+                                        />
+                                        <AvatarFallback>
+                                          {(
+                                            listing.studentName ||
+                                            "Anonymous User"
+                                          )
+                                            .split(" ")
+                                            .map((n) => n[0])
+                                            .join("")}
+                                        </AvatarFallback>
+                                      </Avatar>
+                                      <div>
+                                        <div className="text-sm font-medium">
+                                          {listing.studentName}
+                                        </div>
+                                        <div className="text-xs text-gray-500">
+                                          {new Date(
+                                            listing.datePosted,
+                                          ).toLocaleDateString()}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div className="space-y-2">
+                                    <div className="flex gap-2">
+                                      <Button
+                                        className="flex-1"
+                                        onClick={() =>
+                                          handleViewDetails(listing.id)
+                                        }
+                                        aria-describedby={`accommodation-${listing.id}-title`}
+                                      >
+                                        <ExternalLink
+                                          className="h-4 w-4 mr-2"
+                                          aria-hidden="true"
+                                        />
+                                        View Details
+                                      </Button>
+                                      <Button
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={() =>
+                                          toggleWishlist(listing.id)
+                                        }
+                                        className={
+                                          wishlist.has(listing.id)
+                                            ? "text-red-600"
+                                            : ""
+                                        }
+                                      >
+                                        <Heart
+                                          className={`h-4 w-4 ${
+                                            wishlist.has(listing.id)
+                                              ? "fill-current"
+                                              : ""
+                                          }`}
+                                          aria-hidden="true"
+                                        />
+                                      </Button>
+                                    </div>
+
+                                    {listing.contact?.allowContact && (
+                                      <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                          <Button
+                                            variant="outline"
+                                            className="w-full"
+                                            disabled={contactMutation.isPending}
+                                          >
+                                            <Mail
+                                              className="h-4 w-4 mr-2"
+                                              aria-hidden="true"
+                                            />
+                                            {contactMutation.isPending
+                                              ? "Contacting..."
+                                              : "Contact Student"}
+                                          </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                          <AlertDialogHeader>
+                                            <AlertDialogTitle>
+                                              Contact Student
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                              This will open your email client
+                                              to send a message to{" "}
+                                              {listing.studentName} about their
+                                              accommodation in {listing.city}.
+                                            </AlertDialogDescription>
+                                          </AlertDialogHeader>
+                                          <AlertDialogFooter>
+                                            <AlertDialogCancel>
+                                              Cancel
+                                            </AlertDialogCancel>
+                                            <AlertDialogAction
+                                              onClick={() =>
+                                                handleContactStudent(listing)
+                                              }
+                                            >
+                                              Open Email
+                                            </AlertDialogAction>
+                                          </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                      </AlertDialog>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </article>
+                      ))}
+                    </div>
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                      <div className="mt-8 flex justify-center">
+                        <Pagination>
+                          <PaginationContent>
+                            <PaginationItem>
+                              <PaginationPrevious
+                                onClick={() =>
+                                  setCurrentPage(Math.max(1, currentPage - 1))
+                                }
+                                className={
+                                  currentPage === 1
+                                    ? "pointer-events-none opacity-50"
+                                    : "cursor-pointer"
+                                }
+                                aria-disabled={currentPage === 1}
+                              />
+                            </PaginationItem>
+
+                            {[...Array(totalPages)].map((_, i) => {
+                              const page = i + 1;
+                              if (
+                                page === 1 ||
+                                page === totalPages ||
+                                (page >= currentPage - 1 &&
+                                  page <= currentPage + 1)
+                              ) {
+                                return (
+                                  <PaginationItem key={page}>
+                                    <PaginationLink
+                                      onClick={() => setCurrentPage(page)}
+                                      isActive={currentPage === page}
+                                      className="cursor-pointer"
+                                      aria-current={
+                                        currentPage === page
+                                          ? "page"
+                                          : undefined
+                                      }
+                                    >
+                                      {page}
+                                    </PaginationLink>
+                                  </PaginationItem>
+                                );
+                              } else if (
+                                page === currentPage - 2 ||
+                                page === currentPage + 2
+                              ) {
+                                return (
+                                  <PaginationItem key={page}>
+                                    <PaginationEllipsis />
+                                  </PaginationItem>
+                                );
+                              }
+                              return null;
+                            })}
+
+                            <PaginationItem>
+                              <PaginationNext
+                                onClick={() =>
+                                  setCurrentPage(
+                                    Math.min(totalPages, currentPage + 1),
+                                  )
+                                }
+                                className={
+                                  currentPage === totalPages
+                                    ? "pointer-events-none opacity-50"
+                                    : "cursor-pointer"
+                                }
+                                aria-disabled={currentPage === totalPages}
+                              />
+                            </PaginationItem>
+                          </PaginationContent>
+                        </Pagination>
+                      </div>
+                    )}
+                  </section>
+                )}
+
+                {/* No Results */}
+                {!finalLoading && !error && allAccommodations.length === 0 && (
+                  <div className="text-center py-12">
+                    <Home
+                      className="h-12 w-12 text-gray-400 mx-auto mb-4"
+                      aria-hidden="true"
+                    />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      No accommodations found
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      Try adjusting your search criteria or be the first to
+                      share accommodation info for this location.
+                    </p>
+                    <Link href="/accommodation">
+                      <Button>Share Your Accommodation</Button>
+                    </Link>
+                  </div>
+                )}
+
+                {/* CTA Section */}
+                <section className="mt-12">
+                  <Card className="bg-blue-50 border-blue-200">
+                    <CardContent className="pt-8 pb-8 text-center">
+                      <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                        Help Future Students Find Great Housing
+                      </h2>
+                      <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+                        Share details about your accommodation to help other
+                        students find great places to live during their Erasmus
+                        experience.
+                      </p>
+                      <Link href="/accommodation">
+                        <Button size="lg">
+                          <Home className="h-5 w-5 mr-2" />
+                          Share Your Accommodation
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                </section>
+              </>
+            )}
+
+            {/* Practical Resources Section */}
+            {activeSection === "accommodations" && (
+              <section className="mt-12">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Lightbulb className="h-5 w-5" />
+                      Practical Resources & Tips
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div className="space-y-3">
+                        <h3 className="font-semibold text-gray-900">
+                          Budget Planning
+                        </h3>
+                        <ul className="text-sm text-gray-600 space-y-1">
+                          <li>
+                            • Use our budget calculator in the Tools section
+                          </li>
+                          <li>
+                            • Consider all costs: rent, utilities, groceries
+                          </li>
+                          <li>• Look for student discounts and subsidies</li>
+                          <li>• Budget for deposits and agency fees</li>
+                        </ul>
+                      </div>
+                      <div className="space-y-3">
+                        <h3 className="font-semibold text-gray-900">
+                          Documentation
+                        </h3>
+                        <ul className="text-sm text-gray-600 space-y-1">
+                          <li>• Prepare acceptance letter from university</li>
+                          <li>• Get proof of income or financial support</li>
+                          <li>• Obtain European health insurance card</li>
+                          <li>• Keep passport/ID copies ready</li>
+                        </ul>
+                      </div>
+                      <div className="space-y-3">
+                        <h3 className="font-semibold text-gray-900">
+                          Safety Tips
+                        </h3>
+                        <ul className="text-sm text-gray-600 space-y-1">
+                          <li>• Never pay full rent without viewing</li>
+                          <li>• Verify landlord identity and ownership</li>
+                          <li>• Read contracts carefully before signing</li>
+                          <li>• Check emergency contact numbers</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </section>
             )}
 
-            {/* No Results */}
-            {!finalLoading && !error && allAccommodations.length === 0 && (
-              <div className="text-center py-12">
-                <Home
-                  className="h-12 w-12 text-gray-400 mx-auto mb-4"
-                  aria-hidden="true"
-                />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No accommodations found
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Try adjusting your search criteria or be the first to share
-                  accommodation info for this location.
-                </p>
-                <Link href="/accommodation">
-                  <Button>Share Your Accommodation</Button>
-                </Link>
-              </div>
+            {/* Smart Recommendations for accommodations section */}
+            {activeSection === "accommodations" && userProfile && (
+              <section className="mt-8">
+                <SmartRecommendations userProfile={userProfile} />
+              </section>
             )}
 
-            {/* CTA Section */}
-            <section className="mt-12">
-              <Card className="bg-blue-50 border-blue-200">
-                <CardContent className="pt-8 pb-8 text-center">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                    Help Future Students Find Great Housing
-                  </h2>
-                  <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                    Share details about your accommodation to help other
-                    students find great places to live during their Erasmus
-                    experience.
-                  </p>
-                  <Link href="/accommodation">
-                    <Button size="lg">
-                      <Home className="h-5 w-5 mr-2" />
-                      Share Your Accommodation
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            </section>
+            {/* Wishlist Summary */}
+            {activeSection === "accommodations" && wishlist.size > 0 && (
+              <section className="mt-8">
+                <Card className="bg-red-50 border-red-200">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Heart className="h-5 w-5 text-red-600 fill-current" />
+                      <h3 className="font-semibold text-red-900">
+                        Your Wishlist ({wishlist.size} items)
+                      </h3>
+                    </div>
+                    <p className="text-sm text-red-800">
+                      You have {wishlist.size} accommodation
+                      {wishlist.size === 1 ? "" : "s"} saved to your wishlist.
+                      Your wishlist is saved locally and will be available next
+                      time you visit.
+                    </p>
+                  </CardContent>
+                </Card>
+              </section>
+            )}
           </div>
         </main>
       </div>
