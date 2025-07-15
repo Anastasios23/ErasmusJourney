@@ -59,6 +59,7 @@ import {
   SlidersHorizontal,
   X,
   ChevronDown,
+  Users,
 } from "lucide-react";
 
 const ITEMS_PER_PAGE = 6;
