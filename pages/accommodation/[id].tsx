@@ -844,11 +844,4 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
   };
 
-  const accommodation = sampleAccommodations[id as string] || null;
-
-  return {
-    props: {
-      accommodation,
-    },
-  };
-};
+// Now using client-side data fetching with React Query for better performance and real-time updates
