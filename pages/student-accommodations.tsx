@@ -446,6 +446,169 @@ export default function StudentAccommodations() {
               </div>
             )}
 
+            {/* Student Accommodation Experiences */}
+            {accommodationExperiences.length > 0 && (
+              <section className="mb-12">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">
+                      Real Student Experiences
+                    </h2>
+                    <p className="text-gray-600">
+                      Accommodation reviews and tips from actual exchange
+                      students
+                    </p>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className="text-blue-600 border-blue-600"
+                  >
+                    {accommodationExperiences.length} Experience
+                    {accommodationExperiences.length === 1 ? "" : "s"}
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {accommodationExperiences.slice(0, 6).map((experience) => (
+                    <Card
+                      key={experience.id}
+                      className="hover:shadow-lg transition-shadow"
+                    >
+                      <CardContent className="pt-6">
+                        <div className="space-y-4">
+                          {/* Header */}
+                          <div>
+                            <div className="flex items-start justify-between mb-2">
+                              <h3 className="font-semibold text-lg">
+                                {experience.accommodationType}
+                              </h3>
+                              {experience.rating && (
+                                <div className="flex items-center gap-1">
+                                  <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                                  <span className="text-sm font-medium">
+                                    {experience.rating}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 text-gray-600 text-sm">
+                              <MapPin className="h-4 w-4" />
+                              <span>
+                                {experience.city}, {experience.country}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Student Info */}
+                          <div className="bg-blue-50 rounded-lg p-3">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Users className="h-4 w-4 text-blue-600" />
+                              <span className="text-sm font-medium text-blue-900">
+                                {experience.studentName}
+                              </span>
+                            </div>
+                            {experience.universityInCyprus && (
+                              <p className="text-xs text-blue-700">
+                                {experience.universityInCyprus} →{" "}
+                                {experience.university}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Financial Info */}
+                          {experience.monthlyRent && (
+                            <div className="flex items-center justify-between py-2 border-t border-gray-100">
+                              <span className="text-sm text-gray-600">
+                                Monthly Rent:
+                              </span>
+                              <span className="font-semibold text-green-600">
+                                €{experience.monthlyRent}
+                                {experience.billsIncluded && (
+                                  <span className="text-xs text-green-500 ml-1">
+                                    (bills incl.)
+                                  </span>
+                                )}
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Experience Highlights */}
+                          {experience.pros && experience.pros.length > 0 && (
+                            <div>
+                              <h4 className="text-sm font-medium text-gray-900 mb-2">
+                                Pros:
+                              </h4>
+                              <div className="space-y-1">
+                                {experience.pros
+                                  .slice(0, 2)
+                                  .map((pro, index) => (
+                                    <div
+                                      key={index}
+                                      className="flex items-start gap-2"
+                                    >
+                                      <CheckCircle className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
+                                      <span className="text-xs text-gray-700">
+                                        {pro}
+                                      </span>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Tips */}
+                          {experience.tips && (
+                            <div className="bg-yellow-50 rounded-lg p-3">
+                              <h4 className="text-sm font-medium text-yellow-900 mb-1">
+                                Tip:
+                              </h4>
+                              <p className="text-xs text-yellow-800 line-clamp-2">
+                                {experience.tips}
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Recommendation */}
+                          {experience.wouldRecommend !== undefined && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <span className="text-gray-600">
+                                Would recommend:
+                              </span>
+                              <span
+                                className={
+                                  experience.wouldRecommend
+                                    ? "text-green-600"
+                                    : "text-red-600"
+                                }
+                              >
+                                {experience.wouldRecommend ? "✅ Yes" : "❌ No"}
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Date */}
+                          <div className="text-xs text-gray-500 pt-2 border-t border-gray-100">
+                            Shared{" "}
+                            {new Date(
+                              experience.createdAt,
+                            ).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                {accommodationExperiences.length > 6 && (
+                  <div className="text-center mt-6">
+                    <Button variant="outline">
+                      View All {accommodationExperiences.length} Experiences
+                    </Button>
+                  </div>
+                )}
+              </section>
+            )}
+
             {/* Accommodation Listings */}
             {!finalLoading && !error && (
               <section aria-label="Accommodation listings">
