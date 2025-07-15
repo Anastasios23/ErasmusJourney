@@ -167,6 +167,15 @@ export default function Community() {
             setAvailableHostUniversities(uniqueHostUniversities);
             setAvailableCountries(uniqueCountries);
             setAvailableCities(uniqueCities);
+
+            console.log(
+              `Found ${data.agreements.length} agreements for ${universityInCyprus} - ${departmentInCyprus}`,
+            );
+            console.log(`Available countries: ${uniqueCountries.join(", ")}`);
+            console.log(`Available cities: ${uniqueCities.length} cities`);
+            console.log(
+              `Available universities: ${uniqueHostUniversities.length} universities`,
+            );
           } else {
             setAvailableAgreements([]);
             setAvailableHostUniversities([]);
