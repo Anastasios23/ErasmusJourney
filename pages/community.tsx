@@ -582,18 +582,30 @@ export default function Community() {
                   <Select
                     value={hostCity}
                     onValueChange={setHostCity}
-                    disabled={availableCities.length === 0}
+                    disabled={!hostCountry || hostCountry === "all"}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Host City" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Cities</SelectItem>
-                      {availableCities.map((city) => (
-                        <SelectItem key={city} value={city}>
-                          {city}
-                        </SelectItem>
-                      ))}
+                      {availableAgreements
+                        .filter(
+                          (agreement) =>
+                            !hostCountry ||
+                            hostCountry === "all" ||
+                            agreement.partnerCountry === hostCountry,
+                        )
+                        .map((agreement) => agreement.partnerCity)
+                        .filter(
+                          (city, index, arr) => arr.indexOf(city) === index,
+                        ) // Remove duplicates
+                        .sort()
+                        .map((city) => (
+                          <SelectItem key={city} value={city}>
+                            {city}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
 
