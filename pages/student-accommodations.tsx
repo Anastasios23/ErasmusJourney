@@ -153,7 +153,7 @@ export default function StudentAccommodations() {
   };
 
   const handleViewDetails = (id: string) => {
-    router.push(`/accommodation-detail/${id}`);
+    router.push(`/accommodation/${id}`);
   };
 
   const clearFilters = () => {
