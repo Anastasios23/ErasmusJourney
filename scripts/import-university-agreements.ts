@@ -104,7 +104,7 @@ async function importUniversityAgreements() {
     let agreementCount = 0;
 
     for (const agreement of ALL_UNIVERSITY_AGREEMENTS) {
-      try:
+      try {
         // Find home university
         const homeUni = createdUniversities.get(agreement.homeUniversity);
         if (!homeUni) {
