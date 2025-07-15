@@ -252,6 +252,54 @@ export default function Community() {
     }
   }, [hostUniversity, availableAgreements]);
 
+  // Reset dependent fields when country changes
+  useEffect(() => {
+    if (hostCountry && hostCountry !== "all") {
+      // Reset city if it's not available in the selected country
+      const citiesInCountry = availableAgreements
+        .filter((agreement) => agreement.partnerCountry === hostCountry)
+        .map((agreement) => agreement.partnerCity);
+
+      if (hostCity && !citiesInCountry.includes(hostCity)) {
+        setHostCity("");
+      }
+
+      // Reset university if it's not available in the selected country/city
+      const universitiesInCountry = availableAgreements
+        .filter(
+          (agreement) =>
+            agreement.partnerCountry === hostCountry &&
+            (!hostCity ||
+              hostCity === "all" ||
+              agreement.partnerCity === hostCity),
+        )
+        .map((agreement) => agreement.partnerUniversity.name);
+
+      if (hostUniversity && !universitiesInCountry.includes(hostUniversity)) {
+        setHostUniversity("");
+      }
+    }
+  }, [hostCountry]);
+
+  // Reset university when city changes
+  useEffect(() => {
+    if (hostCity && hostCity !== "all") {
+      const universitiesInCity = availableAgreements
+        .filter(
+          (agreement) =>
+            agreement.partnerCity === hostCity &&
+            (!hostCountry ||
+              hostCountry === "all" ||
+              agreement.partnerCountry === hostCountry),
+        )
+        .map((agreement) => agreement.partnerUniversity.name);
+
+      if (hostUniversity && !universitiesInCity.includes(hostUniversity)) {
+        setHostUniversity("");
+      }
+    }
+  }, [hostCity]);
+
   // Get filtered host universities based on selected country and city
   const filteredHostUniversities = useMemo(() => {
     if (!availableAgreements.length) return [];
