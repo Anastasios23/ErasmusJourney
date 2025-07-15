@@ -107,6 +107,30 @@ export default function StudentAccommodations() {
   const { content: generatedContent, loading: contentLoading } =
     useGeneratedContent("accommodations");
 
+  // Get real accommodation experiences from form submissions (like destinations page)
+  const [accommodationExperiences, setAccommodationExperiences] = useState([]);
+  const [experiencesLoading, setExperiencesLoading] = useState(false);
+
+  // Fetch accommodation experiences
+  useEffect(() => {
+    const fetchExperiences = async () => {
+      setExperiencesLoading(true);
+      try {
+        const response = await fetch("/api/accommodation/experiences");
+        if (response.ok) {
+          const data = await response.json();
+          setAccommodationExperiences(data.accommodations || []);
+        }
+      } catch (error) {
+        console.error("Error fetching accommodation experiences:", error);
+      } finally {
+        setExperiencesLoading(false);
+      }
+    };
+
+    fetchExperiences();
+  }, []);
+
   // Combine generated content with existing data, ensuring unique IDs
   const allAccommodations = [
     ...(generatedContent?.accommodations || []).map((item, index) => ({
