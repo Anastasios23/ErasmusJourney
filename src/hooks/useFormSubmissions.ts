@@ -36,6 +36,7 @@ interface UseFormSubmissionsReturn {
   saveDraft: (type: string, title: string, data: any) => Promise<void>;
   deleteDraft: (id: string) => Promise<void>;
   refreshSubmissions: () => Promise<void>;
+  sessionStatus: string;
 }
 
 export function useFormSubmissions(): UseFormSubmissionsReturn {
