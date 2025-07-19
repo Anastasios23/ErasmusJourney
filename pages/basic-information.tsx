@@ -35,12 +35,25 @@ import {
 } from "../src/data/universityAgreements";
 import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp";
 import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
+import { basicInformationSchema } from "../src/lib/schemas";
+import { handleApiError } from "../src/utils/apiErrorHandler";
+import { Alert, AlertDescription } from "../src/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export default function BasicInformation() {
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
-  const { submitForm, getDraftData, saveDraft } = useFormSubmissions();
+  const {
+    submitForm,
+    getDraftData,
+    saveDraft,
+    sessionStatus: formSessionStatus,
+  } = useFormSubmissions();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -215,6 +228,30 @@ export default function BasicInformation() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage("");
+    setValidationErrors({});
+
+    // Check if session is still loading
+    if (sessionStatus === "loading" || formSessionStatus === "loading") {
+      setErrorMessage("Please wait while we verify your authentication...");
+      return;
+    }
+
+    // Validate required fields using Zod schema
+    try {
+      basicInformationSchema.parse(formData);
+    } catch (validationError: any) {
+      const errors: Record<string, string> = {};
+      validationError.errors?.forEach((err: any) => {
+        if (err.path) {
+          errors[err.path[0]] = err.message;
+        }
+      });
+      setValidationErrors(errors);
+      setErrorMessage("Please fix the validation errors below.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -225,8 +262,19 @@ export default function BasicInformation() {
         "submitted",
       );
       router.push("/course-matching");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Submission error:", error);
+      const errorInfo = handleApiError(error);
+      setErrorMessage(errorInfo.message);
+
+      if (errorInfo.action === "signin") {
+        // Redirect to sign-in if authentication failed
+        setTimeout(() => {
+          router.push(
+            "/auth/signin?callbackUrl=" + encodeURIComponent(router.asPath),
+          );
+        }, 2000);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -235,8 +283,19 @@ export default function BasicInformation() {
   const handleSaveDraft = async () => {
     try {
       await saveDraft("basic-info", "Basic Information Draft", formData);
-    } catch (error) {
+      // Show success message briefly
+      setErrorMessage("");
+      const savedMessage = "Draft saved successfully!";
+      setErrorMessage(savedMessage);
+      setTimeout(() => {
+        if (errorMessage === savedMessage) {
+          setErrorMessage("");
+        }
+      }, 2000);
+    } catch (error: any) {
       console.error("Draft save error:", error);
+      const errorInfo = handleApiError(error);
+      setErrorMessage(`Failed to save draft: ${errorInfo.message}`);
     }
   };
 
@@ -567,10 +626,15 @@ export default function BasicInformation() {
                   >
                     Save Draft
                   </Button>
-                  <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting
-                      ? "Submitting..."
-                      : "Continue to Course Matching"}
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting || sessionStatus === "loading"}
+                  >
+                    {sessionStatus === "loading"
+                      ? "Loading..."
+                      : isSubmitting
+                        ? "Submitting..."
+                        : "Continue to Course Matching"}
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </div>
