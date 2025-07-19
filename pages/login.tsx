@@ -106,6 +106,13 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    // Prevent double submission
+    if (loading) {
+      console.log("Form submission already in progress, ignoring...");
+      return;
+    }
+
     setLoading(true);
     setErrorMessage(null);
     setSuccessMessage(null);
@@ -179,6 +186,11 @@ export default function LoginPage() {
         "Network error. Please check your connection and try again.",
       );
       setLoading(false);
+    } finally {
+      // Ensure loading state is always reset (except for successful login)
+      if (!successMessage) {
+        setTimeout(() => setLoading(false), 100);
+      }
     }
   };
 
@@ -341,7 +353,11 @@ export default function LoginPage() {
                 </button>
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={loading || !email || !password}
+              >
                 {loading ? "Signing in…" : "Sign In"}
               </Button>
             </form>
