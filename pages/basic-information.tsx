@@ -35,7 +35,7 @@ import {
 } from "../src/data/universityAgreements";
 import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp";
 import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
-import { basicInformationSchema } from "../src/lib/schemas";
+import { basicInformationRequiredSchema } from "../src/lib/schemas";
 import { handleApiError } from "../src/utils/apiErrorHandler";
 import { Alert, AlertDescription } from "../src/components/ui/alert";
 import { AlertCircle } from "lucide-react";
@@ -51,9 +51,27 @@ export default function BasicInformation() {
   } = useFormSubmissions();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string>
   >({});
+
+  // Auth guard - redirect unauthenticated users
+  if (sessionStatus === "loading") {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (sessionStatus === "unauthenticated") {
+    router.replace("/auth/signin?callbackUrl=/basic-information");
+    return null;
+  }
 
   const [formData, setFormData] = useState({
     firstName: "",
