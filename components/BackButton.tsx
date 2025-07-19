@@ -15,12 +15,8 @@ export default function BackButton({
   const router = useRouter();
 
   const handleClick = () => {
-    // Try to go back in history, fallback to specified URL
-    if (window.history.length > 1) {
-      router.back();
-    } else {
-      router.push(fallbackUrl);
-    }
+    // Navigate directly to the root page
+    router.push(fallbackUrl);
   };
 
   // Don't show on home page
