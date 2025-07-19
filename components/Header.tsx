@@ -113,60 +113,63 @@ export default function Header() {
               // Loading skeleton
               <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
             ) : status === "authenticated" && session ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="relative h-8 w-8 rounded-full"
-                  >
-                    <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
-                      <span className="text-white text-sm font-medium">
-                        {session.user.name?.[0] || session.user.email?.[0]}
-                      </span>
+              <div className="flex items-center space-x-2">
+                <NotificationDropdown />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="relative h-8 w-8 rounded-full"
+                    >
+                      <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
+                        <span className="text-white text-sm font-medium">
+                          {session.user.name?.[0] || session.user.email?.[0]}
+                        </span>
+                      </div>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <div className="flex items-center justify-start gap-2 p-2">
+                      <div className="h-10 w-10 bg-blue-600 rounded-full flex items-center justify-center">
+                        <span className="text-white text-sm font-bold">
+                          {session.user.name?.[0] || session.user.email?.[0]}
+                        </span>
+                      </div>
+                      <div className="flex flex-col space-y-1 leading-none">
+                        <p className="font-medium text-gray-900">
+                          Welcome,{" "}
+                          {session.user.name?.split(" ")[0] ||
+                            session.user.email?.split("@")[0]}
+                          !
+                        </p>
+                        <p className="w-[200px] truncate text-sm text-muted-foreground">
+                          {session.user.email}
+                        </p>
+                      </div>
                     </div>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <div className="flex items-center justify-start gap-2 p-2">
-                    <div className="h-10 w-10 bg-blue-600 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">
-                        {session.user.name?.[0] || session.user.email?.[0]}
-                      </span>
-                    </div>
-                    <div className="flex flex-col space-y-1 leading-none">
-                      <p className="font-medium text-gray-900">
-                        Welcome,{" "}
-                        {session.user.name?.split(" ")[0] ||
-                          session.user.email?.split("@")[0]}
-                        !
-                      </p>
-                      <p className="w-[200px] truncate text-sm text-muted-foreground">
-                        {session.user.email}
-                      </p>
-                    </div>
-                  </div>
-                  <DropdownMenuSeparator />
-                  {userNavigation.map((item) => (
-                    <DropdownMenuItem key={item.name} asChild>
-                      <Link
-                        href={item.href}
-                        className="flex items-center gap-2 w-full"
-                      >
-                        <item.icon className="h-4 w-4" aria-hidden="true" />
-                        {item.name}
-                      </Link>
+                    <DropdownMenuSeparator />
+                    {userNavigation.map((item) => (
+                      <DropdownMenuItem key={item.name} asChild>
+                        <Link
+                          href={item.href}
+                          className="flex items-center gap-2 w-full"
+                        >
+                          <item.icon className="h-4 w-4" aria-hidden="true" />
+                          {item.name}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="flex items-center gap-2 cursor-pointer"
+                      onClick={handleSignOut}
+                    >
+                      <LogOut className="h-4 w-4" aria-hidden="true" />
+                      Sign out
                     </DropdownMenuItem>
-                  ))}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="flex items-center gap-2 cursor-pointer"
-                    onClick={handleSignOut}
-                  >
-                    <LogOut className="h-4 w-4" aria-hidden="true" />
-                    Sign out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             ) : status === "unauthenticated" ? (
               <div className="flex items-center space-x-4">
                 <Link href="/login">
