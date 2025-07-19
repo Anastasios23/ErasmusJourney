@@ -327,6 +327,18 @@ export default function BasicInformation() {
               </p>
             </div>
 
+            {/* Error Alert */}
+            {errorMessage && (
+              <Alert
+                variant={
+                  errorMessage.includes("success") ? "default" : "destructive"
+                }
+              >
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Personal Information */}
               <Card>
@@ -344,7 +356,15 @@ export default function BasicInformation() {
                           handleInputChange("firstName", e.target.value)
                         }
                         required
+                        className={
+                          validationErrors.firstName ? "border-red-500" : ""
+                        }
                       />
+                      {validationErrors.firstName && (
+                        <p className="text-sm text-red-500">
+                          {validationErrors.firstName}
+                        </p>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="lastName">Last Name *</Label>
@@ -355,7 +375,15 @@ export default function BasicInformation() {
                           handleInputChange("lastName", e.target.value)
                         }
                         required
+                        className={
+                          validationErrors.lastName ? "border-red-500" : ""
+                        }
                       />
+                      {validationErrors.lastName && (
+                        <p className="text-sm text-red-500">
+                          {validationErrors.lastName}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -370,7 +398,15 @@ export default function BasicInformation() {
                           handleInputChange("email", e.target.value)
                         }
                         required
+                        className={
+                          validationErrors.email ? "border-red-500" : ""
+                        }
                       />
+                      {validationErrors.email && (
+                        <p className="text-sm text-red-500">
+                          {validationErrors.email}
+                        </p>
+                      )}
                     </div>
                   </div>
 
