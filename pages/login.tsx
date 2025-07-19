@@ -155,12 +155,19 @@ export default function LoginPage() {
         console.log("Sign in successful");
         // Show success message briefly before redirect
         setSuccessMessage("Login successful! Redirecting...");
+
+        // Use Next.js router instead of window.location for better handling
+        const callbackUrl =
+          (router.query.callbackUrl as string) || "/dashboard";
+        console.log("Redirecting to:", callbackUrl);
+
+        // Set loading to false before redirect
+        setLoading(false);
+
+        // Small delay for user feedback, then redirect
         setTimeout(() => {
-          const callbackUrl =
-            (router.query.callbackUrl as string) || "/dashboard";
-          console.log("Redirecting to:", callbackUrl);
-          window.location.href = callbackUrl;
-        }, 1000);
+          router.push(callbackUrl);
+        }, 800);
       } else {
         console.error("Unexpected sign in result:", result);
         setErrorMessage("Unexpected error during login. Please try again.");
