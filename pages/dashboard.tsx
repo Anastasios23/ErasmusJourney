@@ -24,7 +24,11 @@ import {
   Clock,
   ArrowRight,
   Settings,
+  TrendingUp,
+  Star,
 } from "lucide-react";
+import ActivityTimeline from "../src/components/ActivityTimeline";
+import DashboardWidgets from "../src/components/DashboardWidgets";
 
 interface ApplicationStep {
   id: string;
@@ -145,17 +149,37 @@ export default function Dashboard() {
           <div className="max-w-7xl mx-auto">
             {/* Welcome Section */}
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Welcome back,{" "}
-                {session.user?.name?.split(" ")[0] ||
-                  session.user?.email?.split("@")[0] ||
-                  "User"}
-                !
-              </h1>
-              <p className="text-gray-600">
-                Track your Erasmus application progress and explore new
-                opportunities.
-              </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                    Welcome back,{" "}
+                    {session.user?.name?.split(" ")[0] ||
+                      session.user?.email?.split("@")[0] ||
+                      "User"}
+                    !
+                  </h1>
+                  <p className="text-gray-600">
+                    Track your Erasmus application progress and explore new
+                    opportunities.
+                  </p>
+                </div>
+                <div className="hidden md:flex items-center space-x-2">
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500">Current Progress</p>
+                    <p className="text-2xl font-bold text-blue-600">
+                      {Math.round(progressPercentage)}%
+                    </p>
+                  </div>
+                  <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <TrendingUp className="h-6 w-6 text-blue-600" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Dashboard Widgets */}
+            <div className="mb-8">
+              <DashboardWidgets userProfile={session.user} />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -352,6 +376,9 @@ export default function Dashboard() {
                     </div>
                   </CardContent>
                 </Card>
+
+                {/* Activity Timeline */}
+                <ActivityTimeline />
 
                 {/* Help & Support */}
                 <Card>

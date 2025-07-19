@@ -24,6 +24,7 @@ import {
   Home,
   Euro,
 } from "lucide-react";
+import NotificationDropdown from "../src/components/NotificationDropdown";
 
 export default function Header() {
   const { data: session, status } = useSession();
