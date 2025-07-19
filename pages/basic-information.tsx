@@ -131,13 +131,13 @@ export default function BasicInformation() {
 
   // Authentication temporarily disabled - all users can access
 
-  // Load draft data on component mount
+  // Load draft data on component mount - run only once
   useEffect(() => {
     const draftData = getDraftData("basic-info");
     if (draftData) {
       setFormData(draftData);
     }
-  }, [getDraftData]);
+  }, []); // No dependencies to prevent infinite loop
 
   const cyprusUniversities = CYPRUS_UNIVERSITIES;
   const [availableHostUniversities, setAvailableHostUniversities] = useState<
