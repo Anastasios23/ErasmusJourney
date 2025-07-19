@@ -9,6 +9,9 @@ import BackButton from "../components/BackButton";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
 import { Alert } from "../src/components/ui/alert";
+import { Checkbox } from "../src/components/ui/checkbox";
+import { Label } from "../src/components/ui/label";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,6 +27,11 @@ export default function LoginPage() {
     email?: string;
     password?: string;
   }>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const [forgotPasswordSent, setForgotPasswordSent] = useState(false);
 
   // Field validation functions
   const validateEmail = (value: string) => {
@@ -48,6 +56,38 @@ export default function LoginPage() {
     setPassword(value);
     const error = validatePassword(value);
     setFieldErrors((prev) => ({ ...prev, password: error }));
+  };
+
+  const handleForgotPassword = async () => {
+    if (!forgotPasswordEmail) {
+      setErrorMessage("Please enter your email address.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: forgotPasswordEmail }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setForgotPasswordSent(true);
+        setSuccessMessage(data.message);
+        setErrorMessage(null);
+      } else {
+        setErrorMessage(data.message);
+      }
+    } catch (error) {
+      setErrorMessage("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -212,51 +252,162 @@ export default function LoginPage() {
             </Alert>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium">
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => handleEmailChange(e.target.value)}
-                disabled={loading}
-                autoComplete="email"
-                className={fieldErrors.email ? "border-red-500" : ""}
-              />
-              {fieldErrors.email && (
-                <p className="text-sm text-red-600 mt-1">{fieldErrors.email}</p>
-              )}
-            </div>
+          {!showForgotPassword ? (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    id="email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => handleEmailChange(e.target.value)}
+                    disabled={loading}
+                    autoComplete="email"
+                    className={`pl-10 ${fieldErrors.email ? "border-red-500" : ""}`}
+                    placeholder="Enter your email address"
+                  />
+                </div>
+                {fieldErrors.email && (
+                  <p className="text-sm text-red-600">{fieldErrors.email}</p>
+                )}
+              </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium">
-                Password
-              </label>
-              <Input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => handlePasswordChange(e.target.value)}
-                disabled={loading}
-                autoComplete="current-password"
-                className={fieldErrors.password ? "border-red-500" : ""}
-              />
-              {fieldErrors.password && (
-                <p className="text-sm text-red-600 mt-1">
-                  {fieldErrors.password}
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={password}
+                    onChange={(e) => handlePasswordChange(e.target.value)}
+                    disabled={loading}
+                    autoComplete="current-password"
+                    className={`pl-10 pr-10 ${fieldErrors.password ? "border-red-500" : ""}`}
+                    placeholder="Enter your password"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                    disabled={loading}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-400" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-400" />
+                    )}
+                  </Button>
+                </div>
+                {fieldErrors.password && (
+                  <p className="text-sm text-red-600">{fieldErrors.password}</p>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="remember"
+                    checked={rememberMe}
+                    onCheckedChange={setRememberMe}
+                    disabled={loading}
+                  />
+                  <Label htmlFor="remember" className="text-sm text-gray-600">
+                    Remember me
+                  </Label>
+                </div>
+                <button
+                  type="button"
+                  className="text-sm text-blue-600 hover:underline"
+                  onClick={() => {
+                    setShowForgotPassword(true);
+                    setForgotPasswordEmail(email);
+                  }}
+                >
+                  Forgot password?
+                </button>
+              </div>
+
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Signing in…" : "Sign In"}
+              </Button>
+            </form>
+          ) : (
+            <div className="space-y-4">
+              <div className="text-center">
+                <h3 className="text-lg font-medium">Reset Password</h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  Enter your email and we'll send you a reset link
                 </p>
+              </div>
+
+              {!forgotPasswordSent ? (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="forgotEmail">Email Address</Label>
+                    <Input
+                      id="forgotEmail"
+                      type="email"
+                      value={forgotPasswordEmail}
+                      onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                      disabled={loading}
+                      placeholder="Enter your email address"
+                    />
+                  </div>
+
+                  <div className="flex space-x-2">
+                    <Button
+                      type="button"
+                      onClick={handleForgotPassword}
+                      disabled={loading || !forgotPasswordEmail}
+                      className="flex-1"
+                    >
+                      {loading ? "Sending..." : "Send Reset Link"}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setShowForgotPassword(false);
+                        setForgotPasswordSent(false);
+                        setErrorMessage(null);
+                        setSuccessMessage(null);
+                      }}
+                      disabled={loading}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center space-y-4">
+                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <p className="text-green-800 text-sm">
+                      Password reset instructions have been sent to your email.
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowForgotPassword(false);
+                      setForgotPasswordSent(false);
+                      setSuccessMessage(null);
+                    }}
+                    className="w-full"
+                  >
+                    Back to Sign In
+                  </Button>
+                </div>
               )}
             </div>
-
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing in…" : "Sign In"}
-            </Button>
-          </form>
+          )}
 
           <p className="text-center text-sm text-gray-600">
             Don't have an account?{" "}
