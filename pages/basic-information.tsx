@@ -279,7 +279,14 @@ export default function BasicInformation() {
         formData,
         "submitted",
       );
-      router.push("/course-matching");
+
+      // Show success message before redirect
+      setSuccessMessage(
+        "Basic information submitted successfully! Redirecting to course matching...",
+      );
+      setTimeout(() => {
+        router.push("/course-matching");
+      }, 1500);
     } catch (error: any) {
       console.error("Submission error:", error);
       const errorInfo = handleApiError(error);

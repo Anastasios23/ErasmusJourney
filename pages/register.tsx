@@ -31,7 +31,9 @@ export default function RegisterPage() {
     confirmPassword: "",
   });
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     // Redirect if already authenticated
@@ -40,21 +42,64 @@ export default function RegisterPage() {
     }
   }, [session, status, router]);
 
+  // Field validation functions
+  const validateField = (name: string, value: string) => {
+    switch (name) {
+      case "firstName":
+        return !value ? "First name is required" : "";
+      case "lastName":
+        return !value ? "Last name is required" : "";
+      case "email":
+        if (!value) return "Email is required";
+        if (!value.includes("@")) return "Please enter a valid email address";
+        return "";
+      case "password":
+        if (!value) return "Password is required";
+        if (value.length < 6) return "Password must be at least 6 characters";
+        return "";
+      case "confirmPassword":
+        if (!value) return "Please confirm your password";
+        if (value !== formData.password) return "Passwords do not match";
+        return "";
+      default:
+        return "";
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    // Real-time validation
+    const fieldError = validateField(name, value);
+    setFieldErrors((prev) => ({ ...prev, [name]: fieldError }));
+
+    // Also validate confirm password when password changes
+    if (name === "password" && formData.confirmPassword) {
+      const confirmError = validateField(
+        "confirmPassword",
+        formData.confirmPassword,
+      );
+      setFieldErrors((prev) => ({ ...prev, confirmPassword: confirmError }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccessMessage("");
 
-    // Client-side validations
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters");
+    // Validate all fields
+    const errors: Record<string, string> = {};
+    Object.keys(formData).forEach((key) => {
+      const error = validateField(key, formData[key as keyof typeof formData]);
+      if (error) errors[key] = error;
+    });
+
+    // Check for validation errors
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      setError("Please fix the errors below and try again.");
       return;
     }
 
@@ -63,6 +108,7 @@ export default function RegisterPage() {
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // Include cookies for session handling
         body: JSON.stringify({
           firstName: formData.firstName,
           lastName: formData.lastName,
@@ -78,8 +124,13 @@ export default function RegisterPage() {
         return;
       }
 
-      // On success, send them to login with a success message
-      router.push("/login?message=account_created");
+      // Show success message before redirect
+      setSuccessMessage(
+        "Account created successfully! Redirecting to login...",
+      );
+      setTimeout(() => {
+        router.push("/login?message=account_created");
+      }, 1500);
     } catch (err) {
       console.error("Registration error:", err);
       setError("An unexpected error occurred. Please try again.");
@@ -201,6 +252,17 @@ export default function RegisterPage() {
                   </Alert>
                 )}
 
+                {successMessage && (
+                  <Alert
+                    variant="default"
+                    className="border-green-200 bg-green-50"
+                  >
+                    <AlertDescription className="text-green-800">
+                      {successMessage}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="firstName">First Name</Label>
@@ -214,7 +276,13 @@ export default function RegisterPage() {
                       autoComplete="given-name"
                       required
                       disabled={isLoading}
+                      className={fieldErrors.firstName ? "border-red-500" : ""}
                     />
+                    {fieldErrors.firstName && (
+                      <p className="text-sm text-red-600">
+                        {fieldErrors.firstName}
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="lastName">Last Name</Label>
@@ -228,7 +296,13 @@ export default function RegisterPage() {
                       autoComplete="family-name"
                       required
                       disabled={isLoading}
+                      className={fieldErrors.lastName ? "border-red-500" : ""}
                     />
+                    {fieldErrors.lastName && (
+                      <p className="text-sm text-red-600">
+                        {fieldErrors.lastName}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -244,7 +318,11 @@ export default function RegisterPage() {
                     autoComplete="email"
                     required
                     disabled={isLoading}
+                    className={fieldErrors.email ? "border-red-500" : ""}
                   />
+                  {fieldErrors.email && (
+                    <p className="text-sm text-red-600">{fieldErrors.email}</p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -253,13 +331,19 @@ export default function RegisterPage() {
                     id="password"
                     name="password"
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder="Enter your password (min 6 characters)"
                     value={formData.password}
                     onChange={handleChange}
                     autoComplete="new-password"
                     required
                     disabled={isLoading}
+                    className={fieldErrors.password ? "border-red-500" : ""}
                   />
+                  {fieldErrors.password && (
+                    <p className="text-sm text-red-600">
+                      {fieldErrors.password}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -274,7 +358,15 @@ export default function RegisterPage() {
                     autoComplete="new-password"
                     required
                     disabled={isLoading}
+                    className={
+                      fieldErrors.confirmPassword ? "border-red-500" : ""
+                    }
                   />
+                  {fieldErrors.confirmPassword && (
+                    <p className="text-sm text-red-600">
+                      {fieldErrors.confirmPassword}
+                    </p>
+                  )}
                 </div>
 
                 <Button type="submit" className="w-full" disabled={isLoading}>

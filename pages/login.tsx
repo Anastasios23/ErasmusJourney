@@ -20,6 +20,35 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{
+    email?: string;
+    password?: string;
+  }>({});
+
+  // Field validation functions
+  const validateEmail = (value: string) => {
+    if (!value) return "Email is required";
+    if (!value.includes("@")) return "Please enter a valid email address";
+    return "";
+  };
+
+  const validatePassword = (value: string) => {
+    if (!value) return "Password is required";
+    if (value.length < 6) return "Password must be at least 6 characters";
+    return "";
+  };
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    const error = validateEmail(value);
+    setFieldErrors((prev) => ({ ...prev, email: error }));
+  };
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+    const error = validatePassword(value);
+    setFieldErrors((prev) => ({ ...prev, password: error }));
+  };
 
   useEffect(() => {
     // Redirect if already authenticated
@@ -41,6 +70,25 @@ export default function LoginPage() {
     setErrorMessage(null);
     setSuccessMessage(null);
 
+    // Client-side validation
+    if (!email || !password) {
+      setErrorMessage("Please fill in all fields.");
+      setLoading(false);
+      return;
+    }
+
+    if (!email.includes("@")) {
+      setErrorMessage("Please enter a valid email address.");
+      setLoading(false);
+      return;
+    }
+
+    if (password.length < 6) {
+      setErrorMessage("Password must be at least 6 characters long.");
+      setLoading(false);
+      return;
+    }
+
     try {
       // Attempt sign in
       const result = await signIn("credentials", {
@@ -53,10 +101,13 @@ export default function LoginPage() {
         setErrorMessage("Invalid email or password. Please try again.");
         setLoading(false);
       } else if (result?.ok) {
-        // On success, redirect with a full page reload to ensure session consistency
-        const callbackUrl =
-          (router.query.callbackUrl as string) || "/dashboard";
-        window.location.href = callbackUrl;
+        // Show success message briefly before redirect
+        setSuccessMessage("Login successful! Redirecting...");
+        setTimeout(() => {
+          const callbackUrl =
+            (router.query.callbackUrl as string) || "/dashboard";
+          window.location.href = callbackUrl;
+        }, 1000);
       }
     } catch (error) {
       setErrorMessage("An error occurred. Please try again.");
@@ -151,10 +202,14 @@ export default function LoginPage() {
                 type="email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => handleEmailChange(e.target.value)}
                 disabled={loading}
                 autoComplete="email"
+                className={fieldErrors.email ? "border-red-500" : ""}
               />
+              {fieldErrors.email && (
+                <p className="text-sm text-red-600 mt-1">{fieldErrors.email}</p>
+              )}
             </div>
 
             <div>
@@ -166,10 +221,16 @@ export default function LoginPage() {
                 type="password"
                 required
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => handlePasswordChange(e.target.value)}
                 disabled={loading}
                 autoComplete="current-password"
+                className={fieldErrors.password ? "border-red-500" : ""}
               />
+              {fieldErrors.password && (
+                <p className="text-sm text-red-600 mt-1">
+                  {fieldErrors.password}
+                </p>
+              )}
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
