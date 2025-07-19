@@ -17,7 +17,9 @@ import {
   CardTitle,
 } from "../src/components/ui/card";
 import { Alert, AlertDescription } from "../src/components/ui/alert";
-import { Loader2 } from "lucide-react";
+import { Checkbox } from "../src/components/ui/checkbox";
+import { Loader2, Eye, EyeOff, Mail, CheckCircle } from "lucide-react";
+import PasswordStrength from "../src/components/PasswordStrength";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -34,6 +36,11 @@ export default function RegisterPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState(0);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [emailVerificationSent, setEmailVerificationSent] = useState(false);
 
   useEffect(() => {
     // Redirect if already authenticated
@@ -55,7 +62,12 @@ export default function RegisterPage() {
         return "";
       case "password":
         if (!value) return "Password is required";
-        if (value.length < 6) return "Password must be at least 6 characters";
+        if (value.length < 8) return "Password must be at least 8 characters";
+        if (!/(?=.*[a-z])/.test(value))
+          return "Password must contain a lowercase letter";
+        if (!/(?=.*[A-Z])/.test(value))
+          return "Password must contain an uppercase letter";
+        if (!/(?=.*\d)/.test(value)) return "Password must contain a number";
         return "";
       case "confirmPassword":
         if (!value) return "Please confirm your password";
@@ -103,6 +115,18 @@ export default function RegisterPage() {
       return;
     }
 
+    // Check password strength
+    if (passwordStrength < 60) {
+      setError("Please choose a stronger password.");
+      return;
+    }
+
+    // Check terms agreement
+    if (!agreedToTerms) {
+      setError("Please agree to the Terms of Service and Privacy Policy.");
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await fetch("/api/auth/register", {
@@ -124,13 +148,26 @@ export default function RegisterPage() {
         return;
       }
 
-      // Show success message before redirect
+      // Show success message and send verification email
       setSuccessMessage(
-        "Account created successfully! Redirecting to login...",
+        "Account created successfully! Please check your email for verification.",
       );
+
+      // Send verification email
+      try {
+        await fetch("/api/auth/verify-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: formData.email }),
+        });
+        setEmailVerificationSent(true);
+      } catch (err) {
+        console.warn("Could not send verification email:", err);
+      }
+
       setTimeout(() => {
         router.push("/login?message=account_created");
-      }, 1500);
+      }, 3000);
     } catch (err) {
       console.error("Registration error:", err);
       setError("An unexpected error occurred. Please try again.");
