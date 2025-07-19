@@ -237,9 +237,9 @@ export default function BasicInformation() {
       return;
     }
 
-    // Validate required fields using Zod schema
+    // Validate required fields using simplified schema
     try {
-      basicInformationSchema.parse(formData);
+      basicInformationRequiredSchema.parse(formData);
     } catch (validationError: any) {
       const errors: Record<string, string> = {};
       validationError.errors?.forEach((err: any) => {
@@ -283,19 +283,23 @@ export default function BasicInformation() {
   const handleSaveDraft = async () => {
     try {
       await saveDraft("basic-info", "Basic Information Draft", formData);
-      // Show success message briefly
+      // Show success message
       setErrorMessage("");
-      const savedMessage = "Draft saved successfully!";
-      setErrorMessage(savedMessage);
-      setTimeout(() => {
-        if (errorMessage === savedMessage) {
-          setErrorMessage("");
-        }
-      }, 2000);
+      setSuccessMessage("Draft saved successfully!");
+      setTimeout(() => setSuccessMessage(""), 3000);
     } catch (error: any) {
       console.error("Draft save error:", error);
       const errorInfo = handleApiError(error);
       setErrorMessage(`Failed to save draft: ${errorInfo.message}`);
+
+      // Handle authentication error
+      if (errorInfo.action === "signin") {
+        setTimeout(() => {
+          router.push(
+            "/auth/signin?callbackUrl=" + encodeURIComponent(router.asPath),
+          );
+        }, 2000);
+      }
     }
   };
 
@@ -329,13 +333,19 @@ export default function BasicInformation() {
 
             {/* Error Alert */}
             {errorMessage && (
-              <Alert
-                variant={
-                  errorMessage.includes("success") ? "default" : "destructive"
-                }
-              >
+              <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
+
+            {/* Success Alert */}
+            {successMessage && (
+              <Alert variant="default" className="border-green-200 bg-green-50">
+                <AlertCircle className="h-4 w-4 text-green-600" />
+                <AlertDescription className="text-green-800">
+                  {successMessage}
+                </AlertDescription>
               </Alert>
             )}
 

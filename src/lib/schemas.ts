@@ -1,6 +1,27 @@
 import { z } from "zod";
 
-// Basic Information Form Schema
+// Simplified schema for required fields only to avoid validation errors
+export const basicInformationRequiredSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email address"),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+  nationality: z.string().min(1, "Nationality is required"),
+  universityInCyprus: z.string().min(1, "Cyprus university is required"),
+  departmentInCyprus: z.string().min(1, "Department is required"),
+  levelOfStudy: z.enum(["bachelor", "master", "phd"], {
+    errorMap: () => ({ message: "Please select a level of study" }),
+  }),
+  hostUniversity: z.string().min(1, "Host university is required"),
+  hostCountry: z.string().min(1, "Host country is required"),
+  hostCity: z.string().min(1, "Host city is required"),
+  hostDepartment: z.string().min(1, "Host department is required"),
+  exchangePeriod: z.enum(["semester1", "semester2", "full_year"], {
+    errorMap: () => ({ message: "Please select exchange period" }),
+  }),
+});
+
+// Full schema for reference (not used for validation)
 export const basicInformationSchema = z.object({
   // Personal Information
   firstName: z

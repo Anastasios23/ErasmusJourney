@@ -69,6 +69,7 @@ export async function apiRequest(
   options: RequestInit = {},
 ): Promise<any> {
   const response = await fetch(url, {
+    credentials: "include", // Send cookies for authentication
     headers: {
       "Content-Type": "application/json",
       ...options.headers,
