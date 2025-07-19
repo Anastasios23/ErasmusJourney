@@ -1,18 +1,60 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export interface BasicInformationData {
-  userId: number;
+  userId?: number;
   firstName: string;
   lastName: string;
   email: string;
-  semester: string;
-  levelOfStudy: string;
+  dateOfBirth: string;
+  nationality: string;
+  phoneNumber: string;
+  address: string;
+  emergencyContactName: string;
+  emergencyContactPhone: string;
+  emergencyContactRelation: string;
+
+  // Academic Information
   universityInCyprus: string;
-  department: string;
-  receptionCountry: string;
-  receptionCity: string;
-  foreignUniversity: string;
-  departmentAtHost: string;
+  departmentInCyprus: string;
+  levelOfStudy: string;
+  currentYear: string;
+  gpa: string;
+  studentId: string;
+  academicAdvisor: string;
+
+  // Exchange Information
+  exchangePeriod: string;
+  exchangeStartDate: string;
+  exchangeEndDate: string;
+  hostUniversity: string;
+  hostCountry: string;
+  hostCity: string;
+  hostDepartment: string;
+  hostCoordinator: string;
+
+  // Language Requirements
+  languageOfInstruction: string;
+  languageProficiencyLevel: string;
+  languageCertificates: string;
+
+  // Motivation and Goals
+  motivationForExchange: string;
+  academicGoals: string;
+  personalGoals: string;
+  careerGoals: string;
+
+  // Additional Information
+  previousExchangeExperience: string;
+  extracurricularActivities: string;
+  specialNeeds: string;
+  dietaryRestrictions: string;
+  medicalConditions: string;
+  additionalNotes: string;
+
+  // Preferences
+  accommodationPreference: string;
+  buddyProgramInterest: string;
+  orientationProgramInterest: string;
 }
 
 export interface CourseMatchingData {

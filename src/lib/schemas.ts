@@ -14,6 +14,11 @@ export const basicInformationSchema = z.object({
   email: z.string().email("Invalid email address"),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
   nationality: z.string().min(1, "Nationality is required"),
+  phoneNumber: z.string().optional(),
+  address: z.string().optional(),
+  emergencyContactName: z.string().optional(),
+  emergencyContactPhone: z.string().optional(),
+  emergencyContactRelation: z.string().optional(),
 
   // Academic Information
   universityInCyprus: z.string().min(1, "Cyprus university is required"),
@@ -21,21 +26,46 @@ export const basicInformationSchema = z.object({
   levelOfStudy: z.enum(["bachelor", "master", "phd"], {
     errorMap: () => ({ message: "Please select a level of study" }),
   }),
-  academicYear: z.string().min(1, "Academic year is required"),
+  currentYear: z.string().optional(),
+  gpa: z.string().optional(),
+  studentId: z.string().optional(),
+  academicAdvisor: z.string().optional(),
 
   // Exchange Information
+  exchangePeriod: z.enum(["semester1", "semester2", "full_year"], {
+    errorMap: () => ({ message: "Please select exchange period" }),
+  }),
+  exchangeStartDate: z.string().optional(),
+  exchangeEndDate: z.string().optional(),
   hostUniversity: z.string().min(1, "Host university is required"),
   hostCountry: z.string().min(1, "Host country is required"),
   hostCity: z.string().min(1, "Host city is required"),
   hostDepartment: z.string().min(1, "Host department is required"),
-  exchangePeriod: z.enum(["semester1", "semester2", "full_year"], {
-    errorMap: () => ({ message: "Please select exchange period" }),
-  }),
+  hostCoordinator: z.string().optional(),
 
-  // Optional fields
-  gpa: z.string().optional(),
-  languageRequirements: z.string().optional(),
+  // Language Requirements
+  languageOfInstruction: z.string().optional(),
+  languageProficiencyLevel: z.string().optional(),
+  languageCertificates: z.string().optional(),
+
+  // Motivation and Goals
+  motivationForExchange: z.string().optional(),
+  academicGoals: z.string().optional(),
+  personalGoals: z.string().optional(),
+  careerGoals: z.string().optional(),
+
+  // Additional Information
+  previousExchangeExperience: z.string().optional(),
+  extracurricularActivities: z.string().optional(),
+  specialNeeds: z.string().optional(),
+  dietaryRestrictions: z.string().optional(),
+  medicalConditions: z.string().optional(),
   additionalNotes: z.string().max(1000, "Notes too long").optional(),
+
+  // Preferences
+  accommodationPreference: z.string().optional(),
+  buddyProgramInterest: z.string().optional(),
+  orientationProgramInterest: z.string().optional(),
 });
 
 // Course Matching Form Schema

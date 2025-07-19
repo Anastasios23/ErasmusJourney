@@ -39,7 +39,7 @@ interface UseFormSubmissionsReturn {
 }
 
 export function useFormSubmissions(): UseFormSubmissionsReturn {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [submissions, setSubmissions] = useState<FormSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -105,6 +105,10 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     data: any,
     status: string = "submitted",
   ) => {
+    if (status === "loading") {
+      throw new Error("Please wait while we check your authentication");
+    }
+
     if (!session) {
       throw new AuthenticationError("Must be logged in to submit forms");
     }
@@ -130,6 +134,19 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
 
   const saveDraft = async (type: string, title: string, data: any) => {
     try {
+      if (status === "loading") {
+        // Still loading session, use localStorage temporarily
+        const draftKey = `erasmus_draft_${type}`;
+        const draftData = {
+          type,
+          title,
+          data,
+          timestamp: new Date().toISOString(),
+        };
+        localStorage.setItem(draftKey, JSON.stringify(draftData));
+        return;
+      }
+
       if (session) {
         // Authenticated user: save to server
         await apiRequest("/api/forms/saveDraft", {
@@ -227,9 +244,11 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
   };
 
   useEffect(() => {
-    // Always fetch submissions (handles both authenticated and unauthenticated cases)
-    fetchSubmissions();
-  }, [session]);
+    // Only fetch submissions once we know the authentication status
+    if (status !== "loading") {
+      fetchSubmissions();
+    }
+  }, [session, status]);
 
   return {
     submissions,
@@ -240,6 +259,7 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     saveDraft,
     deleteDraft,
     refreshSubmissions,
+    sessionStatus: status, // Add session status for better error handling
   };
 }
 
