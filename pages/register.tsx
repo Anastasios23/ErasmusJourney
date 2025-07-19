@@ -294,8 +294,17 @@ export default function RegisterPage() {
                     variant="default"
                     className="border-green-200 bg-green-50"
                   >
+                    <CheckCircle className="h-4 w-4" />
                     <AlertDescription className="text-green-800">
                       {successMessage}
+                      {emailVerificationSent && (
+                        <div className="mt-2 text-sm">
+                          <div className="flex items-center space-x-1">
+                            <Mail className="h-3 w-3" />
+                            <span>Verification email sent!</span>
+                          </div>
+                        </div>
+                      )}
                     </AlertDescription>
                   </Alert>
                 )}
@@ -364,41 +373,79 @@ export default function RegisterPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    placeholder="Enter your password (min 6 characters)"
-                    value={formData.password}
-                    onChange={handleChange}
-                    autoComplete="new-password"
-                    required
-                    disabled={isLoading}
-                    className={fieldErrors.password ? "border-red-500" : ""}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Create a strong password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      autoComplete="new-password"
+                      required
+                      disabled={isLoading}
+                      className={`pr-10 ${fieldErrors.password ? "border-red-500" : ""}`}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isLoading}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-gray-400" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-gray-400" />
+                      )}
+                    </Button>
+                  </div>
                   {fieldErrors.password && (
                     <p className="text-sm text-red-600">
                       {fieldErrors.password}
                     </p>
                   )}
+                  <PasswordStrength
+                    password={formData.password}
+                    onStrengthChange={setPasswordStrength}
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    placeholder="Confirm your password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    autoComplete="new-password"
-                    required
-                    disabled={isLoading}
-                    className={
-                      fieldErrors.confirmPassword ? "border-red-500" : ""
-                    }
-                  />
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirm your password"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      autoComplete="new-password"
+                      required
+                      disabled={isLoading}
+                      className={`pr-10 ${
+                        fieldErrors.confirmPassword ? "border-red-500" : ""
+                      }`}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      disabled={isLoading}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-4 w-4 text-gray-400" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-gray-400" />
+                      )}
+                    </Button>
+                  </div>
                   {fieldErrors.confirmPassword && (
                     <p className="text-sm text-red-600">
                       {fieldErrors.confirmPassword}
@@ -406,7 +453,40 @@ export default function RegisterPage() {
                   )}
                 </div>
 
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="terms"
+                      checked={agreedToTerms}
+                      onCheckedChange={setAgreedToTerms}
+                      disabled={isLoading}
+                    />
+                    <Label htmlFor="terms" className="text-sm text-gray-600">
+                      I agree to the{" "}
+                      <Link
+                        href="/terms"
+                        className="text-blue-600 hover:underline"
+                      >
+                        Terms of Service
+                      </Link>{" "}
+                      and{" "}
+                      <Link
+                        href="/privacy"
+                        className="text-blue-600 hover:underline"
+                      >
+                        Privacy Policy
+                      </Link>
+                    </Label>
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={
+                    isLoading || passwordStrength < 60 || !agreedToTerms
+                  }
+                >
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
