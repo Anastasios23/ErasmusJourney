@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import ActivityTimeline from "../src/components/ActivityTimeline";
 import DashboardWidgets from "../src/components/DashboardWidgets";
+import WelcomeTour from "../src/components/WelcomeTour";
 
 interface ApplicationStep {
   id: string;
@@ -132,6 +133,12 @@ export default function Dashboard() {
     return null;
   }
 
+  // Check if user is new (created recently)
+  const isNewUser = session?.user
+    ? new Date(session.user.createdAt || Date.now()).getTime() >
+      Date.now() - 24 * 60 * 60 * 1000
+    : false;
+
   return (
     <>
       <Head>
@@ -141,6 +148,8 @@ export default function Dashboard() {
           content="Track your Erasmus application progress and manage your profile"
         />
       </Head>
+
+      <WelcomeTour isNewUser={isNewUser} />
 
       <div className="min-h-screen bg-gray-50">
         <Header />
