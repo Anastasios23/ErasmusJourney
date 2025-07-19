@@ -90,6 +90,8 @@ export default function LoginPage() {
     }
 
     try {
+      console.log("Attempting sign in for:", email);
+
       // Attempt sign in
       const result = await signIn("credentials", {
         email,
@@ -97,20 +99,38 @@ export default function LoginPage() {
         redirect: false, // Don't auto-redirect, handle manually
       });
 
+      console.log("Sign in result:", result);
+
       if (result?.error) {
-        setErrorMessage("Invalid email or password. Please try again.");
+        console.error("Sign in error:", result.error);
+        if (result.error === "CredentialsSignin") {
+          setErrorMessage(
+            "Invalid email or password. Please check your credentials and try again.",
+          );
+        } else {
+          setErrorMessage(`Authentication error: ${result.error}`);
+        }
         setLoading(false);
       } else if (result?.ok) {
+        console.log("Sign in successful");
         // Show success message briefly before redirect
         setSuccessMessage("Login successful! Redirecting...");
         setTimeout(() => {
           const callbackUrl =
             (router.query.callbackUrl as string) || "/dashboard";
+          console.log("Redirecting to:", callbackUrl);
           window.location.href = callbackUrl;
         }, 1000);
+      } else {
+        console.error("Unexpected sign in result:", result);
+        setErrorMessage("Unexpected error during login. Please try again.");
+        setLoading(false);
       }
     } catch (error) {
-      setErrorMessage("An error occurred. Please try again.");
+      console.error("Login error:", error);
+      setErrorMessage(
+        "Network error. Please check your connection and try again.",
+      );
       setLoading(false);
     }
   };

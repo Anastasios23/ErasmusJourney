@@ -16,31 +16,50 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("CredentialsSignin");
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            console.error("Missing credentials");
+            throw new Error("CredentialsSignin");
+          }
+
+          console.log("Attempting login for:", credentials.email);
+
+          // look up user in your database
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email },
+          });
+
+          if (!user) {
+            console.error("User not found:", credentials.email);
+            throw new Error("CredentialsSignin");
+          }
+
+          console.log("User found, verifying password");
+
+          // verify password
+          const isValid = await bcrypt.compare(
+            credentials.password,
+            user.password,
+          );
+
+          if (!isValid) {
+            console.error("Invalid password for:", credentials.email);
+            throw new Error("CredentialsSignin");
+          }
+
+          console.log("Login successful for:", credentials.email);
+
+          // return the minimal user object
+          return {
+            id: user.id,
+            email: user.email,
+            role: user.role,
+            name: `${user.firstName} ${user.lastName}`,
+          };
+        } catch (error) {
+          console.error("Auth error:", error);
+          throw error;
         }
-        // look up user in your database
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
-        if (!user) {
-          // NextAuth will redirect to /login?error=CredentialsSignin
-          throw new Error("CredentialsSignin");
-        }
-        // verify password
-        const isValid = await bcrypt.compare(
-          credentials.password,
-          user.password,
-        );
-        if (!isValid) {
-          throw new Error("CredentialsSignin");
-        }
-        // return the minimal user object
-        return {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-        };
       },
     }),
     // …other providers if you have them…
@@ -87,7 +106,7 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
 
-  // Cookie configuration
+  // Cookie configuration - simplified for better compatibility
   cookies: {
     sessionToken: {
       name: `next-auth.session-token`,
@@ -96,16 +115,27 @@ export const authOptions: NextAuthOptions = {
         sameSite: "lax",
         path: "/",
         secure: process.env.NODE_ENV === "production",
-        domain:
-          process.env.NODE_ENV === "production"
-            ? process.env.NEXTAUTH_URL_DOMAIN
-            : undefined,
+        // Remove domain restriction for cloud environments
+        domain: undefined,
       },
     },
   },
 
-  // Enable debug logs during development
-  debug: process.env.NODE_ENV === "development",
+  // Enable debug logs for better troubleshooting
+  debug: true,
+
+  // Add error logging
+  logger: {
+    error(code, metadata) {
+      console.error("NextAuth Error:", code, metadata);
+    },
+    warn(code) {
+      console.warn("NextAuth Warning:", code);
+    },
+    debug(code, metadata) {
+      console.log("NextAuth Debug:", code, metadata);
+    },
+  },
 };
 
 export default NextAuth(authOptions);
