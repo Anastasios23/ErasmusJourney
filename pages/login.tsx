@@ -94,6 +94,7 @@ export default function LoginPage() {
     // Redirect if already authenticated
     if (status === "authenticated" && session) {
       const callbackUrl = (router.query.callbackUrl as string) || "/dashboard";
+      console.log("User already authenticated, redirecting to:", callbackUrl);
       router.push(callbackUrl);
       return;
     }
@@ -103,6 +104,20 @@ export default function LoginPage() {
       setSuccessMessage("Account created! Please sign in.");
     }
   }, [message, session, status, router]);
+
+  // Handle session changes after successful login
+  useEffect(() => {
+    if (status === "authenticated" && loading) {
+      console.log("Authentication successful, session established");
+      setLoading(false);
+      setSuccessMessage("Login successful! Redirecting...");
+
+      const callbackUrl = (router.query.callbackUrl as string) || "/dashboard";
+      setTimeout(() => {
+        router.push(callbackUrl);
+      }, 500);
+    }
+  }, [status, loading, router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
