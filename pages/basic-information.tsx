@@ -118,7 +118,20 @@ export default function BasicInformation() {
     orientationProgramInterest: "",
   });
 
-  // Authentication temporarily disabled - all users can access
+  const [availableHostUniversities, setAvailableHostUniversities] = useState<
+    Array<{ university: string; city: string; country: string }>
+  >([]);
+  const [availableCities, setAvailableCities] = useState<string[]>([]);
+
+  // 2. ALL useEffect HOOKS NEXT
+  // Authentication redirect in useEffect
+  useEffect(() => {
+    if (sessionStatus === "unauthenticated") {
+      router.replace(
+        `/auth/signin?callbackUrl=${encodeURIComponent(router.asPath)}`,
+      );
+    }
+  }, [sessionStatus, router]);
 
   // Load draft data when authenticated and submissions have loaded
   useEffect(() => {
@@ -129,12 +142,6 @@ export default function BasicInformation() {
       }
     }
   }, [authStatus, submissionsLoading, getDraftData]);
-
-  const cyprusUniversities = CYPRUS_UNIVERSITIES;
-  const [availableHostUniversities, setAvailableHostUniversities] = useState<
-    Array<{ university: string; city: string; country: string }>
-  >([]);
-  const [availableCities, setAvailableCities] = useState<string[]>([]);
 
   // Get departments for selected Cyprus university
   const availableDepartments =
