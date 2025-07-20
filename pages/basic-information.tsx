@@ -737,9 +737,9 @@ export default function BasicInformation() {
                   </Button>
                   <Button
                     type="submit"
-                    disabled={isSubmitting || sessionStatus === "loading"}
+                    disabled={isSubmitting || formSessionStatus === "loading"}
                   >
-                    {sessionStatus === "loading"
+                    {formSessionStatus === "loading"
                       ? "Loading..."
                       : isSubmitting
                         ? "Submitting..."
