@@ -467,12 +467,12 @@ export default function BasicInformation() {
                         }
                         required
                         className={
-                          validationErrors.dateOfBirth ? "border-red-500" : ""
+                          fieldErrors.dateOfBirth ? "border-red-500" : ""
                         }
                       />
-                      {validationErrors.dateOfBirth && (
+                      {fieldErrors.dateOfBirth && (
                         <p className="text-sm text-red-500">
-                          {validationErrors.dateOfBirth}
+                          {fieldErrors.dateOfBirth}
                         </p>
                       )}
                     </div>
@@ -486,12 +486,12 @@ export default function BasicInformation() {
                         }
                         required
                         className={
-                          validationErrors.nationality ? "border-red-500" : ""
+                          fieldErrors.nationality ? "border-red-500" : ""
                         }
                       />
-                      {validationErrors.nationality && (
+                      {fieldErrors.nationality && (
                         <p className="text-sm text-red-500">
-                          {validationErrors.nationality}
+                          {fieldErrors.nationality}
                         </p>
                       )}
                     </div>
