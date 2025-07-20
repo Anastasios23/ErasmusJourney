@@ -130,7 +130,12 @@ export default function Dashboard() {
 
   // Don't render if not authenticated (will redirect)
   if (!session) {
-    return null;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Redirecting to login...</p>
+        {/* Or a loading spinner component */}
+      </div>
+    );
   }
 
   // Check if user is new (created recently)
