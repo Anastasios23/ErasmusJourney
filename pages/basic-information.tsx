@@ -148,15 +148,15 @@ export default function BasicInformation() {
 
   // Authentication temporarily disabled - all users can access
 
-  // Load draft data when session is authenticated and form session is idle
+  // Load draft data when authenticated and submissions have loaded
   useEffect(() => {
-    if (sessionStatus === "authenticated" && formSessionStatus === "idle") {
+    if (authStatus === "authenticated" && !submissionsLoading) {
       const draft = getDraftData("basic-info");
       if (draft) {
         setFormData(draft);
       }
     }
-  }, [sessionStatus, formSessionStatus, getDraftData]);
+  }, [authStatus, submissionsLoading, getDraftData]);
 
   const cyprusUniversities = CYPRUS_UNIVERSITIES;
   const [availableHostUniversities, setAvailableHostUniversities] = useState<
