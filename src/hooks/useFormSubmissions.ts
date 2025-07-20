@@ -30,13 +30,12 @@ interface UseFormSubmissionsReturn {
     type: string,
     title: string,
     data: any,
-    status?: string,
+    formStatus?: string,
   ) => Promise<void>;
   getDraftData: (type: string) => any | null;
   saveDraft: (type: string, title: string, data: any) => Promise<void>;
   deleteDraft: (id: string) => Promise<void>;
   refreshSubmissions: () => Promise<void>;
-  sessionStatus: string;
 }
 
 export function useFormSubmissions(): UseFormSubmissionsReturn {
@@ -104,7 +103,7 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     type: string,
     title: string,
     data: any,
-    status: string = "submitted",
+    formStatus: string = "submitted",
   ) => {
     if (status === "loading") {
       throw new Error("Please wait while we check your authentication");
@@ -121,7 +120,7 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
           type,
           title,
           data,
-          status,
+          status: formStatus,
         }),
       });
 
@@ -260,7 +259,6 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     saveDraft,
     deleteDraft,
     refreshSubmissions,
-    sessionStatus: status, // Add session status for better error handling
   };
 }
 
