@@ -143,26 +143,6 @@ export default function BasicInformation() {
     }
   }, [authStatus, submissionsLoading, getDraftData]);
 
-  // Get departments for selected Cyprus university
-  const availableDepartments =
-    formData.universityInCyprus === "UNIC"
-      ? // For UNIC, get unique departments from actual agreement data filtered by level
-        formData.levelOfStudy
-        ? [
-            ...new Set(
-              UNIC_COMPREHENSIVE_AGREEMENTS.filter(
-                (agreement) =>
-                  agreement.academicLevel === formData.levelOfStudy,
-              ).map((agreement) => agreement.homeDepartment.trim()),
-            ),
-          ]
-        : []
-      : formData.universityInCyprus
-        ? // For other universities, use the predefined departments
-          cyprusUniversities.find((u) => u.code === formData.universityInCyprus)
-            ?.departments || []
-        : [];
-
   // Update available host universities when Cyprus university, department, or level changes
   useEffect(() => {
     if (
