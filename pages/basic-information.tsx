@@ -51,7 +51,6 @@ export default function BasicInformation() {
     saveDraft,
     loading: submissionsLoading,
     error: submissionsError,
-    sessionStatus: authStatus,
   } = useFormSubmissions();
 
   // All useState hooks
@@ -135,13 +134,13 @@ export default function BasicInformation() {
 
   // Load draft data when authenticated and submissions have loaded
   useEffect(() => {
-    if (authStatus === "authenticated" && !submissionsLoading) {
+    if (sessionStatus === "authenticated" && !submissionsLoading) {
       const draft = getDraftData("basic-info");
       if (draft) {
         setFormData(draft);
       }
     }
-  }, [authStatus, submissionsLoading, getDraftData]);
+  }, [sessionStatus, submissionsLoading, getDraftData]);
 
   // Update available host universities when Cyprus university, department, or level changes
   useEffect(() => {
@@ -756,7 +755,7 @@ export default function BasicInformation() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="hostUniversity">
-                        Preferred Host University
+                        Preferred Host University *
                       </Label>
                       <Select
                         value={formData.hostUniversity}
