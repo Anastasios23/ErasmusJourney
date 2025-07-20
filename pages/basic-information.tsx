@@ -420,9 +420,7 @@ export default function BasicInformation() {
                           handleInputChange("lastName", e.target.value)
                         }
                         required
-                        className={
-                          fieldErrors.lastName ? "border-red-500" : ""
-                        }
+                        className={fieldErrors.lastName ? "border-red-500" : ""}
                       />
                       {fieldErrors.lastName && (
                         <p className="text-sm text-red-500">
@@ -443,9 +441,7 @@ export default function BasicInformation() {
                           handleInputChange("email", e.target.value)
                         }
                         required
-                        className={
-                          fieldErrors.email ? "border-red-500" : ""
-                        }
+                        className={fieldErrors.email ? "border-red-500" : ""}
                       />
                       {fieldErrors.email && (
                         <p className="text-sm text-red-500">
