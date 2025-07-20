@@ -48,28 +48,45 @@ export default function BasicInformation() {
     submitForm,
     getDraftData,
     saveDraft,
-    sessionStatus: formSessionStatus,
+    loading: submissionsLoading,
+    error: submissionsError,
+    sessionStatus: authStatus,
   } = useFormSubmissions();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [draftError, setDraftError] = useState<string | null>(null);
   const [draftSuccess, setDraftSuccess] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
 
-  // Auth guard - redirect unauthenticated users
-  if (sessionStatus === "loading") {
+  // Authentication redirect in useEffect
+  useEffect(() => {
+    if (sessionStatus === "unauthenticated") {
+      router.replace(
+        `/auth/signin?callbackUrl=${encodeURIComponent(router.asPath)}`
+      );
+    }
+  }, [sessionStatus, router]);
+
+  // Loading state for auth and submissions
+  if (sessionStatus === "loading" || submissionsLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p>Loading...</p>
+          <p>
+            {sessionStatus === "loading"
+              ? "Checking authentication..."
+              : "Loading draft data..."
+            }
+          </p>
         </div>
       </div>
     );
   }
 
-  if (sessionStatus === "unauthenticated") {
-    router.replace("/auth/signin?callbackUrl=/basic-information");
+  // Don't render if not authenticated
+  if (sessionStatus !== "authenticated") {
     return null;
   }
 
