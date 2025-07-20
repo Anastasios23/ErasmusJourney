@@ -63,7 +63,7 @@ export default function BasicInformation() {
   useEffect(() => {
     if (sessionStatus === "unauthenticated") {
       router.replace(
-        `/auth/signin?callbackUrl=${encodeURIComponent(router.asPath)}`
+        `/auth/signin?callbackUrl=${encodeURIComponent(router.asPath)}`,
       );
     }
   }, [sessionStatus, router]);
@@ -77,8 +77,7 @@ export default function BasicInformation() {
           <p>
             {sessionStatus === "loading"
               ? "Checking authentication..."
-              : "Loading draft data..."
-            }
+              : "Loading draft data..."}
           </p>
         </div>
       </div>
@@ -340,7 +339,7 @@ export default function BasicInformation() {
       if (sessionStatus === "loading") {
         let retries = 10;
         while (sessionStatus === "loading" && retries > 0) {
-          await new Promise(resolve => setTimeout(resolve, 100));
+          await new Promise((resolve) => setTimeout(resolve, 100));
           retries--;
         }
       }
