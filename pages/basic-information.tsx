@@ -797,15 +797,16 @@ export default function BasicInformation() {
                     type="button"
                     variant="outline"
                     onClick={handleSaveDraft}
+                    disabled={submissionsLoading || isSubmitting}
                   >
-                    Save Draft
+                    {submissionsLoading ? "Loading..." : "Save Draft"}
                   </Button>
                   <Button
                     type="submit"
-                    disabled={isSubmitting || formSessionStatus === "loading"}
+                    disabled={submissionsLoading || isSubmitting}
                   >
-                    {formSessionStatus === "loading"
-                      ? "Loading..."
+                    {submissionsLoading
+                      ? "Loading draft..."
                       : isSubmitting
                         ? "Submitting..."
                         : "Continue to Course Matching"}
