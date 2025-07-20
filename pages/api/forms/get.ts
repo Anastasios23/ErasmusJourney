@@ -1,5 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getServerAuthSession, isAdmin } from "../../../lib/auth";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/[...nextauth]";
+import { isAdmin } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 import { FormType, SubmissionStatus } from "@prisma/client";
 
@@ -26,8 +28,12 @@ export default async function handler(
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const session = await getServerAuthSession(req, res);
-  if (!session?.user) {
+  const session = await getServerSession(req, res, authOptions);
+
+  console.log("Session in get API:", session); // Debug log
+
+  if (!session?.user?.id) {
+    console.log("No session or user ID found in get API"); // Debug log
     return res.status(401).json({ message: "Unauthorized" });
   }
 
