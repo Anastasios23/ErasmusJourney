@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,61 +8,45 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  firstName String
-  lastName  String
-  password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // User profile data
-  studentId    String?
-  nationality  String?
-  homeCity     String?
-  homeCountry  String?
-
-  // Erasmus application data
-  applications Application[]
-  stories      Story[]
+  id              String           @id @default(cuid())
+  email           String           @unique
+  firstName       String
+  lastName        String
+  password        String
+  role            String           @default("USER")
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  studentId       String?
+  nationality     String?
+  homeCity        String?
+  homeCountry     String?
+  applications    Application[]
   formSubmissions FormSubmission[]
+  stories         Story[]
 
   @@map("users")
 }
 
-enum Role {
-  USER
-  ADMIN
-}
-
 model University {
-  id          String        @id @default(cuid())
-  code        String        @unique // UCY, UNIC, EUC, etc.
-  name        String
-  shortName   String
-  type        UniversityType
-  country     String
-  city        String
-  website     String?
-  description String?
-  imageUrl    String?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-
-  // Relationships
-  faculties   Faculty[]
-  homeAgreements    Agreement[] @relation("HomeUniversity")
-  partnerAgreements Agreement[] @relation("PartnerUniversity")
+  id                String        @id @default(cuid())
+  code              String        @unique
+  name              String
+  shortName         String
+  type              String
+  country           String
+  city              String
+  website           String?
+  description       String?
+  imageUrl          String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  partnerAgreements Agreement[]   @relation("PartnerUniversity")
+  homeAgreements    Agreement[]   @relation("HomeUniversity")
   applications      Application[]
-  stories          Story[]
+  faculties         Faculty[]
+  stories           Story[]
 
   @@map("universities")
-}
-
-enum UniversityType {
-  PUBLIC
-  PRIVATE
 }
 
 model Faculty {
@@ -73,243 +54,161 @@ model Faculty {
   name         String
   description  String?
   universityId String
-  university   University   @relation(fields: [universityId], references: [id], onDelete: Cascade)
-
-  departments  Department[]
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+  departments  Department[]
+  university   University   @relation(fields: [universityId], references: [id], onDelete: Cascade)
 
   @@map("faculties")
 }
 
 model Department {
-  id          String    @id @default(cuid())
+  id          String      @id @default(cuid())
   name        String
   description String?
   facultyId   String
-  faculty     Faculty   @relation(fields: [facultyId], references: [id], onDelete: Cascade)
-
-  programs    Program[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
   agreements  Agreement[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  faculty     Faculty     @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  programs    Program[]
 
   @@map("departments")
 }
 
 model Program {
-  id           String      @id @default(cuid())
+  id           String        @id @default(cuid())
   name         String
-  level        ProgramLevel
+  level        String
   duration     String
-  type         ProgramType?
+  type         String?
   ects         Int?
   description  String?
   departmentId String
-  department   Department  @relation(fields: [departmentId], references: [id], onDelete: Cascade)
-
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   applications Application[]
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  department   Department    @relation(fields: [departmentId], references: [id], onDelete: Cascade)
 
   @@map("programs")
 }
 
-enum ProgramLevel {
-  BACHELOR
-  MASTER
-  PHD
-}
-
-enum ProgramType {
-  DISTANCE
-  JOINT
-  INTEGRATED
-}
-
 model Agreement {
-  id                    String         @id @default(cuid())
-  homeUniversityId      String
-  homeUniversity        University     @relation("HomeUniversity", fields: [homeUniversityId], references: [id])
-  homeDepartmentId      String
-  homeDepartment        Department     @relation(fields: [homeDepartmentId], references: [id])
-
-  partnerUniversityId   String
-  partnerUniversity     University     @relation("PartnerUniversity", fields: [partnerUniversityId], references: [id])
-  partnerCity           String
-  partnerCountry        String
-
-  agreementType         AgreementType  @default(BOTH)
-  notes                 String?
-  isActive              Boolean        @default(true)
-  startDate             DateTime?
-  endDate               DateTime?
-
-  applications          Application[]
-  createdAt             DateTime       @default(now())
-  updatedAt             DateTime       @updatedAt
+  id                  String        @id @default(cuid())
+  homeUniversityId    String
+  homeDepartmentId    String
+  partnerUniversityId String
+  partnerCity         String
+  partnerCountry      String
+  agreementType       String        @default("BOTH")
+  notes               String?
+  isActive            Boolean       @default(true)
+  startDate           DateTime?
+  endDate             DateTime?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  partnerUniversity   University    @relation("PartnerUniversity", fields: [partnerUniversityId], references: [id])
+  homeDepartment      Department    @relation(fields: [homeDepartmentId], references: [id])
+  homeUniversity      University    @relation("HomeUniversity", fields: [homeUniversityId], references: [id])
+  applications        Application[]
 
   @@map("agreements")
 }
 
-enum AgreementType {
-  STUDENT
-  STAFF
-  BOTH
-  TRAINEESHIP
-}
-
 model Application {
-  id               String            @id @default(cuid())
+  id               String     @id @default(cuid())
   userId           String
-  user             User              @relation(fields: [userId], references: [id])
-
   homeUniversityId String
-  homeUniversity   University        @relation(fields: [homeUniversityId], references: [id])
   programId        String
-  program          Program           @relation(fields: [programId], references: [id])
   agreementId      String
-  agreement        Agreement         @relation(fields: [agreementId], references: [id])
-
-  status           ApplicationStatus @default(DRAFT)
+  status           String     @default("DRAFT")
   semester         String?
   academicYear     String?
   duration         String?
-
-  // Application form data
   motivation       String?
   languageSkills   Json?
   grades           Json?
-
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  agreement        Agreement  @relation(fields: [agreementId], references: [id])
+  program          Program    @relation(fields: [programId], references: [id])
+  homeUniversity   University @relation(fields: [homeUniversityId], references: [id])
+  user             User       @relation(fields: [userId], references: [id])
 
   @@map("applications")
 }
 
-enum ApplicationStatus {
-  DRAFT
-  SUBMITTED
-  UNDER_REVIEW
-  ACCEPTED
-  REJECTED
-  COMPLETED
-}
-
 model Story {
-  id               String     @id @default(cuid())
-  title            String
-  content          String
-  excerpt          String?
-  imageUrl         String?
-  isPublic         Boolean    @default(true)
-  isPinned         Boolean    @default(false)
-
-  authorId         String
-  author           User       @relation(fields: [authorId], references: [id])
-  universityId     String?
-  university       University? @relation(fields: [universityId], references: [id])
-
-  country          String?
-  city             String?
-  category         StoryCategory @default(EXPERIENCE)
-  tags             String?
-
-  likes            Int        @default(0)
-  views            Int        @default(0)
-
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
+  id           String      @id @default(cuid())
+  title        String
+  content      String
+  excerpt      String?
+  imageUrl     String?
+  isPublic     Boolean     @default(true)
+  isPinned     Boolean     @default(false)
+  authorId     String
+  universityId String?
+  country      String?
+  city         String?
+  category     String      @default("EXPERIENCE")
+  tags         String?
+  likes        Int         @default(0)
+  views        Int         @default(0)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  university   University? @relation(fields: [universityId], references: [id])
+  author       User        @relation(fields: [authorId], references: [id])
 
   @@index([city, country])
   @@map("stories")
 }
 
-enum StoryCategory {
-  EXPERIENCE
-  ACCOMMODATION
-  ACADEMICS
-  CULTURE
-  TRAVEL
-  TIPS
-}
-
 model Accommodation {
-  id          String            @id @default(cuid())
-  name        String
-  type        AccommodationType
-  description String?
-  address     String
-  city        String
-  country     String
-
+  id            String   @id @default(cuid())
+  name          String
+  type          String
+  description   String?
+  address       String
+  city          String
+  country       String
   pricePerMonth Decimal?
   currency      String?
   imageUrl      String?
-
   amenities     Json?
   contactInfo   Json?
-
-  isActive      Boolean         @default(true)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("accommodations")
 }
 
-enum AccommodationType {
-  DORMITORY
-  APARTMENT
-  HOMESTAY
-  STUDIO
-  SHARED_APARTMENT
-}
-
 model Destination {
-  id          String   @id @default(cuid())
-  name        String
-  country     String
-  description String?
-  imageUrl    String?
-  featured    Boolean  @default(false)
-
-  climate     String?
+  id           String   @id @default(cuid())
+  name         String
+  country      String
+  description  String?
+  imageUrl     String?
+  featured     Boolean  @default(false)
+  climate      String?
   costOfLiving Json?
-  highlights  String?
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  highlights   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@map("destinations")
 }
 
 model FormSubmission {
-  id          String           @id @default(cuid())
-  userId      String
-  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  type        FormType
-  title       String
-  data        Json
-  status      SubmissionStatus @default(SUBMITTED)
-
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  data      Json
+  status    String   @default("SUBMITTED")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("form_submissions")
-}
-
-enum FormType {
-  BASIC_INFO
-  COURSE_MATCHING
-  ACCOMMODATION
-  STORY
-  EXPERIENCE
-}
-
-enum SubmissionStatus {
-  DRAFT
-  SUBMITTED
-  PUBLISHED
-  REJECTED
 }
