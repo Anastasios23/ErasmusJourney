@@ -4,7 +4,7 @@ import { authOptions } from "../pages/api/auth/[...nextauth]";
 
 export async function getServerAuthSession(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   return getServerSession(req, res, authOptions);
 }
