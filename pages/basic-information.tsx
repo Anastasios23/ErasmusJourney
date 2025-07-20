@@ -724,7 +724,7 @@ export default function BasicInformation() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="hostCity">Preferred Host City</Label>
+                      <Label htmlFor="hostCity">Preferred Host City *</Label>
                       <Select
                         value={formData.hostCity}
                         onValueChange={(value) =>

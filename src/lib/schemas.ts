@@ -15,7 +15,6 @@ export const basicInformationRequiredSchema = z.object({
   hostUniversity: z.string().min(1, "Host university is required"),
   hostCountry: z.string().min(1, "Host country is required"),
   hostCity: z.string().min(1, "Host city is required"),
-  hostDepartment: z.string().min(1, "Host department is required"),
   exchangePeriod: z.enum(["semester1", "semester2", "full_year"], {
     errorMap: () => ({ message: "Please select exchange period" }),
   }),
