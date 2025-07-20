@@ -189,6 +189,51 @@ export default function BasicInformation() {
     formData.levelOfStudy,
   ]);
 
+  // 3. CONDITIONAL RENDERS AFTER ALL HOOKS
+  // Loading state for auth and submissions
+  if (sessionStatus === "loading" || submissionsLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p>
+            {sessionStatus === "loading"
+              ? "Checking authentication..."
+              : "Loading draft data..."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated
+  if (sessionStatus !== "authenticated") {
+    return null;
+  }
+
+  // 4. COMPUTED VALUES AND CONSTANTS AFTER CONDITIONAL RENDERS
+  const cyprusUniversities = CYPRUS_UNIVERSITIES;
+
+  // Get departments for selected Cyprus university
+  const availableDepartments =
+    formData.universityInCyprus === "UNIC"
+      ? // For UNIC, get unique departments from actual agreement data filtered by level
+        formData.levelOfStudy
+        ? [
+            ...new Set(
+              UNIC_COMPREHENSIVE_AGREEMENTS.filter(
+                (agreement) =>
+                  agreement.academicLevel === formData.levelOfStudy,
+              ).map((agreement) => agreement.homeDepartment.trim()),
+            ),
+          ]
+        : []
+      : formData.universityInCyprus
+        ? // For other universities, use the predefined departments
+          cyprusUniversities.find((u) => u.code === formData.universityInCyprus)
+            ?.departments || []
+        : [];
+
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => {
       const newData = { ...prev, [field]: value };
