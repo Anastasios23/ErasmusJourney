@@ -409,11 +409,27 @@ export default function BasicInformation() {
               </p>
             </div>
 
+            {/* Submissions Loading Error */}
+            {submissionsError && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{submissionsError}</AlertDescription>
+              </Alert>
+            )}
+
             {/* Submit Error Alert */}
             {submitError && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{submitError}</AlertDescription>
+              </Alert>
+            )}
+
+            {/* Draft Error Alert */}
+            {draftError && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{draftError}</AlertDescription>
               </Alert>
             )}
 
