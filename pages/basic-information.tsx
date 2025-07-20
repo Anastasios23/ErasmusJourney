@@ -42,6 +42,7 @@ import { Alert, AlertDescription } from "../src/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
 export default function BasicInformation() {
+  // 1. ALL HOOKS FIRST - NEVER CONDITIONAL
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
   const {
@@ -52,42 +53,14 @@ export default function BasicInformation() {
     error: submissionsError,
     sessionStatus: authStatus,
   } = useFormSubmissions();
+
+  // All useState hooks
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [draftError, setDraftError] = useState<string | null>(null);
   const [draftSuccess, setDraftSuccess] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
-
-  // Authentication redirect in useEffect
-  useEffect(() => {
-    if (sessionStatus === "unauthenticated") {
-      router.replace(
-        `/auth/signin?callbackUrl=${encodeURIComponent(router.asPath)}`,
-      );
-    }
-  }, [sessionStatus, router]);
-
-  // Loading state for auth and submissions
-  if (sessionStatus === "loading" || submissionsLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p>
-            {sessionStatus === "loading"
-              ? "Checking authentication..."
-              : "Loading draft data..."}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // Don't render if not authenticated
-  if (sessionStatus !== "authenticated") {
-    return null;
-  }
 
   const [formData, setFormData] = useState({
     firstName: "",
