@@ -265,9 +265,13 @@ export default function BasicInformation() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Clear all error and success states at start
     setFieldErrors({});
     setSubmitError(null);
+    setDraftError(null);
     setSubmitSuccess(null);
+    setDraftSuccess(null);
 
     // Validate required fields using simplified schema
     try {
