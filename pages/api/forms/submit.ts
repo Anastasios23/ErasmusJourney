@@ -36,7 +36,7 @@ export default async function handler(
     console.log("No session or user ID found"); // Debug log
     return res.status(401).json({
       error: "Authentication required",
-      message: "Please sign in to submit forms"
+      message: "Please sign in to submit forms",
     });
   }
 
