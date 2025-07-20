@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getServerAuthSession } from "../../../lib/auth";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/[...nextauth]";
 import { prisma } from "../../../lib/prisma";
 import { FormType, SubmissionStatus } from "@prisma/client";
 
@@ -22,9 +23,13 @@ export default async function handler(
     });
   }
 
-  // Verify authentication
-  const session = await getServerAuthSession(req, res);
-  if (!session?.user) {
+  // Verify authentication using NextAuth directly
+  const session = await getServerSession(req, res, authOptions);
+
+  console.log("Session in saveDraft API:", session); // Debug log
+
+  if (!session?.user?.id) {
+    console.log("No session or user ID found in saveDraft"); // Debug log
     return res.status(401).json({
       error: "Authentication required",
       message: "Please sign in to save drafts",
