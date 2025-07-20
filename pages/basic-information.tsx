@@ -142,6 +142,14 @@ export default function BasicInformation() {
     }
   }, [sessionStatus, submissionsLoading, getDraftData]);
 
+  // Debug session state
+  useEffect(() => {
+    console.log("Current session:", session);
+    console.log("Session status:", sessionStatus);
+    console.log("User ID:", session?.user?.id);
+    console.log("User role:", session?.user?.role);
+  }, [session, sessionStatus]);
+
   // Update available host universities when Cyprus university, department, or level changes
   useEffect(() => {
     if (
