@@ -36,6 +36,7 @@ import {
 import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp";
 import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
 import { basicInformationRequiredSchema } from "../src/lib/schemas";
+import { ZodError } from "zod";
 import { handleApiError } from "../src/utils/apiErrorHandler";
 import { Alert, AlertDescription } from "../src/components/ui/alert";
 import { AlertCircle } from "lucide-react";
@@ -50,11 +51,10 @@ export default function BasicInformation() {
     sessionStatus: formSessionStatus,
   } = useFormSubmissions();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [successMessage, setSuccessMessage] = useState<string>("");
-  const [validationErrors, setValidationErrors] = useState<
-    Record<string, string>
-  >({});
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [draftSuccess, setDraftSuccess] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
 
   // Auth guard - redirect unauthenticated users
   if (sessionStatus === "loading") {
@@ -131,13 +131,15 @@ export default function BasicInformation() {
 
   // Authentication temporarily disabled - all users can access
 
-  // Load draft data on component mount - run only once
+  // Load draft data when session is authenticated and form session is idle
   useEffect(() => {
-    const draftData = getDraftData("basic-info");
-    if (draftData) {
-      setFormData(draftData);
+    if (sessionStatus === "authenticated" && formSessionStatus === "idle") {
+      const draft = getDraftData("basic-info");
+      if (draft) {
+        setFormData(draft);
+      }
     }
-  }, []); // No dependencies to prevent infinite loop
+  }, [sessionStatus, formSessionStatus, getDraftData]);
 
   const cyprusUniversities = CYPRUS_UNIVERSITIES;
   const [availableHostUniversities, setAvailableHostUniversities] = useState<
@@ -246,28 +248,27 @@ export default function BasicInformation() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage("");
-    setValidationErrors({});
-
-    // Check if session is still loading
-    if (sessionStatus === "loading" || formSessionStatus === "loading") {
-      setErrorMessage("Please wait while we verify your authentication...");
-      return;
-    }
+    setFieldErrors({});
+    setSubmitError(null);
+    setSubmitSuccess(null);
 
     // Validate required fields using simplified schema
     try {
       basicInformationRequiredSchema.parse(formData);
-    } catch (validationError: any) {
-      const errors: Record<string, string> = {};
-      validationError.errors?.forEach((err: any) => {
-        if (err.path) {
-          errors[err.path[0]] = err.message;
+    } catch (err) {
+      if (err instanceof ZodError) {
+        const fieldErrorsData = err.flatten().fieldErrors;
+        const errors: Record<string, string> = {};
+        for (const key in fieldErrorsData) {
+          if (fieldErrorsData[key]?.[0]) {
+            errors[key] = fieldErrorsData[key]![0];
+          }
         }
-      });
-      setValidationErrors(errors);
-      setErrorMessage("Please fix the validation errors below.");
-      return;
+        setFieldErrors(errors);
+        setSubmitError("Please fix the validation errors below.");
+        return;
+      }
+      throw err; // re-throw if it wasn't a ZodError
     }
 
     setIsSubmitting(true);
@@ -281,7 +282,7 @@ export default function BasicInformation() {
       );
 
       // Show success message before redirect
-      setSuccessMessage(
+      setSubmitSuccess(
         "Basic information submitted successfully! Redirecting to course matching...",
       );
       setTimeout(() => {
@@ -290,7 +291,7 @@ export default function BasicInformation() {
     } catch (error: any) {
       console.error("Submission error:", error);
       const errorInfo = handleApiError(error);
-      setErrorMessage(errorInfo.message);
+      setSubmitError(errorInfo.message);
 
       if (errorInfo.action === "signin") {
         // Redirect to sign-in if authentication failed
@@ -309,13 +310,12 @@ export default function BasicInformation() {
     try {
       await saveDraft("basic-info", "Basic Information Draft", formData);
       // Show success message
-      setErrorMessage("");
-      setSuccessMessage("Draft saved successfully!");
-      setTimeout(() => setSuccessMessage(""), 3000);
+      setDraftSuccess("Draft saved successfully!");
+      setTimeout(() => setDraftSuccess(null), 3000);
     } catch (error: any) {
       console.error("Draft save error:", error);
       const errorInfo = handleApiError(error);
-      setErrorMessage(`Failed to save draft: ${errorInfo.message}`);
+      setSubmitError(`Failed to save draft: ${errorInfo.message}`);
 
       // Handle authentication error
       if (errorInfo.action === "signin") {
@@ -356,20 +356,30 @@ export default function BasicInformation() {
               </p>
             </div>
 
-            {/* Error Alert */}
-            {errorMessage && (
+            {/* Submit Error Alert */}
+            {submitError && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{errorMessage}</AlertDescription>
+                <AlertDescription>{submitError}</AlertDescription>
               </Alert>
             )}
 
-            {/* Success Alert */}
-            {successMessage && (
+            {/* Draft Success Alert */}
+            {draftSuccess && (
               <Alert variant="default" className="border-green-200 bg-green-50">
                 <AlertCircle className="h-4 w-4 text-green-600" />
                 <AlertDescription className="text-green-800">
-                  {successMessage}
+                  {draftSuccess}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Submit Success Alert */}
+            {submitSuccess && (
+              <Alert variant="default" className="border-green-200 bg-green-50">
+                <AlertCircle className="h-4 w-4 text-green-600" />
+                <AlertDescription className="text-green-800">
+                  {submitSuccess}
                 </AlertDescription>
               </Alert>
             )}
@@ -392,12 +402,12 @@ export default function BasicInformation() {
                         }
                         required
                         className={
-                          validationErrors.firstName ? "border-red-500" : ""
+                          fieldErrors.firstName ? "border-red-500" : ""
                         }
                       />
-                      {validationErrors.firstName && (
+                      {fieldErrors.firstName && (
                         <p className="text-sm text-red-500">
-                          {validationErrors.firstName}
+                          {fieldErrors.firstName}
                         </p>
                       )}
                     </div>
@@ -411,12 +421,12 @@ export default function BasicInformation() {
                         }
                         required
                         className={
-                          validationErrors.lastName ? "border-red-500" : ""
+                          fieldErrors.lastName ? "border-red-500" : ""
                         }
                       />
-                      {validationErrors.lastName && (
+                      {fieldErrors.lastName && (
                         <p className="text-sm text-red-500">
-                          {validationErrors.lastName}
+                          {fieldErrors.lastName}
                         </p>
                       )}
                     </div>
@@ -434,18 +444,38 @@ export default function BasicInformation() {
                         }
                         required
                         className={
-                          validationErrors.email ? "border-red-500" : ""
+                          fieldErrors.email ? "border-red-500" : ""
                         }
                       />
-                      {validationErrors.email && (
+                      {fieldErrors.email && (
                         <p className="text-sm text-red-500">
-                          {validationErrors.email}
+                          {fieldErrors.email}
                         </p>
                       )}
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="dateOfBirth">Date of Birth *</Label>
+                      <Input
+                        type="date"
+                        id="dateOfBirth"
+                        value={formData.dateOfBirth}
+                        onChange={(e) =>
+                          handleInputChange("dateOfBirth", e.target.value)
+                        }
+                        required
+                        className={
+                          validationErrors.dateOfBirth ? "border-red-500" : ""
+                        }
+                      />
+                      {validationErrors.dateOfBirth && (
+                        <p className="text-sm text-red-500">
+                          {validationErrors.dateOfBirth}
+                        </p>
+                      )}
+                    </div>
                     <div className="space-y-2">
                       <Label htmlFor="nationality">Nationality *</Label>
                       <Input
@@ -455,7 +485,15 @@ export default function BasicInformation() {
                           handleInputChange("nationality", e.target.value)
                         }
                         required
+                        className={
+                          validationErrors.nationality ? "border-red-500" : ""
+                        }
                       />
+                      {validationErrors.nationality && (
+                        <p className="text-sm text-red-500">
+                          {validationErrors.nationality}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </CardContent>
