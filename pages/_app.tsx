@@ -31,14 +31,6 @@ export default function App({
         refetchWhenOffline={false} // Don't refetch when offline
       >
         <QueryClientProvider client={queryClient}>
-<<<<<<< HEAD
-          <TooltipProvider>
-            <HMRErrorHandler />
-            <Toaster />
-            <Sonner />
-            <Component {...pageProps} />
-          </TooltipProvider>
-=======
           <NotificationProvider>
             <TooltipProvider>
               <HMRErrorHandler />
@@ -47,7 +39,6 @@ export default function App({
               <Component {...pageProps} />
             </TooltipProvider>
           </NotificationProvider>
->>>>>>> origin/main
         </QueryClientProvider>
       </SessionProvider>
     </ErrorBoundary>
