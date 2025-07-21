@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getServerAuthSession, isAdmin } from "../../../lib/auth";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/[...nextauth]";
+import { isAdmin } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
-import { FormType, SubmissionStatus } from "@prisma/client";
 
-const typeMapping: Record<string, FormType> = {
+const typeMapping: Record<string, string> = {
   "basic-info": "BASIC_INFO",
   "course-matching": "COURSE_MATCHING",
   accommodation: "ACCOMMODATION",
@@ -11,7 +12,7 @@ const typeMapping: Record<string, FormType> = {
   experience: "EXPERIENCE",
 };
 
-const statusMapping: Record<string, SubmissionStatus> = {
+const statusMapping: Record<string, string> = {
   draft: "DRAFT",
   submitted: "SUBMITTED",
   published: "PUBLISHED",
@@ -26,7 +27,7 @@ export default async function handler(
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  
+
 
   const session = await getServerAuthSession(req, res);
   if (!session?.user) {
