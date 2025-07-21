@@ -1,11 +1,8 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, FormEvent } from "react";
+import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
-import { signIn, useSession } from "next-auth/react";
-import Head from "next/head";
 import Link from "next/link";
-import BackButton from "../components/BackButton";
+import Head from "next/head";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
 import { Label } from "../src/components/ui/label";
@@ -13,17 +10,55 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "../src/components/ui/card";
-import { Alert, AlertDescription } from "../src/components/ui/alert";
 import { Checkbox } from "../src/components/ui/checkbox";
-import { Loader2, Eye, EyeOff, Mail, CheckCircle } from "lucide-react";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "../src/components/ui/alert";
+import { AlertCircle, Eye, EyeOff, MailCheck, CircleCheck } from "lucide-react";
+import { registerUser } from "../src/services/api";
+import { z, ZodError } from "zod";
+import { handleApiError } from "../src/utils/apiErrorHandler";
 import PasswordStrength from "../src/components/PasswordStrength";
+import { cn } from "../src/lib/utils";
 
-export default function RegisterPage() {
-  const router = useRouter();
+const passwordSchema = z
+  .string()
+  .min(8, "Password must be at least 8 characters long")
+  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+  .regex(/[0-9]/, "Password must contain at least one number")
+  .regex(
+    /[^a-zA-Z0-9]/,
+    "Password must contain at least one special character",
+  );
+
+const registrationSchema = z
+  .object({
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
+    email: z.string().email("Invalid email address"),
+    password: passwordSchema,
+    confirmPassword: z.string(),
+    agreedToTerms: z.literal(true, {
+      errorMap: () => ({
+        message: "You must agree to the terms and conditions",
+      }),
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export default function Register() {
   const { data: session, status } = useSession();
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -49,137 +84,68 @@ export default function RegisterPage() {
     }
   }, [session, status, router]);
 
-  // Field validation functions
-  const validateField = (name: string, value: string) => {
-    switch (name) {
-      case "firstName":
-        return !value ? "First name is required" : "";
-      case "lastName":
-        return !value ? "Last name is required" : "";
-      case "email":
-        if (!value) return "Email is required";
-        if (!value.includes("@")) return "Please enter a valid email address";
-        return "";
-      case "password":
-        if (!value) return "Password is required";
-        if (value.length < 8) return "Password must be at least 8 characters";
-        if (!/(?=.*[a-z])/.test(value))
-          return "Password must contain a lowercase letter";
-        if (!/(?=.*[A-Z])/.test(value))
-          return "Password must contain an uppercase letter";
-        if (!/(?=.*\d)/.test(value)) return "Password must contain a number";
-        return "";
-      case "confirmPassword":
-        if (!value) return "Please confirm your password";
-        if (value !== formData.password) return "Passwords do not match";
-        return "";
-      default:
-        return "";
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+
+    if (id === "password") {
+      try {
+        passwordSchema.parse(value);
+        setPasswordStrength(100);
+      } catch (err) {
+        if (err instanceof ZodError) {
+          const score =
+            (Object.keys(err.flatten().fieldErrors).length / 5) * 100;
+          setPasswordStrength(100 - score);
+        }
+      }
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-
-    // Real-time validation
-    const fieldError = validateField(name, value);
-    setFieldErrors((prev) => ({ ...prev, [name]: fieldError }));
-
-    // Also validate confirm password when password changes
-    if (name === "password" && formData.confirmPassword) {
-      const confirmError = validateField(
-        "confirmPassword",
-        formData.confirmPassword,
-      );
-      setFieldErrors((prev) => ({ ...prev, confirmPassword: confirmError }));
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
-    setSuccessMessage("");
-
-    // Validate all fields
-    const errors: Record<string, string> = {};
-    Object.keys(formData).forEach((key) => {
-      const error = validateField(key, formData[key as keyof typeof formData]);
-      if (error) errors[key] = error;
-    });
-
-    // Check for validation errors
-    if (Object.keys(errors).length > 0) {
-      setFieldErrors(errors);
-      setError("Please fix the errors below and try again.");
-      return;
-    }
-
-    // Check password strength
-    if (passwordStrength < 60) {
-      setError("Please choose a stronger password.");
-      return;
-    }
-
-    // Check terms agreement
-    if (!agreedToTerms) {
-      setError("Please agree to the Terms of Service and Privacy Policy.");
-      return;
-    }
-
+    setFieldErrors({});
     setIsLoading(true);
+
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // Include cookies for session handling
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          password: formData.password,
-        }),
+      registrationSchema.parse({ ...formData, agreedToTerms });
+
+      const result = await registerUser({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
       });
-      const data = await response.json();
 
-      if (!response.ok) {
-        setError(data.message || "Registration failed");
-        setIsLoading(false);
-        return;
+      if (result.success) {
+        setSuccessMessage(result.message);
+        setEmailVerificationSent(true); // Show verification message
+      } else {
+        setError(result.message || "An unknown error occurred.");
       }
-
-      // Show success message and send verification email
-      setSuccessMessage(
-        "Account created successfully! Please check your email for verification.",
-      );
-
-      // Send verification email
-      try {
-        await fetch("/api/auth/verify-email", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: formData.email }),
+    } catch (err: any) {
+      if (err instanceof ZodError) {
+        const errors: Record<string, string> = {};
+        err.errors.forEach((e) => {
+          if (e.path[0]) {
+            errors[e.path[0]] = e.message;
+          }
         });
-        setEmailVerificationSent(true);
-      } catch (err) {
-        console.warn("Could not send verification email:", err);
+        setFieldErrors(errors);
+      } else {
+        const errorInfo = handleApiError(err);
+        setError(errorInfo.message);
       }
-
-      setTimeout(() => {
-        router.push("/login?message=account_created");
-      }, 3000);
-    } catch (err) {
-      console.error("Registration error:", err);
-      setError("An unexpected error occurred. Please try again.");
+    } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGoogleSignUp = () => {
-    // Temporarily disabled - needs real Google OAuth credentials
-    setError(
-      "Google OAuth is currently unavailable. Please use email registration instead.",
-    );
+  const handleGoogleSignUp = async () => {
+    // This will redirect the user to the Google sign-in page
+    // and then back to the dashboard upon successful authentication.
+    await signIn("google", { callbackUrl: "/dashboard" });
   };
 
   // Show loading state while checking session
@@ -199,60 +165,45 @@ export default function RegisterPage() {
     );
   }
 
-  // Show already logged in message if authenticated
-  if (status === "authenticated" && session) {
+  if (emailVerificationSent) {
     return (
-      <>
-        <Head>
-          <title>Already Logged In - Erasmus Journey Platform</title>
-        </Head>
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
-          <div className="w-full max-w-md space-y-6 text-center">
-            <Card className="w-full">
-              <CardContent className="p-6">
-                <div className="text-center space-y-4">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                    <svg
-                      className="w-8 h-8 text-green-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </div>
-                  <h2 className="text-xl font-semibold text-gray-900">
-                    You're already registered!
-                  </h2>
-                  <p className="text-gray-600">
-                    Welcome back, {session.user?.name || session.user?.email}
-                  </p>
-                  <div className="space-y-2 pt-4">
-                    <Button
-                      onClick={() => router.push("/dashboard")}
-                      className="w-full"
-                    >
-                      Go to Dashboard
-                    </Button>
-                    <Button
-                      onClick={() => router.push("/")}
-                      variant="outline"
-                      className="w-full"
-                    >
-                      Go to Home
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
+        <Card className="w-full max-w-md shadow-lg">
+          <CardHeader className="text-center">
+            <MailCheck className="mx-auto h-12 w-12 text-green-500" />
+            <CardTitle className="mt-4 text-2xl font-bold">
+              Verify Your Email
+            </CardTitle>
+            <CardDescription className="mt-2 text-gray-600">
+              We've sent a verification link to{" "}
+              <span className="font-semibold text-gray-800">
+                {formData.email}
+              </span>
+              . Please check your inbox and click the link to complete your
+              registration.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-center text-gray-500">
+              Didn't receive the email? Check your spam folder or{" "}
+              <button
+                // Add resend logic here if available
+                className="text-blue-600 hover:underline"
+              >
+                request a new link
+              </button>
+              .
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Link href="/login" className="w-full">
+              <Button variant="outline" className="w-full">
+                Back to Login
+              </Button>
+            </Link>
+          </CardFooter>
+        </Card>
+      </div>
     );
   }
 
@@ -262,308 +213,231 @@ export default function RegisterPage() {
         <title>Register - Erasmus Journey Platform</title>
         <meta
           name="description"
-          content="Create your Erasmus Journey account"
+          content="Create your account to start your Erasmus journey."
         />
       </Head>
-
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
-        <div className="w-full max-w-md space-y-4">
-          {/* Back Button */}
-          <div className="flex justify-start">
-            <BackButton fallbackUrl="/">← Back to Home</BackButton>
-          </div>
-          <Card className="w-full">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold">
-                Join Erasmus Journey
-              </CardTitle>
-              <CardDescription>
-                Create your account to start your exchange journey
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {error && (
-                  <Alert variant="destructive">
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                )}
-
-                {successMessage && (
-                  <Alert
-                    variant="default"
-                    className="border-green-200 bg-green-50"
-                  >
-                    <CheckCircle className="h-4 w-4" />
-                    <AlertDescription className="text-green-800">
-                      {successMessage}
-                      {emailVerificationSent && (
-                        <div className="mt-2 text-sm">
-                          <div className="flex items-center space-x-1">
-                            <Mail className="h-3 w-3" />
-                            <span>Verification email sent!</span>
-                          </div>
-                        </div>
-                      )}
-                    </AlertDescription>
-                  </Alert>
-                )}
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input
-                      id="firstName"
-                      name="firstName"
-                      type="text"
-                      placeholder="John"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      autoComplete="given-name"
-                      required
-                      disabled={isLoading}
-                      className={fieldErrors.firstName ? "border-red-500" : ""}
-                    />
-                    {fieldErrors.firstName && (
-                      <p className="text-sm text-red-600">
-                        {fieldErrors.firstName}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input
-                      id="lastName"
-                      name="lastName"
-                      type="text"
-                      placeholder="Doe"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      autoComplete="family-name"
-                      required
-                      disabled={isLoading}
-                      className={fieldErrors.lastName ? "border-red-500" : ""}
-                    />
-                    {fieldErrors.lastName && (
-                      <p className="text-sm text-red-600">
-                        {fieldErrors.lastName}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <Card className="w-full max-w-md shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-center">
+              Create Your Account
+            </CardTitle>
+            <CardDescription className="text-center text-gray-600">
+              Join the platform to connect with other students.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Registration Error</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              {successMessage && !emailVerificationSent && (
+                <Alert className="bg-green-50 border-green-200 text-green-800">
+                  <CircleCheck className="h-4 w-4 text-green-600" />
+                  <AlertTitle>Success!</AlertTitle>
+                  <AlertDescription>{successMessage}</AlertDescription>
+                </Alert>
+              )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="firstName">First Name</Label>
                   <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="john.doe@example.com"
-                    value={formData.email}
-                    onChange={handleChange}
-                    autoComplete="email"
+                    id="firstName"
+                    type="text"
+                    placeholder="John"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
                     required
-                    disabled={isLoading}
-                    className={fieldErrors.email ? "border-red-500" : ""}
+                    className={cn(fieldErrors.firstName && "border-red-500")}
                   />
-                  {fieldErrors.email && (
-                    <p className="text-sm text-red-600">{fieldErrors.email}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      name="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Create a strong password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      autoComplete="new-password"
-                      required
-                      disabled={isLoading}
-                      className={`pr-10 ${fieldErrors.password ? "border-red-500" : ""}`}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                      disabled={isLoading}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-gray-400" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-gray-400" />
-                      )}
-                    </Button>
-                  </div>
-                  {fieldErrors.password && (
-                    <p className="text-sm text-red-600">
-                      {fieldErrors.password}
-                    </p>
-                  )}
-                  <PasswordStrength
-                    password={formData.password}
-                    onStrengthChange={setPasswordStrength}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Confirm your password"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      autoComplete="new-password"
-                      required
-                      disabled={isLoading}
-                      className={`pr-10 ${
-                        fieldErrors.confirmPassword ? "border-red-500" : ""
-                      }`}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                      disabled={isLoading}
-                    >
-                      {showConfirmPassword ? (
-                        <EyeOff className="h-4 w-4 text-gray-400" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-gray-400" />
-                      )}
-                    </Button>
-                  </div>
-                  {fieldErrors.confirmPassword && (
-                    <p className="text-sm text-red-600">
-                      {fieldErrors.confirmPassword}
+                  {fieldErrors.firstName && (
+                    <p className="text-sm text-red-500">
+                      {fieldErrors.firstName}
                     </p>
                   )}
                 </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="terms"
-                      checked={agreedToTerms}
-                      onCheckedChange={setAgreedToTerms}
-                      disabled={isLoading}
-                    />
-                    <Label htmlFor="terms" className="text-sm text-gray-600">
-                      I agree to the{" "}
-                      <Link
-                        href="/terms"
-                        className="text-blue-600 hover:underline"
-                      >
-                        Terms of Service
-                      </Link>{" "}
-                      and{" "}
-                      <Link
-                        href="/privacy"
-                        className="text-blue-600 hover:underline"
-                      >
-                        Privacy Policy
-                      </Link>
-                    </Label>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    type="text"
+                    placeholder="Doe"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    required
+                    className={cn(fieldErrors.lastName && "border-red-500")}
+                  />
+                  {fieldErrors.lastName && (
+                    <p className="text-sm text-red-500">
+                      {fieldErrors.lastName}
+                    </p>
+                  )}
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="name@example.com"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  className={cn(fieldErrors.email && "border-red-500")}
+                />
+                {fieldErrors.email && (
+                  <p className="text-sm text-red-500">{fieldErrors.email}</p>
+                )}
+              </div>
+              <div className="space-y-2 relative">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
+                  className={cn(
+                    "pr-10",
+                    fieldErrors.password && "border-red-500",
+                  )}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-9 text-gray-500"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+                <PasswordStrength password={formData.password} />
+                {fieldErrors.password && (
+                  <p className="text-sm text-red-500">{fieldErrors.password}</p>
+                )}
+              </div>
 
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={
-                    isLoading || passwordStrength < 60 || !agreedToTerms
+              <div className="space-y-2 relative">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  required
+                  className={cn(
+                    "pr-10",
+                    fieldErrors.confirmPassword && "border-red-500",
+                  )}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-9 text-gray-500"
+                  aria-label={
+                    showConfirmPassword
+                      ? "Hide confirm password"
+                      : "Show confirm password"
                   }
                 >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating account...
-                    </>
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-5 w-5" />
                   ) : (
-                    "Create Account"
+                    <Eye className="h-5 w-5" />
                   )}
-                </Button>
-              </form>
-
-              <div className="mt-4">
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">
-                      Or continue with
-                    </span>
-                  </div>
-                </div>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full mt-4 opacity-50"
-                  onClick={handleGoogleSignUp}
-                  disabled={true}
-                >
-                  <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
-                    <path
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                      fill="#4285F4"
-                    />
-                    <path
-                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                      fill="#34A853"
-                    />
-                    <path
-                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                      fill="#FBBC05"
-                    />
-                    <path
-                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                      fill="#EA4335"
-                    />
-                  </svg>
-                  Sign up with Google (Coming Soon)
-                </Button>
-                <p className="text-xs text-center text-gray-500 mt-2">
-                  Google OAuth requires production credentials
-                </p>
+                </button>
+                {fieldErrors.confirmPassword && (
+                  <p className="text-sm text-red-500">
+                    {fieldErrors.confirmPassword}
+                  </p>
+                )}
               </div>
 
-              <div className="mt-6 text-center space-y-2">
-                <p className="text-sm text-gray-600">
-                  Already have an account?{" "}
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="agreedToTerms"
+                  checked={agreedToTerms}
+                  onCheckedChange={(checked) =>
+                    setAgreedToTerms(checked as boolean)
+                  }
+                />
+                <Label htmlFor="agreedToTerms" className="text-sm">
+                  I agree to the{" "}
                   <Link
-                    href="/login"
-                    className="font-medium text-blue-600 hover:text-blue-500"
+                    href="/terms-of-service"
+                    className="text-blue-600 hover:underline"
                   >
-                    Sign in
+                    Terms and Conditions
                   </Link>
-                </p>
-                <p className="text-sm text-gray-600">
-                  <Link
-                    href="/"
-                    className="font-medium text-blue-600 hover:text-blue-500"
-                  >
-                    Back to Home
-                  </Link>
-                </p>
+                </Label>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+              {fieldErrors.agreedToTerms && (
+                <p className="text-sm text-red-500">
+                  {fieldErrors.agreedToTerms}
+                </p>
+              )}
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isLoading || !agreedToTerms}
+              >
+                {isLoading ? "Creating Account..." : "Create Account"}
+              </Button>
+            </form>
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white px-2 text-gray-500">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={handleGoogleSignUp}
+              disabled={isLoading}
+            >
+              <svg
+                className="mr-2 h-4 w-4"
+                aria-hidden="true"
+                focusable="false"
+                data-prefix="fab"
+                data-icon="google"
+                role="img"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 488 512"
+              >
+                <path
+                  fill="currentColor"
+                  d="M488 261.8C488 403.3 381.5 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 23.4 172.9 61.9l-65.7 64.9C313.5 99.8 283.3 80 248 80c-82.6 0-150.2 67.6-150.2 150.2s67.6 150.2 150.2 150.2c94.2 0 125.6-72.2 129.2-108.2H248v-85.3h236.1c2.3 12.7 3.9 26.1 3.9 40.2z"
+                ></path>
+              </svg>
+              Sign up with Google
+            </Button>
+          </CardContent>
+          <CardFooter className="justify-center">
+            <p className="text-sm text-gray-600">
+              Already have an account?{" "}
+              <Link
+                href="/login"
+                className="font-semibold text-blue-600 hover:underline"
+              >
+                Sign In
+              </Link>
+            </p>
+          </CardFooter>
+        </Card>
       </div>
     </>
   );
