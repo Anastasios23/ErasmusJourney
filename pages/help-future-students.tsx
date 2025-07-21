@@ -40,10 +40,16 @@ import {
   Star,
   Trophy,
 } from "lucide-react";
+import { useCommunityStats } from "../src/hooks/useCommunityStats";
+import { Skeleton } from "../src/components/ui/skeleton";
 
 export default function HelpFutureStudents() {
   const router = useRouter();
   const { submitForm, isSubmitting } = useFormSubmissions();
+<<<<<<< HEAD
+=======
+  const { stats, loading } = useCommunityStats();
+>>>>>>> origin/main
 
   const [formData, setFormData] = useState({
     wantToHelp: "",
@@ -196,7 +202,7 @@ export default function HelpFutureStudents() {
       city: "Barcelona",
       rating: 5,
       avatar:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face",
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&fit=crop&crop=face",
     },
     {
       id: "2",
@@ -267,24 +273,43 @@ export default function HelpFutureStudents() {
               Join our community of student mentors and make a real difference.
             </p>
             <div className="grid md:grid-cols-3 gap-6 text-center">
-              <div>
-                <div className="text-2xl font-bold text-green-200 mb-1">
-                  847
-                </div>
-                <div className="text-sm">Active Mentors</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-blue-200 mb-1">
-                  3,241
-                </div>
-                <div className="text-sm">Students Helped</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-yellow-200 mb-1">
-                  4.9
-                </div>
-                <div className="text-sm">Average Rating</div>
-              </div>
+              {loading ? (
+                <>
+                  <div>
+                    <Skeleton className="h-8 w-24 mx-auto bg-green-400/30" />
+                    <Skeleton className="h-4 w-32 mx-auto mt-2 bg-green-400/20" />
+                  </div>
+                  <div>
+                    <Skeleton className="h-8 w-24 mx-auto bg-blue-400/30" />
+                    <Skeleton className="h-4 w-32 mx-auto mt-2 bg-blue-400/20" />
+                  </div>
+                  <div>
+                    <Skeleton className="h-8 w-24 mx-auto bg-yellow-400/30" />
+                    <Skeleton className="h-4 w-32 mx-auto mt-2 bg-yellow-400/20" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <div className="text-2xl font-bold text-green-200 mb-1">
+                      {stats.countriesFeatured}+
+                    </div>
+                    <div className="text-sm">Countries Featured</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-blue-200 mb-1">
+                      {stats.studentsHelped.toLocaleString()}
+                    </div>
+                    <div className="text-sm">Students Helped</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-yellow-200 mb-1">
+                      {stats.averageRating.toFixed(1)}
+                    </div>
+                    <div className="text-sm">Average Rating</div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </section>

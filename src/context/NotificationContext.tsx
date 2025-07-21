@@ -1,5 +1,11 @@
-<<<<<<< HEAD
-import { useState, useEffect, useCallback } from "react";
+import {
+  createContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+  useContext,
+} from "react";
 import { useSession } from "next-auth/react";
 
 export interface Notification {
@@ -34,28 +40,31 @@ const mockNotifications: Notification[] = [
     actionUrl: "/dashboard",
     actionLabel: "View Progress",
   },
-  {
-    id: "3",
-    type: "warning",
-    title: "Action Required",
-    message: "Don't forget to submit your course matching preferences.",
-    timestamp: new Date(Date.now() - 1000 * 60 * 10), // 10 minutes ago
-    read: false,
-    actionUrl: "/course-matching",
-    actionLabel: "Continue Application",
-  },
 ];
 
-export function useNotifications() {
+interface NotificationContextType {
+  notifications: Notification[];
+  loading: boolean;
+  unreadCount: number;
+  markAsRead: (notificationId: string) => void;
+  markAllAsRead: () => void;
+  addNotification: (
+    notification: Omit<Notification, "id" | "timestamp" | "read">,
+  ) => void;
+  removeNotification: (notificationId: string) => void;
+}
+
+const NotificationContext = createContext<NotificationContextType | undefined>(
+  undefined,
+);
+
+export function NotificationProvider({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Load notifications
   useEffect(() => {
     if (session?.user) {
-      // In a real app, fetch from API
-      // For now, use mock data
       setTimeout(() => {
         setNotifications(mockNotifications);
         setLoading(false);
@@ -68,32 +77,25 @@ export function useNotifications() {
 
   const markAsRead = useCallback((notificationId: string) => {
     setNotifications((prev) =>
-      prev.map((notification) =>
-        notification.id === notificationId
-          ? { ...notification, read: true }
-          : notification,
-      ),
+      prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n)),
     );
   }, []);
 
   const markAllAsRead = useCallback(() => {
-    setNotifications((prev) =>
-      prev.map((notification) => ({ ...notification, read: true })),
-    );
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   }, []);
 
   const removeNotification = useCallback((notificationId: string) => {
-    setNotifications((prev) =>
-      prev.filter((notification) => notification.id !== notificationId),
-    );
+    setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
   }, []);
 
   const addNotification = useCallback(
-    (notification: Omit<Notification, "id" | "timestamp">) => {
+    (notification: Omit<Notification, "id" | "timestamp" | "read">) => {
       const newNotification: Notification = {
         ...notification,
         id: Date.now().toString(),
         timestamp: new Date(),
+        read: false,
       };
       setNotifications((prev) => [newNotification, ...prev]);
     },
@@ -102,19 +104,29 @@ export function useNotifications() {
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  return {
+  const value = {
     notifications,
     loading,
     unreadCount,
     markAsRead,
     markAllAsRead,
-    removeNotification,
     addNotification,
+    removeNotification,
   };
-=======
-import { useNotificationContext } from "../context/NotificationContext";
 
-export function useNotifications() {
-  return useNotificationContext();
->>>>>>> origin/main
+  return (
+    <NotificationContext.Provider value={value}>
+      {children}
+    </NotificationContext.Provider>
+  );
+}
+
+export function useNotificationContext() {
+  const context = useContext(NotificationContext);
+  if (context === undefined) {
+    throw new Error(
+      "useNotificationContext must be used within a NotificationProvider",
+    );
+  }
+  return context;
 }

@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "../src/components/ui/toaster";
 import { Toaster as Sonner } from "../src/components/ui/sonner";
 import { TooltipProvider } from "../src/components/ui/tooltip";
+import { NotificationProvider } from "../src/context/NotificationContext";
 import ErrorBoundary from "../src/components/ErrorBoundary";
 import HMRErrorHandler from "../src/components/HMRErrorHandler";
 import "../src/index.css";
@@ -30,12 +31,23 @@ export default function App({
         refetchWhenOffline={false} // Don't refetch when offline
       >
         <QueryClientProvider client={queryClient}>
+<<<<<<< HEAD
           <TooltipProvider>
             <HMRErrorHandler />
             <Toaster />
             <Sonner />
             <Component {...pageProps} />
           </TooltipProvider>
+=======
+          <NotificationProvider>
+            <TooltipProvider>
+              <HMRErrorHandler />
+              <Toaster />
+              <Sonner />
+              <Component {...pageProps} />
+            </TooltipProvider>
+          </NotificationProvider>
+>>>>>>> origin/main
         </QueryClientProvider>
       </SessionProvider>
     </ErrorBoundary>

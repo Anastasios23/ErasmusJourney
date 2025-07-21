@@ -27,7 +27,11 @@ export default async function handler(
     return res.status(405).json({ message: "Method not allowed" });
   }
 
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> origin/main
 
   const session = await getServerAuthSession(req, res);
   if (!session?.user) {
