@@ -1,11 +1,11 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import bcrypt from "bcryptjs";
-import prisma from "../../../lib/prisma"; // Correctly import the shared prisma instance
+import prisma from "../../../lib/prisma";
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
@@ -19,7 +19,6 @@ export default NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-<<<<<<< HEAD
         try {
           if (!credentials?.email || !credentials?.password) {
             console.error("Missing credentials");
@@ -28,19 +27,17 @@ export default NextAuth({
 
           console.log("Attempting login for:", credentials.email);
 
-          // look up user in your database
           const user = await prisma.user.findUnique({
             where: { email: credentials.email },
           });
 
-          if (!user) {
+          if (!user || !user.password) {
             console.error("User not found:", credentials.email);
             throw new Error("CredentialsSignin");
           }
 
           console.log("User found, verifying password");
 
-          // verify password
           const isValid = await bcrypt.compare(
             credentials.password,
             user.password,
@@ -53,7 +50,6 @@ export default NextAuth({
 
           console.log("Login successful for:", credentials.email);
 
-          // return the minimal user object
           return {
             id: user.id,
             email: user.email,
@@ -64,30 +60,6 @@ export default NextAuth({
           console.error("Auth error:", error);
           throw error;
         }
-=======
-        if (!credentials?.email || !credentials.password) {
-          throw new Error("Please enter an email and password");
-        }
-
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
-
-        if (!user || !user.password) {
-          throw new Error("No user found with this email");
-        }
-
-        const isValid = await bcrypt.compare(
-          credentials.password,
-          user.password,
-        );
-
-        if (!isValid) {
-          throw new Error("Incorrect password");
-        }
-
-        return user;
->>>>>>> origin/main
       },
     }),
   ],
@@ -97,33 +69,16 @@ export default NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
-<<<<<<< HEAD
-      // On sign-in, persist id/role into the token
-=======
->>>>>>> origin/main
       if (user) {
-        // @ts-ignore
         token.id = user.id;
-<<<<<<< HEAD
         token.role = (user as any).role;
-=======
-        // @ts-ignore
-        token.role = user.role;
->>>>>>> origin/main
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-<<<<<<< HEAD
         session.user.id = token.id as string;
         session.user.role = token.role as string;
-=======
-        // @ts-ignore
-        session.user.id = token.id;
-        // @ts-ignore
-        session.user.role = token.role;
->>>>>>> origin/main
       }
       return session;
     },
@@ -131,8 +86,6 @@ export default NextAuth({
   pages: {
     signIn: "/login",
   },
-<<<<<<< HEAD
-
   // Cookie configuration - simplified for better compatibility
   cookies: {
     sessionToken: {
@@ -142,15 +95,12 @@ export default NextAuth({
         sameSite: "lax",
         path: "/",
         secure: process.env.NODE_ENV === "production",
-        // Remove domain restriction for cloud environments
         domain: undefined,
       },
     },
   },
-
   // Enable debug logs for better troubleshooting
   debug: true,
-
   // Add error logging
   logger: {
     error(code, metadata) {
@@ -166,6 +116,3 @@ export default NextAuth({
 };
 
 export default NextAuth(authOptions);
-=======
-});
->>>>>>> origin/main
