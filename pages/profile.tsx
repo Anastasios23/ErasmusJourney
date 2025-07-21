@@ -15,21 +15,22 @@ import {
   CardTitle,
 } from "../src/components/ui/card";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../src/components/ui/alert-dialog";
+import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "../src/components/ui/avatar";
 import { Separator } from "../src/components/ui/separator";
-import {
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  Edit,
-  Save,
-  X,
-} from "lucide-react";
+import { User, Calendar, Edit, Save, X, MapPin } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Profile() {
@@ -37,6 +38,7 @@ export default function Profile() {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCancelAlertOpen, setIsCancelAlertOpen] = useState(false);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -44,6 +46,15 @@ export default function Profile() {
       router.push("/login?callbackUrl=/profile");
     }
   }, [status, router]);
+
+  const [initialProfileData, setInitialProfileData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    bio: "",
+    dateOfBirth: "",
+  });
 
   const [profileData, setProfileData] = useState({
     name: "",
@@ -57,14 +68,16 @@ export default function Profile() {
   // Initialize form with session data
   useEffect(() => {
     if (session?.user) {
-      setProfileData({
+      const initialData = {
         name: session.user?.name || "",
         email: session.user?.email || "",
         phone: (session.user as any)?.phone || "",
         address: (session.user as any)?.address || "",
         bio: (session.user as any)?.bio || "",
         dateOfBirth: (session.user as any)?.dateOfBirth || "",
-      });
+      };
+      setProfileData(initialData);
+      setInitialProfileData(initialData);
     }
   }, [session]);
 
@@ -100,18 +113,21 @@ export default function Profile() {
   };
 
   const handleCancel = () => {
-    // Reset form data to original session data
-    if (session?.user) {
-      setProfileData({
-        name: session.user?.name || "",
-        email: session.user?.email || "",
-        phone: (session.user as any)?.phone || "",
-        address: (session.user as any)?.address || "",
-        bio: (session.user as any)?.bio || "",
-        dateOfBirth: (session.user as any)?.dateOfBirth || "",
-      });
+    const hasChanged =
+      JSON.stringify(profileData) !== JSON.stringify(initialProfileData);
+
+    if (hasChanged) {
+      setIsCancelAlertOpen(true);
+    } else {
+      setIsEditing(false);
     }
+  };
+
+  const handleConfirmCancel = () => {
+    // Reset form data to original session data
+    setProfileData(initialProfileData);
     setIsEditing(false);
+    setIsCancelAlertOpen(false);
   };
 
   // Show loading state while checking authentication
@@ -387,6 +403,23 @@ export default function Profile() {
           </div>
         </div>
       </div>
+      <AlertDialog open={isCancelAlertOpen} onOpenChange={setIsCancelAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You have unsaved changes. If you cancel now, your changes will be
+              lost.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Stay</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmCancel}>
+              Discard Changes
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
