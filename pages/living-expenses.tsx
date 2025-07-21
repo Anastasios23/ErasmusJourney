@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 
 import Head from "next/head";
@@ -34,6 +34,7 @@ import {
   TrendingDown,
   Lightbulb,
 } from "lucide-react";
+import { useNotifications } from "../src/hooks/useNotifications";
 
 interface ExpenseCategory {
   groceries: string;
@@ -47,6 +48,7 @@ interface ExpenseCategory {
 export default function LivingExpenses() {
   const { data: session } = useSession();
   const router = useRouter();
+  const { addNotification } = useNotifications();
 
   // Authentication temporarily disabled - all users can access
 
@@ -76,8 +78,6 @@ export default function LivingExpenses() {
     otherExpenses: "",
   });
 
-  const router = useRouter();
-
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -105,6 +105,16 @@ export default function LivingExpenses() {
     toast.success(
       "🎉 Thank you! Your living expenses data has been saved and will help future students plan their budgets.",
     );
+
+    // Add a persistent notification
+    addNotification({
+      type: "success",
+      title: "Submission Received",
+      message: "Your living expenses information was saved.",
+      read: false,
+      actionUrl: "/dashboard",
+      actionLabel: "View Dashboard",
+    });
 
     // Navigate after a brief delay to show the success message
     setTimeout(() => {
