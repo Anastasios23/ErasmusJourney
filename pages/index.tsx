@@ -255,7 +255,7 @@ export default function HomePage({
               </p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {latestStories.map((story) => (
+              {latestStories?.map((story) => (
                 <Link key={story.id} href={`/stories/${story.id}`}>
                   <Card className="overflow-hidden h-full flex flex-col group hover:shadow-xl transition-shadow duration-300">
                     <CardHeader className="p-0">
