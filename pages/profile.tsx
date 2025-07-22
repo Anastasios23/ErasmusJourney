@@ -56,6 +56,13 @@ export default function Profile() {
     dateOfBirth: "",
   });
 
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login?callbackUrl=/profile");
+    }
+  }, [status, router]);
+
   const [profileData, setProfileData] = useState({
     name: "",
     email: "",
@@ -68,16 +75,24 @@ export default function Profile() {
   // Initialize form with session data
   useEffect(() => {
     if (session?.user) {
+<<<<<<< HEAD
+      setProfileData({
+=======
       const initialData = {
+>>>>>>> origin/main
         name: session.user?.name || "",
         email: session.user?.email || "",
         phone: (session.user as any)?.phone || "",
         address: (session.user as any)?.address || "",
         bio: (session.user as any)?.bio || "",
         dateOfBirth: (session.user as any)?.dateOfBirth || "",
+<<<<<<< HEAD
+      });
+=======
       };
       setProfileData(initialData);
       setInitialProfileData(initialData);
+>>>>>>> origin/main
     }
   }, [session]);
 
@@ -113,6 +128,22 @@ export default function Profile() {
   };
 
   const handleCancel = () => {
+<<<<<<< HEAD
+    // Reset form data to original session data
+    if (session?.user) {
+      setProfileData({
+        name: session.user?.name || "",
+        email: session.user?.email || "",
+        phone: (session.user as any)?.phone || "",
+        address: (session.user as any)?.address || "",
+        bio: (session.user as any)?.bio || "",
+        dateOfBirth: (session.user as any)?.dateOfBirth || "",
+      });
+    }
+    setIsEditing(false);
+  };
+
+=======
     const hasChanged =
       JSON.stringify(profileData) !== JSON.stringify(initialProfileData);
 
@@ -130,6 +161,7 @@ export default function Profile() {
     setIsCancelAlertOpen(false);
   };
 
+>>>>>>> origin/main
   // Show loading state while checking authentication
   if (status === "loading") {
     return (

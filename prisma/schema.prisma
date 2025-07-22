@@ -48,11 +48,18 @@ model VerificationToken {
 
 model User {
   id              String           @id @default(cuid())
+<<<<<<< HEAD
+  email           String           @unique
+  firstName       String
+  lastName        String
+  password        String
+=======
   name            String?          // Use a single, optional name field for compatibility
   email           String           @unique
   emailVerified   DateTime?
   image           String?
   password        String?          // Optional for OAuth users
+>>>>>>> origin/main
   role            String           @default("USER")
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
@@ -60,9 +67,12 @@ model User {
   nationality     String?
   homeCity        String?
   homeCountry     String?
+<<<<<<< HEAD
+=======
   
   accounts        Account[]
   sessions        Session[]
+>>>>>>> origin/main
   applications    Application[]
   formSubmissions FormSubmission[]
   stories         Story[]

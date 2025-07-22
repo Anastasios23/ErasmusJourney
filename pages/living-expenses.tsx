@@ -106,6 +106,8 @@ export default function LivingExpenses() {
       "🎉 Thank you! Your living expenses data has been saved and will help future students plan their budgets.",
     );
 
+<<<<<<< HEAD
+=======
     // Add a persistent notification
     addNotification({
       type: "success",
@@ -116,6 +118,7 @@ export default function LivingExpenses() {
       actionLabel: "View Dashboard",
     });
 
+>>>>>>> origin/main
     // Navigate after a brief delay to show the success message
     setTimeout(() => {
       router.push("/help-future-students");

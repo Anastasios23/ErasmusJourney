@@ -2,7 +2,7 @@ import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-import { prisma } from "../lib/prisma";
+import prisma from "../lib/prisma";
 import Header from "../components/Header";
 import TeaserGallery from "../components/TeaserGallery";
 import { Button } from "../src/components/ui/button";

@@ -2,9 +2,14 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
 import { prisma } from "../../../lib/prisma";
+<<<<<<< HEAD
+
+const typeMapping: Record<string, string> = {
+=======
 import { FormType, SubmissionStatus } from "@prisma/client";
 
 const typeMapping: Record<string, FormType> = {
+>>>>>>> origin/main
   "basic-info": "BASIC_INFO",
   "course-matching": "COURSE_MATCHING",
   accommodation: "ACCOMMODATION",

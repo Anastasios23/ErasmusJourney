@@ -1,6 +1,15 @@
+<<<<<<< HEAD
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { signIn, useSession } from "next-auth/react";
+import Head from "next/head";
+=======
 import { useState, useEffect, FormEvent } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
+>>>>>>> origin/main
 import Link from "next/link";
 import Head from "next/head";
 import { Button } from "../src/components/ui/button";
@@ -14,6 +23,17 @@ import {
   CardHeader,
   CardTitle,
 } from "../src/components/ui/card";
+<<<<<<< HEAD
+import { Alert, AlertDescription } from "../src/components/ui/alert";
+import { Checkbox } from "../src/components/ui/checkbox";
+import { Loader2, Eye, EyeOff, Mail, CheckCircle } from "lucide-react";
+import PasswordStrength from "../src/components/PasswordStrength";
+
+export default function RegisterPage() {
+  const router = useRouter();
+  const { data: session, status } = useSession();
+
+=======
 import { Checkbox } from "../src/components/ui/checkbox";
 import {
   Alert,
@@ -60,6 +80,7 @@ export default function Register() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
+>>>>>>> origin/main
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -76,6 +97,60 @@ export default function Register() {
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [emailVerificationSent, setEmailVerificationSent] = useState(false);
+<<<<<<< HEAD
+
+  useEffect(() => {
+    // Redirect if already authenticated
+    if (status === "authenticated" && session) {
+      router.push("/dashboard");
+    }
+  }, [session, status, router]);
+
+  // Field validation functions
+  const validateField = (name: string, value: string) => {
+    switch (name) {
+      case "firstName":
+        return !value ? "First name is required" : "";
+      case "lastName":
+        return !value ? "Last name is required" : "";
+      case "email":
+        if (!value) return "Email is required";
+        if (!value.includes("@")) return "Please enter a valid email address";
+        return "";
+      case "password":
+        if (!value) return "Password is required";
+        if (value.length < 8) return "Password must be at least 8 characters";
+        if (!/(?=.*[a-z])/.test(value))
+          return "Password must contain a lowercase letter";
+        if (!/(?=.*[A-Z])/.test(value))
+          return "Password must contain an uppercase letter";
+        if (!/(?=.*\d)/.test(value)) return "Password must contain a number";
+        return "";
+      case "confirmPassword":
+        if (!value) return "Please confirm your password";
+        if (value !== formData.password) return "Passwords do not match";
+        return "";
+      default:
+        return "";
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    // Real-time validation
+    const fieldError = validateField(name, value);
+    setFieldErrors((prev) => ({ ...prev, [name]: fieldError }));
+
+    // Also validate confirm password when password changes
+    if (name === "password" && formData.confirmPassword) {
+      const confirmError = validateField(
+        "confirmPassword",
+        formData.confirmPassword,
+      );
+      setFieldErrors((prev) => ({ ...prev, confirmPassword: confirmError }));
+=======
 
   useEffect(() => {
     // Redirect if already authenticated
@@ -99,16 +174,60 @@ export default function Register() {
           setPasswordStrength(100 - score);
         }
       }
+>>>>>>> origin/main
     }
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
+<<<<<<< HEAD
+    setSuccessMessage("");
+
+    // Validate all fields
+    const errors: Record<string, string> = {};
+    Object.keys(formData).forEach((key) => {
+      const error = validateField(key, formData[key as keyof typeof formData]);
+      if (error) errors[key] = error;
+    });
+
+    // Check for validation errors
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      setError("Please fix the errors below and try again.");
+      return;
+    }
+
+    // Check password strength
+    if (passwordStrength < 60) {
+      setError("Please choose a stronger password.");
+      return;
+    }
+
+    // Check terms agreement
+    if (!agreedToTerms) {
+      setError("Please agree to the Terms of Service and Privacy Policy.");
+      return;
+    }
+
+=======
     setFieldErrors({});
+>>>>>>> origin/main
     setIsLoading(true);
 
     try {
+<<<<<<< HEAD
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", // Include cookies for session handling
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+        }),
+=======
       registrationSchema.parse({ ...formData, agreedToTerms });
 
       const result = await registerUser({
@@ -116,6 +235,7 @@ export default function Register() {
         lastName: formData.lastName,
         email: formData.email,
         password: formData.password,
+>>>>>>> origin/main
       });
 
       if (result.success) {
@@ -124,6 +244,32 @@ export default function Register() {
       } else {
         setError(result.message || "An unknown error occurred.");
       }
+<<<<<<< HEAD
+
+      // Show success message and send verification email
+      setSuccessMessage(
+        "Account created successfully! Please check your email for verification.",
+      );
+
+      // Send verification email
+      try {
+        await fetch("/api/auth/verify-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: formData.email }),
+        });
+        setEmailVerificationSent(true);
+      } catch (err) {
+        console.warn("Could not send verification email:", err);
+      }
+
+      setTimeout(() => {
+        router.push("/login?message=account_created");
+      }, 3000);
+    } catch (err) {
+      console.error("Registration error:", err);
+      setError("An unexpected error occurred. Please try again.");
+=======
     } catch (err: any) {
       if (err instanceof ZodError) {
         const errors: Record<string, string> = {};
@@ -138,6 +284,7 @@ export default function Register() {
         setError(errorInfo.message);
       }
     } finally {
+>>>>>>> origin/main
       setIsLoading(false);
     }
   };
@@ -165,6 +312,62 @@ export default function Register() {
     );
   }
 
+<<<<<<< HEAD
+  // Show already logged in message if authenticated
+  if (status === "authenticated" && session) {
+    return (
+      <>
+        <Head>
+          <title>Already Logged In - Erasmus Journey Platform</title>
+        </Head>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
+          <div className="w-full max-w-md space-y-6 text-center">
+            <Card className="w-full">
+              <CardContent className="p-6">
+                <div className="text-center space-y-4">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                    <svg
+                      className="w-8 h-8 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    You're already registered!
+                  </h2>
+                  <p className="text-gray-600">
+                    Welcome back, {session.user?.name || session.user?.email}
+                  </p>
+                  <div className="space-y-2 pt-4">
+                    <Button
+                      onClick={() => router.push("/dashboard")}
+                      className="w-full"
+                    >
+                      Go to Dashboard
+                    </Button>
+                    <Button
+                      onClick={() => router.push("/")}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      Go to Home
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </>
+=======
   if (emailVerificationSent) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
@@ -204,6 +407,7 @@ export default function Register() {
           </CardFooter>
         </Card>
       </div>
+>>>>>>> origin/main
     );
   }
 
@@ -216,6 +420,95 @@ export default function Register() {
           content="Create your account to start your Erasmus journey."
         />
       </Head>
+<<<<<<< HEAD
+
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
+        <div className="w-full max-w-md space-y-4">
+          {/* Back Button */}
+          <div className="flex justify-start">
+            <BackButton fallbackUrl="/">← Back to Home</BackButton>
+          </div>
+          <Card className="w-full">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl font-bold">
+                Join Erasmus Journey
+              </CardTitle>
+              <CardDescription>
+                Create your account to start your exchange journey
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+
+                {successMessage && (
+                  <Alert
+                    variant="default"
+                    className="border-green-200 bg-green-50"
+                  >
+                    <CheckCircle className="h-4 w-4" />
+                    <AlertDescription className="text-green-800">
+                      {successMessage}
+                      {emailVerificationSent && (
+                        <div className="mt-2 text-sm">
+                          <div className="flex items-center space-x-1">
+                            <Mail className="h-3 w-3" />
+                            <span>Verification email sent!</span>
+                          </div>
+                        </div>
+                      )}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input
+                      id="firstName"
+                      name="firstName"
+                      type="text"
+                      placeholder="John"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      autoComplete="given-name"
+                      required
+                      disabled={isLoading}
+                      className={fieldErrors.firstName ? "border-red-500" : ""}
+                    />
+                    {fieldErrors.firstName && (
+                      <p className="text-sm text-red-600">
+                        {fieldErrors.firstName}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input
+                      id="lastName"
+                      name="lastName"
+                      type="text"
+                      placeholder="Doe"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      autoComplete="family-name"
+                      required
+                      disabled={isLoading}
+                      className={fieldErrors.lastName ? "border-red-500" : ""}
+                    />
+                    {fieldErrors.lastName && (
+                      <p className="text-sm text-red-600">
+                        {fieldErrors.lastName}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+=======
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
         <Card className="w-full max-w-md shadow-lg">
           <CardHeader>
@@ -243,9 +536,151 @@ export default function Register() {
                 </Alert>
               )}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+>>>>>>> origin/main
                 <div className="space-y-2">
                   <Label htmlFor="firstName">First Name</Label>
                   <Input
+<<<<<<< HEAD
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="john.doe@example.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    autoComplete="email"
+                    required
+                    disabled={isLoading}
+                    className={fieldErrors.email ? "border-red-500" : ""}
+                  />
+                  {fieldErrors.email && (
+                    <p className="text-sm text-red-600">{fieldErrors.email}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Create a strong password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      autoComplete="new-password"
+                      required
+                      disabled={isLoading}
+                      className={`pr-10 ${fieldErrors.password ? "border-red-500" : ""}`}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isLoading}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-gray-400" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-gray-400" />
+                      )}
+                    </Button>
+                  </div>
+                  {fieldErrors.password && (
+                    <p className="text-sm text-red-600">
+                      {fieldErrors.password}
+                    </p>
+                  )}
+                  <PasswordStrength
+                    password={formData.password}
+                    onStrengthChange={setPasswordStrength}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirm your password"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      autoComplete="new-password"
+                      required
+                      disabled={isLoading}
+                      className={`pr-10 ${
+                        fieldErrors.confirmPassword ? "border-red-500" : ""
+                      }`}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      disabled={isLoading}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-4 w-4 text-gray-400" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-gray-400" />
+                      )}
+                    </Button>
+                  </div>
+                  {fieldErrors.confirmPassword && (
+                    <p className="text-sm text-red-600">
+                      {fieldErrors.confirmPassword}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="terms"
+                      checked={agreedToTerms}
+                      onCheckedChange={setAgreedToTerms}
+                      disabled={isLoading}
+                    />
+                    <Label htmlFor="terms" className="text-sm text-gray-600">
+                      I agree to the{" "}
+                      <Link
+                        href="/terms"
+                        className="text-blue-600 hover:underline"
+                      >
+                        Terms of Service
+                      </Link>{" "}
+                      and{" "}
+                      <Link
+                        href="/privacy"
+                        className="text-blue-600 hover:underline"
+                      >
+                        Privacy Policy
+                      </Link>
+                    </Label>
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={
+                    isLoading || passwordStrength < 60 || !agreedToTerms
+                  }
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating account...
+                    </>
+                  ) : (
+                    "Create Account"
+=======
                     id="firstName"
                     type="text"
                     placeholder="John"
@@ -258,6 +693,7 @@ export default function Register() {
                     <p className="text-sm text-red-500">
                       {fieldErrors.firstName}
                     </p>
+>>>>>>> origin/main
                   )}
                 </div>
                 <div className="space-y-2">
