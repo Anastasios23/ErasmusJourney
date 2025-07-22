@@ -38,7 +38,10 @@ export default async function handler(
       return {
         id: submission.id,
         userId: submission.userId,
-        name: [submission.user.firstName, submission.user.lastName].filter(Boolean).join(" ") || "Anonymous Mentor",
+        name:
+          [submission.user.firstName, submission.user.lastName]
+            .filter(Boolean)
+            .join(" ") || "Anonymous Mentor",
         email: submission.user.email,
         image: submission.user.image,
         tagline: data.funFact || "Eager to help the next generation!",
