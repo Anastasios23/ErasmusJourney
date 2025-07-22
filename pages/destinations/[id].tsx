@@ -127,11 +127,12 @@ export default function DestinationDetailPage() {
   const { data: destination, isLoading, error } = useDestination(id as string);
   const { data: averagesData, isLoading: averagesLoading } =
     useDestinationAverages(id as string);
-  const { content: userGeneratedContent } = useGeneratedContent();
+  const { content } = useGeneratedContent();
+  const userGeneratedContent = Array.isArray(content) ? content : [];
 
   // Filter user content relevant to this destination
   const relevantUserContent =
-    userGeneratedContent?.filter(
+    userGeneratedContent.filter(
       (content: any) =>
         content.data?.city?.toLowerCase() ===
           destination?.city?.toLowerCase() ||
