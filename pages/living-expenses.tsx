@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -9,13 +8,6 @@ import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
 import { Label } from "../src/components/ui/label";
 import { Textarea } from "../src/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../src/components/ui/select";
 import {
   Card,
   CardContent,
@@ -49,8 +41,6 @@ export default function LivingExpenses() {
   const { data: session } = useSession();
   const router = useRouter();
   const { addNotification } = useNotifications();
-
-  // Authentication temporarily disabled - all users can access
 
   const [formData, setFormData] = useState({
     spendingHabit: "",
@@ -101,14 +91,10 @@ export default function LivingExpenses() {
     e.preventDefault();
     console.log("Living Expenses Form submitted:", { formData, expenses });
 
-    // Show success message
     toast.success(
       "🎉 Thank you! Your living expenses data has been saved and will help future students plan their budgets.",
     );
 
-<<<<<<< HEAD
-=======
-    // Add a persistent notification
     addNotification({
       type: "success",
       title: "Submission Received",
@@ -118,8 +104,6 @@ export default function LivingExpenses() {
       actionLabel: "View Dashboard",
     });
 
->>>>>>> origin/main
-    // Navigate after a brief delay to show the success message
     setTimeout(() => {
       router.push("/help-future-students");
     }, 2000);
@@ -177,7 +161,6 @@ export default function LivingExpenses() {
       <div className="min-h-screen bg-gray-50">
         <Header />
 
-        {/* Progress Header */}
         <div className="bg-white border-b">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between">
@@ -205,7 +188,6 @@ export default function LivingExpenses() {
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Monthly Expenses Breakdown */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
@@ -265,7 +247,6 @@ export default function LivingExpenses() {
               </CardContent>
             </Card>
 
-            {/* Income and Financial Overview */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-gray-900">
@@ -307,7 +288,6 @@ export default function LivingExpenses() {
               </CardContent>
             </Card>
 
-            {/* Spending Habits */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
@@ -355,7 +335,6 @@ export default function LivingExpenses() {
               </CardContent>
             </Card>
 
-            {/* Budget Tips and Recommendations */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
@@ -458,7 +437,6 @@ export default function LivingExpenses() {
               </CardContent>
             </Card>
 
-            {/* Budget Summary */}
             {getTotalExpenses() > 0 && (
               <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
                 <CardHeader>
@@ -507,7 +485,6 @@ export default function LivingExpenses() {
               </Card>
             )}
 
-            {/* Data Collection Notice */}
             <div className="bg-blue-50 p-4 rounded-lg mt-6">
               <p className="text-sm text-gray-700">
                 <strong>Note:</strong> Your expense data will be used to help
@@ -517,7 +494,6 @@ export default function LivingExpenses() {
               </p>
             </div>
 
-            {/* Navigation */}
             <div className="flex justify-between items-center pt-8">
               <Link href="/accommodation">
                 <Button variant="outline" className="flex items-center gap-2">
