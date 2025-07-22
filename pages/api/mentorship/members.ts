@@ -43,7 +43,9 @@ export default async function handler(
             .join(" ") || "Anonymous Mentor",
         email: submission.user.email,
         image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
-          [submission.user.firstName, submission.user.lastName].filter(Boolean).join(" ") || "Anonymous"
+          [submission.user.firstName, submission.user.lastName]
+            .filter(Boolean)
+            .join(" ") || "Anonymous",
         )}`,
         tagline: data.funFact || "Eager to help the next generation!",
         specializations: data.specializations || [],
