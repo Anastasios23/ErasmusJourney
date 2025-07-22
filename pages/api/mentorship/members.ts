@@ -23,7 +23,6 @@ export default async function handler(
             firstName: true,
             lastName: true,
             email: true,
-            image: true,
           },
         },
       },
