@@ -10,119 +10,46 @@ export default async function handler(
   }
 
   try {
-    // Fetch all mentorship submissions from database - use EXPERIENCE type for now
-    const allSubmissions = await prisma.formSubmission.findMany({
+    // Fetch all mentorship submissions from database
+    const submissions = await prisma.formSubmission.findMany({
       where: {
-        type: "EXPERIENCE",
+        type: "MENTORSHIP",
         status: "PUBLISHED", // Only show public mentors
       },
       include: {
         user: {
           select: {
-            firstName: true,
-            lastName: true,
+            id: true,
+            name: true, // Corrected from firstName/lastName
             email: true,
+            image: true,
           },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
-    // Filter to only mentorship submissions
-    const mentorshipSubmissions = allSubmissions.filter((submission) => {
+    // Transform submissions into a public mentor format
+    const mentors = submissions.map((submission) => {
       const data = submission.data as any;
-      return data.submissionType === "mentorship";
-    });
-
-    // Transform to public mentor format, removing sensitive data
-    const publicMentors = mentorshipSubmissions.map((submission) => {
-      const data = submission.data as any;
-
-      // Only include mentors who want to help and have public profiles
-      if (data.wantToHelp !== "yes" || data.publicProfile !== "yes") {
-        return null;
-      }
-
-      // Remove any sensitive information
-      const {
-        phoneNumber, // Keep private unless specifically allowed
-        personalWebsite,
-        ...safeContactData
-      } = data;
-
-      const contactInfo: any = {
-        email: data.allowPublicContact === "yes" ? data.email : null,
-      };
-
-      // Add social media links if provided
-      if (data.instagramUsername)
-        contactInfo.instagram = data.instagramUsername;
-      if (data.facebookLink) contactInfo.facebook = data.facebookLink;
-      if (data.linkedinProfile) contactInfo.linkedin = data.linkedinProfile;
-      if (data.personalWebsite) contactInfo.website = data.personalWebsite;
-
-      // Add phone if they allow public contact
-      if (data.allowPublicContact === "yes" && data.phoneNumber) {
-        contactInfo.phone = data.phoneNumber;
-      }
-
       return {
         id: submission.id,
-        name:
-          data.nickname ||
-          [submission.user?.firstName, submission.user?.lastName]
-            .filter(Boolean)
-            .join(" ") ||
-          "Anonymous Mentor",
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
-          submission.id,
-        )}`,
-        bio:
-          data.additionalAdvice || "Experienced Erasmus student ready to help!",
-        funFact: data.funFact || null,
-
-        // Academic information
-        universityInCyprus: data.universityInCyprus || "University in Cyprus",
-        studyProgram:
-          data.studyProgram || data.specializations?.[0] || "Student",
-        levelOfStudy: data.levelOfStudy || null,
-
-        // Host experience information - extract from form data or user profile
-        hostUniversity: data.hostUniversity || "Various Universities",
-        hostCity: data.hostCity || "Multiple Cities",
-        hostCountry: data.hostCountry || "Europe",
-        exchangePeriod: data.exchangePeriod || "Recent",
-
-        // Mentor specializations
+        userId: submission.userId,
+        name: submission.user.name || "Anonymous Mentor",
+        email: submission.user.email,
+        image: submission.user.image,
+        tagline: data.funFact || "Eager to help the next generation!",
         specializations: data.specializations || [],
+        languages: data.languagesSpoken || [],
         helpTopics: data.helpTopics || [],
-        languagesSpoken: data.languagesSpoken || ["English"],
-
-        // Availability
-        availabilityLevel: data.availabilityLevel || "moderate",
-        responseTime: data.responseTime || "within-week",
-        preferredContactTime: data.preferredContactTime || "flexible",
-
-        // Contact information (filtered)
-        contactInfo,
-        contactMethod: data.contactMethod || "email",
-
-        // Mentor experience
-        mentorshipExperience: data.mentorshipExperience || null,
-
-        // Metadata
-        createdAt: submission.createdAt.toISOString(),
-        updatedAt: submission.updatedAt.toISOString(),
+        availability: data.availabilityLevel || "Medium",
+        joinedAt: submission.createdAt.toISOString(),
       };
     });
 
-    // Filter out null entries (mentors who don't want public profiles)
-    const activeMentors = publicMentors.filter((mentor) => mentor !== null);
-
-    res.status(200).json({
-      mentors: activeMentors,
-      total: activeMentors.length,
-    });
+    res.status(200).json({ mentors });
   } catch (error) {
     console.error("Error fetching mentorship members:", error);
     res.status(500).json({ error: "Failed to fetch mentorship members" });

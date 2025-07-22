@@ -1,23 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
-import { isAdmin } from "../../../lib/auth";
+import { getServerAuthSession, isAdmin } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
-
-const typeMapping: Record<string, string> = {
-  "basic-info": "BASIC_INFO",
-  "course-matching": "COURSE_MATCHING",
-  accommodation: "ACCOMMODATION",
-  story: "STORY",
-  experience: "EXPERIENCE",
-};
-
-const statusMapping: Record<string, string> = {
-  draft: "DRAFT",
-  submitted: "SUBMITTED",
-  published: "PUBLISHED",
-  rejected: "REJECTED",
-};
 
 export default async function handler(
   req: NextApiRequest,
@@ -26,12 +9,6 @@ export default async function handler(
   if (req.method !== "GET") {
     return res.status(405).json({ message: "Method not allowed" });
   }
-
-<<<<<<< HEAD
-
-=======
-  
->>>>>>> origin/main
 
   const session = await getServerAuthSession(req, res);
   if (!session?.user) {
@@ -60,13 +37,13 @@ export default async function handler(
     }
 
     // Filter by type
-    if (type && type !== "all" && typeMapping[type as string]) {
-      whereClause.type = typeMapping[type as string];
+    if (type && type !== "all") {
+      whereClause.type = (type as string).toUpperCase().replace("-", "_");
     }
 
     // Filter by status
-    if (status && status !== "all" && statusMapping[status as string]) {
-      whereClause.status = statusMapping[status as string];
+    if (status && status !== "all") {
+      whereClause.status = (status as string).toUpperCase();
     }
 
     // Fetch submissions from database
@@ -76,8 +53,7 @@ export default async function handler(
         user: {
           select: {
             id: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             email: true,
           },
         },
