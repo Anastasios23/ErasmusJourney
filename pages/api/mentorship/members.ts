@@ -20,7 +20,8 @@ export default async function handler(
         user: {
           select: {
             id: true,
-            name: true, // Corrected from firstName/lastName
+            firstName: true,
+            lastName: true,
             email: true,
             image: true,
           },
@@ -37,7 +38,10 @@ export default async function handler(
       return {
         id: submission.id,
         userId: submission.userId,
-        name: submission.user.name || "Anonymous Mentor",
+        name:
+          [submission.user.firstName, submission.user.lastName]
+            .filter(Boolean)
+            .join(" ") || "Anonymous Mentor",
         email: submission.user.email,
         image: submission.user.image,
         tagline: data.funFact || "Eager to help the next generation!",
