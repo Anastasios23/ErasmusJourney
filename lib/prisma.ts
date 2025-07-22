@@ -1,23 +1,21 @@
 // lib/prisma.ts
 import { PrismaClient } from "@prisma/client";
 
-// Declare a global variable to hold the Prisma client.
-// This is necessary because in a serverless environment (like Next.js API routes),
-// a new instance of the application is created for each request. We want to
-// reuse the same Prisma client instance across requests to avoid exhausting
-// the database connection limit.
-declare global {
-  var prisma: PrismaClient | undefined;
+let prisma: PrismaClient;
+
+// This logic ensures that in a development environment, where the module is reloaded on every change,
+// a new PrismaClient is not created on every reload. Instead, the same instance is reused.
+if (process.env.NODE_ENV === "production") {
+  prisma = new PrismaClient();
+} else {
+  // Ensure the prisma instance is re-used during hot-reloading
+  // @ts-ignore
+  if (!global.prisma) {
+    // @ts-ignore
+    global.prisma = new PrismaClient();
+  }
+  // @ts-ignore
+  prisma = global.prisma;
 }
 
-// Create a new Prisma client instance if one doesn't already exist in the
-// global scope. Otherwise, use the existing one.
-const prisma = global.prisma || new PrismaClient();
-
-// In a development environment, assign the Prisma client to the global scope
-// so that it can be reused on subsequent hot reloads.
-if (process.env.NODE_ENV === "development") {
-  global.prisma = prisma;
-}
-
-export default prisma;
+export { prisma };

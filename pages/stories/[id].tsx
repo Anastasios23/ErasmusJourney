@@ -1,157 +1,135 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import Header from "../../components/Header";
-import { useStory } from "../../src/hooks/useStories";
-import { Button } from "../../src/components/ui/button";
-import { Badge } from "../../src/components/ui/badge";
-import { Card, CardContent } from "../../src/components/ui/card";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "../../src/components/ui/avatar";
-import { Skeleton } from "../../src/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import Header from "@/components/Header";
 import {
   ArrowLeft,
-  Heart,
-  Eye,
   Calendar,
-  Share2,
-  MessageSquare,
-  Flag,
-  Bookmark,
-  MapPin,
-  GraduationCap,
   Clock,
+  Euro,
+  Globe,
+  GraduationCap,
+  Heart,
+  Home,
+  MapPin,
+  MessageSquare,
+  Share2,
+  Star,
+  ThumbsUp,
+  User,
 } from "lucide-react";
+import { toast } from "sonner";
 
-export default function StoryDetailPage() {
-  const router = useRouter();
-  const { id } = router.query;
-  const [isLiked, setIsLiked] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
+// This is a placeholder type. In a real app, this would be generated from your API/schema
+type Story = {
+  id: string;
+  title: string;
+  content: string;
+  imageUrl: string | null;
+  photos: { url: string; caption: string }[];
+  location: {
+    city: string;
+    country: string;
+    university: string;
+  };
+  author: {
+    name: string;
+    university: string;
+  };
+  period: string;
+  tags: string[];
+  likes: number;
+  views: number;
+  createdAt: string;
+  updatedAt: string;
+};
 
-  const { story, loading, error } = useStory(id as string);
-
-  const handleShare = async () => {
-    if (navigator.share && story) {
-      try {
-        await navigator.share({
-          title: story.title,
-          text: story.excerpt,
-          url: window.location.href,
-        });
-      } catch (err) {
-        console.log("Error sharing:", err);
+export const getServerSideProps: GetServerSideProps<{
+  story: Story | null;
+}> = async (context) => {
+  const { id } = context.params!;
+  try {
+    const res = await fetch(`http://localhost:3000/api/stories/${id}`);
+    if (!res.ok) {
+      // Return a 404-like state if the story is not found
+      if (res.status === 404) {
+        return { props: { story: null } };
       }
-    } else if (story) {
+      throw new Error(`Failed to fetch story with status: ${res.status}`);
+    }
+    const story = await res.json();
+    return { props: { story } };
+  } catch (error) {
+    console.error(`Error fetching story ${id}:`, error);
+    // Return a server error state
+    return { props: { story: null } };
+  }
+};
+
+export default function StoryDetail({
+  story,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const router = useRouter();
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator
+        .share({
+          title: story?.title,
+          text: `Check out this Erasmus story from ${story?.location.city}!`,
+          url: window.location.href,
+        })
+        .then(() => console.log("Successful share"))
+        .catch((error) => console.log("Error sharing", error));
+    } else {
       navigator.clipboard.writeText(window.location.href);
+      toast.success("Link copied to clipboard!");
     }
   };
 
-  const formatContent = (content: string) => {
-    return content.split("\n\n").map((paragraph, index) => (
-      <p key={index} className="mb-4 leading-relaxed">
-        {paragraph}
-      </p>
-    ));
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(story?.likes || 0);
+
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+    setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
+    toast.success(isLiked ? "Unliked!" : "You liked this story!");
   };
 
-  if (loading) {
-    return (
-      <>
-        <Head>
-          <title>Loading Story - Erasmus Journey Platform</title>
-        </Head>
-        <div className="min-h-screen bg-gray-50">
-          <Header />
-          <div className="pt-20 pb-16 px-4">
-            <div className="max-w-4xl mx-auto">
-              {/* Back Navigation Skeleton */}
-              <div className="mb-6">
-                <Skeleton className="h-10 w-32" />
-              </div>
-
-              {/* Article Skeleton */}
-              <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                {/* Hero Image Skeleton */}
-                <Skeleton className="aspect-video w-full" />
-
-                {/* Content Skeleton */}
-                <div className="p-8">
-                  {/* Meta Info Skeleton */}
-                  <div className="mb-6">
-                    <div className="flex flex-wrap items-center gap-2 mb-4">
-                      <Skeleton className="h-6 w-20" />
-                      <Skeleton className="h-6 w-16" />
-                      <Skeleton className="h-6 w-24" />
-                    </div>
-                    <div className="flex items-center gap-4 text-sm mb-4">
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-4 w-28" />
-                      <Skeleton className="h-4 w-20" />
-                      <Skeleton className="h-4 w-24" />
-                    </div>
-                  </div>
-
-                  {/* Title Skeleton */}
-                  <Skeleton className="h-10 w-full mb-6" />
-
-                  {/* Author Info Skeleton */}
-                  <div className="flex items-center justify-between mb-8 pb-6 border-b">
-                    <div className="flex items-center gap-4">
-                      <Skeleton className="h-16 w-16 rounded-full" />
-                      <div>
-                        <Skeleton className="h-6 w-32 mb-1" />
-                        <Skeleton className="h-4 w-48 mb-1" />
-                        <Skeleton className="h-4 w-40" />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Content Skeleton */}
-                  <div className="space-y-4 mb-8">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-5/6" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    );
+  if (router.isFallback) {
+    return <StorySkeleton />;
   }
 
-  if (error || !story) {
+  if (!story) {
     return (
       <>
         <Head>
-          <title>Story Not Found - Erasmus Journey Platform</title>
+          <title>Story Not Found</title>
         </Head>
         <div className="min-h-screen bg-gray-50">
           <Header />
-          <div className="pt-20 pb-16 px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-2xl font-bold text-gray-900 mb-4">
-                Story Not Found
-              </h1>
-              <p className="text-gray-600 mb-6">
-                The story you're looking for doesn't exist or has been removed.
-              </p>
-              <Link href="/student-stories">
-                <Button>
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Stories
-                </Button>
-              </Link>
-            </div>
+          <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] text-center px-4">
+            <h1 className="text-4xl font-bold text-gray-800 mb-4">
+              Story Not Found
+            </h1>
+            <p className="text-lg text-gray-600 mb-8">
+              Oops! We couldn't find the story you're looking for. It might have
+              been moved or deleted.
+            </p>
+            <Link href="/student-stories">
+              <Button>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to All Stories
+              </Button>
+            </Link>
           </div>
         </div>
       </>
@@ -161,272 +139,229 @@ export default function StoryDetailPage() {
   return (
     <>
       <Head>
-        <title>{story.title} - Erasmus Journey Platform</title>
-        <meta name="description" content={story.excerpt} />
-        <meta property="og:title" content={story.title} />
-        <meta property="og:description" content={story.excerpt} />
-        <meta property="og:image" content={story.imageUrl || ""} />
+        <title>{`${story.title} - Erasmus Story`}</title>
+        <meta
+          name="description"
+          content={`Read about an Erasmus experience in ${story.location.city}, ${story.location.country}.`}
+        />
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-white">
         <Header />
 
-        <div className="pt-20 pb-16 px-4">
-          <div className="max-w-4xl mx-auto">
-            {/* Back Navigation */}
-            <div className="mb-6">
-              <Button
-                variant="ghost"
-                onClick={() => router.back()}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Stories
-              </Button>
-            </div>
-
-            {/* Article Header */}
-            <article className="bg-white rounded-lg shadow-sm overflow-hidden">
-              {/* Hero Image */}
-              <div className="aspect-video overflow-hidden relative">
-                <Image
-                  src={
-                    story.imageUrl ||
-                    story.photos?.[0]?.image ||
-                    "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop"
-                  }
-                  alt={story.title}
-                  fill
-                  className="object-cover"
-                  sizes="100vw"
-                  priority
-                />
-              </div>
-
-              {/* Content */}
-              <div className="p-8">
-                {/* Meta Info */}
-                <div className="mb-6">
-                  <div className="flex flex-wrap items-center gap-2 mb-4">
-                    <Badge variant="secondary">
-                      {story.tags[0] || "Story"}
+        <main className="pt-20 pb-16">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <article>
+              {/* Header */}
+              <div className="mb-8">
+                <Button
+                  variant="outline"
+                  onClick={() => router.back()}
+                  className="mb-4"
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Stories
+                </Button>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {story.tags.map((tag) => (
+                    <Badge key={tag} variant="secondary">
+                      {tag}
                     </Badge>
-                    {story.featured && (
-                      <Badge className="bg-yellow-100 text-yellow-800">
-                        Featured
-                      </Badge>
-                    )}
-                    {story.tags.slice(1).map((tag, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      <span>
-                        {story.location.city || "City"},{" "}
-                        {story.location.country || "Country"}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <GraduationCap className="h-4 w-4" />
-                      <span>
-                        {story.location.university ||
-                          story.author.university ||
-                          "University"}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-4 w-4" />
-                      <span>{story.readingTime} min read</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      <span>
-                        {new Date(story.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-
-                {/* Title */}
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+                <h1 className="text-3xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4">
                   {story.title}
                 </h1>
-
-                {/* Author Info */}
-                <div className="flex items-center justify-between mb-8 pb-6 border-b">
-                  <div className="flex items-center gap-4">
-                    <Avatar className="h-16 w-16">
-                      <AvatarImage src={story.author.avatar} />
+                <div className="flex items-center space-x-6 text-sm text-gray-500">
+                  <div className="flex items-center space-x-2">
+                    <Avatar className="h-8 w-8">
                       <AvatarFallback>
                         {story.author.name
                           .split(" ")
                           .map((n) => n[0])
-                          .join("")
-                          .toUpperCase()}
+                          .join("")}
                       </AvatarFallback>
                     </Avatar>
-                    <div>
-                      <div className="font-semibold text-lg">
-                        {story.author.name}
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        {story.author.program} at {story.author.university}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {story.author.bio}
-                      </div>
-                    </div>
+                    <span>{story.author.name}</span>
                   </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setIsLiked(!isLiked)}
-                      className={isLiked ? "text-red-500 border-red-500" : ""}
-                    >
-                      <Heart
-                        className={`h-4 w-4 mr-1 ${isLiked ? "fill-current" : ""}`}
-                      />
-                      {story.likes + (isLiked ? 1 : 0)}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setIsBookmarked(!isBookmarked)}
-                      className={
-                        isBookmarked ? "text-blue-500 border-blue-500" : ""
-                      }
-                    >
-                      <Bookmark
-                        className={`h-4 w-4 ${isBookmarked ? "fill-current" : ""}`}
-                      />
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={handleShare}>
-                      <Share2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Story Content */}
-                <div className="prose prose-lg max-w-none mb-8">
-                  {formatContent(story.content)}
-                </div>
-
-                {/* Photos Section */}
-                {story.photos && story.photos.length > 0 && (
-                  <div className="mb-8">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">
-                      Photo Gallery
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {story.photos.map((photo, index) => (
-                        <div key={index} className="relative group">
-                          <div className="aspect-video overflow-hidden rounded-lg relative">
-                            <Image
-                              src={photo.image}
-                              alt={photo.caption || `Photo ${index + 1}`}
-                              fill
-                              className="object-cover group-hover:scale-105 transition-transform"
-                              sizes="(max-width: 768px) 100vw, 50vw"
-                            />
-                          </div>
-                          {photo.caption && (
-                            <div className="mt-2">
-                              <p className="text-sm font-medium text-gray-900">
-                                {photo.caption}
-                              </p>
-                              {photo.location && (
-                                <p className="text-xs text-gray-600 flex items-center gap-1">
-                                  <MapPin className="h-3 w-3" />
-                                  {photo.location}
-                                </p>
-                              )}
-                              {photo.description && (
-                                <p className="text-xs text-gray-500 mt-1">
-                                  {photo.description}
-                                </p>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Stats */}
-                <div className="flex items-center gap-6 text-sm text-gray-600 mb-8">
-                  <div className="flex items-center gap-1">
-                    <Heart className="h-4 w-4" />
-                    <span>{story.likes} likes</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Eye className="h-4 w-4" />
-                    <span>{story.views} views</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <MessageSquare className="h-4 w-4" />
-                    <span>{story.comments} comments</span>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center justify-between pt-6 border-t">
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsLiked(!isLiked)}
-                      className={isLiked ? "text-red-500 border-red-500" : ""}
-                    >
-                      <Heart
-                        className={`h-4 w-4 mr-2 ${isLiked ? "fill-current" : ""}`}
-                      />
-                      {isLiked ? "Liked" : "Like"}
-                    </Button>
-                    <Button variant="outline">
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      Comment
-                    </Button>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={handleShare}>
-                      <Share2 className="h-4 w-4 mr-1" />
-                      Share
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Flag className="h-4 w-4 mr-1" />
-                      Report
-                    </Button>
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="h-4 w-4" />
+                    <span>
+                      Published on{" "}
+                      {new Date(story.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </span>
                   </div>
                 </div>
               </div>
-            </article>
 
-            {/* CTA Section */}
-            <Card className="mt-12 bg-blue-50 border-blue-200">
-              <CardContent className="pt-8 pb-8 text-center">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  Share Your Erasmus Story
-                </h3>
-                <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                  Have an amazing experience to share? Help future students by
-                  sharing your insights, tips, and memorable moments.
-                </p>
-                <Link href="/photo-story">
-                  <Button size="lg">Share Your Story</Button>
-                </Link>
-              </CardContent>
-            </Card>
+              {/* Main Image */}
+              {story.imageUrl && (
+                <div className="mb-8 rounded-lg overflow-hidden aspect-video relative">
+                  <Image
+                    src={story.imageUrl}
+                    alt={story.title}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+              )}
+
+              {/* Story Stats */}
+              <div className="flex items-center justify-between py-4 border-t border-b">
+                <div className="flex items-center space-x-6">
+                  <div className="flex items-center space-x-2">
+                    <Home className="h-5 w-5 text-gray-500" />
+                    <span className="text-sm">
+                      Home: {story.author.university}
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <GraduationCap className="h-5 w-5 text-gray-500" />
+                    <span className="text-sm">
+                      Host: {story.location.university}
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <MapPin className="h-5 w-5 text-gray-500" />
+                    <span className="text-sm">
+                      {story.location.city}, {story.location.country}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleLike}
+                    className={`flex items-center space-x-2 ${
+                      isLiked ? "text-red-500" : ""
+                    }`}
+                  >
+                    <ThumbsUp
+                      className={`h-5 w-5 ${isLiked ? "fill-current" : ""}`}
+                    />
+                    <span>{likeCount}</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleShare}
+                    className="flex items-center space-x-2"
+                  >
+                    <Share2 className="h-5 w-5" />
+                    <span>Share</span>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Story Content */}
+              <div
+                className="prose prose-lg max-w-none mt-8"
+                dangerouslySetInnerHTML={{ __html: story.content }}
+              />
+
+              {/* Photo Gallery */}
+              {story.photos && story.photos.length > 0 && (
+                <div className="mt-12">
+                  <h2 className="text-2xl font-bold mb-4">Photo Gallery</h2>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {story.photos.map((photo, index) => (
+                      <div key={index} className="group relative">
+                        <div className="aspect-square w-full overflow-hidden rounded-lg">
+                          <Image
+                            src={photo.url}
+                            alt={photo.caption || `Photo ${index + 1}`}
+                            fill
+                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                        </div>
+                        {photo.caption && (
+                          <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-50 p-2 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            {photo.caption}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Author Bio */}
+              <div className="mt-12 pt-8 border-t">
+                <div className="flex items-center space-x-4">
+                  <Avatar className="h-16 w-16">
+                    <AvatarFallback>
+                      {story.author.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h3 className="text-lg font-semibold">
+                      About {story.author.name}
+                    </h3>
+                    <p className="text-gray-600">
+                      Studied at {story.author.university} and went on exchange
+                      to {story.location.university} during the {story.period}{" "}
+                      academic period.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                {/* CTA Section */}
+                <Card className="mt-12 bg-blue-50 border-blue-200">
+                  <CardContent className="pt-8 pb-8 text-center">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                      Share Your Erasmus Story
+                    </h3>
+                    <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+                      Have an amazing experience to share? Help future students
+                      by sharing your insights, tips, and memorable moments.
+                    </p>
+                    <Link href="/share-story">
+                      <Button size="lg">Share Your Story</Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              </div>
+            </article>
           </div>
-        </div>
+        </main>
       </div>
     </>
   );
 }
+
+const StorySkeleton = () => {
+  return (
+    <div className="min-h-screen bg-white">
+      <Header />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+        <Skeleton className="h-8 w-1/4 mb-4" />
+        <Skeleton className="h-12 w-3/4 mb-6" />
+        <div className="flex items-center space-x-4 mb-8">
+          <Skeleton className="h-10 w-10 rounded-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-4 w-48" />
+          </div>
+        </div>
+        <Skeleton className="h-96 w-full rounded-lg mb-8" />
+        <div className="space-y-4">
+          <Skeleton className="h-6 w-full" />
+          <Skeleton className="h-6 w-5/6" />
+          <Skeleton className="h-6 w-full" />
+          <Skeleton className="h-6 w-3/4" />
+        </div>
+      </div>
+    </div>
+  );
+};
