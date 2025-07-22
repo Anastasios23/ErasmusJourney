@@ -255,45 +255,65 @@ export default function HomePage({
               </p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {latestStories.map((story) => (
-                <Link key={story.id} href={`/stories/${story.id}`}>
-                  <Card className="overflow-hidden h-full flex flex-col group hover:shadow-xl transition-shadow duration-300">
-                    <CardHeader className="p-0">
-                      <div className="aspect-video relative">
-                        <Image
-                          src={
-                            story.imageUrl ||
-                            "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=240&fit=crop"
-                          }
-                          alt={story.title}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    </CardHeader>
-                    <CardContent className="p-6 flex-grow">
-                      <CardTitle className="text-lg font-semibold mb-2 group-hover:text-blue-600 transition-colors">
-                        {story.title}
-                      </CardTitle>
-                      <p className="text-sm text-gray-600 line-clamp-3">
-                        {story.excerpt}
-                      </p>
-                    </CardContent>
-                    <CardFooter className="p-6 bg-gray-50 flex justify-between items-center text-sm text-gray-500">
-                      <div>
-                        By{" "}
-                        <span className="font-medium text-gray-800">
-                          {story.author.name}
-                        </span>
-                      </div>
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
-                        <span>{story.likes}</span>
-                      </div>
-                    </CardFooter>
-                  </Card>
-                </Link>
-              ))}
+              {latestStories && latestStories.length > 0 ? (
+                latestStories.map((story) => (
+                  <Link key={story.id} href={`/stories/${story.id}`}>
+                    <Card className="overflow-hidden h-full flex flex-col group hover:shadow-xl transition-shadow duration-300">
+                      <CardHeader className="p-0">
+                        <div className="aspect-video relative">
+                          <Image
+                            src={
+                              story.imageUrl ||
+                              "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=240&fit=crop"
+                            }
+                            alt={story.title}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      </CardHeader>
+                      <CardContent className="p-6 flex-grow">
+                        <CardTitle className="text-lg font-semibold mb-2 group-hover:text-blue-600 transition-colors">
+                          {story.title}
+                        </CardTitle>
+                        <p className="text-sm text-gray-600 line-clamp-3">
+                          {story.excerpt}
+                        </p>
+                      </CardContent>
+                      <CardFooter className="p-6 bg-gray-50 flex justify-between items-center text-sm text-gray-500">
+                        <div>
+                          By{" "}
+                          <span className="font-medium text-gray-800">
+                            {story.author.name}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
+                          <span>{story.likes}</span>
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  </Link>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <BookOpen className="h-8 w-8 text-gray-400" />
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No stories yet
+                  </h3>
+                  <p className="text-gray-600 mb-4">
+                    Be the first to share your Erasmus experience!
+                  </p>
+                  <Link href="/student-stories">
+                    <Button variant="outline">
+                      Share Your Story
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
             <div className="text-center mt-12">
               <Link href="/student-stories">

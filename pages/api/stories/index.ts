@@ -69,7 +69,7 @@ export default async function handler(
           likes: 0, // Placeholder for future like system
           views: 0, // Placeholder for future view system
           createdAt: story.createdAt?.toISOString() || new Date().toISOString(),
-          updatedAt: story.updatedAt?.toISOString() || new date().toISOString(),
+          updatedAt: story.updatedAt?.toISOString() || new Date().toISOString(),
         };
       })
       .filter(Boolean); // Filter out any null entries from records with bad data

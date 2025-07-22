@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "dotenv -e .env.local.example -- next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "test": "vitest",
