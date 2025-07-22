@@ -2,14 +2,12 @@ import { useState, useMemo, useEffect } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { useDestinationSearch } from "../src/hooks/useDestinations";
 import { useRouter } from "next/router";
 import Fuse from "fuse.js";
 import { ERASMUS_DESTINATIONS } from "../src/data/destinations";
 import { Badge } from "../src/components/ui/badge";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
-import { Label } from "../src/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -23,22 +21,15 @@ import {
   CardHeader,
   CardTitle,
 } from "../src/components/ui/card";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "../src/components/ui/avatar";
 import Header from "../components/Header";
 import {
   MapPin,
   Star,
   Euro,
   Users,
-  Filter,
   Search,
   ArrowRight,
-  Globe,
-  Calendar,
+  FilterX,
 } from "lucide-react";
 import { DestinationSkeleton } from "../src/components/ui/destination-skeleton";
 
@@ -95,7 +86,6 @@ export default function Destinations() {
   const fuse = useMemo(() => new Fuse(destinations, fuseOptions), []);
 
   // Get unique values for filters
-  const regions = [...new Set(destinations.map((dest) => dest.region))].sort();
   const costLevels = ["low", "medium", "high"];
 
   // Filter destinations using Fuse.js and other filters
@@ -131,6 +121,11 @@ export default function Destinations() {
 
   const handleDestinationClick = (destinationId: string) => {
     router.push(`/destinations/${destinationId}`);
+  };
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedCostLevel("");
   };
 
   return (
@@ -192,13 +187,7 @@ export default function Destinations() {
 
                   {/* Clear Filters Button */}
                   {(searchTerm || selectedCostLevel) && (
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setSearchTerm("");
-                        setSelectedCostLevel("");
-                      }}
-                    >
+                    <Button variant="outline" onClick={clearFilters}>
                       Clear Filters
                     </Button>
                   )}
@@ -216,273 +205,171 @@ export default function Destinations() {
             </div>
 
             {/* Destinations Grid */}
-<<<<<<< HEAD
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredDestinations.map((destination) => (
-                <Card
-                  key={destination.id}
-                  className="hover:shadow-lg transition-shadow cursor-pointer"
-                  onClick={() => handleDestinationClick(destination.id)}
-                >
-                  <div className="aspect-video overflow-hidden rounded-t-lg relative">
-                    <Image
-                      src={destination.image}
-                      alt={`${destination.city}, ${destination.country} - Beautiful cityscape showing iconic landmarks and architecture perfect for Erasmus students`}
-                      fill
-                      className="object-cover hover:scale-105 transition-transform"
-                      priority={filteredDestinations.indexOf(destination) < 3}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    />
-                  </div>
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle className="text-xl">
-                          {destination.city}
-                        </CardTitle>
-                        <p className="text-gray-600 flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          {destination.country}
-                        </p>
-                      </div>
-                      <Badge
-                        className={getCostBadgeColor(destination.costLevel)}
-                      >
-                        {destination.costLevel} cost
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600 mb-4 line-clamp-3">
-                      {destination.description}
-                    </p>
-
-                    {/* Stats */}
-                    <div className="flex justify-between items-center mb-4">
-                      <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                        <span className="text-sm font-medium">
-                          {destination.rating}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Users className="h-4 w-4 text-blue-500" />
-                        <span className="text-sm">
-                          {destination.studentCount} students
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Euro className="h-4 w-4 text-green-500" />
-                        <span className="text-sm">
-                          €{destination.avgCostPerMonth}/mo
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Universities */}
-                    <div className="mb-4">
-                      <h4 className="text-sm font-medium text-gray-900 mb-2">
-                        Popular Universities:
-                      </h4>
-                      <div className="space-y-1">
-                        {destination.popularUniversities
-                          .slice(0, 2)
-                          .map((uni, index) => (
-                            <p key={index} className="text-xs text-gray-600">
-                              • {uni}
-                            </p>
-                          ))}
-                        {destination.popularUniversities.length > 2 && (
-                          <p className="text-xs text-blue-600">
-                            +{destination.popularUniversities.length - 2} more
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Highlights */}
-                    <div className="flex flex-wrap gap-1 mb-4">
-                      {destination.highlights
-                        .slice(0, 3)
-                        .map((highlight, index) => (
-                          <Badge
-                            key={index}
-                            variant="secondary"
-                            className="text-xs"
-                          >
-                            {highlight}
-                          </Badge>
-                        ))}
-                    </div>
-
-                    <Button className="w-full" variant="outline">
-                      Learn More
-                      <ArrowRight className="h-4 w-4 ml-2" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {filteredDestinations.length === 0 && (
-              <div className="text-center py-12">
-                <div className="text-gray-500 text-lg mb-4">
-                  No destinations found matching your criteria.
-                </div>
-                <p className="text-gray-400 mb-6">
-                  Try adjusting your search terms or filters to find more
-                  destinations.
-                </p>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setSearchTerm("");
-                    setSelectedCostLevel("");
-                  }}
-                >
-                  Clear All Filters
-                </Button>
-=======
             {isLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Array.from({ length: 6 }).map((_, index) => (
                   <DestinationSkeleton key={index} />
                 ))}
->>>>>>> origin/main
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredDestinations.map((destination) => (
-                    <Card
-                      key={destination.id}
-                      className="hover:shadow-lg transition-shadow cursor-pointer"
-                      onClick={() => handleDestinationClick(destination.id)}
-                    >
-                      <div className="aspect-video overflow-hidden rounded-t-lg relative">
-                        <Image
-                          src={destination.image}
-                          alt={`${destination.city}, ${destination.country} - Beautiful cityscape showing iconic landmarks and architecture perfect for Erasmus students`}
-                          fill
-                          className="object-cover hover:scale-105 transition-transform"
-                          priority={
-                            filteredDestinations.indexOf(destination) < 3
-                          }
-                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        />
-                      </div>
-                      <CardHeader>
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <CardTitle className="text-xl">
-                              {destination.city}
-                            </CardTitle>
-                            <p className="text-gray-600 flex items-center gap-1">
-                              <MapPin className="h-4 w-4" />
-                              {destination.country}
-                            </p>
-                          </div>
-                          <Badge
-                            className={getCostBadgeColor(destination.costLevel)}
-                          >
-                            {destination.costLevel} cost
-                          </Badge>
+                {filteredDestinations.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredDestinations.map((destination) => (
+                      <Card
+                        key={destination.id}
+                        className="hover:shadow-lg transition-shadow cursor-pointer"
+                        onClick={() => handleDestinationClick(destination.id)}
+                      >
+                        <div className="aspect-video overflow-hidden rounded-t-lg relative">
+                          <Image
+                            src={destination.image}
+                            alt={`${destination.city}, ${destination.country} - Beautiful cityscape showing iconic landmarks and architecture perfect for Erasmus students`}
+                            fill
+                            className="object-cover hover:scale-105 transition-transform"
+                            priority={
+                              filteredDestinations.indexOf(destination) < 3
+                            }
+                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          />
                         </div>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-gray-600 mb-4 line-clamp-3">
-                          {destination.description}
-                        </p>
-
-                        {/* Stats */}
-                        <div className="flex justify-between items-center mb-4">
-                          <div className="flex items-center gap-1">
-                            <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                            <span className="text-sm font-medium">
-                              {destination.rating}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Users className="h-4 w-4 text-blue-500" />
-                            <span className="text-sm">
-                              {destination.studentCount} students
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Euro className="h-4 w-4 text-green-500" />
-                            <span className="text-sm">
-                              €{destination.avgCostPerMonth}/mo
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Universities */}
-                        <div className="mb-4">
-                          <h4 className="text-sm font-medium text-gray-900 mb-2">
-                            Popular Universities:
-                          </h4>
-                          <div className="space-y-1">
-                            {destination.popularUniversities
-                              .slice(0, 2)
-                              .map((uni, index) => (
-                                <p
-                                  key={index}
-                                  className="text-xs text-gray-600"
-                                >
-                                  • {uni}
-                                </p>
-                              ))}
-                            {destination.popularUniversities.length > 2 && (
-                              <p className="text-xs text-blue-600">
-                                +{destination.popularUniversities.length - 2}{" "}
-                                more
+                        <CardHeader>
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <CardTitle className="text-xl">
+                                {destination.city}
+                              </CardTitle>
+                              <p className="text-gray-600 flex items-center gap-1">
+                                <MapPin className="h-4 w-4" />
+                                {destination.country}
                               </p>
-                            )}
+                            </div>
+                            <Badge
+                              className={getCostBadgeColor(
+                                destination.costLevel,
+                              )}
+                            >
+                              {destination.costLevel} cost
+                            </Badge>
                           </div>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-gray-600 mb-4 line-clamp-3">
+                            {destination.description}
+                          </p>
+
+                          {/* Stats */}
+                          <div className="flex justify-between items-center mb-4">
+                            <div className="flex items-center gap-1">
+                              <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                              <span className="text-sm font-medium">
+                                {destination.rating}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Users className="h-4 w-4 text-blue-500" />
+                              <span className="text-sm">
+                                {destination.studentCount} students
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Euro className="h-4 w-4 text-green-500" />
+                              <span className="text-sm">
+                                €{destination.avgCostPerMonth}/mo
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Universities */}
+                          <div className="mb-4">
+                            <h4 className="text-sm font-medium text-gray-900 mb-2">
+                              Popular Universities:
+                            </h4>
+                            <div className="space-y-1">
+                              {destination.popularUniversities
+                                .slice(0, 2)
+                                .map((uni, index) => (
+                                  <p
+                                    key={index}
+                                    className="text-xs text-gray-600"
+                                  >
+                                    • {uni}
+                                  </p>
+                                ))}
+                              {destination.popularUniversities.length > 2 && (
+                                <p className="text-xs text-blue-600">
+                                  +{destination.popularUniversities.length - 2}{" "}
+                                  more
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Highlights */}
+                          <div className="flex flex-wrap gap-1 mb-4">
+                            {destination.highlights
+                              .slice(0, 3)
+                              .map((highlight, index) => (
+                                <Badge
+                                  key={index}
+                                  variant="secondary"
+                                  className="text-xs"
+                                >
+                                  {highlight}
+                                </Badge>
+                              ))}
+                          </div>
+
+                          <Button className="w-full" variant="outline">
+                            Learn More
+                            <ArrowRight className="h-4 w-4 ml-2" />
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 col-span-full">
+                    <div className="bg-white p-8 rounded-lg shadow-md">
+                      <FilterX className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                        No Destinations Found
+                      </h3>
+                      <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                        We couldn't find any destinations matching your search
+                        for "{searchTerm}". Try adjusting your filters or search
+                        terms.
+                      </p>
+                      <Button onClick={clearFilters} size="lg">
+                        Clear All Filters
+                      </Button>
+                      <div className="mt-6 text-sm text-gray-500">
+                        <p>Popular searches:</p>
+                        <div className="flex gap-2 justify-center mt-2">
+                          <Button
+                            variant="link"
+                            className="text-blue-600"
+                            onClick={() => setSearchTerm("Spain")}
+                          >
+                            Spain
+                          </Button>
+                          <Button
+                            variant="link"
+                            className="text-blue-600"
+                            onClick={() => setSearchTerm("Germany")}
+                          >
+                            Germany
+                          </Button>
+                          <Button
+                            variant="link"
+                            className="text-blue-600"
+                            onClick={() => setSearchTerm("low cost")}
+                          >
+                            Low Cost
+                          </Button>
                         </div>
-
-                        {/* Highlights */}
-                        <div className="flex flex-wrap gap-1 mb-4">
-                          {destination.highlights
-                            .slice(0, 3)
-                            .map((highlight, index) => (
-                              <Badge
-                                key={index}
-                                variant="secondary"
-                                className="text-xs"
-                              >
-                                {highlight}
-                              </Badge>
-                            ))}
-                        </div>
-
-                        <Button className="w-full" variant="outline">
-                          Learn More
-                          <ArrowRight className="h-4 w-4 ml-2" />
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-
-                {filteredDestinations.length === 0 && (
-                  <div className="text-center py-12">
-                    <div className="text-gray-500 text-lg mb-4">
-                      No destinations found matching your criteria.
+                      </div>
                     </div>
-                    <p className="text-gray-400 mb-6">
-                      Try adjusting your search terms or filters to find more
-                      destinations.
-                    </p>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setSearchTerm("");
-                        setSelectedCostLevel("");
-                      }}
-                    >
-                      Clear All Filters
-                    </Button>
                   </div>
                 )}
               </>

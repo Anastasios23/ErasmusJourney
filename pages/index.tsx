@@ -1,14 +1,28 @@
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-import prisma from "../lib/prisma";
+import { prisma } from "../lib/prisma";
 import Header from "../components/Header";
 import TeaserGallery from "../components/TeaserGallery";
 import { Button } from "../src/components/ui/button";
 import { Badge } from "../src/components/ui/badge";
-import { Card } from "../src/components/ui/card";
-import { ArrowRight, Users, BookOpen, Home, Heart, Globe } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../src/components/ui/card";
+import {
+  ArrowRight,
+  Users,
+  BookOpen,
+  Home,
+  Heart,
+  Globe,
+  Star,
+} from "lucide-react";
 
 interface Story {
   id: string;
@@ -17,23 +31,24 @@ interface Story {
   imageUrl: string | null;
   createdAt: string;
   author: {
-    firstName: string;
-    lastName: string;
-  };
-  university: {
     name: string;
+  };
+  location: {
+    city: string;
     country: string;
-  } | null;
-  category: string;
+  };
   likes: number;
-  views: number;
 }
 
 interface HomePageProps {
   totalUniversities: number;
+  latestStories: Story[];
 }
 
-export default function HomePage({ totalUniversities }: HomePageProps) {
+export default function HomePage({
+  totalUniversities,
+  latestStories,
+}: HomePageProps) {
   const steps = [
     {
       step: 1,
@@ -224,6 +239,68 @@ export default function HomePage({ totalUniversities }: HomePageProps) {
                   </div>
                 </Link>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Latest Stories Section */}
+        <section className="py-16 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+                Latest Student Stories
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Read real experiences from students who have been there.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {latestStories.map((story) => (
+                <Link key={story.id} href={`/stories/${story.id}`}>
+                  <Card className="overflow-hidden h-full flex flex-col group hover:shadow-xl transition-shadow duration-300">
+                    <CardHeader className="p-0">
+                      <div className="aspect-video relative">
+                        <Image
+                          src={
+                            story.imageUrl ||
+                            "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=240&fit=crop"
+                          }
+                          alt={story.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-6 flex-grow">
+                      <CardTitle className="text-lg font-semibold mb-2 group-hover:text-blue-600 transition-colors">
+                        {story.title}
+                      </CardTitle>
+                      <p className="text-sm text-gray-600 line-clamp-3">
+                        {story.excerpt}
+                      </p>
+                    </CardContent>
+                    <CardFooter className="p-6 bg-gray-50 flex justify-between items-center text-sm text-gray-500">
+                      <div>
+                        By{" "}
+                        <span className="font-medium text-gray-800">
+                          {story.author.name}
+                        </span>
+                      </div>
+                      <div className="flex items-center">
+                        <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
+                        <span>{story.likes}</span>
+                      </div>
+                    </CardFooter>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+            <div className="text-center mt-12">
+              <Link href="/student-stories">
+                <Button variant="outline">
+                  Read More Stories <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
         </section>
@@ -422,23 +499,38 @@ export default function HomePage({ totalUniversities }: HomePageProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
+  context,
+) => {
   try {
-    // Get total universities count for stats
     const totalUniversities = await prisma.university.count();
+
+    const protocol = context.req.headers["x-forwarded-proto"] || "http";
+    const host = context.req.headers.host;
+    const apiUrl = `${protocol}://${host}/api/stories`;
+
+    const storiesRes = await fetch(apiUrl);
+    if (!storiesRes.ok) {
+      throw new Error(
+        `Failed to fetch stories with status: ${storiesRes.status}`,
+      );
+    }
+    const storiesData = await storiesRes.json();
+    const latestStories = storiesData.stories.slice(0, 3); // Take the top 3
 
     return {
       props: {
         totalUniversities,
+        latestStories,
       },
     };
   } catch (error) {
     console.error("Error fetching home page data:", error);
-
-    // Fallback data if database is not available
+    // Fallback data if database or API is not available
     return {
       props: {
-        totalUniversities: 5,
+        totalUniversities: 50,
+        latestStories: [],
       },
     };
   }
