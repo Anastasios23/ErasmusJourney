@@ -20,7 +20,8 @@ export default async function handler(
         user: {
           select: {
             id: true,
-            name: true, // Corrected from firstName/lastName
+            firstName: true,
+            lastName: true,
             email: true,
             image: true,
           },
