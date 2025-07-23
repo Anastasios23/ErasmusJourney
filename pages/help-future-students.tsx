@@ -46,10 +46,7 @@ import { Skeleton } from "../src/components/ui/skeleton";
 export default function HelpFutureStudents() {
   const router = useRouter();
   const { submitForm, isSubmitting } = useFormSubmissions();
-<<<<<<< HEAD
-=======
   const { stats, loading } = useCommunityStats();
->>>>>>> origin/main
 
   const [formData, setFormData] = useState({
     wantToHelp: "",
