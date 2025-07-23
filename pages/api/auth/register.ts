@@ -2,7 +2,7 @@
 
 import { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcryptjs";
-import prisma from "../../../lib/prisma";
+import { prisma } from "../../../lib/prisma";
 
 export default async function handler(
   req: NextApiRequest,
@@ -28,10 +28,10 @@ export default async function handler(
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Combine firstName and lastName into the single 'name' field
     const user = await prisma.user.create({
       data: {
-        name: `${firstName} ${lastName}`,
+        firstName,
+        lastName,
         email,
         password: hashedPassword,
       },

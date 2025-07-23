@@ -35,7 +35,7 @@ export default async function handler(
             type: "ACCOMMODATION",
             status: "PUBLISHED",
             data: {
-              path: ["universityInCyprus"],
+              path: "universityInCyprus",
               equals: userUniversity,
             },
           },
@@ -75,7 +75,7 @@ export default async function handler(
             type: "ACCOMMODATION",
             status: "PUBLISHED",
             data: {
-              path: ["city"],
+              path: "city",
               equals: hostCity,
             },
           },

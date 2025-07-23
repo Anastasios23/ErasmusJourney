@@ -242,8 +242,10 @@ export default async function handler(
     const content = generateContent();
 
     // Return specific type or all content
-    if (type && type !== "all") {
-      res.status(200).json({ [type]: content[type as keyof ContentData] });
+    if (type && type !== "all" && typeof type === "string") {
+      const response: { [key: string]: any } = {};
+      response[type] = content[type as keyof ContentData];
+      res.status(200).json(response);
     } else {
       res.status(200).json(content);
     }
