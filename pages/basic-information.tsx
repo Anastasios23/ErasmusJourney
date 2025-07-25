@@ -129,7 +129,7 @@ export default function BasicInformation() {
   useEffect(() => {
     if (sessionStatus === "unauthenticated") {
       router.replace(
-        `/auth/signin?callbackUrl=${encodeURIComponent(router.asPath)}`,
+        `/login?callbackUrl=${encodeURIComponent(router.asPath)}`,
       );
     }
   }, [sessionStatus, router]);
@@ -315,7 +315,7 @@ export default function BasicInformation() {
         // Redirect to sign-in if authentication failed
         setTimeout(() => {
           router.push(
-            "/auth/signin?callbackUrl=" + encodeURIComponent(router.asPath),
+            "/login?callbackUrl=" + encodeURIComponent(router.asPath),
           );
         }, 2000);
       }
@@ -368,7 +368,7 @@ export default function BasicInformation() {
       if (errorInfo.action === "signin") {
         setTimeout(() => {
           router.push(
-            "/auth/signin?callbackUrl=" + encodeURIComponent(router.asPath),
+            "/login?callbackUrl=" + encodeURIComponent(router.asPath),
           );
         }, 2000);
       }
