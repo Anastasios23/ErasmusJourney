@@ -22,7 +22,7 @@ import {
   CardTitle,
 } from "../src/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
-import { Badge } from "../../src/components/ui/badge"; // Corrected path
+import { Badge } from "../src/components/ui/badge";
 import { Textarea } from "../src/components/ui/textarea";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import {
