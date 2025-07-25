@@ -24,7 +24,7 @@ import {
 import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { handleApiError } from "../src/utils/apiErrorHandler";
 import { forgotPassword } from "../src/utils/forgotPasswordHandler"; // Make sure path is correct
-import BackButton from "@/components/BackButton";
+import BackButton from "../components/BackButton";
 
 export default function Login() {
   const { data: session, status } = useSession();

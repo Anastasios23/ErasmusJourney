@@ -33,7 +33,7 @@ import { z, ZodError } from "zod";
 import { handleApiError } from "../src/utils/apiErrorHandler";
 import PasswordStrength from "../src/components/PasswordStrength";
 import { cn } from "../src/lib/utils";
-import BackButton from "@/components/BackButton";
+import BackButton from "../components/BackButton";
 
 const passwordSchema = z
   .string()
