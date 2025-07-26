@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ERASMUS_DESTINATIONS } from "../../../src/data/destinations";
+import { prisma } from "../../../lib/prisma";
 
 export default async function handler(
   req: NextApiRequest,
@@ -23,16 +24,98 @@ export default async function handler(
       return res.status(404).json({ message: "Destination not found" });
     }
 
-    // TODO: Fetch user-generated content related to this destination
-    // This would include stories, accommodation tips, course matches, etc.
-    // For now, we'll add empty arrays that can be populated later
+    // Fetch user-generated content related to this destination
+    // This includes stories, accommodation tips, course matches, etc.
+    let userStories = [];
+    let userAccommodationTips = [];
+    let userCourseMatches = [];
+    let userReviews = [];
+    
+    try {
+      // Fetch form submissions related to this destination
+      const submissions = await prisma.formSubmission.findMany({
+        where: {
+          status: "PUBLISHED", // Only use published submissions
+        },
+        orderBy: { createdAt: "desc" },
+      });
+      
+      // Filter submissions by city
+      const citySubmissions = submissions.filter((submission) => {
+        const data = submission.data as any;
+        return data.hostCity?.toLowerCase() === baseDestination.city.toLowerCase();
+      });
+      
+      // Process submissions by type
+      userStories = citySubmissions
+        .filter(sub => sub.type === "STORY")
+        .map(sub => {
+          const data = sub.data as any;
+          return {
+            id: sub.id,
+            title: sub.title,
+            excerpt: data.personalExperience?.substring(0, 150) + "..." || "Student story",
+            author: `${data.firstName || 'Anonymous'} ${data.lastName ? data.lastName.charAt(0) + '.' : ''}`,
+            createdAt: sub.createdAt.toISOString(),
+          };
+        });
+      
+      userAccommodationTips = citySubmissions
+        .filter(sub => sub.type === "ACCOMMODATION")
+        .map(sub => {
+          const data = sub.data as any;
+          return {
+            id: sub.id,
+            title: sub.title || `Accommodation in ${baseDestination.city}`,
+            type: data.accommodationType || "Unknown",
+            monthlyRent: data.monthlyRent,
+            rating: data.accommodationRating,
+            tips: data.topTips || [],
+            createdAt: sub.createdAt.toISOString(),
+          };
+        });
+      
+      userCourseMatches = citySubmissions
+        .filter(sub => sub.type === "COURSE_MATCHING")
+        .map(sub => {
+          const data = sub.data as any;
+          return {
+            id: sub.id,
+            title: sub.title || `Course Matching in ${baseDestination.city}`,
+            hostUniversity: data.hostUniversity,
+            courses: data.courses || [],
+            createdAt: sub.createdAt.toISOString(),
+          };
+        });
+      
+      userReviews = citySubmissions
+        .filter(sub => [
+          "BASIC_INFO", 
+          "ACCOMMODATION", 
+          "COURSE_MATCHING", 
+          "STORY"
+        ].includes(sub.type))
+        .map(sub => {
+          const data = sub.data as any;
+          return {
+            id: sub.id,
+            type: sub.type,
+            rating: data.overallRating,
+            review: data.personalExperience || data.challenges || "",
+            createdAt: sub.createdAt.toISOString(),
+          };
+        });
+    } catch (error) {
+      console.error(`Error fetching user content for ${baseDestination.city}:`, error);
+      // Continue with empty arrays if there's an error
+    }
 
     const enrichedDestination = {
       ...baseDestination,
-      userStories: [],
-      userAccommodationTips: [],
-      userCourseMatches: [],
-      userReviews: [],
+      userStories,
+      userAccommodationTips,
+      userCourseMatches,
+      userReviews,
       // Add detailed information that might come from forms
       detailedInfo: {
         population: getPopulationForCity(baseDestination.city),
