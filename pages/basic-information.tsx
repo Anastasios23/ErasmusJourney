@@ -54,6 +54,8 @@ export default function BasicInformation() {
   } = useFormSubmissions();
 
   const draftLoaded = useRef(false);
+  const autoSaveTimeout = useRef<NodeJS.Timeout | null>(null);
+  const isNavigating = useRef(false);
 
   // All useState hooks
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -62,6 +64,8 @@ export default function BasicInformation() {
   const [draftError, setDraftError] = useState<string | null>(null);
   const [draftSuccess, setDraftSuccess] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
   const [formData, setFormData] = useState({
     firstName: "",
