@@ -249,9 +249,9 @@ export default function BasicInformation() {
         setLastSaved(new Date());
 
         if (silent) {
-          // Show the floating indicator for auto-save
+          // Show subtle floating indicator for auto-save
           setShowSavedIndicator(true);
-          setTimeout(() => setShowSavedIndicator(false), 3000);
+          setTimeout(() => setShowSavedIndicator(false), 2000); // Shorter duration
         } else {
           // Show the alert for manual save
           setDraftSuccess("Draft saved successfully!");
