@@ -263,16 +263,25 @@ export default function BasicInformation() {
 
   // Auto-save when form data changes (debounced)
   useEffect(() => {
-    if (draftLoaded.current && !isSubmitting) {
-      // Clear existing timeout
-      if (autoSaveTimeout.current) {
-        clearTimeout(autoSaveTimeout.current);
-      }
+    if (draftLoaded.current && !isSubmitting && !isNavigating.current) {
+      // Only auto-save if we have some meaningful data
+      const hasData = formData.firstName?.trim() ||
+                     formData.lastName?.trim() ||
+                     formData.email?.trim() ||
+                     formData.universityInCyprus ||
+                     formData.departmentInCyprus;
 
-      // Set new timeout for auto-save (3 seconds after user stops typing)
-      autoSaveTimeout.current = setTimeout(() => {
-        autoSaveForm(formData, true);
-      }, 3000);
+      if (hasData) {
+        // Clear existing timeout
+        if (autoSaveTimeout.current) {
+          clearTimeout(autoSaveTimeout.current);
+        }
+
+        // Set new timeout for auto-save (5 seconds after user stops typing)
+        autoSaveTimeout.current = setTimeout(() => {
+          autoSaveForm(formData, true);
+        }, 5000); // Increased to 5 seconds to be less aggressive
+      }
     }
 
     return () => {
