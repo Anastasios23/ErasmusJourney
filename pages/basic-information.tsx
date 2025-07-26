@@ -164,6 +164,11 @@ export default function BasicInformation() {
     console.log("SESSION STATUS:", sessionStatus);
   }, [sessionStatus]);
 
+  // Debug form data changes
+  useEffect(() => {
+    console.log("FORM DATA CHANGED:", formData);
+  }, [formData]);
+
   // Auto-save function with debouncing
   const autoSaveForm = useCallback(async (formData: any, silent: boolean = true) => {
     // Don't auto-save if form is empty or we're navigating away
