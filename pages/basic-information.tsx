@@ -56,6 +56,7 @@ export default function BasicInformation() {
   const draftLoaded = useRef(false);
   const autoSaveTimeout = useRef<NodeJS.Timeout | null>(null);
   const isNavigating = useRef(false);
+  const isLoadingDraft = useRef(false);
 
   // All useState hooks
   const [isSubmitting, setIsSubmitting] = useState(false);
