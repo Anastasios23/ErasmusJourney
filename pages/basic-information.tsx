@@ -187,6 +187,34 @@ export default function BasicInformation() {
     console.log("- levelOfStudy:", formData.levelOfStudy);
   }, [formData]);
 
+  // Silent save function that doesn't refresh submissions (for autosave)
+  const silentSaveDraft = useCallback(async (formData: any) => {
+    if (sessionStatus === "authenticated" && session) {
+      // Save to server without refreshing submissions
+      await fetch("/api/forms/saveDraft", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type: "basic-info",
+          title: "Basic Information Draft",
+          data: formData,
+        }),
+      });
+    } else {
+      // Save to localStorage for unauthenticated users
+      const draftKey = `erasmus_draft_basic-info`;
+      const draftData = {
+        type: "basic-info",
+        title: "Basic Information Draft",
+        data: formData,
+        timestamp: new Date().toISOString(),
+      };
+      localStorage.setItem(draftKey, JSON.stringify(draftData));
+    }
+  }, [sessionStatus, session]);
+
   // Auto-save function with debouncing
   const autoSaveForm = useCallback(
     async (formData: any, silent: boolean = true) => {
@@ -202,19 +230,12 @@ export default function BasicInformation() {
       try {
         setIsAutoSaving(true);
 
-        if (sessionStatus === "authenticated" && session) {
-          // Save to server for authenticated users
-          await saveDraft("basic-info", "Basic Information Draft", formData);
+        if (silent) {
+          // Use silent save for autosave to avoid page refresh
+          await silentSaveDraft(formData);
         } else {
-          // Save to localStorage for unauthenticated users
-          const draftKey = `erasmus_draft_basic-info`;
-          const draftData = {
-            type: "basic-info",
-            title: "Basic Information Draft",
-            data: formData,
-            timestamp: new Date().toISOString(),
-          };
-          localStorage.setItem(draftKey, JSON.stringify(draftData));
+          // Use regular save for manual save (shows in submissions list)
+          await saveDraft("basic-info", "Basic Information Draft", formData);
         }
 
         setLastSaved(new Date());
@@ -233,7 +254,7 @@ export default function BasicInformation() {
         setIsAutoSaving(false);
       }
     },
-    [sessionStatus, session, saveDraft],
+    [sessionStatus, session, saveDraft, silentSaveDraft],
   );
 
   // Auto-save when form data changes (debounced)
