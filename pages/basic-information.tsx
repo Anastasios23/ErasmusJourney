@@ -911,17 +911,17 @@ export default function BasicInformation() {
         </Card>
 
         {/* Navigation */}
-        {/* Auto-save status indicator */}
-        <div className="flex justify-center mb-4">
+        {/* Auto-save status indicator - less intrusive */}
+        <div className="fixed top-4 right-4 z-50">
           {isAutoSaving && (
-            <div className="flex items-center text-sm text-blue-600">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
-              Saving draft...
+            <div className="flex items-center bg-blue-100 text-blue-800 px-3 py-2 rounded-lg shadow-sm text-sm">
+              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 mr-2"></div>
+              Saving...
             </div>
           )}
           {lastSaved && !isAutoSaving && (
-            <div className="text-sm text-green-600">
-              Draft saved at {lastSaved.toLocaleTimeString()}
+            <div className="bg-green-100 text-green-800 px-3 py-2 rounded-lg shadow-sm text-sm opacity-75 transition-opacity duration-500">
+              ✓ Saved at {lastSaved.toLocaleTimeString()}
             </div>
           )}
         </div>
