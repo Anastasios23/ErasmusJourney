@@ -150,11 +150,19 @@ export default function BasicInformation() {
       if (draft) {
         console.log("DRAFT DATA FOUND. APPLYING TO FORM:", draft); // DEBUG
         console.log("SETTING FORM DATA..."); // DEBUG
+
+        isLoadingDraft.current = true; // Set flag to prevent field clearing
+
         setFormData(prevData => {
           console.log("PREVIOUS FORM DATA:", prevData); // DEBUG
           console.log("NEW FORM DATA:", draft); // DEBUG
           return { ...prevData, ...draft };
         });
+
+        // Clear the flag after a short delay to allow the state update to complete
+        setTimeout(() => {
+          isLoadingDraft.current = false;
+        }, 100);
       }
       draftLoaded.current = true; // Mark draft as loaded
     }
