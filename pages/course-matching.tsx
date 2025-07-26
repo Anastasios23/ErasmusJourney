@@ -34,6 +34,7 @@ import {
   getAgreementsByUniversityAndLevel,
 } from "../src/data/universityAgreements";
 import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp";
+import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
 
 interface Course {
   name: string;
@@ -52,6 +53,15 @@ interface EquivalentCourse {
 export default function CourseMatching() {
   const { data: session } = useSession();
   const router = useRouter();
+
+  // Form submissions hook
+  const {
+    submitForm,
+    getDraftData,
+    saveDraft,
+    loading: submissionsLoading,
+    error: submissionsError,
+  } = useFormSubmissions();
 
   // Authentication temporarily disabled - all users can access
 
@@ -98,6 +108,50 @@ export default function CourseMatching() {
           cyprusUniversities.find((u) => u.code === selectedHomeUniversityId)
             ?.departments || []
         : [];
+
+  // Load draft data on component mount
+  useEffect(() => {
+    const loadDraftData = async () => {
+      try {
+        console.log("Loading draft data...");
+        const draftData = await getDraftData("basic-information");
+        console.log("Draft data loaded:", draftData);
+        
+        if (draftData) {
+          console.log("Pre-populating form with:", {
+            levelOfStudy: draftData.levelOfStudy,
+            universityInCyprus: draftData.universityInCyprus,
+            departmentInCyprus: draftData.departmentInCyprus,
+            preferredHostUniversity: draftData.preferredHostUniversity,
+          });
+          
+          // Pre-populate form fields with data from basic-information
+          setFormData((prev) => ({
+            ...prev,
+            levelOfStudy: draftData.levelOfStudy || "",
+            homeUniversity: draftData.universityInCyprus || "",
+            homeDepartment: draftData.departmentInCyprus || "",
+            hostUniversity: draftData.preferredHostUniversity || "",
+          }));
+          
+          // Set the selected home university ID for department filtering
+          if (draftData.universityInCyprus) {
+            const university = cyprusUniversities.find(u => u.name === draftData.universityInCyprus);
+            console.log("Found university:", university);
+            if (university) {
+              setSelectedHomeUniversityId(university.code);
+            }
+          }
+        } else {
+          console.log("No draft data found");
+        }
+      } catch (error) {
+        console.error("Error loading draft data:", error);
+      }
+    };
+
+    loadDraftData();
+  }, [getDraftData]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

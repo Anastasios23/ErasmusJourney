@@ -7,8 +7,6 @@ datasource db {
   url      = "file:./prisma/dev.db"
 }
 
-// --- NextAuth.js Required Models ---
-
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -22,8 +20,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -44,22 +41,14 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// --- Your Application Models ---
-
 model User {
   id              String           @id @default(cuid())
-<<<<<<< HEAD
-  email           String           @unique
-  firstName       String
-  lastName        String
-  password        String
-=======
-  name            String?          // Use a single, optional name field for compatibility
+  firstName       String?
+  lastName        String?
   email           String           @unique
   emailVerified   DateTime?
   image           String?
-  password        String?          // Optional for OAuth users
->>>>>>> origin/main
+  password        String?
   role            String           @default("USER")
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
@@ -67,12 +56,8 @@ model User {
   nationality     String?
   homeCity        String?
   homeCountry     String?
-<<<<<<< HEAD
-=======
-  
   accounts        Account[]
   sessions        Session[]
->>>>>>> origin/main
   applications    Application[]
   formSubmissions FormSubmission[]
   stories         Story[]
@@ -93,8 +78,8 @@ model University {
   imageUrl          String?
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
-  partnerAgreements Agreement[]   @relation("PartnerUniversity")
   homeAgreements    Agreement[]   @relation("HomeUniversity")
+  partnerAgreements Agreement[]   @relation("PartnerUniversity")
   applications      Application[]
   faculties         Faculty[]
   stories           Story[]
@@ -160,9 +145,9 @@ model Agreement {
   endDate             DateTime?
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
-  partnerUniversity   University    @relation("PartnerUniversity", fields: [partnerUniversityId], references: [id])
-  homeDepartment      Department    @relation(fields: [homeDepartmentId], references: [id])
   homeUniversity      University    @relation("HomeUniversity", fields: [homeUniversityId], references: [id])
+  homeDepartment      Department    @relation(fields: [homeDepartmentId], references: [id])
+  partnerUniversity   University    @relation("PartnerUniversity", fields: [partnerUniversityId], references: [id])
   applications        Application[]
 
   @@map("agreements")
@@ -183,10 +168,10 @@ model Application {
   grades           Json?
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
-  agreement        Agreement  @relation(fields: [agreementId], references: [id])
-  program          Program    @relation(fields: [programId], references: [id])
-  homeUniversity   University @relation(fields: [homeUniversityId], references: [id])
   user             User       @relation(fields: [userId], references: [id])
+  homeUniversity   University @relation(fields: [homeUniversityId], references: [id])
+  program          Program    @relation(fields: [programId], references: [id])
+  agreement        Agreement  @relation(fields: [agreementId], references: [id])
 
   @@map("applications")
 }
@@ -209,8 +194,8 @@ model Story {
   views        Int         @default(0)
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
-  university   University? @relation(fields: [universityId], references: [id])
   author       User        @relation(fields: [authorId], references: [id])
+  university   University? @relation(fields: [universityId], references: [id])
 
   @@index([city, country])
   @@map("stories")
@@ -247,7 +232,7 @@ model Destination {
   costOfLiving Json?
   highlights   String?
   createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  updatedAt    DateTime @default(now())
 
   @@map("destinations")
 }

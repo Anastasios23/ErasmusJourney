@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
-import prisma from "../../../lib/prisma";
+import { prisma } from "../../../lib/prisma";
+import { FormType, SubmissionStatus } from "@prisma/client";
 
-const typeMapping: Record<string, string> = {
+const typeMapping: Record<string, FormType> = {
   "basic-info": "BASIC_INFO",
   "course-matching": "COURSE_MATCHING",
   accommodation: "ACCOMMODATION",
@@ -11,11 +12,11 @@ const typeMapping: Record<string, string> = {
   experience: "EXPERIENCE",
 };
 
-const statusMapping: Record<string, string> = {
+const statusMapping: Record<string, SubmissionStatus> = {
   draft: "DRAFT",
   submitted: "SUBMITTED",
   published: "PUBLISHED",
-  rejected: "REJECTED",
+  rejected: "ARCHIVED",
 };
 
 export default async function handler(
