@@ -799,7 +799,7 @@ export default function BasicInformation() {
               <div className="space-y-2">
                 <Label htmlFor="hostCity">Preferred Host City *</Label>
                 <Select
-                  value={formData.hostCity}
+                  value={formData.hostCity || ""}
                   onValueChange={(value) =>
                     handleInputChange("hostCity", value)
                   }
