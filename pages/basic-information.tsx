@@ -506,14 +506,12 @@ export default function BasicInformation() {
     isNavigating.current = true;
 
     try {
-      // First save the current form data as a draft for backup
-      try {
-        await autoSaveForm(formData, true);
-      } catch (draftSaveError) {
-        console.warn("Could not save draft before submission:", draftSaveError);
-        // Continue with submission even if draft save fails
-      }
+      // ALWAYS save draft before submitting - this is critical for user data safety
+      console.log("Saving draft before submission...");
+      await silentSaveDraft(formData);
+      console.log("Draft saved successfully before submission");
 
+      // Now submit the form
       await submitForm(
         "basic-info",
         "Basic Information Form",
