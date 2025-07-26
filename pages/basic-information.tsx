@@ -925,8 +925,8 @@ export default function BasicInformation() {
               Saving...
             </div>
           )}
-          {lastSaved && !isAutoSaving && (
-            <div className="bg-green-100 text-green-800 px-3 py-2 rounded-lg shadow-sm text-sm opacity-75 transition-opacity duration-500">
+          {showSavedIndicator && lastSaved && !isAutoSaving && (
+            <div className="bg-green-100 text-green-800 px-3 py-2 rounded-lg shadow-sm text-sm transition-all duration-500 ease-in-out">
               ✓ Saved at {lastSaved.toLocaleTimeString()}
             </div>
           )}
