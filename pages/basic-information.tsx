@@ -458,35 +458,7 @@ export default function BasicInformation() {
       setDraftError(null);
       setDraftSuccess(null);
 
-      // Wait if session is still loading
-      if (sessionStatus === "loading") {
-        let retries = 10;
-        while (sessionStatus === "loading" && retries > 0) {
-          await new Promise((resolve) => setTimeout(resolve, 100));
-          retries--;
-        }
-      }
-
-      if (!session) {
-        // Unauthenticated fallback to localStorage
-        const draftKey = `erasmus_draft_basic-info`;
-        const draftData = {
-          type: "basic-info",
-          title: "Basic Information Draft",
-          data: formData,
-          timestamp: new Date().toISOString(),
-        };
-        localStorage.setItem(draftKey, JSON.stringify(draftData));
-        setDraftSuccess("Draft saved locally!");
-      } else {
-        // Authenticated: save to server and cleanup localStorage
-        await saveDraft("basic-info", "Basic Information Draft", formData);
-        // Clean up any old localStorage draft
-        localStorage.removeItem("erasmus_draft_basic-info");
-        setDraftSuccess("Draft saved successfully!");
-      }
-
-      setTimeout(() => setDraftSuccess(null), 3000);
+      await autoSaveForm(formData, false);
     } catch (error: any) {
       console.error("Draft save error:", error);
       const errorInfo = handleApiError(error);
