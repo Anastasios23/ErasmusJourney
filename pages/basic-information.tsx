@@ -991,9 +991,12 @@ export default function BasicInformation() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 Basic Information
               </h1>
-              <p className="text-gray-600">
+              <p className="text-gray-600 mb-2">
                 Complete your personal and academic information for your Erasmus
                 application. All fields marked with * are required.
+              </p>
+              <p className="text-sm text-gray-500">
+                💡 Your progress is automatically saved periodically and when you continue to the next step.
               </p>
             </div>
 
