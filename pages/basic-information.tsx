@@ -916,17 +916,17 @@ export default function BasicInformation() {
         </Card>
 
         {/* Navigation */}
-        {/* Auto-save status indicator - less intrusive */}
-        <div className="fixed top-4 right-4 z-50">
+        {/* Subtle auto-save status indicator */}
+        <div className="fixed top-20 right-4 z-40">
           {isAutoSaving && (
-            <div className="flex items-center bg-blue-100 text-blue-800 px-3 py-2 rounded-lg shadow-sm text-sm">
-              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 mr-2"></div>
-              Saving...
+            <div className="flex items-center bg-gray-800 bg-opacity-90 text-white px-2 py-1 rounded text-xs shadow-lg">
+              <div className="animate-spin rounded-full h-2 w-2 border border-white border-t-transparent mr-1.5"></div>
+              Auto-saving...
             </div>
           )}
           {showSavedIndicator && lastSaved && !isAutoSaving && (
-            <div className="bg-green-100 text-green-800 px-3 py-2 rounded-lg shadow-sm text-sm transition-all duration-500 ease-in-out">
-              ✓ Saved at {lastSaved.toLocaleTimeString()}
+            <div className="bg-gray-800 bg-opacity-90 text-white px-2 py-1 rounded text-xs shadow-lg transition-all duration-300 ease-in-out">
+              ✓ Auto-saved
             </div>
           )}
         </div>
