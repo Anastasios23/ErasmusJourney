@@ -534,7 +534,7 @@ export default function BasicInformation() {
   } else {
     // Render the form only when authenticated and data is loaded
     content = (
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-8" key={draftApplied ? "draft-loaded" : "initial"}>
         {/* Personal Information */}
         <Card>
           <CardHeader>
