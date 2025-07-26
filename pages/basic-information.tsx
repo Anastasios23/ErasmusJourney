@@ -270,27 +270,24 @@ export default function BasicInformation() {
     [sessionStatus, session, saveDraft, silentSaveDraft],
   );
 
-  // Auto-save when form data changes (debounced)
+  // Auto-save when form data changes (debounced) - less aggressive
   useEffect(() => {
     if (draftLoaded.current && !isSubmitting && !isNavigating.current) {
-      // Only auto-save if we have some meaningful data
-      const hasData =
-        formData.firstName?.trim() ||
-        formData.lastName?.trim() ||
-        formData.email?.trim() ||
-        formData.universityInCyprus ||
-        formData.departmentInCyprus;
+      // Only auto-save if we have substantial data (more than just basic fields)
+      const hasSubstantialData =
+        (formData.firstName?.trim() && formData.lastName?.trim() && formData.email?.trim()) ||
+        (formData.universityInCyprus && formData.departmentInCyprus && formData.levelOfStudy);
 
-      if (hasData) {
+      if (hasSubstantialData) {
         // Clear existing timeout
         if (autoSaveTimeout.current) {
           clearTimeout(autoSaveTimeout.current);
         }
 
-        // Set new timeout for auto-save (5 seconds after user stops typing)
+        // Set new timeout for auto-save (15 seconds after user stops typing)
         autoSaveTimeout.current = setTimeout(() => {
           autoSaveForm(formData, true);
-        }, 5000); // Increased to 5 seconds to be less aggressive
+        }, 15000); // Much longer delay - 15 seconds
       }
     }
 
