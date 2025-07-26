@@ -679,7 +679,7 @@ export default function BasicInformation() {
               <div className="space-y-2">
                 <Label htmlFor="levelOfStudy">Level of Study *</Label>
                 <Select
-                  value={formData.levelOfStudy}
+                  value={formData.levelOfStudy || ""}
                   onValueChange={(value) =>
                     handleInputChange("levelOfStudy", value)
                   }
