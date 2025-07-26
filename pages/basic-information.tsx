@@ -699,7 +699,7 @@ export default function BasicInformation() {
             <div className="space-y-2">
               <Label htmlFor="departmentInCyprus">Department *</Label>
               <Select
-                value={formData.departmentInCyprus}
+                value={formData.departmentInCyprus || ""}
                 onValueChange={(value) =>
                   handleInputChange("departmentInCyprus", value)
                 }
