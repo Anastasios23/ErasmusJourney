@@ -275,8 +275,12 @@ export default function BasicInformation() {
     if (draftLoaded.current && !isSubmitting && !isNavigating.current) {
       // Only auto-save if we have substantial data (more than just basic fields)
       const hasSubstantialData =
-        (formData.firstName?.trim() && formData.lastName?.trim() && formData.email?.trim()) ||
-        (formData.universityInCyprus && formData.departmentInCyprus && formData.levelOfStudy);
+        (formData.firstName?.trim() &&
+          formData.lastName?.trim() &&
+          formData.email?.trim()) ||
+        (formData.universityInCyprus &&
+          formData.departmentInCyprus &&
+          formData.levelOfStudy);
 
       if (hasSubstantialData) {
         // Clear existing timeout
@@ -996,7 +1000,8 @@ export default function BasicInformation() {
                 application. All fields marked with * are required.
               </p>
               <p className="text-sm text-gray-500">
-                💡 Your progress is automatically saved periodically and when you continue to the next step.
+                💡 Your progress is automatically saved periodically and when
+                you continue to the next step.
               </p>
             </div>
 
