@@ -138,17 +138,22 @@ export default function BasicInformation() {
     }
   }, [sessionStatus, router]);
 
-  // Load draft data only once when authenticated
+  // Load draft data for both authenticated and unauthenticated users
   useEffect(() => {
     if (
-      sessionStatus === "authenticated" &&
+      sessionStatus !== "loading" &&
       !submissionsLoading &&
       !draftLoaded.current
     ) {
       const draft = getDraftData("basic-info");
       if (draft) {
         console.log("DRAFT DATA FOUND. APPLYING TO FORM:", draft); // DEBUG
-        setFormData(draft);
+        console.log("SETTING FORM DATA..."); // DEBUG
+        setFormData(prevData => {
+          console.log("PREVIOUS FORM DATA:", prevData); // DEBUG
+          console.log("NEW FORM DATA:", draft); // DEBUG
+          return { ...prevData, ...draft };
+        });
       }
       draftLoaded.current = true; // Mark draft as loaded
     }
