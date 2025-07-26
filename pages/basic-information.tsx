@@ -68,6 +68,7 @@ export default function BasicInformation() {
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [draftApplied, setDraftApplied] = useState(false);
+  const [showSavedIndicator, setShowSavedIndicator] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: "",
