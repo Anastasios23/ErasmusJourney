@@ -189,36 +189,39 @@ export default function BasicInformation() {
   }, [formData]);
 
   // Silent save function that doesn't refresh submissions (for autosave)
-  const silentSaveDraft = useCallback(async (formData: any) => {
-    if (sessionStatus === "authenticated" && session) {
-      // Save to server without refreshing submissions
-      const response = await fetch("/api/forms/saveDraft", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+  const silentSaveDraft = useCallback(
+    async (formData: any) => {
+      if (sessionStatus === "authenticated" && session) {
+        // Save to server without refreshing submissions
+        const response = await fetch("/api/forms/saveDraft", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            type: "basic-info",
+            title: "Basic Information Draft",
+            data: formData,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to save draft: ${response.status}`);
+        }
+      } else {
+        // Save to localStorage for unauthenticated users
+        const draftKey = `erasmus_draft_basic-info`;
+        const draftData = {
           type: "basic-info",
           title: "Basic Information Draft",
           data: formData,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to save draft: ${response.status}`);
+          timestamp: new Date().toISOString(),
+        };
+        localStorage.setItem(draftKey, JSON.stringify(draftData));
       }
-    } else {
-      // Save to localStorage for unauthenticated users
-      const draftKey = `erasmus_draft_basic-info`;
-      const draftData = {
-        type: "basic-info",
-        title: "Basic Information Draft",
-        data: formData,
-        timestamp: new Date().toISOString(),
-      };
-      localStorage.setItem(draftKey, JSON.stringify(draftData));
-    }
-  }, [sessionStatus, session]);
+    },
+    [sessionStatus, session],
+  );
 
   // Auto-save function with debouncing
   const autoSaveForm = useCallback(
@@ -271,11 +274,12 @@ export default function BasicInformation() {
   useEffect(() => {
     if (draftLoaded.current && !isSubmitting && !isNavigating.current) {
       // Only auto-save if we have some meaningful data
-      const hasData = formData.firstName?.trim() ||
-                     formData.lastName?.trim() ||
-                     formData.email?.trim() ||
-                     formData.universityInCyprus ||
-                     formData.departmentInCyprus;
+      const hasData =
+        formData.firstName?.trim() ||
+        formData.lastName?.trim() ||
+        formData.email?.trim() ||
+        formData.universityInCyprus ||
+        formData.departmentInCyprus;
 
       if (hasData) {
         // Clear existing timeout
