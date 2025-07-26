@@ -245,7 +245,12 @@ export default function BasicInformation() {
 
         setLastSaved(new Date());
 
-        if (!silent) {
+        if (silent) {
+          // Show the floating indicator for auto-save
+          setShowSavedIndicator(true);
+          setTimeout(() => setShowSavedIndicator(false), 3000);
+        } else {
+          // Show the alert for manual save
           setDraftSuccess("Draft saved successfully!");
           setTimeout(() => setDraftSuccess(null), 3000);
         }
