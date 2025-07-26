@@ -180,6 +180,13 @@ export default function BasicInformation() {
   // Debug form data changes
   useEffect(() => {
     console.log("FORM DATA CHANGED:", formData);
+    console.log("Key fields:");
+    console.log("- firstName:", formData.firstName);
+    console.log("- lastName:", formData.lastName);
+    console.log("- email:", formData.email);
+    console.log("- universityInCyprus:", formData.universityInCyprus);
+    console.log("- departmentInCyprus:", formData.departmentInCyprus);
+    console.log("- levelOfStudy:", formData.levelOfStudy);
   }, [formData]);
 
   // Auto-save function with debouncing
