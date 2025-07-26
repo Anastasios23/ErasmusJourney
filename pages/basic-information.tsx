@@ -191,7 +191,7 @@ export default function BasicInformation() {
   const silentSaveDraft = useCallback(async (formData: any) => {
     if (sessionStatus === "authenticated" && session) {
       // Save to server without refreshing submissions
-      await fetch("/api/forms/saveDraft", {
+      const response = await fetch("/api/forms/saveDraft", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -202,6 +202,10 @@ export default function BasicInformation() {
           data: formData,
         }),
       });
+
+      if (!response.ok) {
+        throw new Error(`Failed to save draft: ${response.status}`);
+      }
     } else {
       // Save to localStorage for unauthenticated users
       const draftKey = `erasmus_draft_basic-info`;
