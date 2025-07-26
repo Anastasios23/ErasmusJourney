@@ -365,17 +365,19 @@ export default function BasicInformation() {
     setFormData((prev) => {
       const newData = { ...prev, [field]: value };
 
-      // Reset dependent fields when changing university or department
-      if (field === "universityInCyprus") {
-        newData.departmentInCyprus = "";
-        newData.hostUniversity = "";
-        newData.hostCountry = "";
-        newData.hostCity = "";
-      }
-      if (field === "departmentInCyprus" || field === "levelOfStudy") {
-        newData.hostUniversity = "";
-        newData.hostCountry = "";
-        newData.hostCity = "";
+      // Reset dependent fields when changing university or department, but not during draft loading
+      if (!isLoadingDraft.current) {
+        if (field === "universityInCyprus") {
+          newData.departmentInCyprus = "";
+          newData.hostUniversity = "";
+          newData.hostCountry = "";
+          newData.hostCity = "";
+        }
+        if (field === "departmentInCyprus" || field === "levelOfStudy") {
+          newData.hostUniversity = "";
+          newData.hostCountry = "";
+          newData.hostCity = "";
+        }
       }
 
       // Auto-fill city when country is selected
