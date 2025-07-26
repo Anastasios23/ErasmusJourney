@@ -159,6 +159,120 @@ export default function BasicInformation() {
     console.log("SESSION STATUS:", sessionStatus);
   }, [sessionStatus]);
 
+  // Auto-save function with debouncing
+  const autoSaveForm = useCallback(async (formData: any, silent: boolean = true) => {
+    // Don't auto-save if form is empty or we're navigating away
+    if (!formData.firstName && !formData.lastName && !formData.email) {
+      return;
+    }
+
+    if (isNavigating.current) {
+      return;
+    }
+
+    try {
+      setIsAutoSaving(true);
+
+      if (sessionStatus === "authenticated" && session) {
+        // Save to server for authenticated users
+        await saveDraft("basic-info", "Basic Information Draft", formData);
+      } else {
+        // Save to localStorage for unauthenticated users
+        const draftKey = `erasmus_draft_basic-info`;
+        const draftData = {
+          type: "basic-info",
+          title: "Basic Information Draft",
+          data: formData,
+          timestamp: new Date().toISOString(),
+        };
+        localStorage.setItem(draftKey, JSON.stringify(draftData));
+      }
+
+      setLastSaved(new Date());
+
+      if (!silent) {
+        setDraftSuccess("Draft saved successfully!");
+        setTimeout(() => setDraftSuccess(null), 3000);
+      }
+    } catch (error) {
+      console.error("Auto-save error:", error);
+      if (!silent) {
+        setDraftError("Failed to auto-save. Please save manually.");
+        setTimeout(() => setDraftError(null), 5000);
+      }
+    } finally {
+      setIsAutoSaving(false);
+    }
+  }, [sessionStatus, session, saveDraft]);
+
+  // Auto-save when form data changes (debounced)
+  useEffect(() => {
+    if (draftLoaded.current && !isSubmitting) {
+      // Clear existing timeout
+      if (autoSaveTimeout.current) {
+        clearTimeout(autoSaveTimeout.current);
+      }
+
+      // Set new timeout for auto-save (3 seconds after user stops typing)
+      autoSaveTimeout.current = setTimeout(() => {
+        autoSaveForm(formData, true);
+      }, 3000);
+    }
+
+    return () => {
+      if (autoSaveTimeout.current) {
+        clearTimeout(autoSaveTimeout.current);
+      }
+    };
+  }, [formData, autoSaveForm, isSubmitting]);
+
+  // Save before navigation/page unload
+  useEffect(() => {
+    const handleBeforeUnload = async (e: BeforeUnloadEvent) => {
+      // Only save if there's meaningful data
+      if (formData.firstName || formData.lastName || formData.email) {
+        isNavigating.current = true;
+
+        // For page unload, we need to use synchronous localStorage
+        const draftKey = `erasmus_draft_basic-info`;
+        const draftData = {
+          type: "basic-info",
+          title: "Basic Information Draft",
+          data: formData,
+          timestamp: new Date().toISOString(),
+        };
+        localStorage.setItem(draftKey, JSON.stringify(draftData));
+
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+
+    const handleRouteChangeStart = async (url: string) => {
+      // Don't auto-save when navigating to course-matching (form submission handles this)
+      if (url.includes('course-matching')) {
+        return;
+      }
+
+      if ((formData.firstName || formData.lastName || formData.email) && !isSubmitting) {
+        isNavigating.current = true;
+        try {
+          await autoSaveForm(formData, false);
+        } catch (error) {
+          console.error("Error saving before navigation:", error);
+        }
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+    };
+  }, [formData, autoSaveForm, isSubmitting, router.events]);
+
   // Update available host universities when Cyprus university, department, or level changes
   useEffect(() => {
     if (
