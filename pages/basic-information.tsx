@@ -827,7 +827,7 @@ export default function BasicInformation() {
                   Preferred Host University *
                 </Label>
                 <Select
-                  value={formData.hostUniversity}
+                  value={formData.hostUniversity || ""}
                   onValueChange={(value) =>
                     handleInputChange("hostUniversity", value)
                   }
