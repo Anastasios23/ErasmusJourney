@@ -372,6 +372,15 @@ export default function BasicInformation() {
             ?.departments || []
         : [];
 
+  // Debug available departments
+  useEffect(() => {
+    if (formData.universityInCyprus) {
+      console.log("AVAILABLE DEPARTMENTS for", formData.universityInCyprus, ":", availableDepartments);
+      console.log("LOADED DEPARTMENT:", formData.departmentInCyprus);
+      console.log("DEPARTMENT IS AVAILABLE:", availableDepartments.includes(formData.departmentInCyprus));
+    }
+  }, [formData.universityInCyprus, formData.departmentInCyprus, availableDepartments]);
+
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => {
       const newData = { ...prev, [field]: value };
