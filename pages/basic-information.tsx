@@ -160,6 +160,9 @@ export default function BasicInformation() {
           return { ...prevData, ...draft };
         });
 
+        // Set flag to indicate draft was applied
+        setDraftApplied(true);
+
         // Clear the flag after a short delay to allow the state update to complete
         setTimeout(() => {
           isLoadingDraft.current = false;
