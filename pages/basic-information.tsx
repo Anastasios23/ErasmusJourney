@@ -134,9 +134,7 @@ export default function BasicInformation() {
   // Authentication redirect in useEffect
   useEffect(() => {
     if (sessionStatus === "unauthenticated") {
-      router.replace(
-        `/login?callbackUrl=${encodeURIComponent(router.asPath)}`,
-      );
+      router.replace(`/login?callbackUrl=${encodeURIComponent(router.asPath)}`);
     }
   }, [sessionStatus, router]);
 
@@ -154,7 +152,7 @@ export default function BasicInformation() {
 
         isLoadingDraft.current = true; // Set flag to prevent field clearing
 
-        setFormData(prevData => {
+        setFormData((prevData) => {
           console.log("PREVIOUS FORM DATA:", prevData); // DEBUG
           console.log("NEW FORM DATA:", draft); // DEBUG
           return { ...prevData, ...draft };
@@ -190,50 +188,53 @@ export default function BasicInformation() {
   }, [formData]);
 
   // Auto-save function with debouncing
-  const autoSaveForm = useCallback(async (formData: any, silent: boolean = true) => {
-    // Don't auto-save if form is empty or we're navigating away
-    if (!formData.firstName && !formData.lastName && !formData.email) {
-      return;
-    }
-
-    if (isNavigating.current) {
-      return;
-    }
-
-    try {
-      setIsAutoSaving(true);
-
-      if (sessionStatus === "authenticated" && session) {
-        // Save to server for authenticated users
-        await saveDraft("basic-info", "Basic Information Draft", formData);
-      } else {
-        // Save to localStorage for unauthenticated users
-        const draftKey = `erasmus_draft_basic-info`;
-        const draftData = {
-          type: "basic-info",
-          title: "Basic Information Draft",
-          data: formData,
-          timestamp: new Date().toISOString(),
-        };
-        localStorage.setItem(draftKey, JSON.stringify(draftData));
+  const autoSaveForm = useCallback(
+    async (formData: any, silent: boolean = true) => {
+      // Don't auto-save if form is empty or we're navigating away
+      if (!formData.firstName && !formData.lastName && !formData.email) {
+        return;
       }
 
-      setLastSaved(new Date());
+      if (isNavigating.current) {
+        return;
+      }
 
-      if (!silent) {
-        setDraftSuccess("Draft saved successfully!");
-        setTimeout(() => setDraftSuccess(null), 3000);
+      try {
+        setIsAutoSaving(true);
+
+        if (sessionStatus === "authenticated" && session) {
+          // Save to server for authenticated users
+          await saveDraft("basic-info", "Basic Information Draft", formData);
+        } else {
+          // Save to localStorage for unauthenticated users
+          const draftKey = `erasmus_draft_basic-info`;
+          const draftData = {
+            type: "basic-info",
+            title: "Basic Information Draft",
+            data: formData,
+            timestamp: new Date().toISOString(),
+          };
+          localStorage.setItem(draftKey, JSON.stringify(draftData));
+        }
+
+        setLastSaved(new Date());
+
+        if (!silent) {
+          setDraftSuccess("Draft saved successfully!");
+          setTimeout(() => setDraftSuccess(null), 3000);
+        }
+      } catch (error) {
+        console.error("Auto-save error:", error);
+        if (!silent) {
+          setDraftError("Failed to auto-save. Please save manually.");
+          setTimeout(() => setDraftError(null), 5000);
+        }
+      } finally {
+        setIsAutoSaving(false);
       }
-    } catch (error) {
-      console.error("Auto-save error:", error);
-      if (!silent) {
-        setDraftError("Failed to auto-save. Please save manually.");
-        setTimeout(() => setDraftError(null), 5000);
-      }
-    } finally {
-      setIsAutoSaving(false);
-    }
-  }, [sessionStatus, session, saveDraft]);
+    },
+    [sessionStatus, session, saveDraft],
+  );
 
   // Auto-save when form data changes (debounced)
   useEffect(() => {
@@ -280,11 +281,14 @@ export default function BasicInformation() {
 
     const handleRouteChangeStart = async (url: string) => {
       // Don't auto-save when navigating to course-matching (form submission handles this)
-      if (url.includes('course-matching')) {
+      if (url.includes("course-matching")) {
         return;
       }
 
-      if ((formData.firstName || formData.lastName || formData.email) && !isSubmitting) {
+      if (
+        (formData.firstName || formData.lastName || formData.email) &&
+        !isSubmitting
+      ) {
         isNavigating.current = true;
         try {
           await autoSaveForm(formData, false);
@@ -294,12 +298,12 @@ export default function BasicInformation() {
       }
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    router.events.on('routeChangeStart', handleRouteChangeStart);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    router.events.on("routeChangeStart", handleRouteChangeStart);
 
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      router.events.off('routeChangeStart', handleRouteChangeStart);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      router.events.off("routeChangeStart", handleRouteChangeStart);
     };
   }, [formData, autoSaveForm, isSubmitting, router.events]);
 
@@ -375,11 +379,23 @@ export default function BasicInformation() {
   // Debug available departments
   useEffect(() => {
     if (formData.universityInCyprus) {
-      console.log("AVAILABLE DEPARTMENTS for", formData.universityInCyprus, ":", availableDepartments);
+      console.log(
+        "AVAILABLE DEPARTMENTS for",
+        formData.universityInCyprus,
+        ":",
+        availableDepartments,
+      );
       console.log("LOADED DEPARTMENT:", formData.departmentInCyprus);
-      console.log("DEPARTMENT IS AVAILABLE:", availableDepartments.includes(formData.departmentInCyprus));
+      console.log(
+        "DEPARTMENT IS AVAILABLE:",
+        availableDepartments.includes(formData.departmentInCyprus),
+      );
     }
-  }, [formData.universityInCyprus, formData.departmentInCyprus, availableDepartments]);
+  }, [
+    formData.universityInCyprus,
+    formData.departmentInCyprus,
+    availableDepartments,
+  ]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => {
@@ -550,7 +566,11 @@ export default function BasicInformation() {
   } else {
     // Render the form only when authenticated and data is loaded
     content = (
-      <form onSubmit={handleSubmit} className="space-y-8" key={draftApplied ? "draft-loaded" : "initial"}>
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-8"
+        key={draftApplied ? "draft-loaded" : "initial"}
+      >
         {/* Personal Information */}
         <Card>
           <CardHeader>
@@ -887,9 +907,16 @@ export default function BasicInformation() {
               onClick={handleSaveDraft}
               disabled={submissionsLoading || isSubmitting || isAutoSaving}
             >
-              {submissionsLoading ? "Loading..." : isAutoSaving ? "Saving..." : "Save Draft"}
+              {submissionsLoading
+                ? "Loading..."
+                : isAutoSaving
+                  ? "Saving..."
+                  : "Save Draft"}
             </Button>
-            <Button type="submit" disabled={submissionsLoading || isSubmitting || isAutoSaving}>
+            <Button
+              type="submit"
+              disabled={submissionsLoading || isSubmitting || isAutoSaving}
+            >
               {submissionsLoading
                 ? "Loading draft..."
                 : isSubmitting
