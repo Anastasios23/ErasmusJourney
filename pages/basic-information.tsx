@@ -405,8 +405,17 @@ export default function BasicInformation() {
     }
 
     setIsSubmitting(true);
+    isNavigating.current = true;
 
     try {
+      // First save the current form data as a draft for backup
+      try {
+        await autoSaveForm(formData, true);
+      } catch (draftSaveError) {
+        console.warn("Could not save draft before submission:", draftSaveError);
+        // Continue with submission even if draft save fails
+      }
+
       await submitForm(
         "basic-info",
         "Basic Information Form",
@@ -428,6 +437,7 @@ export default function BasicInformation() {
       console.error("Submission error:", error);
       const errorInfo = handleApiError(error);
       setSubmitError(errorInfo.message);
+      isNavigating.current = false; // Reset navigation flag on error
 
       if (errorInfo.action === "signin") {
         // Redirect to sign-in if authentication failed
