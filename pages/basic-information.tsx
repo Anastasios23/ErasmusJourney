@@ -749,7 +749,7 @@ export default function BasicInformation() {
               <div className="space-y-2">
                 <Label htmlFor="exchangePeriod">Exchange Period *</Label>
                 <Select
-                  value={formData.exchangePeriod}
+                  value={formData.exchangePeriod || ""}
                   onValueChange={(value) =>
                     handleInputChange("exchangePeriod", value)
                   }
