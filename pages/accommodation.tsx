@@ -26,10 +26,21 @@ import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
 import { Checkbox } from "../src/components/ui/checkbox";
 import Header from "../components/Header";
 import { ArrowRight, ArrowLeft, Home, Star, Euro } from "lucide-react";
+import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
 
 export default function Accommodation() {
   const { data: session } = useSession();
   const router = useRouter();
+
+  // Form submissions hook
+  const {
+    submitForm,
+    getDraftData,
+    saveDraft,
+    getBasicInfoId,
+    loading: submissionsLoading,
+    error: submissionsError,
+  } = useFormSubmissions();
 
   // Authentication temporarily disabled - all users can access
 
@@ -73,10 +84,34 @@ export default function Accommodation() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Accommodation Form submitted:", formData);
-    router.push("/living-expenses");
+    
+    try {
+      console.log("Accommodation Form submitted:", formData);
+      
+      // Get the basicInfoId from the session manager
+      const basicInfoId = getBasicInfoId();
+      
+      if (!basicInfoId) {
+        console.warn("No basicInfoId found. This form will not be linked to the Basic Information form.");
+      }
+      
+      // Submit the form data with the basicInfoId
+      await submitForm(
+        "accommodation",
+        "Accommodation Information",
+        formData,
+        "submitted",
+        basicInfoId
+      );
+      
+      // Navigate to the next page after successful submission
+      router.push("/living-expenses");
+    } catch (error) {
+      console.error("Error submitting accommodation form:", error);
+      // You could add error handling UI here
+    }
   };
 
   const accommodationTypes = [

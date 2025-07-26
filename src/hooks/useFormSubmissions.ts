@@ -5,6 +5,7 @@ import {
   handleApiError,
   AuthenticationError,
 } from "../utils/apiErrorHandler";
+import { apiService } from "../services/api";
 
 interface FormSubmission {
   id: string;
@@ -31,11 +32,14 @@ interface UseFormSubmissionsReturn {
     title: string,
     data: any,
     formStatus?: string,
-  ) => Promise<void>;
+    basicInfoId?: string
+  ) => Promise<any>;
   getDraftData: (type: string) => any | null;
   saveDraft: (type: string, title: string, data: any) => Promise<void>;
   deleteDraft: (id: string) => Promise<void>;
   refreshSubmissions: () => Promise<void>;
+  getBasicInfoId: () => string | undefined;
+  setBasicInfoId: (id: string) => void;
 }
 
 export function useFormSubmissions(): UseFormSubmissionsReturn {
@@ -104,6 +108,7 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     title: string,
     data: any,
     formStatus: string = "submitted",
+    basicInfoId?: string
   ) => {
     if (status === "loading") {
       throw new Error("Please wait while we check your authentication");
@@ -114,18 +119,40 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     }
 
     try {
-      await apiRequest("/api/forms/submit", {
+      // If this is a basic-info submission, we don't need to include a basicInfoId
+      // For other form types, try to get the basicInfoId from the parameter or from the session manager
+      const payload: any = {
+        type,
+        title,
+        data,
+        status: formStatus,
+      };
+      
+      // For non-basic-info forms, include the basicInfoId if available
+      if (type !== "basic-info") {
+        // Use the provided basicInfoId or get it from the session manager
+        const infoId = basicInfoId || apiService.sessionManager.getBasicInfoId();
+        if (infoId) {
+          payload.basicInfoId = infoId;
+        } else {
+          console.warn("No basicInfoId available for form submission");
+        }
+      }
+
+      const response = await apiRequest("/api/forms/submit", {
         method: "POST",
-        body: JSON.stringify({
-          type,
-          title,
-          data,
-          status: formStatus,
-        }),
+        body: JSON.stringify(payload),
       });
+
+      // If this is a basic-info submission, store the returned ID for future use
+      if (type === "basic-info" && response.submissionId) {
+        apiService.sessionManager.setBasicInfoId(response.submissionId);
+      }
 
       // Refresh submissions after successful submission
       await fetchSubmissions();
+      
+      return response;
     } catch (err) {
       console.error("Error submitting form:", err);
       throw err;
@@ -250,6 +277,14 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     }
   }, [session, status]);
 
+  const getBasicInfoId = () => {
+    return apiService.sessionManager.getBasicInfoId();
+  };
+
+  const setBasicInfoId = (id: string) => {
+    apiService.sessionManager.setBasicInfoId(id);
+  };
+
   return {
     submissions,
     loading,
@@ -259,6 +294,8 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     saveDraft,
     deleteDraft,
     refreshSubmissions,
+    getBasicInfoId,
+    setBasicInfoId,
   };
 }
 

@@ -27,6 +27,7 @@ import {
   Lightbulb,
 } from "lucide-react";
 import { useNotifications } from "../src/hooks/useNotifications";
+import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
 
 interface ExpenseCategory {
   groceries: string;
@@ -41,6 +42,16 @@ export default function LivingExpenses() {
   const { data: session } = useSession();
   const router = useRouter();
   const { addNotification } = useNotifications();
+
+  // Form submissions hook
+  const {
+    submitForm,
+    getDraftData,
+    saveDraft,
+    getBasicInfoId,
+    loading: submissionsLoading,
+    error: submissionsError,
+  } = useFormSubmissions();
 
   const [formData, setFormData] = useState({
     spendingHabit: "",
@@ -87,26 +98,55 @@ export default function LivingExpenses() {
     return total;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Living Expenses Form submitted:", { formData, expenses });
+    
+    try {
+      // Combine formData and expenses into a single object
+      const livingExpensesData = {
+        ...formData,
+        expenses: expenses
+      };
+      
+      console.log("Living Expenses Form submitted:", livingExpensesData);
+      
+      // Get the basicInfoId from the session manager
+      const basicInfoId = getBasicInfoId();
+      
+      if (!basicInfoId) {
+        console.warn("No basicInfoId found. This form will not be linked to the Basic Information form.");
+      }
+      
+      // Submit the form data with the basicInfoId
+      await submitForm(
+        "living-expenses",
+        "Living Expenses Information",
+        livingExpensesData,
+        "submitted",
+        basicInfoId
+      );
+      
+      toast.success(
+        "🎉 Thank you! Your living expenses data has been saved and will help future students plan their budgets.",
+      );
 
-    toast.success(
-      "🎉 Thank you! Your living expenses data has been saved and will help future students plan their budgets.",
-    );
+      addNotification({
+        type: "success",
+        title: "Submission Received",
+        message: "Your living expenses information was saved.",
+        read: false,
+        actionUrl: "/dashboard",
+        actionLabel: "View Dashboard",
+      });
 
-    addNotification({
-      type: "success",
-      title: "Submission Received",
-      message: "Your living expenses information was saved.",
-      read: false,
-      actionUrl: "/dashboard",
-      actionLabel: "View Dashboard",
-    });
-
-    setTimeout(() => {
-      router.push("/help-future-students");
-    }, 2000);
+      // Navigate to the next page after successful submission
+      setTimeout(() => {
+        router.push("/help-future-students");
+      }, 2000);
+    } catch (error) {
+      console.error("Error submitting living expenses form:", error);
+      toast.error("There was an error saving your data. Please try again.");
+    }
   };
 
   const expenseCategories = [

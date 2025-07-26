@@ -41,7 +41,7 @@ export default async function handler(
   }
 
   try {
-    const { type, title, data, status = "submitted" } = req.body;
+    const { type, title, data, status = "submitted", basicInfoId } = req.body;
 
     if (!type || !title || !data) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -60,16 +60,30 @@ export default async function handler(
     }
 
     console.log("Creating submission for user:", session.user.id); // Debug log
+    
+    // Prepare submission data
+    const submissionData: any = {
+      userId: session.user.id,
+      type: formType,
+      title,
+      data,
+      status: submissionStatus,
+    };
+    
+    // If this is not a basic-info submission and we have a basicInfoId, include it in the data
+    if (type !== "basic-info" && basicInfoId) {
+      console.log(`Including basicInfoId: ${basicInfoId} for ${type} submission`);
+      // Store the basicInfoId in the data field for now
+      // In a production app, you would add a proper relation in the database schema
+      submissionData.data = {
+        ...data,
+        _basicInfoId: basicInfoId // Add a special field to track the relationship
+      };
+    }
 
     // Create form submission in database
     const submission = await prisma.formSubmission.create({
-      data: {
-        userId: session.user.id,
-        type: formType,
-        title,
-        data,
-        status: submissionStatus,
-      },
+      data: submissionData,
       include: {
         user: {
           select: {

@@ -45,7 +45,7 @@ import { Skeleton } from "../src/components/ui/skeleton";
 
 export default function HelpFutureStudents() {
   const router = useRouter();
-  const { submitForm, isSubmitting } = useFormSubmissions();
+  const { submitForm, getBasicInfoId, isSubmitting } = useFormSubmissions();
   const { stats, loading } = useCommunityStats();
 
   const [formData, setFormData] = useState({
@@ -126,11 +126,19 @@ export default function HelpFutureStudents() {
         wantToHelp: formData.wantToHelp === "yes",
       };
 
+      // Get the basicInfoId from the session manager
+      const basicInfoId = getBasicInfoId();
+      
+      if (!basicInfoId) {
+        console.warn("No basicInfoId found. This form will not be linked to the Basic Information form.");
+      }
+      
       await submitForm(
         "experience", // This will be converted to "EXPERIENCE" enum by the API
         `Mentorship Application - ${formData.nickname || "Anonymous"}`,
         submissionData,
         formData.publicProfile === "yes" ? "published" : "submitted", // Public mentors get published status
+        basicInfoId
       );
 
       toast.success("Thank you for joining our mentor community! 🎉");

@@ -59,6 +59,7 @@ export default function CourseMatching() {
     submitForm,
     getDraftData,
     saveDraft,
+    getBasicInfoId,
     loading: submissionsLoading,
     error: submissionsError,
   } = useFormSubmissions();
@@ -301,14 +302,43 @@ export default function CourseMatching() {
     setEquivalentCourses(updatedCourses);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Course Matching Form submitted:", {
-      formData,
-      courses,
-      equivalentCourses,
-    });
-    router.push("/accommodation");
+    
+    try {
+      // Prepare the complete data object
+      const courseMatchingData = {
+        ...formData,
+        courses: [
+          ...courses.map(course => ({ ...course, type: "host" })),
+          ...equivalentCourses.map(course => ({ ...course, difficulty: "", examTypes: [], type: "home" }))
+        ]
+      };
+      
+      console.log("Course Matching Form submitted:", courseMatchingData);
+      
+      // Get the basicInfoId from the session manager
+      const basicInfoId = getBasicInfoId();
+      
+      if (!basicInfoId) {
+        console.warn("No basicInfoId found. This form will not be linked to the Basic Information form.");
+      }
+      
+      // Submit the form data with the basicInfoId
+      await submitForm(
+        "course-matching",
+        "Course Matching Information",
+        courseMatchingData,
+        "submitted",
+        basicInfoId
+      );
+      
+      // Navigate to the next page after successful submission
+      router.push("/accommodation");
+    } catch (error) {
+      console.error("Error submitting course matching form:", error);
+      // You could add error handling UI here
+    }
   };
 
   return (

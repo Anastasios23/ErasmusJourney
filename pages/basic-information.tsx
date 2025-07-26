@@ -49,6 +49,7 @@ export default function BasicInformation() {
     submitForm,
     getDraftData,
     saveDraft,
+    setBasicInfoId,
     loading: submissionsLoading,
     error: submissionsError,
   } = useFormSubmissions();
@@ -516,12 +517,20 @@ export default function BasicInformation() {
       console.log("Draft saved successfully before submission");
 
       // Now submit the form
-      await submitForm(
+      const response = await submitForm(
         "basic-info",
         "Basic Information Form",
         formData,
         "submitted",
       );
+
+      // Store the basicInfoId for linking with subsequent forms
+      if (response && response.submissionId) {
+        console.log("Setting basicInfoId:", response.submissionId);
+        setBasicInfoId(response.submissionId);
+      } else {
+        console.warn("No submissionId received from basic-info form submission");
+      }
 
       // Clean up any old localStorage draft after successful submission
       localStorage.removeItem("erasmus_draft_basic-info");

@@ -62,7 +62,7 @@ interface PhotoStoryEntry {
 
 export default function PhotoStory() {
   const router = useRouter();
-  const { submitForm } = useFormSubmissions();
+  const { submitForm, getBasicInfoId } = useFormSubmissions();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -217,11 +217,19 @@ export default function PhotoStory() {
         allowPublicUse: formData.allowPublicUse || false,
       };
 
+      // Get the basicInfoId from the session manager
+      const basicInfoId = getBasicInfoId();
+      
+      if (!basicInfoId) {
+        console.warn("No basicInfoId found. This form will not be linked to the Basic Information form.");
+      }
+      
       await submitForm(
         "story", // This will be converted to "STORY" enum by the API
         formData.storyTitle,
         submissionData,
         "published", // Make stories public by default
+        basicInfoId
       );
 
       toast.success("Your photo story has been submitted successfully!");
