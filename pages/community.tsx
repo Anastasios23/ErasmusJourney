@@ -912,7 +912,7 @@ export default function Community() {
 
                         {/* Specializations */}
                         <div className="flex flex-wrap gap-1">
-                          {mentor.specializations.slice(0, 3).map((spec) => (
+                          {(mentor.specializations || []).slice(0, 3).map((spec) => (
                             <Badge
                               key={spec}
                               variant="outline"
@@ -921,9 +921,9 @@ export default function Community() {
                               {spec}
                             </Badge>
                           ))}
-                          {mentor.specializations.length > 3 && (
+                          {(mentor.specializations || []).length > 3 && (
                             <Badge variant="outline" className="text-xs">
-                              +{mentor.specializations.length - 3} more
+                              +{(mentor.specializations || []).length - 3} more
                             </Badge>
                           )}
                         </div>
@@ -932,8 +932,8 @@ export default function Community() {
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <Languages className="h-4 w-4 text-orange-500" />
                           <span className="truncate">
-                            {mentor.languagesSpoken.slice(0, 3).join(", ")}
-                            {mentor.languagesSpoken.length > 3 && "..."}
+                            {(mentor.languagesSpoken || mentor.languages || []).slice(0, 3).join(", ") || "Not specified"}
+                            {(mentor.languagesSpoken || mentor.languages || []).length > 3 && "..."}
                           </span>
                         </div>
 
