@@ -120,8 +120,57 @@ export interface HelpFutureStudentsData {
   nickname: string;
 }
 
+// User session management
+class SessionManager {
+  private static instance: SessionManager;
+  private currentUserSession: { basicInfoId?: string } = {};
+
+  static getInstance(): SessionManager {
+    if (!SessionManager.instance) {
+      SessionManager.instance = new SessionManager();
+    }
+    return SessionManager.instance;
+  }
+
+  setBasicInfoId(id: string): void {
+    this.currentUserSession.basicInfoId = id;
+    localStorage.setItem(
+      "erasmusJourneySession",
+      JSON.stringify(this.currentUserSession),
+    );
+  }
+
+  getBasicInfoId(): string | undefined {
+    // Try to get from memory first
+    if (this.currentUserSession.basicInfoId) {
+      return this.currentUserSession.basicInfoId;
+    }
+
+    // Fall back to localStorage
+    const stored = localStorage.getItem("erasmusJourneySession");
+    if (stored) {
+      try {
+        const session = JSON.parse(stored);
+        this.currentUserSession = session;
+        return session.basicInfoId;
+      } catch (error) {
+        console.error("Error parsing stored session:", error);
+        localStorage.removeItem("erasmusJourneySession");
+      }
+    }
+
+    return undefined;
+  }
+
+  clearSession(): void {
+    this.currentUserSession = {};
+    localStorage.removeItem("erasmusJourneySession");
+  }
+}
+
 class ApiService {
   private isBackendAvailable = true;
+  public sessionManager = SessionManager.getInstance();
 
   private async makeRequest<T>(
     endpoint: string,
@@ -260,55 +309,6 @@ class ApiService {
 }
 
 export const apiService = new ApiService();
-
-// User session management
-class SessionManager {
-  private static instance: SessionManager;
-  private currentUserSession: { basicInfoId?: number } = {};
-
-  static getInstance(): SessionManager {
-    if (!SessionManager.instance) {
-      SessionManager.instance = new SessionManager();
-    }
-    return SessionManager.instance;
-  }
-
-  setBasicInfoId(id: number): void {
-    this.currentUserSession.basicInfoId = id;
-    localStorage.setItem(
-      "erasmusJourneySession",
-      JSON.stringify(this.currentUserSession),
-    );
-  }
-
-  getBasicInfoId(): number | undefined {
-    // Try to get from memory first
-    if (this.currentUserSession.basicInfoId) {
-      return this.currentUserSession.basicInfoId;
-    }
-
-    // Fall back to localStorage
-    const stored = localStorage.getItem("erasmusJourneySession");
-    if (stored) {
-      try {
-        const session = JSON.parse(stored);
-        this.currentUserSession = session;
-        return session.basicInfoId;
-      } catch (error) {
-        console.error("Error parsing stored session:", error);
-        localStorage.removeItem("erasmusJourneySession");
-      }
-    }
-
-    return undefined;
-  }
-
-  clearSession(): void {
-    this.currentUserSession = {};
-    localStorage.removeItem("erasmusJourneySession");
-  }
-}
-
 export const sessionManager = SessionManager.getInstance();
 
 // Registration function

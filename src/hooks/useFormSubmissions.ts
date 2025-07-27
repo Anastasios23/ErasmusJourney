@@ -131,7 +131,7 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
       // For non-basic-info forms, include the basicInfoId if available
       if (type !== "basic-info") {
         // Use the provided basicInfoId or get it from the session manager
-        const infoId = basicInfoId || apiService.sessionManager.getBasicInfoId();
+        const infoId = basicInfoId || (apiService.sessionManager ? apiService.sessionManager.getBasicInfoId() : undefined);
         if (infoId) {
           payload.basicInfoId = infoId;
         } else {
@@ -145,7 +145,7 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
       });
 
       // If this is a basic-info submission, store the returned ID for future use
-      if (type === "basic-info" && response.submissionId) {
+      if (type === "basic-info" && response.submissionId && apiService.sessionManager) {
         apiService.sessionManager.setBasicInfoId(response.submissionId);
       }
 
@@ -278,11 +278,13 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
   }, [session, status]);
 
   const getBasicInfoId = () => {
-    return apiService.sessionManager.getBasicInfoId();
+    return apiService.sessionManager ? apiService.sessionManager.getBasicInfoId() : undefined;
   };
 
   const setBasicInfoId = (id: string) => {
-    apiService.sessionManager.setBasicInfoId(id);
+    if (apiService.sessionManager) {
+      apiService.sessionManager.setBasicInfoId(id);
+    }
   };
 
   return {

@@ -25,12 +25,15 @@ import {
 import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
 import { Checkbox } from "../src/components/ui/checkbox";
 import Header from "../components/Header";
-import { ArrowRight, ArrowLeft, Home, Star, Euro } from "lucide-react";
+import { ArrowRight, ArrowLeft, Home, Star, Euro, MapPin, GraduationCap } from "lucide-react";
+import { useToast } from "../src/components/ui/use-toast";
+import { Toaster } from "../src/components/ui/toaster";
 import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
 
 export default function Accommodation() {
   const { data: session } = useSession();
   const router = useRouter();
+  const { toast } = useToast();
 
   // Form submissions hook
   const {
@@ -84,11 +87,53 @@ export default function Accommodation() {
     }));
   };
 
+  // Load basic info data to get city/country information
+  const [basicInfoData, setBasicInfoData] = useState<any>(null);
+
+  useEffect(() => {
+    // Load any existing draft data for the accommodation form
+    const draftData = getDraftData("accommodation");
+    if (draftData) {
+      setFormData(draftData);
+    }
+
+    // Get basic info data from the session
+    const basicInfo = getDraftData("basic-info");
+    if (basicInfo) {
+      setBasicInfoData(basicInfo);
+    }
+  }, []);
+  
+  // Load draft data when component mounts
+  useEffect(() => {
+    // If we have both draft data with city/country and basic info, make sure they match
+    if (formData.city && formData.country && basicInfoData) {
+      // If the draft data has different city/country than the basic info,
+      // update the form data to use the basic info city/country
+      if (formData.city !== basicInfoData.hostCity || formData.country !== basicInfoData.hostCountry) {
+        console.log("Updating accommodation draft with current basic info location");
+        setFormData(prev => ({
+          ...prev,
+          city: basicInfoData.hostCity,
+          country: basicInfoData.hostCountry
+        }));
+      }
+    }
+  }, [basicInfoData]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
-      console.log("Accommodation Form submitted:", formData);
+      // Ensure we have city and country information from basic info
+      if (!basicInfoData?.hostCity || !basicInfoData?.hostCountry) {
+        toast({
+          title: "Missing location information",
+          description: "Please complete the Basic Information form first to provide your host city and country.",
+          variant: "destructive",
+        });
+        return;
+      }
       
       // Get the basicInfoId from the session manager
       const basicInfoId = getBasicInfoId();
@@ -97,20 +142,41 @@ export default function Accommodation() {
         console.warn("No basicInfoId found. This form will not be linked to the Basic Information form.");
       }
       
+      // Merge city and country information from basic info
+      const enrichedFormData = {
+        ...formData,
+        // Include city and country from basic info for filtering in the experiences API
+        city: basicInfoData.hostCity,
+        country: basicInfoData.hostCountry,
+        university: basicInfoData.hostUniversity || "",
+      };
+      
+      console.log("Accommodation Form submitted:", enrichedFormData);
+      
       // Submit the form data with the basicInfoId
       await submitForm(
         "accommodation",
-        "Accommodation Information",
-        formData,
-        "submitted",
+        "Accommodation Experience",
+        enrichedFormData,
+        "published", // Set status to published so it appears in the experiences page
         basicInfoId
       );
+      
+      // Show success toast
+      toast({
+        title: "Success!",
+        description: "Your accommodation experience has been submitted and will be visible to other students.",
+      });
       
       // Navigate to the next page after successful submission
       router.push("/living-expenses");
     } catch (error) {
       console.error("Error submitting accommodation form:", error);
-      // You could add error handling UI here
+      toast({
+        title: "Submission failed",
+        description: "There was an error submitting your accommodation experience. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -148,6 +214,7 @@ export default function Accommodation() {
 
       <div className="min-h-screen bg-gray-50">
         <Header />
+        <Toaster />
 
         {/* Progress Header */}
         <div className="bg-white border-b">
@@ -176,6 +243,26 @@ export default function Accommodation() {
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Display basic info context */}
+          {basicInfoData && (
+            <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+              <h3 className="text-sm font-medium text-blue-800 mb-2">Your accommodation will be associated with:</h3>
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-blue-600" />
+                <p className="text-sm text-blue-700">
+                  <strong>{basicInfoData.hostCity}</strong>, {basicInfoData.hostCountry}
+                </p>
+              </div>
+              {basicInfoData.hostUniversity && (
+                <div className="flex items-center gap-2 mt-1">
+                  <GraduationCap className="h-4 w-4 text-blue-600" />
+                  <p className="text-sm text-blue-700">
+                    <strong>{basicInfoData.hostUniversity}</strong>
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Basic Accommodation Information */}
             <Card>
@@ -635,12 +722,46 @@ export default function Accommodation() {
 
             {/* Navigation */}
             <div className="flex justify-between items-center pt-8">
-              <Link href="/course-matching">
-                <Button variant="outline" className="flex items-center gap-2">
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Course Matching
+              <div className="flex gap-2">
+                <Link href="/course-matching">
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Course Matching
+                  </Button>
+                </Link>
+                
+                <Button 
+                  type="button" 
+                  variant="secondary"
+                  onClick={() => {
+                    try {
+                      // Save as draft with city/country information
+                      const enrichedFormData = {
+                        ...formData,
+                        city: basicInfoData?.hostCity || "",
+                        country: basicInfoData?.hostCountry || "",
+                        university: basicInfoData?.hostUniversity || "",
+                      };
+                      saveDraft("accommodation", "Accommodation Experience", enrichedFormData);
+                      
+                      toast({
+                        title: "Draft saved",
+                        description: "Your accommodation information has been saved as a draft.",
+                      });
+                    } catch (error) {
+                      console.error("Error saving draft:", error);
+                      toast({
+                        title: "Error saving draft",
+                        description: "There was a problem saving your draft. Please try again.",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  Save as Draft
                 </Button>
-              </Link>
+              </div>
 
               <Button
                 type="submit"
