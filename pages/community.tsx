@@ -363,9 +363,9 @@ export default function Community() {
 
       const matchesHostUniversity =
         !hostUniversity ||
-        mentor.hostUniversity
+        (mentor.hostUniversity && mentor.hostUniversity
           .toLowerCase()
-          .includes(hostUniversity.toLowerCase());
+          .includes(hostUniversity.toLowerCase()));
 
       const matchesHostCountry =
         !hostCountry ||
