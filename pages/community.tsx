@@ -369,11 +369,11 @@ export default function Community() {
 
       const matchesHostCountry =
         !hostCountry ||
-        mentor.hostCountry.toLowerCase().includes(hostCountry.toLowerCase());
+        (mentor.hostCountry && mentor.hostCountry.toLowerCase().includes(hostCountry.toLowerCase()));
 
       const matchesHostCity =
         !hostCity ||
-        mentor.hostCity.toLowerCase().includes(hostCity.toLowerCase());
+        (mentor.hostCity && mentor.hostCity.toLowerCase().includes(hostCity.toLowerCase()));
 
       return (
         matchesUniversityInCyprus &&
