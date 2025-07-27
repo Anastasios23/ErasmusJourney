@@ -409,7 +409,7 @@ export default function Community() {
     const universities = [...new Set(mentors.map((m) => m.hostUniversity))];
     const specializationCounts = mentors.reduce(
       (acc, mentor) => {
-        mentor.specializations.forEach((spec) => {
+        (mentor.specializations || []).forEach((spec) => {
           acc[spec] = (acc[spec] || 0) + 1;
         });
         return acc;
