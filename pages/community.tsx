@@ -973,7 +973,7 @@ export default function Community() {
 
                               {/* Additional contact methods */}
                               <div className="flex justify-center gap-2">
-                                {mentor.contactInfo.instagram && (
+                                {mentor.contactInfo && mentor.contactInfo.instagram && (
                                   <Button variant="outline" size="sm" asChild>
                                     <a
                                       href={`https://instagram.com/${mentor.contactInfo.instagram}`}
@@ -984,7 +984,7 @@ export default function Community() {
                                     </a>
                                   </Button>
                                 )}
-                                {mentor.contactInfo.linkedin && (
+                                {mentor.contactInfo && mentor.contactInfo.linkedin && (
                                   <Button variant="outline" size="sm" asChild>
                                     <a
                                       href={mentor.contactInfo.linkedin}
@@ -995,7 +995,7 @@ export default function Community() {
                                     </a>
                                   </Button>
                                 )}
-                                {mentor.contactInfo.facebook && (
+                                {mentor.contactInfo && mentor.contactInfo.facebook && (
                                   <Button variant="outline" size="sm" asChild>
                                     <a
                                       href={mentor.contactInfo.facebook}
@@ -1006,7 +1006,7 @@ export default function Community() {
                                     </a>
                                   </Button>
                                 )}
-                                {mentor.contactInfo.website && (
+                                {mentor.contactInfo && mentor.contactInfo.website && (
                                   <Button variant="outline" size="sm" asChild>
                                     <a
                                       href={mentor.contactInfo.website}
