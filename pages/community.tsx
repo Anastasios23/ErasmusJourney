@@ -962,7 +962,7 @@ export default function Community() {
 
                         {/* Contact Button */}
                         <div className="pt-2">
-                          {mentor.contactInfo.email ? (
+                          {mentor.contactInfo && mentor.contactInfo.email ? (
                             <div className="space-y-2">
                               <Button className="w-full" asChild>
                                 <a href={`mailto:${mentor.contactInfo.email}`}>
