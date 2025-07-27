@@ -941,7 +941,7 @@ export default function Community() {
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <Clock className="h-4 w-4 text-indigo-500" />
                           <span>
-                            Responds {mentor.responseTime.replace("-", " ")}
+                            Responds {(mentor.responseTime || "within-week").replace("-", " ")}
                           </span>
                         </div>
 
