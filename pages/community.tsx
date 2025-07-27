@@ -349,8 +349,8 @@ export default function Community() {
       const matchesDepartmentInCyprus =
         !departmentInCyprus ||
         departmentInCyprus === "all" ||
-        mentor.studyProgram.includes(departmentInCyprus) ||
-        mentor.specializations.some(
+        (mentor.studyProgram && mentor.studyProgram.includes(departmentInCyprus)) ||
+        (mentor.specializations || []).some(
           (spec) =>
             spec.toLowerCase().includes(departmentInCyprus.toLowerCase()) ||
             departmentInCyprus.toLowerCase().includes(spec.toLowerCase()),
