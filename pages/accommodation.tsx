@@ -39,6 +39,7 @@ export default function Accommodation() {
   const {
     submitForm,
     getDraftData,
+    getFormData,
     saveDraft,
     getBasicInfoId,
     loading: submissionsLoading,
@@ -97,8 +98,8 @@ export default function Accommodation() {
       setFormData(draftData);
     }
 
-    // Get basic info data from the session
-    const basicInfo = getDraftData("basic-info");
+    // Get basic info data from the session (checks both submitted and draft data)
+    const basicInfo = getFormData("basic-info");
     if (basicInfo) {
       setBasicInfoData(basicInfo);
     }

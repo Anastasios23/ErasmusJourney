@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -39,13 +39,14 @@ import {
   Globe,
   Star,
   Trophy,
+  Save,
 } from "lucide-react";
 import { useCommunityStats } from "../src/hooks/useCommunityStats";
 import { Skeleton } from "../src/components/ui/skeleton";
 
 export default function HelpFutureStudents() {
   const router = useRouter();
-  const { submitForm, getBasicInfoId, isSubmitting } = useFormSubmissions();
+  const { submitForm, getDraftData, saveDraft, getBasicInfoId, isSubmitting } = useFormSubmissions();
   const { stats, loading } = useCommunityStats();
 
   const [formData, setFormData] = useState({
@@ -71,6 +72,52 @@ export default function HelpFutureStudents() {
     funFact: "",
     nickname: "",
   });
+
+  // Load draft data when component mounts
+  useEffect(() => {
+    const draftData = getDraftData("help-future-students");
+    if (draftData) {
+      setFormData(draftData);
+    }
+  }, []);
+
+  // Auto-save functionality
+  const saveFormData = useCallback(async () => {
+    try {
+      await saveDraft("help-future-students", "Help Future Students Information", formData);
+    } catch (error) {
+      console.error("Error saving draft:", error);
+    }
+  }, [formData, saveDraft]);
+
+  // Auto-save when form data changes (debounced)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (Object.values(formData).some(value => 
+        typeof value === 'string' ? value.trim() !== "" : 
+        Array.isArray(value) ? value.length > 0 : false
+      )) {
+        saveFormData();
+      }
+    }, 1000); // 1 second debounce
+
+    return () => clearTimeout(timer);
+  }, [formData, saveFormData]);
+
+  // Save before navigation
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (Object.values(formData).some(value => 
+        typeof value === 'string' ? value.trim() !== "" : 
+        Array.isArray(value) ? value.length > 0 : false
+      )) {
+        saveFormData();
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [formData, saveFormData]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -851,14 +898,26 @@ export default function HelpFutureStudents() {
                 </Button>
               </Link>
 
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2 px-8"
-              >
-                <CheckCircle className="h-4 w-4" />
-                {isSubmitting ? "Submitting..." : "Complete Application"}
-              </Button>
+              <div className="flex items-center gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={saveFormData}
+                  className="flex items-center gap-2"
+                >
+                  <Save className="h-4 w-4" />
+                  Save as Draft
+                </Button>
+                
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2 px-8"
+                >
+                  <CheckCircle className="h-4 w-4" />
+                  {isSubmitting ? "Submitting..." : "Complete Application"}
+                </Button>
+              </div>
             </div>
           </form>
         </div>

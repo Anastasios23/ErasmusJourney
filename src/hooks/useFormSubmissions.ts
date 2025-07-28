@@ -35,6 +35,8 @@ interface UseFormSubmissionsReturn {
     basicInfoId?: string
   ) => Promise<any>;
   getDraftData: (type: string) => any | null;
+  getSubmittedData: (type: string) => any | null;
+  getFormData: (type: string) => any | null;
   saveDraft: (type: string, title: string, data: any) => Promise<void>;
   deleteDraft: (id: string) => Promise<void>;
   refreshSubmissions: () => Promise<void>;
@@ -248,6 +250,23 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     return null;
   };
 
+  const getSubmittedData = (type: string): any | null => {
+    // Check for submitted or published forms (for authenticated users)
+    const submittedForm = submissions.find(
+      (s) => s.type === type && (s.status === "submitted" || s.status === "published"),
+    );
+    if (submittedForm) {
+      return submittedForm.data;
+    }
+
+    return null;
+  };
+
+  const getFormData = (type: string): any | null => {
+    // First try to get submitted data, then fall back to draft data
+    return getSubmittedData(type) || getDraftData(type);
+  };
+
   const deleteDraft = async (id: string) => {
     if (id.startsWith("local_")) {
       // Local draft: remove from localStorage
@@ -293,6 +312,8 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     error,
     submitForm,
     getDraftData,
+    getSubmittedData,
+    getFormData,
     saveDraft,
     deleteDraft,
     refreshSubmissions,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
@@ -47,6 +47,7 @@ export default function LivingExpenses() {
   const {
     submitForm,
     getDraftData,
+    getFormData,
     saveDraft,
     getBasicInfoId,
     loading: submissionsLoading,
@@ -78,6 +79,57 @@ export default function LivingExpenses() {
     travel: "",
     otherExpenses: "",
   });
+
+  // Load draft data when component mounts
+  useEffect(() => {
+    const draftData = getDraftData("living-expenses");
+    if (draftData) {
+      if (draftData.expenses) {
+        setExpenses(draftData.expenses);
+      }
+      // Remove expenses from formData to avoid duplication
+      const { expenses: _, ...restData } = draftData;
+      setFormData(restData);
+    }
+  }, []);
+
+  // Auto-save functionality
+  const saveFormData = useCallback(async () => {
+    try {
+      const dataToSave = {
+        ...formData,
+        expenses: expenses
+      };
+      await saveDraft("living-expenses", "Living Expenses Information", dataToSave);
+    } catch (error) {
+      console.error("Error saving draft:", error);
+    }
+  }, [formData, expenses, saveDraft]);
+
+  // Auto-save when form data changes (debounced)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (Object.values(formData).some(value => value.trim() !== "") || 
+          Object.values(expenses).some(value => value.trim() !== "")) {
+        saveFormData();
+      }
+    }, 1000); // 1 second debounce
+
+    return () => clearTimeout(timer);
+  }, [formData, expenses, saveFormData]);
+
+  // Save before navigation
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (Object.values(formData).some(value => value.trim() !== "") || 
+          Object.values(expenses).some(value => value.trim() !== "")) {
+        saveFormData();
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [formData, expenses, saveFormData]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -542,13 +594,23 @@ export default function LivingExpenses() {
                 </Button>
               </Link>
 
-              <Button
-                type="submit"
-                className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
-              >
-                Continue to Help Future Students
-                <ArrowRight className="h-4 w-4" />
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={saveFormData}
+                  className="flex items-center gap-2"
+                >
+                  Save as Draft
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
+                >
+                  Continue to Help Future Students
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </form>
         </div>

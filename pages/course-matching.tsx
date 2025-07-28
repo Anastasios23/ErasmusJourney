@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 
 import Head from "next/head";
@@ -58,6 +58,7 @@ export default function CourseMatching() {
   const {
     submitForm,
     getDraftData,
+    getFormData,
     saveDraft,
     getBasicInfoId,
     loading: submissionsLoading,
@@ -115,7 +116,7 @@ export default function CourseMatching() {
     const loadDraftData = async () => {
       try {
         console.log("Loading draft data...");
-        const draftData = await getDraftData("basic-information");
+        const draftData = await getFormData("basic-information");
         console.log("Draft data loaded:", draftData);
         
         if (draftData) {
@@ -152,7 +153,72 @@ export default function CourseMatching() {
     };
 
     loadDraftData();
-  }, [getDraftData]);
+  }, [getFormData]);
+
+  // Load course-matching draft data
+  useEffect(() => {
+    const courseMatchingDraft = getDraftData("course-matching");
+    if (courseMatchingDraft) {
+      // Load form data
+      const { courses: draftCourses, ...restFormData } = courseMatchingDraft;
+      setFormData(prev => ({ ...prev, ...restFormData }));
+      
+      // Load courses if they exist
+      if (draftCourses && Array.isArray(draftCourses)) {
+        const hostCourses = draftCourses.filter(c => c.type === "host");
+        const homeCourses = draftCourses.filter(c => c.type === "home");
+        
+        if (hostCourses.length > 0) {
+          setCourses(hostCourses.map(({ type, ...course }) => course));
+        }
+        
+        if (homeCourses.length > 0) {
+          setEquivalentCourses(homeCourses.map(({ type, difficulty, examTypes, ...course }) => course));
+        }
+      }
+    }
+  }, []);
+
+  // Auto-save functionality
+  const saveFormData = useCallback(async () => {
+    try {
+      const dataToSave = {
+        ...formData,
+        courses: [
+          ...courses.map(course => ({ ...course, type: "host" })),
+          ...equivalentCourses.map(course => ({ ...course, difficulty: "", examTypes: [], type: "home" }))
+        ]
+      };
+      await saveDraft("course-matching", "Course Matching Information", dataToSave);
+    } catch (error) {
+      console.error("Error saving draft:", error);
+    }
+  }, [formData, courses, equivalentCourses, saveDraft]);
+
+  // Auto-save when form data changes (debounced)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (Object.values(formData).some(value => value.trim() !== "") || 
+          courses.length > 0 || equivalentCourses.length > 0) {
+        saveFormData();
+      }
+    }, 1000); // 1 second debounce
+
+    return () => clearTimeout(timer);
+  }, [formData, courses, equivalentCourses, saveFormData]);
+
+  // Save before navigation
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (Object.values(formData).some(value => value.trim() !== "") || 
+          courses.length > 0 || equivalentCourses.length > 0) {
+        saveFormData();
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [formData, courses, equivalentCourses, saveFormData]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -978,13 +1044,23 @@ export default function CourseMatching() {
                 </Button>
               </Link>
 
-              <Button
-                type="submit"
-                className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
-              >
-                Continue to Accommodation
-                <ArrowRight className="h-4 w-4" />
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={saveFormData}
+                  className="flex items-center gap-2"
+                >
+                  Save as Draft
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
+                >
+                  Continue to Accommodation
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </form>
         </div>

@@ -529,7 +529,9 @@ export default function BasicInformation() {
         console.log("Setting basicInfoId:", response.submissionId);
         setBasicInfoId(response.submissionId);
       } else {
-        console.warn("No submissionId received from basic-info form submission");
+        console.warn(
+          "No submissionId received from basic-info form submission",
+        );
       }
 
       // Clean up any old localStorage draft after successful submission
