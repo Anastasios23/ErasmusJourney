@@ -25,7 +25,16 @@ import {
 import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
 import { Checkbox } from "../src/components/ui/checkbox";
 import Header from "../components/Header";
-import { ArrowRight, ArrowLeft, Home, Star, Euro, MapPin, GraduationCap } from "lucide-react";
+import DebugBasicInfo from "../components/DebugBasicInfo";
+import {
+  ArrowRight,
+  ArrowLeft,
+  Home,
+  Star,
+  Euro,
+  MapPin,
+  GraduationCap,
+} from "lucide-react";
 import { useToast } from "../src/components/ui/use-toast";
 import { Toaster } from "../src/components/ui/toaster";
 import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
@@ -90,6 +99,7 @@ export default function Accommodation() {
 
   // Load basic info data to get city/country information
   const [basicInfoData, setBasicInfoData] = useState<any>(null);
+  const [showDebug, setShowDebug] = useState(false);
 
   useEffect(() => {
     // Load any existing draft data for the accommodation form
@@ -104,19 +114,27 @@ export default function Accommodation() {
       setBasicInfoData(basicInfo);
     }
   }, []);
-  
+
   // Load draft data when component mounts
   useEffect(() => {
     // If we have both draft data with city/country and basic info, make sure they match
-    if (formData.city && formData.country && basicInfoData) {
+    if (basicInfoData?.hostCity && basicInfoData?.hostCountry) {
       // If the draft data has different city/country than the basic info,
       // update the form data to use the basic info city/country
-      if (formData.city !== basicInfoData.hostCity || formData.country !== basicInfoData.hostCountry) {
-        console.log("Updating accommodation draft with current basic info location");
-        setFormData(prev => ({
+      if (
+        !formData.hasOwnProperty("city") ||
+        !formData.hasOwnProperty("country") ||
+        formData["city" as keyof typeof formData] !== basicInfoData.hostCity ||
+        formData["country" as keyof typeof formData] !==
+          basicInfoData.hostCountry
+      ) {
+        console.log(
+          "Updating accommodation draft with current basic info location",
+        );
+        setFormData((prev) => ({
           ...prev,
           city: basicInfoData.hostCity,
-          country: basicInfoData.hostCountry
+          country: basicInfoData.hostCountry,
         }));
       }
     }
@@ -124,25 +142,28 @@ export default function Accommodation() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       // Ensure we have city and country information from basic info
       if (!basicInfoData?.hostCity || !basicInfoData?.hostCountry) {
         toast({
           title: "Missing location information",
-          description: "Please complete the Basic Information form first to provide your host city and country.",
+          description:
+            "Please complete the Basic Information form first to provide your host city and country.",
           variant: "destructive",
         });
         return;
       }
-      
+
       // Get the basicInfoId from the session manager
       const basicInfoId = getBasicInfoId();
-      
+
       if (!basicInfoId) {
-        console.warn("No basicInfoId found. This form will not be linked to the Basic Information form.");
+        console.warn(
+          "No basicInfoId found. This form will not be linked to the Basic Information form.",
+        );
       }
-      
+
       // Merge city and country information from basic info
       const enrichedFormData = {
         ...formData,
@@ -151,31 +172,33 @@ export default function Accommodation() {
         country: basicInfoData.hostCountry,
         university: basicInfoData.hostUniversity || "",
       };
-      
+
       console.log("Accommodation Form submitted:", enrichedFormData);
-      
+
       // Submit the form data with the basicInfoId
       await submitForm(
         "accommodation",
         "Accommodation Experience",
         enrichedFormData,
         "published", // Set status to published so it appears in the experiences page
-        basicInfoId
+        basicInfoId,
       );
-      
+
       // Show success toast
       toast({
         title: "Success!",
-        description: "Your accommodation experience has been submitted and will be visible to other students.",
+        description:
+          "Your accommodation experience has been submitted and will be visible to other students.",
       });
-      
+
       // Navigate to the next page after successful submission
       router.push("/living-expenses");
     } catch (error) {
       console.error("Error submitting accommodation form:", error);
       toast({
         title: "Submission failed",
-        description: "There was an error submitting your accommodation experience. Please try again.",
+        description:
+          "There was an error submitting your accommodation experience. Please try again.",
         variant: "destructive",
       });
     }
@@ -244,14 +267,30 @@ export default function Accommodation() {
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Debug Button - Prominently Placed */}
+          <div className="mb-6 flex justify-center">
+            <Button
+              type="button"
+              variant="default"
+              size="lg"
+              onClick={() => setShowDebug(true)}
+              className="bg-red-500 hover:bg-red-600 text-white font-bold px-8 py-4 text-lg shadow-lg"
+            >
+              🐛 DEBUG: Click to Check Data Issues
+            </Button>
+          </div>
+
           {/* Display basic info context */}
           {basicInfoData && (
             <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
-              <h3 className="text-sm font-medium text-blue-800 mb-2">Your accommodation will be associated with:</h3>
+              <h3 className="text-sm font-medium text-blue-800 mb-2">
+                Your accommodation will be associated with:
+              </h3>
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-blue-600" />
                 <p className="text-sm text-blue-700">
-                  <strong>{basicInfoData.hostCity}</strong>, {basicInfoData.hostCountry}
+                  <strong>{basicInfoData.hostCity}</strong>,{" "}
+                  {basicInfoData.hostCountry}
                 </p>
               </div>
               {basicInfoData.hostUniversity && (
@@ -730,9 +769,9 @@ export default function Accommodation() {
                     Back to Course Matching
                   </Button>
                 </Link>
-                
-                <Button 
-                  type="button" 
+
+                <Button
+                  type="button"
                   variant="secondary"
                   onClick={() => {
                     try {
@@ -743,17 +782,23 @@ export default function Accommodation() {
                         country: basicInfoData?.hostCountry || "",
                         university: basicInfoData?.hostUniversity || "",
                       };
-                      saveDraft("accommodation", "Accommodation Experience", enrichedFormData);
-                      
+                      saveDraft(
+                        "accommodation",
+                        "Accommodation Experience",
+                        enrichedFormData,
+                      );
+
                       toast({
                         title: "Draft saved",
-                        description: "Your accommodation information has been saved as a draft.",
+                        description:
+                          "Your accommodation information has been saved as a draft.",
                       });
                     } catch (error) {
                       console.error("Error saving draft:", error);
                       toast({
                         title: "Error saving draft",
-                        description: "There was a problem saving your draft. Please try again.",
+                        description:
+                          "There was a problem saving your draft. Please try again.",
                         variant: "destructive",
                       });
                     }
@@ -775,6 +820,25 @@ export default function Accommodation() {
           </form>
         </div>
       </div>
+
+      {/* Debug Modal */}
+      {showDebug && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-4xl max-h-[80vh] overflow-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Debug Information</h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowDebug(false)}
+              >
+                Close
+              </Button>
+            </div>
+            <DebugBasicInfo onClose={() => setShowDebug(false)} />
+          </div>
+        </div>
+      )}
     </>
   );
 }
