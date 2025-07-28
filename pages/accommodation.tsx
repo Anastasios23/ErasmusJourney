@@ -144,12 +144,13 @@ export default function Accommodation() {
     e.preventDefault();
 
     try {
-      // Ensure we have city and country information from basic info
-      if (!basicInfoData?.hostCity || !basicInfoData?.hostCountry) {
+      // Check if we have the required basic info data
+      const basicInfo = getFormData("basic-info");
+      if (!basicInfo?.hostUniversity || !basicInfo?.hostCountry) {
         toast({
-          title: "Missing location information",
+          title: "Missing information",
           description:
-            "Please complete the Basic Information form first to provide your host city and country.",
+            "Please complete the Basic Information form with your host university and country details.",
           variant: "destructive",
         });
         return;
@@ -157,41 +158,39 @@ export default function Accommodation() {
 
       // Get the basicInfoId from the session manager
       const basicInfoId = getBasicInfoId();
-
       if (!basicInfoId) {
-        console.warn(
-          "No basicInfoId found. This form will not be linked to the Basic Information form.",
-        );
+        toast({
+          title: "Missing basic information",
+          description: "Please complete the Basic Information form first.",
+          variant: "destructive",
+        });
+        return;
       }
 
-      // Merge city and country information from basic info
+      // Merge basic info data
       const enrichedFormData = {
         ...formData,
-        // Include city and country from basic info for filtering in the experiences API
-        city: basicInfoData.hostCity,
-        country: basicInfoData.hostCountry,
-        university: basicInfoData.hostUniversity || "",
+        city: basicInfo.hostCity || "",
+        country: basicInfo.hostCountry || "",
+        university: basicInfo.hostUniversity || "",
       };
 
       console.log("Accommodation Form submitted:", enrichedFormData);
 
-      // Submit the form data with the basicInfoId
+      // Submit the form
       await submitForm(
         "accommodation",
         "Accommodation Experience",
         enrichedFormData,
-        "published", // Set status to published so it appears in the experiences page
+        "published",
         basicInfoId,
       );
 
-      // Show success toast
       toast({
         title: "Success!",
-        description:
-          "Your accommodation experience has been submitted and will be visible to other students.",
+        description: "Your accommodation experience has been submitted.",
       });
 
-      // Navigate to the next page after successful submission
       router.push("/living-expenses");
     } catch (error) {
       console.error("Error submitting accommodation form:", error);
@@ -754,91 +753,29 @@ export default function Accommodation() {
                     onChange={(e) =>
                       handleInputChange("additionalNotes", e.target.value)
                     }
-                    rows={4}
                   />
                 </div>
               </CardContent>
             </Card>
 
-            {/* Navigation */}
-            <div className="flex justify-between items-center pt-8">
-              <div className="flex gap-2">
-                <Link href="/course-matching">
-                  <Button variant="outline" className="flex items-center gap-2">
-                    <ArrowLeft className="h-4 w-4" />
-                    Back to Course Matching
-                  </Button>
-                </Link>
-
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => {
-                    try {
-                      // Save as draft with city/country information
-                      const enrichedFormData = {
-                        ...formData,
-                        city: basicInfoData?.hostCity || "",
-                        country: basicInfoData?.hostCountry || "",
-                        university: basicInfoData?.hostUniversity || "",
-                      };
-                      saveDraft(
-                        "accommodation",
-                        "Accommodation Experience",
-                        enrichedFormData,
-                      );
-
-                      toast({
-                        title: "Draft saved",
-                        description:
-                          "Your accommodation information has been saved as a draft.",
-                      });
-                    } catch (error) {
-                      console.error("Error saving draft:", error);
-                      toast({
-                        title: "Error saving draft",
-                        description:
-                          "There was a problem saving your draft. Please try again.",
-                        variant: "destructive",
-                      });
-                    }
-                  }}
-                  className="flex items-center gap-2"
-                >
-                  Save as Draft
-                </Button>
-              </div>
-
-              <Button
-                type="submit"
-                className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
-              >
-                Continue to Living Expenses
-                <ArrowRight className="h-4 w-4" />
+            {/* Submit Button */}
+            <div className="flex justify-end">
+              <Button type="submit" size="lg" className="px-8 py-4 text-lg">
+                Next <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
           </form>
+
+          {/* Debug Modal */}
+          {showDebug && (
+            <DebugBasicInfo
+              basicInfoData={basicInfoData}
+              accommodationData={formData}
+              onClose={() => setShowDebug(false)}
+            />
+          )}
         </div>
       </div>
-
-      {/* Debug Modal */}
-      {showDebug && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-4xl max-h-[80vh] overflow-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Debug Information</h2>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowDebug(false)}
-              >
-                Close
-              </Button>
-            </div>
-            <DebugBasicInfo onClose={() => setShowDebug(false)} />
-          </div>
-        </div>
-      )}
     </>
   );
 }
