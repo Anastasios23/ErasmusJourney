@@ -40,8 +40,11 @@ import { ZodError } from "zod";
 import { handleApiError } from "../src/utils/apiErrorHandler";
 import { Alert, AlertDescription } from "../src/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { StepIndicator } from "../src/components/StepIndicator";
+import { useFormProgress } from "../src/context/FormProgressContext";
 
 export default function BasicInformation() {
+  const { markStepCompleted } = useFormProgress();
   // 1. ALL HOOKS FIRST - NEVER CONDITIONAL
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
@@ -996,6 +999,11 @@ export default function BasicInformation() {
 
       <div className="min-h-screen bg-gray-50">
         <Header />
+        <StepIndicator
+          currentStep={1}
+          totalSteps={5}
+          title="Basic Information"
+        />
 
         <div className="pt-20 pb-16 px-4">
           <div className="max-w-4xl mx-auto">

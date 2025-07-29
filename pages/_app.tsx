@@ -5,6 +5,7 @@ import { Toaster } from "../src/components/ui/toaster";
 import { Toaster as Sonner } from "../src/components/ui/sonner";
 import { TooltipProvider } from "../src/components/ui/tooltip";
 import { NotificationProvider } from "../src/context/NotificationContext";
+import { FormProgressProvider } from "../src/context/FormProgressContext";
 import ErrorBoundary from "../src/components/ErrorBoundary";
 import HMRErrorHandler from "../src/components/HMRErrorHandler";
 import "../src/index.css";
@@ -33,10 +34,12 @@ export default function App({
         <QueryClientProvider client={queryClient}>
           <NotificationProvider>
             <TooltipProvider>
-              <HMRErrorHandler />
-              <Toaster />
-              <Sonner />
-              <Component {...pageProps} />
+              <FormProgressProvider>
+                <HMRErrorHandler />
+                <Toaster />
+                <Sonner />
+                <Component {...pageProps} />
+              </FormProgressProvider>
             </TooltipProvider>
           </NotificationProvider>
         </QueryClientProvider>
