@@ -200,7 +200,7 @@ export default function BasicInformation() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            type: "basic-info",
+            type: "basic-info", // Changed from "basic-information"
             title: "Basic Information Draft",
             data: formData,
           }),
@@ -518,7 +518,7 @@ export default function BasicInformation() {
 
       // Now submit the form
       const response = await submitForm(
-        "basic-info",
+        "basic-info", // Changed from "basic-information"
         "Basic Information Form",
         formData,
         "submitted",

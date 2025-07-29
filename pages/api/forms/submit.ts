@@ -2,12 +2,33 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
 import { prisma } from "../../../lib/prisma";
-import { FormType, SubmissionStatus } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import { z } from "zod";
+
+const livingExpensesSchema = z.object({
+  type: z.string(),
+  title: z.string(),
+  data: z.object({}).passthrough(),
+  status: z.string().optional(),
+  basicInfoId: z.string().optional(),
+});
+
+// Define the correct types based on your Prisma schema
+type FormType =
+  | "BASIC_INFO"
+  | "COURSE_MATCHING"
+  | "ACCOMMODATION"
+  | "LIVING_EXPENSES"
+  | "STORY"
+  | "EXPERIENCE";
+
+type SubmissionStatus = "DRAFT" | "SUBMITTED" | "PUBLISHED" | "ARCHIVED";
 
 const typeMapping: Record<string, FormType> = {
   "basic-info": "BASIC_INFO",
   "course-matching": "COURSE_MATCHING",
   accommodation: "ACCOMMODATION",
+  "living-expenses": "LIVING_EXPENSES",
   story: "STORY",
   experience: "EXPERIENCE",
 };
@@ -43,6 +64,11 @@ export default async function handler(
   try {
     const { type, title, data, status = "submitted", basicInfoId } = req.body;
 
+    // Validate based on form type
+    if (type === "living-expenses") {
+      livingExpensesSchema.parse(req.body);
+    }
+
     if (!type || !title || !data) {
       return res.status(400).json({ message: "Missing required fields" });
     }
@@ -60,7 +86,7 @@ export default async function handler(
     }
 
     console.log("Creating submission for user:", session.user.id); // Debug log
-    
+
     // Prepare submission data
     const submissionData: any = {
       userId: session.user.id,
@@ -69,15 +95,17 @@ export default async function handler(
       data,
       status: submissionStatus,
     };
-    
+
     // If this is not a basic-info submission and we have a basicInfoId, include it in the data
     if (type !== "basic-info" && basicInfoId) {
-      console.log(`Including basicInfoId: ${basicInfoId} for ${type} submission`);
+      console.log(
+        `Including basicInfoId: ${basicInfoId} for ${type} submission`,
+      );
       // Store the basicInfoId in the data field for now
       // In a production app, you would add a proper relation in the database schema
       submissionData.data = {
         ...data,
-        _basicInfoId: basicInfoId // Add a special field to track the relationship
+        _basicInfoId: basicInfoId, // Add a special field to track the relationship
       };
     }
 
@@ -108,6 +136,12 @@ export default async function handler(
       },
     });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        error: "Validation failed",
+        message: error.errors[0].message,
+      });
+    }
     console.error("Error submitting form:", error);
     res.status(500).json({ message: "Internal server error" });
   }

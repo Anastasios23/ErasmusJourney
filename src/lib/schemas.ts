@@ -217,81 +217,21 @@ export const accommodationSchema = z.object({
 
 // Living Expenses Form Schema
 export const livingExpensesSchema = z.object({
-  // Location
-  city: z.string().min(1, "City is required"),
-  country: z.string().min(1, "Country is required"),
-  exchangePeriod: z.enum(["semester", "academic_year"], {
-    errorMap: () => ({ message: "Please select exchange period" }),
+  type: z.literal("living-expenses"),
+  title: z.string(),
+  data: z.object({
+    spendingHabit: z.string().optional(),
+    expenses: z.object({
+      groceries: z.string(),
+      transportation: z.string(),
+      eatingOut: z.string(),
+      socialLife: z.string(),
+      travel: z.string(),
+      otherExpenses: z.string(),
+    }),
+    monthlyIncomeAmount: z.string().optional(),
+    // ... other fields optional
   }),
-
-  // Accommodation Costs
-  monthlyRent: z
-    .number()
-    .min(0, "Rent cannot be negative")
-    .max(5000, "Rent seems too high"),
-  monthlyUtilities: z
-    .number()
-    .min(0, "Utilities cannot be negative")
-    .max(500, "Utilities seem too high"),
-
-  // Living Costs
-  monthlyGroceries: z
-    .number()
-    .min(0, "Groceries cost cannot be negative")
-    .max(1000, "Groceries cost seems too high"),
-  monthlyDiningOut: z
-    .number()
-    .min(0, "Dining out cost cannot be negative")
-    .max(1000, "Dining out cost seems too high"),
-  monthlyTransport: z
-    .number()
-    .min(0, "Transport cost cannot be negative")
-    .max(300, "Transport cost seems too high"),
-  monthlyEntertainment: z
-    .number()
-    .min(0, "Entertainment cost cannot be negative")
-    .max(500, "Entertainment cost seems too high"),
-
-  // One-time Costs
-  visaApplicationFee: z
-    .number()
-    .min(0, "Visa fee cannot be negative")
-    .max(1000, "Visa fee seems too high")
-    .optional(),
-  flightTickets: z
-    .number()
-    .min(0, "Flight cost cannot be negative")
-    .max(2000, "Flight cost seems too high")
-    .optional(),
-  insuranceCost: z
-    .number()
-    .min(0, "Insurance cost cannot be negative")
-    .max(1000, "Insurance cost seems too high")
-    .optional(),
-
-  // Additional Information
-  scholarshipReceived: z
-    .number()
-    .min(0, "Scholarship cannot be negative")
-    .optional(),
-  partTimeJobIncome: z.number().min(0, "Income cannot be negative").optional(),
-  budgetTips: z.string().max(1000, "Budget tips too long").optional(),
-  costComparisonHome: z.enum(
-    ["much_cheaper", "cheaper", "similar", "expensive", "much_expensive"],
-    {
-      errorMap: () => ({
-        message: "Please compare costs with your home country",
-      }),
-    },
-  ),
-
-  // Overall Assessment
-  overallAffordability: z
-    .number()
-    .min(1, "Rating must be at least 1")
-    .max(5, "Rating cannot exceed 5"),
-  wouldRecommendBudget: z.boolean(),
-  budgetAdvice: z.string().max(500, "Budget advice too long").optional(),
 });
 
 // Help Future Students Form Schema

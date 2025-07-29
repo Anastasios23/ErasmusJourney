@@ -14,7 +14,7 @@ export class AuthenticationError extends Error {
 }
 
 export class ValidationError extends Error {
-  constructor(message: string = "Invalid input provided") {
+  constructor(message: string) {
     super(message);
     this.name = "ValidationError";
   }
@@ -30,7 +30,7 @@ export class ServerError extends Error {
 /**
  * Handles API responses and throws appropriate errors
  */
-export async function handleApiResponse(response: Response) {
+export async function handleApiResponse(response: Response, message?: string) {
   if (response.ok) {
     return response.json();
   }
@@ -42,22 +42,24 @@ export async function handleApiResponse(response: Response) {
     errorData = { message: "Unknown error occurred" };
   }
 
-  const message = errorData.message || "An error occurred";
+  const errorMessage = errorData.message || message || "An error occurred";
 
   switch (response.status) {
     case 401:
-      throw new AuthenticationError(message);
+      throw new AuthenticationError(errorMessage);
     case 403:
       throw new AuthenticationError(
         "You don't have permission to access this resource",
       );
     case 400:
-      throw new ValidationError(message);
+      throw new ValidationError(
+        errorData.message || message || "Invalid form data submitted",
+      );
     case 404:
       throw new Error("Resource not found");
     case 500:
     default:
-      throw new ServerError(message);
+      throw new ServerError(errorMessage);
   }
 }
 

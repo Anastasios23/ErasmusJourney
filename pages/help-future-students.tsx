@@ -46,8 +46,12 @@ import { Skeleton } from "../src/components/ui/skeleton";
 
 export default function HelpFutureStudents() {
   const router = useRouter();
-  const { submitForm, getDraftData, saveDraft, getBasicInfoId, isSubmitting } = useFormSubmissions();
+  const { submitForm, getDraftData, saveDraft, getBasicInfoId } =
+    useFormSubmissions(); // Remove isSubmitting from destructuring
   const { stats, loading } = useCommunityStats();
+
+  // Keep the local isSubmitting state
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     wantToHelp: "",
@@ -84,7 +88,11 @@ export default function HelpFutureStudents() {
   // Auto-save functionality
   const saveFormData = useCallback(async () => {
     try {
-      await saveDraft("help-future-students", "Help Future Students Information", formData);
+      await saveDraft(
+        "help-future-students",
+        "Help Future Students Information",
+        formData,
+      );
     } catch (error) {
       console.error("Error saving draft:", error);
     }
@@ -93,10 +101,15 @@ export default function HelpFutureStudents() {
   // Auto-save when form data changes (debounced)
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (Object.values(formData).some(value => 
-        typeof value === 'string' ? value.trim() !== "" : 
-        Array.isArray(value) ? value.length > 0 : false
-      )) {
+      if (
+        Object.values(formData).some((value) =>
+          typeof value === "string"
+            ? value.trim() !== ""
+            : Array.isArray(value)
+              ? value.length > 0
+              : false,
+        )
+      ) {
         saveFormData();
       }
     }, 1000); // 1 second debounce
@@ -107,10 +120,15 @@ export default function HelpFutureStudents() {
   // Save before navigation
   useEffect(() => {
     const handleBeforeUnload = () => {
-      if (Object.values(formData).some(value => 
-        typeof value === 'string' ? value.trim() !== "" : 
-        Array.isArray(value) ? value.length > 0 : false
-      )) {
+      if (
+        Object.values(formData).some((value) =>
+          typeof value === "string"
+            ? value.trim() !== ""
+            : Array.isArray(value)
+              ? value.length > 0
+              : false,
+        )
+      ) {
         saveFormData();
       }
     };
@@ -143,29 +161,32 @@ export default function HelpFutureStudents() {
       return;
     }
 
-    if (formData.wantToHelp === "yes") {
-      if (!formData.contactMethod) {
-        toast.error("Please select a preferred contact method");
-        return;
-      }
-
-      if (formData.contactMethod === "email" && !formData.email) {
-        toast.error("Please provide your email address");
-        return;
-      }
-
-      if (formData.helpTopics.length === 0) {
-        toast.error("Please select at least one topic you can help with");
-        return;
-      }
-
-      if (!formData.availabilityLevel) {
-        toast.error("Please select your availability level");
-        return;
-      }
-    }
+    // Set submitting state to true before submission
+    setIsSubmitting(true);
 
     try {
+      if (formData.wantToHelp === "yes") {
+        if (!formData.contactMethod) {
+          toast.error("Please select a preferred contact method");
+          return;
+        }
+
+        if (formData.contactMethod === "email" && !formData.email) {
+          toast.error("Please provide your email address");
+          return;
+        }
+
+        if (formData.helpTopics.length === 0) {
+          toast.error("Please select at least one topic you can help with");
+          return;
+        }
+
+        if (!formData.availabilityLevel) {
+          toast.error("Please select your availability level");
+          return;
+        }
+      }
+
       // Prepare submission data
       const submissionData = {
         ...formData,
@@ -175,17 +196,19 @@ export default function HelpFutureStudents() {
 
       // Get the basicInfoId from the session manager
       const basicInfoId = getBasicInfoId();
-      
+
       if (!basicInfoId) {
-        console.warn("No basicInfoId found. This form will not be linked to the Basic Information form.");
+        console.warn(
+          "No basicInfoId found. This form will not be linked to the Basic Information form.",
+        );
       }
-      
+
       await submitForm(
         "experience", // This will be converted to "EXPERIENCE" enum by the API
         `Mentorship Application - ${formData.nickname || "Anonymous"}`,
         submissionData,
         formData.publicProfile === "yes" ? "published" : "submitted", // Public mentors get published status
-        basicInfoId
+        basicInfoId,
       );
 
       toast.success("Thank you for joining our mentor community! 🎉");
@@ -197,6 +220,9 @@ export default function HelpFutureStudents() {
     } catch (error) {
       console.error("Error submitting mentorship form:", error);
       toast.error("Failed to submit your application. Please try again.");
+    } finally {
+      // Reset submitting state regardless of outcome
+      setIsSubmitting(false);
     }
   };
 
@@ -892,7 +918,11 @@ export default function HelpFutureStudents() {
             {/* Navigation */}
             <div className="flex justify-between items-center pt-8">
               <Link href="/living-expenses">
-                <Button variant="outline" className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2"
+                  disabled={isSubmitting}
+                >
                   <ArrowLeft className="h-4 w-4" />
                   Back to Living Expenses
                 </Button>
@@ -904,18 +934,28 @@ export default function HelpFutureStudents() {
                   variant="outline"
                   onClick={saveFormData}
                   className="flex items-center gap-2"
+                  disabled={isSubmitting}
                 >
                   <Save className="h-4 w-4" />
                   Save as Draft
                 </Button>
-                
+
                 <Button
                   type="submit"
                   disabled={isSubmitting}
                   className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2 px-8"
                 >
-                  <CheckCircle className="h-4 w-4" />
-                  {isSubmitting ? "Submitting..." : "Complete Application"}
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin mr-2">⏳</div>
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="h-4 w-4" />
+                      Complete Application
+                    </>
+                  )}
                 </Button>
               </div>
             </div>

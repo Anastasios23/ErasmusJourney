@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useToast } from "../src/components/ui/use-toast";
+import { accommodationFormSchema } from "../src/lib/formSchemas";
+import { z } from "zod";
 
 import Head from "next/head";
 import Link from "next/link";
@@ -35,9 +38,9 @@ import {
   MapPin,
   GraduationCap,
 } from "lucide-react";
-import { useToast } from "../src/components/ui/use-toast";
 import { Toaster } from "../src/components/ui/toaster";
 import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
+import { useFormAutoSave } from "../src/hooks/useFormAutoSave";
 
 export default function Accommodation() {
   const { data: session } = useSession();
@@ -83,6 +86,9 @@ export default function Accommodation() {
     laundryAccess: "",
     parkingAvailable: "",
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -142,32 +148,27 @@ export default function Accommodation() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFieldErrors({});
+    setIsSubmitting(true);
 
     try {
-      // Check if we have the required basic info data
-      const basicInfo = getFormData("basic-info");
-      if (!basicInfo?.hostUniversity || !basicInfo?.hostCountry) {
-        toast({
-          title: "Missing information",
-          description:
-            "Please complete the Basic Information form with your host university and country details.",
-          variant: "destructive",
-        });
-        return;
-      }
+      // Validate form data
+      accommodationFormSchema.parse(formData);
 
-      // Get the basicInfoId from the session manager
+      // Get basic info and basicInfoId
+      const basicInfo = getFormData("basic-info");
       const basicInfoId = getBasicInfoId();
+
       if (!basicInfoId) {
         toast({
-          title: "Missing basic information",
-          description: "Please complete the Basic Information form first.",
+          title: "Error",
+          description:
+            "Missing basic information reference. Please complete the basic information form first.",
           variant: "destructive",
         });
         return;
       }
 
-      // Merge basic info data
       const enrichedFormData = {
         ...formData,
         city: basicInfo.hostCity || "",
@@ -175,9 +176,12 @@ export default function Accommodation() {
         university: basicInfo.hostUniversity || "",
       };
 
-      console.log("Accommodation Form submitted:", enrichedFormData);
+      // Show loading toast
+      toast({
+        title: "Saving your accommodation details...",
+        description: "Please wait while we process your information.",
+      });
 
-      // Submit the form
       await submitForm(
         "accommodation",
         "Accommodation Experience",
@@ -186,20 +190,41 @@ export default function Accommodation() {
         basicInfoId,
       );
 
+      // Show success toast with correct variant
       toast({
         title: "Success!",
-        description: "Your accommodation experience has been submitted.",
+        description: "Your accommodation details have been saved.",
+        variant: "default", // Changed from "success" to "default"
       });
 
-      router.push("/living-expenses");
+      // Brief delay before navigation
+      setTimeout(() => {
+        router.push("/living-expenses");
+      }, 1000);
     } catch (error) {
-      console.error("Error submitting accommodation form:", error);
-      toast({
-        title: "Submission failed",
-        description:
-          "There was an error submitting your accommodation experience. Please try again.",
-        variant: "destructive",
-      });
+      if (error instanceof z.ZodError) {
+        const errors: Record<string, string> = {};
+        error.errors.forEach((err) => {
+          if (err.path) {
+            errors[err.path[0]] = err.message;
+          }
+        });
+        setFieldErrors(errors);
+        toast({
+          title: "Validation Error",
+          description: "Please check the form for errors.",
+          variant: "destructive",
+        });
+      } else {
+        console.error("Error submitting accommodation form:", error);
+        toast({
+          title: "Submission failed",
+          description: "There was an error saving your accommodation details.",
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -224,6 +249,14 @@ export default function Accommodation() {
     "Pharmacy",
     "Parks/Recreation",
   ];
+
+  // Add auto-save hook
+  const { isAutoSaving, showSavedIndicator, setIsNavigating } = useFormAutoSave(
+    "accommodation",
+    "Accommodation Experience",
+    formData,
+    isSubmitting,
+  );
 
   return (
     <>
@@ -323,7 +356,16 @@ export default function Accommodation() {
                       handleInputChange("accommodationAddress", e.target.value)
                     }
                     rows={3}
+                    className={
+                      fieldErrors.accommodationAddress ? "border-red-500" : ""
+                    }
+                    required
                   />
+                  {fieldErrors.accommodationAddress && (
+                    <p className="text-sm text-red-500">
+                      {fieldErrors.accommodationAddress}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
@@ -758,19 +800,82 @@ export default function Accommodation() {
               </CardContent>
             </Card>
 
-            {/* Submit Button */}
-            <div className="flex justify-end">
-              <Button type="submit" size="lg" className="px-8 py-4 text-lg">
-                Next <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+            {/* Navigation */}
+            <div className="flex justify-between items-center pt-8">
+              <Link href="/course-matching">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Course Matching
+                </Button>
+              </Link>
+
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    try {
+                      saveDraft(
+                        "accommodation",
+                        "Accommodation Experience",
+                        formData,
+                      );
+                      toast({
+                        title: "Draft saved",
+                        description:
+                          "Your accommodation information has been saved as a draft.",
+                      });
+                    } catch (error) {
+                      console.error("Error saving draft:", error);
+                      toast({
+                        title: "Error saving draft",
+                        description:
+                          "There was a problem saving your draft. Please try again.",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                  disabled={isSubmitting || isAutoSaving}
+                  className="flex items-center gap-2"
+                >
+                  {isAutoSaving ? "Auto-saving..." : "Save Draft"}
+                </Button>
+
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || isAutoSaving}
+                  className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin mr-2">⏳</div>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      Continue to Living Expenses
+                      <ArrowRight className="h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {/* Auto-save indicator */}
+            <div className="fixed top-20 right-4 z-40">
+              {showSavedIndicator && (
+                <div className="bg-gray-800 bg-opacity-90 text-white px-2 py-1 rounded text-xs shadow-lg transition-all duration-300 ease-in-out">
+                  ✓ Auto-saved
+                </div>
+              )}
             </div>
           </form>
 
           {/* Debug Modal */}
           {showDebug && (
             <DebugBasicInfo
-              basicInfoData={basicInfoData}
-              accommodationData={formData}
+              formData={formData}
+              basicInfo={basicInfoData}
               onClose={() => setShowDebug(false)}
             />
           )}
