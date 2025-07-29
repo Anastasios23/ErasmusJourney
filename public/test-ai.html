@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+  <head>
+    <title>AI API Test</title>
+  </head>
+  <body>
+    <h1>AI API Test</h1>
+    <button onclick="testAnalyzeStory()">Test Analyze Story</button>
+    <button onclick="testRecommendations()">Test Recommendations</button>
+    <div id="results"></div>
+
+    <script>
+      async function testAnalyzeStory() {
+        try {
+          const response = await fetch("/api/ai/analyze-story", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              storyId: "cmdoknii10009tdycgy5nvhdd",
+            }),
+          });
+          const data = await response.json();
+          document.getElementById("results").innerHTML =
+            "<h3>Analyze Story Result:</h3><pre>" +
+            JSON.stringify(data, null, 2) +
+            "</pre>";
+        } catch (error) {
+          document.getElementById("results").innerHTML =
+            "<h3>Error:</h3>" + error.message;
+        }
+      }
+
+      async function testRecommendations() {
+        try {
+          const response = await fetch("/api/ai/recommendations", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              university: "Liepaja University",
+              country: "Latvia",
+              department: "Physics",
+            }),
+          });
+          const data = await response.json();
+          document.getElementById("results").innerHTML =
+            "<h3>Recommendations Result:</h3><pre>" +
+            JSON.stringify(data, null, 2) +
+            "</pre>";
+        } catch (error) {
+          document.getElementById("results").innerHTML =
+            "<h3>Error:</h3>" + error.message;
+        }
+      }
+    </script>
+  </body>
+</html>

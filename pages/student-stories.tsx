@@ -32,6 +32,17 @@ import {
 } from "../src/components/StudentStoryComponents";
 import { StoriesListMetaTags } from "../src/utils/seoUtils";
 import AIRecommendations from "../src/components/AIRecommendations";
+import StandardIcon from "../src/components/StandardIcon";
+import {
+  GRID_LAYOUTS,
+  RESPONSIVE_SPACING,
+  RESPONSIVE_TEXT,
+} from "../src/utils/responsiveLayout";
+import {
+  CARD_STYLES,
+  INTERACTIVE_STATES,
+  TEXT_STYLES,
+} from "../src/utils/visualConsistency";
 import {
   Search,
   Heart,

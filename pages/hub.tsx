@@ -122,19 +122,20 @@ export default function HubPage({ stats }: HubPageProps) {
 
         {/* Hero Section */}
         <section className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 text-white overflow-hidden">
-          <div className="absolute inset-0 bg-black/20"></div>
+          {/* Enhanced overlay for better text contrast */}
+          <div className="absolute inset-0 bg-black/30"></div>
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
             <div className="text-center">
-              <Badge className="mb-6 bg-white/20 text-white border-white/30">
-                <Plane className="h-4 w-4 mr-2" />
+              <Badge className="mb-6 bg-white/25 text-white border-white/40 backdrop-blur-sm">
+                <Plane className="h-4 w-4 mr-2 drop-shadow-sm" />
                 Your Erasmus Journey Starts Here
               </Badge>
 
-              <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6">
+              <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6 drop-shadow-lg">
                 Erasmus Hub
               </h1>
 
-              <p className="text-xl lg:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-xl lg:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
                 The central platform for Cyprus students planning their study
                 abroad adventure. Discover destinations, connect with peers, and
                 make informed decisions.
@@ -397,10 +398,15 @@ export const getServerSideProps: GetServerSideProps = async () => {
       ]);
 
     // Calculate total destinations from partnerships
-    const totalDestinations = await prisma.agreement.count({
+    const distinctPartnerships = await prisma.agreement.findMany({
       where: { isActive: true },
+      select: {
+        partnerUniversityId: true,
+      },
       distinct: ["partnerUniversityId"],
     });
+
+    const totalDestinations = distinctPartnerships.length;
 
     return {
       props: {

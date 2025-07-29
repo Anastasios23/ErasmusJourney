@@ -28,11 +28,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  console.log("AI analyze-story API called:", req.method, req.body);
+
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
   const { storyId } = req.body;
+  console.log("Extracted storyId:", storyId);
 
   if (!storyId) {
     return res.status(400).json({ message: "Story ID is required" });
@@ -43,7 +46,7 @@ export default async function handler(
     const submission = await prisma.formSubmission.findFirst({
       where: {
         id: storyId,
-        type: "EXPERIENCE",
+        OR: [{ type: "EXPERIENCE" }, { type: "STORY" }],
       },
       include: {
         user: {

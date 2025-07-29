@@ -10,15 +10,28 @@ export default async function handler(
   }
 
   try {
-    // Get help-future-students submissions (mentorship data)
-    const mentorshipSubmissions = await prisma.formSubmission.findMany({
+    // Get story submissions and experience submissions that want to help
+    const storySubmissions = await prisma.formSubmission.findMany({
       where: {
-        type: "EXPERIENCE",
-        status: { in: ["SUBMITTED", "PUBLISHED"] },
-        data: {
-          path: "wantToHelp",
-          string_contains: "yes",
-        },
+        OR: [
+          {
+            type: "EXPERIENCE",
+            status: { in: ["SUBMITTED", "PUBLISHED"] },
+            data: {
+              path: "wantToHelp",
+              string_contains: "yes",
+            },
+          },
+          {
+            type: "EXPERIENCE",
+            status: { in: ["SUBMITTED", "PUBLISHED"] },
+            // Include all experience submissions for now to debug
+          },
+          {
+            type: "STORY",
+            status: { in: ["SUBMITTED", "PUBLISHED"] },
+          },
+        ],
       },
       include: {
         user: {
@@ -30,9 +43,9 @@ export default async function handler(
       },
     });
 
-    // Get related basic info for each mentor
+    // Get related basic info for each story
     const stories = await Promise.all(
-      mentorshipSubmissions.map(async (submission) => {
+      storySubmissions.map(async (submission) => {
         // Type assertion to include the user property
         const submissionWithUser = submission as typeof submission & {
           user?: { firstName: string; lastName: string; email: string };

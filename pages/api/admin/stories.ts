@@ -19,7 +19,7 @@ async function handleGetStories(req: NextApiRequest, res: NextApiResponse) {
 
     const stories = await prisma.formSubmission.findMany({
       where: {
-        type: "EXPERIENCE",
+        OR: [{ type: "EXPERIENCE" }, { type: "STORY" }],
       },
       include: {
         user: {

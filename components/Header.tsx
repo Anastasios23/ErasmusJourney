@@ -79,11 +79,14 @@ export default function Header() {
           {/* Logo and Back Button */}
           <div className="flex items-center space-x-4">
             <BackButton className="hidden md:block" />
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <Link
+              href="/"
+              className="flex items-center space-x-2 group transition-transform hover:scale-105"
+            >
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center transition-colors group-hover:bg-blue-700">
                 <span className="text-white font-bold text-sm">EJ</span>
               </div>
-              <span className="font-bold text-xl text-gray-900">
+              <span className="font-bold text-xl text-gray-900 group-hover:text-blue-600 transition-colors">
                 Erasmus Journey
               </span>
             </Link>

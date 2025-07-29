@@ -221,41 +221,37 @@ export default function AdminStoriesPage() {
   const getStatusBadge = (status: AdminStoryData["status"]) => {
     const statusConfig = {
       PENDING: {
-        variant: "secondary" as const,
-        color: "bg-yellow-100 text-yellow-800",
+        variant: "warning" as const,
+        label: "Pending Review",
       },
       APPROVED: {
-        variant: "default" as const,
-        color: "bg-green-100 text-green-800",
+        variant: "success" as const,
+        label: "Approved",
       },
       PUBLISHED: {
-        variant: "default" as const,
-        color: "bg-blue-100 text-blue-800",
+        variant: "info" as const,
+        label: "Published",
       },
       REJECTED: {
-        variant: "destructive" as const,
-        color: "bg-red-100 text-red-800",
+        variant: "error" as const,
+        label: "Rejected",
       },
       SUBMITTED: {
         variant: "secondary" as const,
-        color: "bg-gray-100 text-gray-800",
+        label: "Submitted",
       },
       DELETED: {
         variant: "outline" as const,
-        color: "bg-gray-50 text-gray-500",
+        label: "Deleted",
       },
     };
 
     const config = statusConfig[status] || {
       variant: "outline" as const,
-      color: "bg-gray-100 text-gray-600",
+      label: status,
     };
 
-    return (
-      <Badge variant={config.variant} className={config.color}>
-        {status}
-      </Badge>
-    );
+    return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
   if (loading) {
