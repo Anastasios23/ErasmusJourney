@@ -224,11 +224,14 @@ export default function CourseMatching() {
   // Auto-save when form data changes (debounced)
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (
-        Object.values(formData).some((value) => value.trim() !== "") ||
-        courses.length > 0 ||
-        equivalentCourses.length > 0
-      ) {
+      const hasFormData = Object.values(formData).some((value) => {
+        if (typeof value === "string") {
+          return value.trim() !== "";
+        }
+        return value !== null && value !== undefined;
+      });
+
+      if (hasFormData || courses.length > 0 || equivalentCourses.length > 0) {
         saveFormData();
       }
     }, 1000); // 1 second debounce
@@ -239,11 +242,14 @@ export default function CourseMatching() {
   // Save before navigation
   useEffect(() => {
     const handleBeforeUnload = () => {
-      if (
-        Object.values(formData).some((value) => value.trim() !== "") ||
-        courses.length > 0 ||
-        equivalentCourses.length > 0
-      ) {
+      const hasFormData = Object.values(formData).some((value) => {
+        if (typeof value === "string") {
+          return value.trim() !== "";
+        }
+        return value !== null && value !== undefined;
+      });
+
+      if (hasFormData || courses.length > 0 || equivalentCourses.length > 0) {
         saveFormData();
       }
     };
