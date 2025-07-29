@@ -318,36 +318,19 @@ export async function registerUser(userData: {
   email: string;
   password: string;
 }): Promise<{ success: boolean; message: string; user?: any }> {
-  try {
-    const response = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userData),
-    });
+  const response = await fetch("/api/auth/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userData),
+  });
 
-    // Check if response body can be read
-    if (!response.body || response.bodyUsed) {
-      throw new Error("Response body is not available");
-    }
+  const data = await response.json();
 
-    // Read the response data
-    let data;
-    try {
-      data = await response.json();
-    } catch (parseError) {
-      console.error("Error parsing response JSON:", parseError);
-      throw new Error("Invalid response from server");
-    }
-
-    if (!response.ok) {
-      throw new Error(data.message || "Registration failed");
-    }
-
-    return data;
-  } catch (error) {
-    console.error("Registration error:", error);
-    throw error;
+  if (!response.ok) {
+    throw new Error(data.message || "Registration failed");
   }
+
+  return data;
 }
