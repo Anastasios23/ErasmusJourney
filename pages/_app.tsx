@@ -29,16 +29,16 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   useEffect(() => {
-    // Setup API call monitoring in development
-    if (process.env.NODE_ENV === "development") {
-      setupApiCallMonitoring();
-    }
+    // Temporarily disabled API call monitoring to debug body stream issues
+    // if (process.env.NODE_ENV === "development") {
+    //   setupApiCallMonitoring();
+    // }
 
     return () => {
       // Cleanup when component unmounts
-      if (process.env.NODE_ENV === "development") {
-        restoreOriginalFetch();
-      }
+      // if (process.env.NODE_ENV === "development") {
+      //   restoreOriginalFetch();
+      // }
     };
   }, []);
 
