@@ -349,8 +349,8 @@ export default function Community() {
       const matchesDepartmentInCyprus =
         !departmentInCyprus ||
         departmentInCyprus === "all" ||
-        mentor.studyProgram.includes(departmentInCyprus) ||
-        mentor.specializations.some(
+        (mentor.studyProgram && mentor.studyProgram.includes(departmentInCyprus)) ||
+        (mentor.specializations || []).some(
           (spec) =>
             spec.toLowerCase().includes(departmentInCyprus.toLowerCase()) ||
             departmentInCyprus.toLowerCase().includes(spec.toLowerCase()),
@@ -363,17 +363,17 @@ export default function Community() {
 
       const matchesHostUniversity =
         !hostUniversity ||
-        mentor.hostUniversity
+        (mentor.hostUniversity && mentor.hostUniversity
           .toLowerCase()
-          .includes(hostUniversity.toLowerCase());
+          .includes(hostUniversity.toLowerCase()));
 
       const matchesHostCountry =
         !hostCountry ||
-        mentor.hostCountry.toLowerCase().includes(hostCountry.toLowerCase());
+        (mentor.hostCountry && mentor.hostCountry.toLowerCase().includes(hostCountry.toLowerCase()));
 
       const matchesHostCity =
         !hostCity ||
-        mentor.hostCity.toLowerCase().includes(hostCity.toLowerCase());
+        (mentor.hostCity && mentor.hostCity.toLowerCase().includes(hostCity.toLowerCase()));
 
       return (
         matchesUniversityInCyprus &&
@@ -409,7 +409,7 @@ export default function Community() {
     const universities = [...new Set(mentors.map((m) => m.hostUniversity))];
     const specializationCounts = mentors.reduce(
       (acc, mentor) => {
-        mentor.specializations.forEach((spec) => {
+        (mentor.specializations || []).forEach((spec) => {
           acc[spec] = (acc[spec] || 0) + 1;
         });
         return acc;
@@ -912,7 +912,7 @@ export default function Community() {
 
                         {/* Specializations */}
                         <div className="flex flex-wrap gap-1">
-                          {mentor.specializations.slice(0, 3).map((spec) => (
+                          {(mentor.specializations || []).slice(0, 3).map((spec) => (
                             <Badge
                               key={spec}
                               variant="outline"
@@ -921,9 +921,9 @@ export default function Community() {
                               {spec}
                             </Badge>
                           ))}
-                          {mentor.specializations.length > 3 && (
+                          {(mentor.specializations || []).length > 3 && (
                             <Badge variant="outline" className="text-xs">
-                              +{mentor.specializations.length - 3} more
+                              +{(mentor.specializations || []).length - 3} more
                             </Badge>
                           )}
                         </div>
@@ -932,8 +932,8 @@ export default function Community() {
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <Languages className="h-4 w-4 text-orange-500" />
                           <span className="truncate">
-                            {mentor.languagesSpoken.slice(0, 3).join(", ")}
-                            {mentor.languagesSpoken.length > 3 && "..."}
+                            {(mentor.languagesSpoken || mentor.languages || []).slice(0, 3).join(", ") || "Not specified"}
+                            {(mentor.languagesSpoken || mentor.languages || []).length > 3 && "..."}
                           </span>
                         </div>
 
@@ -941,7 +941,7 @@ export default function Community() {
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <Clock className="h-4 w-4 text-indigo-500" />
                           <span>
-                            Responds {mentor.responseTime.replace("-", " ")}
+                            Responds {(mentor.responseTime || "within-week").replace("-", " ")}
                           </span>
                         </div>
 
@@ -962,7 +962,7 @@ export default function Community() {
 
                         {/* Contact Button */}
                         <div className="pt-2">
-                          {mentor.contactInfo.email ? (
+                          {mentor.contactInfo && mentor.contactInfo.email ? (
                             <div className="space-y-2">
                               <Button className="w-full" asChild>
                                 <a href={`mailto:${mentor.contactInfo.email}`}>
@@ -973,7 +973,7 @@ export default function Community() {
 
                               {/* Additional contact methods */}
                               <div className="flex justify-center gap-2">
-                                {mentor.contactInfo.instagram && (
+                                {mentor.contactInfo && mentor.contactInfo.instagram && (
                                   <Button variant="outline" size="sm" asChild>
                                     <a
                                       href={`https://instagram.com/${mentor.contactInfo.instagram}`}
@@ -984,7 +984,7 @@ export default function Community() {
                                     </a>
                                   </Button>
                                 )}
-                                {mentor.contactInfo.linkedin && (
+                                {mentor.contactInfo && mentor.contactInfo.linkedin && (
                                   <Button variant="outline" size="sm" asChild>
                                     <a
                                       href={mentor.contactInfo.linkedin}
@@ -995,7 +995,7 @@ export default function Community() {
                                     </a>
                                   </Button>
                                 )}
-                                {mentor.contactInfo.facebook && (
+                                {mentor.contactInfo && mentor.contactInfo.facebook && (
                                   <Button variant="outline" size="sm" asChild>
                                     <a
                                       href={mentor.contactInfo.facebook}
@@ -1006,7 +1006,7 @@ export default function Community() {
                                     </a>
                                   </Button>
                                 )}
-                                {mentor.contactInfo.website && (
+                                {mentor.contactInfo && mentor.contactInfo.website && (
                                   <Button variant="outline" size="sm" asChild>
                                     <a
                                       href={mentor.contactInfo.website}
