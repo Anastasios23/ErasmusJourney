@@ -26,18 +26,23 @@ import {
 
 interface Story {
   id: string;
-  title: string;
-  excerpt: string | null;
-  imageUrl: string | null;
+  title?: string;
+  studentName?: string;
+  excerpt?: string | null;
+  story?: string;
+  imageUrl?: string | null;
   createdAt: string;
-  author: {
+  city?: string;
+  country?: string;
+  university?: string;
+  author?: {
     name: string;
   };
-  location: {
+  location?: {
     city: string;
     country: string;
   };
-  likes: number;
+  likes?: number;
 }
 
 interface HomePageProps {
@@ -266,7 +271,11 @@ export default function HomePage({
                               story.imageUrl ||
                               "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=240&fit=crop"
                             }
-                            alt={story.title}
+                            alt={
+                              story.title ||
+                              story.studentName ||
+                              "Student story"
+                            }
                             fill
                             className="object-cover"
                           />
@@ -274,17 +283,20 @@ export default function HomePage({
                       </CardHeader>
                       <CardContent className="p-6 flex-grow">
                         <CardTitle className="text-lg font-semibold mb-2 group-hover:text-blue-600 transition-colors">
-                          {story.title}
+                          {story.title ||
+                            `${story.studentName}'s Experience in ${story.city}`}
                         </CardTitle>
                         <p className="text-sm text-gray-600 line-clamp-3">
-                          {story.excerpt}
+                          {story.excerpt ||
+                            story.story?.substring(0, 150) + "..." ||
+                            "Read about this student's experience abroad"}
                         </p>
                       </CardContent>
                       <CardFooter className="p-6 bg-gray-50 flex justify-between items-center text-sm text-gray-500">
                         <div>
                           By{" "}
                           <span className="font-medium text-gray-800">
-                            {story.author.name}
+                            {story.author?.name || story.studentName}
                           </span>
                         </div>
                         <div className="flex items-center">
@@ -527,7 +539,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
 
     const protocol = context.req.headers["x-forwarded-proto"] || "http";
     const host = context.req.headers.host;
-    const apiUrl = `${protocol}://${host}/api/stories`;
+    const apiUrl = `${protocol}://${host}/api/student-stories`;
 
     const storiesRes = await fetch(apiUrl);
     if (!storiesRes.ok) {

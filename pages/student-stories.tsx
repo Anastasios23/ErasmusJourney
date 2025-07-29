@@ -26,6 +26,13 @@ import {
 } from "../src/components/ui/pagination";
 import { useStories, useLikeStory } from "../src/hooks/useStories";
 import {
+  StudentStoryErrorBoundary,
+  StoryCardSkeleton,
+  EmptyState,
+} from "../src/components/StudentStoryComponents";
+import { StoriesListMetaTags } from "../src/utils/seoUtils";
+import AIRecommendations from "../src/components/AIRecommendations";
+import {
   Search,
   Heart,
   Eye,
@@ -36,6 +43,7 @@ import {
   ChevronDown,
   MapPin,
   GraduationCap,
+  AlertCircle,
 } from "lucide-react";
 
 const ITEMS_PER_PAGE = 6;
@@ -57,7 +65,7 @@ export default function StudentStoriesPage() {
   const [showFilters, setShowFilters] = useState(false);
 
   // React Query for data fetching with caching
-  const { stories, loading, error } = useStories();
+  const { stories, loading, error, refetch } = useStories();
   const { likeStory } = useLikeStory();
 
   // Filter stories based on search and category
@@ -65,18 +73,32 @@ export default function StudentStoriesPage() {
     return stories.filter((story) => {
       const matchesSearch =
         searchTerm === "" ||
-        story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        story.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        story.location.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        story.location.country
-          ?.toLowerCase()
+        (story.title || story.studentName || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        (story.content || story.story || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        (story.location?.city || story.city || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        (story.location?.country || story.country || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        (story.university || "")
+          .toLowerCase()
           .includes(searchTerm.toLowerCase());
 
       const matchesCategory =
         selectedCategory === "all" ||
-        story.tags.some(
-          (tag) => tag.toLowerCase() === selectedCategory.toLowerCase(),
-        );
+        (story.tags &&
+          story.tags.some(
+            (tag) => tag.toLowerCase() === selectedCategory.toLowerCase(),
+          )) ||
+        (story.helpTopics &&
+          story.helpTopics.some(
+            (topic) => topic.toLowerCase() === selectedCategory.toLowerCase(),
+          ));
 
       return matchesSearch && matchesCategory;
     });
@@ -109,15 +131,8 @@ export default function StudentStoriesPage() {
   const hasActiveFilters = searchTerm || selectedCategory !== "all";
 
   return (
-    <>
-      <Head>
-        <title>Student Stories - Erasmus Journey Platform</title>
-        <meta
-          name="description"
-          content="Read inspiring stories from Erasmus students sharing their experiences abroad."
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
+    <StudentStoryErrorBoundary onRetry={refetch}>
+      <StoriesListMetaTags totalStories={stories.length} />
 
       <div className="min-h-screen bg-gray-50">
         <Header />
@@ -240,31 +255,12 @@ export default function StudentStoriesPage() {
             )}
 
             {/* Loading State */}
-            {finalLoading && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                {[...Array(6)].map((_, i) => (
-                  <Card key={i}>
-                    <Skeleton className="aspect-video w-full" />
-                    <CardHeader className="pb-2">
-                      <div className="flex justify-between items-start mb-2">
-                        <Skeleton className="h-5 w-20" />
-                        <Skeleton className="h-4 w-16" />
-                      </div>
-                      <Skeleton className="h-6 w-full" />
-                    </CardHeader>
-                    <CardContent>
-                      <Skeleton className="h-4 w-full mb-2" />
-                      <Skeleton className="h-4 w-3/4 mb-4" />
-                      <div className="flex items-center gap-3 mb-3">
-                        <Skeleton className="h-8 w-8 rounded-full" />
-                        <div>
-                          <Skeleton className="h-4 w-24 mb-1" />
-                          <Skeleton className="h-3 w-32" />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+            {finalLoading && <StoryCardSkeleton count={6} className="mb-12" />}
+
+            {/* AI Recommendations */}
+            {!finalLoading && !error && stories.length > 0 && (
+              <div className="mb-12">
+                <AIRecommendations maxRecommendations={3} />
               </div>
             )}
 
@@ -288,7 +284,11 @@ export default function StudentStoriesPage() {
                               story.imageUrl ||
                               "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop"
                             }
-                            alt={story.title}
+                            alt={
+                              story.title ||
+                              story.studentName ||
+                              "Student story"
+                            }
                             fill
                             className="object-cover hover:scale-105 transition-transform"
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -297,7 +297,10 @@ export default function StudentStoriesPage() {
                         <CardHeader className="pb-2 flex-none">
                           <div className="flex justify-between items-start mb-2">
                             <Badge variant="secondary">
-                              {story.tags[0]?.toLowerCase() || "experience"}
+                              {(story.tags && story.tags[0]?.toLowerCase()) ||
+                                (story.helpTopics &&
+                                  story.helpTopics[0]?.toLowerCase()) ||
+                                "experience"}
                             </Badge>
                             <div className="flex items-center text-xs text-gray-500 gap-1">
                               <Calendar
@@ -313,20 +316,27 @@ export default function StudentStoriesPage() {
                             id={`story-${story.id}-title`}
                             className="text-lg line-clamp-2 group-hover:text-blue-600 transition-colors"
                           >
-                            {story.title}
+                            {story.title ||
+                              `${story.studentName}'s Experience in ${story.city}`}
                           </CardTitle>
                         </CardHeader>
                         <CardContent className="flex-1 flex flex-col">
                           <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-1">
-                            {story.excerpt}
+                            {story.excerpt ||
+                              story.story?.substring(0, 150) + "..." ||
+                              "No description available"}
                           </p>
 
                           {/* Author Info */}
                           <div className="flex items-center gap-3 mb-3">
                             <div className="relative w-8 h-8">
                               <Image
-                                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(story.author?.name || "anonymous")}`}
-                                alt={story.author?.name || "Anonymous User"}
+                                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(story.author?.name || story.studentName || "anonymous")}`}
+                                alt={
+                                  story.author?.name ||
+                                  story.studentName ||
+                                  "Anonymous User"
+                                }
                                 fill
                                 className="rounded-full object-cover"
                                 sizes="32px"
@@ -334,10 +344,14 @@ export default function StudentStoriesPage() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="text-sm font-medium truncate">
-                                {story.author?.name || "Anonymous User"}
+                                {story.author?.name ||
+                                  story.studentName ||
+                                  "Anonymous User"}
                               </div>
                               <div className="text-xs text-gray-500 truncate">
-                                {story.author?.university || "University"}
+                                {story.author?.university ||
+                                  story.university ||
+                                  "University"}
                               </div>
                             </div>
                           </div>
@@ -346,8 +360,10 @@ export default function StudentStoriesPage() {
                           <div className="flex items-center gap-1 text-sm text-blue-600 mb-3">
                             <MapPin className="h-3 w-3" aria-hidden="true" />
                             <span>
-                              {story.location.city || "City"},{" "}
-                              {story.location.country || "Country"}
+                              {story.location?.city || story.city || "City"},{" "}
+                              {story.location?.country ||
+                                story.country ||
+                                "Country"}
                             </span>
                           </div>
 
@@ -360,7 +376,7 @@ export default function StudentStoriesPage() {
                                   handleLikeStory(story.id);
                                 }}
                                 className="flex items-center gap-1 hover:text-red-500 transition-colors"
-                                aria-label={`Like story: ${story.title}`}
+                                aria-label={`Like story: ${story.title || story.studentName}`}
                               >
                                 <Heart className="h-3 w-3" />
                                 <span>{story.likes || 0}</span>
@@ -464,22 +480,13 @@ export default function StudentStoriesPage() {
 
             {/* No Results */}
             {!finalLoading && !error && filteredStories.length === 0 && (
-              <div className="text-center py-12">
-                <BookOpen
-                  className="h-12 w-12 text-gray-400 mx-auto mb-4"
-                  aria-hidden="true"
-                />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No stories found
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Try adjusting your search criteria or be the first to share a
-                  story about this topic.
-                </p>
-                <Link href="/share-story">
-                  <Button>Share Your Story</Button>
-                </Link>
-              </div>
+              <EmptyState
+                title="No stories found"
+                description="Try adjusting your search criteria or be the first to share a story about this topic."
+                actionLabel="Share Your Story"
+                onAction={() => router.push("/share-story")}
+                icon={<BookOpen className="h-8 w-8 text-gray-400" />}
+              />
             )}
 
             {/* CTA Section */}
@@ -506,6 +513,6 @@ export default function StudentStoriesPage() {
           </div>
         </main>
       </div>
-    </>
+    </StudentStoryErrorBoundary>
   );
 }

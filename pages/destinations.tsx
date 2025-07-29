@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
+import { ERASMUS_DESTINATIONS } from "../src/data/destinations";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Fuse from "fuse.js";
-import { ERASMUS_DESTINATIONS } from "../src/data/destinations";
 import { Badge } from "../src/components/ui/badge";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
@@ -33,42 +33,81 @@ import {
 } from "lucide-react";
 import { DestinationSkeleton } from "../src/components/ui/destination-skeleton";
 
-// Transform centralized destinations data for display compatibility
-const destinations = ERASMUS_DESTINATIONS.map((dest) => ({
-  id: dest.id,
-  city: dest.city,
-  country: dest.country,
-  region:
-    dest.country === "Germany" || dest.country === "Czech Republic"
-      ? "Central Europe"
-      : dest.country === "Spain" || dest.country === "Italy"
-        ? "Southern Europe"
-        : "Western Europe",
-  image: dest.imageUrl,
-  description: dest.description,
-  costLevel: dest.costOfLiving,
-  rating: 4.5, // Default rating - this would come from averages in production
-  studentCount: 800, // Default student count - this would come from averages in production
-  popularUniversities: [
-    dest.university,
-    ...dest.partnerUniversities.slice(0, 2),
-  ],
-  highlights: dest.popularWith.slice(0, 3),
-  avgCostPerMonth: dest.averageRent * 1.5, // Rough estimate of total monthly cost
-}));
-
 export default function Destinations() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCostLevel, setSelectedCostLevel] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [destinations, setDestinations] = useState([]); // Make this dynamic
+  const [error, setError] = useState<string | null>(null);
 
+  // Load dynamic destination data
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500); // Simulate a 1.5-second loading time
-    return () => clearTimeout(timer);
+    const fetchDestinations = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/destinations");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch destinations");
+        }
+
+        const data = await response.json();
+
+        // Transform API data to match component expectations
+        const transformedDestinations = data.destinations.map((dest: any) => ({
+          id: dest.id,
+          city: dest.city,
+          country: dest.country,
+          image: dest.image,
+          description: dest.description,
+          costLevel: dest.costLevel,
+          rating: dest.rating,
+          studentCount: dest.studentCount,
+          popularUniversities: dest.popularUniversities,
+          highlights: dest.universities ? dest.universities.slice(0, 3) : [], // Use universities as highlights for now
+          avgCostPerMonth: dest.avgCostPerMonth,
+          region: getRegionFromCountry(dest.country),
+        }));
+
+        setDestinations(transformedDestinations);
+      } catch (error) {
+        console.error("Error fetching destinations:", error);
+        setError("Failed to load destinations");
+        // Fallback to static data if API fails and ERASMUS_DESTINATIONS exists
+        if (ERASMUS_DESTINATIONS) {
+          setDestinations(
+            ERASMUS_DESTINATIONS.map((dest) => ({
+              ...dest,
+              studentCount: 0,
+              popularUniversities: [dest.university],
+              highlights: dest.popularWith ? dest.popularWith.slice(0, 3) : [],
+              avgCostPerMonth: dest.averageRent * 1.5,
+            })),
+          );
+        } else {
+          // Create empty state if no static data available
+          setDestinations([]);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDestinations();
   }, []);
+
+  const getRegionFromCountry = (country: string) => {
+    const regions: Record<string, string> = {
+      Germany: "Central Europe",
+      "Czech Republic": "Central Europe",
+      Spain: "Southern Europe",
+      Italy: "Southern Europe",
+      France: "Western Europe",
+      Netherlands: "Western Europe",
+    };
+    return regions[country] || "Europe";
+  };
 
   // Configure Fuse.js for fuzzy search
   const fuseOptions = {
@@ -373,6 +412,33 @@ export default function Destinations() {
                   </div>
                 )}
               </>
+            )}
+
+            {/* Show error message if API fails */}
+            {error && !isLoading && (
+              <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-yellow-800">
+                  {error}. Showing available destinations from our database.
+                </p>
+              </div>
+            )}
+
+            {/* Show data source info */}
+            {!isLoading && destinations.length > 0 && (
+              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-blue-800 text-sm">
+                  📊 This data is generated from{" "}
+                  <strong>
+                    {destinations.reduce(
+                      (sum, dest) => sum + dest.studentCount,
+                      0,
+                    )}{" "}
+                    real student experiences
+                  </strong>
+                  {destinations.some((dest) => dest.studentCount > 0) &&
+                    ". Click on any destination to see detailed experiences from students who studied there."}
+                </p>
+              </div>
             )}
 
             {/* CTA Section */}
