@@ -143,35 +143,46 @@ export default function BasicInformation() {
     }
   }, [sessionStatus, router]);
 
-  // Load draft data for both authenticated and unauthenticated users
+  // Load saved data when component mounts
   useEffect(() => {
     if (
       sessionStatus !== "loading" &&
       !submissionsLoading &&
       !draftLoaded.current
     ) {
-      const draft = getDraftData("basic-info");
-      if (draft) {
-        console.log("DRAFT DATA FOUND. APPLYING TO FORM:", draft); // DEBUG
-        console.log("SETTING FORM DATA..."); // DEBUG
+      // Load from navigation data first (user came back from next page)
+      const savedFormData = localStorage.getItem("erasmus_form_basic-info");
+      if (savedFormData) {
+        try {
+          const parsedData = JSON.parse(savedFormData);
+          console.log("Loading saved basic-info data:", parsedData);
 
-        isLoadingDraft.current = true; // Set flag to prevent field clearing
+          isLoadingDraft.current = true;
+          setFormData((prevData) => ({ ...prevData, ...parsedData }));
+          setDraftApplied(true);
 
-        setFormData((prevData) => {
-          console.log("PREVIOUS FORM DATA:", prevData); // DEBUG
-          console.log("NEW FORM DATA:", draft); // DEBUG
-          return { ...prevData, ...draft };
-        });
+          setTimeout(() => {
+            isLoadingDraft.current = false;
+          }, 100);
+        } catch (error) {
+          console.error("Error loading saved basic-info data:", error);
+        }
+      } else {
+        // Fallback to draft data
+        const draft = getDraftData("basic-info");
+        if (draft) {
+          console.log("DRAFT DATA FOUND. APPLYING TO FORM:", draft);
 
-        // Set flag to indicate draft was applied
-        setDraftApplied(true);
+          isLoadingDraft.current = true;
+          setFormData((prevData) => ({ ...prevData, ...draft }));
+          setDraftApplied(true);
 
-        // Clear the flag after a short delay to allow the state update to complete
-        setTimeout(() => {
-          isLoadingDraft.current = false;
-        }, 100);
+          setTimeout(() => {
+            isLoadingDraft.current = false;
+          }, 100);
+        }
       }
-      draftLoaded.current = true; // Mark draft as loaded
+      draftLoaded.current = true;
     }
   }, [sessionStatus, submissionsLoading, getDraftData]);
 
@@ -493,6 +504,9 @@ export default function BasicInformation() {
       // Validate form data
       basicInformationRequiredSchema.parse(formData);
 
+      // Always save data to localStorage for navigation back
+      localStorage.setItem("erasmus_form_basic-info", JSON.stringify(formData));
+
       // Submit the form
       const response = await submitForm(
         "basic-info",
@@ -505,6 +519,8 @@ export default function BasicInformation() {
         // Update states synchronously
         setBasicInfoId(response.submissionId);
         markStepCompleted("basic-info");
+
+        // Remove draft but keep navigation data
         localStorage.removeItem("erasmus_draft_basic-info");
 
         // Navigate immediately

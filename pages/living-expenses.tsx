@@ -32,6 +32,7 @@ import { useNotifications } from "../src/hooks/useNotifications";
 import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
 import { FormType } from "../src/types/forms";
 import { ValidationError } from "../src/utils/apiErrorHandler";
+import { useFormProgress } from "../src/context/FormProgressContext";
 
 interface ExpenseCategory {
   groceries: string;
@@ -57,6 +58,9 @@ export default function LivingExpenses() {
     loading: submissionsLoading,
     error: submissionsError,
   } = useFormSubmissions();
+
+  // Add FormProgress context
+  const { markStepCompleted } = useFormProgress();
 
   const [formData, setFormData] = useState({
     spendingHabit: "",
@@ -89,16 +93,34 @@ export default function LivingExpenses() {
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Load draft data when component mounts
+  // Load saved data when component mounts
   useEffect(() => {
-    const draftData = getDraftData("living-expenses");
-    if (draftData) {
-      if (draftData.expenses) {
-        setExpenses(draftData.expenses);
+    // Load from navigation data first (user came back from next page)
+    const savedFormData = localStorage.getItem("erasmus_form_living-expenses");
+    if (savedFormData) {
+      try {
+        const parsedData = JSON.parse(savedFormData);
+        console.log("Loading saved living-expenses data:", parsedData);
+
+        if (parsedData.expenses) {
+          setExpenses(parsedData.expenses);
+        }
+        // Remove expenses from formData to avoid duplication
+        const { expenses: _, ...restData } = parsedData;
+        setFormData(restData);
+      } catch (error) {
+        console.error("Error loading saved living-expenses data:", error);
       }
-      // Remove expenses from formData to avoid duplication
-      const { expenses: _, ...restData } = draftData;
-      setFormData(restData);
+    } else {
+      // Fallback to draft data
+      const draftData = getDraftData("living-expenses");
+      if (draftData) {
+        if (draftData.expenses) {
+          setExpenses(draftData.expenses);
+        }
+        const { expenses: _, ...restData } = draftData;
+        setFormData(restData);
+      }
     }
   }, []);
 
@@ -187,8 +209,15 @@ export default function LivingExpenses() {
         expenses: expenses,
       };
 
+      // Always save data to localStorage for navigation back
+      localStorage.setItem(
+        "erasmus_form_living-expenses",
+        JSON.stringify(livingExpensesData),
+      );
+
       const basicInfoId = getBasicInfoId();
 
+      // Submit the form
       const response = await submitForm(
         "living-expenses",
         "Living Expenses Information",
@@ -198,13 +227,13 @@ export default function LivingExpenses() {
       );
 
       if (response?.submissionId) {
-        // Clean up localStorage
+        // Remove draft but keep navigation data
         localStorage.removeItem("erasmus_draft_living-expenses");
 
-        // Mark step as completed
+        // Mark step as completed using context function
         markStepCompleted("living-expenses");
 
-        // Navigate immediately
+        // Navigate immediately - no setTimeout needed
         router.push("/help-future-students");
       } else {
         throw new Error("No submission ID received");
@@ -658,20 +687,4 @@ export default function LivingExpenses() {
       </div>
     </>
   );
-}
-function markStepCompleted(stepName: string) {
-  try {
-    // Get existing completed steps from localStorage
-    const completedSteps = JSON.parse(
-      localStorage.getItem("completed_steps") || "[]",
-    );
-
-    // Add the new step if it's not already included
-    if (!completedSteps.includes(stepName)) {
-      completedSteps.push(stepName);
-      localStorage.setItem("completed_steps", JSON.stringify(completedSteps));
-    }
-  } catch (error) {
-    console.error("Error marking step as completed:", error);
-  }
 }

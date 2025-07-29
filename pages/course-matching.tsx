@@ -124,8 +124,9 @@ export default function CourseMatching() {
   useEffect(() => {
     const loadDraftData = async () => {
       try {
-        console.log("Loading draft data...");
-        const draftData = await getFormData("basic-information");
+        console.log("Loading basic info data...");
+        // Use getFormData instead of direct API call
+        const draftData = getFormData("basic-info"); // Remove "basic-information"
         console.log("Draft data loaded:", draftData);
 
         if (draftData) {
@@ -163,8 +164,9 @@ export default function CourseMatching() {
       }
     };
 
+    // Only load once
     loadDraftData();
-  }, [getFormData]);
+  }, []); // Remove getFormData from dependencies to prevent re-runs
 
   // Load course-matching draft data
   useEffect(() => {
@@ -427,18 +429,7 @@ export default function CourseMatching() {
     setValidationErrors({});
 
     try {
-      // Basic validation
-      if (!formData.hostCourseCount || !formData.homeCourseCount) {
-        setValidationErrors({
-          courseCount:
-            "Please specify the number of courses for both host and home university",
-        });
-        setSubmitError("Please fill in all required fields");
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Prepare the complete data object
+      // Save current form data before submission
       const courseMatchingData = {
         ...formData,
         courses: [
@@ -451,6 +442,23 @@ export default function CourseMatching() {
           })),
         ],
       };
+
+      // Always save data to localStorage for navigation back
+      localStorage.setItem(
+        "erasmus_form_course-matching",
+        JSON.stringify(courseMatchingData),
+      );
+
+      // Basic validation
+      if (!formData.hostCourseCount || !formData.homeCourseCount) {
+        setValidationErrors({
+          courseCount:
+            "Please specify the number of courses for both host and home university",
+        });
+        setSubmitError("Please fill in all required fields");
+        setIsSubmitting(false);
+        return;
+      }
 
       // Get the basicInfoId
       const basicInfoId = getBasicInfoId();
@@ -465,7 +473,7 @@ export default function CourseMatching() {
       );
 
       if (response?.submissionId) {
-        // Clean up localStorage
+        // Remove draft but keep navigation data
         localStorage.removeItem("erasmus_draft_course-matching");
 
         // Mark step as completed
@@ -496,6 +504,68 @@ export default function CourseMatching() {
       setIsSubmitting(false);
     }
   };
+
+  // Load saved form data when component mounts
+  useEffect(() => {
+    // Load from navigation data first (user came back from next page)
+    const savedFormData = localStorage.getItem("erasmus_form_course-matching");
+    if (savedFormData) {
+      try {
+        const parsedData = JSON.parse(savedFormData);
+        console.log("Loading saved course-matching data:", parsedData);
+
+        // Load form data
+        const { courses: savedCourses, ...restFormData } = parsedData;
+        setFormData((prev) => ({ ...prev, ...restFormData }));
+
+        // Load courses if they exist
+        if (savedCourses && Array.isArray(savedCourses)) {
+          const hostCourses = savedCourses.filter((c) => c.type === "host");
+          const homeCourses = savedCourses.filter((c) => c.type === "home");
+
+          if (hostCourses.length > 0) {
+            setCourses(hostCourses.map(({ type, ...course }) => course));
+          }
+
+          if (homeCourses.length > 0) {
+            setEquivalentCourses(
+              homeCourses.map(
+                ({ type, difficulty, examTypes, ...course }) => course,
+              ),
+            );
+          }
+        }
+      } catch (error) {
+        console.error("Error loading saved course-matching data:", error);
+      }
+    } else {
+      // Fallback to draft data
+      const courseMatchingDraft = getDraftData("course-matching");
+      if (courseMatchingDraft) {
+        // Load form data
+        const { courses: draftCourses, ...restFormData } = courseMatchingDraft;
+        setFormData((prev) => ({ ...prev, ...restFormData }));
+
+        // Load courses if they exist
+        if (draftCourses && Array.isArray(draftCourses)) {
+          const hostCourses = draftCourses.filter((c) => c.type === "host");
+          const homeCourses = draftCourses.filter((c) => c.type === "home");
+
+          if (hostCourses.length > 0) {
+            setCourses(hostCourses.map(({ type, ...course }) => course));
+          }
+
+          if (homeCourses.length > 0) {
+            setEquivalentCourses(
+              homeCourses.map(
+                ({ type, difficulty, examTypes, ...course }) => course,
+              ),
+            );
+          }
+        }
+      }
+    }
+  }, []);
 
   return (
     <>

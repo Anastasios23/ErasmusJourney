@@ -65,6 +65,51 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
   const submissionsCache = useRef<Record<string, any>>({});
   const isFetching = useRef<Record<string, boolean>>({});
 
+  // Add cache to prevent duplicate API calls
+  const apiCache = useRef<Map<string, { data: any; timestamp: number }>>(
+    new Map(),
+  );
+  const pendingRequests = useRef<Map<string, Promise<any>>>(new Map());
+
+  // Cache duration: 30 seconds
+  const CACHE_DURATION = 30 * 1000;
+
+  const fetchWithCache = useCallback(async (url: string) => {
+    const now = Date.now();
+    const cached = apiCache.current.get(url);
+
+    // Return cached data if still valid
+    if (cached && now - cached.timestamp < CACHE_DURATION) {
+      return cached.data;
+    }
+
+    // Return pending request if one exists
+    if (pendingRequests.current.has(url)) {
+      return pendingRequests.current.get(url);
+    }
+
+    // Make new request
+    const requestPromise = fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        // Cache the result
+        apiCache.current.set(url, { data, timestamp: now });
+        // Remove from pending requests
+        pendingRequests.current.delete(url);
+        return data;
+      })
+      .catch((error) => {
+        // Remove from pending requests on error
+        pendingRequests.current.delete(url);
+        throw error;
+      });
+
+    // Store pending request
+    pendingRequests.current.set(url, requestPromise);
+
+    return requestPromise;
+  }, []);
+
   const fetchFormData = useCallback(
     async (type: string) => {
       // Return cached data if available
@@ -290,32 +335,19 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
   };
 
   // Update getDraftData to use consistent form types
-  const getDraftData = (type: FormType): any | null => {
-    // First check server drafts (for authenticated users)
-    const serverDraft = submissions.find(
-      (s) => s.type === type && s.status === "draft",
-    );
-    if (serverDraft) {
-      return serverDraft.data;
-    }
-
-    // Fallback to localStorage draft (for unauthenticated users)
-    if (typeof window !== "undefined") {
+  const getDraftData = useCallback((type: string) => {
+    try {
       const draftKey = `erasmus_draft_${type}`;
-      const localDraft = localStorage.getItem(draftKey);
-      if (localDraft) {
-        try {
-          const parsed = JSON.parse(localDraft);
-          return parsed.data;
-        } catch (err) {
-          console.error("Error parsing local draft:", err);
-          localStorage.removeItem(draftKey);
-        }
+      const stored = localStorage.getItem(draftKey);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return parsed.data || parsed;
       }
+    } catch (error) {
+      console.error("Error getting draft data:", error);
     }
-
     return null;
-  };
+  }, []);
 
   const getSubmittedData = (type: string): any | null => {
     // Check for submitted or published forms (for authenticated users)
@@ -333,17 +365,26 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
 
   const getFormData = useCallback(
     async (type: FormType) => {
-      // Try localStorage first
+      // Always check localStorage first
       const localData = getDraftData(type);
       if (localData) {
         return localData;
       }
 
-      // Only fetch from API if no local data exists
-      const data = await fetchFormData(type);
-      return data?.submissions?.[0]?.data || null;
+      // Only fetch from API if no local data AND user is authenticated
+      if (session?.user) {
+        try {
+          const data = await fetchWithCache(`/api/forms/get?type=${type}`);
+          return data?.submissions?.[0]?.data || null;
+        } catch (error) {
+          console.error("Error fetching form data:", error);
+          return null;
+        }
+      }
+
+      return null;
     },
-    [getDraftData, fetchFormData],
+    [session, fetchWithCache, getDraftData],
   );
 
   const deleteDraft = async (id: string) => {

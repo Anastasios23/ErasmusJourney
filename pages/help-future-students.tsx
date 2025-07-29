@@ -90,11 +90,26 @@ export default function HelpFutureStudents() {
     setFormError,
   } = useFormValidation();
 
-  // Load draft data when component mounts
+  // Load saved data when component mounts
   useEffect(() => {
-    const draftData = getDraftData("help-future-students");
-    if (draftData) {
-      setFormData(draftData);
+    // Load from navigation data first (user came back from next page)
+    const savedFormData = localStorage.getItem(
+      "erasmus_form_help-future-students",
+    );
+    if (savedFormData) {
+      try {
+        const parsedData = JSON.parse(savedFormData);
+        console.log("Loading saved help-future-students data:", parsedData);
+        setFormData(parsedData);
+      } catch (error) {
+        console.error("Error loading saved help-future-students data:", error);
+      }
+    } else {
+      // Fallback to draft data
+      const draftData = getDraftData("help-future-students");
+      if (draftData) {
+        setFormData(draftData);
+      }
     }
   }, []);
 
@@ -236,34 +251,18 @@ export default function HelpFutureStudents() {
     setIsSubmitting(true);
 
     try {
-      if (formData.wantToHelp === "yes") {
-        if (!formData.contactMethod) {
-          toast.error("Please select a preferred contact method");
-          return;
-        }
-
-        if (formData.contactMethod === "email" && !formData.email) {
-          toast.error("Please provide your email address");
-          return;
-        }
-
-        if (formData.helpTopics.length === 0) {
-          toast.error("Please select at least one topic you can help with");
-          return;
-        }
-
-        if (!formData.availabilityLevel) {
-          toast.error("Please select your availability level");
-          return;
-        }
-      }
-
       // Prepare submission data
       const submissionData = {
         ...formData,
         submissionType: "mentorship",
         wantToHelp: formData.wantToHelp === "yes",
       };
+
+      // Always save data to localStorage for navigation back
+      localStorage.setItem(
+        "erasmus_form_help-future-students",
+        JSON.stringify(submissionData),
+      );
 
       // Get the basicInfoId from the session manager
       const basicInfoId = getBasicInfoId();
@@ -281,6 +280,9 @@ export default function HelpFutureStudents() {
         formData.publicProfile === "yes" ? "published" : "submitted", // Public mentors get published status
         basicInfoId,
       );
+
+      // Remove draft but keep navigation data
+      localStorage.removeItem("erasmus_draft_help-future-students");
 
       toast.success("Thank you for joining our mentor community! 🎉");
 

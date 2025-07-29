@@ -9,6 +9,11 @@ import { FormProgressProvider } from "../src/context/FormProgressContext";
 import ErrorBoundary from "../src/components/ErrorBoundary";
 import HMRErrorHandler from "../src/components/HMRErrorHandler";
 import "../src/index.css";
+import { useEffect } from "react";
+import {
+  setupApiCallMonitoring,
+  restoreOriginalFetch,
+} from "../src/utils/debugApiCalls";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,6 +28,20 @@ export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) {
+  useEffect(() => {
+    // Setup API call monitoring in development
+    if (process.env.NODE_ENV === "development") {
+      setupApiCallMonitoring();
+    }
+
+    return () => {
+      // Cleanup when component unmounts
+      if (process.env.NODE_ENV === "development") {
+        restoreOriginalFetch();
+      }
+    };
+  }, []);
+
   return (
     <ErrorBoundary>
       <SessionProvider

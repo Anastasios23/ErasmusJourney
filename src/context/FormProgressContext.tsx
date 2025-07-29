@@ -5,6 +5,7 @@ import {
   useEffect,
   useCallback,
   useMemo,
+  useRef,
 } from "react";
 import { useSession } from "next-auth/react";
 import { useFormSubmissions } from "../hooks/useFormSubmissions";
@@ -42,6 +43,9 @@ export function FormProgressProvider({
   // Add cache for form data
   const [formDataCache, setFormDataCache] = useState<Record<string, any>>({});
 
+  // Add request debouncing
+  const requestTimeouts = useRef<Map<string, NodeJS.Timeout>>(new Map());
+
   // Cache form data
   const cacheFormData = useCallback((type: string, data: any) => {
     setFormDataCache((prev) => ({
@@ -56,6 +60,22 @@ export function FormProgressProvider({
       return formDataCache[type];
     },
     [formDataCache],
+  );
+
+  // Debounced request
+  const debouncedRequest = useCallback(
+    (key: string, fn: () => void, delay = 100) => {
+      // Clear existing timeout
+      const existingTimeout = requestTimeouts.current.get(key);
+      if (existingTimeout) {
+        clearTimeout(existingTimeout);
+      }
+
+      // Set new timeout
+      const newTimeout = setTimeout(fn, delay);
+      requestTimeouts.current.set(key, newTimeout);
+    },
+    [],
   );
 
   // Load completed steps from submissions data
@@ -81,6 +101,14 @@ export function FormProgressProvider({
       loadCompletedSteps();
     }
   }, [session, getFormData]);
+
+  useEffect(() => {
+    return () => {
+      // Clear all timeouts on unmount
+      requestTimeouts.current.forEach((timeout) => clearTimeout(timeout));
+      requestTimeouts.current.clear();
+    };
+  }, []);
 
   const stepOrder: FormStep[] = [
     "basic-info",

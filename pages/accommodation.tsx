@@ -108,18 +108,32 @@ export default function Accommodation() {
   const [basicInfoData, setBasicInfoData] = useState<any>(null);
 
   useEffect(() => {
-    // Load any existing draft data for the accommodation form
-    const draftData = getDraftData("accommodation");
-    if (draftData) {
-      setFormData(draftData);
+    // Load from navigation data first (user came back from next page)
+    const savedFormData = localStorage.getItem("erasmus_form_accommodation");
+    if (savedFormData) {
+      try {
+        const parsedData = JSON.parse(savedFormData);
+        console.log("Loading saved accommodation data:", parsedData);
+        setFormData(parsedData);
+      } catch (error) {
+        console.error("Error loading saved accommodation data:", error);
+      }
+    } else {
+      // Fallback to draft data
+      const draftData = getDraftData("accommodation");
+      if (draftData) {
+        setFormData(draftData);
+      }
     }
 
-    // Get basic info data from the session (checks both submitted and draft data)
-    const basicInfo = getFormData("basic-info");
+    // Get basic info data - use sync method to avoid extra API calls
+    const basicInfo =
+      getDraftData("basic-info") ||
+      JSON.parse(localStorage.getItem("erasmus_form_basic-info") || "null");
     if (basicInfo) {
       setBasicInfoData(basicInfo);
     }
-  }, []);
+  }, []); // Remove dependencies to prevent re-runs
 
   // Load draft data when component mounts
   useEffect(() => {
@@ -155,7 +169,9 @@ export default function Accommodation() {
 
     try {
       // Get basic info and basicInfoId
-      const basicInfo = getFormData("basic-info");
+      const basicInfo =
+        getFormData("basic-info") ||
+        JSON.parse(localStorage.getItem("erasmus_form_basic-info") || "null");
       const basicInfoId = getBasicInfoId();
 
       const enrichedFormData = {
@@ -164,6 +180,12 @@ export default function Accommodation() {
         country: basicInfo?.hostCountry || "",
         university: basicInfo?.hostUniversity || "",
       };
+
+      // Always save data to localStorage for navigation back
+      localStorage.setItem(
+        "erasmus_form_accommodation",
+        JSON.stringify(enrichedFormData),
+      );
 
       const response = await submitForm(
         "accommodation",
@@ -174,7 +196,7 @@ export default function Accommodation() {
       );
 
       if (response?.submissionId) {
-        // Clean up localStorage
+        // Remove draft but keep navigation data
         localStorage.removeItem("erasmus_draft_accommodation");
 
         // Mark step as completed
