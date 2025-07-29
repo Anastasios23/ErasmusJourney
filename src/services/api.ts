@@ -327,6 +327,7 @@ export async function registerUser(userData: {
       body: JSON.stringify(userData),
     });
 
+    // Always read the JSON first, regardless of response status
     const data = await response.json();
 
     if (!response.ok) {
