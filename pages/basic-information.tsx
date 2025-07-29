@@ -21,6 +21,21 @@ import {
   CardHeader,
   CardTitle,
 } from "../src/components/ui/card";
+import { EnhancedInput } from "../src/components/ui/enhanced-input";
+import {
+  EnhancedSelect,
+  EnhancedSelectTrigger,
+  EnhancedSelectValue,
+  EnhancedSelectContent,
+  EnhancedSelectItem,
+} from "../src/components/ui/enhanced-select";
+import { EnhancedTextarea } from "../src/components/ui/enhanced-textarea";
+import {
+  FormField,
+  FormSection,
+  FormGrid,
+  DisabledFieldHint,
+} from "../src/components/ui/form-components";
 import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
 import { Badge } from "../src/components/ui/badge";
 import { Textarea } from "../src/components/ui/textarea";
@@ -615,309 +630,377 @@ export default function BasicInformation() {
         key={draftApplied ? "draft-loaded" : "initial"}
       >
         {/* Personal Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name *</Label>
-                <Input
-                  id="firstName"
-                  value={formData.firstName}
-                  onChange={(e) =>
-                    handleInputChange("firstName", e.target.value)
-                  }
-                  required
-                  className={fieldErrors.firstName ? "border-red-500" : ""}
-                />
-                {fieldErrors.firstName && (
-                  <p className="text-sm text-red-500">
-                    {fieldErrors.firstName}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name *</Label>
-                <Input
-                  id="lastName"
-                  value={formData.lastName}
-                  onChange={(e) =>
-                    handleInputChange("lastName", e.target.value)
-                  }
-                  required
-                  className={fieldErrors.lastName ? "border-red-500" : ""}
-                />
-                {fieldErrors.lastName && (
-                  <p className="text-sm text-red-500">{fieldErrors.lastName}</p>
-                )}
-              </div>
-            </div>
+        <FormSection
+          title="Personal Information"
+          subtitle="Your basic personal details for the exchange program"
+        >
+          <FormGrid columns={2}>
+            <FormField
+              label="First Name"
+              required
+              error={fieldErrors.firstName}
+            >
+              <EnhancedInput
+                id="firstName"
+                value={formData.firstName}
+                onChange={(e) => handleInputChange("firstName", e.target.value)}
+                placeholder="Enter your first name"
+                required
+                error={fieldErrors.firstName}
+              />
+            </FormField>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  required
-                  className={fieldErrors.email ? "border-red-500" : ""}
-                />
-                {fieldErrors.email && (
-                  <p className="text-sm text-red-500">{fieldErrors.email}</p>
-                )}
-              </div>
-            </div>
+            <FormField label="Last Name" required error={fieldErrors.lastName}>
+              <EnhancedInput
+                id="lastName"
+                value={formData.lastName}
+                onChange={(e) => handleInputChange("lastName", e.target.value)}
+                placeholder="Enter your last name"
+                required
+                error={fieldErrors.lastName}
+              />
+            </FormField>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="dateOfBirth">Date of Birth *</Label>
-                <Input
-                  type="date"
-                  id="dateOfBirth"
-                  value={formData.dateOfBirth}
-                  onChange={(e) =>
-                    handleInputChange("dateOfBirth", e.target.value)
-                  }
-                  required
-                  className={fieldErrors.dateOfBirth ? "border-red-500" : ""}
-                />
-                {fieldErrors.dateOfBirth && (
-                  <p className="text-sm text-red-500">
-                    {fieldErrors.dateOfBirth}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="nationality">Nationality *</Label>
-                <Input
-                  id="nationality"
-                  value={formData.nationality}
-                  onChange={(e) =>
-                    handleInputChange("nationality", e.target.value)
-                  }
-                  required
-                  className={fieldErrors.nationality ? "border-red-500" : ""}
-                />
-                {fieldErrors.nationality && (
-                  <p className="text-sm text-red-500">
-                    {fieldErrors.nationality}
-                  </p>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            <FormField label="Email Address" required error={fieldErrors.email}>
+              <EnhancedInput
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
+                placeholder="your.email@example.com"
+                required
+                error={fieldErrors.email}
+              />
+            </FormField>
+
+            <FormField
+              label="Date of Birth"
+              required
+              error={fieldErrors.dateOfBirth}
+            >
+              <EnhancedInput
+                type="date"
+                id="dateOfBirth"
+                value={formData.dateOfBirth}
+                onChange={(e) =>
+                  handleInputChange("dateOfBirth", e.target.value)
+                }
+                required
+                error={fieldErrors.dateOfBirth}
+              />
+            </FormField>
+
+            <FormField
+              label="Nationality"
+              required
+              error={fieldErrors.nationality}
+            >
+              <EnhancedInput
+                id="nationality"
+                value={formData.nationality}
+                onChange={(e) =>
+                  handleInputChange("nationality", e.target.value)
+                }
+                placeholder="e.g., Cypriot, Greek, German"
+                required
+                error={fieldErrors.nationality}
+              />
+            </FormField>
+          </FormGrid>
+        </FormSection>
 
         {/* Academic Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Academic Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="universityInCyprus">Cyprus University *</Label>
-                <Select
-                  value={formData.universityInCyprus || ""}
-                  onValueChange={(value) =>
-                    handleInputChange("universityInCyprus", value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your university" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cyprusUniversities.map((uni) => (
-                      <SelectItem key={uni.code} value={uni.code}>
-                        {uni.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="levelOfStudy">Level of Study *</Label>
-                <Select
-                  value={formData.levelOfStudy || ""}
-                  onValueChange={(value) =>
-                    handleInputChange("levelOfStudy", value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="bachelor">Bachelor</SelectItem>
-                    <SelectItem value="master">Master</SelectItem>
-                    <SelectItem value="phd">PhD</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="departmentInCyprus">Department *</Label>
-              <Select
-                value={formData.departmentInCyprus || ""}
+        <FormSection
+          title="Academic Information"
+          subtitle="Your current academic status and university details"
+        >
+          <FormGrid columns={2}>
+            <FormField
+              label="Cyprus University"
+              required
+              error={fieldErrors.universityInCyprus}
+            >
+              <EnhancedSelect
+                value={formData.universityInCyprus || ""}
                 onValueChange={(value) =>
-                  handleInputChange("departmentInCyprus", value)
+                  handleInputChange("universityInCyprus", value)
                 }
-                disabled={!formData.universityInCyprus}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select your department" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableDepartments.map((dept) => (
-                    <SelectItem key={dept} value={dept}>
-                      {dept}
-                    </SelectItem>
+                <EnhancedSelectTrigger error={fieldErrors.universityInCyprus}>
+                  <EnhancedSelectValue placeholder="Select your university" />
+                </EnhancedSelectTrigger>
+                <EnhancedSelectContent>
+                  {cyprusUniversities.map((uni) => (
+                    <EnhancedSelectItem key={uni.code} value={uni.code}>
+                      {uni.name}
+                    </EnhancedSelectItem>
                   ))}
-                </SelectContent>
-              </Select>
-            </div>
+                </EnhancedSelectContent>
+              </EnhancedSelect>
+            </FormField>
 
-            {formData.departmentInCyprus &&
-              availableHostUniversities.length > 0 && (
-                <div className="p-4 bg-green-50 rounded-lg border border-green-200 mb-4">
-                  <p className="text-green-800 text-sm">
-                    <span className="font-semibold">
-                      {availableHostUniversities.length} partner universities
-                    </span>{" "}
-                    available for {formData.departmentInCyprus} at{" "}
-                    {
-                      cyprusUniversities.find(
-                        (u) => u.code === formData.universityInCyprus,
-                      )?.name
-                    }
-                    {formData.levelOfStudy &&
-                      ` (${formData.levelOfStudy} level)`}
-                  </p>
-                </div>
-              )}
-          </CardContent>
-        </Card>
+            <FormField
+              label="Level of Study"
+              required
+              error={fieldErrors.levelOfStudy}
+            >
+              <EnhancedSelect
+                value={formData.levelOfStudy || ""}
+                onValueChange={(value) =>
+                  handleInputChange("levelOfStudy", value)
+                }
+              >
+                <EnhancedSelectTrigger error={fieldErrors.levelOfStudy}>
+                  <EnhancedSelectValue placeholder="Select level" />
+                </EnhancedSelectTrigger>
+                <EnhancedSelectContent>
+                  <EnhancedSelectItem value="bachelor">
+                    Bachelor
+                  </EnhancedSelectItem>
+                  <EnhancedSelectItem value="master">Master</EnhancedSelectItem>
+                  <EnhancedSelectItem value="phd">PhD</EnhancedSelectItem>
+                </EnhancedSelectContent>
+              </EnhancedSelect>
+            </FormField>
+          </FormGrid>
+
+          <FormField
+            label="Department"
+            required
+            error={fieldErrors.departmentInCyprus}
+          >
+            <EnhancedSelect
+              value={formData.departmentInCyprus || ""}
+              onValueChange={(value) =>
+                handleInputChange("departmentInCyprus", value)
+              }
+              disabled={!formData.universityInCyprus}
+            >
+              <EnhancedSelectTrigger
+                disabledMessage={
+                  !formData.universityInCyprus
+                    ? "Please select a university first"
+                    : undefined
+                }
+                error={fieldErrors.departmentInCyprus}
+              >
+                <EnhancedSelectValue
+                  placeholder="Select your department"
+                  disabledMessage={
+                    !formData.universityInCyprus
+                      ? "Please select a university first"
+                      : undefined
+                  }
+                  disabled={!formData.universityInCyprus}
+                />
+              </EnhancedSelectTrigger>
+              <EnhancedSelectContent>
+                {availableDepartments.map((dept) => (
+                  <EnhancedSelectItem key={dept} value={dept}>
+                    {dept}
+                  </EnhancedSelectItem>
+                ))}
+              </EnhancedSelectContent>
+            </EnhancedSelect>
+            {!formData.universityInCyprus && (
+              <DisabledFieldHint message="Please select a university first" />
+            )}
+          </FormField>
+
+          {formData.departmentInCyprus &&
+            availableHostUniversities.length > 0 && (
+              <div className="p-4 bg-green-50 rounded-lg border border-green-200 mb-4">
+                <p className="text-green-800 text-sm">
+                  <span className="font-semibold">
+                    {availableHostUniversities.length} partner universities
+                  </span>{" "}
+                  available for {formData.departmentInCyprus} at{" "}
+                  {
+                    cyprusUniversities.find(
+                      (u) => u.code === formData.universityInCyprus,
+                    )?.name
+                  }
+                  {formData.levelOfStudy && ` (${formData.levelOfStudy} level)`}
+                </p>
+              </div>
+            )}
+        </FormSection>
 
         {/* Exchange Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Exchange Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="exchangePeriod">Exchange Period *</Label>
-                <Select
-                  value={formData.exchangePeriod || ""}
-                  onValueChange={(value) =>
-                    handleInputChange("exchangePeriod", value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select period" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="semester1">Fall Semester</SelectItem>
-                    <SelectItem value="semester2">Spring Semester</SelectItem>
-                    <SelectItem value="full_year">
-                      Full Academic Year
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="hostCountry">Preferred Host Country *</Label>
-                <Select
-                  value={formData.hostCountry || ""}
-                  onValueChange={(value) =>
-                    handleInputChange("hostCountry", value)
-                  }
-                  disabled={availableHostUniversities.length === 0}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {[
-                      ...new Set(
-                        availableHostUniversities.map((u) => u.country),
-                      ),
-                    ]
-                      .sort()
-                      .map((country) => (
-                        <SelectItem key={country} value={country}>
-                          {country}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+        <FormSection
+          title="Exchange Information"
+          subtitle="Your preferred exchange details and destination"
+        >
+          <FormGrid columns={2}>
+            <FormField
+              label="Exchange Period"
+              required
+              error={fieldErrors.exchangePeriod}
+            >
+              <EnhancedSelect
+                value={formData.exchangePeriod || ""}
+                onValueChange={(value) =>
+                  handleInputChange("exchangePeriod", value)
+                }
+              >
+                <EnhancedSelectTrigger error={fieldErrors.exchangePeriod}>
+                  <EnhancedSelectValue placeholder="Select period" />
+                </EnhancedSelectTrigger>
+                <EnhancedSelectContent>
+                  <EnhancedSelectItem value="semester1">
+                    Fall Semester
+                  </EnhancedSelectItem>
+                  <EnhancedSelectItem value="semester2">
+                    Spring Semester
+                  </EnhancedSelectItem>
+                  <EnhancedSelectItem value="full_year">
+                    Full Academic Year
+                  </EnhancedSelectItem>
+                </EnhancedSelectContent>
+              </EnhancedSelect>
+            </FormField>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="hostCity">Preferred Host City *</Label>
-                <Select
-                  value={formData.hostCity || ""}
-                  onValueChange={(value) =>
-                    handleInputChange("hostCity", value)
+            <FormField
+              label="Preferred Host Country"
+              required
+              error={fieldErrors.hostCountry}
+            >
+              <EnhancedSelect
+                value={formData.hostCountry || ""}
+                onValueChange={(value) =>
+                  handleInputChange("hostCountry", value)
+                }
+                disabled={availableHostUniversities.length === 0}
+              >
+                <EnhancedSelectTrigger
+                  disabledMessage={
+                    availableHostUniversities.length === 0
+                      ? "Please select university, level, and department first"
+                      : undefined
                   }
-                  disabled={!formData.hostCountry}
+                  error={fieldErrors.hostCountry}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select city" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableHostUniversities
-                      .filter((uni) => uni.country === formData.hostCountry)
-                      .map((uni) => uni.city)
-                      .filter((city, index, arr) => arr.indexOf(city) === index)
-                      .sort()
-                      .map((city) => (
-                        <SelectItem key={city} value={city}>
-                          {city}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="hostUniversity">
-                  Preferred Host University *
-                </Label>
-                <Select
-                  value={formData.hostUniversity || ""}
-                  onValueChange={(value) =>
-                    handleInputChange("hostUniversity", value)
+                  <EnhancedSelectValue
+                    placeholder="Select country"
+                    disabledMessage={
+                      availableHostUniversities.length === 0
+                        ? "Please select university, level, and department first"
+                        : undefined
+                    }
+                    disabled={availableHostUniversities.length === 0}
+                  />
+                </EnhancedSelectTrigger>
+                <EnhancedSelectContent>
+                  {[...new Set(availableHostUniversities.map((u) => u.country))]
+                    .sort()
+                    .map((country) => (
+                      <EnhancedSelectItem key={country} value={country}>
+                        {country}
+                      </EnhancedSelectItem>
+                    ))}
+                </EnhancedSelectContent>
+              </EnhancedSelect>
+              {availableHostUniversities.length === 0 && (
+                <DisabledFieldHint message="Please select university, level, and department first" />
+              )}
+            </FormField>
+
+            <FormField
+              label="Preferred Host City"
+              required
+              error={fieldErrors.hostCity}
+            >
+              <EnhancedSelect
+                value={formData.hostCity || ""}
+                onValueChange={(value) => handleInputChange("hostCity", value)}
+                disabled={!formData.hostCountry}
+              >
+                <EnhancedSelectTrigger
+                  disabledMessage={
+                    !formData.hostCountry
+                      ? "Please select a country first"
+                      : undefined
                   }
-                  disabled={!formData.hostCountry}
+                  error={fieldErrors.hostCity}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select university" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableHostUniversities
-                      .filter(
-                        (uni) =>
-                          uni.country === formData.hostCountry &&
-                          (!formData.hostCity ||
-                            uni.city === formData.hostCity),
-                      )
-                      .map((uni, index) => (
-                        <SelectItem key={index} value={uni.university}>
-                          {uni.university} - {uni.city}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                  <EnhancedSelectValue
+                    placeholder="Select city"
+                    disabledMessage={
+                      !formData.hostCountry
+                        ? "Please select a country first"
+                        : undefined
+                    }
+                    disabled={!formData.hostCountry}
+                  />
+                </EnhancedSelectTrigger>
+                <EnhancedSelectContent>
+                  {availableHostUniversities
+                    .filter((uni) => uni.country === formData.hostCountry)
+                    .map((uni) => uni.city)
+                    .filter((city, index, arr) => arr.indexOf(city) === index)
+                    .sort()
+                    .map((city) => (
+                      <EnhancedSelectItem key={city} value={city}>
+                        {city}
+                      </EnhancedSelectItem>
+                    ))}
+                </EnhancedSelectContent>
+              </EnhancedSelect>
+              {!formData.hostCountry && (
+                <DisabledFieldHint message="Please select a country first" />
+              )}
+            </FormField>
+
+            <FormField
+              label="Preferred Host University"
+              required
+              error={fieldErrors.hostUniversity}
+            >
+              <EnhancedSelect
+                value={formData.hostUniversity || ""}
+                onValueChange={(value) =>
+                  handleInputChange("hostUniversity", value)
+                }
+                disabled={!formData.hostCountry}
+              >
+                <EnhancedSelectTrigger
+                  disabledMessage={
+                    !formData.hostCountry
+                      ? "Please select a country first"
+                      : undefined
+                  }
+                  error={fieldErrors.hostUniversity}
+                >
+                  <EnhancedSelectValue
+                    placeholder="Select university"
+                    disabledMessage={
+                      !formData.hostCountry
+                        ? "Please select a country first"
+                        : undefined
+                    }
+                    disabled={!formData.hostCountry}
+                  />
+                </EnhancedSelectTrigger>
+                <EnhancedSelectContent>
+                  {availableHostUniversities
+                    .filter(
+                      (uni) =>
+                        uni.country === formData.hostCountry &&
+                        (!formData.hostCity || uni.city === formData.hostCity),
+                    )
+                    .map((uni, index) => (
+                      <EnhancedSelectItem key={index} value={uni.university}>
+                        {uni.university} - {uni.city}
+                      </EnhancedSelectItem>
+                    ))}
+                </EnhancedSelectContent>
+              </EnhancedSelect>
+              {!formData.hostCountry && (
+                <DisabledFieldHint message="Please select a country first" />
+              )}
+            </FormField>
+          </FormGrid>
+        </FormSection>
 
         {/* Navigation */}
         {/* Subtle auto-save status indicator */}

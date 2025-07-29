@@ -22,6 +22,21 @@ import {
   SelectValue,
 } from "../src/components/ui/select";
 import {
+  EnhancedSelect,
+  EnhancedSelectContent,
+  EnhancedSelectItem,
+  EnhancedSelectTrigger,
+  EnhancedSelectValue,
+} from "../src/components/ui/enhanced-select";
+import { EnhancedInput } from "../src/components/ui/enhanced-input";
+import { EnhancedTextarea } from "../src/components/ui/enhanced-textarea";
+import {
+  FormField,
+  FormSection,
+  FormGrid,
+  DisabledFieldHint,
+} from "../src/components/ui/form-components";
+import {
   Card,
   CardContent,
   CardHeader,
@@ -723,75 +738,107 @@ export default function CourseMatching() {
                   Tell us about the courses you took during your exchange
                 </p>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="hostCourseCount">
-                      How many courses did you take at the host university?
-                    </Label>
-                    <Select
-                      value={formData.hostCourseCount}
-                      onValueChange={(value) =>
-                        handleInputChange("hostCourseCount", value)
-                      }
+              <CardContent>
+                <FormSection
+                  title="Course Count Setup"
+                  subtitle="Specify how many courses you took and need to match"
+                >
+                  <FormGrid columns={2}>
+                    <FormField
+                      label="Host University Courses"
+                      required
+                      error={validationErrors.hostCourseCount}
+                      helperText="Number of courses you took at your exchange university"
+                      fieldId="hostCourseCount"
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select number of courses" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: 10 }, (_, i) => i + 1).map(
-                          (num) => (
-                            <SelectItem key={num} value={num.toString()}>
-                              {num} {num === 1 ? "course" : "courses"}
-                            </SelectItem>
-                          ),
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                      <EnhancedSelect
+                        value={formData.hostCourseCount}
+                        onValueChange={(value) =>
+                          handleInputChange("hostCourseCount", value)
+                        }
+                      >
+                        <EnhancedSelectTrigger
+                          id="hostCourseCount"
+                          error={validationErrors.hostCourseCount}
+                        >
+                          <EnhancedSelectValue placeholder="Select number of courses" />
+                        </EnhancedSelectTrigger>
+                        <EnhancedSelectContent>
+                          {Array.from({ length: 10 }, (_, i) => i + 1).map(
+                            (num) => (
+                              <EnhancedSelectItem
+                                key={num}
+                                value={num.toString()}
+                              >
+                                {num} {num === 1 ? "course" : "courses"}
+                              </EnhancedSelectItem>
+                            ),
+                          )}
+                        </EnhancedSelectContent>
+                      </EnhancedSelect>
+                    </FormField>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="homeCourseCount">
-                      How many equivalent courses do you have at your home
-                      university?
-                    </Label>
-                    <Select
-                      value={formData.homeCourseCount}
-                      onValueChange={(value) =>
-                        handleInputChange("homeCourseCount", value)
-                      }
+                    <FormField
+                      label="Home University Equivalent Courses"
+                      required
+                      error={validationErrors.homeCourseCount}
+                      helperText="Equivalent courses at your home university"
+                      fieldId="homeCourseCount"
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select number of courses" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: 10 }, (_, i) => i + 1).map(
-                          (num) => (
-                            <SelectItem key={num} value={num.toString()}>
-                              {num} {num === 1 ? "course" : "courses"}
-                            </SelectItem>
-                          ),
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+                      <EnhancedSelect
+                        value={formData.homeCourseCount}
+                        onValueChange={(value) =>
+                          handleInputChange("homeCourseCount", value)
+                        }
+                      >
+                        <EnhancedSelectTrigger
+                          id="homeCourseCount"
+                          error={validationErrors.homeCourseCount}
+                        >
+                          <EnhancedSelectValue placeholder="Select number of courses" />
+                        </EnhancedSelectTrigger>
+                        <EnhancedSelectContent>
+                          {Array.from({ length: 10 }, (_, i) => i + 1).map(
+                            (num) => (
+                              <EnhancedSelectItem
+                                key={num}
+                                value={num.toString()}
+                              >
+                                {num} {num === 1 ? "course" : "courses"}
+                              </EnhancedSelectItem>
+                            ),
+                          )}
+                        </EnhancedSelectContent>
+                      </EnhancedSelect>
+                    </FormField>
+                  </FormGrid>
 
-                {formData.hostCourseCount && formData.homeCourseCount && (
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <p className="text-sm text-blue-800">
-                      <strong>Course Setup:</strong> You'll provide details for{" "}
-                      <span className="font-semibold">
-                        {formData.hostCourseCount} host university courses
-                      </span>{" "}
-                      and{" "}
-                      <span className="font-semibold">
-                        {formData.homeCourseCount} equivalent home courses
-                      </span>
-                      .
-                    </p>
-                  </div>
-                )}
+                  {formData.hostCourseCount && formData.homeCourseCount && (
+                    <div className="p-4 bg-green-50 rounded-lg border border-green-200 mt-4">
+                      <div className="flex items-start space-x-3">
+                        <div className="flex-shrink-0">
+                          <BookOpen className="h-5 w-5 text-green-600 mt-0.5" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-green-800">
+                            Course Setup Complete
+                          </h4>
+                          <p className="text-sm text-green-700 mt-1">
+                            You'll provide details for{" "}
+                            <span className="font-semibold">
+                              {formData.hostCourseCount} host university courses
+                            </span>{" "}
+                            and{" "}
+                            <span className="font-semibold">
+                              {formData.homeCourseCount} equivalent home courses
+                            </span>
+                            .
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </FormSection>
               </CardContent>
             </Card>
 
@@ -806,8 +853,11 @@ export default function CourseMatching() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Course Program Image Upload */}
-                  <div className="space-y-2">
-                    <Label>Course Program Image (Optional)</Label>
+                  <FormField
+                    label="Course Program Image (Optional)"
+                    helperText="Upload a photo of your course program or fill the manual entry below"
+                    fieldId="course-program-upload"
+                  >
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                       {uploadedFile ? (
                         <div className="space-y-2">
@@ -862,7 +912,7 @@ export default function CourseMatching() {
                         </div>
                       )}
                     </div>
-                  </div>
+                  </FormField>
 
                   {courses.map((course, index) => (
                     <Card
@@ -874,30 +924,46 @@ export default function CourseMatching() {
                           Course {index + 1}
                         </h4>
                       </div>
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label>Course Name</Label>
-                          <Input
+
+                      <FormGrid columns={2}>
+                        <FormField
+                          label="Course Name"
+                          required
+                          fieldId={`host-course-name-${index}`}
+                        >
+                          <EnhancedInput
+                            id={`host-course-name-${index}`}
                             placeholder="Enter course name"
                             value={course.name}
                             onChange={(e) =>
                               updateCourse(index, "name", e.target.value)
                             }
                           />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Course Code</Label>
-                          <Input
+                        </FormField>
+
+                        <FormField
+                          label="Course Code"
+                          required
+                          fieldId={`host-course-code-${index}`}
+                        >
+                          <EnhancedInput
+                            id={`host-course-code-${index}`}
                             placeholder="Enter course code"
                             value={course.code}
                             onChange={(e) =>
                               updateCourse(index, "code", e.target.value)
                             }
                           />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>ECTS Credits</Label>
-                          <Input
+                        </FormField>
+
+                        <FormField
+                          label="ECTS Credits"
+                          required
+                          helperText="Usually 3-6 ECTS per course"
+                          fieldId={`host-course-ects-${index}`}
+                        >
+                          <EnhancedInput
+                            id={`host-course-ects-${index}`}
                             type="number"
                             placeholder="Enter ECTS credits"
                             value={course.ects}
@@ -905,67 +971,84 @@ export default function CourseMatching() {
                               updateCourse(index, "ects", e.target.value)
                             }
                           />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Level of Difficulty (1-5)</Label>
-                          <Select
+                        </FormField>
+
+                        <FormField
+                          label="Level of Difficulty"
+                          helperText="Rate from 1 (very easy) to 5 (very difficult)"
+                          fieldId={`host-course-difficulty-${index}`}
+                        >
+                          <EnhancedSelect
+                            value={course.difficulty}
                             onValueChange={(value) =>
                               updateCourse(index, "difficulty", value)
                             }
                           >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select difficulty" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="1">1 - Very Easy</SelectItem>
-                              <SelectItem value="2">2 - Easy</SelectItem>
-                              <SelectItem value="3">3 - Moderate</SelectItem>
-                              <SelectItem value="4">4 - Difficult</SelectItem>
-                              <SelectItem value="5">
+                            <EnhancedSelectTrigger
+                              id={`host-course-difficulty-${index}`}
+                            >
+                              <EnhancedSelectValue placeholder="Select difficulty" />
+                            </EnhancedSelectTrigger>
+                            <EnhancedSelectContent>
+                              <EnhancedSelectItem value="1">
+                                1 - Very Easy
+                              </EnhancedSelectItem>
+                              <EnhancedSelectItem value="2">
+                                2 - Easy
+                              </EnhancedSelectItem>
+                              <EnhancedSelectItem value="3">
+                                3 - Moderate
+                              </EnhancedSelectItem>
+                              <EnhancedSelectItem value="4">
+                                4 - Difficult
+                              </EnhancedSelectItem>
+                              <EnhancedSelectItem value="5">
                                 5 - Very Difficult
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2 md:col-span-2">
-                          <Label>Exam Types (Select all that apply)</Label>
-                          <div className="flex flex-wrap gap-6">
-                            {["oral", "written", "presentation", "project"].map(
-                              (examType) => (
-                                <div
-                                  key={examType}
-                                  className="flex items-center space-x-2"
-                                >
-                                  <Checkbox
-                                    id={`${examType}-${index}`}
-                                    checked={course.examTypes.includes(
+                              </EnhancedSelectItem>
+                            </EnhancedSelectContent>
+                          </EnhancedSelect>
+                        </FormField>
+                      </FormGrid>
+
+                      <FormField
+                        label="Exam Types"
+                        helperText="Select all types of examinations for this course"
+                        fieldId={`host-course-exams-${index}`}
+                      >
+                        <div className="flex flex-wrap gap-6">
+                          {["oral", "written", "presentation", "project"].map(
+                            (examType) => (
+                              <div
+                                key={examType}
+                                className="flex items-center space-x-2"
+                              >
+                                <Checkbox
+                                  id={`${examType}-${index}`}
+                                  checked={course.examTypes.includes(examType)}
+                                  onCheckedChange={(checked) =>
+                                    updateCourseExamTypes(
+                                      index,
                                       examType,
-                                    )}
-                                    onCheckedChange={(checked) =>
-                                      updateCourseExamTypes(
-                                        index,
-                                        examType,
-                                        checked as boolean,
-                                      )
-                                    }
-                                  />
-                                  <Label htmlFor={`${examType}-${index}`}>
-                                    {examType === "project"
-                                      ? "Project-Based"
-                                      : examType.charAt(0).toUpperCase() +
-                                        examType.slice(1)}
-                                  </Label>
-                                </div>
-                              ),
-                            )}
-                          </div>
-                          {course.examTypes.length > 0 && (
-                            <p className="text-xs text-gray-600">
-                              Selected: {course.examTypes.join(", ")}
-                            </p>
+                                      checked as boolean,
+                                    )
+                                  }
+                                />
+                                <Label htmlFor={`${examType}-${index}`}>
+                                  {examType === "project"
+                                    ? "Project-Based"
+                                    : examType.charAt(0).toUpperCase() +
+                                      examType.slice(1)}
+                                </Label>
+                              </div>
+                            ),
                           )}
                         </div>
-                      </div>
+                        {course.examTypes.length > 0 && (
+                          <p className="text-xs text-gray-600 mt-2">
+                            Selected: {course.examTypes.join(", ")}
+                          </p>
+                        )}
+                      </FormField>
                     </Card>
                   ))}
                 </CardContent>
@@ -992,10 +1075,15 @@ export default function CourseMatching() {
                           Equivalent Course {index + 1}
                         </h4>
                       </div>
-                      <div className="grid md:grid-cols-3 gap-4">
-                        <div className="space-y-2">
-                          <Label>Course Name</Label>
-                          <Input
+
+                      <FormGrid columns={3}>
+                        <FormField
+                          label="Course Name"
+                          required
+                          fieldId={`home-course-name-${index}`}
+                        >
+                          <EnhancedInput
+                            id={`home-course-name-${index}`}
                             placeholder="Enter equivalent course name"
                             value={course.name}
                             onChange={(e) =>
@@ -1006,10 +1094,15 @@ export default function CourseMatching() {
                               )
                             }
                           />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Course Code</Label>
-                          <Input
+                        </FormField>
+
+                        <FormField
+                          label="Course Code"
+                          required
+                          fieldId={`home-course-code-${index}`}
+                        >
+                          <EnhancedInput
+                            id={`home-course-code-${index}`}
                             placeholder="Enter course code"
                             value={course.code}
                             onChange={(e) =>
@@ -1020,10 +1113,16 @@ export default function CourseMatching() {
                               )
                             }
                           />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>ECTS Credits</Label>
-                          <Input
+                        </FormField>
+
+                        <FormField
+                          label="ECTS Credits"
+                          required
+                          helperText="Credits at your home university"
+                          fieldId={`home-course-ects-${index}`}
+                        >
+                          <EnhancedInput
+                            id={`home-course-ects-${index}`}
                             type="number"
                             placeholder="Enter ECTS credits"
                             value={course.ects}
@@ -1035,8 +1134,8 @@ export default function CourseMatching() {
                               )
                             }
                           />
-                        </div>
-                      </div>
+                        </FormField>
+                      </FormGrid>
                     </Card>
                   ))}
                 </CardContent>
@@ -1050,12 +1149,16 @@ export default function CourseMatching() {
                   Course Matching Evaluation
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div>
-                    <Label className="text-base font-medium">
-                      Was the course-matching process difficult?
-                    </Label>
+              <CardContent>
+                <FormSection
+                  title="Your Experience Assessment"
+                  subtitle="Help future students understand the course matching process"
+                >
+                  <FormField
+                    label="Was the course-matching process difficult?"
+                    required
+                    fieldId="courseMatchingDifficult"
+                  >
                     <RadioGroup
                       value={formData.courseMatchingDifficult}
                       onValueChange={(value) =>
@@ -1065,22 +1168,28 @@ export default function CourseMatching() {
                     >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="yes" id="difficult-yes" />
-                        <Label htmlFor="difficult-yes">Yes</Label>
+                        <Label htmlFor="difficult-yes">
+                          Yes, it was challenging
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="no" id="difficult-no" />
-                        <Label htmlFor="difficult-no">No</Label>
+                        <Label htmlFor="difficult-no">
+                          No, it was straightforward
+                        </Label>
                       </div>
                     </RadioGroup>
-                  </div>
+                  </FormField>
 
                   {formData.courseMatchingDifficult === "yes" && (
-                    <div className="space-y-2">
-                      <Label htmlFor="challenges">
-                        What were the challenges?
-                      </Label>
-                      <Textarea
-                        id="challenges"
+                    <FormField
+                      label="What were the challenges?"
+                      required
+                      helperText="Describe the specific difficulties you encountered"
+                      fieldId="courseMatchingChallenges"
+                    >
+                      <EnhancedTextarea
+                        id="courseMatchingChallenges"
                         placeholder="Describe the challenges you faced during the course-matching process..."
                         value={formData.courseMatchingChallenges}
                         onChange={(e) =>
@@ -1089,15 +1198,16 @@ export default function CourseMatching() {
                             e.target.value,
                           )
                         }
-                        rows={4}
+                        className="min-h-[100px]"
                       />
-                    </div>
+                    </FormField>
                   )}
 
-                  <div>
-                    <Label className="text-base font-medium">
-                      Would you recommend these courses for future students?
-                    </Label>
+                  <FormField
+                    label="Would you recommend these courses for future students?"
+                    required
+                    fieldId="recommendCourses"
+                  >
                     <RadioGroup
                       value={formData.recommendCourses}
                       onValueChange={(value) =>
@@ -1107,19 +1217,27 @@ export default function CourseMatching() {
                     >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="yes" id="recommend-yes" />
-                        <Label htmlFor="recommend-yes">Yes</Label>
+                        <Label htmlFor="recommend-yes">
+                          Yes, I recommend them
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="no" id="recommend-no" />
-                        <Label htmlFor="recommend-no">No</Label>
+                        <Label htmlFor="recommend-no">
+                          No, I would not recommend them
+                        </Label>
                       </div>
                     </RadioGroup>
-                  </div>
+                  </FormField>
 
                   {formData.recommendCourses === "no" && (
-                    <div className="space-y-2">
-                      <Label htmlFor="recommendationReason">Why not?</Label>
-                      <Textarea
+                    <FormField
+                      label="Why wouldn't you recommend these courses?"
+                      required
+                      helperText="Help future students make informed decisions"
+                      fieldId="recommendationReason"
+                    >
+                      <EnhancedTextarea
                         id="recommendationReason"
                         placeholder="Explain why you wouldn't recommend these courses..."
                         value={formData.recommendationReason}
@@ -1129,11 +1247,11 @@ export default function CourseMatching() {
                             e.target.value,
                           )
                         }
-                        rows={4}
+                        className="min-h-[100px]"
                       />
-                    </div>
+                    </FormField>
                   )}
-                </div>
+                </FormSection>
               </CardContent>
             </Card>
 
