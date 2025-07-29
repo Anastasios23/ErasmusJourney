@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
@@ -28,6 +28,8 @@ import {
 } from "lucide-react";
 import { useNotifications } from "../src/hooks/useNotifications";
 import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
+import { FormType } from "../src/types/forms";
+import { ValidationError } from "../src/utils/apiErrorHandler";
 
 interface ExpenseCategory {
   groceries: string;
@@ -47,6 +49,7 @@ export default function LivingExpenses() {
   const {
     submitForm,
     getDraftData,
+    getFormData,
     saveDraft,
     getBasicInfoId,
     loading: submissionsLoading,
@@ -79,6 +82,71 @@ export default function LivingExpenses() {
     otherExpenses: "",
   });
 
+  // Load draft data when component mounts
+  useEffect(() => {
+    const draftData = getDraftData("living-expenses");
+    if (draftData) {
+      if (draftData.expenses) {
+        setExpenses(draftData.expenses);
+      }
+      // Remove expenses from formData to avoid duplication
+      const { expenses: _, ...restData } = draftData;
+      setFormData(restData);
+    }
+  }, []);
+
+  // Auto-save functionality
+  const saveFormData = useCallback(async () => {
+    try {
+      const dataToSave = {
+        ...formData,
+        expenses: expenses,
+      };
+      await saveDraft(
+        "living-expenses",
+        "Living Expenses Information",
+        dataToSave,
+      );
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        console.error("Validation error:", error.message);
+        toast.error(`Validation error: ${error.message}`);
+      } else {
+        console.error("Error saving draft:", error);
+        toast.error("Failed to save draft. Please try again.");
+      }
+    }
+  }, [formData, expenses, saveDraft]);
+
+  // Auto-save when form data changes (debounced)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (
+        Object.values(formData).some((value) => value.trim() !== "") ||
+        Object.values(expenses).some((value) => value.trim() !== "")
+      ) {
+        saveFormData();
+      }
+    }, 1000); // 1 second debounce
+
+    return () => clearTimeout(timer);
+  }, [formData, expenses, saveFormData]);
+
+  // Save before navigation
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (
+        Object.values(formData).some((value) => value.trim() !== "") ||
+        Object.values(expenses).some((value) => value.trim() !== "")
+      ) {
+        saveFormData();
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [formData, expenses, saveFormData]);
+
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -100,32 +168,23 @@ export default function LivingExpenses() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
-      // Combine formData and expenses into a single object
       const livingExpensesData = {
         ...formData,
-        expenses: expenses
+        expenses: expenses,
       };
-      
-      console.log("Living Expenses Form submitted:", livingExpensesData);
-      
-      // Get the basicInfoId from the session manager
+
       const basicInfoId = getBasicInfoId();
-      
-      if (!basicInfoId) {
-        console.warn("No basicInfoId found. This form will not be linked to the Basic Information form.");
-      }
-      
-      // Submit the form data with the basicInfoId
+
       await submitForm(
-        "living-expenses",
+        "living-expenses" as FormType,
         "Living Expenses Information",
         livingExpensesData,
         "submitted",
-        basicInfoId
+        basicInfoId,
       );
-      
+
       toast.success(
         "🎉 Thank you! Your living expenses data has been saved and will help future students plan their budgets.",
       );
@@ -134,7 +193,6 @@ export default function LivingExpenses() {
         type: "success",
         title: "Submission Received",
         message: "Your living expenses information was saved.",
-        read: false,
         actionUrl: "/dashboard",
         actionLabel: "View Dashboard",
       });
@@ -144,8 +202,13 @@ export default function LivingExpenses() {
         router.push("/help-future-students");
       }, 2000);
     } catch (error) {
-      console.error("Error submitting living expenses form:", error);
-      toast.error("There was an error saving your data. Please try again.");
+      if (error instanceof ValidationError) {
+        console.error("Validation error:", error.message);
+        toast.error(`Validation error: ${error.message}`);
+      } else {
+        console.error("Error submitting living expenses form:", error);
+        toast.error("There was an error saving your data. Please try again.");
+      }
     }
   };
 
@@ -542,13 +605,23 @@ export default function LivingExpenses() {
                 </Button>
               </Link>
 
-              <Button
-                type="submit"
-                className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
-              >
-                Continue to Help Future Students
-                <ArrowRight className="h-4 w-4" />
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={saveFormData}
+                  className="flex items-center gap-2"
+                >
+                  Save as Draft
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
+                >
+                  Continue to Help Future Students
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </form>
         </div>

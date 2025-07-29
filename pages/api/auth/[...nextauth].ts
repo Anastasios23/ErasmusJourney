@@ -6,7 +6,22 @@ import bcrypt from "bcryptjs";
 import { prisma } from "../../../lib/prisma";
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  adapter: {
+    ...PrismaAdapter(prisma),
+    createUser: (data) => {
+      const [firstName, ...lastNameParts] = data.name?.split(" ") || ["", ""];
+      const lastName = lastNameParts.join(" ");
+      return prisma.user.create({
+        data: {
+          email: data.email,
+          firstName: firstName || null,
+          lastName: lastName || null,
+          image: data.image,
+          emailVerified: data.emailVerified,
+        },
+      });
+    },
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,

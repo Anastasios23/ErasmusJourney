@@ -2,14 +2,25 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
 import { prisma } from "../../../lib/prisma";
-import { FormType, SubmissionStatus } from "@prisma/client";
+import { FormType } from "../../../src/types/forms";
+import { livingExpensesSchema } from "../../../src/lib/formSchemas";
 
 const typeMapping: Record<string, FormType> = {
-  "basic-info": "BASIC_INFO",
-  "course-matching": "COURSE_MATCHING",
-  accommodation: "ACCOMMODATION",
-  story: "STORY",
-  experience: "EXPERIENCE",
+  "basic-info": "basic-info",
+  "course-matching": "course-matching",
+  accommodation: "accommodation",
+  "living-expenses": "living-expenses",
+  "help-future-students": "help-future-students",
+};
+
+const validateFormType = (type: string): type is FormType => {
+  return [
+    "basic-info",
+    "course-matching",
+    "accommodation",
+    "living-expenses",
+    "help-future-students",
+  ].includes(type);
 };
 
 export default async function handler(
@@ -53,6 +64,26 @@ export default async function handler(
         error: "Validation failed",
         message: "Invalid form type",
       });
+    }
+
+    // Validate form type
+    if (!validateFormType(type)) {
+      return res.status(400).json({
+        error: "Validation failed",
+        message: `Invalid form type: ${type}`,
+      });
+    }
+
+    // Validate living expenses form data specifically
+    if (type === "living-expenses") {
+      try {
+        livingExpensesSchema.parse(req.body);
+      } catch (error) {
+        return res.status(400).json({
+          error: "Validation failed",
+          message: "Invalid living expenses form data",
+        });
+      }
     }
 
     // Check if draft already exists

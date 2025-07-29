@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import { toast } from "../src/hooks/use-toast";
 
 import Head from "next/head";
 import Link from "next/link";
@@ -35,6 +36,7 @@ import {
 } from "../src/data/universityAgreements";
 import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp";
 import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
+import { useFormAutoSave } from "../src/hooks/useFormAutoSave";
 
 interface Course {
   name: string;
@@ -58,6 +60,7 @@ export default function CourseMatching() {
   const {
     submitForm,
     getDraftData,
+    getFormData,
     saveDraft,
     getBasicInfoId,
     loading: submissionsLoading,
@@ -80,6 +83,7 @@ export default function CourseMatching() {
     recommendationReason: "",
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [courses, setCourses] = useState<Course[]>([]);
   const [equivalentCourses, setEquivalentCourses] = useState<
     EquivalentCourse[]
@@ -115,9 +119,9 @@ export default function CourseMatching() {
     const loadDraftData = async () => {
       try {
         console.log("Loading draft data...");
-        const draftData = await getDraftData("basic-information");
+        const draftData = await getFormData("basic-information");
         console.log("Draft data loaded:", draftData);
-        
+
         if (draftData) {
           console.log("Pre-populating form with:", {
             levelOfStudy: draftData.levelOfStudy,
@@ -125,7 +129,7 @@ export default function CourseMatching() {
             departmentInCyprus: draftData.departmentInCyprus,
             preferredHostUniversity: draftData.preferredHostUniversity,
           });
-          
+
           // Pre-populate form fields with data from basic-information
           setFormData((prev) => ({
             ...prev,
@@ -134,10 +138,12 @@ export default function CourseMatching() {
             homeDepartment: draftData.departmentInCyprus || "",
             hostUniversity: draftData.preferredHostUniversity || "",
           }));
-          
+
           // Set the selected home university ID for department filtering
           if (draftData.universityInCyprus) {
-            const university = cyprusUniversities.find(u => u.name === draftData.universityInCyprus);
+            const university = cyprusUniversities.find(
+              (u) => u.name === draftData.universityInCyprus,
+            );
             console.log("Found university:", university);
             if (university) {
               setSelectedHomeUniversityId(university.code);
@@ -152,7 +158,99 @@ export default function CourseMatching() {
     };
 
     loadDraftData();
-  }, [getDraftData]);
+  }, [getFormData]);
+
+  // Load course-matching draft data
+  useEffect(() => {
+    const courseMatchingDraft = getDraftData("course-matching");
+    if (courseMatchingDraft) {
+      // Load form data
+      const { courses: draftCourses, ...restFormData } = courseMatchingDraft;
+      setFormData((prev) => ({ ...prev, ...restFormData }));
+
+      // Load courses if they exist
+      if (draftCourses && Array.isArray(draftCourses)) {
+        const hostCourses = draftCourses.filter((c) => c.type === "host");
+        const homeCourses = draftCourses.filter((c) => c.type === "home");
+
+        if (hostCourses.length > 0) {
+          setCourses(hostCourses.map(({ type, ...course }) => course));
+        }
+
+        if (homeCourses.length > 0) {
+          setEquivalentCourses(
+            homeCourses.map(
+              ({ type, difficulty, examTypes, ...course }) => course,
+            ),
+          );
+        }
+      }
+    }
+  }, []);
+
+  // Auto-save functionality
+  const saveFormData = useCallback(async () => {
+    try {
+      const dataToSave = {
+        ...formData,
+        courses: [
+          ...courses.map((course) => ({ ...course, type: "host" })),
+          ...equivalentCourses.map((course) => ({
+            ...course,
+            difficulty: "",
+            examTypes: [],
+            type: "home",
+          })),
+        ],
+      };
+      await saveDraft(
+        "course-matching",
+        "Course Matching Information",
+        dataToSave,
+      );
+    } catch (error) {
+      console.error("Error saving draft:", error);
+    }
+  }, [formData, courses, equivalentCourses, saveDraft]);
+
+  // Add auto-save hook
+  const { isAutoSaving, showSavedIndicator, setIsNavigating } = useFormAutoSave(
+    "course-matching",
+    "Course Matching Information",
+    { ...formData, courses, equivalentCourses },
+    isSubmitting,
+  );
+
+  // Auto-save when form data changes (debounced)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (
+        Object.values(formData).some((value) => value.trim() !== "") ||
+        courses.length > 0 ||
+        equivalentCourses.length > 0
+      ) {
+        saveFormData();
+      }
+    }, 1000); // 1 second debounce
+
+    return () => clearTimeout(timer);
+  }, [formData, courses, equivalentCourses, saveFormData]);
+
+  // Save before navigation
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (
+        Object.values(formData).some((value) => value.trim() !== "") ||
+        courses.length > 0 ||
+        equivalentCourses.length > 0
+      ) {
+        saveFormData();
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [formData, courses, equivalentCourses, saveFormData]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -304,40 +402,50 @@ export default function CourseMatching() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setIsSubmitting(true); // Set submitting state
+
     try {
       // Prepare the complete data object
       const courseMatchingData = {
         ...formData,
         courses: [
-          ...courses.map(course => ({ ...course, type: "host" })),
-          ...equivalentCourses.map(course => ({ ...course, difficulty: "", examTypes: [], type: "home" }))
-        ]
+          ...courses.map((course) => ({ ...course, type: "host" })),
+          ...equivalentCourses.map((course) => ({
+            ...course,
+            difficulty: "",
+            examTypes: [],
+            type: "home",
+          })),
+        ],
       };
-      
+
       console.log("Course Matching Form submitted:", courseMatchingData);
-      
+
       // Get the basicInfoId from the session manager
       const basicInfoId = getBasicInfoId();
-      
+
       if (!basicInfoId) {
-        console.warn("No basicInfoId found. This form will not be linked to the Basic Information form.");
+        console.warn(
+          "No basicInfoId found. This form will not be linked to the Basic Information form.",
+        );
       }
-      
+
       // Submit the form data with the basicInfoId
       await submitForm(
         "course-matching",
         "Course Matching Information",
         courseMatchingData,
         "submitted",
-        basicInfoId
+        basicInfoId,
       );
-      
+
       // Navigate to the next page after successful submission
       router.push("/accommodation");
     } catch (error) {
       console.error("Error submitting course matching form:", error);
       // You could add error handling UI here
+    } finally {
+      setIsSubmitting(false); // Reset submitting state
     }
   };
 
@@ -978,13 +1086,69 @@ export default function CourseMatching() {
                 </Button>
               </Link>
 
-              <Button
-                type="submit"
-                className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
-              >
-                Continue to Accommodation
-                <ArrowRight className="h-4 w-4" />
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    try {
+                      saveDraft(
+                        "course-matching",
+                        "Course Matching Information",
+                        {
+                          ...formData,
+                          courses,
+                          equivalentCourses,
+                        },
+                      );
+                      toast({
+                        title: "Draft saved",
+                        description:
+                          "Your course matching information has been saved as a draft.",
+                      });
+                    } catch (error) {
+                      console.error("Error saving draft:", error);
+                      toast({
+                        title: "Error saving draft",
+                        description:
+                          "There was a problem saving your draft. Please try again.",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                  disabled={isSubmitting || isAutoSaving}
+                  className="flex items-center gap-2"
+                >
+                  {isAutoSaving ? "Auto-saving..." : "Save Draft"}
+                </Button>
+
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || isAutoSaving}
+                  className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin mr-2">⏳</div>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      Continue to Accommodation
+                      <ArrowRight className="h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {/* Auto-save indicator */}
+            <div className="fixed top-20 right-4 z-40">
+              {showSavedIndicator && (
+                <div className="bg-gray-800 bg-opacity-90 text-white px-2 py-1 rounded text-xs shadow-lg transition-all duration-300 ease-in-out">
+                  ✓ Auto-saved
+                </div>
+              )}
             </div>
           </form>
         </div>

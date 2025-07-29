@@ -4,8 +4,11 @@ import {
   apiRequest,
   handleApiError,
   AuthenticationError,
+  ValidationError,
 } from "../utils/apiErrorHandler";
 import { apiService } from "../services/api";
+import { FormType, FormStatus } from "../types/forms";
+import { livingExpensesSchema } from "../lib/schemas";
 
 interface FormSubmission {
   id: string;
@@ -32,15 +35,25 @@ interface UseFormSubmissionsReturn {
     title: string,
     data: any,
     formStatus?: string,
-    basicInfoId?: string
+    basicInfoId?: string,
   ) => Promise<any>;
   getDraftData: (type: string) => any | null;
+  getSubmittedData: (type: string) => any | null;
+  getFormData: (type: string) => any | null;
   saveDraft: (type: string, title: string, data: any) => Promise<void>;
   deleteDraft: (id: string) => Promise<void>;
   refreshSubmissions: () => Promise<void>;
   getBasicInfoId: () => string | undefined;
   setBasicInfoId: (id: string) => void;
 }
+
+// Update the FormType type to include living-expenses
+type ExtendedFormType =
+  | "basic-info"
+  | "course-matching"
+  | "accommodation"
+  | "living-expenses"
+  | "experience";
 
 export function useFormSubmissions(): UseFormSubmissionsReturn {
   const { data: session, status } = useSession();
@@ -104,34 +117,43 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
   };
 
   const submitForm = async (
-    type: string,
+    type: FormType,
     title: string,
     data: any,
-    formStatus: string = "submitted",
-    basicInfoId?: string
+    status: FormStatus = "submitted",
+    basicInfoId?: string,
   ) => {
-    if (status === "loading") {
-      throw new Error("Please wait while we check your authentication");
-    }
-
-    if (!session) {
-      throw new AuthenticationError("Must be logged in to submit forms");
-    }
-
     try {
+      // Validate data before sending to API
+      if (type === "living-expenses") {
+        livingExpensesSchema.parse({ type, title, data });
+      }
+
+      if (status === "loading") {
+        throw new Error("Please wait while we check your authentication");
+      }
+
+      if (!session) {
+        throw new AuthenticationError("Must be logged in to submit forms");
+      }
+
       // If this is a basic-info submission, we don't need to include a basicInfoId
       // For other form types, try to get the basicInfoId from the parameter or from the session manager
       const payload: any = {
         type,
         title,
         data,
-        status: formStatus,
+        status,
       };
-      
+
       // For non-basic-info forms, include the basicInfoId if available
       if (type !== "basic-info") {
         // Use the provided basicInfoId or get it from the session manager
-        const infoId = basicInfoId || (apiService.sessionManager ? apiService.sessionManager.getBasicInfoId() : undefined);
+        const infoId =
+          basicInfoId ||
+          (apiService.sessionManager
+            ? apiService.sessionManager.getBasicInfoId()
+            : undefined);
         if (infoId) {
           payload.basicInfoId = infoId;
         } else {
@@ -145,13 +167,17 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
       });
 
       // If this is a basic-info submission, store the returned ID for future use
-      if (type === "basic-info" && response.submissionId && apiService.sessionManager) {
+      if (
+        type === "basic-info" &&
+        response.submissionId &&
+        apiService.sessionManager
+      ) {
         apiService.sessionManager.setBasicInfoId(response.submissionId);
       }
 
       // Refresh submissions after successful submission
       await fetchSubmissions();
-      
+
       return response;
     } catch (err) {
       console.error("Error submitting form:", err);
@@ -159,10 +185,9 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     }
   };
 
-  const saveDraft = async (type: string, title: string, data: any) => {
+  const saveDraft = async (type: FormType, title: string, data: any) => {
     try {
-      if (status === "loading") {
-        // Still loading session, use localStorage temporarily
+      if (session?.user === undefined && status === "loading") {
         const draftKey = `erasmus_draft_${type}`;
         const draftData = {
           type,
@@ -175,7 +200,6 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
       }
 
       if (session) {
-        // Authenticated user: save to server
         await apiRequest("/api/forms/saveDraft", {
           method: "POST",
           body: JSON.stringify({
@@ -215,13 +239,18 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
           return [...filtered, localDraft];
         });
       }
-    } catch (err) {
-      console.error("Error saving draft:", err);
-      throw err;
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        console.error("Validation error:", error.message);
+        throw error;
+      }
+      console.error("Error saving draft:", error);
+      throw error;
     }
   };
 
-  const getDraftData = (type: string): any | null => {
+  // Update getDraftData to use consistent form types
+  const getDraftData = (type: FormType): any | null => {
     // First check server drafts (for authenticated users)
     const serverDraft = submissions.find(
       (s) => s.type === type && s.status === "draft",
@@ -246,6 +275,25 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     }
 
     return null;
+  };
+
+  const getSubmittedData = (type: string): any | null => {
+    // Check for submitted or published forms (for authenticated users)
+    const submittedForm = submissions.find(
+      (s) =>
+        s.type === type &&
+        (s.status === "submitted" || s.status === "published"),
+    );
+    if (submittedForm) {
+      return submittedForm.data;
+    }
+
+    return null;
+  };
+
+  const getFormData = (type: FormType): any | null => {
+    // First try to get submitted data, then fall back to draft data
+    return getSubmittedData(type) || getDraftData(type);
   };
 
   const deleteDraft = async (id: string) => {
@@ -278,7 +326,9 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
   }, [session, status]);
 
   const getBasicInfoId = () => {
-    return apiService.sessionManager ? apiService.sessionManager.getBasicInfoId() : undefined;
+    return apiService.sessionManager
+      ? apiService.sessionManager.getBasicInfoId()
+      : undefined;
   };
 
   const setBasicInfoId = (id: string) => {
@@ -293,6 +343,8 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     error,
     submitForm,
     getDraftData,
+    getSubmittedData,
+    getFormData,
     saveDraft,
     deleteDraft,
     refreshSubmissions,
