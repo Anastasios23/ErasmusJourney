@@ -327,8 +327,19 @@ export async function registerUser(userData: {
       body: JSON.stringify(userData),
     });
 
-    // Always read the JSON first, regardless of response status
-    const data = await response.json();
+    // Check if response body can be read
+    if (!response.body || response.bodyUsed) {
+      throw new Error("Response body is not available");
+    }
+
+    // Read the response data
+    let data;
+    try {
+      data = await response.json();
+    } catch (parseError) {
+      console.error("Error parsing response JSON:", parseError);
+      throw new Error("Invalid response from server");
+    }
 
     if (!response.ok) {
       throw new Error(data.message || "Registration failed");
