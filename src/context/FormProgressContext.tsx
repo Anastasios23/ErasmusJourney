@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import { useSession } from "next-auth/react";
 import { useFormSubmissions } from "../hooks/useFormSubmissions";
 
@@ -15,6 +22,8 @@ interface FormProgressContextType {
   isStepCompleted: (step: FormStep) => boolean;
   canAccessStep: (step: FormStep) => boolean;
   markStepCompleted: (step: FormStep) => void;
+  cacheFormData: (type: string, data: any) => void;
+  getCachedFormData: (type: string) => any;
 }
 
 const FormProgressContext = createContext<FormProgressContextType | undefined>(
@@ -30,6 +39,24 @@ export function FormProgressProvider({
   const { getFormData } = useFormSubmissions();
   const [completedSteps, setCompletedSteps] = useState<FormStep[]>([]);
   const [currentStep, setCurrentStep] = useState<FormStep>("basic-info");
+  // Add cache for form data
+  const [formDataCache, setFormDataCache] = useState<Record<string, any>>({});
+
+  // Cache form data
+  const cacheFormData = useCallback((type: string, data: any) => {
+    setFormDataCache((prev) => ({
+      ...prev,
+      [type]: data,
+    }));
+  }, []);
+
+  // Get cached form data
+  const getCachedFormData = useCallback(
+    (type: string) => {
+      return formDataCache[type];
+    },
+    [formDataCache],
+  );
 
   // Load completed steps from submissions data
   useEffect(() => {
@@ -80,16 +107,29 @@ export function FormProgressProvider({
     setCompletedSteps((prev) => [...new Set([...prev, step])]);
   };
 
+  const value = useMemo(
+    () => ({
+      currentStep,
+      completedSteps,
+      isStepCompleted,
+      canAccessStep,
+      markStepCompleted,
+      cacheFormData,
+      getCachedFormData,
+    }),
+    [
+      currentStep,
+      completedSteps,
+      isStepCompleted,
+      canAccessStep,
+      markStepCompleted,
+      cacheFormData,
+      getCachedFormData,
+    ],
+  );
+
   return (
-    <FormProgressContext.Provider
-      value={{
-        currentStep,
-        completedSteps,
-        isStepCompleted,
-        canAccessStep,
-        markStepCompleted,
-      }}
-    >
+    <FormProgressContext.Provider value={value}>
       {children}
     </FormProgressContext.Provider>
   );

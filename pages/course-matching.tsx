@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "../src/hooks/use-toast";
+import { Alert, AlertDescription } from "../src/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import { ValidationError } from "../src/utils/apiErrorHandler";
+import { useFormProgress } from "../src/context/FormProgressContext";
 
 import Head from "next/head";
 import Link from "next/link";
@@ -37,6 +41,7 @@ import {
 import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp";
 import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
 import { useFormAutoSave } from "../src/hooks/useFormAutoSave";
+// import { markStepCompleted } from "../src/utils/progress";
 
 interface Course {
   name: string;
@@ -55,6 +60,7 @@ interface EquivalentCourse {
 export default function CourseMatching() {
   const { data: session } = useSession();
   const router = useRouter();
+  const { markStepCompleted } = useFormProgress();
 
   // Form submissions hook
   const {
@@ -406,11 +412,32 @@ export default function CourseMatching() {
     setEquivalentCourses(updatedCourses);
   };
 
+  // Add error states
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true); // Set submitting state
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+    setValidationErrors({});
 
     try {
+      // Basic validation
+      if (!formData.hostCourseCount || !formData.homeCourseCount) {
+        setValidationErrors({
+          courseCount:
+            "Please specify the number of courses for both host and home university",
+        });
+        setSubmitError("Please fill in all required fields");
+        setIsSubmitting(false);
+        return;
+      }
+
       // Prepare the complete data object
       const courseMatchingData = {
         ...formData,
@@ -425,19 +452,11 @@ export default function CourseMatching() {
         ],
       };
 
-      console.log("Course Matching Form submitted:", courseMatchingData);
-
-      // Get the basicInfoId from the session manager
+      // Get the basicInfoId
       const basicInfoId = getBasicInfoId();
 
-      if (!basicInfoId) {
-        console.warn(
-          "No basicInfoId found. This form will not be linked to the Basic Information form.",
-        );
-      }
-
-      // Submit the form data with the basicInfoId
-      await submitForm(
+      // Submit the form
+      const response = await submitForm(
         "course-matching",
         "Course Matching Information",
         courseMatchingData,
@@ -445,13 +464,36 @@ export default function CourseMatching() {
         basicInfoId,
       );
 
-      // Navigate to the next page after successful submission
-      router.push("/accommodation");
+      if (response?.submissionId) {
+        // Clean up localStorage
+        localStorage.removeItem("erasmus_draft_course-matching");
+
+        // Mark step as completed
+        markStepCompleted("course-matching");
+
+        // Navigate immediately
+        router.push("/accommodation");
+      } else {
+        throw new Error("No submission ID received");
+      }
     } catch (error) {
       console.error("Error submitting course matching form:", error);
-      // You could add error handling UI here
-    } finally {
-      setIsSubmitting(false); // Reset submitting state
+      if (error instanceof ValidationError) {
+        setValidationErrors({ form: error.message });
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error.message,
+        });
+      } else {
+        setSubmitError("Failed to submit form. Please try again.");
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "There was a problem saving your information.",
+        });
+      }
+      setIsSubmitting(false);
     }
   };
 
@@ -495,6 +537,28 @@ export default function CourseMatching() {
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Error Alert */}
+          {submitError && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{submitError}</AlertDescription>
+            </Alert>
+          )}
+
+          {/* Validation Errors */}
+          {Object.keys(validationErrors).length > 0 && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                <ul className="list-disc pl-4">
+                  {Object.entries(validationErrors).map(([field, error]) => (
+                    <li key={field}>{error}</li>
+                  ))}
+                </ul>
+              </AlertDescription>
+            </Alert>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* University Selection */}
             <Card>

@@ -43,6 +43,9 @@ import {
 } from "lucide-react";
 import { useCommunityStats } from "../src/hooks/useCommunityStats";
 import { Skeleton } from "../src/components/ui/skeleton";
+import { FormMessage } from "../src/components/ui/form"; // Add this import
+import { useFormValidation } from "../src/hooks/useFormValidation";
+import { FormErrorSummary } from "../src/components/FormErrorSummary";
 
 export default function HelpFutureStudents() {
   const router = useRouter();
@@ -76,6 +79,16 @@ export default function HelpFutureStudents() {
     funFact: "",
     nickname: "",
   });
+
+  // Fix destructuring to include setFormError
+  const {
+    fieldErrors,
+    formError,
+    setError,
+    clearErrors,
+    setFieldErrors,
+    setFormError,
+  } = useFormValidation();
 
   // Load draft data when component mounts
   useEffect(() => {
@@ -152,16 +165,74 @@ export default function HelpFutureStudents() {
     }));
   };
 
+  // Update hero section with better contrast
+  const heroSection = (
+    <section className="bg-gradient-to-r from-green-700 to-blue-700 text-white py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <Heart className="h-12 w-12 text-white mx-auto mb-4" />
+        <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-white">
+          Become a Mentor
+        </h2>
+        <p className="text-xl text-white mb-6 max-w-2xl mx-auto">
+          Your experience could be exactly what someone needs to succeed. Join
+          our community of student mentors and make a real difference.
+        </p>
+      </div>
+    </section>
+  );
+
+  // Update form error handling
+  const handleError = (message: string, field?: string) => {
+    if (field) {
+      setFieldErrors((prev) => ({ ...prev, [field]: message }));
+    } else {
+      setFormError(message); // Now properly using the setter from useFormValidation
+    }
+
+    // Display error toast
+    toast.error(message);
+  };
+
+  // Update form validation
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearErrors();
 
-    // Validate required fields
+    // Validate all fields at once
+    const validationErrors: Record<string, string> = {};
+
     if (!formData.wantToHelp) {
-      toast.error("Please indicate if you want to help future students");
+      validationErrors.wantToHelp =
+        "Please indicate if you want to help future students";
+    }
+
+    if (formData.wantToHelp === "yes") {
+      if (!formData.contactMethod) {
+        validationErrors.contactMethod =
+          "Please select a preferred contact method";
+      }
+      if (formData.contactMethod === "email" && !formData.email) {
+        validationErrors.email = "Please provide your email address";
+      }
+      if (formData.helpTopics.length === 0) {
+        validationErrors.helpTopics =
+          "Please select at least one topic you can help with";
+      }
+      if (!formData.availabilityLevel) {
+        validationErrors.availabilityLevel =
+          "Please select your availability level";
+      }
+    }
+
+    // If there are validation errors, show them all at once
+    if (Object.keys(validationErrors).length > 0) {
+      Object.entries(validationErrors).forEach(([field, message]) => {
+        setError(message, field);
+      });
+      document.getElementById(Object.keys(validationErrors)[0])?.focus();
       return;
     }
 
-    // Set submitting state to true before submission
     setIsSubmitting(true);
 
     try {
@@ -218,10 +289,8 @@ export default function HelpFutureStudents() {
         router.push("/community");
       }, 2000);
     } catch (error) {
-      console.error("Error submitting mentorship form:", error);
-      toast.error("Failed to submit your application. Please try again.");
+      setError("Failed to submit form. Please try again.");
     } finally {
-      // Reset submitting state regardless of outcome
       setIsSubmitting(false);
     }
   };
@@ -339,61 +408,12 @@ export default function HelpFutureStudents() {
           </div>
         </div>
 
-        {/* Hero Section */}
-        <section className="bg-gradient-to-r from-green-600 to-blue-600 text-white py-12">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <Heart className="h-12 w-12 text-green-200 mx-auto mb-4" />
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-              Become a Mentor
-            </h2>
-            <p className="text-xl text-green-100 mb-6 max-w-2xl mx-auto">
-              Your experience could be exactly what someone needs to succeed.
-              Join our community of student mentors and make a real difference.
-            </p>
-            <div className="grid md:grid-cols-3 gap-6 text-center">
-              {loading ? (
-                <>
-                  <div>
-                    <Skeleton className="h-8 w-24 mx-auto bg-green-400/30" />
-                    <Skeleton className="h-4 w-32 mx-auto mt-2 bg-green-400/20" />
-                  </div>
-                  <div>
-                    <Skeleton className="h-8 w-24 mx-auto bg-blue-400/30" />
-                    <Skeleton className="h-4 w-32 mx-auto mt-2 bg-blue-400/20" />
-                  </div>
-                  <div>
-                    <Skeleton className="h-8 w-24 mx-auto bg-yellow-400/30" />
-                    <Skeleton className="h-4 w-32 mx-auto mt-2 bg-yellow-400/20" />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div>
-                    <div className="text-2xl font-bold text-green-200 mb-1">
-                      {stats.countriesFeatured}+
-                    </div>
-                    <div className="text-sm">Countries Featured</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-blue-200 mb-1">
-                      {stats.studentsHelped.toLocaleString()}
-                    </div>
-                    <div className="text-sm">Students Helped</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-yellow-200 mb-1">
-                      {stats.averageRating.toFixed(1)}
-                    </div>
-                    <div className="text-sm">Average Rating</div>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </section>
+        {heroSection}
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-8" noValidate>
+            <FormErrorSummary formError={formError} fieldErrors={fieldErrors} />
+
             {/* Main Decision */}
             <Card>
               <CardHeader>
@@ -414,10 +434,16 @@ export default function HelpFutureStudents() {
                       Erasmus Students?
                     </Label>
                     <RadioGroup
+                      id="wantToHelp"
+                      name="wantToHelp"
                       value={formData.wantToHelp}
                       onValueChange={(value) =>
                         handleInputChange("wantToHelp", value)
                       }
+                      aria-describedby={
+                        fieldErrors.wantToHelp ? "wantToHelp-error" : undefined
+                      }
+                      aria-invalid={Boolean(fieldErrors.wantToHelp)}
                       className="mt-2"
                     >
                       <div className="flex items-center space-x-2">
@@ -431,6 +457,14 @@ export default function HelpFutureStudents() {
                         <Label htmlFor="help-no">No, not at this time</Label>
                       </div>
                     </RadioGroup>
+                    {fieldErrors.wantToHelp && (
+                      <FormMessage
+                        id="wantToHelp-error"
+                        className="text-red-500 text-sm mt-1"
+                      >
+                        {fieldErrors.wantToHelp}
+                      </FormMessage>
+                    )}
                   </div>
 
                   {formData.wantToHelp === "no" && (
@@ -494,11 +528,24 @@ export default function HelpFutureStudents() {
                           id="email"
                           type="email"
                           placeholder="your.email@example.com"
+                          aria-labelledby="email-label"
+                          aria-describedby={
+                            fieldErrors.email ? "email-error" : undefined
+                          }
+                          aria-invalid={Boolean(fieldErrors.email)}
                           value={formData.email}
                           onChange={(e) =>
                             handleInputChange("email", e.target.value)
                           }
                         />
+                        {fieldErrors.email && (
+                          <FormMessage
+                            id="email-error"
+                            className="text-red-500 text-sm mt-1"
+                          >
+                            {fieldErrors.email}
+                          </FormMessage>
+                        )}
                       </div>
 
                       <div className="space-y-2">
@@ -899,15 +946,15 @@ export default function HelpFutureStudents() {
             )}
 
             {/* Final Call to Action */}
-            <Card className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
+            <Card className="bg-gradient-to-r from-green-800 to-blue-800 text-white">
               <CardContent className="text-center py-8">
-                <CheckCircle className="h-12 w-12 text-green-200 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold mb-4">
+                <CheckCircle className="h-12 w-12 text-white mx-auto mb-4" />
+                <h3 className="text-2xl font-bold mb-4 text-white">
                   {formData.wantToHelp === "yes"
                     ? "You're Almost Ready to Start Helping!"
                     : "Complete Your Erasmus Journey"}
                 </h3>
-                <p className="text-green-100 mb-6 max-w-2xl mx-auto">
+                <p className="text-white mb-6 max-w-2xl mx-auto">
                   {formData.wantToHelp === "yes"
                     ? "Thank you for choosing to help future students! Your experience and guidance will be invaluable to students planning their Erasmus journey."
                     : "Thank you for sharing your complete Erasmus experience! Your story will help countless future students make informed decisions."}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import {
   apiRequest,
@@ -60,6 +60,46 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
   const [submissions, setSubmissions] = useState<FormSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Add a cache ref to prevent multiple fetches
+  const submissionsCache = useRef<Record<string, any>>({});
+  const isFetching = useRef<Record<string, boolean>>({});
+
+  const fetchFormData = useCallback(
+    async (type: string) => {
+      // Return cached data if available
+      if (submissionsCache.current[type]) {
+        return submissionsCache.current[type];
+      }
+
+      // Prevent duplicate fetches
+      if (isFetching.current[type]) {
+        return null;
+      }
+
+      isFetching.current[type] = true;
+
+      try {
+        const response = await fetch(`/api/forms/get?type=${type}`);
+        const data = await response.json();
+
+        // Cache the result
+        submissionsCache.current[type] = data;
+        return data;
+      } finally {
+        isFetching.current[type] = false;
+      }
+    },
+    [submissionsCache, isFetching],
+  );
+
+  // Clear cache on unmount
+  useEffect(() => {
+    return () => {
+      submissionsCache.current = {};
+      isFetching.current = {};
+    };
+  }, []);
 
   const fetchSubmissions = async () => {
     try {
@@ -291,10 +331,20 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     return null;
   };
 
-  const getFormData = (type: FormType): any | null => {
-    // First try to get submitted data, then fall back to draft data
-    return getSubmittedData(type) || getDraftData(type);
-  };
+  const getFormData = useCallback(
+    async (type: FormType) => {
+      // Try localStorage first
+      const localData = getDraftData(type);
+      if (localData) {
+        return localData;
+      }
+
+      // Only fetch from API if no local data exists
+      const data = await fetchFormData(type);
+      return data?.submissions?.[0]?.data || null;
+    },
+    [getDraftData, fetchFormData],
+  );
 
   const deleteDraft = async (id: string) => {
     if (id.startsWith("local_")) {

@@ -8,6 +8,7 @@ import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
 import { Label } from "../src/components/ui/label";
 import { Textarea } from "../src/components/ui/textarea";
+import { Alert, AlertDescription } from "../src/components/ui/alert";
 import {
   Card,
   CardContent,
@@ -25,6 +26,7 @@ import {
   Calculator,
   TrendingDown,
   Lightbulb,
+  AlertCircle,
 } from "lucide-react";
 import { useNotifications } from "../src/hooks/useNotifications";
 import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
@@ -82,6 +84,11 @@ export default function LivingExpenses() {
     otherExpenses: "",
   });
 
+  // Add loading states
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   // Load draft data when component mounts
   useEffect(() => {
     const draftData = getDraftData("living-expenses");
@@ -95,9 +102,9 @@ export default function LivingExpenses() {
     }
   }, []);
 
-  // Auto-save functionality
   const saveFormData = useCallback(async () => {
     try {
+      setIsAutoSaving(true);
       const dataToSave = {
         ...formData,
         expenses: expenses,
@@ -107,6 +114,7 @@ export default function LivingExpenses() {
         "Living Expenses Information",
         dataToSave,
       );
+      setIsAutoSaving(false);
     } catch (error) {
       if (error instanceof ValidationError) {
         console.error("Validation error:", error.message);
@@ -168,6 +176,10 @@ export default function LivingExpenses() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    setSubmitError(null);
 
     try {
       const livingExpensesData = {
@@ -177,38 +189,36 @@ export default function LivingExpenses() {
 
       const basicInfoId = getBasicInfoId();
 
-      await submitForm(
-        "living-expenses" as FormType,
+      const response = await submitForm(
+        "living-expenses",
         "Living Expenses Information",
         livingExpensesData,
         "submitted",
         basicInfoId,
       );
 
-      toast.success(
-        "🎉 Thank you! Your living expenses data has been saved and will help future students plan their budgets.",
-      );
+      if (response?.submissionId) {
+        // Clean up localStorage
+        localStorage.removeItem("erasmus_draft_living-expenses");
 
-      addNotification({
-        type: "success",
-        title: "Submission Received",
-        message: "Your living expenses information was saved.",
-        actionUrl: "/dashboard",
-        actionLabel: "View Dashboard",
-      });
+        // Mark step as completed
+        markStepCompleted("living-expenses");
 
-      // Navigate to the next page after successful submission
-      setTimeout(() => {
+        // Navigate immediately
         router.push("/help-future-students");
-      }, 2000);
-    } catch (error) {
-      if (error instanceof ValidationError) {
-        console.error("Validation error:", error.message);
-        toast.error(`Validation error: ${error.message}`);
       } else {
-        console.error("Error submitting living expenses form:", error);
-        toast.error("There was an error saving your data. Please try again.");
+        throw new Error("No submission ID received");
       }
+    } catch (error) {
+      console.error("Error submitting living expenses form:", error);
+      const errorMessage =
+        error instanceof ValidationError
+          ? error.message
+          : "Failed to save your information. Please try again.";
+
+      setSubmitError(errorMessage);
+      toast.error(errorMessage);
+      setIsSubmitting(false);
     }
   };
 
@@ -610,22 +620,58 @@ export default function LivingExpenses() {
                   type="button"
                   variant="outline"
                   onClick={saveFormData}
+                  disabled={isSubmitting}
                   className="flex items-center gap-2"
                 >
-                  Save as Draft
+                  {isAutoSaving ? "Auto-saving..." : "Save Draft"}
                 </Button>
+
                 <Button
                   type="submit"
+                  disabled={isSubmitting}
                   className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
                 >
-                  Continue to Help Future Students
-                  <ArrowRight className="h-4 w-4" />
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin mr-2">⏳</div>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      Continue to Help Future Students
+                      <ArrowRight className="h-4 w-4" />
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
+
+            {/* Error message display */}
+            {submitError && (
+              <Alert variant="destructive" className="mt-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{submitError}</AlertDescription>
+              </Alert>
+            )}
           </form>
         </div>
       </div>
     </>
   );
+}
+function markStepCompleted(stepName: string) {
+  try {
+    // Get existing completed steps from localStorage
+    const completedSteps = JSON.parse(
+      localStorage.getItem("completed_steps") || "[]",
+    );
+
+    // Add the new step if it's not already included
+    if (!completedSteps.includes(stepName)) {
+      completedSteps.push(stepName);
+      localStorage.setItem("completed_steps", JSON.stringify(completedSteps));
+    }
+  } catch (error) {
+    console.error("Error marking step as completed:", error);
+  }
 }

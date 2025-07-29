@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { useToast } from "../src/components/ui/use-toast";
+import { toast } from "sonner";
 import { accommodationFormSchema } from "../src/lib/formSchemas";
 import { z } from "zod";
 
@@ -28,7 +28,6 @@ import {
 import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
 import { Checkbox } from "../src/components/ui/checkbox";
 import Header from "../components/Header";
-import DebugBasicInfo from "../components/DebugBasicInfo";
 import {
   ArrowRight,
   ArrowLeft,
@@ -41,11 +40,12 @@ import {
 import { Toaster } from "../src/components/ui/toaster";
 import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
 import { useFormAutoSave } from "../src/hooks/useFormAutoSave";
+import { useFormProgress } from "../src/context/FormProgressContext";
 
 export default function Accommodation() {
+  const { markStepCompleted } = useFormProgress();
   const { data: session } = useSession();
   const router = useRouter();
-  const { toast } = useToast();
 
   // Form submissions hook
   const {
@@ -89,6 +89,7 @@ export default function Accommodation() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -105,7 +106,6 @@ export default function Accommodation() {
 
   // Load basic info data to get city/country information
   const [basicInfoData, setBasicInfoData] = useState<any>(null);
-  const [showDebug, setShowDebug] = useState(false);
 
   useEffect(() => {
     // Load any existing draft data for the accommodation form
@@ -148,82 +148,49 @@ export default function Accommodation() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFieldErrors({});
+    if (isSubmitting) return;
+
     setIsSubmitting(true);
+    setSubmitError(null);
 
     try {
-      // Validate form data
-      accommodationFormSchema.parse(formData);
-
       // Get basic info and basicInfoId
       const basicInfo = getFormData("basic-info");
       const basicInfoId = getBasicInfoId();
 
-      if (!basicInfoId) {
-        toast({
-          title: "Error",
-          description:
-            "Missing basic information reference. Please complete the basic information form first.",
-          variant: "destructive",
-        });
-        return;
-      }
-
       const enrichedFormData = {
         ...formData,
-        city: basicInfo.hostCity || "",
-        country: basicInfo.hostCountry || "",
-        university: basicInfo.hostUniversity || "",
+        city: basicInfo?.hostCity || "",
+        country: basicInfo?.hostCountry || "",
+        university: basicInfo?.hostUniversity || "",
       };
 
-      // Show loading toast
-      toast({
-        title: "Saving your accommodation details...",
-        description: "Please wait while we process your information.",
-      });
-
-      await submitForm(
+      const response = await submitForm(
         "accommodation",
         "Accommodation Experience",
         enrichedFormData,
-        "published",
+        "submitted",
         basicInfoId,
       );
 
-      // Show success toast with correct variant
-      toast({
-        title: "Success!",
-        description: "Your accommodation details have been saved.",
-        variant: "default", // Changed from "success" to "default"
-      });
+      if (response?.submissionId) {
+        // Clean up localStorage
+        localStorage.removeItem("erasmus_draft_accommodation");
 
-      // Brief delay before navigation
-      setTimeout(() => {
+        // Mark step as completed
+        markStepCompleted("accommodation");
+
+        // Navigate immediately
         router.push("/living-expenses");
-      }, 1000);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const errors: Record<string, string> = {};
-        error.errors.forEach((err) => {
-          if (err.path) {
-            errors[err.path[0]] = err.message;
-          }
-        });
-        setFieldErrors(errors);
-        toast({
-          title: "Validation Error",
-          description: "Please check the form for errors.",
-          variant: "destructive",
-        });
       } else {
-        console.error("Error submitting accommodation form:", error);
-        toast({
-          title: "Submission failed",
-          description: "There was an error saving your accommodation details.",
-          variant: "destructive",
-        });
+        throw new Error("No submission ID received");
       }
-    } finally {
+    } catch (error) {
+      console.error("Error submitting accommodation form:", error);
+      setSubmitError("Failed to submit form. Please try again.");
+      toast("Error", {
+        description: "There was a problem saving your information.",
+      });
       setIsSubmitting(false);
     }
   };
@@ -299,19 +266,6 @@ export default function Accommodation() {
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Debug Button - Prominently Placed */}
-          <div className="mb-6 flex justify-center">
-            <Button
-              type="button"
-              variant="default"
-              size="lg"
-              onClick={() => setShowDebug(true)}
-              className="bg-red-500 hover:bg-red-600 text-white font-bold px-8 py-4 text-lg shadow-lg"
-            >
-              🐛 DEBUG: Click to Check Data Issues
-            </Button>
-          </div>
-
           {/* Display basic info context */}
           {basicInfoData && (
             <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
@@ -820,18 +774,15 @@ export default function Accommodation() {
                         "Accommodation Experience",
                         formData,
                       );
-                      toast({
-                        title: "Draft saved",
+                      toast("Draft saved", {
                         description:
                           "Your accommodation information has been saved as a draft.",
                       });
                     } catch (error) {
                       console.error("Error saving draft:", error);
-                      toast({
-                        title: "Error saving draft",
+                      toast.error("Error saving draft", {
                         description:
                           "There was a problem saving your draft. Please try again.",
-                        variant: "destructive",
                       });
                     }
                   }}
@@ -870,15 +821,6 @@ export default function Accommodation() {
               )}
             </div>
           </form>
-
-          {/* Debug Modal */}
-          {showDebug && (
-            <DebugBasicInfo
-              formData={formData}
-              basicInfo={basicInfoData}
-              onClose={() => setShowDebug(false)}
-            />
-          )}
         </div>
       </div>
     </>

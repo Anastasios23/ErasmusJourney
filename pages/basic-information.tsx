@@ -483,86 +483,56 @@ export default function BasicInformation() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Clear all error and success states at start
-    setFieldErrors({});
-    setSubmitError(null);
-    setDraftError(null);
-    setSubmitSuccess(null);
-    setDraftSuccess(null);
-
-    // Validate required fields using simplified schema
-    try {
-      basicInformationRequiredSchema.parse(formData);
-    } catch (err) {
-      if (err instanceof ZodError) {
-        const fieldErrorsData = err.flatten().fieldErrors;
-        const errors: Record<string, string> = {};
-        for (const key in fieldErrorsData) {
-          if (fieldErrorsData[key]?.[0]) {
-            errors[key] = fieldErrorsData[key]![0];
-          }
-        }
-        setFieldErrors(errors);
-        setSubmitError("Please fix the validation errors below.");
-        return;
-      }
-      throw err; // re-throw if it wasn't a ZodError
-    }
+    if (isSubmitting) return;
 
     setIsSubmitting(true);
-    isNavigating.current = true;
+    setFieldErrors({});
+    setSubmitError(null);
 
     try {
-      // ALWAYS save draft before submitting - this is critical for user data safety
-      console.log("Saving draft before submission...");
-      await silentSaveDraft(formData);
-      console.log("Draft saved successfully before submission");
+      // Validate form data
+      basicInformationRequiredSchema.parse(formData);
 
-      // Now submit the form
+      // Submit the form
       const response = await submitForm(
-        "basic-info", // Changed from "basic-information"
+        "basic-info",
         "Basic Information Form",
         formData,
         "submitted",
       );
 
-      // Store the basicInfoId for linking with subsequent forms
-      if (response && response.submissionId) {
-        console.log("Setting basicInfoId:", response.submissionId);
+      if (response?.submissionId) {
+        // Update states synchronously
         setBasicInfoId(response.submissionId);
-      } else {
-        console.warn(
-          "No submissionId received from basic-info form submission",
-        );
-      }
+        markStepCompleted("basic-info");
+        localStorage.removeItem("erasmus_draft_basic-info");
 
-      // Clean up any old localStorage draft after successful submission
-      localStorage.removeItem("erasmus_draft_basic-info");
-
-      // Show success message before redirect
-      setSubmitSuccess(
-        "Basic information submitted successfully! Redirecting to course matching...",
-      );
-      setTimeout(() => {
+        // Navigate immediately
         router.push("/course-matching");
-      }, 1500);
-    } catch (error: any) {
-      console.error("Submission error:", error);
-      const errorInfo = handleApiError(error);
-      setSubmitError(errorInfo.message);
-      isNavigating.current = false; // Reset navigation flag on error
+      } else {
+        throw new Error("No submission ID received");
+      }
+    } catch (error) {
+      setIsSubmitting(false);
+      if (error instanceof ZodError) {
+        const errors: Record<string, string> = {};
+        error.flatten().fieldErrors;
+        Object.entries(error.flatten().fieldErrors).forEach(([key, value]) => {
+          if (value?.[0]) errors[key] = value[0];
+        });
+        setFieldErrors(errors);
+        setSubmitError("Please fix the validation errors below.");
+      } else {
+        console.error("Submission error:", error);
+        const errorInfo = handleApiError(error);
+        setSubmitError(errorInfo.message);
 
-      if (errorInfo.action === "signin") {
-        // Redirect to sign-in if authentication failed
-        setTimeout(() => {
+        if (errorInfo.action === "signin") {
           router.push(
             "/login?callbackUrl=" + encodeURIComponent(router.asPath),
           );
-        }, 2000);
+        }
       }
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
