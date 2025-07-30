@@ -36,6 +36,7 @@ export default function Destinations() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCostLevel, setSelectedCostLevel] = useState("");
+  const [selectedDataFilter, setSelectedDataFilter] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [destinations, setDestinations] = useState([]); // Make this dynamic
   const [error, setError] = useState<string | null>(null);
@@ -107,7 +108,10 @@ export default function Destinations() {
     includeScore: true,
   };
 
-  const fuse = useMemo(() => new Fuse(destinations, fuseOptions), []);
+  const fuse = useMemo(
+    () => new Fuse(destinations, fuseOptions),
+    [destinations],
+  );
 
   // Get unique values for filters
   const costLevels = ["low", "medium", "high"];
@@ -122,13 +126,45 @@ export default function Destinations() {
       results = fuseResults.map((result) => result.item);
     }
 
-    // Apply cost filter
-    if (selectedCostLevel && selectedCostLevel !== "all-costs") {
+    // Apply cost filter (only if a specific cost level is selected)
+    if (
+      selectedCostLevel &&
+      selectedCostLevel !== "all-costs" &&
+      selectedCostLevel !== ""
+    ) {
       results = results.filter((dest) => dest.costLevel === selectedCostLevel);
     }
 
+    // Apply data availability filter
+    if (
+      selectedDataFilter &&
+      selectedDataFilter !== "all-data" &&
+      selectedDataFilter !== ""
+    ) {
+      switch (selectedDataFilter) {
+        case "with-cost-data":
+          results = results.filter(
+            (dest) =>
+              dest.dataInsights?.hasAccommodationData ||
+              dest.dataInsights?.hasExpenseData,
+          );
+          break;
+        case "popular-destinations":
+          results = results.filter((dest) => dest.studentCount >= 10);
+          break;
+        case "complete-info":
+          results = results.filter(
+            (dest) =>
+              dest.cityInfo &&
+              dest.cityInfo.topAttractions &&
+              dest.cityInfo.topAttractions.length > 0,
+          );
+          break;
+      }
+    }
+
     return results;
-  }, [searchTerm, selectedCostLevel, fuse]);
+  }, [searchTerm, selectedCostLevel, selectedDataFilter, destinations, fuse]);
 
   const getCostBadgeColor = (cost: string) => {
     switch (cost) {
@@ -150,6 +186,7 @@ export default function Destinations() {
   const clearFilters = () => {
     setSearchTerm("");
     setSelectedCostLevel("");
+    setSelectedDataFilter("");
   };
 
   return (
@@ -193,8 +230,10 @@ export default function Destinations() {
 
                 <div className="flex gap-4">
                   <Select
-                    value={selectedCostLevel}
-                    onValueChange={setSelectedCostLevel}
+                    value={selectedCostLevel || "all-costs"}
+                    onValueChange={(value) =>
+                      setSelectedCostLevel(value === "all-costs" ? "" : value)
+                    }
                   >
                     <SelectTrigger className="w-48">
                       <SelectValue placeholder="All Cost Levels" />
@@ -209,8 +248,31 @@ export default function Destinations() {
                     </SelectContent>
                   </Select>
 
+                  <Select
+                    value={selectedDataFilter || "all-data"}
+                    onValueChange={(value) =>
+                      setSelectedDataFilter(value === "all-data" ? "" : value)
+                    }
+                  >
+                    <SelectTrigger className="w-56">
+                      <SelectValue placeholder="All Destinations" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all-data">All Destinations</SelectItem>
+                      <SelectItem value="with-cost-data">
+                        With Real Cost Data
+                      </SelectItem>
+                      <SelectItem value="popular-destinations">
+                        Popular (10+ Students)
+                      </SelectItem>
+                      <SelectItem value="complete-info">
+                        Complete City Info
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+
                   {/* Clear Filters Button */}
-                  {(searchTerm || selectedCostLevel) && (
+                  {(searchTerm || selectedCostLevel || selectedDataFilter) && (
                     <Button variant="outline" onClick={clearFilters}>
                       Clear Filters
                     </Button>
@@ -218,14 +280,88 @@ export default function Destinations() {
                 </div>
               </div>
 
-              {/* Results count */}
+              {/* Results count and active filters */}
               <div className="text-left mt-4">
-                <p className="text-sm text-gray-600">
-                  Showing {filteredDestinations.length} of {destinations.length}{" "}
-                  European destinations
-                  {searchTerm && ` for "${searchTerm}"`}
-                </p>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <p className="text-sm text-gray-600">
+                    Showing {filteredDestinations.length} of{" "}
+                    {destinations.length} European destinations
+                  </p>
+
+                  {/* Active Filters */}
+                  {(searchTerm || selectedCostLevel || selectedDataFilter) && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-500">•</span>
+                      {searchTerm && (
+                        <Badge variant="outline" className="text-xs">
+                          Search: "{searchTerm}"
+                        </Badge>
+                      )}
+                      {selectedCostLevel && (
+                        <Badge variant="outline" className="text-xs">
+                          {selectedCostLevel.charAt(0).toUpperCase() +
+                            selectedCostLevel.slice(1)}{" "}
+                          cost
+                        </Badge>
+                      )}
+                      {selectedDataFilter && (
+                        <Badge variant="outline" className="text-xs">
+                          {selectedDataFilter === "with-cost-data"
+                            ? "Real cost data"
+                            : selectedDataFilter === "popular-destinations"
+                              ? "Popular (10+ students)"
+                              : selectedDataFilter === "complete-info"
+                                ? "Complete city info"
+                                : selectedDataFilter}
+                        </Badge>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
+
+              {/* Quick Filter Buttons */}
+              {!searchTerm && !selectedCostLevel && !selectedDataFilter && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="text-sm text-gray-600 self-center">
+                    Quick filters:
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedDataFilter("with-cost-data")}
+                    className="text-xs"
+                  >
+                    Real Cost Data
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setSelectedDataFilter("popular-destinations")
+                    }
+                    className="text-xs"
+                  >
+                    Popular Destinations
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedCostLevel("low")}
+                    className="text-xs"
+                  >
+                    Low Cost
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedDataFilter("complete-info")}
+                    className="text-xs"
+                  >
+                    Complete Info
+                  </Button>
+                </div>
+              )}
             </div>
 
             {/* Destinations Grid */}
