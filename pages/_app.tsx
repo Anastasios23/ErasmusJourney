@@ -8,6 +8,7 @@ import { NotificationProvider } from "../src/context/NotificationContext";
 import { FormProgressProvider } from "../src/context/FormProgressContext";
 import ErrorBoundary from "../src/components/ErrorBoundary";
 import HMRErrorHandler from "../src/components/HMRErrorHandler";
+import EnhancedOfflineIndicator from "../src/components/EnhancedOfflineIndicator";
 import "../src/index.css";
 import { useEffect } from "react";
 import {
@@ -55,6 +56,7 @@ export default function App({
             <TooltipProvider>
               <FormProgressProvider>
                 <HMRErrorHandler />
+                <EnhancedOfflineIndicator />
                 <Toaster />
                 <Sonner />
                 <Component {...pageProps} />

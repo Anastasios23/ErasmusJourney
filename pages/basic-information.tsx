@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Header from "../components/Header";
 import Breadcrumb from "../components/Breadcrumb";
+import LoginPrompt from "../src/components/LoginPrompt";
+import EnhancedOfflineIndicator from "../src/components/EnhancedOfflineIndicator";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
 import { Label } from "../src/components/ui/label";
@@ -609,16 +611,25 @@ export default function BasicInformation() {
   } else if (sessionStatus !== "authenticated") {
     // This case should ideally trigger a redirect via useEffect, but provides a fallback UI
     content = (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center p-6 bg-white rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Access Denied
-          </h2>
-          <p className="text-gray-600 mb-4">
-            You must be logged in to view this page. Redirecting...
-          </p>
-          <div className="animate-pulse text-blue-600">...</div>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="max-w-3xl mx-auto">
+            <Breadcrumb
+              items={[
+                { label: "Home", href: "/" },
+                { label: "Basic Information", href: "/basic-information" },
+              ]}
+            />
+
+            <div className="mt-8">
+              <LoginPrompt
+                title="Start Your Erasmus Application"
+                description="Ready to begin your application? Sign in to save your progress and access all features."
+              />
+            </div>
+          </div>
+        </main>
       </div>
     );
   } else {
