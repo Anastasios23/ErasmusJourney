@@ -61,6 +61,7 @@ model User {
   applications    Application[]
   formSubmissions FormSubmission[]
   stories         Story[]
+  storyEngagements Engagement[]
 
   @@map("users")
 }
@@ -177,28 +178,49 @@ model Application {
 }
 
 model Story {
-  id           String      @id @default(cuid())
+  id           String             @id @default(cuid())
   title        String
   content      String
   excerpt      String?
   imageUrl     String?
-  isPublic     Boolean     @default(true)
-  isPinned     Boolean     @default(false)
+  isPublic     Boolean            @default(true)
+  isPinned     Boolean            @default(false)
   authorId     String
   universityId String?
   country      String?
   city         String?
-  category     String      @default("EXPERIENCE")
+  category     String             @default("EXPERIENCE")
   tags         String?
-  likes        Int         @default(0)
-  views        Int         @default(0)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  author       User        @relation(fields: [authorId], references: [id])
-  university   University? @relation(fields: [universityId], references: [id])
+  likes        Int                @default(0)
+  views        Int                @default(0)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  author       User               @relation(fields: [authorId], references: [id])
+  university   University?        @relation(fields: [universityId], references: [id])
+  engagements  Engagement[]
 
   @@index([city, country])
   @@map("stories")
+}
+
+model Engagement {
+  id          String    @id @default(cuid())
+  storyId     String
+  userId      String
+  liked       Boolean   @default(false)
+  bookmarked  Boolean   @default(false)
+  rating      Int       @default(0)
+  views       Int       @default(0)
+  likes       Int       @default(0)
+  comments    Int       @default(0)
+  lastViewed  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  story       Story     @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, userId])
+  @@map("story_engagements")
 }
 
 model Accommodation {
