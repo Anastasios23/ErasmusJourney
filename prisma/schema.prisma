@@ -250,3 +250,13 @@ model FormSubmission {
 
   @@map("form_submissions")
 }
+
+model CustomDestination {
+  id            String   @id @default(cuid())
+  destinationId String   @unique
+  data          Json
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("custom_destinations")
+}

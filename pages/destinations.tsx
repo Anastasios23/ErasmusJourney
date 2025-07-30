@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import { ERASMUS_DESTINATIONS } from "../src/data/destinations";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -74,21 +73,7 @@ export default function Destinations() {
       } catch (error) {
         console.error("Error fetching destinations:", error);
         setError("Failed to load destinations");
-        // Fallback to static data if API fails and ERASMUS_DESTINATIONS exists
-        if (ERASMUS_DESTINATIONS) {
-          setDestinations(
-            ERASMUS_DESTINATIONS.map((dest) => ({
-              ...dest,
-              studentCount: 0,
-              popularUniversities: [dest.university],
-              highlights: dest.popularWith ? dest.popularWith.slice(0, 3) : [],
-              avgCostPerMonth: dest.averageRent * 1.5,
-            })),
-          );
-        } else {
-          // Create empty state if no static data available
-          setDestinations([]);
-        }
+        setDestinations([]);
       } finally {
         setIsLoading(false);
       }
@@ -250,6 +235,37 @@ export default function Destinations() {
                   <DestinationSkeleton key={index} />
                 ))}
               </div>
+            ) : destinations.length === 0 ? (
+              /* No data at all - show empty state with call to action */
+              <div className="text-center py-16">
+                <div className="mx-auto max-w-md">
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
+                    <MapPin className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <h3 className="mt-4 text-lg font-semibold text-gray-900">
+                    No destinations available yet
+                  </h3>
+                  <p className="mt-2 text-sm text-gray-600">
+                    Destinations are generated based on student form
+                    submissions. Be the first to share your experience!
+                  </p>
+                  <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+                    <Button
+                      onClick={() => router.push("/basic-information")}
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      Share Your Experience
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => router.push("/dev-tools")}
+                      className="text-gray-600"
+                    >
+                      Generate Sample Data
+                    </Button>
+                  </div>
+                </div>
+              </div>
             ) : (
               <>
                 {filteredDestinations.length > 0 ? (
@@ -319,6 +335,37 @@ export default function Destinations() {
                             </div>
                           </div>
 
+                          {/* Data Quality Indicators */}
+                          {destination.dataInsights && (
+                            <div className="mb-4 flex gap-2">
+                              {destination.dataInsights
+                                .hasAccommodationData && (
+                                <Badge
+                                  variant="outline"
+                                  className="text-xs bg-green-50 text-green-700 border-green-200"
+                                >
+                                  ✓ Real rent data
+                                </Badge>
+                              )}
+                              {destination.dataInsights.hasExpenseData && (
+                                <Badge
+                                  variant="outline"
+                                  className="text-xs bg-blue-50 text-blue-700 border-blue-200"
+                                >
+                                  ✓ Living costs
+                                </Badge>
+                              )}
+                              {destination.studentCount >= 10 && (
+                                <Badge
+                                  variant="outline"
+                                  className="text-xs bg-purple-50 text-purple-700 border-purple-200"
+                                >
+                                  Popular choice
+                                </Badge>
+                              )}
+                            </div>
+                          )}
+
                           {/* Universities */}
                           <div className="mb-4">
                             <h4 className="text-sm font-medium text-gray-900 mb-2">
@@ -344,6 +391,59 @@ export default function Destinations() {
                             </div>
                           </div>
 
+                          {/* Cost Breakdown */}
+                          {destination.dataInsights &&
+                            (destination.dataInsights.hasAccommodationData ||
+                              destination.dataInsights.hasExpenseData) && (
+                              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                                <h4 className="text-sm font-medium text-gray-900 mb-2">
+                                  💰 Real Student Costs:
+                                </h4>
+                                <div className="space-y-1 text-xs">
+                                  {destination.dataInsights.avgRent > 0 && (
+                                    <div className="flex justify-between">
+                                      <span className="text-gray-600">
+                                        Average Rent:
+                                      </span>
+                                      <span className="font-medium">
+                                        €{destination.dataInsights.avgRent}/mo
+                                      </span>
+                                    </div>
+                                  )}
+                                  {destination.dataInsights.avgLivingExpenses >
+                                    0 && (
+                                    <div className="flex justify-between">
+                                      <span className="text-gray-600">
+                                        Living Expenses:
+                                      </span>
+                                      <span className="font-medium">
+                                        €
+                                        {
+                                          destination.dataInsights
+                                            .avgLivingExpenses
+                                        }
+                                        /mo
+                                      </span>
+                                    </div>
+                                  )}
+                                  {destination.dataInsights
+                                    .mostCommonBiggestExpense && (
+                                    <div className="mt-2 pt-2 border-t border-gray-200">
+                                      <span className="text-gray-600">
+                                        Biggest expense:{" "}
+                                      </span>
+                                      <span className="font-medium text-orange-600">
+                                        {
+                                          destination.dataInsights
+                                            .mostCommonBiggestExpense
+                                        }
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+
                           {/* Highlights */}
                           <div className="flex flex-wrap gap-1 mb-4">
                             {destination.highlights
@@ -358,6 +458,78 @@ export default function Destinations() {
                                 </Badge>
                               ))}
                           </div>
+
+                          {/* City Information */}
+                          {destination.cityInfo && (
+                            <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                              <h4 className="text-sm font-medium text-blue-900 mb-2">
+                                🏛️ City Info:
+                              </h4>
+                              <div className="grid grid-cols-2 gap-2 text-xs">
+                                {destination.cityInfo.population && (
+                                  <div>
+                                    <span className="text-gray-600">
+                                      Population:
+                                    </span>
+                                    <span className="font-medium ml-1">
+                                      {destination.cityInfo.population}
+                                    </span>
+                                  </div>
+                                )}
+                                {destination.cityInfo.language && (
+                                  <div>
+                                    <span className="text-gray-600">
+                                      Language:
+                                    </span>
+                                    <span className="font-medium ml-1">
+                                      {destination.cityInfo.language}
+                                    </span>
+                                  </div>
+                                )}
+                                {destination.cityInfo.climate && (
+                                  <div>
+                                    <span className="text-gray-600">
+                                      Climate:
+                                    </span>
+                                    <span className="font-medium ml-1">
+                                      {destination.cityInfo.climate}
+                                    </span>
+                                  </div>
+                                )}
+                                {destination.cityInfo.practicalInfo
+                                  ?.englishFriendly && (
+                                  <div>
+                                    <span className="text-gray-600">
+                                      English:
+                                    </span>
+                                    <span className="font-medium ml-1">
+                                      {
+                                        destination.cityInfo.practicalInfo
+                                          .englishFriendly
+                                      }
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+
+                              {destination.cityInfo.topAttractions &&
+                                destination.cityInfo.topAttractions.length >
+                                  0 && (
+                                  <div className="mt-2 pt-2 border-t border-blue-200">
+                                    <span className="text-gray-600 text-xs">
+                                      Top attractions:{" "}
+                                    </span>
+                                    <span className="text-blue-700 text-xs font-medium">
+                                      {destination.cityInfo.topAttractions
+                                        .slice(0, 3)
+                                        .join(", ")}
+                                      {destination.cityInfo.topAttractions
+                                        .length > 3 && "..."}
+                                    </span>
+                                  </div>
+                                )}
+                            </div>
+                          )}
 
                           <Button className="w-full" variant="outline">
                             Learn More

@@ -572,6 +572,60 @@ export default function AdminDashboard() {
                     </div>
                   </CardContent>
                 </Card>
+
+                {/* Content Management Actions */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Content Management</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <Button
+                        onClick={() => router.push("/admin-destinations")}
+                        className="h-24 flex flex-col items-center justify-center gap-2"
+                        variant="outline"
+                      >
+                        <MapPin className="h-6 w-6" />
+                        <div className="text-center">
+                          <div className="font-medium">Manage Destinations</div>
+                          <div className="text-xs text-gray-600">
+                            Edit city info & data
+                          </div>
+                        </div>
+                      </Button>
+
+                      <Button
+                        onClick={() => router.push("/admin")}
+                        className="h-24 flex flex-col items-center justify-center gap-2"
+                        variant="outline"
+                        disabled
+                      >
+                        <Home className="h-6 w-6" />
+                        <div className="text-center">
+                          <div className="font-medium">Accommodations</div>
+                          <div className="text-xs text-gray-600">
+                            Coming soon
+                          </div>
+                        </div>
+                      </Button>
+
+                      <Button
+                        onClick={() => router.push("/admin")}
+                        className="h-24 flex flex-col items-center justify-center gap-2"
+                        variant="outline"
+                        disabled
+                      >
+                        <MessageSquare className="h-6 w-6" />
+                        <div className="text-center">
+                          <div className="font-medium">Student Stories</div>
+                          <div className="text-xs text-gray-600">
+                            Coming soon
+                          </div>
+                        </div>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               </TabsContent>
             </Tabs>
           </div>

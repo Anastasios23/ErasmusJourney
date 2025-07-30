@@ -1,0 +1,45 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="lyonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E40AF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Sky background -->
+  <rect width="400" height="300" fill="url(#lyonGradient)"/>
+  
+  <!-- Basilique Notre-Dame de Fourvière -->
+  <rect x="150" y="80" width="50" height="70" fill="#1F2937" opacity="0.9"/>
+  <rect x="165" y="50" width="20" height="100" fill="#1F2937" opacity="0.9"/>
+  <polygon points="165,50 175,30 185,50" fill="#6B7280" opacity="0.8"/>
+  
+  <!-- Twin towers -->
+  <rect x="130" y="90" width="15" height="60" fill="#1F2937" opacity="0.9"/>
+  <rect x="205" y="90" width="15" height="60" fill="#1F2937" opacity="0.9"/>
+  <polygon points="130,90 137,75 145,90" fill="#6B7280" opacity="0.8"/>
+  <polygon points="205,90 212,75 220,90" fill="#6B7280" opacity="0.8"/>
+  
+  <!-- Old Lyon buildings -->
+  <rect x="250" y="160" width="30" height="140" fill="#1F2937" opacity="0.7"/>
+  <rect x="290" y="170" width="25" height="130" fill="#1F2937" opacity="0.7"/>
+  <rect x="320" y="155" width="28" height="145" fill="#1F2937" opacity="0.7"/>
+  
+  <!-- Renaissance roofs -->
+  <polygon points="250,160 265,140 280,160" fill="#DC2626" opacity="0.8"/>
+  <polygon points="290,170 302,150 315,170" fill="#DC2626" opacity="0.8"/>
+  <polygon points="320,155 334,135 348,155" fill="#DC2626" opacity="0.8"/>
+  
+  <!-- Traboules (hidden passages) -->
+  <rect x="80" y="180" width="20" height="120" fill="#1F2937" opacity="0.6"/>
+  <rect x="105" y="190" width="25" height="110" fill="#1F2937" opacity="0.6"/>
+  
+  <!-- River Rhône -->
+  <rect x="0" y="240" width="400" height="25" fill="#3B82F6" opacity="0.5"/>
+  
+  <!-- Building windows -->
+  <rect x="260" y="190" width="6" height="8" fill="#FCD34D" opacity="0.8"/>
+  <rect x="300" y="200" width="6" height="8" fill="#FCD34D" opacity="0.8"/>
+  
+  <text x="200" y="280" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="20" font-weight="bold">Lyon, France</text>
+</svg>
