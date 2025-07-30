@@ -1,0 +1,33 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="barcelonaSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B47"/>
+      <stop offset="50%" style="stop-color:#FFB347"/>
+      <stop offset="100%" style="stop-color:#FF8C69"/>
+    </linearGradient>
+    <linearGradient id="sagradaFamilia" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#F5E6D3"/>
+      <stop offset="100%" style="stop-color:#D2B48C"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Sky background with sunset -->
+  <rect width="400" height="300" fill="url(#barcelonaSky)"/>
+  
+  <!-- Sagrada Familia inspired spires -->
+  <ellipse cx="120" cy="160" rx="15" ry="80" fill="url(#sagradaFamilia)"/>
+  <ellipse cx="150" cy="140" rx="12" ry="100" fill="url(#sagradaFamilia)"/>
+  <ellipse cx="180" cy="130" rx="18" ry="110" fill="url(#sagradaFamilia)"/>
+  <ellipse cx="210" cy="140" rx="12" ry="100" fill="url(#sagradaFamilia)"/>
+  <ellipse cx="240" cy="160" rx="15" ry="80" fill="url(#sagradaFamilia)"/>
+  
+  <!-- Building base -->
+  <rect x="100" y="240" width="160" height="40" fill="url(#sagradaFamilia)"/>
+  
+  <!-- Mediterranean elements -->
+  <circle cx="350" cy="60" r="25" fill="#FFD700" opacity="0.8"/>
+  <path d="M20 250 Q50 230 80 250 T140 250" stroke="#20B2AA" stroke-width="3" fill="none"/>
+  
+  <!-- Text -->
+  <text x="200" y="290" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#8B4513">BARCELONA</text>
+</svg>

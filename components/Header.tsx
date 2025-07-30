@@ -25,6 +25,7 @@ import {
   Euro,
 } from "lucide-react";
 import NotificationDropdown from "../src/components/NotificationDropdown";
+import { ErasmusIcon } from "../src/components/icons/CustomIcons";
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -81,14 +82,28 @@ export default function Header() {
             <BackButton className="hidden md:block" />
             <Link
               href="/"
-              className="flex items-center space-x-2 group transition-transform hover:scale-105"
+              className="flex items-center space-x-3 group transition-all duration-300 hover:scale-105"
             >
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center transition-colors group-hover:bg-blue-700">
-                <span className="text-white font-bold text-sm">EJ</span>
+              <div className="relative">
+                <ErasmusIcon
+                  size={36}
+                  className="transition-all duration-300 group-hover:rotate-12"
+                />
+                <div className="absolute -inset-2 bg-blue-500/20 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300" />
               </div>
-              <span className="font-bold text-xl text-gray-900 group-hover:text-blue-600 transition-colors">
-                Erasmus Journey
-              </span>
+              <div className="flex flex-col">
+                <div className="flex items-baseline">
+                  <span className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                    Erasmus
+                  </span>
+                  <span className="text-xl font-light text-blue-600 ml-1 group-hover:text-blue-700 transition-colors">
+                    Journey
+                  </span>
+                </div>
+                <span className="text-xs text-gray-500 -mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Cyprus Edition
+                </span>
+              </div>
             </Link>
           </div>
 

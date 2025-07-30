@@ -32,6 +32,12 @@ import {
   Globe,
   Mail,
 } from "lucide-react";
+import {
+  ErasmusIcon,
+  UniversityIcon,
+  StudyAbroadIcon,
+} from "../src/components/icons/CustomIcons";
+import { OptimizedImage } from "../src/components/ui/OptimizedImage";
 
 interface UniversityExchange {
   id: string;
@@ -253,20 +259,81 @@ export default function UniversityExchanges() {
       <div className="min-h-screen bg-gray-50">
         <Header />
 
-        <div className="pt-20 pb-16 px-4">
-          <div className="max-w-7xl mx-auto">
-            {/* Header Section */}
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                University Exchange Partners
-              </h1>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Discover partner universities based on real exchange data from
-                Cyprus students. Find the perfect academic match for your
-                Erasmus journey.
-              </p>
+        {/* Enhanced Hero Section */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-700 to-blue-800 py-20">
+          {/* Custom academic background pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <svg viewBox="0 0 1200 400" className="w-full h-full">
+              <defs>
+                <pattern
+                  id="academicPattern"
+                  x="0"
+                  y="0"
+                  width="60"
+                  height="60"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <circle cx="30" cy="30" r="1" fill="currentColor" />
+                  <rect
+                    x="25"
+                    y="25"
+                    width="10"
+                    height="10"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="0.5"
+                  />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#academicPattern)" />
+
+              {/* University buildings silhouettes */}
+              <g opacity="0.3" fill="currentColor">
+                <rect x="100" y="200" width="40" height="80" />
+                <rect x="120" y="180" width="40" height="100" />
+                <rect x="140" y="160" width="40" height="120" />
+                <polygon points="120,160 140,140 160,160" />
+
+                <rect x="800" y="220" width="50" height="60" />
+                <rect x="825" y="200" width="50" height="80" />
+                <polygon points="825,200 850,180 875,200" />
+              </g>
+            </svg>
+          </div>
+
+          <div className="absolute inset-0 bg-black/30" />
+
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            {/* Icon row */}
+            <div className="flex justify-center mb-6">
+              <div className="flex space-x-4">
+                <UniversityIcon
+                  size={48}
+                  className="text-yellow-300 animate-pulse"
+                />
+                <ErasmusIcon size={48} className="text-blue-300" />
+                <StudyAbroadIcon
+                  size={48}
+                  className="text-teal-300 animate-pulse"
+                />
+              </div>
             </div>
 
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+              University{" "}
+              <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+                Exchanges
+              </span>
+            </h1>
+            <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+              Discover partner universities and hear from fellow Cypriot
+              students about their academic experiences abroad
+            </p>
+          </div>
+        </div>
+
+        <div className="pt-8 pb-16 px-4">
+          <div className="max-w-7xl mx-auto">
             {/* Statistics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
               <Card>

@@ -1,0 +1,45 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="viennaSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="50%" style="stop-color:#FFA500"/>
+      <stop offset="100%" style="stop-color:#FF6347"/>
+    </linearGradient>
+    <linearGradient id="viennaBuilding" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#F5F5DC"/>
+      <stop offset="100%" style="stop-color:#D2B48C"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Imperial golden sky -->
+  <rect width="400" height="300" fill="url(#viennaSky)"/>
+  
+  <!-- St. Stephen's Cathedral inspired spire -->
+  <rect x="180" y="180" width="40" height="80" fill="url(#viennaBuilding)"/>
+  <polygon points="180,180 200,120 220,180" fill="#8B4513"/>
+  
+  <!-- Imperial palace buildings -->
+  <rect x="100" y="200" width="80" height="60" fill="url(#viennaBuilding)"/>
+  <rect x="220" y="195" width="90" height="65" fill="url(#viennaBuilding)"/>
+  
+  <!-- Baroque architecture details -->
+  <rect x="110" y="210" width="8" height="30" fill="#DAA520"/>
+  <rect x="125" y="210" width="8" height="30" fill="#DAA520"/>
+  <rect x="140" y="210" width="8" height="30" fill="#DAA520"/>
+  <rect x="155" y="210" width="8" height="30" fill="#DAA520"/>
+  
+  <!-- Habsburg eagle silhouette -->
+  <circle cx="50" cy="80" r="15" fill="#FFD700" opacity="0.8"/>
+  <path d="M40 80 L50 70 L60 80 L50 90 Z" fill="#8B4513" opacity="0.6"/>
+  
+  <!-- Danube -->
+  <ellipse cx="200" cy="280" rx="160" ry="12" fill="#4682B4" opacity="0.7"/>
+  
+  <!-- Austrian flag -->
+  <rect x="320" y="40" width="40" height="8" fill="#FF0000"/>
+  <rect x="320" y="48" width="40" height="8" fill="#FFFFFF"/>
+  <rect x="320" y="56" width="40" height="8" fill="#FF0000"/>
+  
+  <!-- Text -->
+  <text x="200" y="290" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#8B4513">VIENNA</text>
+</svg>

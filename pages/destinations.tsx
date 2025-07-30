@@ -31,6 +31,11 @@ import {
   FilterX,
 } from "lucide-react";
 import { DestinationSkeleton } from "../src/components/ui/destination-skeleton";
+import { OptimizedImage } from "../src/components/ui/OptimizedImage";
+import {
+  ErasmusIcon,
+  DestinationIcon,
+} from "../src/components/icons/CustomIcons";
 
 export default function Destinations() {
   const router = useRouter();
@@ -406,23 +411,62 @@ export default function Destinations() {
               <>
                 {filteredDestinations.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredDestinations.map((destination) => (
+                    {filteredDestinations.map((destination, index) => (
                       <Card
                         key={destination.id}
-                        className="hover:shadow-lg transition-shadow cursor-pointer"
+                        className="overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer border-0 shadow-md hover:shadow-2xl hover:-translate-y-1"
                         onClick={() => handleDestinationClick(destination.id)}
                       >
-                        <div className="aspect-video overflow-hidden rounded-t-lg relative">
-                          <Image
-                            src={destination.image}
-                            alt={`${destination.city}, ${destination.country} - Beautiful cityscape showing iconic landmarks and architecture perfect for Erasmus students`}
-                            fill
-                            className="object-cover hover:scale-105 transition-transform"
-                            priority={
-                              filteredDestinations.indexOf(destination) < 3
+                        <div className="relative h-48 overflow-hidden">
+                          <OptimizedImage
+                            src={
+                              destination.image ||
+                              `/images/destinations/${destination.city.toLowerCase().replace(/\s+/g, "-")}-custom.svg`
                             }
-                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            alt={`${destination.city}, ${destination.country} - Study abroad destination with Erasmus program`}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-110"
+                            priority={index < 6}
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           />
+
+                          {/* Custom gradient overlay with Erasmus branding */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+                          {/* EU/Erasmus indicator */}
+                          <div className="absolute top-4 right-4 transform transition-transform group-hover:scale-110">
+                            <div className="bg-blue-600/90 backdrop-blur-sm p-2 rounded-full shadow-lg">
+                              <ErasmusIcon
+                                size={18}
+                                className="text-yellow-300"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Destination indicator */}
+                          <div className="absolute top-4 left-4">
+                            <div className="flex items-center space-x-2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-lg">
+                              <DestinationIcon
+                                size={16}
+                                className="text-blue-600"
+                              />
+                              <span className="text-sm font-medium text-gray-800">
+                                {destination.country}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* City name overlay */}
+                          <div className="absolute bottom-4 left-4 right-4">
+                            <h3 className="text-2xl font-bold text-white mb-1 drop-shadow-lg">
+                              {destination.city}
+                            </h3>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-blue-200 text-sm font-medium">
+                                {destination.studentCount} Cypriot students
+                              </span>
+                            </div>
+                          </div>
                         </div>
                         <CardHeader>
                           <div className="flex justify-between items-start">
