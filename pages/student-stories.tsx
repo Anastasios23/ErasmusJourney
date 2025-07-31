@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -43,6 +43,10 @@ import StandardIcon from "../src/components/StandardIcon";
 import { StoriesHeroSection } from "../src/components/StoriesHeroSection";
 import EnhancedStoryCard from "../src/components/EnhancedStoryCard";
 import StoriesSorting from "../src/components/StoriesSorting";
+import { QuickFilters } from "../src/components/QuickFilters";
+import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
+import { useRecentlyViewed } from "../src/hooks/useRecentlyViewed";
+import { RecentlyViewed } from "../src/components/RecentlyViewed";
 import {
   GRID_LAYOUTS,
   RESPONSIVE_SPACING,
@@ -99,6 +103,24 @@ export default function StudentStoriesPage() {
   // React Query for data fetching with caching
   const { stories, loading, error, refetch } = useStories();
   const { likeStory } = useLikeStory();
+
+  // User profile from form submissions
+  const { getDraftData } = useFormSubmissions();
+  const { addRecentItem } = useRecentlyViewed();
+  const [userProfile, setUserProfile] = useState<any>(null);
+
+  // Load user profile
+  React.useEffect(() => {
+    const basicInfoData = getDraftData("basic-info");
+    if (basicInfoData) {
+      setUserProfile({
+        university: basicInfoData.universityInCyprus,
+        hostCountry: basicInfoData.hostCountry,
+        hostCity: basicInfoData.hostCity,
+        hostUniversity: basicInfoData.hostUniversity,
+      });
+    }
+  }, [getDraftData]);
 
   // Extract unique values for filters
   const countries = useMemo(
@@ -290,12 +312,42 @@ export default function StudentStoriesPage() {
     }
   };
 
+  const handleStoryClick = (story: any) => {
+    // Track this story as recently viewed
+    addRecentItem({
+      id: story.id,
+      title: story.title || `${story.studentName}'s Story`,
+      type: "story",
+      url: `/stories/${story.id}`,
+      metadata: {
+        city: story.location?.city || story.city,
+        country: story.location?.country || story.country,
+        author: story.studentName || story.author?.name,
+        university: story.university || story.author?.university,
+      },
+    });
+  };
+
   const clearFilters = () => {
     setSearchTerm("");
     setSelectedCategory("all");
     setSelectedCountry("all");
     setSelectedUniversity("all");
     setSelectedPeriod("all");
+    setCurrentPage(1);
+    setSortBy("newest");
+  };
+
+  const handleQuickFilter = (filters: {
+    country?: string;
+    university?: string;
+    category?: string;
+    sortBy?: string;
+  }) => {
+    if (filters.country) setSelectedCountry(filters.country);
+    if (filters.university) setSelectedUniversity(filters.university);
+    if (filters.category) setSelectedCategory(filters.category);
+    if (filters.sortBy) setSortBy(filters.sortBy);
     setCurrentPage(1);
   };
 
@@ -325,6 +377,27 @@ export default function StudentStoriesPage() {
                 setCurrentPage(1);
               }}
             />
+
+            {/* Quick Filters */}
+            <div className="mb-8">
+              <Card className="shadow-sm border border-gray-200">
+                <CardContent className="pt-6">
+                  <QuickFilters
+                    userProfile={userProfile}
+                    onFilterApply={handleQuickFilter}
+                    activeFilters={{
+                      country: selectedCountry,
+                      university: selectedUniversity,
+                      category: selectedCategory,
+                      sortBy: sortBy,
+                    }}
+                    availableCountries={countries}
+                    availableUniversities={universities}
+                    onClearFilters={clearFilters}
+                  />
+                </CardContent>
+              </Card>
+            </div>
 
             {/* Enhanced Search and Filter */}
             <section aria-label="Search and filter stories">
@@ -542,12 +615,13 @@ export default function StudentStoriesPage() {
                   }`}
                 >
                   {paginatedStories.map((story) => (
-                    <EnhancedStoryCard
-                      key={story.id}
-                      story={story}
-                      onLike={handleLikeStory}
-                      compact={viewMode === "compact"}
-                    />
+                    <div key={story.id} onClick={() => handleStoryClick(story)}>
+                      <EnhancedStoryCard
+                        story={story}
+                        onLike={handleLikeStory}
+                        compact={viewMode === "compact"}
+                      />
+                    </div>
                   ))}
                 </div>
 

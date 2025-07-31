@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./prisma/dev.db"
+  url      = "file:./dev.db"
 }
 
 model Account {
@@ -260,15 +260,16 @@ model Destination {
 }
 
 model FormSubmission {
-  id        String   @id @default(cuid())
-  userId    String
-  type      String
-  title     String
-  data      Json
-  status    String   @default("SUBMITTED")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  userId     String
+  type       String
+  title      String
+  data       Json
+  status     String   @default("SUBMITTED")
+  adminNotes String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("form_submissions")
 }
@@ -281,4 +282,25 @@ model CustomDestination {
   updatedAt     DateTime @updatedAt
 
   @@map("custom_destinations")
+}
+
+model UniversityExchange {
+  id                  String   @id @default(cuid())
+  hostUniversity      String
+  hostCountry         String
+  hostCity            String
+  studyLevel          String
+  fieldOfStudy        String
+  description         String?
+  imageUrl            String?
+  highlights          String?
+  requirements        String?
+  applicationDeadline String?
+  totalEcts           Int?
+  language            String   @default("English")
+  isActive            Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@map("university_exchanges")
 }

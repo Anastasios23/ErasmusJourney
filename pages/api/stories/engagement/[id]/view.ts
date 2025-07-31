@@ -31,51 +31,47 @@ export default async function handler(
 
     // If user is authenticated, track their view engagement
     if (userEmail) {
-      const existingEngagement = await prisma.engagement.findFirst({
-        where: {
-          storyId,
-          user: {
-            email: userEmail,
-          },
-        },
+      // Find user first
+      const user = await prisma.user.findUnique({
+        where: { email: userEmail },
       });
 
-      if (existingEngagement) {
-        // Update existing engagement
-        await prisma.engagement.update({
-          where: { id: existingEngagement.id },
-          data: {
-            views: { increment: 1 },
-            lastViewed: new Date(),
-            updatedAt: new Date(),
+      if (user) {
+        const existingEngagement = await prisma.engagement.findFirst({
+          where: {
+            storyId,
+            userId: user.id,
           },
         });
-      } else {
-        // Create new engagement
-        await prisma.engagement.create({
-          data: {
-            story: {
-              connect: {
-                id: storyId,
-              },
+
+        if (existingEngagement) {
+          // Update existing engagement
+          await prisma.engagement.update({
+            where: { id: existingEngagement.id },
+            data: {
+              views: { increment: 1 },
+              lastViewed: new Date(),
+              updatedAt: new Date(),
             },
-            user: {
-              connect: {
-                email: userEmail,
-              },
+          });
+        } else {
+          // Create new engagement
+          await prisma.engagement.create({
+            data: {
+              storyId,
+              userId: user.id,
+              views: 1,
+              likes: 0,
+              comments: 0,
+              rating: 0,
+              liked: false,
+              bookmarked: false,
+              lastViewed: new Date(),
             },
-            views: 1,
-            likes: 0,
-            comments: 0,
-            rating: 0,
-            liked: false,
-            bookmarked: false,
-            lastViewed: new Date(),
-          },
-        });
+          });
+        }
       }
     }
-
     return res.status(200).json({ success: true });
   } catch (error) {
     console.error("Error incrementing view:", error);

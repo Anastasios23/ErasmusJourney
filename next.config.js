@@ -46,6 +46,11 @@ const nextConfig = {
     cpus: 1,
   },
   images: {
+    // Performance optimization for images
+    formats: ["image/webp", "image/avif"],
+    minimumCacheTTL: 60,
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     remotePatterns: [
       {
         protocol: "https",

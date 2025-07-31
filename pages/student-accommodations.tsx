@@ -52,6 +52,8 @@ import {
   useGeneratedContent,
   useFormSubmissions,
 } from "../src/hooks/useFormSubmissions";
+import { useRecentlyViewed } from "../src/hooks/useRecentlyViewed";
+import { RecentlyViewed } from "../src/components/RecentlyViewed";
 import BudgetCalculator from "../components/accommodation/BudgetCalculator";
 import SmartRecommendations from "../components/accommodation/SmartRecommendations";
 import ContactIntegration from "../components/accommodation/ContactIntegration";
@@ -133,6 +135,7 @@ export default function StudentAccommodations() {
 
   // User profile and preferences
   const { getDraftData } = useFormSubmissions();
+  const { addRecentItem } = useRecentlyViewed();
   const [userProfile, setUserProfile] = useState(null);
   const [wishlist, setWishlist] = useState(new Set());
   const [activeSection, setActiveSection] = useState("accommodations");
@@ -225,6 +228,22 @@ export default function StudentAccommodations() {
   };
 
   const handleViewDetails = (id: string) => {
+    // Track this accommodation as recently viewed
+    const accommodation = allAccommodations.find((acc) => acc.id === id);
+    if (accommodation) {
+      addRecentItem({
+        id: id,
+        title: `${accommodation.accommodationType || accommodation.type} in ${accommodation.city}`,
+        type: "accommodation",
+        url: `/accommodation/${id}`,
+        metadata: {
+          city: accommodation.city,
+          country: accommodation.country,
+          author: accommodation.studentName,
+        },
+      });
+    }
+
     router.push(`/accommodation/${id}`);
   };
 
@@ -391,6 +410,11 @@ export default function StudentAccommodations() {
 
             {activeSection === "accommodations" && (
               <>
+                {/* Recently Viewed Section */}
+                <div className="mb-8">
+                  <RecentlyViewed maxItems={3} />
+                </div>
+
                 {/* Search and Filters */}
                 <section aria-label="Search and filter accommodations">
                   <Card className="mb-8">
