@@ -1,34 +1,62 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../../auth/[...nextauth]";
 import { prisma } from "../../../../lib/prisma";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  // Check if user is admin
+  const session = await getServerSession(req, res, authOptions);
+  if (!session?.user || session.user.role !== "ADMIN") {
+    return res.status(403).json({ error: "Unauthorized" });
+  }
+
   const { id } = req.query;
+
+  if (!id || typeof id !== "string") {
+    return res.status(400).json({ error: "Invalid destination ID" });
+  }
 
   if (req.method === "PUT") {
     // Update destination
     try {
-      const destinationData = req.body;
+      const {
+        name,
+        country,
+        description,
+        imageUrl,
+        featured,
+        highlights,
+        climate,
+        costOfLiving,
+      } = req.body;
 
-      // For now, we'll store custom destination data in a separate table
-      // This allows admins to override the auto-generated data
-      const customDestination = await prisma.customDestination.upsert({
-        where: { destinationId: id as string },
-        update: {
-          data: destinationData,
+      // Convert highlights array to string if needed
+      const highlightsString = Array.isArray(highlights)
+        ? highlights.join(", ")
+        : highlights;
+
+      // Update the destination in the main Destination table
+      const updatedDestination = await prisma.destination.update({
+        where: { id },
+        data: {
+          name,
+          country,
+          description,
+          imageUrl,
+          featured,
+          highlights: highlightsString,
+          climate,
+          costOfLiving,
           updatedAt: new Date(),
-        },
-        create: {
-          destinationId: id as string,
-          data: destinationData,
         },
       });
 
       return res.status(200).json({
         success: true,
-        destination: customDestination,
+        destination: updatedDestination,
       });
     } catch (error) {
       console.error("Error updating destination:", error);
@@ -40,15 +68,15 @@ export default async function handler(
   }
 
   if (req.method === "DELETE") {
-    // Delete custom destination data (revert to auto-generated)
+    // Delete destination
     try {
-      await prisma.customDestination.delete({
-        where: { destinationId: id as string },
+      await prisma.destination.delete({
+        where: { id },
       });
 
       return res.status(200).json({
         success: true,
-        message: "Custom destination data deleted",
+        message: "Destination deleted successfully",
       });
     } catch (error) {
       console.error("Error deleting destination:", error);
