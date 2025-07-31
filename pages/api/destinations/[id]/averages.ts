@@ -92,7 +92,7 @@ async function getDestinationAverages(
   }
 
   const city = destination.city.toLowerCase();
-  
+
   // Fetch real form submissions from the database
   try {
     const submissions = await prisma.formSubmission.findMany({
@@ -101,15 +101,15 @@ async function getDestinationAverages(
       },
       orderBy: { createdAt: "desc" },
     });
-    
+
     // Filter submissions by city
     const citySubmissions = submissions.filter((submission) => {
       const data = submission.data as any;
       return data.hostCity?.toLowerCase() === city.toLowerCase();
     });
-    
+
     const totalSubmissions = citySubmissions.length;
-    
+
     if (totalSubmissions > 0) {
       // Calculate real averages from submissions
       return calculateRealAverages(city, citySubmissions);
@@ -118,7 +118,7 @@ async function getDestinationAverages(
     console.error(`Error fetching submissions for ${city}:`, error);
     // Fall through to use fallback data
   }
-  
+
   // Fallback to hardcoded data for cities without real submissions
   const cityAveragesMap: Record<string, Partial<DestinationAverages>> = {
     berlin: {
@@ -272,79 +272,180 @@ async function getDestinationAverages(
 }
 
 // Calculate real averages from actual form submissions
-function calculateRealAverages(city: string, submissions: any[]): DestinationAverages {
+function calculateRealAverages(
+  city: string,
+  submissions: any[],
+): DestinationAverages {
   const totalSubmissions = submissions.length;
-  
-  // Calculate living costs
+
+  console.log(
+    `🔢 Calculating real averages for ${city} from ${totalSubmissions} submissions`,
+  );
+
+  // Calculate living costs - enhanced to support multiple field names
   const livingCosts = submissions.reduce(
     (acc, submission) => {
       const data = submission.data as any;
+      // Support both old and new field names
       if (data.monthlyRent) acc.rent.push(data.monthlyRent);
-      if (data.monthlyFood) acc.food.push(data.monthlyFood);
-      if (data.monthlyTransport) acc.transport.push(data.monthlyTransport);
-      if (data.monthlyEntertainment) acc.entertainment.push(data.monthlyEntertainment);
+      if (data.monthlyFood || data.foodExpenses)
+        acc.food.push(data.monthlyFood || data.foodExpenses);
+      if (data.monthlyTransport || data.transportExpenses)
+        acc.transport.push(data.monthlyTransport || data.transportExpenses);
+      if (data.monthlyEntertainment)
+        acc.entertainment.push(data.monthlyEntertainment);
+
+      // Calculate total if individual components exist
+      const total =
+        (data.monthlyRent || 0) +
+        (data.monthlyFood || data.foodExpenses || 0) +
+        (data.monthlyTransport || data.transportExpenses || 0) +
+        (data.monthlyEntertainment || 0);
+      if (total > 0 || data.totalMonthlyBudget) {
+        acc.total.push(data.totalMonthlyBudget || total);
+      }
+
       return acc;
     },
-    { rent: [], food: [], transport: [], entertainment: [] } as any
+    { rent: [], food: [], transport: [], entertainment: [], total: [] } as any,
   );
 
-  // Calculate average living costs
-  const avgRent = livingCosts.rent.length > 0
-    ? Math.round(livingCosts.rent.reduce((a: number, b: number) => a + b, 0) / livingCosts.rent.length)
-    : null;
-    
-  const avgFood = livingCosts.food.length > 0
-    ? Math.round(livingCosts.food.reduce((a: number, b: number) => a + b, 0) / livingCosts.food.length)
-    : null;
-    
-  const avgTransport = livingCosts.transport.length > 0
-    ? Math.round(livingCosts.transport.reduce((a: number, b: number) => a + b, 0) / livingCosts.transport.length)
-    : null;
-    
-  const avgEntertainment = livingCosts.entertainment.length > 0
-    ? Math.round(livingCosts.entertainment.reduce((a: number, b: number) => a + b, 0) / livingCosts.entertainment.length)
-    : null;
-    
-  // Calculate total average cost
-  const avgTotal = [avgRent, avgFood, avgTransport, avgEntertainment].filter(x => x !== null).length > 0
-    ? [avgRent, avgFood, avgTransport, avgEntertainment].reduce((a, b) => (a || 0) + (b || 0), 0)
-    : null;
-  
+  console.log(`💰 Found cost data:`, {
+    rent: livingCosts.rent.length,
+    food: livingCosts.food.length,
+    transport: livingCosts.transport.length,
+    total: livingCosts.total.length,
+  });
+
+  // Calculate average living costs with better handling
+  const avgRent =
+    livingCosts.rent.length > 0
+      ? Math.round(
+          livingCosts.rent.reduce((a: number, b: number) => a + b, 0) /
+            livingCosts.rent.length,
+        )
+      : null;
+
+  const avgFood =
+    livingCosts.food.length > 0
+      ? Math.round(
+          livingCosts.food.reduce((a: number, b: number) => a + b, 0) /
+            livingCosts.food.length,
+        )
+      : null;
+
+  const avgTransport =
+    livingCosts.transport.length > 0
+      ? Math.round(
+          livingCosts.transport.reduce((a: number, b: number) => a + b, 0) /
+            livingCosts.transport.length,
+        )
+      : null;
+
+  const avgEntertainment =
+    livingCosts.entertainment.length > 0
+      ? Math.round(
+          livingCosts.entertainment.reduce((a: number, b: number) => a + b, 0) /
+            livingCosts.entertainment.length,
+        )
+      : null;
+
+  // Calculate total average cost - use actual total if available, otherwise sum components
+  const avgTotal =
+    livingCosts.total.length > 0
+      ? Math.round(
+          livingCosts.total.reduce((a: number, b: number) => a + b, 0) /
+            livingCosts.total.length,
+        )
+      : [avgRent, avgFood, avgTransport, avgEntertainment].filter(
+            (x) => x !== null,
+          ).length > 0
+        ? [avgRent, avgFood, avgTransport, avgEntertainment].reduce(
+            (a, b) => (a || 0) + (b || 0),
+            0,
+          )
+        : null;
+
+  console.log(`📊 Calculated averages:`, {
+    avgRent,
+    avgFood,
+    avgTransport,
+    avgTotal,
+  });
+
   // Calculate ratings
   const ratings = submissions.reduce(
     (acc, submission) => {
       const data = submission.data as any;
       if (data.overallRating) acc.overall.push(data.overallRating);
-      if (data.accommodationRating) acc.accommodation.push(data.accommodationRating);
+      if (data.accommodationRating)
+        acc.accommodation.push(data.accommodationRating);
       if (data.socialLifeRating) acc.socialLife.push(data.socialLifeRating);
       if (data.academicsRating) acc.academics.push(data.academicsRating);
-      if (data.costOfLivingRating) acc.costOfLiving.push(data.costOfLivingRating);
+      if (data.costOfLivingRating)
+        acc.costOfLiving.push(data.costOfLivingRating);
       return acc;
     },
-    { overall: [], accommodation: [], socialLife: [], academics: [], costOfLiving: [] } as any
+    {
+      overall: [],
+      accommodation: [],
+      socialLife: [],
+      academics: [],
+      costOfLiving: [],
+    } as any,
   );
-  
+
   // Calculate average ratings
-  const avgOverall = ratings.overall.length > 0
-    ? Number((ratings.overall.reduce((a: number, b: number) => a + b, 0) / ratings.overall.length).toFixed(1))
-    : null;
-    
-  const avgAccommodation = ratings.accommodation.length > 0
-    ? Number((ratings.accommodation.reduce((a: number, b: number) => a + b, 0) / ratings.accommodation.length).toFixed(1))
-    : null;
-    
-  const avgSocialLife = ratings.socialLife.length > 0
-    ? Number((ratings.socialLife.reduce((a: number, b: number) => a + b, 0) / ratings.socialLife.length).toFixed(1))
-    : null;
-    
-  const avgAcademics = ratings.academics.length > 0
-    ? Number((ratings.academics.reduce((a: number, b: number) => a + b, 0) / ratings.academics.length).toFixed(1))
-    : null;
-    
-  const avgCostOfLiving = ratings.costOfLiving.length > 0
-    ? Number((ratings.costOfLiving.reduce((a: number, b: number) => a + b, 0) / ratings.costOfLiving.length).toFixed(1))
-    : null;
-  
+  const avgOverall =
+    ratings.overall.length > 0
+      ? Number(
+          (
+            ratings.overall.reduce((a: number, b: number) => a + b, 0) /
+            ratings.overall.length
+          ).toFixed(1),
+        )
+      : null;
+
+  const avgAccommodation =
+    ratings.accommodation.length > 0
+      ? Number(
+          (
+            ratings.accommodation.reduce((a: number, b: number) => a + b, 0) /
+            ratings.accommodation.length
+          ).toFixed(1),
+        )
+      : null;
+
+  const avgSocialLife =
+    ratings.socialLife.length > 0
+      ? Number(
+          (
+            ratings.socialLife.reduce((a: number, b: number) => a + b, 0) /
+            ratings.socialLife.length
+          ).toFixed(1),
+        )
+      : null;
+
+  const avgAcademics =
+    ratings.academics.length > 0
+      ? Number(
+          (
+            ratings.academics.reduce((a: number, b: number) => a + b, 0) /
+            ratings.academics.length
+          ).toFixed(1),
+        )
+      : null;
+
+  const avgCostOfLiving =
+    ratings.costOfLiving.length > 0
+      ? Number(
+          (
+            ratings.costOfLiving.reduce((a: number, b: number) => a + b, 0) /
+            ratings.costOfLiving.length
+          ).toFixed(1),
+        )
+      : null;
+
   // Calculate recommendations
   const recommendations = submissions.reduce(
     (acc, submission) => {
@@ -355,21 +456,22 @@ function calculateRealAverages(city: string, submissions: any[]): DestinationAve
       }
       return acc;
     },
-    { positive: 0, total: 0 }
+    { positive: 0, total: 0 },
   );
-  
+
   // Calculate recommendation percentage
-  const recommendationPercentage = recommendations.total > 0
-    ? Math.round((recommendations.positive / recommendations.total) * 100)
-    : 0;
-  
+  const recommendationPercentage =
+    recommendations.total > 0
+      ? Math.round((recommendations.positive / recommendations.total) * 100)
+      : 0;
+
   // Extract top tips
-  const allTips = submissions.flatMap(submission => {
+  const allTips = submissions.flatMap((submission) => {
     const data = submission.data as any;
     return data.topTips || [];
   });
   const uniqueTips = [...new Set(allTips)];
-  
+
   // Extract accommodation types
   const accommodationTypes = submissions.reduce((acc, submission) => {
     const data = submission.data as any;
@@ -385,30 +487,37 @@ function calculateRealAverages(city: string, submissions: any[]): DestinationAve
     }
     return acc;
   }, {} as any);
-  
+
   const accommodationTypesArray = Object.entries(accommodationTypes).map(
     ([type, data]: [string, any]) => ({
       type,
       count: data.count,
-      averageRent: data.rents.length > 0
-        ? Math.round(data.rents.reduce((a: number, b: number) => a + b, 0) / data.rents.length)
-        : null,
-    })
+      averageRent:
+        data.rents.length > 0
+          ? Math.round(
+              data.rents.reduce((a: number, b: number) => a + b, 0) /
+                data.rents.length,
+            )
+          : null,
+    }),
   );
-  
+
   // Format recent submissions
-  const recentSubmissions = submissions.slice(0, 4).map(submission => {
+  const recentSubmissions = submissions.slice(0, 4).map((submission) => {
     const data = submission.data as any;
     return {
       id: submission.id,
       type: submission.type,
       title: submission.title || `Experience in ${city}`,
-      excerpt: data.personalExperience || data.challenges || "Student experience shared",
-      author: `${data.firstName || 'Anonymous'} ${data.lastName ? data.lastName.charAt(0) + '.' : ''}`,
+      excerpt:
+        data.personalExperience ||
+        data.challenges ||
+        "Student experience shared",
+      author: `${data.firstName || "Anonymous"} ${data.lastName ? data.lastName.charAt(0) + "." : ""}`,
       createdAt: submission.createdAt.toISOString(),
     };
   });
-  
+
   return {
     city,
     totalSubmissions,

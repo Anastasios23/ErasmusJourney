@@ -58,6 +58,7 @@ import {
   Image as ImageIcon,
   Save,
   RefreshCw,
+  Merge,
 } from "lucide-react";
 
 interface FormSubmissionData {
@@ -134,6 +135,8 @@ export default function AdminDestinations() {
   // Add state for editing live destinations
   const [editingDestination, setEditingDestination] =
     useState<DestinationData | null>(null);
+  // For storing suggested images from Unsplash for each submission
+  const [suggestedImages, setSuggestedImages] = useState<any[]>([]);
 
   // Function to handle editing a live destination
   const handleEditDestination = (destination: DestinationData) => {
@@ -142,10 +145,11 @@ export default function AdminDestinations() {
 
   // Function to handle viewing a destination on the public page
   const handleViewDestination = (destination: DestinationData) => {
-    const destinationSlug = destination.name
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, "-");
-    window.open(`/destinations/${destinationSlug}`, "_blank");
+    // Use the destination ID directly if available, otherwise create a slug from the name
+    const destinationId =
+      destination.id ||
+      destination.name.toLowerCase().replace(/[^a-z0-9]/g, "-");
+    window.open(`/destinations/${destinationId}`, "_blank");
   };
 
   // Fetch pending submissions
@@ -375,6 +379,87 @@ export default function AdminDestinations() {
       weatherInfo: "",
     });
 
+    // Image management state
+    const [imagePreview, setImagePreview] = useState("");
+    const [suggestedImages, setSuggestedImages] = useState<any[]>([]);
+    const [loadingImages, setLoadingImages] = useState(false);
+
+    // Fetch images for the city
+    const fetchCityImages = async (cityName: string) => {
+      setLoadingImages(true);
+      try {
+        const response = await fetch(
+          `https://api.unsplash.com/search/photos?query=${encodeURIComponent(cityName + " city")}&per_page=6&client_id=YOUR_UNSPLASH_ACCESS_KEY`,
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setSuggestedImages(data.results || []);
+        }
+      } catch (error) {
+        console.error("Error fetching images:", error);
+        // Fallback to mock images
+        setSuggestedImages([
+          {
+            urls: { regular: "/placeholder.svg" },
+            alt_description: `${cityName} cityscape`,
+            user: { name: "Stock Photo" },
+          },
+        ]);
+      } finally {
+        setLoadingImages(false);
+      }
+    };
+
+    // Auto-fetch images when city changes
+    useEffect(() => {
+      if (editedData.hostCity) {
+        fetchCityImages(editedData.hostCity);
+        checkExistingDestination(editedData.hostCity, editedData.hostCountry);
+      }
+    }, [editedData.hostCity, editedData.hostCountry]);
+
+    // Check if destination already exists
+    const [existingDestination, setExistingDestination] = useState<any>(null);
+    const [relatedSubmissions, setRelatedSubmissions] = useState<any[]>([]);
+    const [loadingExisting, setLoadingExisting] = useState(false);
+
+    const checkExistingDestination = async (city: string, country: string) => {
+      if (!city || !country) return;
+
+      setLoadingExisting(true);
+      try {
+        // Check for existing published destination
+        const destResponse = await fetch(
+          `/api/destinations/${city.toLowerCase().replace(/\s+/g, "-")}-${country.toLowerCase().replace(/\s+/g, "-")}`,
+        );
+        if (destResponse.ok) {
+          const existingDest = await destResponse.json();
+          setExistingDestination(existingDest);
+        } else {
+          setExistingDestination(null);
+        }
+
+        // Check for other student submissions to the same city
+        const submissionsResponse = await fetch("/api/admin/form-submissions");
+        if (submissionsResponse.ok) {
+          const allSubmissions = await submissionsResponse.json();
+          const citySubmissions = allSubmissions
+            .filter(
+              (sub: any) =>
+                sub.data.hostCity?.toLowerCase() === city.toLowerCase() &&
+                sub.data.hostCountry?.toLowerCase() === country.toLowerCase() &&
+                sub.id !== submission.id, // Exclude current submission
+            )
+            .slice(0, 5); // Show up to 5 related submissions
+          setRelatedSubmissions(citySubmissions);
+        }
+      } catch (error) {
+        console.error("Error checking existing destination:", error);
+      } finally {
+        setLoadingExisting(false);
+      }
+    };
+
     // Auto-calculate total budget when individual expenses change
     useEffect(() => {
       const calculatedTotal =
@@ -409,8 +494,23 @@ export default function AdminDestinations() {
         name: `${editedData.hostCity}, ${editedData.hostCountry}`,
         country: editedData.hostCountry,
         description,
-        highlights: highlights.join(", "),
+        highlights: highlights, // Send as array, API will handle conversion
         featured: true,
+        imageUrl:
+          imagePreview ||
+          (suggestedImages.length > 0
+            ? suggestedImages[0].urls.regular
+            : "/placeholder.svg"),
+        photos:
+          suggestedImages && suggestedImages.length > 0
+            ? suggestedImages.map((img, index) => ({
+                url: img.urls.regular,
+                caption:
+                  img.alt_description ||
+                  `${editedData.hostCity} - ${index + 1}`,
+                credit: `Photo by ${img.user.name} on Unsplash`,
+              }))
+            : [],
         costOfLiving: {
           averageRent: editedData.monthlyRent,
           averageFood: editedData.foodExpenses,
@@ -420,9 +520,31 @@ export default function AdminDestinations() {
         averageRating: editedData.overallRating,
         studentCount: 1,
         generalInfo: generalInfo,
+        // Include information about existing destination
+        isExistingDestination: !!existingDestination,
+        existingDestinationId: existingDestination?.id,
+        relatedSubmissionsCount: relatedSubmissions.length,
       };
 
-      approveSubmission(submission.id, destinationData);
+      if (existingDestination && relatedSubmissions.length > 0) {
+        // Confirm before proceeding if destination exists
+        const confirmMessage = `This city already has ${relatedSubmissions.length} student submission(s) and ${existingDestination ? "a published destination page" : ""}. 
+
+Options:
+1. Update the existing destination with this new data
+2. Create a new destination entry (may cause duplicates)
+
+Click OK to UPDATE the existing destination, or Cancel to create new.`;
+
+        if (confirm(confirmMessage)) {
+          (destinationData as any).updateExisting = true;
+        }
+      }
+
+      approveSubmission(submission.id, {
+        ...destinationData,
+        highlights: highlights.join(", "), // Convert array to string for the function call
+      });
     };
 
     return (
@@ -438,6 +560,342 @@ export default function AdminDestinations() {
               {submission.data.studentName}
             </DialogDescription>
           </DialogHeader>
+
+          {/* Existing Destination Information */}
+          {(existingDestination || relatedSubmissions.length > 0) && (
+            <Card className="border-amber-200 bg-amber-50">
+              <CardHeader>
+                <CardTitle className="text-amber-800 flex items-center gap-2">
+                  <MapPin className="h-5 w-5" />
+                  Destination Already Visited
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {existingDestination && (
+                  <div className="mb-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <span className="font-medium text-green-800">
+                        This destination is already published!
+                      </span>
+                    </div>
+                    <p className="text-sm text-amber-700 mb-2">
+                      {existingDestination.description?.substring(0, 100)}...
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          window.open(
+                            `/destinations/${existingDestination.id}`,
+                            "_blank",
+                          )
+                        }
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        View Live Page
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          const existing = liveDestinations.find(
+                            (d) => d.id === existingDestination.id,
+                          );
+                          if (existing) handleEditDestination(existing);
+                        }}
+                      >
+                        <Edit3 className="h-4 w-4 mr-1" />
+                        Edit Destination
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {relatedSubmissions.length > 0 && (
+                  <div>
+                    <p className="font-medium text-amber-800 mb-2">
+                      {relatedSubmissions.length} other student
+                      {relatedSubmissions.length > 1 ? "s have" : " has"}{" "}
+                      visited this city:
+                    </p>
+                    <div className="space-y-2">
+                      {relatedSubmissions.map((sub: any) => (
+                        <div
+                          key={sub.id}
+                          className="text-sm p-2 bg-white rounded border"
+                        >
+                          <div className="flex justify-between items-center">
+                            <span className="font-medium">
+                              {sub.data.studentName}
+                            </span>
+                            <Badge
+                              variant={
+                                sub.status === "APPROVED"
+                                  ? "default"
+                                  : "secondary"
+                              }
+                            >
+                              {sub.status}
+                            </Badge>
+                          </div>
+                          <p className="text-gray-600 text-xs mt-1">
+                            {sub.data.hostUniversity} • {sub.data.studyPeriod}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-amber-600 mt-2">
+                      💡 Consider updating the existing destination instead of
+                      creating a new one
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Smart Merge Preview */}
+          {existingDestination && (
+            <Card className="border-blue-200 bg-blue-50">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2 text-blue-700">
+                  <Merge className="h-5 w-5" />
+                  Smart Data Accumulation Preview
+                </CardTitle>
+                <p className="text-sm text-blue-600">
+                  Shows how this student's data will be added to existing
+                  information (no data is lost!)
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Description Merge */}
+                <div>
+                  <Label className="text-sm font-medium text-blue-700">
+                    Description Update
+                  </Label>
+                  <div className="mt-1 space-y-2">
+                    <div className="p-2 rounded bg-blue-100">
+                      <p className="text-xs text-blue-600 mb-1">
+                        Current (Live):
+                      </p>
+                      <p className="text-sm">
+                        {existingDestination.description || "No description"}
+                      </p>
+                    </div>
+                    <div className="p-2 rounded bg-green-100">
+                      <p className="text-xs text-green-600 mb-1">
+                        New (Will replace if different):
+                      </p>
+                      <p className="text-sm">
+                        {description || "No new description"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Photos Merge */}
+                <div>
+                  <Label className="text-sm font-medium text-blue-700">
+                    Photos Accumulation
+                  </Label>
+                  <div className="mt-1">
+                    {(() => {
+                      try {
+                        const existingHighlights =
+                          existingDestination.highlights
+                            ? JSON.parse(existingDestination.highlights)
+                            : {};
+                        const existingPhotos = existingHighlights.photos || [];
+                        const newPhotos = suggestedImages || [];
+
+                        return (
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="p-2 rounded bg-blue-100">
+                              <p className="text-xs text-blue-600 mb-1">
+                                Current Gallery: {existingPhotos.length} photos
+                              </p>
+                              <div className="grid grid-cols-2 gap-1">
+                                {existingPhotos
+                                  .slice(0, 4)
+                                  .map((photo: any, idx: number) => (
+                                    <img
+                                      key={idx}
+                                      src={photo.url}
+                                      alt="Existing"
+                                      className="w-full h-12 object-cover rounded"
+                                    />
+                                  ))}
+                              </div>
+                              {existingPhotos.length > 4 && (
+                                <p className="text-xs text-blue-500 mt-1">
+                                  +{existingPhotos.length - 4} more
+                                </p>
+                              )}
+                            </div>
+                            <div className="p-2 rounded bg-green-100">
+                              <p className="text-xs text-green-600 mb-1">
+                                Adding: {newPhotos.length} new photos
+                              </p>
+                              <div className="grid grid-cols-2 gap-1">
+                                {newPhotos
+                                  .slice(0, 4)
+                                  .map((photo: any, idx: number) => (
+                                    <img
+                                      key={idx}
+                                      src={photo.url}
+                                      alt="New"
+                                      className="w-full h-12 object-cover rounded"
+                                    />
+                                  ))}
+                              </div>
+                              {newPhotos.length > 4 && (
+                                <p className="text-xs text-green-500 mt-1">
+                                  +{newPhotos.length - 4} more
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      } catch (error) {
+                        return (
+                          <p className="text-xs text-gray-500">
+                            Unable to preview photo accumulation
+                          </p>
+                        );
+                      }
+                    })()}
+                    <div className="mt-2 p-2 rounded bg-purple-100">
+                      <p className="text-xs text-purple-700 font-medium">
+                        📸 Final Gallery:{" "}
+                        {(() => {
+                          try {
+                            const existingHighlights =
+                              existingDestination.highlights
+                                ? JSON.parse(existingDestination.highlights)
+                                : {};
+                            const existingPhotos =
+                              existingHighlights.photos || [];
+                            const newPhotos = suggestedImages || [];
+                            const uniqueNew = newPhotos.filter(
+                              (newPhoto) =>
+                                !existingPhotos.some(
+                                  (existing) => existing.url === newPhoto.url,
+                                ),
+                            );
+                            return existingPhotos.length + uniqueNew.length;
+                          } catch {
+                            return "?";
+                          }
+                        })()}{" "}
+                        total photos (visitors can scroll through all)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* General Info Merge */}
+                <div>
+                  <Label className="text-sm font-medium text-blue-700">
+                    General Information Merge
+                  </Label>
+                  <div className="mt-1 grid grid-cols-2 gap-2 text-xs">
+                    {Object.entries({
+                      "City Overview": "cityOverview",
+                      "Cultural Notes": "culturalNotes",
+                      "Practical Tips": "practicalTips",
+                      "Language Info": "languageInfo",
+                      "Safety Info": "safetyInfo",
+                      "Weather Info": "weatherInfo",
+                    }).map(([label, key]) => {
+                      const hasExisting = (() => {
+                        try {
+                          const existingHighlights =
+                            existingDestination.highlights
+                              ? JSON.parse(existingDestination.highlights)
+                              : {};
+                          return (
+                            existingHighlights.generalInfo &&
+                            existingHighlights.generalInfo[key]
+                          );
+                        } catch {
+                          return false;
+                        }
+                      })();
+                      const hasNew = generalInfo && generalInfo[key];
+
+                      return (
+                        <div key={key} className="p-2 rounded border">
+                          <p className="font-medium">{label}</p>
+                          <p
+                            className={`${hasExisting ? "text-blue-600" : "text-gray-400"}`}
+                          >
+                            Existing: {hasExisting ? "✓" : "✗"}
+                          </p>
+                          <p
+                            className={`${hasNew ? "text-green-600" : "text-gray-400"}`}
+                          >
+                            New: {hasNew ? "✓ (will update)" : "✗"}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Cost Data Recalculation */}
+                <div>
+                  <Label className="text-sm font-medium text-blue-700">
+                    💰 Cost Data Recalculation
+                  </Label>
+                  <div className="mt-1 space-y-2">
+                    <div className="p-2 rounded bg-yellow-100">
+                      <p className="text-xs text-yellow-700 mb-2 font-medium">
+                        🔄 All cost averages will be automatically recalculated
+                        from student submissions:
+                      </p>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                          <p className="font-medium text-yellow-800">
+                            Current Student:
+                          </p>
+                          <p>• Rent: €{editedData.monthlyRent}</p>
+                          <p>• Food: €{editedData.foodExpenses}</p>
+                          <p>• Transport: €{editedData.transportExpenses}</p>
+                          <p>• Total: €{editedData.totalMonthlyBudget}</p>
+                        </div>
+                        <div>
+                          <p className="font-medium text-yellow-800">
+                            Data Sources:
+                          </p>
+                          <p>• Current submission: 1</p>
+                          <p>• Other students: {relatedSubmissions.length}</p>
+                          <p>
+                            •{" "}
+                            <strong>
+                              Total contributors:{" "}
+                              {relatedSubmissions.length + 1}
+                            </strong>
+                          </p>
+                          <p>
+                            • Rating from {relatedSubmissions.length + 1}{" "}
+                            students
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-2 rounded bg-green-100">
+                      <p className="text-xs text-green-700">
+                        ✅ Visitors will see accurate averages based on real
+                        student experiences, not just this single submission
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           <div className="space-y-6">
             {/* Student Information */}
@@ -1057,9 +1515,14 @@ export default function AdminDestinations() {
                 !editedData.hostCity.trim() ||
                 !editedData.hostCountry.trim()
               }
+              className={
+                existingDestination ? "bg-blue-600 hover:bg-blue-700" : ""
+              }
             >
               <CheckCircle className="h-4 w-4 mr-2" />
-              Approve & Publish
+              {existingDestination
+                ? "Add to Existing City Data"
+                : "Create New Destination"}
             </Button>
           </DialogFooter>
         </DialogContent>

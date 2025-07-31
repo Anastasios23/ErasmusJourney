@@ -17,11 +17,64 @@ export default async function handler(
   }
 
   try {
-    // Find base destination data
-    const baseDestination = ERASMUS_DESTINATIONS.find((dest) => dest.id === id);
+    // First check if this is a database destination
+    let baseDestination = null;
+    let isDbDestination = false;
 
+    try {
+      const dbDestination = await prisma.destination.findFirst({
+        where: {
+          OR: [{ id: id }, { name: { contains: id } }],
+        },
+      });
+
+      if (dbDestination) {
+        isDbDestination = true;
+        // Parse highlights field which may contain enhanced data
+        let parsedHighlights: any = {};
+        try {
+          if (dbDestination.highlights) {
+            // Try to parse as JSON first (new format)
+            try {
+              parsedHighlights = JSON.parse(dbDestination.highlights);
+            } catch {
+              // Fallback to old string format
+              parsedHighlights = { highlights: dbDestination.highlights };
+            }
+          }
+        } catch (error) {
+          console.error("Error parsing highlights:", error);
+          parsedHighlights = { highlights: dbDestination.highlights || "" };
+        }
+
+        baseDestination = {
+          id: dbDestination.id,
+          city: dbDestination.name.split(",")[0].trim(),
+          country: dbDestination.country,
+          university: "Partner University", // Default, will be enriched from submissions
+          universityShort: "PU",
+          partnerUniversities: [],
+          language: "English/Local",
+          costOfLiving: "medium" as const,
+          averageRent: (dbDestination.costOfLiving as any)?.averageRent || 500,
+          popularWith: [],
+          imageUrl: dbDestination.imageUrl || "/placeholder.svg",
+          description: dbDestination.description || "",
+          photos: parsedHighlights.photos || [],
+          generalInfo: parsedHighlights.generalInfo || {},
+          highlights: parsedHighlights.highlights || "",
+        };
+      }
+    } catch (dbError) {
+      console.error("Error checking database destinations:", dbError);
+    }
+
+    // Fall back to static data if no database destination found
     if (!baseDestination) {
-      return res.status(404).json({ message: "Destination not found" });
+      baseDestination = ERASMUS_DESTINATIONS.find((dest) => dest.id === id);
+      if (!baseDestination) {
+        return res.status(404).json({ message: "Destination not found" });
+      }
     }
 
     // Fetch user-generated content related to this destination
@@ -30,7 +83,7 @@ export default async function handler(
     let userAccommodationTips = [];
     let userCourseMatches = [];
     let userReviews = [];
-    
+
     try {
       // Fetch form submissions related to this destination
       const submissions = await prisma.formSubmission.findMany({
@@ -39,30 +92,34 @@ export default async function handler(
         },
         orderBy: { createdAt: "desc" },
       });
-      
+
       // Filter submissions by city
       const citySubmissions = submissions.filter((submission) => {
         const data = submission.data as any;
-        return data.hostCity?.toLowerCase() === baseDestination.city.toLowerCase();
+        return (
+          data.hostCity?.toLowerCase() === baseDestination.city.toLowerCase()
+        );
       });
-      
+
       // Process submissions by type
       userStories = citySubmissions
-        .filter(sub => sub.type === "STORY")
-        .map(sub => {
+        .filter((sub) => sub.type === "STORY")
+        .map((sub) => {
           const data = sub.data as any;
           return {
             id: sub.id,
             title: sub.title,
-            excerpt: data.personalExperience?.substring(0, 150) + "..." || "Student story",
-            author: `${data.firstName || 'Anonymous'} ${data.lastName ? data.lastName.charAt(0) + '.' : ''}`,
+            excerpt:
+              data.personalExperience?.substring(0, 150) + "..." ||
+              "Student story",
+            author: `${data.firstName || "Anonymous"} ${data.lastName ? data.lastName.charAt(0) + "." : ""}`,
             createdAt: sub.createdAt.toISOString(),
           };
         });
-      
+
       userAccommodationTips = citySubmissions
-        .filter(sub => sub.type === "ACCOMMODATION")
-        .map(sub => {
+        .filter((sub) => sub.type === "ACCOMMODATION")
+        .map((sub) => {
           const data = sub.data as any;
           return {
             id: sub.id,
@@ -74,10 +131,10 @@ export default async function handler(
             createdAt: sub.createdAt.toISOString(),
           };
         });
-      
+
       userCourseMatches = citySubmissions
-        .filter(sub => sub.type === "COURSE_MATCHING")
-        .map(sub => {
+        .filter((sub) => sub.type === "COURSE_MATCHING")
+        .map((sub) => {
           const data = sub.data as any;
           return {
             id: sub.id,
@@ -87,15 +144,14 @@ export default async function handler(
             createdAt: sub.createdAt.toISOString(),
           };
         });
-      
+
       userReviews = citySubmissions
-        .filter(sub => [
-          "BASIC_INFO", 
-          "ACCOMMODATION", 
-          "COURSE_MATCHING", 
-          "STORY"
-        ].includes(sub.type))
-        .map(sub => {
+        .filter((sub) =>
+          ["BASIC_INFO", "ACCOMMODATION", "COURSE_MATCHING", "STORY"].includes(
+            sub.type,
+          ),
+        )
+        .map((sub) => {
           const data = sub.data as any;
           return {
             id: sub.id,
@@ -106,7 +162,10 @@ export default async function handler(
           };
         });
     } catch (error) {
-      console.error(`Error fetching user content for ${baseDestination.city}:`, error);
+      console.error(
+        `Error fetching user content for ${baseDestination.city}:`,
+        error,
+      );
       // Continue with empty arrays if there's an error
     }
 

@@ -44,6 +44,9 @@ import {
   ExternalLink,
   List,
   TrendingUp,
+  ImageIcon,
+  Shield,
+  Sun,
 } from "lucide-react";
 
 interface TableOfContentsProps {
@@ -347,6 +350,164 @@ export default function DestinationDetailPage() {
               </div>
             </div>
           </div>
+
+          {/* Photo Gallery Section */}
+          {(destination as any).photos &&
+            (destination as any).photos.length > 0 && (
+              <Card className="mb-8">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <ImageIcon className="h-5 w-5" />
+                    Photo Gallery
+                  </CardTitle>
+                  <p className="text-sm text-gray-600">
+                    Visual highlights of {destination.city}
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {(destination as any).photos
+                      .slice(0, 6)
+                      .map((photo: any, index: number) => (
+                        <div
+                          key={index}
+                          className="aspect-video rounded-lg overflow-hidden relative group cursor-pointer"
+                        >
+                          <Image
+                            src={photo.url}
+                            alt={
+                              photo.caption ||
+                              `${destination.city} photo ${index + 1}`
+                            }
+                            fill
+                            className="object-cover transition-transform group-hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          />
+                          {photo.caption && (
+                            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 text-sm">
+                              {photo.caption}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                  </div>
+                  {(destination as any).photos.length > 6 && (
+                    <div className="mt-4 text-center">
+                      <Button variant="outline">
+                        View All {(destination as any).photos.length} Photos
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+          {/* Enhanced Information Cards */}
+          {(destination as any).generalInfo && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              {/* City Overview */}
+              {(destination as any).generalInfo.cityOverview && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Globe className="h-5 w-5" />
+                      City Overview
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">
+                      {(destination as any).generalInfo.cityOverview}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Cultural Notes */}
+              {(destination as any).generalInfo?.culturalNotes && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Heart className="h-5 w-5" />
+                      Cultural Notes
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">
+                      {(destination as any).generalInfo.culturalNotes}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Language Information */}
+              {(destination as any).generalInfo?.languageInfo && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Globe className="h-5 w-5" />
+                      Language Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">
+                      {(destination as any).generalInfo.languageInfo}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Safety Information */}
+              {(destination as any).generalInfo?.safetyInfo && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Shield className="h-5 w-5" />
+                      Safety Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">
+                      {(destination as any).generalInfo.safetyInfo}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Weather Information */}
+              {(destination as any).generalInfo?.weatherInfo && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Sun className="h-5 w-5" />
+                      Weather & Climate
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">
+                      {(destination as any).generalInfo.weatherInfo}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Practical Tips */}
+              {(destination as any).generalInfo?.practicalTips && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <List className="h-5 w-5" />
+                      Practical Tips
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">
+                      {(destination as any).generalInfo.practicalTips}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
 
           {/* Main Content with Table of Contents */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -770,44 +931,213 @@ export default function DestinationDetailPage() {
                 </TabsContent>
 
                 <TabsContent value="costs" data-section="costs">
-                  {destination.livingCosts && (
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Living Costs Breakdown</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-4">
-                          <div className="flex justify-between items-center">
-                            <span>Accommodation</span>
-                            <span>
-                              €{destination.livingCosts.accommodation.min} - €
-                              {destination.livingCosts.accommodation.max}/month
-                            </span>
+                  <div className="space-y-6">
+                    {/* Real Student Cost Data */}
+                    {averagesData?.averages?.livingCosts && (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2">
+                            <Euro className="h-5 w-5" />
+                            Real Student Cost Data
+                          </CardTitle>
+                          <p className="text-sm text-gray-600">
+                            Based on actual expenses from{" "}
+                            {averagesData.totalSubmissions} students who studied
+                            in {destination?.city}
+                          </p>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-4">
+                            {averagesData.averages.livingCosts.rent && (
+                              <div className="flex justify-between items-center p-3 bg-blue-50 rounded">
+                                <div>
+                                  <span className="font-medium">
+                                    🏠 Accommodation
+                                  </span>
+                                  <p className="text-xs text-gray-600">
+                                    Monthly rent
+                                  </p>
+                                </div>
+                                <span className="font-bold text-lg">
+                                  €{averagesData.averages.livingCosts.rent}
+                                </span>
+                              </div>
+                            )}
+                            {averagesData.averages.livingCosts.food && (
+                              <div className="flex justify-between items-center p-3 bg-green-50 rounded">
+                                <div>
+                                  <span className="font-medium">
+                                    🍽️ Food & Groceries
+                                  </span>
+                                  <p className="text-xs text-gray-600">
+                                    Monthly food expenses
+                                  </p>
+                                </div>
+                                <span className="font-bold text-lg">
+                                  €{averagesData.averages.livingCosts.food}
+                                </span>
+                              </div>
+                            )}
+                            {averagesData.averages.livingCosts.transport && (
+                              <div className="flex justify-between items-center p-3 bg-yellow-50 rounded">
+                                <div>
+                                  <span className="font-medium">
+                                    🚇 Transportation
+                                  </span>
+                                  <p className="text-xs text-gray-600">
+                                    Monthly transport costs
+                                  </p>
+                                </div>
+                                <span className="font-bold text-lg">
+                                  €{averagesData.averages.livingCosts.transport}
+                                </span>
+                              </div>
+                            )}
+                            {averagesData.averages.livingCosts
+                              .entertainment && (
+                              <div className="flex justify-between items-center p-3 bg-purple-50 rounded">
+                                <div>
+                                  <span className="font-medium">
+                                    🎉 Entertainment
+                                  </span>
+                                  <p className="text-xs text-gray-600">
+                                    Monthly entertainment budget
+                                  </p>
+                                </div>
+                                <span className="font-bold text-lg">
+                                  €
+                                  {
+                                    averagesData.averages.livingCosts
+                                      .entertainment
+                                  }
+                                </span>
+                              </div>
+                            )}
+                            {averagesData.averages.livingCosts.total && (
+                              <div className="flex justify-between items-center p-4 bg-gray-100 rounded-lg border-2 border-gray-300">
+                                <div>
+                                  <span className="font-bold text-lg">
+                                    💸 Total Monthly Budget
+                                  </span>
+                                  <p className="text-sm text-gray-600">
+                                    Average total living expenses
+                                  </p>
+                                </div>
+                                <span className="font-bold text-2xl text-blue-600">
+                                  €{averagesData.averages.livingCosts.total}
+                                </span>
+                              </div>
+                            )}
                           </div>
-                          <div className="flex justify-between items-center">
-                            <span>Food</span>
-                            <span>
-                              €{destination.livingCosts.food.min} - €
-                              {destination.livingCosts.food.max}/month
-                            </span>
+
+                          {/* Data Source Information */}
+                          <div className="mt-6 p-3 bg-blue-100 rounded-lg">
+                            <p className="text-sm text-blue-800 font-medium mb-1">
+                              📊 Data Transparency
+                            </p>
+                            <p className="text-xs text-blue-700">
+                              These averages are calculated from real student
+                              submissions. Each new student's data automatically
+                              updates these averages, making them more accurate
+                              over time.
+                            </p>
+                            <p className="text-xs text-blue-600 mt-1">
+                              Last updated: When the most recent student shared
+                              their experience
+                            </p>
                           </div>
-                          <div className="flex justify-between items-center">
-                            <span>Transport</span>
-                            <span>
-                              €{destination.livingCosts.transport}/month
-                            </span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <span>Entertainment</span>
-                            <span>
-                              €{destination.livingCosts.entertainment.min} - €
-                              {destination.livingCosts.entertainment.max}/month
-                            </span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Fallback to static data if no real data */}
+                    {!averagesData?.averages?.livingCosts &&
+                      destination.livingCosts && (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Estimated Living Costs</CardTitle>
+                            <p className="text-sm text-gray-600">
+                              General cost estimates (will be replaced with real
+                              student data as it becomes available)
+                            </p>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center">
+                                <span>Accommodation</span>
+                                <span>
+                                  €{destination.livingCosts.accommodation.min} -
+                                  €{destination.livingCosts.accommodation.max}
+                                  /month
+                                </span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span>Food</span>
+                                <span>
+                                  €{destination.livingCosts.food.min} - €
+                                  {destination.livingCosts.food.max}/month
+                                </span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span>Transport</span>
+                                <span>
+                                  €{destination.livingCosts.transport}/month
+                                </span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span>Entertainment</span>
+                                <span>
+                                  €{destination.livingCosts.entertainment.min} -
+                                  €{destination.livingCosts.entertainment.max}
+                                  /month
+                                </span>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
+
+                    {/* Accommodation Types from Real Data */}
+                    {averagesData?.accommodationTypes &&
+                      averagesData.accommodationTypes.length > 0 && (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Student Accommodation Choices</CardTitle>
+                            <p className="text-sm text-gray-600">
+                              Where students actually stayed and what they paid
+                            </p>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-3">
+                              {averagesData.accommodationTypes.map(
+                                (accommodation, index) => (
+                                  <div
+                                    key={index}
+                                    className="flex justify-between items-center p-3 border rounded"
+                                  >
+                                    <div>
+                                      <span className="font-medium">
+                                        {accommodation.type}
+                                      </span>
+                                      <p className="text-sm text-gray-600">
+                                        {accommodation.count} student
+                                        {accommodation.count > 1 ? "s" : ""}{" "}
+                                        chose this
+                                      </p>
+                                    </div>
+                                    {accommodation.averageRent && (
+                                      <span className="font-bold">
+                                        €{accommodation.averageRent}/month
+                                      </span>
+                                    )}
+                                  </div>
+                                ),
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
+                  </div>
                 </TabsContent>
 
                 <TabsContent value="life" data-section="life">
