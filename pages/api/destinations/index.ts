@@ -52,6 +52,16 @@ export default async function handler(
       customDestinationMap.set(custom.destinationId, custom.data);
     });
 
+    // Get published destinations from admin panel
+    const publishedDestinations = await prisma.destination.findMany({
+      where: {
+        featured: true, // Only get featured/published destinations
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+
     // Aggregate destinations data
     const destinationMap = new Map();
 
@@ -199,72 +209,189 @@ export default async function handler(
     });
 
     // Convert to array and format for frontend
-    const destinations = Array.from(destinationMap.values()).map((dest) => {
-      const totalMonthlyCost = Math.round(
-        dest.avgRent + dest.avgLivingExpenses,
-      );
-      const mostCommonExpense = dest.commonBiggestExpenses
-        ? Object.entries(dest.commonBiggestExpenses).sort(
-            ([, a], [, b]) => (b as number) - (a as number),
-          )[0]?.[0]
-        : undefined;
+    const destinations = Array.from(destinationMap.values())
+      .filter((dest) => dest.city && dest.country) // Filter out invalid destinations
+      .map((dest) => {
+        const totalMonthlyCost = Math.round(
+          dest.avgRent + dest.avgLivingExpenses,
+        );
+        const mostCommonExpense = dest.commonBiggestExpenses
+          ? Object.entries(dest.commonBiggestExpenses).sort(
+              ([, a], [, b]) => (b as number) - (a as number),
+            )[0]?.[0]
+          : undefined;
 
-      // Get general city information
-      const cityInfo = getCityInfo(dest.city);
+        // Get general city information
+        const cityInfo = getCityInfo(dest.city);
 
-      // Create base destination object
-      const baseDestination = {
-        ...dest,
-        universities: Array.from(dest.universities),
-        image: `/images/destinations/${dest.city
-          .toLowerCase()
-          .replace(/\s+/g, "-")}.svg`,
-        description: `Experience ${dest.city} through the eyes of ${dest.studentCount} Erasmus student${dest.studentCount !== 1 ? "s" : ""}. ${getDestinationDescription(dest.city)}`,
-        costLevel: getCostLevel(totalMonthlyCost),
-        rating:
-          dest.avgAccommodationRating > 0
-            ? Math.round(dest.avgAccommodationRating * 10) / 10
-            : Math.round((4.2 + Math.random() * 0.6) * 10) / 10, // Fallback rating
-        avgCostPerMonth: totalMonthlyCost || Math.round(dest.avgRent),
-        popularUniversities: Array.from(dest.universities).slice(0, 3),
-        highlights: getDestinationHighlights(dest.city),
-        // General city information
-        cityInfo: cityInfo || {
-          population: "Information not available",
-          language: "Local language",
-          currency: "EUR",
-          climate: "European climate",
-          topAttractions: [],
-          practicalInfo: {
-            englishFriendly: "Moderate",
-            safetyRating: "Good",
-          },
-        },
-        // Additional insights from real data
-        dataInsights: {
-          hasAccommodationData: dest.accommodationCount > 0,
-          hasExpenseData: dest.expenseSubmissionCount > 0,
-          mostCommonBiggestExpense: mostCommonExpense,
-          avgRent: Math.round(dest.avgRent),
-          avgLivingExpenses: Math.round(dest.avgLivingExpenses),
-          accommodationRating:
+        // Create base destination object
+        const baseDestination = {
+          ...dest,
+          universities: Array.from(dest.universities),
+          image: `/images/destinations/${dest.city
+            .toLowerCase()
+            .replace(/\s+/g, "-")}.svg`,
+          description: `Experience ${dest.city} through the eyes of ${dest.studentCount} Erasmus student${dest.studentCount !== 1 ? "s" : ""}. ${getDestinationDescription(dest.city)}`,
+          costLevel: getCostLevel(totalMonthlyCost),
+          rating:
             dest.avgAccommodationRating > 0
               ? Math.round(dest.avgAccommodationRating * 10) / 10
-              : null,
-        },
-      };
+              : Math.round((4.2 + Math.random() * 0.6) * 10) / 10, // Fallback rating
+          avgCostPerMonth: totalMonthlyCost || Math.round(dest.avgRent),
+          popularUniversities: Array.from(dest.universities).slice(0, 3),
+          highlights: getDestinationHighlights(dest.city),
+          // General city information
+          cityInfo: cityInfo || {
+            population: "Information not available",
+            language: "Local language",
+            currency: "EUR",
+            climate: "European climate",
+            topAttractions: [],
+            practicalInfo: {
+              englishFriendly: "Moderate",
+              safetyRating: "Good",
+            },
+          },
+          // Additional insights from real data
+          dataInsights: {
+            hasAccommodationData: dest.accommodationCount > 0,
+            hasExpenseData: dest.expenseSubmissionCount > 0,
+            mostCommonBiggestExpense: mostCommonExpense,
+            avgRent: Math.round(dest.avgRent),
+            avgLivingExpenses: Math.round(dest.avgLivingExpenses),
+            accommodationRating:
+              dest.avgAccommodationRating > 0
+                ? Math.round(dest.avgAccommodationRating * 10) / 10
+                : null,
+          },
+        };
 
-      // Check if there's a custom override for this destination
-      const customData = customDestinationMap.get(baseDestination.id);
-      if (customData) {
-        // Merge custom data with base data
-        return { ...baseDestination, ...customData };
+        // Check if there's a custom override for this destination
+        const customData = customDestinationMap.get(baseDestination.id);
+        if (customData) {
+          // Merge custom data with base data
+          return { ...baseDestination, ...customData };
+        }
+
+        return baseDestination;
+      });
+
+    // Add published destinations from admin panel
+    const publishedDestinationsFormatted = await Promise.all(
+      publishedDestinations.map(async (dest) => {
+        // Extract city from name (format: "City, Country")
+        const [city, country] = dest.name.split(",").map((s) => s.trim());
+
+        // Get form submissions for this city to calculate student count and rating
+        const citySubmissions = basicInfoSubmissions.filter((sub) => {
+          const data = sub.data as any;
+          return data.hostCity?.toLowerCase() === city?.toLowerCase();
+        });
+
+        // Get accommodation and expense data for cost calculation
+        const cityAccommodations = accommodationSubmissions.filter((sub) => {
+          const data = sub.data as any;
+          return data.city?.toLowerCase() === city?.toLowerCase();
+        });
+
+        const cityExpenses = expenseSubmissions.filter((sub) => {
+          const data = sub.data as any;
+          return data.city?.toLowerCase() === city?.toLowerCase();
+        });
+
+        // Calculate average costs
+        const avgRent =
+          cityAccommodations.length > 0
+            ? cityAccommodations.reduce((sum, sub) => {
+                const rent = parseFloat((sub.data as any).monthlyRent || "0");
+                return sum + (isNaN(rent) ? 0 : rent);
+              }, 0) / cityAccommodations.length
+            : 500; // Default value
+
+        const avgExpenses =
+          cityExpenses.length > 0
+            ? cityExpenses.reduce((sum, sub) => {
+                const expenses = parseFloat(
+                  (sub.data as any).totalMonthlyBudget || "0",
+                );
+                return sum + (isNaN(expenses) ? 0 : expenses);
+              }, 0) / cityExpenses.length
+            : 300; // Default value
+
+        const totalMonthlyCost = Math.round(avgRent + avgExpenses);
+
+        // Calculate average rating from form submissions
+        const ratings = citySubmissions
+          .map((sub) => (sub.data as any)?.overallRating)
+          .filter((rating) => rating !== undefined && rating !== null);
+
+        const avgRating =
+          ratings.length > 0
+            ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
+            : 4.2; // Default rating
+
+        return {
+          id: dest.id,
+          city: city || dest.name,
+          country: country || dest.country,
+          universities: [], // Will be populated from submissions if available
+          studentCount: citySubmissions.length,
+          experiences: [],
+          accommodationCount: cityAccommodations.length,
+          avgRent,
+          avgLivingExpenses: avgExpenses,
+          avgAccommodationRating: avgRating,
+          expenseSubmissionCount: cityExpenses.length,
+          commonBiggestExpenses: {},
+          image:
+            dest.imageUrl ||
+            `/images/destinations/${city?.toLowerCase().replace(/\s+/g, "-")}.svg`,
+          description:
+            dest.description || getDestinationDescription(city || dest.name),
+          costLevel: getCostLevel(totalMonthlyCost),
+          rating: Math.round(avgRating * 10) / 10,
+          avgCostPerMonth: totalMonthlyCost,
+          popularUniversities: citySubmissions
+            .slice(0, 3)
+            .map((sub) => (sub.data as any).hostUniversity)
+            .filter(Boolean),
+          highlights: dest.highlights
+            ? dest.highlights.split(",").map((h) => h.trim())
+            : getDestinationHighlights(city || dest.name),
+          cityInfo: getCityInfo(city || dest.name) || {
+            population: "Information not available",
+            language: "Local language",
+            currency: "EUR",
+            climate: dest.climate || "European climate",
+            topAttractions: [],
+            practicalInfo: {},
+          },
+          isAdminDestination: true, // Flag to identify admin-created destinations
+        };
+      }),
+    );
+
+    // Combine form-based destinations with admin-published destinations
+    // Remove duplicates by city name (admin destinations take precedence)
+    const allDestinations = [...destinations];
+
+    publishedDestinationsFormatted.forEach((adminDest) => {
+      const existingIndex = allDestinations.findIndex(
+        (dest) =>
+          dest.city?.toLowerCase() === adminDest.city?.toLowerCase() &&
+          dest.country?.toLowerCase() === adminDest.country?.toLowerCase(),
+      );
+
+      if (existingIndex >= 0) {
+        // Replace existing with admin version (admin takes precedence)
+        allDestinations[existingIndex] = adminDest;
+      } else {
+        // Add new admin destination
+        allDestinations.push(adminDest);
       }
-
-      return baseDestination;
     });
 
-    res.status(200).json({ destinations });
+    res.status(200).json({ destinations: allDestinations });
   } catch (error) {
     console.error("Error fetching destinations:", error);
     res.status(500).json({ message: "Internal server error" });

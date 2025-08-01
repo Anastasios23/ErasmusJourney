@@ -1,4 +1,4 @@
-import { Destination, StudentTestimonial } from "./destinations";
+import { ErasmusDestination, StudentTestimonial } from "./destinations";
 import {
   UniversityAgreement,
   ALL_UNIVERSITY_AGREEMENTS,
@@ -7,7 +7,7 @@ import {
   getPartnerCountries,
 } from "./universityAgreements";
 
-export interface EnhancedDestination extends Destination {
+export interface EnhancedDestination extends ErasmusDestination {
   cyprusUniversityPartnerships: {
     universityCode: string;
     universityName: string;

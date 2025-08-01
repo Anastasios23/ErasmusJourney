@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Header from "../../components/Header";
+import InteractiveCostCalculator from "../../src/components/InteractiveCostCalculator";
+import StudentReviews from "../../src/components/StudentReviews";
 import {
   useDestination,
   useDestinationAverages,
@@ -519,12 +521,13 @@ export default function DestinationDetailPage() {
             {/* Main Content */}
             <div className="lg:col-span-3 order-1 lg:order-2">
               <Tabs defaultValue="overview" className="w-full">
-                <TabsList className="grid w-full grid-cols-6 mb-6">
+                <TabsList className="grid w-full grid-cols-7 mb-6">
                   <TabsTrigger value="overview">Overview</TabsTrigger>
                   <TabsTrigger value="universities">Universities</TabsTrigger>
                   <TabsTrigger value="student-data">Student Data</TabsTrigger>
                   <TabsTrigger value="costs">Living Costs</TabsTrigger>
                   <TabsTrigger value="life">Student Life</TabsTrigger>
+                  <TabsTrigger value="reviews">Reviews</TabsTrigger>
                   <TabsTrigger value="practical">Practical Info</TabsTrigger>
                 </TabsList>
 
@@ -1050,6 +1053,25 @@ export default function DestinationDetailPage() {
                       </Card>
                     )}
 
+                    {/* Interactive Cost Calculator */}
+                    <InteractiveCostCalculator
+                      baseData={{
+                        averageRent:
+                          averagesData?.averages?.livingCosts?.rent ||
+                          destination?.averageRent ||
+                          400,
+                        averageFood:
+                          averagesData?.averages?.livingCosts?.food || 300,
+                        averageTransport:
+                          averagesData?.averages?.livingCosts?.transport || 50,
+                        averageTotal:
+                          averagesData?.averages?.livingCosts?.total || 750,
+                        studentCount: averagesData?.totalSubmissions || 0,
+                      }}
+                      city={destination?.city || "this city"}
+                      country={destination?.country || "this country"}
+                    />
+
                     {/* Fallback to static data if no real data */}
                     {!averagesData?.averages?.livingCosts &&
                       destination.livingCosts && (
@@ -1121,7 +1143,9 @@ export default function DestinationDetailPage() {
                                       </span>
                                       <p className="text-sm text-gray-600">
                                         {accommodation.count} student
-                                        {accommodation.count > 1 ? "s" : ""}{" "}
+                                        {accommodation.count > 1
+                                          ? "s"
+                                          : ""}{" "}
                                         chose this
                                       </p>
                                     </div>
@@ -1181,6 +1205,14 @@ export default function DestinationDetailPage() {
                       </CardContent>
                     </Card>
                   )}
+                </TabsContent>
+
+                <TabsContent value="reviews" data-section="reviews">
+                  <StudentReviews
+                    destinationId={id as string}
+                    city={destination?.city || ""}
+                    country={destination?.country || ""}
+                  />
                 </TabsContent>
 
                 <TabsContent value="practical" data-section="practical">

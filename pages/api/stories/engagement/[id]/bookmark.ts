@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "../../../../lib/prisma";
+import { prisma } from "../../../../../lib/prisma";
 import { getSession } from "next-auth/react";
 
 export default async function handler(
@@ -26,7 +26,7 @@ export default async function handler(
 
   try {
     // Find or create engagement record
-    const existingEngagement = await prisma.storyEngagement.findFirst({
+    const existingEngagement = await prisma.engagement.findFirst({
       where: {
         storyId,
         userId,
@@ -35,7 +35,7 @@ export default async function handler(
 
     if (existingEngagement) {
       // Toggle bookmark status
-      const updatedEngagement = await prisma.storyEngagement.update({
+      const updatedEngagement = await prisma.engagement.update({
         where: { id: existingEngagement.id },
         data: {
           bookmarked: !existingEngagement.bookmarked,
@@ -49,7 +49,7 @@ export default async function handler(
       });
     } else {
       // Create new engagement with bookmark
-      const newEngagement = await prisma.storyEngagement.create({
+      const newEngagement = await prisma.engagement.create({
         data: {
           storyId,
           userId,

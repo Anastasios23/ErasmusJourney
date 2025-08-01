@@ -165,6 +165,9 @@ export default function Destinations() {
               dest.cityInfo.topAttractions.length > 0,
           );
           break;
+        case "admin-verified":
+          results = results.filter((dest) => dest.isAdminDestination);
+          break;
       }
     }
 
@@ -264,6 +267,9 @@ export default function Destinations() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all-data">All Destinations</SelectItem>
+                      <SelectItem value="admin-verified">
+                        ✓ Admin Verified
+                      </SelectItem>
                       <SelectItem value="with-cost-data">
                         With Real Cost Data
                       </SelectItem>
@@ -317,7 +323,9 @@ export default function Destinations() {
                               ? "Popular (10+ students)"
                               : selectedDataFilter === "complete-info"
                                 ? "Complete city info"
-                                : selectedDataFilter}
+                                : selectedDataFilter === "admin-verified"
+                                  ? "✓ Admin verified"
+                                  : selectedDataFilter}
                         </Badge>
                       )}
                     </div>
@@ -479,13 +487,23 @@ export default function Destinations() {
                                 {destination.country}
                               </p>
                             </div>
-                            <Badge
-                              className={getCostBadgeColor(
-                                destination.costLevel,
+                            <div className="flex flex-col gap-2">
+                              <Badge
+                                className={getCostBadgeColor(
+                                  destination.costLevel,
+                                )}
+                              >
+                                {destination.costLevel} cost
+                              </Badge>
+                              {destination.isAdminDestination && (
+                                <Badge
+                                  variant="outline"
+                                  className="bg-blue-50 text-blue-700 border-blue-200"
+                                >
+                                  ✓ Verified
+                                </Badge>
                               )}
-                            >
-                              {destination.costLevel} cost
-                            </Badge>
+                            </div>
                           </div>
                         </CardHeader>
                         <CardContent>

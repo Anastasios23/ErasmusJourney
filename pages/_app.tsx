@@ -6,6 +6,7 @@ import { Toaster as Sonner } from "../src/components/ui/sonner";
 import { TooltipProvider } from "../src/components/ui/tooltip";
 import { NotificationProvider } from "../src/context/NotificationContext";
 import { FormProgressProvider } from "../src/context/FormProgressContext";
+import { ToastProvider } from "../src/components/ToastProvider";
 import ErrorBoundary from "../src/components/ErrorBoundary";
 import HMRErrorHandler from "../src/components/HMRErrorHandler";
 import EnhancedOfflineIndicator from "../src/components/EnhancedOfflineIndicator";
@@ -52,17 +53,19 @@ export default function App({
         refetchWhenOffline={false} // Don't refetch when offline
       >
         <QueryClientProvider client={queryClient}>
-          <NotificationProvider>
-            <TooltipProvider>
-              <FormProgressProvider>
-                <HMRErrorHandler />
-                <EnhancedOfflineIndicator />
-                <Toaster />
-                <Sonner />
-                <Component {...pageProps} />
-              </FormProgressProvider>
-            </TooltipProvider>
-          </NotificationProvider>
+          <ToastProvider>
+            <NotificationProvider>
+              <TooltipProvider>
+                <FormProgressProvider>
+                  <HMRErrorHandler />
+                  <EnhancedOfflineIndicator />
+                  <Toaster />
+                  <Sonner />
+                  <Component {...pageProps} />
+                </FormProgressProvider>
+              </TooltipProvider>
+            </NotificationProvider>
+          </ToastProvider>
         </QueryClientProvider>
       </SessionProvider>
     </ErrorBoundary>

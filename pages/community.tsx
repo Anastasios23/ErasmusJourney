@@ -147,7 +147,7 @@ export default function Community() {
                   (agreement: any) => agreement.partnerUniversity.name,
                 ),
               ),
-            ].sort();
+            ].sort() as string[];
 
             // Extract unique countries and cities
             const uniqueCountries = [
@@ -156,13 +156,13 @@ export default function Community() {
                   (agreement: any) => agreement.partnerCountry,
                 ),
               ),
-            ].sort();
+            ].sort() as string[];
 
             const uniqueCities = [
               ...new Set(
                 data.agreements.map((agreement: any) => agreement.partnerCity),
               ),
-            ].sort();
+            ].sort() as string[];
 
             setAvailableHostUniversities(uniqueHostUniversities);
             setAvailableCountries(uniqueCountries);
@@ -349,7 +349,8 @@ export default function Community() {
       const matchesDepartmentInCyprus =
         !departmentInCyprus ||
         departmentInCyprus === "all" ||
-        (mentor.studyProgram && mentor.studyProgram.includes(departmentInCyprus)) ||
+        (mentor.studyProgram &&
+          mentor.studyProgram.includes(departmentInCyprus)) ||
         (mentor.specializations || []).some(
           (spec) =>
             spec.toLowerCase().includes(departmentInCyprus.toLowerCase()) ||
@@ -363,17 +364,20 @@ export default function Community() {
 
       const matchesHostUniversity =
         !hostUniversity ||
-        (mentor.hostUniversity && mentor.hostUniversity
-          .toLowerCase()
-          .includes(hostUniversity.toLowerCase()));
+        (mentor.hostUniversity &&
+          mentor.hostUniversity
+            .toLowerCase()
+            .includes(hostUniversity.toLowerCase()));
 
       const matchesHostCountry =
         !hostCountry ||
-        (mentor.hostCountry && mentor.hostCountry.toLowerCase().includes(hostCountry.toLowerCase()));
+        (mentor.hostCountry &&
+          mentor.hostCountry.toLowerCase().includes(hostCountry.toLowerCase()));
 
       const matchesHostCity =
         !hostCity ||
-        (mentor.hostCity && mentor.hostCity.toLowerCase().includes(hostCity.toLowerCase()));
+        (mentor.hostCity &&
+          mentor.hostCity.toLowerCase().includes(hostCity.toLowerCase()));
 
       return (
         matchesUniversityInCyprus &&
@@ -912,15 +916,17 @@ export default function Community() {
 
                         {/* Specializations */}
                         <div className="flex flex-wrap gap-1">
-                          {(mentor.specializations || []).slice(0, 3).map((spec) => (
-                            <Badge
-                              key={spec}
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              {spec}
-                            </Badge>
-                          ))}
+                          {(mentor.specializations || [])
+                            .slice(0, 3)
+                            .map((spec) => (
+                              <Badge
+                                key={spec}
+                                variant="outline"
+                                className="text-xs"
+                              >
+                                {spec}
+                              </Badge>
+                            ))}
                           {(mentor.specializations || []).length > 3 && (
                             <Badge variant="outline" className="text-xs">
                               +{(mentor.specializations || []).length - 3} more
@@ -932,8 +938,10 @@ export default function Community() {
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <Languages className="h-4 w-4 text-orange-500" />
                           <span className="truncate">
-                            {(mentor.languagesSpoken || mentor.languages || []).slice(0, 3).join(", ") || "Not specified"}
-                            {(mentor.languagesSpoken || mentor.languages || []).length > 3 && "..."}
+                            {(mentor.languagesSpoken || [])
+                              .slice(0, 3)
+                              .join(", ") || "Not specified"}
+                            {(mentor.languagesSpoken || []).length > 3 && "..."}
                           </span>
                         </div>
 
@@ -941,7 +949,11 @@ export default function Community() {
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <Clock className="h-4 w-4 text-indigo-500" />
                           <span>
-                            Responds {(mentor.responseTime || "within-week").replace("-", " ")}
+                            Responds{" "}
+                            {(mentor.responseTime || "within-week").replace(
+                              "-",
+                              " ",
+                            )}
                           </span>
                         </div>
 
@@ -973,50 +985,54 @@ export default function Community() {
 
                               {/* Additional contact methods */}
                               <div className="flex justify-center gap-2">
-                                {mentor.contactInfo && mentor.contactInfo.instagram && (
-                                  <Button variant="outline" size="sm" asChild>
-                                    <a
-                                      href={`https://instagram.com/${mentor.contactInfo.instagram}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
-                                      <Instagram className="h-4 w-4" />
-                                    </a>
-                                  </Button>
-                                )}
-                                {mentor.contactInfo && mentor.contactInfo.linkedin && (
-                                  <Button variant="outline" size="sm" asChild>
-                                    <a
-                                      href={mentor.contactInfo.linkedin}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
-                                      <Linkedin className="h-4 w-4" />
-                                    </a>
-                                  </Button>
-                                )}
-                                {mentor.contactInfo && mentor.contactInfo.facebook && (
-                                  <Button variant="outline" size="sm" asChild>
-                                    <a
-                                      href={mentor.contactInfo.facebook}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
-                                      <Facebook className="h-4 w-4" />
-                                    </a>
-                                  </Button>
-                                )}
-                                {mentor.contactInfo && mentor.contactInfo.website && (
-                                  <Button variant="outline" size="sm" asChild>
-                                    <a
-                                      href={mentor.contactInfo.website}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
-                                      <Globe className="h-4 w-4" />
-                                    </a>
-                                  </Button>
-                                )}
+                                {mentor.contactInfo &&
+                                  mentor.contactInfo.instagram && (
+                                    <Button variant="outline" size="sm" asChild>
+                                      <a
+                                        href={`https://instagram.com/${mentor.contactInfo.instagram}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                      >
+                                        <Instagram className="h-4 w-4" />
+                                      </a>
+                                    </Button>
+                                  )}
+                                {mentor.contactInfo &&
+                                  mentor.contactInfo.linkedin && (
+                                    <Button variant="outline" size="sm" asChild>
+                                      <a
+                                        href={mentor.contactInfo.linkedin}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                      >
+                                        <Linkedin className="h-4 w-4" />
+                                      </a>
+                                    </Button>
+                                  )}
+                                {mentor.contactInfo &&
+                                  mentor.contactInfo.facebook && (
+                                    <Button variant="outline" size="sm" asChild>
+                                      <a
+                                        href={mentor.contactInfo.facebook}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                      >
+                                        <Facebook className="h-4 w-4" />
+                                      </a>
+                                    </Button>
+                                  )}
+                                {mentor.contactInfo &&
+                                  mentor.contactInfo.website && (
+                                    <Button variant="outline" size="sm" asChild>
+                                      <a
+                                        href={mentor.contactInfo.website}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                      >
+                                        <Globe className="h-4 w-4" />
+                                      </a>
+                                    </Button>
+                                  )}
                               </div>
                             </div>
                           ) : (
