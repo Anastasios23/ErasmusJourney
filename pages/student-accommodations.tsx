@@ -519,7 +519,7 @@ export default function StudentAccommodations() {
               {activeSection === "experiences" && (
                 <>
                   {/* Student Accommodation Experiences */}
-                  {!realAccommodationsLoading && filteredRealAccommodations.length > 0 && (
+                  {!isLoading && accommodations.length > 0 && (
                     <section className="mb-12">
                       <div className="flex items-center justify-between mb-6">
                         <div>
@@ -534,13 +534,13 @@ export default function StudentAccommodations() {
                           variant="outline"
                           className="text-blue-600 border-blue-600"
                         >
-                          {filteredRealAccommodations.length} Experience
-                          {filteredRealAccommodations.length === 1 ? "" : "s"}
+                          {accommodations.length} Experience
+                          {accommodations.length === 1 ? "" : "s"}
                         </Badge>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredRealAccommodations.map((accommodation) => (
+                        {accommodations.map((accommodation) => (
                           <AccommodationExperienceCard
                             key={accommodation.id}
                             accommodation={{
