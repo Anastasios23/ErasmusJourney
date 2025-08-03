@@ -655,6 +655,18 @@ export async function aggregateCityData(
         types: [],
         totalAccommodationSubmissions: 0,
       },
+      courseMatching: {
+        avgDifficulty: 0,
+        difficultyBreakdown: {},
+        avgCoursesMatched: 0,
+        avgCreditsTransferred: 0,
+        successRate: 0,
+        recommendationRate: 0,
+        totalCourseMatchingSubmissions: 0,
+        commonChallenges: [],
+        topAdvice: [],
+        departmentInsights: [],
+      },
       recommendations: {
         wouldRecommendCount: 0,
         totalRecommendationResponses: 0,
