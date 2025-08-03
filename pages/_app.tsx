@@ -31,16 +31,11 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   useEffect(() => {
-    // Temporarily disabled API call monitoring to debug body stream issues
-    // if (process.env.NODE_ENV === "development") {
-    //   setupApiCallMonitoring();
-    // }
+    // Completely disable all fetch monitoring to prevent conflicts with analytics tools
+    // This prevents interference from FullStory, HMR, and other monitoring tools
 
     return () => {
-      // Cleanup when component unmounts
-      // if (process.env.NODE_ENV === "development") {
-      //   restoreOriginalFetch();
-      // }
+      // No cleanup needed since we're not setting up any monitoring
     };
   }, []);
 
