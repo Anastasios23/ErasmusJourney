@@ -21,13 +21,17 @@ export default async function handler(
   const userEmail = session?.user?.email;
 
   try {
-    // Increment view count for the story
-    await prisma.story.update({
+    // Check if this is a FormSubmission ID, not a Story ID
+    const formSubmission = await prisma.formSubmission.findUnique({
       where: { id: storyId },
-      data: {
-        views: { increment: 1 },
-      },
     });
+
+    if (!formSubmission) {
+      return res.status(404).json({ error: "Story not found" });
+    }
+
+    // For FormSubmission stories, we'll skip incrementing views since they don't have a views field
+    // This prevents the database error
 
     // If user is authenticated, track their view engagement
     if (userEmail) {
