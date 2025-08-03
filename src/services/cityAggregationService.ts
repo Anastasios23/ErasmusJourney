@@ -885,6 +885,135 @@ export async function aggregateCityData(
       };
     }
 
+    // Aggregate course matching data
+    if (courseMatchingSubmissions.length > 0) {
+      const difficultyMap: Record<string, number> = {
+        "Very Easy": 1,
+        "Easy": 2,
+        "Moderate": 3,
+        "Difficult": 4,
+        "Very Difficult": 5,
+      };
+
+      let totalDifficulty = 0;
+      let totalCoursesMatched = 0;
+      let totalCreditsTransferred = 0;
+      let creditsTransferredCount = 0;
+      let courseRecommendationCount = 0;
+      const challenges: string[] = [];
+      const advice: string[] = [];
+      const difficultyBreakdown: Record<string, number> = {};
+      const departmentData = new Map<string, {
+        count: number;
+        totalDifficulty: number;
+        totalSuccess: number;
+        successCount: number;
+      }>();
+
+      courseMatchingSubmissions.forEach((submission) => {
+        const data = submission.data as any;
+
+        // Difficulty aggregation
+        const difficulty = difficultyMap[data.courseMatchingDifficult] || 3;
+        totalDifficulty += difficulty;
+
+        // Track difficulty breakdown
+        const difficultyLabel = data.courseMatchingDifficult || "Moderate";
+        difficultyBreakdown[difficultyLabel] = (difficultyBreakdown[difficultyLabel] || 0) + 1;
+
+        // Courses matched
+        if (data.homeCourseCount) {
+          totalCoursesMatched += data.homeCourseCount;
+        }
+
+        // Credits transferred
+        if (data.creditsTransferredSuccessfully && data.totalCreditsAttempted) {
+          const successRate = (data.creditsTransferredSuccessfully / data.totalCreditsAttempted) * 100;
+          totalCreditsTransferred += successRate;
+          creditsTransferredCount++;
+        }
+
+        // Course recommendations
+        if (data.recommendCourses === "Yes") {
+          courseRecommendationCount++;
+        }
+
+        // Collect challenges and advice
+        if (data.courseMatchingChallenges) {
+          challenges.push(data.courseMatchingChallenges);
+        }
+        if (data.biggestCourseChallenge) {
+          challenges.push(data.biggestCourseChallenge);
+        }
+        if (data.academicAdviceForFuture) {
+          advice.push(data.academicAdviceForFuture);
+        }
+        if (data.courseSelectionTips) {
+          advice.push(data.courseSelectionTips);
+        }
+
+        // Department insights
+        const dept = data.hostDepartment;
+        if (dept) {
+          if (!departmentData.has(dept)) {
+            departmentData.set(dept, {
+              count: 0,
+              totalDifficulty: 0,
+              totalSuccess: 0,
+              successCount: 0,
+            });
+          }
+          const deptData = departmentData.get(dept)!;
+          deptData.count++;
+          deptData.totalDifficulty += difficulty;
+
+          if (data.creditsTransferredSuccessfully && data.totalCreditsAttempted) {
+            deptData.totalSuccess += (data.creditsTransferredSuccessfully / data.totalCreditsAttempted) * 100;
+            deptData.successCount++;
+          }
+        }
+      });
+
+      // Process common challenges and advice (extract most frequent/useful ones)
+      const commonChallenges = challenges
+        .filter(challenge => challenge.length > 20)
+        .slice(0, 3);
+
+      const topAdvice = advice
+        .filter(tip => tip.length > 20)
+        .slice(0, 3);
+
+      // Calculate department insights
+      const departmentInsights = Array.from(departmentData.entries())
+        .map(([department, data]) => ({
+          department,
+          studentCount: data.count,
+          avgDifficulty: Math.round((data.totalDifficulty / data.count) * 10) / 10,
+          avgSuccess: data.successCount > 0
+            ? Math.round((data.totalSuccess / data.successCount) * 10) / 10
+            : 0,
+        }))
+        .sort((a, b) => b.studentCount - a.studentCount)
+        .slice(0, 5);
+
+      aggregated.courseMatching = {
+        avgDifficulty: Math.round((totalDifficulty / courseMatchingSubmissions.length) * 10) / 10,
+        difficultyBreakdown,
+        avgCoursesMatched: Math.round((totalCoursesMatched / courseMatchingSubmissions.length) * 10) / 10,
+        avgCreditsTransferred: creditsTransferredCount > 0
+          ? Math.round((totalCreditsTransferred / creditsTransferredCount) * 10) / 10
+          : 0,
+        successRate: creditsTransferredCount > 0
+          ? Math.round((totalCreditsTransferred / creditsTransferredCount) * 10) / 10
+          : 0,
+        recommendationRate: Math.round((courseRecommendationCount / courseMatchingSubmissions.length) * 100),
+        totalCourseMatchingSubmissions: courseMatchingSubmissions.length,
+        commonChallenges,
+        topAdvice,
+        departmentInsights,
+      };
+    }
+
     // Calculate recommendation percentage from multiple sources
     let recommendCount = 0;
     let totalRecommendationResponses = 0;
