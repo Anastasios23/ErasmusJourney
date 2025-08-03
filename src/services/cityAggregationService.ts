@@ -1093,9 +1093,14 @@ export async function aggregateCityData(
         "socialTips",
         "culturalTips",
         "travelTips",
-        "academicTips",
+        "academicTips", // Now includes course matching advice
         "practicalTips",
         "adviceForFutureStudents",
+        // Course matching specific fields from linked submissions
+        "academicAdviceForFuture",
+        "courseSelectionTips",
+        "academicPreparationAdvice",
+        "bestCoursesRecommendation",
         // Legacy and other fields
         "budgetTips",
         "transportationTips",
