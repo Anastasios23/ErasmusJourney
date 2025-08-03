@@ -285,33 +285,30 @@ export const experienceStorySchema = z.object({
   personalWebsite: z.string().url().optional().or(z.literal("")),
   phoneNumber: z.string().optional(),
 });
-  monthlyIncomeAmount: z.coerce
-    .number()
-    .min(0, "Income amount must be positive")
-    .optional(),
 
-  // Budget Analysis
-  biggestExpense: z.string().optional(),
-  unexpectedCosts: z.string().optional(),
-  budgetTips: z.string().optional(),
-
-  // Money Management
-  moneyManagementTools: z.string().optional(),
-  currencyExchangeTips: z.string().optional(),
-
-  // Cost-saving Tips
-  cheapGroceryPlaces: z.string().optional(),
-  cheapEatingPlaces: z.string().optional(),
-  transportationTips: z.string().optional(),
-  overallBudgetAdvice: z.string().optional(),
-
-  // Spending Habits
-  spendingHabit: z
-    .enum(["Conservative", "Moderate", "Liberal"], {
-      required_error: "Spending habit is required",
-    })
-    .optional(),
-});
+// Validation function for all form types
+export function validateFormData(type: string, data: any) {
+  switch (type) {
+    case "experience":
+    case "EXPERIENCE":
+      return experienceStorySchema.parse(data);
+    case "basic-info":
+    case "BASIC_INFO":
+      return basicInformationSchema.parse(data);
+    case "accommodation":
+    case "ACCOMMODATION":
+      return enhancedAccommodationSchema.parse(data);
+    case "living-expenses":
+    case "LIVING_EXPENSES":
+      return enhancedLivingExpensesSchema.parse(data);
+    case "course-matching":
+    case "COURSE_MATCHING":
+      return courseMatchingSchema.parse(data);
+    default:
+      // For unknown types, just return the data as-is
+      return data;
+  }
+}
 
 // Enhanced Accommodation Schema - Housing details and recommendations
 export const enhancedAccommodationSchema = z.object({
