@@ -107,13 +107,20 @@ export default function Destinations() {
     const fetchDestinations = async () => {
       try {
         setIsLoading(true);
+        console.log("Fetching destinations from /api/destinations");
         const response = await fetch("/api/destinations");
 
+        console.log("Response status:", response.status);
+        console.log("Response headers:", response.headers);
+
         if (!response.ok) {
-          throw new Error("Failed to fetch destinations");
+          const errorText = await response.text();
+          console.error("API Error Response:", errorText);
+          throw new Error(`Failed to fetch destinations: ${response.status} - ${errorText}`);
         }
 
         const data = await response.json();
+        console.log("Destinations data received:", data);
 
         // Transform API data to match component expectations
         const transformedDestinations = data.destinations.map((dest: any) => ({
