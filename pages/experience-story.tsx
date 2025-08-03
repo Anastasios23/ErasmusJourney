@@ -136,9 +136,9 @@ const tipCategories = [
   },
   {
     key: "academicTips",
-    label: "Academic Success Tips",
+    label: "Academic Success Tips & Course Matching",
     placeholder:
-      "Study strategies, professor relationships, exam preparation...",
+      "Study strategies, professor relationships, course selection advice, credit transfer tips, best courses to take, courses to avoid, academic preparation advice...",
   },
   {
     key: "practicalTips",
