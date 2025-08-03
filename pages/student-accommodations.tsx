@@ -212,41 +212,22 @@ export default function StudentAccommodations() {
     }
   }, []); // Remove getDraftData dependency to prevent infinite loop
 
-  // Fetch real accommodation experiences with filtering
+  // Fetch accommodation statistics for destination insights
   useEffect(() => {
-    const fetchRealAccommodations = async () => {
-      setRealAccommodationsLoading(true);
+    const fetchAccommodationStats = async () => {
       try {
-        const queryParams = new URLSearchParams();
-        if (filters.city) queryParams.append('city', filters.city);
-        if (filters.country) queryParams.append('country', filters.country);
-        if (filters.type) queryParams.append('accommodationType', filters.type);
-
-        const response = await fetch(`/api/student-accommodations?${queryParams.toString()}`);
+        const response = await fetch('/api/student-accommodations/stats');
         if (response.ok) {
           const data = await response.json();
-          setRealAccommodations(data.accommodations || []);
           setAccommodationStats(data.destinationStats || null);
         }
       } catch (error) {
-        console.error("Error fetching real accommodations:", error);
-      } finally {
-        setRealAccommodationsLoading(false);
+        console.error("Error fetching accommodation stats:", error);
       }
     };
 
-    fetchRealAccommodations();
-  }, [filters]);
-
-  // Filter real accommodations based on search and filters
-  const filteredRealAccommodations = useMemo(() => {
-    let filtered = realAccommodations;
-
-    // Apply search filter
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      filtered = filtered.filter(acc =>
-        acc.city?.toLowerCase().includes(searchLower) ||
+    fetchAccommodationStats();
+  }, []);
         acc.country?.toLowerCase().includes(searchLower) ||
         acc.university?.toLowerCase().includes(searchLower) ||
         acc.accommodationType?.toLowerCase().includes(searchLower) ||
