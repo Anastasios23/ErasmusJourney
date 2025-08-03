@@ -5,6 +5,7 @@ import {
   validateStudentStoriesResponse,
   LoadingState,
 } from "../types/studentStories";
+import { safeFetch } from "../utils/safeFetch";
 
 export interface Story {
   id: string;
@@ -82,7 +83,7 @@ export function useStories() {
     try {
       setLoadingState((prev) => ({ ...prev, isLoading: true, error: null }));
 
-      const response = await fetch("/api/student-stories");
+      const response = await safeFetch("/api/student-stories");
 
       if (!response.ok) {
         throw new StudentStoryError(
@@ -152,7 +153,7 @@ export function useStory(id: string | undefined) {
       try {
         setLoadingState((prev) => ({ ...prev, isLoading: true, error: null }));
 
-        const response = await fetch(`/api/student-stories/${id}`);
+        const response = await safeFetch(`/api/student-stories/${id}`);
 
         if (!response.ok) {
           if (response.status === 404) {
