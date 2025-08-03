@@ -409,7 +409,16 @@ export default function DestinationDetailPage() {
                   )}
                 </CardContent>
               </Card>
-            )}
+              )}
+
+          {/* Student Data Overview Section */}
+          <div id="student-data" data-section="student-data" className="mb-8">
+            <StudentDataOverview
+              city={destination.city}
+              country={destination.country}
+              className="mb-8"
+            />
+          </div>
 
           {/* Enhanced Information Cards */}
           {(destination as any).generalInfo && (
