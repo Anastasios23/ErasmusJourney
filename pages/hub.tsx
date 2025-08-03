@@ -80,6 +80,14 @@ export default function HubPage({ stats }: HubPageProps) {
       stats: "Verified listings",
     },
     {
+      title: "Course Matching",
+      description: "Learn from student academic experiences",
+      icon: BookOpen,
+      href: "/course-matching-experiences",
+      color: "bg-blue-500",
+      stats: "Academic insights",
+    },
+    {
       title: "University Exchanges",
       description: "Explore partnership agreements",
       icon: Globe,
