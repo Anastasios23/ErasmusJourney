@@ -10,23 +10,35 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { city, country } = req.query;
+  const { id, country } = req.query;
 
-  if (!city || typeof city !== "string") {
-    return res.status(400).json({ error: "City parameter is required" });
+  if (!id || typeof id !== "string") {
+    return res.status(400).json({ error: "Destination ID parameter is required" });
   }
 
   try {
-    const countryParam = country && typeof country === "string" ? country : "";
+    // Parse the destination ID to extract city and country
+    // Format expected: "paris-france" or similar
+    const parts = id.split('-');
+    const city = parts[0] ? parts[0].charAt(0).toUpperCase() + parts[0].slice(1) : "";
+    const countryFromId = parts[1] ? parts[1].charAt(0).toUpperCase() + parts[1].slice(1) : "";
+
+    // Use query parameter country if provided, otherwise use parsed country
+    const countryParam = (country && typeof country === "string") ? country : countryFromId;
+
+    if (!city) {
+      return res.status(400).json({ error: "Invalid destination ID format" });
+    }
+
     const insights = await getCourseMatchingInsights(city, countryParam);
-    
+
     if (!insights) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: "No course matching data found for this destination" 
+        message: "No course matching data found for this destination"
       });
     }
-    
+
     res.status(200).json({
       success: true,
       insights,
