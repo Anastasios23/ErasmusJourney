@@ -312,7 +312,7 @@ export default function UniversityDetailPage() {
             {/* Course Matching Insights */}
             <div className="mb-8">
               <CourseMatchingInsights
-                city={university.city}
+                city={university.location}
                 country={university.country}
                 className="mb-8"
               />
