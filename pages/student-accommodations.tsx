@@ -119,11 +119,60 @@ export default function StudentAccommodations() {
     ],
   );
 
+  // Use real accommodation data from API instead of generated data
   const {
     data: accommodations = [],
     isLoading,
     error,
-  } = useAccommodations(filters);
+  } = useQuery({
+    queryKey: ["real-accommodations", filters],
+    queryFn: async () => {
+      const response = await fetch("/api/accommodation/experiences");
+      if (!response.ok) throw new Error("Failed to fetch accommodations");
+      const data = await response.json();
+
+      // Apply client-side filtering if needed
+      let filtered = data.experiences || [];
+
+      if (filters.search) {
+        const search = filters.search.toLowerCase();
+        filtered = filtered.filter((acc: any) =>
+          acc.studentName?.toLowerCase().includes(search) ||
+          acc.accommodationAddress?.toLowerCase().includes(search) ||
+          acc.accommodationType?.toLowerCase().includes(search) ||
+          acc.neighborhood?.toLowerCase().includes(search)
+        );
+      }
+
+      if (filters.city) {
+        filtered = filtered.filter((acc: any) =>
+          acc.city?.toLowerCase() === filters.city?.toLowerCase()
+        );
+      }
+
+      if (filters.type) {
+        filtered = filtered.filter((acc: any) =>
+          acc.accommodationType === filters.type
+        );
+      }
+
+      if (filters.maxBudget) {
+        filtered = filtered.filter((acc: any) =>
+          acc.monthlyRent <= filters.maxBudget!
+        );
+      }
+
+      if (filters.minRating) {
+        filtered = filtered.filter((acc: any) =>
+          acc.rating >= filters.minRating!
+        );
+      }
+
+      return filtered;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
   const contactMutation = useContactStudent();
 
   // Get generated content from user submissions
