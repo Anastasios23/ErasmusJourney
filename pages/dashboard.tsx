@@ -490,6 +490,15 @@ export default function Dashboard() {
                           <span className="text-xs">Explore Universities</span>
                         </Button>
                       </Link>
+                      <Link href="/course-matching-experiences">
+                        <Button
+                          variant="outline"
+                          className="w-full h-20 flex-col gap-2"
+                        >
+                          <BookOpen className="h-5 w-5" />
+                          <span className="text-xs">Course Matching Tips</span>
+                        </Button>
+                      </Link>
                       <Link href="/student-stories">
                         <Button
                           variant="outline"
