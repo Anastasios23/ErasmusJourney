@@ -7,6 +7,7 @@ import Header from "../components/Header";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
 import { Badge } from "../src/components/ui/badge";
+import AccommodationExperienceCard from "../src/components/AccommodationExperienceCard";
 import {
   Card,
   CardContent,
@@ -454,12 +455,130 @@ export default function StudentAccommodations() {
               </section>
             )}
 
-            {activeSection === "accommodations" && (
-              <>
-                {/* Recently Viewed Section */}
-                <div className="mb-8">
-                  <RecentlyViewed maxItems={3} />
-                </div>
+              {activeSection === "experiences" && (
+                <>
+                  {/* Student Accommodation Experiences */}
+                  {!realAccommodationsLoading && filteredRealAccommodations.length > 0 && (
+                    <section className="mb-12">
+                      <div className="flex items-center justify-between mb-6">
+                        <div>
+                          <h2 className="text-2xl font-bold text-gray-900">
+                            Real Student Accommodation Experiences
+                          </h2>
+                          <p className="text-gray-600">
+                            Detailed reviews and tips from actual exchange students
+                          </p>
+                        </div>
+                        <Badge
+                          variant="outline"
+                          className="text-blue-600 border-blue-600"
+                        >
+                          {filteredRealAccommodations.length} Experience
+                          {filteredRealAccommodations.length === 1 ? "" : "s"}
+                        </Badge>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {filteredRealAccommodations.map((accommodation) => (
+                          <AccommodationExperienceCard
+                            key={accommodation.id}
+                            accommodation={{
+                              ...accommodation,
+                              isReal: true,
+                              source: 'student_experience',
+                            }}
+                            onSaveToWishlist={(id) => {
+                              const newWishlist = new Set(wishlist);
+                              if (wishlist.has(id)) {
+                                newWishlist.delete(id);
+                              } else {
+                                newWishlist.add(id);
+                              }
+                              setWishlist(newWishlist);
+                              if (typeof window !== "undefined") {
+                                localStorage.setItem("accommodation_wishlist", JSON.stringify(Array.from(newWishlist)));
+                              }
+                            }}
+                            isInWishlist={wishlist.has(accommodation.id)}
+                          />
+                        ))}
+                      </div>
+
+                      {filteredRealAccommodations.length > 6 && (
+                        <div className="text-center mt-6">
+                          <Button variant="outline">
+                            View All {filteredRealAccommodations.length} Experiences
+                          </Button>
+                        </div>
+                      )}
+                    </section>
+                  )}
+
+                  {/* Stats Overview */}
+                  {accommodationStats && accommodationStats.length > 0 && (
+                    <section className="mb-12">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {accommodationStats.slice(0, 4).map((stat, index) => (
+                          <Card key={index}>
+                            <CardContent className="pt-6">
+                              <div className="text-center">
+                                <h3 className="font-semibold text-lg mb-2">
+                                  {stat.city}, {stat.country}
+                                </h3>
+                                <div className="space-y-2">
+                                  <div>
+                                    <div className="text-2xl font-bold text-blue-600">
+                                      €{stat.avgRent}
+                                    </div>
+                                    <div className="text-sm text-gray-600">Avg. Rent</div>
+                                  </div>
+                                  <div>
+                                    <div className="text-lg font-semibold text-green-600">
+                                      ⭐ {stat.avgRating}
+                                    </div>
+                                    <div className="text-sm text-gray-600">Avg. Rating</div>
+                                  </div>
+                                  <div className="text-sm text-gray-500">
+                                    {stat.accommodationCount} experiences
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </section>
+                  )}
+
+                  {/* No experiences message */}
+                  {!realAccommodationsLoading && filteredRealAccommodations.length === 0 && (
+                    <section className="mb-12">
+                      <Card className="bg-blue-50 border-blue-200">
+                        <CardContent className="pt-8 pb-8 text-center">
+                          <div className="max-w-2xl mx-auto">
+                            <Home className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                              No accommodation experiences yet
+                            </h3>
+                            <p className="text-gray-600 mb-6">
+                              Be the first to share your accommodation experience to help future students find great places to stay.
+                            </p>
+                            <Link href="/accommodation">
+                              <Button size="lg">
+                                <Home className="h-5 w-5 mr-2" />
+                                Share Your Accommodation Experience
+                              </Button>
+                            </Link>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </section>
+                  )}
+
+                  {/* Recently Viewed Section */}
+                  <div className="mb-8">
+                    <RecentlyViewed maxItems={3} />
+                  </div>
 
                 {/* Search and Filters */}
                 <section aria-label="Search and filter accommodations">
