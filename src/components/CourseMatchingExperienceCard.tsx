@@ -152,9 +152,16 @@ export default function CourseMatchingExperienceCard({
               </div>
             </div>
           </div>
-          <Badge className={getDifficultyColor(courseMatching.courseMatchingDifficult)}>
-            {courseMatching.courseMatchingDifficult}
-          </Badge>
+          <div className="flex gap-2">
+            <Badge className={getDifficultyColor(courseMatching.courseMatchingDifficult)}>
+              {courseMatching.courseMatchingDifficult}
+            </Badge>
+            {courseMatching.hasLinkedStory && (
+              <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                Full Story Available
+              </Badge>
+            )}
+          </div>
         </div>
       </CardHeader>
 
