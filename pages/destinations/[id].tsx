@@ -421,6 +421,15 @@ export default function DestinationDetailPage() {
             />
           </div>
 
+          {/* Course Matching Insights Section */}
+          <div id="course-matching" data-section="course-matching" className="mb-8">
+            <CourseMatchingInsights
+              city={destination.city}
+              country={destination.country}
+              className="mb-8"
+            />
+          </div>
+
           {/* Enhanced Information Cards */}
           {(destination as any).generalInfo && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
