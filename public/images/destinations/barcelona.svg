@@ -1,0 +1,38 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="barcelonaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#DC2626;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F59E0B;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Sky background -->
+  <rect width="400" height="300" fill="url(#barcelonaGradient)"/>
+  
+  <!-- Sagrada Familia spires -->
+  <rect x="160" y="60" width="12" height="140" fill="#1F2937" opacity="0.9"/>
+  <rect x="180" y="40" width="15" height="160" fill="#1F2937" opacity="0.9"/>
+  <rect x="205" y="45" width="13" height="155" fill="#1F2937" opacity="0.9"/>
+  <rect x="225" y="65" width="12" height="135" fill="#1F2937" opacity="0.9"/>
+  
+  <!-- Spire tops -->
+  <circle cx="166" cy="55" r="6" fill="#6B7280" opacity="0.8"/>
+  <circle cx="187" cy="35" r="7" fill="#6B7280" opacity="0.8"/>
+  <circle cx="211" cy="40" r="6" fill="#6B7280" opacity="0.8"/>
+  <circle cx="231" cy="60" r="6" fill="#6B7280" opacity="0.8"/>
+  
+  <!-- Mediterranean buildings -->
+  <rect x="50" y="180" width="35" height="120" fill="#1F2937" opacity="0.7"/>
+  <rect x="300" y="170" width="30" height="130" fill="#1F2937" opacity="0.7"/>
+  <rect x="340" y="190" width="25" height="110" fill="#1F2937" opacity="0.7"/>
+  
+  <!-- Palm tree -->
+  <rect x="120" y="160" width="6" height="80" fill="#92400E" opacity="0.8"/>
+  <ellipse cx="123" cy="155" rx="15" ry="8" fill="#16A34A" opacity="0.7"/>
+  
+  <!-- Building windows -->
+  <rect x="60" y="200" width="6" height="8" fill="#FCD34D" opacity="0.8"/>
+  <rect x="70" y="200" width="6" height="8" fill="#FCD34D" opacity="0.8"/>
+  
+  <text x="200" y="280" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="20" font-weight="bold">Barcelona, Spain</text>
+</svg>

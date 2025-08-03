@@ -4,6 +4,7 @@ interface ApiError {
   error: string;
   message: string;
   status: number;
+  action?: string;
 }
 
 export class AuthenticationError extends Error {
@@ -46,6 +47,12 @@ export async function handleApiResponse(response: Response, message?: string) {
 
   switch (response.status) {
     case 401:
+      // Check if this is a reauthentication error
+      if (errorData.action === "REAUTHENTICATE") {
+        throw new AuthenticationError(
+          "Your session has expired or your account needs to be refreshed. Please sign out and sign in again.",
+        );
+      }
       throw new AuthenticationError(errorMessage);
     case 403:
       throw new AuthenticationError(

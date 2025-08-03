@@ -25,6 +25,21 @@ import {
   CardHeader,
   CardTitle,
 } from "../src/components/ui/card";
+import { EnhancedInput } from "../src/components/ui/enhanced-input";
+import {
+  EnhancedSelect,
+  EnhancedSelectTrigger,
+  EnhancedSelectValue,
+  EnhancedSelectContent,
+  EnhancedSelectItem,
+} from "../src/components/ui/enhanced-select";
+import { EnhancedTextarea } from "../src/components/ui/enhanced-textarea";
+import {
+  FormField,
+  FormSection,
+  FormGrid,
+  DisabledFieldHint,
+} from "../src/components/ui/form-components";
 import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
 import { Checkbox } from "../src/components/ui/checkbox";
 import Header from "../components/Header";
@@ -313,201 +328,210 @@ export default function Accommodation() {
           )}
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Basic Accommodation Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold text-gray-900">
-                  Basic Accommodation Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="accommodationAddress">
-                    Address of Accommodation
-                  </Label>
-                  <Textarea
-                    id="accommodationAddress"
-                    placeholder="Enter the full address of your accommodation..."
-                    value={formData.accommodationAddress}
-                    onChange={(e) =>
-                      handleInputChange("accommodationAddress", e.target.value)
-                    }
-                    rows={3}
-                    className={
-                      fieldErrors.accommodationAddress ? "border-red-500" : ""
-                    }
-                    required
-                  />
-                  {fieldErrors.accommodationAddress && (
-                    <p className="text-sm text-red-500">
-                      {fieldErrors.accommodationAddress}
-                    </p>
-                  )}
-                </div>
+            <FormSection
+              title="Basic Accommodation Information"
+              subtitle="Details about your accommodation location and type"
+            >
+              <FormField
+                label="Address of Accommodation"
+                required
+                error={fieldErrors.accommodationAddress}
+              >
+                <EnhancedTextarea
+                  id="accommodationAddress"
+                  placeholder="Enter the full address of your accommodation..."
+                  value={formData.accommodationAddress}
+                  onChange={(e) =>
+                    handleInputChange("accommodationAddress", e.target.value)
+                  }
+                  rows={3}
+                  required
+                  error={fieldErrors.accommodationAddress}
+                />
+              </FormField>
 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="accommodationType">
-                      Type of Accommodation
-                    </Label>
-                    <Select
-                      onValueChange={(value) =>
-                        handleInputChange("accommodationType", value)
-                      }
+              <FormGrid columns={2}>
+                <FormField
+                  label="Type of Accommodation"
+                  required
+                  error={fieldErrors.accommodationType}
+                >
+                  <EnhancedSelect
+                    value={formData.accommodationType || ""}
+                    onValueChange={(value) =>
+                      handleInputChange("accommodationType", value)
+                    }
+                  >
+                    <EnhancedSelectTrigger
+                      error={fieldErrors.accommodationType}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select accommodation type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {accommodationTypes.map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {type}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                      <EnhancedSelectValue placeholder="Select accommodation type" />
+                    </EnhancedSelectTrigger>
+                    <EnhancedSelectContent>
+                      {accommodationTypes.map((type) => (
+                        <EnhancedSelectItem key={type} value={type}>
+                          {type}
+                        </EnhancedSelectItem>
+                      ))}
+                    </EnhancedSelectContent>
+                  </EnhancedSelect>
+                </FormField>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="neighborhood">Neighborhood/District</Label>
-                    <Input
-                      id="neighborhood"
-                      placeholder="e.g., Friedrichshain, Södermalm..."
-                      value={formData.neighborhood}
-                      onChange={(e) =>
-                        handleInputChange("neighborhood", e.target.value)
-                      }
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                <FormField
+                  label="Neighborhood/District"
+                  error={fieldErrors.neighborhood}
+                >
+                  <EnhancedInput
+                    id="neighborhood"
+                    placeholder="e.g., Friedrichshain, Södermalm..."
+                    value={formData.neighborhood}
+                    onChange={(e) =>
+                      handleInputChange("neighborhood", e.target.value)
+                    }
+                    error={fieldErrors.neighborhood}
+                  />
+                </FormField>
+              </FormGrid>
+            </FormSection>
 
             {/* Contact Details */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold text-gray-900">
-                  Landlord Contact Details
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="landlordName">Landlord Name</Label>
-                    <Input
-                      id="landlordName"
-                      placeholder="Enter landlord's name"
-                      value={formData.landlordName}
-                      onChange={(e) =>
-                        handleInputChange("landlordName", e.target.value)
-                      }
-                    />
-                  </div>
+            <FormSection
+              title="Landlord Contact Details"
+              subtitle="Contact information for your accommodation provider"
+            >
+              <FormGrid columns={2}>
+                <FormField
+                  label="Landlord Name"
+                  error={fieldErrors.landlordName}
+                >
+                  <EnhancedInput
+                    id="landlordName"
+                    placeholder="Enter landlord's name"
+                    value={formData.landlordName}
+                    onChange={(e) =>
+                      handleInputChange("landlordName", e.target.value)
+                    }
+                    error={fieldErrors.landlordName}
+                  />
+                </FormField>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="landlordEmail">Email Address</Label>
-                    <Input
-                      id="landlordEmail"
-                      type="email"
-                      placeholder="landlord@example.com"
-                      value={formData.landlordEmail}
-                      onChange={(e) =>
-                        handleInputChange("landlordEmail", e.target.value)
-                      }
-                    />
-                  </div>
-                </div>
+                <FormField
+                  label="Email Address"
+                  error={fieldErrors.landlordEmail}
+                >
+                  <EnhancedInput
+                    id="landlordEmail"
+                    type="email"
+                    placeholder="landlord@example.com"
+                    value={formData.landlordEmail}
+                    onChange={(e) =>
+                      handleInputChange("landlordEmail", e.target.value)
+                    }
+                    error={fieldErrors.landlordEmail}
+                  />
+                </FormField>
 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="landlordPhone">Phone Number</Label>
-                    <Input
-                      id="landlordPhone"
-                      placeholder="+49 123 456789"
-                      value={formData.landlordPhone}
-                      onChange={(e) =>
-                        handleInputChange("landlordPhone", e.target.value)
-                      }
-                    />
-                  </div>
+                <FormField
+                  label="Phone Number"
+                  error={fieldErrors.landlordPhone}
+                >
+                  <EnhancedInput
+                    id="landlordPhone"
+                    placeholder="+49 123 456789"
+                    value={formData.landlordPhone}
+                    onChange={(e) =>
+                      handleInputChange("landlordPhone", e.target.value)
+                    }
+                    error={fieldErrors.landlordPhone}
+                  />
+                </FormField>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="bookingLink">
-                      Booking Link (if applicable)
-                    </Label>
-                    <Input
-                      id="bookingLink"
-                      placeholder="https://..."
-                      value={formData.bookingLink}
-                      onChange={(e) =>
-                        handleInputChange("bookingLink", e.target.value)
-                      }
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                <FormField
+                  label="Booking Link (if applicable)"
+                  error={fieldErrors.bookingLink}
+                >
+                  <EnhancedInput
+                    id="bookingLink"
+                    placeholder="https://..."
+                    value={formData.bookingLink}
+                    onChange={(e) =>
+                      handleInputChange("bookingLink", e.target.value)
+                    }
+                    error={fieldErrors.bookingLink}
+                  />
+                </FormField>
+              </FormGrid>
+            </FormSection>
 
             {/* Financial Details */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-                  <Euro className="h-5 w-5 mr-2" />
-                  Financial Details
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="monthlyRent">Monthly Rent (€)</Label>
-                    <Input
-                      id="monthlyRent"
-                      type="number"
-                      placeholder="e.g., 450"
-                      value={formData.monthlyRent}
-                      onChange={(e) =>
-                        handleInputChange("monthlyRent", e.target.value)
-                      }
-                    />
-                  </div>
+            <FormSection
+              title="Financial Details"
+              subtitle="Monthly rent and utility costs for your accommodation"
+              icon={Euro}
+            >
+              <FormGrid columns={2}>
+                <FormField
+                  label="Monthly Rent (€)"
+                  required
+                  error={fieldErrors.monthlyRent}
+                >
+                  <EnhancedInput
+                    id="monthlyRent"
+                    type="number"
+                    placeholder="e.g., 450"
+                    value={formData.monthlyRent}
+                    onChange={(e) =>
+                      handleInputChange("monthlyRent", e.target.value)
+                    }
+                    error={fieldErrors.monthlyRent}
+                  />
+                </FormField>
 
-                  <div className="space-y-2">
-                    <Label>Were ALL the bills included?</Label>
-                    <RadioGroup
-                      value={formData.billsIncluded}
-                      onValueChange={(value) =>
-                        handleInputChange("billsIncluded", value)
-                      }
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="yes" id="bills-yes" />
-                        <Label htmlFor="bills-yes">Yes</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="no" id="bills-no" />
-                        <Label htmlFor="bills-no">No</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-                </div>
+                <FormField
+                  label="Were ALL the bills included?"
+                  required
+                  error={fieldErrors.billsIncluded}
+                >
+                  <EnhancedSelect
+                    value={formData.billsIncluded || ""}
+                    onValueChange={(value) =>
+                      handleInputChange("billsIncluded", value)
+                    }
+                  >
+                    <EnhancedSelectTrigger error={fieldErrors.billsIncluded}>
+                      <EnhancedSelectValue placeholder="Select an option" />
+                    </EnhancedSelectTrigger>
+                    <EnhancedSelectContent>
+                      <EnhancedSelectItem value="yes">
+                        Yes, all bills included
+                      </EnhancedSelectItem>
+                      <EnhancedSelectItem value="no">
+                        No, additional utility costs
+                      </EnhancedSelectItem>
+                    </EnhancedSelectContent>
+                  </EnhancedSelect>
+                </FormField>
+              </FormGrid>
 
-                {formData.billsIncluded === "no" && (
-                  <div className="space-y-2">
-                    <Label htmlFor="avgUtilityCost">
-                      Average Monthly Expense for Utility Bills Not Included (€)
-                    </Label>
-                    <Input
-                      id="avgUtilityCost"
-                      type="number"
-                      placeholder="e.g., 80"
-                      value={formData.avgUtilityCost}
-                      onChange={(e) =>
-                        handleInputChange("avgUtilityCost", e.target.value)
-                      }
-                    />
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+              {formData.billsIncluded === "no" && (
+                <FormField
+                  label="Average Monthly Expense for Utility Bills Not Included (€)"
+                  required
+                  error={fieldErrors.avgUtilityCost}
+                >
+                  <EnhancedInput
+                    id="avgUtilityCost"
+                    type="number"
+                    placeholder="e.g., 80"
+                    value={formData.avgUtilityCost}
+                    onChange={(e) =>
+                      handleInputChange("avgUtilityCost", e.target.value)
+                    }
+                    error={fieldErrors.avgUtilityCost}
+                  />
+                </FormField>
+              )}
+            </FormSection>
 
             {/* Facilities and Amenities */}
             <Card>

@@ -1,0 +1,358 @@
+// City information database with general data about popular destinations
+export const cityData = {
+  Berlin: {
+    country: "Germany",
+    population: "3.7M",
+    language: "German",
+    currency: "EUR",
+    timezone: "CET (UTC+1)",
+    climate: "Temperate oceanic",
+    averageTemp: {
+      summer: "19°C (66°F)",
+      winter: "1°C (34°F)",
+    },
+    topAttractions: [
+      "Brandenburg Gate",
+      "Museum Island",
+      "Berlin Wall Memorial",
+      "Reichstag Building",
+      "Checkpoint Charlie",
+    ],
+    transportation: {
+      publicTransport: "Excellent U-Bahn, S-Bahn, buses, trams",
+      studentDiscount: "Student semester ticket available",
+      bikeFreindly: true,
+      averageTransportCost: "€81/month (student)",
+    },
+    studentLife: {
+      nightlife: "World-famous club scene",
+      culturalScene: "Museums, galleries, theaters",
+      foodScene: "International cuisine, street food",
+      studentAreas: ["Kreuzberg", "Friedrichshain", "Prenzlauer Berg"],
+    },
+    practicalInfo: {
+      internetSpeed: "High",
+      englishFriendly: "Very good",
+      safetyRating: "High",
+      healthcareQuality: "Excellent",
+    },
+    funFacts: [
+      "Home to over 170 museums",
+      "More bridges than Venice",
+      "Currywurst was invented here",
+      "Capital of techno music",
+    ],
+  },
+
+  Barcelona: {
+    country: "Spain",
+    population: "1.6M",
+    language: "Spanish, Catalan",
+    currency: "EUR",
+    timezone: "CET (UTC+1)",
+    climate: "Mediterranean",
+    averageTemp: {
+      summer: "25°C (77°F)",
+      winter: "13°C (55°F)",
+    },
+    topAttractions: [
+      "Sagrada Familia",
+      "Park Güell",
+      "La Rambla",
+      "Gothic Quarter",
+      "Casa Batlló",
+    ],
+    transportation: {
+      publicTransport: "Metro, buses, trams",
+      studentDiscount: "T-jove reduced fare",
+      bikeFreindly: true,
+      averageTransportCost: "€40/month (student)",
+    },
+    studentLife: {
+      nightlife: "Beach clubs, tapas bars",
+      culturalScene: "Picasso Museum, contemporary art",
+      foodScene: "Tapas, paella, markets",
+      studentAreas: ["Gràcia", "El Born", "Barceloneta"],
+    },
+    practicalInfo: {
+      internetSpeed: "High",
+      englishFriendly: "Good",
+      safetyRating: "High",
+      healthcareQuality: "Excellent",
+    },
+    funFacts: [
+      "Host city of 1992 Olympics",
+      "Gaudí's architectural masterpieces",
+      "7 beaches within city limits",
+      "Largest football stadium in Europe",
+    ],
+  },
+
+  Prague: {
+    country: "Czech Republic",
+    population: "1.3M",
+    language: "Czech",
+    currency: "CZK",
+    timezone: "CET (UTC+1)",
+    climate: "Continental",
+    averageTemp: {
+      summer: "18°C (64°F)",
+      winter: "0°C (32°F)",
+    },
+    topAttractions: [
+      "Prague Castle",
+      "Charles Bridge",
+      "Old Town Square",
+      "Astronomical Clock",
+      "Wenceslas Square",
+    ],
+    transportation: {
+      publicTransport: "Metro, trams, buses",
+      studentDiscount: "Student travel pass available",
+      bikeFreindly: true,
+      averageTransportCost: "€15/month (student)",
+    },
+    studentLife: {
+      nightlife: "Historic pubs, beer gardens",
+      culturalScene: "Classical music, opera",
+      foodScene: "Traditional Czech cuisine, beer",
+      studentAreas: ["Vinohrady", "Karlín", "Smíchov"],
+    },
+    practicalInfo: {
+      internetSpeed: "High",
+      englishFriendly: "Good",
+      safetyRating: "Very high",
+      healthcareQuality: "Good",
+    },
+    funFacts: [
+      "City of a Hundred Spires",
+      "Birthplace of pilsner beer",
+      "UNESCO World Heritage Site",
+      "One of Europe's most affordable capitals",
+    ],
+  },
+
+  Amsterdam: {
+    country: "Netherlands",
+    population: "872K",
+    language: "Dutch",
+    currency: "EUR",
+    timezone: "CET (UTC+1)",
+    climate: "Oceanic",
+    averageTemp: {
+      summer: "17°C (63°F)",
+      winter: "4°C (39°F)",
+    },
+    topAttractions: [
+      "Anne Frank House",
+      "Van Gogh Museum",
+      "Rijksmuseum",
+      "Canal Ring",
+      "Vondelpark",
+    ],
+    transportation: {
+      publicTransport: "Trams, buses, metro",
+      studentDiscount: "Student OV-chipkaart",
+      bikeFreindly: true,
+      averageTransportCost: "€95/month (student)",
+    },
+    studentLife: {
+      nightlife: "Brown cafés, club scene",
+      culturalScene: "World-class museums",
+      foodScene: "International, stroopwafels",
+      studentAreas: ["Jordaan", "De Pijp", "Oost"],
+    },
+    practicalInfo: {
+      internetSpeed: "Very high",
+      englishFriendly: "Excellent",
+      safetyRating: "High",
+      healthcareQuality: "Excellent",
+    },
+    funFacts: [
+      "More canals than Venice",
+      "More bikes than residents",
+      "Home to 75 museums",
+      "Coffee shops are legal",
+    ],
+  },
+
+  Vienna: {
+    country: "Austria",
+    population: "1.9M",
+    language: "German",
+    currency: "EUR",
+    timezone: "CET (UTC+1)",
+    climate: "Continental",
+    averageTemp: {
+      summer: "20°C (68°F)",
+      winter: "1°C (34°F)",
+    },
+    topAttractions: [
+      "Schönbrunn Palace",
+      "St. Stephen's Cathedral",
+      "Belvedere Palace",
+      "Naschmarkt",
+      "Vienna State Opera",
+    ],
+    transportation: {
+      publicTransport: "U-Bahn, trams, buses",
+      studentDiscount: "Student semester ticket",
+      bikeFreindly: true,
+      averageTransportCost: "€75/month (student)",
+    },
+    studentLife: {
+      nightlife: "Coffee houses, wine taverns",
+      culturalScene: "Classical music, opera",
+      foodScene: "Sachertorte, schnitzel, cafés",
+      studentAreas: ["Innere Stadt", "Leopoldstadt", "Landstraße"],
+    },
+    practicalInfo: {
+      internetSpeed: "High",
+      englishFriendly: "Good",
+      safetyRating: "Very high",
+      healthcareQuality: "Excellent",
+    },
+    funFacts: [
+      "World's most livable city",
+      "Home to Mozart, Beethoven",
+      "Coffee house culture UNESCO heritage",
+      "Palace with 1,441 rooms",
+    ],
+  },
+
+  Lyon: {
+    country: "France",
+    population: "515K",
+    language: "French",
+    currency: "EUR",
+    timezone: "CET (UTC+1)",
+    climate: "Oceanic/Continental",
+    averageTemp: {
+      summer: "20°C (68°F)",
+      winter: "4°C (39°F)",
+    },
+    topAttractions: [
+      "Basilica of Notre-Dame",
+      "Old Lyon (UNESCO)",
+      "Musée des Beaux-Arts",
+      "Parc de la Tête d'Or",
+      "Place Bellecour",
+    ],
+    transportation: {
+      publicTransport: "Metro, trams, buses",
+      studentDiscount: "TCL student rates",
+      bikeFreindly: true,
+      averageTransportCost: "€32/month (student)",
+    },
+    studentLife: {
+      nightlife: "Bouchons, riverside bars",
+      culturalScene: "Museums, festivals",
+      foodScene: "Gastronomy capital, markets",
+      studentAreas: ["Presqu'île", "Croix-Rousse", "Part-Dieu"],
+    },
+    practicalInfo: {
+      internetSpeed: "High",
+      englishFriendly: "Moderate",
+      safetyRating: "High",
+      healthcareQuality: "Excellent",
+    },
+    funFacts: [
+      "Gastronomy capital of France",
+      "Birthplace of cinema",
+      "UNESCO World Heritage center",
+      "Second largest urban area in France",
+    ],
+  },
+
+  Liepāja: {
+    country: "Latvia",
+    population: "68K",
+    language: "Latvian",
+    currency: "EUR",
+    timezone: "EET (UTC+2)",
+    climate: "Maritime",
+    averageTemp: {
+      summer: "16°C (61°F)",
+      winter: "-1°C (30°F)",
+    },
+    topAttractions: [
+      "Liepāja Beach",
+      "Karosta Naval Port",
+      "St. Nicholas Cathedral",
+      "Liepāja Museum",
+      "Great Amber Concert Hall",
+    ],
+    transportation: {
+      publicTransport: "Buses, walking friendly",
+      studentDiscount: "Student discounts available",
+      bikeFreindly: true,
+      averageTransportCost: "€20/month",
+    },
+    studentLife: {
+      nightlife: "Cozy pubs, beach parties",
+      culturalScene: "Music festivals, local arts",
+      foodScene: "Baltic cuisine, seafood",
+      studentAreas: ["City Center", "New Town"],
+    },
+    practicalInfo: {
+      internetSpeed: "High",
+      englishFriendly: "Good",
+      safetyRating: "Very high",
+      healthcareQuality: "Good",
+    },
+    funFacts: [
+      "City where the wind is born",
+      "Important naval heritage",
+      "Blue Flag beach",
+      "Most affordable Erasmus destination",
+    ],
+  },
+
+  Vilnius: {
+    country: "Lithuania",
+    population: "588K",
+    language: "Lithuanian",
+    currency: "EUR",
+    timezone: "EET (UTC+2)",
+    climate: "Continental",
+    averageTemp: {
+      summer: "17°C (63°F)",
+      winter: "-3°C (27°F)",
+    },
+    topAttractions: [
+      "Vilnius Old Town",
+      "Gediminas Castle",
+      "St. Anne's Church",
+      "Užupis District",
+      "Cathedral Square",
+    ],
+    transportation: {
+      publicTransport: "Buses, trolleys",
+      studentDiscount: "Student transport cards",
+      bikeFreindly: true,
+      averageTransportCost: "€25/month (student)",
+    },
+    studentLife: {
+      nightlife: "Pub scene, alternative venues",
+      culturalScene: "UNESCO Old Town, galleries",
+      foodScene: "Traditional Lithuanian, international",
+      studentAreas: ["Old Town", "New Town", "Žvėrynas"],
+    },
+    practicalInfo: {
+      internetSpeed: "Very high",
+      englishFriendly: "Good",
+      safetyRating: "High",
+      healthcareQuality: "Good",
+    },
+    funFacts: [
+      "Largest Old Town in Eastern Europe",
+      "Republic of Užupis",
+      "Geographic center of Europe nearby",
+      "Very tech-savvy city",
+    ],
+  },
+};
+
+export function getCityInfo(cityName: string) {
+  return cityData[cityName as keyof typeof cityData] || null;
+}

@@ -22,7 +22,7 @@ interface DashboardWidgetProps {
 }
 
 const DashboardWidgets: React.FC<DashboardWidgetProps> = ({ userProfile }) => {
-  const { submissions, isLoading: submissionsLoading } = useFormSubmissions();
+  const { submissions, loading: submissionsLoading } = useFormSubmissions();
   const { stats, loading: statsLoading } = useDashboardStats();
 
   // Define the core steps for the application
@@ -35,7 +35,7 @@ const DashboardWidgets: React.FC<DashboardWidgetProps> = ({ userProfile }) => {
   ];
 
   const completedSteps = coreApplicationSteps.filter((step) =>
-    submissions.some((s) => s.type === step && s.status !== "DRAFT"),
+    submissions.some((s) => s.type === step && s.status !== "draft"),
   ).length;
 
   const applicationProgress =

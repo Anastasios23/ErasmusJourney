@@ -27,6 +27,12 @@ import {
   Star,
   TrendingUp,
 } from "lucide-react";
+import {
+  ErasmusIcon,
+  CyprusIcon,
+  StudyAbroadIcon,
+  UniversityIcon,
+} from "../src/components/icons/CustomIcons";
 
 interface HubPageProps {
   stats: {
@@ -121,23 +127,135 @@ export default function HubPage({ stats }: HubPageProps) {
         <Header />
 
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 text-white overflow-hidden">
-          <div className="absolute inset-0 bg-black/20"></div>
+        <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white overflow-hidden">
+          {/* Custom SVG Background */}
+          <div className="absolute inset-0 opacity-10">
+            <svg viewBox="0 0 1200 600" className="w-full h-full">
+              <defs>
+                <linearGradient
+                  id="cyprusGradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%"
+                >
+                  <stop offset="0%" stopColor="#CD7F32" />
+                  <stop offset="100%" stopColor="#20B2AA" />
+                </linearGradient>
+                <pattern
+                  id="starsPattern"
+                  x="0"
+                  y="0"
+                  width="100"
+                  height="100"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="2"
+                    fill="currentColor"
+                    opacity="0.6"
+                  />
+                </pattern>
+              </defs>
+
+              {/* Background pattern */}
+              <rect width="100%" height="100%" fill="url(#starsPattern)" />
+
+              {/* Cyprus inspired wave pattern */}
+              <path
+                d="M0 300c100-50 200-50 300 0s200 50 300 0 200-50 300 0 200 50 300 0v300H0V300z"
+                fill="url(#cyprusGradient)"
+                opacity="0.3"
+              />
+
+              {/* Academic elements */}
+              <g opacity="0.2">
+                <circle
+                  cx="200"
+                  cy="150"
+                  r="30"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+                <circle
+                  cx="1000"
+                  cy="400"
+                  r="25"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+                <rect
+                  x="180"
+                  y="130"
+                  width="40"
+                  height="40"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                />
+              </g>
+            </svg>
+          </div>
+
+          {/* Enhanced overlay for better text contrast */}
+          <div className="absolute inset-0 bg-black/40"></div>
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
             <div className="text-center">
-              <Badge className="mb-6 bg-white/20 text-white border-white/30">
-                <Plane className="h-4 w-4 mr-2" />
+              {/* Custom icon row */}
+              <div className="flex justify-center mb-8">
+                <div className="flex space-x-6">
+                  <div className="transform transition-transform hover:scale-110 hover:rotate-12">
+                    <ErasmusIcon
+                      size={56}
+                      className="text-yellow-300 drop-shadow-lg"
+                    />
+                  </div>
+                  <div className="transform transition-transform hover:scale-110 hover:-rotate-12">
+                    <CyprusIcon
+                      size={56}
+                      className="text-teal-300 drop-shadow-lg"
+                    />
+                  </div>
+                  <div className="transform transition-transform hover:scale-110 hover:rotate-12">
+                    <StudyAbroadIcon
+                      size={56}
+                      className="text-blue-300 drop-shadow-lg"
+                    />
+                  </div>
+                  <div className="transform transition-transform hover:scale-110 hover:-rotate-12">
+                    <UniversityIcon
+                      size={56}
+                      className="text-amber-300 drop-shadow-lg"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <Badge className="mb-6 bg-white/25 text-white border-white/40 backdrop-blur-sm">
+                <Plane className="h-4 w-4 mr-2 drop-shadow-sm" />
                 Your Erasmus Journey Starts Here
               </Badge>
 
-              <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6">
-                Erasmus Hub
+              {/* Enhanced hero title with better typography */}
+              <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+                Your{" "}
+                <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+                  Erasmus Journey
+                </span>
+                <br />
+                <span className="text-2xl md:text-4xl font-normal text-blue-100">
+                  Starts in Cyprus
+                </span>
               </h1>
 
-              <p className="text-xl lg:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
-                The central platform for Cyprus students planning their study
-                abroad adventure. Discover destinations, connect with peers, and
-                make informed decisions.
+              {/* Enhanced subtitle */}
+              <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
+                Connect with fellow Cypriot students, discover amazing
+                destinations, and plan your perfect European exchange experience
               </p>
 
               {/* Global Search */}
@@ -397,10 +515,15 @@ export const getServerSideProps: GetServerSideProps = async () => {
       ]);
 
     // Calculate total destinations from partnerships
-    const totalDestinations = await prisma.agreement.count({
+    const distinctPartnerships = await prisma.agreement.findMany({
       where: { isActive: true },
+      select: {
+        partnerUniversityId: true,
+      },
       distinct: ["partnerUniversityId"],
     });
+
+    const totalDestinations = distinctPartnerships.length;
 
     return {
       props: {

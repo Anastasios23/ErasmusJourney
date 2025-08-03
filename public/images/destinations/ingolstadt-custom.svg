@@ -1,0 +1,44 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ingolstadtSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#B0E0E6"/>
+      <stop offset="100%" style="stop-color:#4682B4"/>
+    </linearGradient>
+    <linearGradient id="ingolstadtBuilding" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#F5F5DC"/>
+      <stop offset="100%" style="stop-color:#D2B48C"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Bavarian blue sky -->
+  <rect width="400" height="300" fill="url(#ingolstadtSky)"/>
+  
+  <!-- Historic city walls and towers -->
+  <rect x="80" y="180" width="240" height="60" fill="url(#ingolstadtBuilding)"/>
+  
+  <!-- Medieval towers -->
+  <rect x="100" y="140" width="30" height="60" fill="#8B7355"/>
+  <polygon points="100,140 115,120 130,140" fill="#8B4513"/>
+  
+  <rect x="180" y="130" width="35" height="70" fill="#8B7355"/>
+  <polygon points="180,130 197.5,105 215,130" fill="#8B4513"/>
+  
+  <rect x="270" y="145" width="28" height="55" fill="#8B7355"/>
+  <polygon points="270,145 284,125 298,145" fill="#8B4513"/>
+  
+  <!-- University modern elements -->
+  <rect x="50" y="200" width="80" height="40" fill="#4169E1" opacity="0.8"/>
+  <rect x="280" y="195" width="90" height="45" fill="#4169E1" opacity="0.8"/>
+  
+  <!-- Danube river -->
+  <ellipse cx="200" cy="280" rx="190" ry="15" fill="#1E90FF" opacity="0.7"/>
+  
+  <!-- Bavarian flag colors -->
+  <rect x="20" y="20" width="40" height="6" fill="#FFFFFF"/>
+  <rect x="20" y="26" width="40" height="6" fill="#1E90FF"/>
+  <rect x="20" y="32" width="40" height="6" fill="#FFFFFF"/>
+  <rect x="20" y="38" width="40" height="6" fill="#1E90FF"/>
+  
+  <!-- Text -->
+  <text x="200" y="290" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="#003399">INGOLSTADT</text>
+</svg>

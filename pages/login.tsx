@@ -23,7 +23,7 @@ import {
 } from "../src/components/ui/alert";
 import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { handleApiError } from "../src/utils/apiErrorHandler";
-import { forgotPassword } from "../src/utils/forgotPasswordHandler"; // Make sure path is correct
+import { handleForgotPassword as forgotPasswordAPI } from "../src/utils/forgotPasswordHandler"; // Make sure path is correct
 import BackButton from "../components/BackButton";
 
 export default function Login() {
@@ -90,7 +90,7 @@ export default function Login() {
     setError(null);
     setSuccessMessage(null);
     try {
-      await forgotPassword(forgotPasswordEmail);
+      await forgotPasswordAPI(forgotPasswordEmail);
       setForgotPasswordSent(true);
       setSuccessMessage("Password reset link sent! Check your email.");
     } catch (error) {

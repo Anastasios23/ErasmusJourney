@@ -26,18 +26,23 @@ import {
 
 interface Story {
   id: string;
-  title: string;
-  excerpt: string | null;
-  imageUrl: string | null;
+  title?: string;
+  studentName?: string;
+  excerpt?: string | null;
+  story?: string;
+  imageUrl?: string | null;
   createdAt: string;
-  author: {
+  city?: string;
+  country?: string;
+  university?: string;
+  author?: {
     name: string;
   };
-  location: {
+  location?: {
     city: string;
     country: string;
   };
-  likes: number;
+  likes?: number;
 }
 
 interface HomePageProps {
@@ -266,7 +271,11 @@ export default function HomePage({
                               story.imageUrl ||
                               "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=240&fit=crop"
                             }
-                            alt={story.title}
+                            alt={
+                              story.title ||
+                              story.studentName ||
+                              "Student story"
+                            }
                             fill
                             className="object-cover"
                           />
@@ -274,17 +283,20 @@ export default function HomePage({
                       </CardHeader>
                       <CardContent className="p-6 flex-grow">
                         <CardTitle className="text-lg font-semibold mb-2 group-hover:text-blue-600 transition-colors">
-                          {story.title}
+                          {story.title ||
+                            `${story.studentName}'s Experience in ${story.city}`}
                         </CardTitle>
                         <p className="text-sm text-gray-600 line-clamp-3">
-                          {story.excerpt}
+                          {story.excerpt ||
+                            story.story?.substring(0, 150) + "..." ||
+                            "Read about this student's experience abroad"}
                         </p>
                       </CardContent>
                       <CardFooter className="p-6 bg-gray-50 flex justify-between items-center text-sm text-gray-500">
                         <div>
                           By{" "}
                           <span className="font-medium text-gray-800">
-                            {story.author.name}
+                            {story.author?.name || story.studentName}
                           </span>
                         </div>
                         <div className="flex items-center">
@@ -372,10 +384,26 @@ export default function HomePage({
 
             {/* Start Application Button */}
             <div className="text-center mt-12">
+              {/* Login Requirement Notice */}
+              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg max-w-md mx-auto">
+                <div className="flex items-center justify-center mb-2">
+                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-2">
+                    <span className="text-blue-600 text-sm">🔒</span>
+                  </div>
+                  <span className="text-blue-800 font-medium text-sm">
+                    Account Required
+                  </span>
+                </div>
+                <p className="text-blue-700 text-sm">
+                  You'll need an account to save and submit your application
+                  details. Don't worry - it's quick and free!
+                </p>
+              </div>
+
               <Link href="/basic-information">
                 <Button
                   size="lg"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-medium"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-medium transition-all duration-200 hover:scale-105"
                 >
                   Start Your Application Journey
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -384,6 +412,28 @@ export default function HomePage({
               <p className="text-gray-600 text-sm mt-3">
                 Begin with Step 1: Personal Information
               </p>
+
+              {/* Value Without Login Notice */}
+              <div className="mt-6 text-center">
+                <p className="text-gray-500 text-sm mb-2">
+                  Want to explore first? You can browse destinations and read
+                  stories without an account.
+                </p>
+                <div className="flex justify-center space-x-4">
+                  <Link
+                    href="/destinations"
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                  >
+                    Browse Destinations →
+                  </Link>
+                  <Link
+                    href="/student-stories"
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                  >
+                    Read Stories →
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -527,7 +577,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
 
     const protocol = context.req.headers["x-forwarded-proto"] || "http";
     const host = context.req.headers.host;
-    const apiUrl = `${protocol}://${host}/api/stories`;
+    const apiUrl = `${protocol}://${host}/api/student-stories`;
 
     const storiesRes = await fetch(apiUrl);
     if (!storiesRes.ok) {

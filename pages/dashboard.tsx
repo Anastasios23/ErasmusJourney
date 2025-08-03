@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
 
 import Head from "next/head";
 import Link from "next/link";
@@ -26,11 +27,13 @@ import {
   Settings,
   TrendingUp,
   Star,
+  AlertCircle,
+  PlayCircle,
 } from "lucide-react";
 import ActivityTimeline from "../src/components/ActivityTimeline";
 import DashboardWidgets from "../src/components/DashboardWidgets";
 import WelcomeTour from "../src/components/WelcomeTour";
-
+import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
 interface ApplicationStep {
   id: string;
   name: string;
@@ -40,9 +43,64 @@ interface ApplicationStep {
   description: string;
 }
 
+interface ExtendedSession extends Session {
+  user: {
+    id: string;
+    role: string;
+    name?: string;
+    email?: string;
+    image?: string;
+    createdAt?: string | Date;
+  };
+}
+
 export default function Dashboard() {
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() as {
+    data: ExtendedSession | null;
+    status: "loading" | "authenticated" | "unauthenticated";
+  };
   const router = useRouter();
+  const { getFormData, loading: formsLoading } = useFormSubmissions();
+  const [completionStatus, setCompletionStatus] = useState<
+    Record<string, boolean>
+  >({});
+
+  // Check completion status for all forms
+  useEffect(() => {
+    const checkFormCompletions = async () => {
+      if (!session?.user?.id) return;
+
+      try {
+        const formTypes = [
+          "basic-info",
+          "course-matching",
+          "accommodation",
+          "living-expenses",
+        ];
+        const statusChecks = await Promise.allSettled(
+          formTypes.map(async (type) => {
+            const data = await getFormData(type as any);
+            return { type, completed: data && Object.keys(data).length > 0 };
+          }),
+        );
+
+        const newStatus: Record<string, boolean> = {};
+        statusChecks.forEach((result, index) => {
+          if (result.status === "fulfilled") {
+            newStatus[formTypes[index]] = result.value.completed;
+          }
+        });
+
+        setCompletionStatus(newStatus);
+      } catch (error) {
+        console.error("Error checking form completions:", error);
+      }
+    };
+
+    if (session && !formsLoading) {
+      checkFormCompletions();
+    }
+  }, [session, getFormData, formsLoading]);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -51,14 +109,14 @@ export default function Dashboard() {
     }
   }, [status, router]);
 
-  // Mock application progress - in a real app, this would come from your database
+  // Application steps with dynamic completion status
   const applicationSteps: ApplicationStep[] = [
     {
       id: "basic-info",
       name: "Personal Information",
       href: "/basic-information",
       icon: User,
-      completed: false, // This would be determined from your database
+      completed: completionStatus["basic-info"] || false,
       description: "Complete your personal and academic information",
     },
     {
@@ -66,7 +124,7 @@ export default function Dashboard() {
       name: "Course Matching",
       href: "/course-matching",
       icon: BookOpen,
-      completed: false,
+      completed: completionStatus["course-matching"] || false,
       description: "Select and match courses with your home university",
     },
     {
@@ -74,7 +132,7 @@ export default function Dashboard() {
       name: "Accommodation Details",
       href: "/accommodation",
       icon: Home,
-      completed: false,
+      completed: completionStatus["accommodation"] || false,
       description: "Provide information about your accommodation preferences",
     },
     {
@@ -82,7 +140,7 @@ export default function Dashboard() {
       name: "Living Expenses",
       href: "/living-expenses",
       icon: Euro,
-      completed: false,
+      completed: completionStatus["living-expenses"] || false,
       description: "Estimate and plan your living expenses abroad",
     },
   ];
@@ -91,6 +149,10 @@ export default function Dashboard() {
     (step) => step.completed,
   ).length;
   const progressPercentage = (completedSteps / applicationSteps.length) * 100;
+
+  // Find next incomplete step
+  const nextStep = applicationSteps.find((step) => !step.completed);
+  const allStepsCompleted = completedSteps === applicationSteps.length;
 
   // Show loading state while checking authentication
   if (status === "loading") {
@@ -196,6 +258,86 @@ export default function Dashboard() {
               <DashboardWidgets userProfile={session.user} />
             </div>
 
+            {/* Next Steps Section */}
+            {!allStepsCompleted && nextStep && (
+              <div className="mb-8">
+                <Card className="border-blue-200 bg-blue-50">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-blue-100 rounded-full">
+                          <PlayCircle className="h-6 w-6 text-blue-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-blue-900">
+                            Ready for your next step?
+                          </h3>
+                          <p className="text-blue-700">
+                            Continue with:{" "}
+                            <span className="font-medium">{nextStep.name}</span>
+                          </p>
+                          <p className="text-sm text-blue-600 mt-1">
+                            {nextStep.description}
+                          </p>
+                        </div>
+                      </div>
+                      <Link href={nextStep.href}>
+                        <Button className="bg-blue-600 hover:bg-blue-700">
+                          Continue
+                          <ArrowRight className="h-4 w-4 ml-2" />
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {/* Application Completed Section */}
+            {allStepsCompleted && (
+              <div className="mb-8">
+                <Card className="border-green-200 bg-green-50">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-green-100 rounded-full">
+                          <CheckCircle className="h-6 w-6 text-green-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-green-900">
+                            🎉 Application Complete!
+                          </h3>
+                          <p className="text-green-700">
+                            Congratulations! You've completed all application
+                            steps.
+                          </p>
+                          <p className="text-sm text-green-600 mt-1">
+                            You can review your information or explore
+                            additional resources.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Link href="/submissions">
+                          <Button
+                            variant="outline"
+                            className="border-green-300 text-green-700 hover:bg-green-100"
+                          >
+                            View Submissions
+                          </Button>
+                        </Link>
+                        <Link href="/student-stories">
+                          <Button className="bg-green-600 hover:bg-green-700">
+                            Share Your Story
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Application Progress */}
               <div className="lg:col-span-2 space-y-6">
@@ -221,30 +363,66 @@ export default function Dashboard() {
                     </div>
 
                     <div className="mt-6 space-y-4">
-                      {applicationSteps.map((step) => (
+                      {applicationSteps.map((step, index) => (
                         <div
                           key={step.id}
-                          className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                          className={`flex items-center justify-between p-4 border rounded-lg transition-colors ${
+                            step.completed
+                              ? "bg-green-50 border-green-200 hover:bg-green-100"
+                              : step === nextStep
+                                ? "bg-blue-50 border-blue-200 hover:bg-blue-100"
+                                : "hover:bg-gray-50"
+                          }`}
                         >
                           <div className="flex items-center gap-4">
-                            <div
-                              className={`p-2 rounded-lg ${
-                                step.completed
-                                  ? "bg-green-100 text-green-600"
-                                  : "bg-gray-100 text-gray-600"
-                              }`}
-                            >
-                              {step.completed ? (
-                                <CheckCircle className="h-5 w-5" />
-                              ) : (
-                                <step.icon className="h-5 w-5" />
-                              )}
+                            <div className="flex items-center gap-3">
+                              <div className="text-sm font-medium text-gray-500 w-8">
+                                {index + 1}
+                              </div>
+                              <div
+                                className={`p-2 rounded-lg ${
+                                  step.completed
+                                    ? "bg-green-100 text-green-600"
+                                    : step === nextStep
+                                      ? "bg-blue-100 text-blue-600"
+                                      : "bg-gray-100 text-gray-600"
+                                }`}
+                              >
+                                {step.completed ? (
+                                  <CheckCircle className="h-5 w-5" />
+                                ) : step === nextStep ? (
+                                  <PlayCircle className="h-5 w-5" />
+                                ) : (
+                                  <step.icon className="h-5 w-5" />
+                                )}
+                              </div>
                             </div>
                             <div>
-                              <h3 className="font-medium text-gray-900">
+                              <h3
+                                className={`font-medium ${
+                                  step.completed
+                                    ? "text-green-900"
+                                    : step === nextStep
+                                      ? "text-blue-900"
+                                      : "text-gray-900"
+                                }`}
+                              >
                                 {step.name}
+                                {step === nextStep && (
+                                  <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                                    Next
+                                  </span>
+                                )}
                               </h3>
-                              <p className="text-sm text-gray-600">
+                              <p
+                                className={`text-sm ${
+                                  step.completed
+                                    ? "text-green-600"
+                                    : step === nextStep
+                                      ? "text-blue-600"
+                                      : "text-gray-600"
+                                }`}
+                              >
                                 {step.description}
                               </p>
                             </div>
@@ -255,7 +433,13 @@ export default function Dashboard() {
                                 variant="secondary"
                                 className="bg-green-100 text-green-800"
                               >
+                                <CheckCircle className="h-3 w-3 mr-1" />
                                 Complete
+                              </Badge>
+                            ) : step === nextStep ? (
+                              <Badge className="bg-blue-100 text-blue-800">
+                                <PlayCircle className="h-3 w-3 mr-1" />
+                                Continue
                               </Badge>
                             ) : (
                               <Badge variant="outline">
@@ -264,8 +448,22 @@ export default function Dashboard() {
                               </Badge>
                             )}
                             <Link href={step.href}>
-                              <Button size="sm" variant="outline">
-                                {step.completed ? "Review" : "Continue"}
+                              <Button
+                                size="sm"
+                                variant={
+                                  step === nextStep ? "default" : "outline"
+                                }
+                                className={
+                                  step === nextStep
+                                    ? "bg-blue-600 hover:bg-blue-700"
+                                    : ""
+                                }
+                              >
+                                {step.completed
+                                  ? "Review"
+                                  : step === nextStep
+                                    ? "Continue"
+                                    : "Start"}
                                 <ArrowRight className="h-4 w-4 ml-2" />
                               </Button>
                             </Link>
@@ -283,13 +481,13 @@ export default function Dashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <Link href="/university-exchanges">
+                      <Link href="/destinations">
                         <Button
                           variant="outline"
                           className="w-full h-20 flex-col gap-2"
                         >
                           <BookOpen className="h-5 w-5" />
-                          <span className="text-xs">Browse Exchanges</span>
+                          <span className="text-xs">Explore Universities</span>
                         </Button>
                       </Link>
                       <Link href="/student-stories">
@@ -298,16 +496,16 @@ export default function Dashboard() {
                           className="w-full h-20 flex-col gap-2"
                         >
                           <FileText className="h-5 w-5" />
-                          <span className="text-xs">Read Stories</span>
+                          <span className="text-xs">Read Student Stories</span>
                         </Button>
                       </Link>
-                      <Link href="/student-accommodations">
+                      <Link href="/basic-information">
                         <Button
                           variant="outline"
                           className="w-full h-20 flex-col gap-2"
                         >
-                          <Home className="h-5 w-5" />
-                          <span className="text-xs">Find Housing</span>
+                          <User className="h-5 w-5" />
+                          <span className="text-xs">Start Application</span>
                         </Button>
                       </Link>
                       <Link href="/profile">
@@ -316,7 +514,7 @@ export default function Dashboard() {
                           className="w-full h-20 flex-col gap-2"
                         >
                           <Settings className="h-5 w-5" />
-                          <span className="text-xs">Edit Profile</span>
+                          <span className="text-xs">Update Profile</span>
                         </Button>
                       </Link>
                     </div>

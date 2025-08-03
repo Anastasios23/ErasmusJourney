@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Header from "../components/Header";
+import LoginPrompt from "../src/components/LoginPrompt";
+import Breadcrumb from "../components/Breadcrumb";
 
 type Submission = {
   id: string;
@@ -68,7 +70,30 @@ export default function SubmissionsPage() {
 
   // Don't render if not authenticated (will redirect)
   if (!session) {
-    return null;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="max-w-3xl mx-auto">
+            <Breadcrumb
+              items={[
+                { label: "Home", href: "/" },
+                { label: "Admin", href: "/admin" },
+                { label: "Submissions", href: "/submissions" },
+              ]}
+            />
+
+            <div className="mt-8">
+              <LoginPrompt
+                title="Admin Access Required"
+                description="You need to be logged in as an administrator to view submissions."
+                currentPath="/submissions"
+              />
+            </div>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   return (

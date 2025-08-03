@@ -74,6 +74,40 @@ export default async function handler(
       });
     }
 
+    // Check if user exists in database, create if missing
+    let userExists = await prisma.user.findUnique({
+      where: { id: session.user.id },
+    });
+
+    if (!userExists) {
+      console.log(
+        "User not found in database, attempting to create:",
+        session.user.id,
+      );
+
+      try {
+        // Create the user based on session data
+        userExists = await prisma.user.create({
+          data: {
+            id: session.user.id,
+            email: session.user.email || "",
+            firstName: session.user.name?.split(" ")[0] || "Unknown",
+            lastName: session.user.name?.split(" ").slice(1).join(" ") || "",
+            role: session.user.role || "USER",
+          },
+        });
+        console.log("Successfully created user account:", userExists.id);
+      } catch (createError) {
+        console.error("Failed to create user account:", createError);
+        return res.status(401).json({
+          error: "User account creation failed",
+          message:
+            "Could not create your user account. Please sign out and sign in again.",
+          action: "REAUTHENTICATE",
+        });
+      }
+    }
+
     // Validate living expenses form data specifically
     if (type === "living-expenses") {
       try {

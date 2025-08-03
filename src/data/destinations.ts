@@ -1,110 +1,111 @@
-export interface Destination {
+export interface ErasmusDestination {
   id: string;
-  country: string;
   city: string;
-  university: string;
-  universityShort: string;
-  partnerUniversities: string[];
-  language: string;
-  costOfLiving: "low" | "medium" | "high";
-  averageRent: number;
-  popularWith: string[];
+  country: string;
   imageUrl: string;
   description: string;
+  costOfLiving: "low" | "medium" | "high";
+  averageRent: number;
+  university: string;
+  universityShort?: string;
+  partnerUniversities: string[];
+  popularWith: string[];
+  language?: string;
 }
 
-export interface StudentTestimonial {
-  id: string;
-  studentName: string;
-  homeUniversity: string;
-  hostUniversity: string;
-  city: string;
-  country: string;
-  semester: string;
-  year: number;
-  accommodationType: string;
-  monthlyRent: number;
-  rating: number;
-  accommodationReview: string;
-  cityReview: string;
-  budgetTips: string;
-  wouldRecommend: boolean;
-  avatar: string;
-}
-
-export const ERASMUS_DESTINATIONS: Destination[] = [
+export const ERASMUS_DESTINATIONS: ErasmusDestination[] = [
   {
-    id: "berlin_germany",
-    country: "Germany",
-    city: "Berlin",
-    university: "Technical University of Berlin",
-    universityShort: "TU Berlin",
-    partnerUniversities: [
-      "University of Cyprus",
-      "Cyprus University of Technology",
-    ],
-    language: "German/English",
+    id: "barcelona-spain",
+    city: "Barcelona",
+    country: "Spain",
+    imageUrl: "/images/destinations/barcelona.jpg",
+    description:
+      "A vibrant Mediterranean city combining stunning architecture, beaches, and rich culture. Perfect for students seeking a dynamic urban experience.",
     costOfLiving: "medium",
     averageRent: 450,
-    popularWith: ["Engineering", "Computer Science", "Architecture"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1587330979470-3010b06cccd4?w=600&h=400&fit=crop",
-    description:
-      "Vibrant capital city with excellent technical education and rich cultural life.",
-  },
-  {
-    id: "barcelona_spain",
-    country: "Spain",
-    city: "Barcelona",
-    university: "Universitat Politècnica de Catalunya",
-    universityShort: "UPC",
-    partnerUniversities: ["University of Cyprus", "University of Nicosia"],
-    language: "Spanish/Catalan/English",
-    costOfLiving: "medium",
-    averageRent: 500,
-    popularWith: ["Architecture", "Engineering", "Business"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=600&h=400&fit=crop",
-    description:
-      "Mediterranean coastal city famous for Gaudí architecture and vibrant student life.",
-  },
-  {
-    id: "amsterdam_netherlands",
-    country: "Netherlands",
-    city: "Amsterdam",
-    university: "University of Amsterdam",
-    universityShort: "UvA",
-    partnerUniversities: ["University of Cyprus", "European University Cyprus"],
-    language: "Dutch/English",
-    costOfLiving: "high",
-    averageRent: 650,
-    popularWith: ["Business", "Social Sciences", "Psychology"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1459679749680-18eb29d40cd2?w=600&h=400&fit=crop",
-    description:
-      "Historic city with world-class universities and excellent English-taught programs.",
-  },
-  {
-    id: "vienna_austria",
-    country: "Austria",
-    city: "Vienna",
-    university: "Vienna University of Technology",
-    universityShort: "TU Wien",
+    university: "Universitat de Barcelona",
     partnerUniversities: [
-      "Cyprus University of Technology",
-      "Frederick University",
+      "Universitat Pompeu Fabra",
+      "Universitat Autònoma de Barcelona",
     ],
-    language: "German/English",
+    popularWith: ["Business Students", "Art & Design", "Architecture"],
+  },
+  {
+    id: "berlin-germany",
+    city: "Berlin",
+    country: "Germany",
+    imageUrl: "/images/destinations/berlin.jpg",
+    description:
+      "Europe's cultural capital with a rich history, vibrant nightlife, and affordable living. Ideal for students interested in history, politics, and arts.",
     costOfLiving: "medium",
     averageRent: 400,
-    popularWith: ["Engineering", "Architecture", "Music"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=600&h=400&fit=crop",
-    description:
-      "Imperial city with prestigious technical university and rich cultural heritage.",
+    university: "Humboldt University of Berlin",
+    partnerUniversities: [
+      "Technical University of Berlin",
+      "Free University of Berlin",
+    ],
+    popularWith: ["Political Science", "Engineering", "Liberal Arts"],
   },
   {
-    id: "prague_czech",
+    id: "prague-czech-republic",
+    city: "Prague",
+    country: "Czech Republic",
+    imageUrl: "/images/destinations/prague.jpg",
+    description:
+      "A fairy-tale city with stunning medieval architecture and very affordable living costs. Great for students on a budget who love history.",
+    costOfLiving: "low",
+    averageRent: 300,
+    university: "Charles University",
+    partnerUniversities: [
+      "Czech Technical University",
+      "University of Economics",
+    ],
+    popularWith: ["History", "Economics", "Computer Science"],
+  },
+  {
+    id: "paris-france",
+    city: "Paris",
+    country: "France",
+    imageUrl: "/images/destinations/paris.jpg",
+    description:
+      "The city of lights offers unparalleled cultural experiences, world-class museums, and academic excellence. Perfect for arts and humanities students.",
+    costOfLiving: "high",
+    averageRent: 700,
+    university: "Sorbonne University",
+    partnerUniversities: ["Sciences Po", "École Normale Supérieure"],
+    popularWith: ["Literature", "Philosophy", "International Relations"],
+  },
+  {
+    id: "amsterdam-netherlands",
+    city: "Amsterdam",
+    country: "Netherlands",
+    imageUrl: "/images/destinations/amsterdam.jpg",
+    description:
+      "A progressive, English-friendly city with excellent universities and a high quality of life. Great for international business and social sciences.",
+    costOfLiving: "high",
+    averageRent: 650,
+    university: "University of Amsterdam",
+    partnerUniversities: [
+      "VU Amsterdam",
+      "Amsterdam University of Applied Sciences",
+    ],
+    popularWith: ["Business", "Social Sciences", "Environmental Studies"],
+  },
+  {
+    id: "rome-italy",
+    city: "Rome",
+    country: "Italy",
+    imageUrl: "/images/destinations/rome.jpg",
+    description:
+      "The eternal city offers an incredible blend of ancient history, art, and Italian culture. Perfect for students of classics, art history, and archaeology.",
+    costOfLiving: "medium",
+    averageRent: 500,
+    university: "Sapienza University of Rome",
+    partnerUniversities: ["Roma Tre University", "LUISS University"],
+    popularWith: ["Art History", "Archaeology", "Italian Studies"],
+  },
+  {
+    id: "prague_czech_republic",
     country: "Czech Republic",
     city: "Prague",
     university: "Charles University",
@@ -171,6 +172,25 @@ export const ERASMUS_DESTINATIONS: Destination[] = [
       "English-speaking tech hub with friendly culture and vibrant student life.",
   },
 ];
+
+export interface StudentTestimonial {
+  id: string;
+  studentName: string;
+  homeUniversity: string;
+  hostUniversity: string;
+  city: string;
+  country: string;
+  semester: string;
+  year: number;
+  accommodationType: string;
+  monthlyRent: number;
+  rating: number;
+  accommodationReview: string;
+  cityReview: string;
+  budgetTips: string;
+  wouldRecommend: boolean;
+  avatar: string;
+}
 
 export const STUDENT_TESTIMONIALS: StudentTestimonial[] = [
   {
@@ -352,9 +372,10 @@ export const STUDENT_TESTIMONIALS: StudentTestimonial[] = [
 ];
 
 // Helper functions
+// Helper functions
 export const getDestinationsByUniversity = (
   universityName: string,
-): Destination[] => {
+): ErasmusDestination[] => {
   return ERASMUS_DESTINATIONS.filter((dest) =>
     dest.partnerUniversities.includes(universityName),
   );
@@ -378,7 +399,7 @@ export const getTestimonialsByUniversity = (
   );
 };
 
-export const getAllDestinations = (): Destination[] => ERASMUS_DESTINATIONS;
-
+export const getAllDestinations = (): ErasmusDestination[] =>
+  ERASMUS_DESTINATIONS;
 export const getAllTestimonials = (): StudentTestimonial[] =>
   STUDENT_TESTIMONIALS;

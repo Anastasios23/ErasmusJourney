@@ -12,6 +12,9 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
 } from "../src/components/ui/dropdown-menu";
 import {
   Menu,
@@ -23,8 +26,11 @@ import {
   FileText,
   Home,
   Euro,
+  ChevronDown,
+  ClipboardList,
 } from "lucide-react";
 import NotificationDropdown from "../src/components/NotificationDropdown";
+import { ErasmusIcon } from "../src/components/icons/CustomIcons";
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -48,14 +54,6 @@ export default function Header() {
     ? [
         { name: "Dashboard", href: "/dashboard", icon: User },
         { name: "My Profile", href: "/profile", icon: User },
-        {
-          name: "Basic Information",
-          href: "/basic-information",
-          icon: FileText,
-        },
-        { name: "Course Matching", href: "/course-matching", icon: BookOpen },
-        { name: "Accommodation", href: "/accommodation", icon: Home },
-        { name: "Living Expenses", href: "/living-expenses", icon: Euro },
         { name: "Settings", href: "/settings", icon: Settings },
         // Add admin link for admin users
         ...((session.user as any)?.role === "ADMIN"
@@ -63,6 +61,34 @@ export default function Header() {
           : []),
       ]
     : [];
+
+  // Application steps grouped separately for submenu
+  const applicationSteps = [
+    {
+      name: "Basic Information",
+      href: "/basic-information",
+      icon: FileText,
+      description: "Personal & academic details",
+    },
+    {
+      name: "Course Matching",
+      href: "/course-matching",
+      icon: BookOpen,
+      description: "Select courses and universities",
+    },
+    {
+      name: "Accommodation",
+      href: "/accommodation",
+      icon: Home,
+      description: "Housing preferences",
+    },
+    {
+      name: "Living Expenses",
+      href: "/living-expenses",
+      icon: Euro,
+      description: "Budget and cost planning",
+    },
+  ];
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/" });
@@ -79,13 +105,30 @@ export default function Header() {
           {/* Logo and Back Button */}
           <div className="flex items-center space-x-4">
             <BackButton className="hidden md:block" />
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">EJ</span>
+            <Link
+              href="/"
+              className="flex items-center space-x-3 group transition-all duration-300 hover:scale-105"
+            >
+              <div className="relative">
+                <ErasmusIcon
+                  size={36}
+                  className="transition-all duration-300 group-hover:rotate-12"
+                />
+                <div className="absolute -inset-2 bg-blue-500/20 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300" />
               </div>
-              <span className="font-bold text-xl text-gray-900">
-                Erasmus Journey
-              </span>
+              <div className="flex flex-col">
+                <div className="flex items-baseline">
+                  <span className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                    Erasmus
+                  </span>
+                  <span className="text-xl font-light text-blue-600 ml-1 group-hover:text-blue-700 transition-colors">
+                    Journey
+                  </span>
+                </div>
+                <span className="text-xs text-gray-500 -mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Cyprus Edition
+                </span>
+              </div>
             </Link>
           </div>
 
@@ -160,6 +203,36 @@ export default function Header() {
                         </Link>
                       </DropdownMenuItem>
                     ))}
+                    <DropdownMenuSeparator />
+                    {/* Application Steps Submenu */}
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger className="flex items-center gap-2">
+                        <ClipboardList className="h-4 w-4" aria-hidden="true" />
+                        <span>Application Steps</span>
+                        <ChevronDown className="h-3 w-3 ml-auto" />
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuSubContent>
+                        {applicationSteps.map((step) => (
+                          <DropdownMenuItem key={step.name} asChild>
+                            <Link
+                              href={step.href}
+                              className="flex items-start gap-3 w-full p-3"
+                            >
+                              <step.icon
+                                className="h-4 w-4 mt-0.5"
+                                aria-hidden="true"
+                              />
+                              <div className="flex flex-col">
+                                <span className="font-medium">{step.name}</span>
+                                <span className="text-xs text-muted-foreground">
+                                  {step.description}
+                                </span>
+                              </div>
+                            </Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuSubContent>
+                    </DropdownMenuSub>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       className="flex items-center gap-2 cursor-pointer"
@@ -253,6 +326,24 @@ export default function Header() {
                         {item.name}
                       </Link>
                     ))}
+
+                    {/* Application Steps Section */}
+                    <div className="px-3 py-2">
+                      <div className="text-sm font-medium text-gray-900 mb-2">
+                        Application Steps
+                      </div>
+                      {applicationSteps.map((step) => (
+                        <Link
+                          key={step.name}
+                          href={step.href}
+                          className="block px-3 py-2 ml-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          {step.name}
+                        </Link>
+                      ))}
+                    </div>
+
                     <button
                       onClick={handleSignOut}
                       className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100"

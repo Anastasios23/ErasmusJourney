@@ -141,6 +141,8 @@ export default async function handler(
       return {
         ...sub,
         data: safeData,
+        createdAt: sub.createdAt.toISOString(),
+        updatedAt: sub.updatedAt.toISOString(),
       };
     });
 

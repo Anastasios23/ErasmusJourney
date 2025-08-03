@@ -1,7 +1,7 @@
- 
+import { UniversityAgreement } from "./universityAgreements";
 
 // Temporary file for UNIC comprehensive agreements
-export const UNIC_COMPREHENSIVE_AGREEMENTS = [
+export const UNIC_COMPREHENSIVE_AGREEMENTS: UniversityAgreement[] = [
   // accounting bachelor
 
   {
@@ -2618,7 +2618,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Bielefeld University",
     partnerCity: "Bielefeld",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -2626,7 +2626,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Radboud University Nijmegen",
     partnerCity: "Nijmegen",
     partnerCountry: "Netherlands",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -2634,7 +2634,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universiteit Maastricht",
     partnerCity: "Maastricht",
     partnerCountry: "Netherlands",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   // Criminology Master
@@ -2644,7 +2644,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "AGH University of Science and Technology",
     partnerCity: "Krakow",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   // Civil and Environmental Engineer bachelor
@@ -2655,7 +2655,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "FH Joanneum University of Applied Sciences",
     partnerCity: "Graz",
     partnerCountry: "Austria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -2663,7 +2663,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -2671,7 +2671,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Northern Denmark",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -2679,23 +2679,25 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "VIA University College",
     partnerCity: "Aarhus",
     partnerCountry: "Denmark",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Civil and Environmental Engineer (BSc)",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Civil and Environmental Engineer (BSc)",
-    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerUniversity:
+      "School of Pedagogical & Technological Education (ASPETE)",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -2703,7 +2705,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Western Macedonia",
     partnerCity: "Kozani",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -2711,7 +2713,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Siauliu Valstybine Kolegija",
     partnerCity: "Šiauliai",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -2719,7 +2721,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -2727,7 +2729,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Saxion University of Applied Sciences",
     partnerCity: "Enschede",
     partnerCountry: "Netherlands",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -2735,7 +2737,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Politecnic of Coimbra",
     partnerCity: "Coimbra",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -2743,7 +2745,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universidade do Porto",
     partnerCity: "Porto",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -2751,7 +2753,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Orebro University",
     partnerCity: "Örebro",
     partnerCountry: "Sweden",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -2759,7 +2761,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universitatea Tehnica Cluj-Napoca",
     partnerCity: "Cluj-Napoca",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -2767,15 +2769,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Lublin University of Technology",
     partnerCity: "Lublin",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Civil and Environmental Engineer (BSc)",
-    partnerUniversity: "UNIVERSITATEA NATIONALA DE STIINTA SI TEHNOLOGIE POLITEHNICA BUCURESTI",
+    partnerUniversity:
+      "UNIVERSITATEA NATIONALA DE STIINTA SI TEHNOLOGIE POLITEHNICA BUCURESTI",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -2783,7 +2786,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of San Marino",
     partnerCity: "San Marino",
     partnerCountry: "San Marino",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   // Clinical Dietetics Master
@@ -2794,18 +2797,18 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Agricultural University of Athens",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
-// Clinical Psychology master
+  // Clinical Psychology master
 
-{
+  {
     homeUniversity: "UNIC",
     homeDepartment: "Clinical Psychology (MSc)",
     partnerUniversity: "Bielefeld University",
     partnerCity: "Bielefeld",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -2813,7 +2816,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Radboud University Nijmegen",
     partnerCity: "Nijmegen",
     partnerCountry: "Netherlands",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -2821,7 +2824,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
     partnerCity: "Novi Sad",
     partnerCountry: "Serbia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   // Education Sciences master
@@ -2829,10 +2832,11 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   {
     homeUniversity: "UNIC",
     homeDepartment: "Education Sciences (MEd)",
-    partnerUniversity: "Theresianische Militärakademie Fachhochschul-Bachelorstudiengang Militärische Führung",
+    partnerUniversity:
+      "Theresianische Militärakademie Fachhochschul-Bachelorstudiengang Militärische Führung",
     partnerCity: "Wiener Neustadt",
     partnerCountry: "Austria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -2840,7 +2844,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Ostravska Univerzita",
     partnerCity: "Ostrava",
     partnerCountry: "Czech Republic",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -2848,7 +2852,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Europa-Universität Flensburg",
     partnerCity: "Flensburg",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -2856,15 +2860,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "MARTIN-LUTHER-UNIVERSITAT HALLE-WITTENBERG",
     partnerCity: "Halle (Saale)",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Education Sciences (MEd)",
-    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerUniversity:
+      "School of Pedagogical & Technological Education (ASPETE)",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -2872,7 +2877,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Patras",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -2880,7 +2885,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of the Aegean",
     partnerCity: "Mytilene",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -2888,7 +2893,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Crete",
     partnerCity: "Heraklion",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -2896,7 +2901,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hellenic Open University",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -2904,7 +2909,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Salerno",
     partnerCity: "Salerno",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -2912,7 +2917,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Instituto Europeu de Estudos Superiores",
     partnerCity: "Funchal",
     partnerCountry: "Portugal",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -2920,7 +2925,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
     partnerCity: "Novi Sad",
     partnerCountry: "Serbia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   //Education Sciences phd
@@ -2931,15 +2936,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "MARTIN-LUTHER-UNIVERSITAT HALLE-WITTENBERG",
     partnerCity: "Halle (Saale)",
     partnerCountry: "Germany",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Education Sciences (PhD)",
-    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerUniversity:
+      "School of Pedagogical & Technological Education (ASPETE)",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -2947,7 +2953,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Patras",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -2955,7 +2961,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of the Aegean",
     partnerCity: "Mytilene",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -2963,7 +2969,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universidad de Zaragoza",
     partnerCity: "Zaragoza",
     partnerCountry: "Spain",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
 
   // Educ. School Psychology master
@@ -2974,7 +2980,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Bielefeld University",
     partnerCity: "Bielefeld",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -2982,7 +2988,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Radboud University Nijmegen",
     partnerCity: "Nijmegen",
     partnerCountry: "Netherlands",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   // English Language and Literature bachelor
@@ -2990,10 +2996,11 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   {
     homeUniversity: "UNIC",
     homeDepartment: "English Language and Literature (BA)",
-    partnerUniversity: "St. Cyril and St. Methodius University of Veliko Turnov",
+    partnerUniversity:
+      "St. Cyril and St. Methodius University of Veliko Turnov",
     partnerCity: "Veliko Turnovo",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3001,7 +3008,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Metropolitan University Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3009,7 +3016,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universite Rennes Ii",
     partnerCity: "Rennes",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3017,7 +3024,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Erfurt (Universitat Erfurt)",
     partnerCity: "Erfurt",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3025,7 +3032,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Verona",
     partnerCity: "Verona",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3033,7 +3040,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Limerick",
     partnerCity: "Limerick",
     partnerCountry: "Ireland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3041,7 +3048,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "LIEPAJAS UNIVERSITATE",
     partnerCity: "Liepāja",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3049,7 +3056,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Latvian Academy of Culture",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3057,7 +3064,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3065,7 +3072,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Adams Mickiewicz Poznan",
     partnerCity: "Poznań",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3073,7 +3080,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Katolickl Uniwersytet Lubelski Jana Pawla II",
     partnerCity: "Lublin",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3081,7 +3088,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Uniwersytet Szczecinski",
     partnerCity: "Szczecin",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3089,7 +3096,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "State University of Applied Sciences in Wloclawek",
     partnerCity: "Włocławek",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3097,7 +3104,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
     partnerCity: "Novi Sad",
     partnerCountry: "Serbia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3105,7 +3112,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universitat Jaume I",
     partnerCity: "Castelló de la Plana",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3113,7 +3120,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of New Bulgaria",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3121,7 +3128,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Vilnius Business College",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3129,7 +3136,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Lazarski University",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3137,7 +3144,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Humboldt-Universität zu Berlin",
     partnerCity: "Berlin",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   // Energy, Oil and Gas Management bachelor
@@ -3147,7 +3154,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "FH JOANNEUM GmbH",
     partnerCity: "Graz",
     partnerCountry: "Austria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3155,7 +3162,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Politecnico Setubal-Tecnologia Barreiro",
     partnerCity: "Barreiro (Lavradio)",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3163,7 +3170,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Diethnes Panepistimio Ellados",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   // Environmental and Energy Management bachelor
@@ -3174,18 +3181,18 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Instituto Politecnico de Coimbra",
     partnerCity: "Coimbra",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
-// Exercise Sc and Physical Ed master
+  // Exercise Sc and Physical Ed master
 
-{
+  {
     homeUniversity: "UNIC",
     homeDepartment: " Exercise Sc and Physical Ed(MSc) ",
     partnerUniversity: "National sports Academy Vassil Levski",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3193,7 +3200,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "National and Kapodistrian University of Athens",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3201,7 +3208,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Democritus University of Thrace",
     partnerCity: "Komotini",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3209,7 +3216,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Lithuanian Sports University",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   // Exercise Sc and Physical Ed phd
@@ -3219,7 +3226,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "National sports Academy Vassil Levski",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -3227,7 +3234,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "National and Kapodistrian University of Athens",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -3235,7 +3242,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Democritus University of Thrace",
     partnerCity: "Komotini",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -3243,7 +3250,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Lithuanian Sports University",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
 
   // Computer Science bachelor
@@ -3254,7 +3261,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "FH Joanneum University of Applied Sciences",
     partnerCity: "Graz",
     partnerCountry: "Austria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3262,7 +3269,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3270,7 +3277,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Ruse Angel Kanchev",
     partnerCity: "Ruse",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3278,7 +3285,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechnic of Šibenik",
     partnerCity: "Šibenik",
     partnerCountry: "Croatia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3286,7 +3293,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Mendel University in Brno",
     partnerCity: "Brno",
     partnerCountry: "Czech Republic",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3294,7 +3301,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Czech Technical University in Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3302,7 +3309,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Business Academy Aarhus",
     partnerCity: "Aarhus",
     partnerCountry: "Denmark",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3310,7 +3317,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "VIA University College",
     partnerCity: "Horsens",
     partnerCountry: "Denmark",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3318,7 +3325,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3326,7 +3333,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Vaasa University of Applied Sciences",
     partnerCity: "Vaasa",
     partnerCountry: "Finland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3334,7 +3341,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ESME Sudria Engineering School",
     partnerCity: "Paris",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3342,7 +3349,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Nantes",
     partnerCity: "Nantes",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3350,7 +3357,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Sciences Ingolstadt",
     partnerCity: "Ingolstadt",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3358,23 +3365,25 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Sciences Stralsund",
     partnerCity: "Stralsund",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Computer Science (BSc)",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Computer Science (BSc)",
-    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerUniversity:
+      "School of Pedagogical & Technological Education (ASPETE)",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3382,7 +3391,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Patras",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3390,7 +3399,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Crete",
     partnerCity: "Heraklion",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3398,7 +3407,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Panepistimio Ioanninon",
     partnerCity: "Ioannina",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3406,7 +3415,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Aristotle University of Thessaloniki",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3414,7 +3423,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Panepistimio Thessalias",
     partnerCity: "Volos",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3422,7 +3431,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "College of Dunaujvaros",
     partnerCity: "Dunaújváros",
     partnerCountry: "Hungary",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3430,7 +3439,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita del Salento",
     partnerCity: "Lecce",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3438,7 +3447,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITA DEGLI STUDI DI PERUGIA",
     partnerCity: "Perugia",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3446,7 +3455,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "LIEPAJAS UNIVERSITATE",
     partnerCity: "Liepaja",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3454,7 +3463,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Riga Technical University",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3462,7 +3471,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Vilniaus Kolegija University of Applied Sciences",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3470,7 +3479,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universitetet i Sorost-Norge",
     partnerCity: "Kristiansand",
     partnerCountry: "Norway",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3478,7 +3487,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Politechnika Warszawska",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3486,7 +3495,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polish-Japanese Academy of Information Technology",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3494,7 +3503,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "State University of Applied Sciences in Wloclawek",
     partnerCity: "Włocławek",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3502,7 +3511,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "POLITECHNIKA WROCLAWSKA",
     partnerCity: "Wrocław",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3510,7 +3519,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Lodz",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3518,7 +3527,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "AGH University of Science and Technology",
     partnerCity: "Kraków",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3526,7 +3535,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Lublin University of Technology",
     partnerCity: "Lublin",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3534,7 +3543,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Politecnic of Coimbra",
     partnerCity: "Coimbra",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3542,7 +3551,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Craiova",
     partnerCity: "Craiova",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3550,7 +3559,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Romanian-American University",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3558,7 +3567,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University Politehnica of Bucharest",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3566,7 +3575,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universidad Complutense de Madrid",
     partnerCity: "Madrid",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3574,7 +3583,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Orebro University",
     partnerCity: "Örebro",
     partnerCountry: "Sweden",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3582,7 +3591,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF LJUBLJANA",
     partnerCity: "Ljubljana",
     partnerCountry: "Slovenia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3590,7 +3599,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "NOVA Lisbon",
     partnerCity: "Lisbon",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3598,7 +3607,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Kauno Kolegija/ University of Applied Sciences",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3606,18 +3615,18 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Oradea",
     partnerCity: "Oradea",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   // Computer Science master
 
-{
+  {
     homeUniversity: "UNIC",
     homeDepartment: "Computer Science (MSc)",
     partnerUniversity: "FH Joanneum University of Applied Sciences",
     partnerCity: "Graz",
     partnerCountry: "Austria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3625,7 +3634,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3633,7 +3642,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Ruse Angel Kanchev",
     partnerCity: "Ruse",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3641,7 +3650,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Mendel University in Brno",
     partnerCity: "Brno",
     partnerCountry: "Czech Republic",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3649,7 +3658,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Czech Technical University in Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3657,7 +3666,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3665,7 +3674,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "VIA University College",
     partnerCity: "VIA (multiple cities, HQ in Herning)",
     partnerCountry: "Denmark",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3673,15 +3682,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ESME Sudria Engineering School",
     partnerCity: "Paris",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Computer Science (MSc)",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3689,7 +3699,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Sciences Ingolstadt",
     partnerCity: "Ingolstadt",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3697,15 +3707,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Crete",
     partnerCity: "Heraklion (Crete)",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Computer Science (MSc)",
-    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerUniversity:
+      "School of Pedagogical & Technological Education (ASPETE)",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3713,7 +3724,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Patras",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3721,7 +3732,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Aristotle University of Thessaloniki",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3729,7 +3740,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universitetet i Sorost-Norge",
     partnerCity: "Sørøst-Norge",
     partnerCountry: "Norway",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3737,7 +3748,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Politechnika Warszawska",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3745,7 +3756,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Lodz",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3753,7 +3764,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "AGH University of Science and Technology",
     partnerCity: "Kraków",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3761,7 +3772,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polish-Japanese Academy of Information Technology",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3769,7 +3780,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "State University of Applied Sciences in Wloclawek",
     partnerCity: "Włocławek",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3777,7 +3788,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Politecnic of Coimbra",
     partnerCity: "Coimbra",
     partnerCountry: "Portugal",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3785,7 +3796,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University Politehnica of Bucharest",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3793,7 +3804,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Romanian-American University",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3801,7 +3812,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF LJUBLJANA",
     partnerCity: "Ljubljana",
     partnerCountry: "Slovenia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3809,7 +3820,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "NOVA Lisbon",
     partnerCity: "Lisbon",
     partnerCountry: "Portugal",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   //Computer Science phd
@@ -3820,7 +3831,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
     partnerCountry: "Bulgaria",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -3828,7 +3839,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Ruse Angel Kanchev",
     partnerCity: "Ruse",
     partnerCountry: "Bulgaria",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -3836,15 +3847,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Czech Technical University in Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Computer Science (PhD)",
-    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerUniversity:
+      "School of Pedagogical & Technological Education (ASPETE)",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -3852,7 +3864,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polish-Japanese Academy of Information Technology",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -3860,7 +3872,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Lodz",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -3868,7 +3880,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Politechnika Warszawska",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -3876,7 +3888,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University Politehnica of Bucharest",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
 
   // Dance bachelor
@@ -3887,7 +3899,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Pula",
     partnerCity: "Pula",
     partnerCountry: "Croatia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3895,7 +3907,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Strasbourg",
     partnerCity: "Strasbourg",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3903,7 +3915,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "National Academy of Dance in Rome",
     partnerCity: "Rome",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3911,7 +3923,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Latvian Academy of Culture",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3919,7 +3931,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Akademia Humanistyczno-Ekonomiczna w Lodzi",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -3927,7 +3939,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universidad Rey Juan Carlos",
     partnerCity: "Madrid",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   // Digital Art and Design master
@@ -3938,7 +3950,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Zagreb",
     partnerCity: "Zagreb",
     partnerCountry: "Croatia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3946,15 +3958,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Köthen",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Digital Art and Design",
-    partnerUniversity: "University of West Attica / Panepistimio Dytikis Attikis",
+    partnerUniversity:
+      "University of West Attica / Panepistimio Dytikis Attikis",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3962,7 +3975,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Naples Federico II",
     partnerCity: "Naples",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3970,7 +3983,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Academy of Fine Arts of Macerata",
     partnerCity: "Macerata",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3978,7 +3991,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "RISEBA University of Applied Sciences",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3986,7 +3999,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polish-Japanese Academy of Information Technology",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -3994,7 +4007,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Escuela Superior de Diseño de Madrid",
     partnerCity: "Madrid",
     partnerCountry: "Spain",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4002,7 +4015,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Ljubljana",
     partnerCity: "Ljubljana",
     partnerCountry: "Slovenia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4010,7 +4023,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Sciences BFI Vienna",
     partnerCity: "Vienna",
     partnerCountry: "Austria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4018,7 +4031,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ACCADEMIA DI BELLE ARTI STATALE DI VERONA",
     partnerCity: "Verona",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4026,7 +4039,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Timisoara",
     partnerCity: "Timișoara",
     partnerCountry: "Romania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   // Digital Communications and Mass Media bachelor
@@ -4037,7 +4050,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Haute École de la Province de Liège",
     partnerCity: "Liège",
     partnerCountry: "Belgium",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4045,7 +4058,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4053,7 +4066,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Metropolitan University Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4061,7 +4074,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Roskilde University",
     partnerCity: "Roskilde",
     partnerCountry: "Denmark",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4069,15 +4082,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Tartu Ulikool",
     partnerCity: "Tartu",
     partnerCountry: "Estonia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Digital Communications and Mass Media",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4085,7 +4099,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "EUROPA-UNIVERSITAET FLENSBURG",
     partnerCity: "Flensburg",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4093,7 +4107,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Aegean",
     partnerCity: "Mytilene",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4101,7 +4115,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Limerick",
     partnerCity: "Limerick",
     partnerCountry: "Ireland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4109,7 +4123,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Molise",
     partnerCity: "Campobasso",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4117,7 +4131,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Academy of Fine Arts of Macerata",
     partnerCity: "Macerata",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4125,7 +4139,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Uniwersytet Łódzki",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4133,7 +4147,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polish-Japanese Academy of Information Technology",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4141,7 +4155,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechnic Institute of Guarda",
     partnerCity: "Guarda",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4149,7 +4163,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITATEA DE VEST DIN TIMISOARA",
     partnerCity: "Timișoara",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4157,7 +4171,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universitat de Barcelona",
     partnerCity: "Barcelona",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4165,7 +4179,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universidad Europea Miguel de Cervantes S. A.",
     partnerCity: "Valladolid",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4173,7 +4187,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Orebro University",
     partnerCity: "Örebro",
     partnerCountry: "Sweden",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4181,7 +4195,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Ljubljana",
     partnerCity: "Ljubljana",
     partnerCountry: "Slovenia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4189,7 +4203,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ACCADEMIA DI BELLE ARTI STATALE DI VERONA",
     partnerCity: "Verona",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4197,7 +4211,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of San Marino",
     partnerCity: "San Marino",
     partnerCountry: "San Marino",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   // Digital Media and Comm master
@@ -4208,7 +4222,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4216,7 +4230,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Metropolitan University Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4224,7 +4238,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Metropolitan University Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4232,15 +4246,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Roskilde University",
     partnerCity: "Roskilde",
     partnerCountry: "Denmark",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Digital Media and Comm",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4248,7 +4263,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Bauhaus-Universität Weimar",
     partnerCity: "Weimar",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4256,7 +4271,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Köthen",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4264,7 +4279,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Molise",
     partnerCity: "Campobasso",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4272,7 +4287,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Academy of Fine Arts of Macerata",
     partnerCity: "Macerata",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4280,7 +4295,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "RISEBA University of Applied Sciences",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4288,7 +4303,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4296,7 +4311,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Uniwersytet Łódzki",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4304,7 +4319,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "AGH University of Science and Technology",
     partnerCity: "Kraków",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4312,7 +4327,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polish-Japanese Academy of Information Technology",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4320,7 +4335,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Adam Mickiewicz University, Poznan",
     partnerCity: "Poznań",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4328,7 +4343,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechnic Institute of Guarda",
     partnerCity: "Guarda",
     partnerCountry: "Portugal",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4336,7 +4351,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITATEA DE VEST DIN TIMISOARA",
     partnerCity: "Timișoara",
     partnerCountry: "Romania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4344,7 +4359,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
     partnerCity: "Novi Sad",
     partnerCountry: "Serbia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4352,7 +4367,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Escuela Superior de Diseño de Madrid",
     partnerCity: "Madrid",
     partnerCountry: "Spain",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4360,7 +4375,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Ljubljana",
     partnerCity: "Ljubljana",
     partnerCountry: "Slovenia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4368,7 +4383,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ACCADEMIA DI BELLE ARTI STATALE DI VERONA",
     partnerCity: "Verona",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   // Economics and Finance bachelor
@@ -4379,23 +4394,25 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Economics and Finance",
-    partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
+    partnerUniversity:
+      "University of Rijeka, Faculty of Economics and Business",
     partnerCity: "Rijeka",
     partnerCountry: "Croatia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Economics and Finance",
-    partnerUniversity: "Brno University of Technology, Faculty of Business and Management",
+    partnerUniversity:
+      "Brno University of Technology, Faculty of Business and Management",
     partnerCity: "Brno",
     partnerCountry: "Czech Republic",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4403,7 +4420,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "International University Libertas",
     partnerCity: "Zagreb",
     partnerCountry: "Croatia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4411,7 +4428,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4419,7 +4436,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Université de Tours",
     partnerCity: "Tours",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4427,15 +4444,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ESC Rennes - School of Business",
     partnerCity: "Rennes",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Economics and Finance",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4443,7 +4461,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universität Kassel",
     partnerCity: "Kassel",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4451,7 +4469,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Köthen",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4459,7 +4477,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Crete",
     partnerCity: "Heraklion",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4467,7 +4485,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Peloponnese",
     partnerCity: "Tripoli",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4475,7 +4493,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Volos",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4483,7 +4501,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Vilnius University Business School",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4491,7 +4509,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4499,7 +4517,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "State University of Applied Sciences in Wloclawek",
     partnerCity: "Włocławek",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4507,7 +4525,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Economics in Katowice",
     partnerCity: "Katowice",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4515,7 +4533,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Instituto Politécnico Da Guarda",
     partnerCity: "Guarda",
     partnerCountry: "Portugal",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4523,7 +4541,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Romanian-American University",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4531,7 +4549,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
     partnerCountry: "Slovakia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   // Engineering Management master
@@ -4541,15 +4559,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ESME Sudria Engineering School",
     partnerCity: "Paris",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Engineering Management (MSc)",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   // Electrical Engineering bachelor
@@ -4560,15 +4579,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Electrical Engineering (BSc)",
-    partnerUniversity: "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
+    partnerUniversity:
+      "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
     partnerCity: "Vaasa",
     partnerCountry: "Finland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4576,7 +4596,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ESME Sudria Engineering School",
     partnerCity: "Paris",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4584,15 +4604,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Köthen",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Electrical Engineering (BSc)",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4600,7 +4621,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Sciences Stralsund",
     partnerCity: "Stralsund",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4608,15 +4629,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Sciences Mittelhessen",
     partnerCity: "Gießen",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Electrical Engineering (BSc)",
-    partnerUniversity: "ASPETE - School of Pedagogical & Technological Education",
+    partnerUniversity:
+      "ASPETE - School of Pedagogical & Technological Education",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4624,7 +4646,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Western Macedonia",
     partnerCity: "Kozani",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4632,7 +4654,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Patras",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4640,7 +4662,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Elliniko Mesogeiako Panepistimio",
     partnerCity: "Heraklion",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4648,7 +4670,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechneio Kritis",
     partnerCity: "Chania",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4656,7 +4678,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita del Salento",
     partnerCity: "Lecce",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4664,7 +4686,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita degli Studi di Perugia",
     partnerCity: "Perugia",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4672,7 +4694,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Rezeknes Tehnologiju Akademija",
     partnerCity: "Rezekne",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4680,7 +4702,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universitatea Tehnica Cluj-Napoca",
     partnerCity: "Cluj-Napoca",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4688,7 +4710,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4696,7 +4718,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Lublin University of Technology",
     partnerCity: "Lublin",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4704,7 +4726,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Oradea",
     partnerCity: "Oradea",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4712,7 +4734,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Politehnica University of Bucharest",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4720,15 +4742,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Northern Denmark",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Electrical Engineering (BSc)",
-    partnerUniversity: "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
+    partnerUniversity:
+      "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
     partnerCity: "Vaasa",
     partnerCountry: "Finland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4736,7 +4759,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
     partnerCountry: "Slovakia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -4744,15 +4767,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechnic University of Catalonia",
     partnerCity: "Barcelona",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Electrical Engineering (BSc)",
-    partnerUniversity: "UNIVERSITATEA NATIONALA DE STIINTA SI TEHNOLOGIE POLITEHNICA BUCURESTI",
+    partnerUniversity:
+      "UNIVERSITATEA NATIONALA DE STIINTA SI TEHNOLOGIE POLITEHNICA BUCURESTI",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   // Electrical Engineering master
@@ -4763,15 +4787,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Electrical Engineering (MSc)",
-    partnerUniversity: "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
+    partnerUniversity:
+      "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
     partnerCity: "Vaasa",
     partnerCountry: "Finland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4779,7 +4804,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ESME Sudria Engineering School",
     partnerCity: "Paris",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4787,15 +4812,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Köthen",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Electrical Engineering (MSc)",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4803,7 +4829,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Sciences Stralsund",
     partnerCity: "Stralsund",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4811,15 +4837,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Sciences Mittelhessen",
     partnerCity: "Gießen",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Electrical Engineering (MSc)",
-    partnerUniversity: "ASPETE - School of Pedagogical & Technological Education",
+    partnerUniversity:
+      "ASPETE - School of Pedagogical & Technological Education",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4827,7 +4854,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Western Macedonia",
     partnerCity: "Kozani",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4835,7 +4862,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Patras",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4843,7 +4870,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Elliniko Mesogeiako Panepistimio",
     partnerCity: "Heraklion",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4851,7 +4878,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechneio Kritis",
     partnerCity: "Chania",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4859,7 +4886,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita del Salento",
     partnerCity: "Lecce",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4867,7 +4894,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita degli Studi di Perugia",
     partnerCity: "Perugia",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4875,7 +4902,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Rezeknes Tehnologiju Akademija",
     partnerCity: "Rezekne",
     partnerCountry: "Latvia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4883,7 +4910,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universitatea Tehnica Cluj-Napoca",
     partnerCity: "Cluj-Napoca",
     partnerCountry: "Romania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4891,7 +4918,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4899,7 +4926,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Lublin University of Technology",
     partnerCity: "Lublin",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4907,7 +4934,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Oradea",
     partnerCity: "Oradea",
     partnerCountry: "Romania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4915,7 +4942,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Politehnica University of Bucharest",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4923,15 +4950,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Northern Denmark",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Electrical Engineering (MSc)",
-    partnerUniversity: "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
+    partnerUniversity:
+      "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
     partnerCity: "Vaasa",
     partnerCountry: "Finland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4939,7 +4967,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
     partnerCountry: "Slovakia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -4947,15 +4975,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechnic University of Catalonia",
     partnerCity: "Barcelona",
     partnerCountry: "Spain",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Electrical Engineering (MSc)",
-    partnerUniversity: "UNIVERSITATEA NATIONALA DE STIINTA SI TEHNOLOGIE POLITEHNICA BUCURESTI",
+    partnerUniversity:
+      "UNIVERSITATEA NATIONALA DE STIINTA SI TEHNOLOGIE POLITEHNICA BUCURESTI",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   // Exercise Science and Physical Education phd
@@ -4966,15 +4995,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
     partnerCountry: "Bulgaria",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Exercise Science and Physical Education (PhD)",
-    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerUniversity:
+      "School of Pedagogical & Technological Education (ASPETE)",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -4982,7 +5012,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Western Macedonia",
     partnerCity: "Kozani",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -4990,7 +5020,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
 
   // Fine Art bachelor
@@ -5001,7 +5031,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Arts Vienna",
     partnerCity: "Vienna",
     partnerCountry: "Austria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5009,15 +5039,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Haute Ecole de la Ville de Liege",
     partnerCity: "Liège",
     partnerCountry: "Belgium",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Fine Art",
-    partnerUniversity: "St. Cyril and St. Methodius University of Veliko Turnov",
+    partnerUniversity:
+      "St. Cyril and St. Methodius University of Veliko Turnov",
     partnerCity: "Veliko Tarnovo",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5025,7 +5056,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Zagreb",
     partnerCity: "Zagreb",
     partnerCountry: "Croatia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5033,7 +5064,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universite Rennes Ii",
     partnerCity: "Rennes",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5041,7 +5072,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Lapland",
     partnerCity: "Rovaniemi",
     partnerCountry: "Finland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5049,7 +5080,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Western Attica",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5057,7 +5088,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ANOTATI SCHOLI KALON TECHNON",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5065,7 +5096,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Academy of Fine Arts of Macerata",
     partnerCity: "Macerata",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5073,7 +5104,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "LIEPAJAS UNIVERSITATE",
     partnerCity: "Liepaja",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5081,7 +5112,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "RISEBA University of Applied Sciences",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5089,7 +5120,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Vytautas Magnus University",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5097,7 +5128,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polish-Japanese Academy of Information Technology",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5105,7 +5136,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Lci Barcelona Escuela Superior S. L. U",
     partnerCity: "Barcelona",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5113,7 +5144,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Ljubljana",
     partnerCity: "Ljubljana",
     partnerCountry: "Slovenia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5121,26 +5152,27 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ACCADEMIA DI BELLE ARTI STATALE DI VERONA",
     partnerCity: "Verona",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Fine Art",
-    partnerUniversity: "Universitatea Națională de Arte ,,George Enescu\" din Iasi",
+    partnerUniversity:
+      'Universitatea Națională de Arte ,,George Enescu" din Iasi',
     partnerCity: "Iași",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
-// Family Medicine master
+  // Family Medicine master
 
-{
+  {
     homeUniversity: "UNIC",
     homeDepartment: "Family Medicine (MSc)",
     partnerUniversity: "Trakia University",
     partnerCity: "Stara Zagora",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5148,7 +5180,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Orebro University",
     partnerCity: "Örebro",
     partnerCountry: "Sweden",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   // Graphic & Digital Design bachelor
@@ -5156,10 +5188,11 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   {
     homeUniversity: "UNIC",
     homeDepartment: "Graphic & Digital Design",
-    partnerUniversity: "St. Cyril and St. Methodius University of Veliko Turnov",
+    partnerUniversity:
+      "St. Cyril and St. Methodius University of Veliko Turnov",
     partnerCity: "Veliko Tarnovo",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5167,7 +5200,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Lapland",
     partnerCity: "Rovaniemi",
     partnerCountry: "Finland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5175,15 +5208,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Köthen (Anhalt)",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Graphic & Digital Design",
-    partnerUniversity: "University of West Attica / Panepistimio Dytikis Attikis",
+    partnerUniversity:
+      "University of West Attica / Panepistimio Dytikis Attikis",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5191,7 +5225,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Naples Federico II",
     partnerCity: "Naples",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5199,7 +5233,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Academy of Fine Arts of Macerata",
     partnerCity: "Macerata",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5207,7 +5241,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "LIEPAJAS UNIVERSITATE",
     partnerCity: "Liepāja",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5215,7 +5249,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "RISEBA University of Applied Sciences",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5223,7 +5257,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Vytautas Magnus University",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5231,7 +5265,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polish-Japanese Academy of Information Technology",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5239,7 +5273,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Lci Barcelona Escuela Superior S. L. U",
     partnerCity: "Barcelona",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5247,15 +5281,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Escuela Superior de Diseño de Madrid",
     partnerCity: "Madrid",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Graphic & Digital Design",
-    partnerUniversity: "Escuela de Arte y Superior de Diseño de Alcoy/Escola d'Art i Superior de Disseny d'Alcoi",
+    partnerUniversity:
+      "Escuela de Arte y Superior de Diseño de Alcoy/Escola d'Art i Superior de Disseny d'Alcoi",
     partnerCity: "Alcoy",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5263,7 +5298,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Ljubljana",
     partnerCity: "Ljubljana",
     partnerCountry: "Slovenia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5271,9 +5306,8 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "„George Enescu” National University of Arts from Iași",
     partnerCity: "Iași",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
-
 
   // Health services admin master
 
@@ -5283,7 +5317,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Trakia University",
     partnerCity: "Stara Zagora",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5291,11 +5325,10 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Orebro University",
     partnerCity: "Örebro",
     partnerCountry: "Sweden",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
-
-// Hospitality Management bachelor
+  // Hospitality Management bachelor
 
   {
     homeUniversity: "UNIC",
@@ -5303,7 +5336,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Sciences BFI Vienna",
     partnerCity: "Vienna",
     partnerCountry: "Austria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5311,7 +5344,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "FH Joanneum University of Applied Sciences",
     partnerCity: "Graz",
     partnerCountry: "Austria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5319,7 +5352,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Agricultural University of Plovdiv",
     partnerCity: "Plovdiv",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5327,7 +5360,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "International University Libertas",
     partnerCity: "Dubrovnik",
     partnerCountry: "Croatia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5335,7 +5368,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Copenhagen Business Academy",
     partnerCity: "Copenhagen",
     partnerCountry: "Denmark",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5343,7 +5376,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5351,15 +5384,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Institut Limayrac",
     partnerCity: "Albi",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Hospitality Management",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5367,7 +5401,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "LIEPAJAS UNIVERSITATE",
     partnerCity: "Liepāja",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5375,7 +5409,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5383,7 +5417,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Vilnius Business College",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5391,7 +5425,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Saxion University of Applied Sciences",
     partnerCity: "Enschede",
     partnerCountry: "Netherlands",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5399,7 +5433,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechnic Institute of Guarda",
     partnerCity: "Guarda",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5407,7 +5441,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Instituto Europeu de Estudos Superiores",
     partnerCity: "Lisbon",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5415,7 +5449,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Romanian-American University",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5423,7 +5457,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSIDAD COMPLUTENSE DE MADRID",
     partnerCity: "Madrid",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5431,7 +5465,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Malta",
     partnerCity: "Msida",
     partnerCountry: "Malta",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   // Human Biology bachelor
@@ -5442,7 +5476,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Crete",
     partnerCity: "Heraklion",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5450,7 +5484,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Foggia",
     partnerCity: "Foggia",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5458,7 +5492,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Lodz",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -5466,7 +5500,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Maribor",
     partnerCity: "Maribor",
     partnerCountry: "Slovenia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   // HR master
@@ -5477,7 +5511,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Sciences BFI Vienna",
     partnerCity: "Vienna",
     partnerCountry: "Austria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5485,7 +5519,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5493,7 +5527,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Univerity of Liege",
     partnerCity: "Liège",
     partnerCountry: "Belgium",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5501,7 +5535,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Haute Ecole de la Province de Liege",
     partnerCity: "Liège",
     partnerCountry: "Belgium",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5509,15 +5543,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Agricultural University of Plovdiv",
     partnerCity: "Plovdiv",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "HR (MBA)",
-    partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
+    partnerUniversity:
+      "University of Rijeka, Faculty of Economics and Business",
     partnerCity: "Rijeka",
     partnerCountry: "Croatia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5525,7 +5560,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "International University Libertas",
     partnerCity: "Zagreb",
     partnerCountry: "Croatia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5533,15 +5568,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Mendel University in Brno",
     partnerCity: "Brno",
     partnerCountry: "Czech Republic",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "HR (MBA)",
-    partnerUniversity: "Brno University of Technology, Faculty of Business and Management",
+    partnerUniversity:
+      "Brno University of Technology, Faculty of Business and Management",
     partnerCity: "Brno",
     partnerCountry: "Czech Republic",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5549,7 +5585,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "VIA University College",
     partnerCity: "Horsens",
     partnerCountry: "Denmark",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5557,7 +5593,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5565,7 +5601,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Tallinn University",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5573,7 +5609,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Tallinn University of Technology",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5581,7 +5617,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "EDC Business School",
     partnerCity: "Paris",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5589,7 +5625,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Ecole De Management De Normandie",
     partnerCity: "Caen",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5597,7 +5633,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Groupe Kedge Business School",
     partnerCity: "Bordeaux",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5605,7 +5641,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Skema Business School Association",
     partnerCity: "Lille",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5613,7 +5649,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Université Lumière Lyon 2",
     partnerCity: "Lyon",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5621,7 +5657,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ESC Rennes - School of Business",
     partnerCity: "Rennes",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5629,7 +5665,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Université de Tours",
     partnerCity: "Tours",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5637,7 +5673,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Institut Limayrac",
     partnerCity: "Toulouse",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5645,7 +5681,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Groupe ESC Troyes",
     partnerCity: "Troyes",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5653,7 +5689,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ESCE International Business School",
     partnerCity: "Paris",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5661,7 +5697,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hochschule Stralsund",
     partnerCity: "Stralsund",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5669,7 +5705,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hochschule Emden/Leer",
     partnerCity: "Emden",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5677,15 +5713,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Köthen (Anhalt)",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "HR (MBA)",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5693,7 +5730,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "SRH Berlin University of Applied Sciences",
     partnerCity: "Berlin",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5701,7 +5738,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universität Kassel",
     partnerCity: "Kassel",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5709,7 +5746,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Leuphana Universität Lüneburg",
     partnerCity: "Lüneburg",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5717,7 +5754,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Management Studies",
     partnerCity: "Mannheim",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5725,7 +5762,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Sciences Schmalkalden",
     partnerCity: "Schmalkalden",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5733,7 +5770,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Sciences Stralsund",
     partnerCity: "Stralsund",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5741,7 +5778,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Technische Hochschule Ingolstadt",
     partnerCity: "Ingolstadt",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5749,7 +5786,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Charokopeio Panepistimio",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5757,7 +5794,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Volos",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5765,7 +5802,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of the Aegean (Mytilene)",
     partnerCity: "Mytilene",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5773,7 +5810,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hellenic Open University",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5781,7 +5818,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Crete",
     partnerCity: "Heraklion",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5789,7 +5826,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hellenic Mediterranean University",
     partnerCity: "Crete",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5797,7 +5834,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Siena",
     partnerCity: "Siena",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5805,7 +5842,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Salerno",
     partnerCity: "Salerno",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5813,7 +5850,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita Telematica Internazionale-Uninettuno",
     partnerCity: "Rome",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5821,7 +5858,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Riga Technical University",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5829,7 +5866,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Rezeknes Tehnologiju Akademija",
     partnerCity: "Rezekne",
     partnerCountry: "Latvia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5837,7 +5874,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "RISEBA University of Applied Sciences",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5845,7 +5882,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Vilnius Business College",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5853,7 +5890,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ISM University of Management and Economics",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5861,7 +5898,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5869,15 +5906,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Vilnius University Business School",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "HR (MBA)",
-    partnerUniversity: "Vytautas Magnus University Faculty of Economics and Management",
+    partnerUniversity:
+      "Vytautas Magnus University Faculty of Economics and Management",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5885,15 +5923,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Amsterdam University of Applied Sciences",
     partnerCity: "Amsterdam",
     partnerCountry: "Netherlands",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "HR (MBA)",
-    partnerUniversity: "Spesi - Sociedade de Promoção de Ensino Superior Imobiliário",
+    partnerUniversity:
+      "Spesi - Sociedade de Promoção de Ensino Superior Imobiliário",
     partnerCity: "Lisbon",
     partnerCountry: "Portugal",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5901,7 +5940,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Lodz",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5909,7 +5948,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Economics in Katowice",
     partnerCity: "Katowice",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5917,7 +5956,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Szczecin",
     partnerCity: "Szczecin",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5925,7 +5964,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "State University of Applied Sciences in Wloclawek",
     partnerCity: "Włocławek",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5933,7 +5972,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Romanian-American University",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5941,7 +5980,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Academy of Economic Studies in Bucharest",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5949,7 +5988,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Maribor",
     partnerCity: "Maribor",
     partnerCountry: "Slovenia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5957,7 +5996,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
     partnerCountry: "Slovakia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5965,7 +6004,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF LJUBLJANA",
     partnerCity: "Ljubljana",
     partnerCountry: "Slovenia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5973,7 +6012,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Economics and Management of Bratislava",
     partnerCity: "Bratislava",
     partnerCountry: "Slovakia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5981,7 +6020,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universitat de Girona",
     partnerCity: "Girona",
     partnerCountry: "Spain",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -5989,11 +6028,10 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Orebro University",
     partnerCity: "Örebro",
     partnerCountry: "Sweden",
-    academicLevel: "master"
+    academicLevel: "master",
   },
-  
 
-// HUMAN RIGHTS phd
+  // HUMAN RIGHTS phd
 
   {
     homeUniversity: "UNIC",
@@ -6001,7 +6039,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Tallinn University",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -6009,7 +6047,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Université Lumière Lyon 2",
     partnerCity: "Lyon",
     partnerCountry: "France",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -6017,7 +6055,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Padova",
     partnerCity: "Padua",
     partnerCountry: "Italy",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -6025,7 +6063,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Lodz",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
 
   // Interior Design bachelor
@@ -6036,7 +6074,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "KU Leuven",
     partnerCity: "Leuven",
     partnerCountry: "Belgium",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6044,7 +6082,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Lapland",
     partnerCity: "Rovaniemi",
     partnerCountry: "Finland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6052,7 +6090,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Y SCHOOLS",
     partnerCity: "Paris",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6060,7 +6098,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Bauhaus-Universität Weimar",
     partnerCity: "Weimar",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6068,15 +6106,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Volos",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Interior Design",
-    partnerUniversity: "University of West Attica / Panepistimio Dytikis Attikis",
+    partnerUniversity:
+      "University of West Attica / Panepistimio Dytikis Attikis",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6084,7 +6123,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Academy of Fine Arts of Macerata",
     partnerCity: "Macerata",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6092,7 +6131,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Rezeknes Tehnologiju Akademija",
     partnerCity: "Rēzekne",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6100,7 +6139,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polish-Japanese Academy of Information Technology",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6108,15 +6147,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Escuela Superior de Diseño de Madrid",
     partnerCity: "Madrid",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Interior Design",
-    partnerUniversity: "Escuela de Arte y Superior de Diseño de Alcoy/Escola d'Art i Superior de Disseny d'Alcoi",
+    partnerUniversity:
+      "Escuela de Arte y Superior de Diseño de Alcoy/Escola d'Art i Superior de Disseny d'Alcoi",
     partnerCity: "Alcoy (Alcoi)",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   // Interactive media & animation  bachelor
@@ -6127,7 +6167,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "FH Joanneum University of Applied Sciences",
     partnerCity: "Graz",
     partnerCountry: "Austria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6135,15 +6175,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Uniwersytet Łódzki",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Interactive media & animation",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6151,7 +6192,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Köthen",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6159,7 +6200,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Academy of Fine Arts of Macerata",
     partnerCity: "Macerata",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6167,7 +6208,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Vilnius Business College",
     partnerCity: "Vilnius",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6175,7 +6216,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Siauliu Valstybine Kolegija",
     partnerCity: "Šiauliai",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6183,7 +6224,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "LIEPAJAS UNIVERSITATE",
     partnerCity: "Liepāja",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6191,7 +6232,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polish-Japanese Academy of Information Technology",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6199,7 +6240,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Adam Mickiewicz University in Poznań",
     partnerCity: "Poznań",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6207,7 +6248,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Lci Barcelona Escuela Superior S. L. U",
     partnerCity: "Barcelona",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6215,15 +6256,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universitat de Barcelona",
     partnerCity: "Barcelona",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Interactive media & animation",
-    partnerUniversity: "Escuela de Arte y Superior de Diseño de Alcoy/Escola d'Art i Superior de Disseny d'Alcoi",
+    partnerUniversity:
+      "Escuela de Arte y Superior de Diseño de Alcoy/Escola d'Art i Superior de Disseny d'Alcoi",
     partnerCity: "Alcoy (Alcoi)",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6231,7 +6273,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universidad Europea Miguel de Cervantes S. A.",
     partnerCity: "Valladolid",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   //  International Relations and European Studies bachelor
@@ -6239,10 +6281,11 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   {
     homeUniversity: "UNIC",
     homeDepartment: "International Relations and European Studies",
-    partnerUniversity: "St. Cyril and St. Methodius University of Veliko Turnov",
+    partnerUniversity:
+      "St. Cyril and St. Methodius University of Veliko Turnov",
     partnerCity: "Veliko Tarnovo",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6250,7 +6293,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6258,7 +6301,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechnic of Šibenik",
     partnerCity: "Šibenik",
     partnerCountry: "Croatia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6266,7 +6309,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "International University Libertas",
     partnerCity: "Dubrovnik",
     partnerCountry: "Croatia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6274,7 +6317,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Masaryk University",
     partnerCity: "Brno",
     partnerCountry: "Czech Republic",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6282,7 +6325,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Metropolitan University Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6290,7 +6333,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Tallinn University",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6298,7 +6341,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Université Lumière Lyon 2",
     partnerCity: "Lyon",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6306,7 +6349,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universite de Bordeaux",
     partnerCity: "Bordeaux",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6314,7 +6357,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ICES",
     partnerCity: "La Roche-sur-Yon",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6322,7 +6365,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Goethe Universitat Frankfurt",
     partnerCity: "Frankfurt am Main",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6330,7 +6373,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Freiburg",
     partnerCity: "Freiburg im Breisgau",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6338,15 +6381,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Flensburg",
     partnerCity: "Flensburg",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "International Relations and European Studies",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6354,7 +6398,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Erfurt",
     partnerCity: "Erfurt",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6362,7 +6406,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Piraeus",
     partnerCity: "Piraeus",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6370,7 +6414,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF MACEDONIA",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6378,7 +6422,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Democritus University of Thrace",
     partnerCity: "Komotini",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6386,7 +6430,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Panteion University of Social and Political Sciences",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6394,7 +6438,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Haskolinn a Akureyri",
     partnerCity: "Akureyri",
     partnerCountry: "Iceland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6402,7 +6446,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Naples Federico II",
     partnerCity: "Naples",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6410,7 +6454,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita degli Studi di Salerno",
     partnerCity: "Salerno",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6418,7 +6462,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Padova",
     partnerCity: "Padua",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6426,7 +6470,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Verona",
     partnerCity: "Verona",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6434,7 +6478,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Latvian Academy of Culture",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6442,7 +6486,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Malta",
     partnerCity: "Msida",
     partnerCountry: "Malta",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6450,7 +6494,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "The Hague University of Applied Sciences",
     partnerCity: "The Hague",
     partnerCountry: "Netherlands",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6458,7 +6502,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Radboud University NIjmegen",
     partnerCity: "Nijmegen",
     partnerCountry: "Netherlands",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6466,7 +6510,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University American College Skopje",
     partnerCity: "Skopje",
     partnerCountry: "North Macedonia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6474,7 +6518,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polonia University",
     partnerCity: "Częstochowa",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6482,7 +6526,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Katolickl Uniwersytet Lubelski Jana Pawla II",
     partnerCity: "Lublin",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6490,7 +6534,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Collegium Civitas",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6498,7 +6542,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Warsaw",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6506,7 +6550,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "National Defence University Warsaw",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6514,7 +6558,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Adam Mickiewicz University in Poznań",
     partnerCity: "Poznań",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6522,7 +6566,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Lodz",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6530,7 +6574,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University Institute of Lisbon",
     partnerCity: "Lisbon",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6538,7 +6582,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Ljubljana",
     partnerCity: "Ljubljana",
     partnerCountry: "Slovenia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   // International Relations and European Studies master
@@ -6549,7 +6593,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6557,7 +6601,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Metropolitan University Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6565,7 +6609,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Masaryk University",
     partnerCity: "Brno",
     partnerCountry: "Czech Republic",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6573,7 +6617,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "International University Libertas",
     partnerCity: "Dubrovnik",
     partnerCountry: "Croatia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6581,7 +6625,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Tallinn University",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6589,7 +6633,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Université Lumière Lyon 2",
     partnerCity: "Lyon",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6597,15 +6641,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universite de Bordeaux",
     partnerCity: "Bordeaux",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "International Relations and European Studies",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6613,7 +6658,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Freiburg",
     partnerCity: "Freiburg im Breisgau",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6621,7 +6666,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Erfurt",
     partnerCity: "Erfurt",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6629,7 +6674,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Democritus University of Thrace",
     partnerCity: "Komotini",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6637,7 +6682,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Panteion University Social and Political Sciences",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6645,7 +6690,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF MACEDONIA",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6653,7 +6698,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Naples Federico II",
     partnerCity: "Naples",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6661,7 +6706,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Padova",
     partnerCity: "Padua",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6669,7 +6714,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Verona",
     partnerCity: "Verona",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6677,7 +6722,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita degli Studi di Salerno",
     partnerCity: "Salerno",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6685,7 +6730,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Radboud University NIjmegen",
     partnerCity: "Nijmegen",
     partnerCountry: "Netherlands",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6693,7 +6738,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University American College Skopje",
     partnerCity: "Skopje",
     partnerCountry: "North Macedonia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6701,7 +6746,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Warsaw",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6709,7 +6754,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Adam Mickiewicz University in Poznań",
     partnerCity: "Poznań",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6717,7 +6762,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Lodz",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6725,7 +6770,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University Institute of Lisbon",
     partnerCity: "Lisbon",
     partnerCountry: "Portugal",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -6733,9 +6778,8 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ICES",
     partnerCity: "La Roche-sur-Yon",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
-
 
   // International Relations and European Studies phd
 
@@ -6745,7 +6789,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -6753,7 +6797,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Metropolitan University Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -6761,7 +6805,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Tallinn University",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -6769,7 +6813,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Université Lumière Lyon 2",
     partnerCity: "Lyon",
     partnerCountry: "France",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -6777,7 +6821,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Democritus University of Thrace",
     partnerCity: "Komotini",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -6785,7 +6829,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Panteion University of Social and Political Sciences",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -6793,7 +6837,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF MACEDONIA",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -6801,7 +6845,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Padova",
     partnerCity: "Padua",
     partnerCountry: "Italy",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -6809,7 +6853,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Verona",
     partnerCity: "Verona",
     partnerCountry: "Italy",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -6817,7 +6861,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University American College Skopje",
     partnerCity: "Skopje",
     partnerCountry: "North Macedonia",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -6825,7 +6869,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Adam Mickiewicz University in Poznań",
     partnerCity: "Poznań",
     partnerCountry: "Poland",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
 
   // Law (LLB)
@@ -6836,7 +6880,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Haute École de la Province de Liège",
     partnerCity: "Liège",
     partnerCountry: "Belgium",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6844,7 +6888,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Hasselt",
     partnerCity: "Hasselt",
     partnerCountry: "Belgium",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6852,7 +6896,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6860,7 +6904,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Metropolitan University Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6868,7 +6912,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechnic of Sibenik",
     partnerCity: "Šibenik",
     partnerCountry: "Croatia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6876,7 +6920,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "International University Libertas",
     partnerCity: "Dubrovnik",
     partnerCountry: "Croatia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6884,7 +6928,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Tallinn University of Technology",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6892,7 +6936,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Tallinn University",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6900,7 +6944,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Strasbourg",
     partnerCity: "Strasbourg",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6908,7 +6952,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Université Lumière Lyon 2",
     partnerCity: "Lyon",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6916,7 +6960,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universite de Bordeaux",
     partnerCity: "Bordeaux",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6924,7 +6968,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universitry of Applied Sciences Schmalkalden",
     partnerCity: "Schmalkalden",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6932,7 +6976,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ALBERT-LUDWIGS-UNIVERSITAET FREIBURG",
     partnerCity: "Freiburg",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6940,7 +6984,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Europa-Universität Flensburg",
     partnerCity: "Flensburg",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6948,7 +6992,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Köthen",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6956,7 +7000,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ARISTOTELIO PANEPISTIMIO THESSALONIKIS",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6964,7 +7008,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF MACEDONIA",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6972,7 +7016,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "National and Kapodistrian University of Athens",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6980,7 +7024,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hellenic Open University",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6988,7 +7032,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Panteion University of Social and Political Sciences",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -6996,7 +7040,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Democritus University of Thrace",
     partnerCity: "Komotini",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7004,7 +7048,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "National University of Public Service",
     partnerCity: "Budapest",
     partnerCountry: "Hungary",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7012,7 +7056,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita degli studi di Sassari",
     partnerCity: "Sassari",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7020,7 +7064,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Macerata",
     partnerCity: "Macerata",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7028,7 +7072,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Verona",
     partnerCity: "Verona",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7036,7 +7080,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita Degli Studi Di Urbino Carlo Bo",
     partnerCity: "Urbino",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7044,7 +7088,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Padova",
     partnerCity: "Padua",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7052,15 +7096,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita Telematica Internazionale-Uninettuno",
     partnerCity: "Rome",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Law",
-    partnerUniversity: "UNIVERSITA DEGLI STUDI DI MESSINA - University of Messina",
+    partnerUniversity:
+      "UNIVERSITA DEGLI STUDI DI MESSINA - University of Messina",
     partnerCity: "Messina",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7068,7 +7113,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Limerick",
     partnerCity: "Limerick",
     partnerCountry: "Ireland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7076,7 +7121,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Agder",
     partnerCity: "Kristiansand",
     partnerCountry: "Norway",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7084,7 +7129,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University American College Skopje",
     partnerCity: "Skopje",
     partnerCountry: "North Macedonia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7092,7 +7137,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universiteit Maastricht",
     partnerCity: "Maastricht",
     partnerCountry: "Netherlands",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7100,7 +7145,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "National Defence University Warsaw",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7108,7 +7153,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Adam Mickiewicz University in Poznań",
     partnerCity: "Poznań",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7116,7 +7161,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Katolickl Uniwersytet Lubelski Jana Pawla II",
     partnerCity: "Lublin",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7124,7 +7169,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Lazarski University",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7132,7 +7177,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Lodz",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7140,7 +7185,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
     partnerCountry: "Slovakia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7148,7 +7193,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universidad de Burgos",
     partnerCity: "Burgos",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7156,7 +7201,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Oviedo",
     partnerCity: "Oviedo",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7164,7 +7209,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Orebro University",
     partnerCity: "Örebro",
     partnerCountry: "Sweden",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7172,10 +7217,8 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Freiburg",
     partnerCity: "Freiburg",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
-
-
 
   // Law (LLM) master
 
@@ -7185,7 +7228,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7193,7 +7236,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "International University Libertas",
     partnerCity: "Dubrovnik",
     partnerCountry: "Croatia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7201,7 +7244,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechnic of Sibenik",
     partnerCity: "Šibenik",
     partnerCountry: "Croatia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7209,7 +7252,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Metropolitan University Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7217,7 +7260,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Tallinn University",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7225,7 +7268,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Tallinn University of Technology",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7233,7 +7276,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hellenic Open University",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7241,7 +7284,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Panteion University of Social and Political Sciences",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7249,7 +7292,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Democritus University of Thrace",
     partnerCity: "Komotini",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7257,7 +7300,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF MACEDONIA",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7265,7 +7308,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ARISTOTELIO PANEPISTIMIO THESSALONIKIS",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7273,7 +7316,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universitry of Applied Sciences Schmalkalden",
     partnerCity: "Schmalkalden",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7281,7 +7324,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Europa-Universität Flensburg",
     partnerCity: "Flensburg",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7289,7 +7332,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Köthen",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7297,7 +7340,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita Telematica Internazionale-Uninettuno",
     partnerCity: "Rome",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7305,7 +7348,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Padova",
     partnerCity: "Padua",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7313,7 +7356,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Lodz",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7321,7 +7364,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Université Lumière Lyon 2",
     partnerCity: "Lyon",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7329,7 +7372,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universite de Bordeaux",
     partnerCity: "Bordeaux",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7337,7 +7380,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita degli studi di Sassari",
     partnerCity: "Sassari",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7345,7 +7388,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Macerata",
     partnerCity: "Macerata",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7353,7 +7396,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita Degli Studi Di Urbino Carlo Bo",
     partnerCity: "Urbino",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7361,7 +7404,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Agder",
     partnerCity: "Kristiansand",
     partnerCountry: "Norway",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7369,7 +7412,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universiteit Maastricht",
     partnerCity: "Maastricht",
     partnerCountry: "Netherlands",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7377,7 +7420,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University American College Skopje",
     partnerCity: "Skopje",
     partnerCountry: "North Macedonia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7385,7 +7428,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
     partnerCountry: "Slovakia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7393,7 +7436,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Orebro University",
     partnerCity: "Örebro",
     partnerCountry: "Sweden",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7401,7 +7444,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Adam Mickiewicz University in Poznań",
     partnerCity: "Poznań",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7409,7 +7452,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Verona",
     partnerCity: "Verona",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7417,9 +7460,8 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ALBERT-LUDWIGS-UNIVERSITAET FREIBURG",
     partnerCity: "Freiburg",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
-
 
   // Law phd
 
@@ -7429,7 +7471,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7437,7 +7479,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Metropolitan University Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7445,7 +7487,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Tallinn University",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7453,7 +7495,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Tallinn University of Technology",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7461,7 +7503,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Université Lumière Lyon 2",
     partnerCity: "Lyon",
     partnerCountry: "France",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7469,7 +7511,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Democritus University of Thrace",
     partnerCity: "Komotini",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7477,7 +7519,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF MACEDONIA",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7485,7 +7527,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Verona",
     partnerCity: "Verona",
     partnerCountry: "Italy",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7493,7 +7535,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Macerata",
     partnerCity: "Macerata",
     partnerCountry: "Italy",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7501,7 +7543,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Agder",
     partnerCity: "Kristiansand",
     partnerCountry: "Norway",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7509,7 +7551,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University American College Skopje",
     partnerCity: "Skopje",
     partnerCountry: "North Macedonia",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7517,7 +7559,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universidad de Burgos",
     partnerCity: "Burgos",
     partnerCountry: "Spain",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7525,7 +7567,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Oviedo",
     partnerCity: "Oviedo",
     partnerCountry: "Spain",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7533,7 +7575,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
     partnerCountry: "Slovakia",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7541,7 +7583,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Adam Mickiewicz University in Poznań",
     partnerCity: "Poznań",
     partnerCountry: "Poland",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
 
   // Management Information Systems bachelor
@@ -7552,15 +7594,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "FH Joanneum University of Applied Sciences",
     partnerCity: "Graz",
     partnerCountry: "Austria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Management Information Systems",
-    partnerUniversity: "FHWien der WKW - University of Applied Sciences for Management & Communication",
+    partnerUniversity:
+      "FHWien der WKW - University of Applied Sciences for Management & Communication",
     partnerCity: "Vienna",
     partnerCountry: "Austria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7568,7 +7611,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Sciences BFI Vienna",
     partnerCity: "Vienna",
     partnerCountry: "Austria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7576,15 +7619,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Management Information Systems",
-    partnerUniversity: "Brno University of Technology, Faculty of Business and Management",
+    partnerUniversity:
+      "Brno University of Technology, Faculty of Business and Management",
     partnerCity: "Brno",
     partnerCountry: "Czech Republic",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7592,15 +7636,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Management Information Systems",
-    partnerUniversity: "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
+    partnerUniversity:
+      "Vaasan ammattikorkeakoulu (Vaasa University of Applied Sciences)",
     partnerCity: "Vaasa",
     partnerCountry: "Finland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7608,15 +7653,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Aalen University",
     partnerCity: "Aalen",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Management Information Systems",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7624,7 +7670,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Athens University of Economics and Business",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7632,7 +7678,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hellenic Open University",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7640,7 +7686,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF PATRAS",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7648,7 +7694,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Aristotle University of Thessaloniki",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7656,7 +7702,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "College of Dunaujvaros",
     partnerCity: "Dunaújváros",
     partnerCountry: "Hungary",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7664,7 +7710,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita Telematica Internazionale-Uninettuno",
     partnerCity: "Rome",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7672,7 +7718,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Kaunas University of Technology",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7680,7 +7726,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Instituto Politécnico Da Guarda",
     partnerCity: "Guarda",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7688,7 +7734,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Szczecin",
     partnerCity: "Szczecin",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7696,7 +7742,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polish-Japanese Academy of Information Technology",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7704,7 +7750,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Romanian-American University",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7712,7 +7758,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universidad Complutense de Madrid",
     partnerCity: "Madrid",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   // Mathematics bachelor
@@ -7723,15 +7769,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Crete",
     partnerCity: "Crete",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Mathematics",
-    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerUniversity:
+      "School of Pedagogical & Technological Education (ASPETE)",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7739,7 +7786,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Lodz",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   // Mechanical Engineering bachelor
@@ -7750,7 +7797,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Technical University of Varna",
     partnerCity: "Varna",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7758,7 +7805,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hochschule Emden/Leer",
     partnerCity: "Emden/Leer",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7766,15 +7813,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Sciences Stralsund",
     partnerCity: "Stralsund",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Mechanical Engineering",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7782,15 +7830,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Patra",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Mechanical Engineering",
-    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerUniversity:
+      "School of Pedagogical & Technological Education (ASPETE)",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7798,7 +7847,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Elliniko Mesogeiako Panepistimio",
     partnerCity: "Heraklion",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7806,7 +7855,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Politecnic of Coimbra",
     partnerCity: "Coimbra",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7814,7 +7863,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Orebro University",
     partnerCity: "Örebro",
     partnerCountry: "Sweden",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7822,7 +7871,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universitatea Tehnica Cluj-Napoca",
     partnerCity: "Cluj-Napoca",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7830,7 +7879,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Lublin University of Technology",
     partnerCity: "Lublin",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7838,7 +7887,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Politehnica University of Bucharest",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -7846,7 +7895,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechnic University of Catalonia",
     partnerCity: "Barcelona",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   // Medicine master
@@ -7857,7 +7906,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Trakia University",
     partnerCity: "Stara Zagora",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7865,7 +7914,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Patras",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7873,7 +7922,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Crete",
     partnerCity: "Heraklion",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7881,7 +7930,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Foggia",
     partnerCity: "Foggia",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7889,7 +7938,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Leiden University Medical Centre",
     partnerCity: "Leiden",
     partnerCountry: "Netherlands",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7897,7 +7946,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Univeristy of Oviedo",
     partnerCity: "Oviedo",
     partnerCountry: "Spain",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -7905,15 +7954,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Orebro University",
     partnerCity: "Örebro",
     partnerCountry: "Sweden",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Medicine",
-    partnerUniversity: "KARL LANDSTEINER PRIVATUNIVERSITAT FUR GESUNDHEITSWISSEN­SCHAFTEN GMBH",
+    partnerUniversity:
+      "KARL LANDSTEINER PRIVATUNIVERSITAT FUR GESUNDHEITSWISSEN­SCHAFTEN GMBH",
     partnerCity: "Krems an der Donau",
     partnerCountry: "Austria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   // Medical Sciences php
@@ -7924,7 +7974,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Orebro University",
     partnerCity: "Örebro",
     partnerCountry: "Sweden",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
 
   // Mental Health Nurs. master
@@ -7935,7 +7985,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Trakia University",
     partnerCity: "Stara Zagora",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   // Media and Communications phd
@@ -7946,7 +7996,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7954,7 +8004,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Metropolitan University Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7962,7 +8012,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "RISEBA University of Applied Sciences",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7970,7 +8020,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Roskilde University",
     partnerCity: "Roskilde",
     partnerCountry: "Denmark",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7978,7 +8028,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITA' DEGLI STUDI DEL MOLISE",
     partnerCity: "Campobasso",
     partnerCountry: "Italy",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7986,7 +8036,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Lodz",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -7994,7 +8044,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polish-Japanese Academy of Information Technology",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -8002,9 +8052,8 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
     partnerCity: "Novi Sad",
     partnerCountry: "Serbia",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
-
 
   // Music bachelor
 
@@ -8014,7 +8063,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Osijek",
     partnerCity: "Osijek",
     partnerCountry: "Croatia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8022,7 +8071,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Pula",
     partnerCity: "Pula",
     partnerCountry: "Croatia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8030,7 +8079,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universite Rennes Ii",
     partnerCity: "Rennes",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8038,7 +8087,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Burgundy",
     partnerCity: "Dijon",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8046,7 +8095,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Strasbourg",
     partnerCity: "Strasbourg",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8054,7 +8103,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hochschule für Musik Würzburg",
     partnerCity: "Würzburg",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8062,7 +8111,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "National and Kapodistrian University of Athens",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8070,7 +8119,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Ionian University",
     partnerCity: "Corfu",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8078,7 +8127,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Macedonia",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8086,15 +8135,15 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Szeged",
     partnerCity: "Szeged",
     partnerCountry: "Hungary",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Music",
-    partnerUniversity: "Conservatorio di Musica \"G.Verdi\" di Como",
+    partnerUniversity: 'Conservatorio di Musica "G.Verdi" di Como',
     partnerCity: "Como",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8102,7 +8151,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Latvian Academy of Culture",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8110,7 +8159,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Stichting Hanzehogeschool Groningen",
     partnerCity: "Groningen",
     partnerCountry: "Netherlands",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8118,7 +8167,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Akademia Muzyczna im. I.J. Paderewskiego w Poznaniu",
     partnerCity: "Poznań",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8126,7 +8175,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "The Krzysztof Penderecki Academy of Music in Krakow",
     partnerCity: "Kraków",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8134,9 +8183,8 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universidade de Aveiro",
     partnerCity: "Aveiro",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
-
 
   // Music master
 
@@ -8146,7 +8194,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universite Rennes Ii",
     partnerCity: "Rennes",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -8154,15 +8202,15 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Szeged",
     partnerCity: "Szeged",
     partnerCountry: "Hungary",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Music",
-    partnerUniversity: "Conservatorio di Musica \"G.Verdi\" di Como",
+    partnerUniversity: 'Conservatorio di Musica "G.Verdi" di Como',
     partnerCity: "Como",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -8170,7 +8218,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Akademia Muzyczna im. I.J. Paderewskiego w Poznaniu",
     partnerCity: "Poznań",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -8178,7 +8226,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "The Krzysztof Penderecki Academy of Music in Krakow",
     partnerCity: "Kraków",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   // Nursing bachelor
@@ -8189,7 +8237,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Haute École de la Province de Liège",
     partnerCity: "Liège",
     partnerCountry: "Belgium",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8197,7 +8245,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Trakia University",
     partnerCity: "Stara Zagora",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8205,7 +8253,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechnic of Šibenik",
     partnerCity: "Šibenik",
     partnerCountry: "Croatia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8213,7 +8261,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Volos",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8221,7 +8269,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Naples Federico II",
     partnerCity: "Naples",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8229,7 +8277,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Foggia",
     partnerCity: "Foggia",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8237,7 +8285,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Šiauliai State University",
     partnerCity: "Šiauliai",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8245,7 +8293,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Agder",
     partnerCity: "Kristiansand",
     partnerCountry: "Norway",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8253,7 +8301,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "State University of Applied Sciences in Wloclawek",
     partnerCity: "Włocławek",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8261,7 +8309,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Instituto Politécnico Da Guarda",
     partnerCity: "Guarda",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8269,7 +8317,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of the Peloponnese",
     partnerCity: "Tripoli",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8277,9 +8325,8 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Medical University of Silesia",
     partnerCity: "Katowice",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
-
 
   // Nursing phd
 
@@ -8289,7 +8336,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Trakia University",
     partnerCity: "Stara Zagora",
     partnerCountry: "Bulgaria",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -8297,9 +8344,8 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Instituto Politécnico Da Guarda",
     partnerCity: "Guarda",
     partnerCountry: "Portugal",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
-
 
   // Nutrition and Dietetics bachelor
 
@@ -8309,7 +8355,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechnic of Šibenik",
     partnerCity: "Šibenik",
     partnerCountry: "Croatia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8317,7 +8363,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Agricultural University of Athens",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8325,7 +8371,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hochschule Anhalt University of Applied Sciences",
     partnerCity: "Köthen",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8333,7 +8379,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Amsterdam University of Applied Sciences",
     partnerCity: "Amsterdam",
     partnerCountry: "Netherlands",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8341,11 +8387,8 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF PELOPONNESE",
     partnerCity: "Tripoli",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
-
-
-
 
   // Oil and Gas Engineering bachelor
 
@@ -8355,7 +8398,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Northern Denmark",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8363,7 +8406,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Western Macedonia",
     partnerCity: "Kozani",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8371,7 +8414,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechnic Institute of Setúbal",
     partnerCity: "Setúbal",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   // Oil and Gas Engineering master
@@ -8382,7 +8425,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "FH JOANNEUM GmbH",
     partnerCity: "Graz",
     partnerCountry: "Austria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -8390,7 +8433,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Western Macedonia",
     partnerCity: "Kozani",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -8398,7 +8441,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Stavanger",
     partnerCity: "Stavanger",
     partnerCountry: "Norway",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -8406,9 +8449,8 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechnic Institute of Setúbal",
     partnerCity: "Setúbal",
     partnerCountry: "Portugal",
-    academicLevel: "master"
+    academicLevel: "master",
   },
-
 
   //Oil, Gas and Energy Eng phd
 
@@ -8418,7 +8460,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Polytechnic Institute of Setúbal",
     partnerCity: "Setúbal",
     partnerCountry: "Portugal",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
 
   // Orthopedic Sc and Rehab master
@@ -8429,7 +8471,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "National sports Academy Vassil Levski",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -8437,7 +8479,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Trakia University",
     partnerCity: "Stara Zagora",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -8445,7 +8487,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Peloponnese",
     partnerCity: "Tripoli",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -8453,15 +8495,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Volos",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Orthopedic Sc and Rehab (MSc)",
-    partnerUniversity: "University of West Attica / Panepistimio Dytikis Attikis",
+    partnerUniversity:
+      "University of West Attica / Panepistimio Dytikis Attikis",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -8469,7 +8512,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Lithuanian Sports University",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -8477,7 +8520,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Siauliu Valstybine Kolegija",
     partnerCity: "Šiauliai",
     partnerCountry: "Lithuania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
   // PR, Advertising and Marketing bachelor
@@ -8485,10 +8528,11 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
   {
     homeUniversity: "UNIC",
     homeDepartment: "PR, Advertising and Marketing (BA)",
-    partnerUniversity: "FHWien der WKW - University of Applied Sciences for Management & Communication",
+    partnerUniversity:
+      "FHWien der WKW - University of Applied Sciences for Management & Communication",
     partnerCity: "Vienna",
     partnerCountry: "Austria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8496,7 +8540,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hogeschool West-Vlaanderen Howest",
     partnerCity: "Kortrijk",
     partnerCountry: "Belgium",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8504,7 +8548,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Haute Ecole de la Ville de Liege",
     partnerCity: "Liège",
     partnerCountry: "Belgium",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8512,7 +8556,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Haute École de la Province de Liège",
     partnerCity: "Liège",
     partnerCountry: "Belgium",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8520,15 +8564,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "PR, Advertising and Marketing (BA)",
-    partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
+    partnerUniversity:
+      "University of Rijeka, Faculty of Economics and Business",
     partnerCity: "Rijeka",
     partnerCountry: "Croatia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8536,15 +8581,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Université de Tours",
     partnerCity: "Tours",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "PR, Advertising and Marketing (BA)",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8552,7 +8598,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Aristotle University of Thessaloniki",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8560,7 +8606,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Latvian Academy of Culture",
     partnerCity: "Riga",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8568,7 +8614,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Uniwersytet Łódzki",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8576,7 +8622,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "AGH University of Science and Technology",
     partnerCity: "Kraków",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8584,7 +8630,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Warsaw",
     partnerCity: "Warsaw",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8592,7 +8638,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Instituto Politécnico Da Guarda",
     partnerCity: "Guarda",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8600,7 +8646,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Slovak University of Agriculture in Nitra",
     partnerCity: "Nitra",
     partnerCountry: "Slovakia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8608,7 +8654,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Univerzita Komenského v Bratislave",
     partnerCity: "Bratislava",
     partnerCountry: "Slovakia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8616,7 +8662,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Univerza v Ljubljani",
     partnerCity: "Ljubljana",
     partnerCountry: "Slovenia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -8624,292 +8670,251 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Tallinn",
     partnerCity: "Tallinn",
     partnerCountry: "Estonia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
-// Primary Education bachelor
+  // Primary Education bachelor
 
-{  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Primary Education (BEd)",  
-    partnerUniversity: "Theresianische Militärakademie Fachhochschul-Bachelorstudiengang Militärische Führung",  
-    partnerCity: "Wiener Neustadt",  
-    partnerCountry: "Austria",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Primary Education (BEd)",  
-    partnerUniversity: "Europa-Universität Flensburg",  
-    partnerCity: "Flensburg",  
-    partnerCountry: "Germany",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Primary Education (BEd)",  
-    partnerUniversity: "MARTIN-LUTHER-UNIVERSITÄT HALLE-WITTENBERG",  
-    partnerCity: "Halle (Saale)",  
-    partnerCountry: "Germany",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Primary Education (BEd)",  
-    partnerUniversity: "University of Bielefeld",  
-    partnerCity: "Bielefeld",  
-    partnerCountry: "Germany",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Primary Education (BEd)",  
-    partnerUniversity: "University of the Aegean",  
-    partnerCity: "Mytilene",  
-    partnerCountry: "Greece",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Primary Education (BEd)",  
-    partnerUniversity: "University of Ioannina",  
-    partnerCity: "Ioannina",  
-    partnerCountry: "Greece",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Primary Education (BEd)",  
-    partnerUniversity: "University of Thessaly",  
-    partnerCity: "Volos",  
-    partnerCountry: "Greece",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Primary Education (BEd)",  
-    partnerUniversity: "University of Patras",  
-    partnerCity: "Patras",  
-    partnerCountry: "Greece",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Primary Education (BEd)",  
-    partnerUniversity: "Aristotle University of Thessaloniki",  
-    partnerCity: "Thessaloniki",  
-    partnerCountry: "Greece",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Primary Education (BEd)",  
-    partnerUniversity: "University of Crete",  
-    partnerCity: "Heraklion",  
-    partnerCountry: "Greece",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Primary Education (BEd)",  
-    partnerUniversity: "Hellenic Open University",  
-    partnerCity: "Patras",  
-    partnerCountry: "Greece",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Primary Education (BEd)",  
-    partnerUniversity: "Haskolinn a Akureyri",  
-    partnerCity: "Akureyri",  
-    partnerCountry: "Iceland",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Primary Education (BEd)",  
-    partnerUniversity: "Rezeknes Tehnologiju Akademija",  
-    partnerCity: "Rēzekne",  
-    partnerCountry: "Latvia",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Primary Education (BEd)",  
-    partnerUniversity: "Instituto Europeu de Estudos Superiores",  
-    partnerCity: "Funchal",  
-    partnerCountry: "Portugal",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Primary Education (BEd)",  
-    partnerUniversity: "University of Ostrava",  
-    partnerCity: "Ostrava",  
-    partnerCountry: "Czech Republic",  
-    academicLevel: "bachelor"  
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Primary Education (BEd)",
+    partnerUniversity:
+      "Theresianische Militärakademie Fachhochschul-Bachelorstudiengang Militärische Führung",
+    partnerCity: "Wiener Neustadt",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Primary Education (BEd)",
+    partnerUniversity: "Europa-Universität Flensburg",
+    partnerCity: "Flensburg",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Primary Education (BEd)",
+    partnerUniversity: "MARTIN-LUTHER-UNIVERSITÄT HALLE-WITTENBERG",
+    partnerCity: "Halle (Saale)",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Primary Education (BEd)",
+    partnerUniversity: "University of Bielefeld",
+    partnerCity: "Bielefeld",
+    partnerCountry: "Germany",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Primary Education (BEd)",
+    partnerUniversity: "University of the Aegean",
+    partnerCity: "Mytilene",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Primary Education (BEd)",
+    partnerUniversity: "University of Ioannina",
+    partnerCity: "Ioannina",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Primary Education (BEd)",
+    partnerUniversity: "University of Thessaly",
+    partnerCity: "Volos",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Primary Education (BEd)",
+    partnerUniversity: "University of Patras",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Primary Education (BEd)",
+    partnerUniversity: "Aristotle University of Thessaloniki",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Primary Education (BEd)",
+    partnerUniversity: "University of Crete",
+    partnerCity: "Heraklion",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Primary Education (BEd)",
+    partnerUniversity: "Hellenic Open University",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Primary Education (BEd)",
+    partnerUniversity: "Haskolinn a Akureyri",
+    partnerCity: "Akureyri",
+    partnerCountry: "Iceland",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Primary Education (BEd)",
+    partnerUniversity: "Rezeknes Tehnologiju Akademija",
+    partnerCity: "Rēzekne",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Primary Education (BEd)",
+    partnerUniversity: "Instituto Europeu de Estudos Superiores",
+    partnerCity: "Funchal",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Primary Education (BEd)",
+    partnerUniversity: "University of Ostrava",
+    partnerCity: "Ostrava",
+    partnerCountry: "Czech Republic",
+    academicLevel: "bachelor",
   },
 
-// Pre-Primary Education bachelor
+  // Pre-Primary Education bachelor
 
-{  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Pre-Primary Education (BEd)",  
-    partnerUniversity: "Theresianische Militärakademie Fachhochschul-Bachelorstudiengang Militärische Führung",  
-    partnerCity: "Wiener Neustadt",  
-    partnerCountry: "Austria",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Pre-Primary Education (BEd)",  
-    partnerUniversity: "University of the Aegean",  
-    partnerCity: "Mytilene",  
-    partnerCountry: "Greece",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Pre-Primary Education (BEd)",  
-    partnerUniversity: "Aristotle University of Thessaloniki",  
-    partnerCity: "Thessaloniki",  
-    partnerCountry: "Greece",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Pre-Primary Education (BEd)",  
-    partnerUniversity: "University of Patras",  
-    partnerCity: "Patras",  
-    partnerCountry: "Greece",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Pre-Primary Education (BEd)",  
-    partnerUniversity: "University of Crete",  
-    partnerCity: "Heraklion",  
-    partnerCountry: "Greece",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Pre-Primary Education (BEd)",  
-    partnerUniversity: "Hellenic Open University",  
-    partnerCity: "Patras",  
-    partnerCountry: "Greece",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Pre-Primary Education (BEd)",  
-    partnerUniversity: "Haskolinn a Akureyri",  
-    partnerCity: "Akureyri",  
-    partnerCountry: "Iceland",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Pre-Primary Education (BEd)",  
-    partnerUniversity: "Rezeknes Tehnologiju Akademija",  
-    partnerCity: "Rēzekne",  
-    partnerCountry: "Latvia",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Pre-Primary Education (BEd)",  
-    partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",  
-    partnerCity: "Kaunas",  
-    partnerCountry: "Lithuania",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Pre-Primary Education (BEd)",  
-    partnerUniversity: "Instituto Europeu de Estudos Superiores",  
-    partnerCity: "Funchal",  
-    partnerCountry: "Portugal",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Pre-Primary Education (BEd)",  
-    partnerUniversity: "University of Ostrava",  
-    partnerCity: "Ostrava",  
-    partnerCountry: "Czech Republic",  
-    academicLevel: "bachelor"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Pre-Primary Education (BEd)",  
-    partnerUniversity: "University of South-Eastern Norway",  
-    partnerCity: "Bø i Telemark",  
-    partnerCountry: "Norway",  
-    academicLevel: "bachelor"  
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Pre-Primary Education (BEd)",
+    partnerUniversity:
+      "Theresianische Militärakademie Fachhochschul-Bachelorstudiengang Militärische Führung",
+    partnerCity: "Wiener Neustadt",
+    partnerCountry: "Austria",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Pre-Primary Education (BEd)",
+    partnerUniversity: "University of the Aegean",
+    partnerCity: "Mytilene",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Pre-Primary Education (BEd)",
+    partnerUniversity: "Aristotle University of Thessaloniki",
+    partnerCity: "Thessaloniki",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Pre-Primary Education (BEd)",
+    partnerUniversity: "University of Patras",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Pre-Primary Education (BEd)",
+    partnerUniversity: "University of Crete",
+    partnerCity: "Heraklion",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Pre-Primary Education (BEd)",
+    partnerUniversity: "Hellenic Open University",
+    partnerCity: "Patras",
+    partnerCountry: "Greece",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Pre-Primary Education (BEd)",
+    partnerUniversity: "Haskolinn a Akureyri",
+    partnerCity: "Akureyri",
+    partnerCountry: "Iceland",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Pre-Primary Education (BEd)",
+    partnerUniversity: "Rezeknes Tehnologiju Akademija",
+    partnerCity: "Rēzekne",
+    partnerCountry: "Latvia",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Pre-Primary Education (BEd)",
+    partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
+    partnerCity: "Kaunas",
+    partnerCountry: "Lithuania",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Pre-Primary Education (BEd)",
+    partnerUniversity: "Instituto Europeu de Estudos Superiores",
+    partnerCity: "Funchal",
+    partnerCountry: "Portugal",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Pre-Primary Education (BEd)",
+    partnerUniversity: "University of Ostrava",
+    partnerCity: "Ostrava",
+    partnerCountry: "Czech Republic",
+    academicLevel: "bachelor",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Pre-Primary Education (BEd)",
+    partnerUniversity: "University of South-Eastern Norway",
+    partnerCity: "Bø i Telemark",
+    partnerCountry: "Norway",
+    academicLevel: "bachelor",
   },
 
-// Psychology bachelor
+  // Psychology bachelor
 
- {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Psychology (PhD)",  
-    partnerUniversity: "Université Lumière Lyon 2",  
-    partnerCity: "Lyon",  
-    partnerCountry: "France",  
-    academicLevel: "phd"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Psychology (PhD)",  
-    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",  
-    partnerCity: "Athens",  
-    partnerCountry: "Greece",  
-    academicLevel: "phd"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Psychology (PhD)",  
-    partnerUniversity: "University of Ioannina",  
-    partnerCity: "Ioannina",  
-    partnerCountry: "Greece",  
-    academicLevel: "phd"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Psychology (PhD)",  
-    partnerUniversity: "University American College Skopje",  
-    partnerCity: "Skopje",  
-    partnerCountry: "North Macedonia",  
-    academicLevel: "phd"  
-  },  
-  {  
-    homeUniversity: "UNIC",  
-    homeDepartment: "Psychology (PhD)",  
-    partnerUniversity: "University of Novi Sad, Faculty of Philosophy",  
-    partnerCity: "Novi Sad",  
-    partnerCountry: "Serbia",  
-    academicLevel: "phd"  
-  },
-
-
-// Psychology phd
-
-{
+  {
     homeUniversity: "UNIC",
     homeDepartment: "Psychology (PhD)",
     partnerUniversity: "Université Lumière Lyon 2",
     partnerCity: "Lyon",
     partnerCountry: "France",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Psychology (PhD)",
-    partnerUniversity: "School of Pedagogical & Technological Education (ASPETE)",
+    partnerUniversity:
+      "School of Pedagogical & Technological Education (ASPETE)",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -8917,7 +8922,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Ioannina",
     partnerCity: "Ioannina",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -8925,7 +8930,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University American College Skopje",
     partnerCity: "Skopje",
     partnerCountry: "North Macedonia",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -8933,27 +8938,71 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
     partnerCity: "Novi Sad",
     partnerCountry: "Serbia",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
 
+  // Psychology phd
 
-// Public Administration master
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Psychology (PhD)",
+    partnerUniversity: "Université Lumière Lyon 2",
+    partnerCity: "Lyon",
+    partnerCountry: "France",
+    academicLevel: "phd",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Psychology (PhD)",
+    partnerUniversity:
+      "School of Pedagogical & Technological Education (ASPETE)",
+    partnerCity: "Athens",
+    partnerCountry: "Greece",
+    academicLevel: "phd",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Psychology (PhD)",
+    partnerUniversity: "University of Ioannina",
+    partnerCity: "Ioannina",
+    partnerCountry: "Greece",
+    academicLevel: "phd",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Psychology (PhD)",
+    partnerUniversity: "University American College Skopje",
+    partnerCity: "Skopje",
+    partnerCountry: "North Macedonia",
+    academicLevel: "phd",
+  },
+  {
+    homeUniversity: "UNIC",
+    homeDepartment: "Psychology (PhD)",
+    partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
+    partnerCity: "Novi Sad",
+    partnerCountry: "Serbia",
+    academicLevel: "phd",
+  },
 
-{
+  // Public Administration master
+
+  {
     homeUniversity: "UNIC",
     homeDepartment: "Public Administration (MPA)",
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Public Administration (MPA)",
-    partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
+    partnerUniversity:
+      "University of Rijeka, Faculty of Economics and Business",
     partnerCity: "Rijeka",
     partnerCountry: "Croatia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -8961,7 +9010,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Université de Tours",
     partnerCity: "Tours",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -8969,7 +9018,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Université Lumière Lyon 2",
     partnerCity: "Lyon",
     partnerCountry: "France",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -8977,7 +9026,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Panteion University of Social and Political Sciences",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -8985,7 +9034,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Saxion University of Applied Sciences",
     partnerCity: "Enschede",
     partnerCountry: "Netherlands",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -8993,7 +9042,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Radboud University Nijmegen",
     partnerCity: "Nijmegen",
     partnerCountry: "Netherlands",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -9001,7 +9050,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Lodz",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -9009,18 +9058,18 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Economics in Katowice",
     partnerCity: "Katowice",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
-//  Public Administration phd
+  //  Public Administration phd
 
-{
+  {
     homeUniversity: "UNIC",
     homeDepartment: "Public Administration (PhD)",
     partnerUniversity: "University of Economics in Katowice",
     partnerCity: "Katowice",
     partnerCountry: "Poland",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -9028,7 +9077,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -9036,7 +9085,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Université Lumière Lyon 2",
     partnerCity: "Lyon",
     partnerCountry: "France",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -9044,26 +9093,27 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Panteion University of Social and Political Sciences",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Public Administration (PhD)",
-    partnerUniversity: "University of Rijeka, Faculty of Economics and Business",
+    partnerUniversity:
+      "University of Rijeka, Faculty of Economics and Business",
     partnerCity: "Rijeka",
     partnerCountry: "Croatia",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
 
-//Pharmacy (MPharm) bachelor
+  //Pharmacy (MPharm) bachelor
 
-{
+  {
     homeUniversity: "UNIC",
     homeDepartment: "Pharmacy (MPharm)",
     partnerUniversity: "University of Patras",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9071,7 +9121,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "ARISTOTELIO PANEPISTIMIO THESSALONIKIS",
     partnerCity: "Thessaloniki",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9079,7 +9129,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Peloponnese",
     partnerCity: "Tripoli",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9087,18 +9137,18 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Masarykova univerzita",
     partnerCity: "Brno",
     partnerCountry: "Czech Republic",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
-// Physiotherapy bachelor
+  // Physiotherapy bachelor
 
-{
+  {
     homeUniversity: "UNIC",
     homeDepartment: "Physiotherapy (BSc)",
     partnerUniversity: "National sports Academy Vassil Levski",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9106,7 +9156,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Trakia University",
     partnerCity: "Stara Zagora",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9114,7 +9164,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Western Attica",
     partnerCity: "Egaleo",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9122,7 +9172,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Thessaly",
     partnerCity: "Volos",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9130,15 +9180,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Peloponnese",
     partnerCity: "Tripoli",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Physiotherapy (BSc)",
-    partnerUniversity: "University of West Attica / Panepistimio Dytikis Attikis",
+    partnerUniversity:
+      "University of West Attica / Panepistimio Dytikis Attikis",
     partnerCity: "Egaleo",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9146,7 +9197,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Patras",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9154,19 +9205,18 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Lithuanian Sports University",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
+  //Physiotherapy phd
 
-//Physiotherapy phd
-
-{
+  {
     homeUniversity: "UNIC",
     homeDepartment: "Physiotherapy (PhD)",
     partnerUniversity: "National sports Academy Vassil Levski",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -9174,7 +9224,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Trakia University",
     partnerCity: "Stara Zagora",
     partnerCountry: "Bulgaria",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
   {
     homeUniversity: "UNIC",
@@ -9182,18 +9232,18 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Thessaly",
     partnerCity: "Volos",
     partnerCountry: "Greece",
-    academicLevel: "phd"
+    academicLevel: "phd",
   },
 
-// Social Work bachelor
+  // Social Work bachelor
 
-{
+  {
     homeUniversity: "UNIC",
     homeDepartment: "Social Work (BSc)",
     partnerUniversity: "St. Pölten University of Applied Sciences",
     partnerCity: "St. Pölten",
     partnerCountry: "Austria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9201,15 +9251,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Ruse Angel Kanchev",
     partnerCity: "Ruse",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Social Work (BSc)",
-    partnerUniversity: "St. Cyril and St. Methodius University of Veliko Turnov",
+    partnerUniversity:
+      "St. Cyril and St. Methodius University of Veliko Turnov",
     partnerCity: "Veliko Tarnovo",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9217,7 +9268,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Thomas More University",
     partnerCity: "Mechelen",
     partnerCountry: "Belgium",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9225,7 +9276,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Ostrava",
     partnerCity: "Ostrava",
     partnerCountry: "Czech Republic",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9233,7 +9284,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Leibniz Universität Hannover",
     partnerCity: "Hannover",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9241,7 +9292,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "HAWK University of Applied Sciences and Arts",
     partnerCity: "Hildesheim",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9249,7 +9300,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Frankfurt University of Applied Sciences",
     partnerCity: "Frankfurt am Main",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9257,15 +9308,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Flensburg",
     partnerCity: "Flensburg",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Social Work (BSc)",
-    partnerUniversity: "University of West Attica / Panepistimio Dytikis Attikis",
+    partnerUniversity:
+      "University of West Attica / Panepistimio Dytikis Attikis",
     partnerCity: "Athens (Egaleo)",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9273,7 +9325,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hellenic Open University",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9281,7 +9333,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Democritus University of Thrace",
     partnerCity: "Komotini",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9289,7 +9341,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hellenic Mediterranean University",
     partnerCity: "Heraklion",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9297,7 +9349,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita di Pisa",
     partnerCity: "Pisa",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9305,7 +9357,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9313,7 +9365,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hogeschool Zuyd",
     partnerCity: "Heerlen",
     partnerCountry: "Netherlands",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9321,7 +9373,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "State University of Applied Sciences in Wloclawek",
     partnerCity: "Włocławek",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9329,7 +9381,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "AGH University of Science and Technology",
     partnerCity: "Kraków",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9337,7 +9389,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Instituto Europeu de Estudos Superiores",
     partnerCity: "Fafe",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9345,7 +9397,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
     partnerCity: "Novi Sad",
     partnerCountry: "Serbia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9353,20 +9405,18 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "The Hague University of Applied Sciences",
     partnerCity: "The Hague",
     partnerCountry: "Netherlands",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
+  // Social Work master
 
-
-// Social Work master
-
-{
+  {
     homeUniversity: "UNIC",
     homeDepartment: "Social Work (MSc)",
     partnerUniversity: "St. Pölten University of Applied Sciences",
     partnerCity: "St. Pölten",
     partnerCountry: "Austria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -9374,15 +9424,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Ruse Angel Kanchev",
     partnerCity: "Ruse",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Social Work (MSc)",
-    partnerUniversity: "St. Cyril and St. Methodius University of Veliko Turnov",
+    partnerUniversity:
+      "St. Cyril and St. Methodius University of Veliko Turnov",
     partnerCity: "Veliko Tarnovo",
     partnerCountry: "Bulgaria",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -9390,7 +9441,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Ostrava",
     partnerCity: "Ostrava",
     partnerCountry: "Czech Republic",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -9398,7 +9449,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Flensburg",
     partnerCity: "Flensburg",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -9406,7 +9457,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hellenic Open University",
     partnerCity: "Patras",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -9414,7 +9465,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "LIEPAJAS UNIVERSITATE",
     partnerCity: "Liepaja",
     partnerCountry: "Latvia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -9422,7 +9473,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "AGH University of Science and Technology",
     partnerCity: "Kraków",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -9430,7 +9481,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Instituto Europeu de Estudos Superiores",
     partnerCity: "Fafe",
     partnerCountry: "Portugal",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -9438,19 +9489,18 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
     partnerCity: "Novi Sad",
     partnerCountry: "Serbia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
+  // Sports Management bachelor
 
-// Sports Management bachelor
-
-{
+  {
     homeUniversity: "UNIC",
     homeDepartment: "Sports Management (BBA)",
     partnerUniversity: "FH Joanneum University of Applied Sciences",
     partnerCity: "Graz",
     partnerCountry: "Austria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9458,7 +9508,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Agricultural University of Plovdiv",
     partnerCity: "Plovdiv",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9466,7 +9516,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "National sports Academy Vassil Levski",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9474,7 +9524,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "International University Libertas",
     partnerCity: "Zagreb",
     partnerCountry: "Croatia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9482,15 +9532,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Sports Management (BBA)",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9498,7 +9549,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9506,7 +9557,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Lithuanian Sports University",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9514,7 +9565,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Amsterdam University of Applied Sciences",
     partnerCity: "Amsterdam",
     partnerCountry: "Netherlands",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9522,7 +9573,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Instituto Europeu de Estudos Superiores",
     partnerCity: "Fafe",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9530,7 +9581,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Romanian-American University",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9538,7 +9589,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Orebro University",
     partnerCity: "Örebro",
     partnerCountry: "Sweden",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9546,53 +9597,56 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "The Hague University of Applied Sciences",
     partnerCity: "The Hague",
     partnerCountry: "Netherlands",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
   // Sports Nutrition/Dietetics and Nutrition Intervention master
   {
     homeUniversity: "UNIC",
-    homeDepartment: "Sports Nutrition/Dietetics and Nutrition Intervention (MSc)",
+    homeDepartment:
+      "Sports Nutrition/Dietetics and Nutrition Intervention (MSc)",
     partnerUniversity: "Agricultural University of Athens",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: "Sports Nutrition/Dietetics and Nutrition Intervention (MSc)",
+    homeDepartment:
+      "Sports Nutrition/Dietetics and Nutrition Intervention (MSc)",
     partnerUniversity: "Lithuanian Sports University",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
-    homeDepartment: "Sports Nutrition/Dietetics and Nutrition Intervention (MSc)",
+    homeDepartment:
+      "Sports Nutrition/Dietetics and Nutrition Intervention (MSc)",
     partnerUniversity: "Amsterdam University of Applied Sciences",
     partnerCity: "Amsterdam",
     partnerCountry: "Netherlands",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
+  // Sports Science bachelor
 
-// Sports Science bachelor
-
-{
+  {
     homeUniversity: "UNIC",
     homeDepartment: "Sports Science (BSc)",
     partnerUniversity: "National sports Academy Vassil Levski",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Sports Science (BSc)",
-    partnerUniversity: "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
+    partnerUniversity:
+      "Deggendorf Institute of Technology / Technische Hochschule Deggendorf",
     partnerCity: "Deggendorf",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9600,7 +9654,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITY OF THESSALY",
     partnerCity: "Volos",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9608,7 +9662,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "National and Kapodistrian University of Athens",
     partnerCity: "Athens",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9616,7 +9670,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Democritus University of Thrace",
     partnerCity: "Komotini",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9624,7 +9678,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Pavia",
     partnerCity: "Pavia",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9632,7 +9686,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Foggia",
     partnerCity: "Foggia",
     partnerCountry: "Italy",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9640,7 +9694,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Lithuanian Sports University",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9648,7 +9702,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Akademia Wychowania Fizycznego we Wrocławiu",
     partnerCity: "Wrocław",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9656,7 +9710,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Instituto Europeu de Estudos Superiores",
     partnerCity: "Fafe",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9664,7 +9718,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSIDAD DE CADIZ",
     partnerCity: "Cádiz",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9672,19 +9726,17 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Extremadura",
     partnerCity: "Badajoz",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
 
-
-
-// Teaching English to Speakers of Other Languages master
-{
+  // Teaching English to Speakers of Other Languages master
+  {
     homeUniversity: "UNIC",
     homeDepartment: "Teaching English to Speakers of Other Languages (MA)",
     partnerUniversity: "University of Erfurt (Universitat Erfurt)",
     partnerCity: "Erfurt",
     partnerCountry: "Germany",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -9692,7 +9744,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Metropolitan University in Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -9700,7 +9752,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universita degli Studi di Verona",
     partnerCity: "Verona",
     partnerCountry: "Italy",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -9708,7 +9760,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Adam Mickiewicz University, Poznan",
     partnerCity: "Poznań",
     partnerCountry: "Poland",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -9716,7 +9768,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universitat Jaume I",
     partnerCity: "Castellón de la Plana",
     partnerCountry: "Spain",
-    academicLevel: "master"
+    academicLevel: "master",
   },
   {
     homeUniversity: "UNIC",
@@ -9724,17 +9776,17 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Novi Sad, Faculty of Philosophy",
     partnerCity: "Novi Sad",
     partnerCountry: "Serbia",
-    academicLevel: "master"
+    academicLevel: "master",
   },
 
-// Tourism, Leisure and Events Management bachelor
-{
+  // Tourism, Leisure and Events Management bachelor
+  {
     homeUniversity: "UNIC",
     homeDepartment: "Tourism, Leisure and Events Management (BBA)",
     partnerUniversity: "FH Joanneum University of Applied Sciences",
     partnerCity: "Graz",
     partnerCountry: "Austria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9742,15 +9794,16 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hogeschool West-Vlaanderen Howest",
     partnerCity: "Kortrijk",
     partnerCountry: "Belgium",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
     homeDepartment: "Tourism, Leisure and Events Management (BBA)",
-    partnerUniversity: "St. Cyril and St. Methodius University of Veliko Turnov",
+    partnerUniversity:
+      "St. Cyril and St. Methodius University of Veliko Turnov",
     partnerCity: "Veliko Tarnovo",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9758,7 +9811,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Agricultural University of Plovdiv",
     partnerCity: "Plovdiv",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9766,7 +9819,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of National and World Economy",
     partnerCity: "Sofia",
     partnerCountry: "Bulgaria",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9774,7 +9827,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Libertas Business School",
     partnerCity: "Zagreb",
     partnerCountry: "Croatia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9782,7 +9835,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Rit Croatia",
     partnerCity: "Dubrovnik",
     partnerCountry: "Croatia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9790,7 +9843,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Metropolitan University Prague",
     partnerCity: "Prague",
     partnerCountry: "Czech Republic",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9798,7 +9851,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Copenhagen Business Academy",
     partnerCity: "Copenhagen",
     partnerCountry: "Denmark",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9806,7 +9859,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University College of Northern Denmark - UCN",
     partnerCity: "Aalborg",
     partnerCountry: "Denmark",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9814,7 +9867,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Haaga-Helia University of Applied Sciences",
     partnerCity: "Helsinki",
     partnerCountry: "Finland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9822,7 +9875,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Institut Limayrac",
     partnerCity: "Toulouse",
     partnerCountry: "France",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9830,7 +9883,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Applied Sciences Stralsund",
     partnerCity: "Stralsund",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9838,7 +9891,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universitat Trier",
     partnerCity: "Trier",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9846,7 +9899,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "SRH Berlin University of Applied Sciences",
     partnerCity: "Berlin",
     partnerCountry: "Germany",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9854,7 +9907,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Hellenic Mediterranean University",
     partnerCity: "Heraklion (Crete)",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9862,7 +9915,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "LIEPAJAS UNIVERSITATE",
     partnerCity: "Liepāja",
     partnerCountry: "Latvia",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9870,7 +9923,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Kauno kolegija/ Kaunas University of Applied Sciences",
     partnerCity: "Kaunas",
     partnerCountry: "Lithuania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9878,7 +9931,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Saxion University of Applied Sciences",
     partnerCity: "Enschede",
     partnerCountry: "Netherlands",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9886,7 +9939,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Instituto Politécnico Da Guarda",
     partnerCity: "Guarda",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9894,7 +9947,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Instituto Europeu de Estudos Superiores",
     partnerCity: "Penafiel",
     partnerCountry: "Portugal",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9902,7 +9955,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Akademia Wychowania Fizycznego we Wrocławiu",
     partnerCity: "Wrocław",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9910,7 +9963,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "The University College of Tourism and Ecology",
     partnerCity: "Sucha Beskidzka",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9918,7 +9971,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Uniwersytet Łódzki",
     partnerCity: "Łódź",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9926,7 +9979,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Romanian-American University",
     partnerCity: "Bucharest",
     partnerCountry: "Romania",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9934,7 +9987,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universidad Complutense de Madrid",
     partnerCity: "Madrid",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9942,7 +9995,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Universitat de Lleida",
     partnerCity: "Lleida",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9950,9 +10003,8 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Malta",
     partnerCity: "Msida",
     partnerCountry: "Malta",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
-
 
   // Veterinary Medicine (DVM) bachelor
 
@@ -9962,7 +10014,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Wroclaw University of Environmental and Life Sciences",
     partnerCity: "Wrocław",
     partnerCountry: "Poland",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9970,7 +10022,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "University of Thessaly",
     partnerCity: "Volos",
     partnerCountry: "Greece",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9978,7 +10030,7 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "UNIVERSITAT AUTONOMA DE BARCELONA",
     partnerCity: "Barcelona",
     partnerCountry: "Spain",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
   {
     homeUniversity: "UNIC",
@@ -9986,10 +10038,8 @@ export const UNIC_COMPREHENSIVE_AGREEMENTS = [
     partnerUniversity: "Nord University",
     partnerCity: "Bodø",
     partnerCountry: "Norway",
-    academicLevel: "bachelor"
+    academicLevel: "bachelor",
   },
-
-  
 
   // This is just the beginning - I'll need multiple parts due to size
 ];

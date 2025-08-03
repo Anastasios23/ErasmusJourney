@@ -66,7 +66,7 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async (context) => {
   const { id } = context.params!;
   try {
-    const res = await fetch(`http://localhost:3000/api/stories/${id}`);
+    const res = await fetch(`http://localhost:3001/api/student-stories/${id}`);
     if (!res.ok) {
       // Return a 404-like state if the story is not found
       if (res.status === 404) {
