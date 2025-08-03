@@ -125,15 +125,18 @@ export const enhancedLivingExpensesSchema = z.object({
 // Enhanced Accommodation Schema - Detailed housing information with numeric validation
 export const enhancedAccommodationSchema = z.object({
   // Basic Accommodation Info
-  accommodationType: z.enum([
-    "Student Residence",
-    "Shared Apartment",
-    "Private Apartment",
-    "Host Family",
-    "Private Room",
-    "Studio",
-    "Other"
-  ], { required_error: "Accommodation type is required" }),
+  accommodationType: z.enum(
+    [
+      "Student Residence",
+      "Shared Apartment",
+      "Private Apartment",
+      "Host Family",
+      "Private Room",
+      "Studio",
+      "Other",
+    ],
+    { required_error: "Accommodation type is required" },
+  ),
 
   accommodationAddress: z.string().min(1, "Address is required"),
   neighborhood: z.string().optional(),
@@ -152,12 +155,18 @@ export const enhancedAccommodationSchema = z.object({
     .max(5, "Rating must be between 1 and 5"),
 
   // Experience Questions
-  easyToFind: z.enum(["Very Easy", "Easy", "Moderate", "Difficult", "Very Difficult"], {
-    required_error: "Please indicate difficulty of finding accommodation",
-  }),
-  wouldRecommend: z.enum(["Definitely", "Probably", "Maybe", "Probably Not", "Definitely Not"], {
-    required_error: "Please indicate if you would recommend",
-  }),
+  easyToFind: z.enum(
+    ["Very Easy", "Easy", "Moderate", "Difficult", "Very Difficult"],
+    {
+      required_error: "Please indicate difficulty of finding accommodation",
+    },
+  ),
+  wouldRecommend: z.enum(
+    ["Definitely", "Probably", "Maybe", "Probably Not", "Definitely Not"],
+    {
+      required_error: "Please indicate if you would recommend",
+    },
+  ),
 
   // Additional Details
   roommates: z.string().optional(),
@@ -178,9 +187,12 @@ export const courseMatchingSchema = z.object({
     .max(20, "Too many courses"),
 
   // Course Matching Process
-  courseMatchingDifficult: z.enum(["Very Easy", "Easy", "Moderate", "Difficult", "Very Difficult"], {
-    required_error: "Please rate the difficulty of course matching",
-  }),
+  courseMatchingDifficult: z.enum(
+    ["Very Easy", "Easy", "Moderate", "Difficult", "Very Difficult"],
+    {
+      required_error: "Please rate the difficulty of course matching",
+    },
+  ),
   courseMatchingChallenges: z.string().optional(),
 
   // Course Recommendations
@@ -190,28 +202,51 @@ export const courseMatchingSchema = z.object({
   recommendationReason: z.string().optional(),
 
   // Detailed Course Information
-  hostCourses: z.array(z.object({
-    name: z.string().min(1, "Course name is required"),
-    code: z.string().optional(),
-    ects: z.coerce.number().min(0).max(30),
-    difficulty: z.enum(["Very Easy", "Easy", "Moderate", "Difficult", "Very Difficult"]).optional(),
-    examTypes: z.string().optional(),
-    type: z.enum(["Core", "Elective", "Language", "Other"]).optional(),
-  })).optional(),
+  hostCourses: z
+    .array(
+      z.object({
+        name: z.string().min(1, "Course name is required"),
+        code: z.string().optional(),
+        ects: z.coerce.number().min(0).max(30),
+        difficulty: z
+          .enum([
+            "Very Easy",
+            "Easy",
+            "Moderate",
+            "Difficult",
+            "Very Difficult",
+          ])
+          .optional(),
+        examTypes: z.string().optional(),
+        type: z.enum(["Core", "Elective", "Language", "Other"]).optional(),
+      }),
+    )
+    .optional(),
 
-  equivalentCourses: z.array(z.object({
-    hostCourseName: z.string(),
-    homeCourseName: z.string(),
-    ects: z.coerce.number().min(0).max(30),
-    matchQuality: z.enum(["Perfect", "Good", "Partial", "Poor"]).optional(),
-  })).optional(),
+  equivalentCourses: z
+    .array(
+      z.object({
+        hostCourseName: z.string(),
+        homeCourseName: z.string(),
+        ects: z.coerce.number().min(0).max(30),
+        matchQuality: z.enum(["Perfect", "Good", "Partial", "Poor"]).optional(),
+      }),
+    )
+    .optional(),
 });
 
 // Experience Story Schema - Comprehensive experience narrative and ratings
 export const experienceStorySchema = z.object({
   // Core Story Elements
-  personalExperience: z.string().min(50, "Please provide a detailed personal experience (at least 50 characters)"),
-  adviceForFutureStudents: z.string().min(20, "Please provide advice for future students"),
+  personalExperience: z
+    .string()
+    .min(
+      50,
+      "Please provide a detailed personal experience (at least 50 characters)",
+    ),
+  adviceForFutureStudents: z
+    .string()
+    .min(20, "Please provide advice for future students"),
   favoriteMemory: z.string().optional(),
   biggestChallenge: z.string().optional(),
   unexpectedDiscovery: z.string().optional(),

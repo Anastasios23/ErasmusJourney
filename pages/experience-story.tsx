@@ -76,7 +76,7 @@ const ratingFields: RatingField[] = [
     icon: BookOpen,
   },
   {
-    key: "socialLifeRating", 
+    key: "socialLifeRating",
     label: "Social Life",
     description: "Making friends, social activities, and community",
     icon: Users,
@@ -104,7 +104,7 @@ const ratingFields: RatingField[] = [
 const helpTopics = [
   "Course Selection & Registration",
   "Accommodation & Housing",
-  "Visa & Legal Requirements", 
+  "Visa & Legal Requirements",
   "Budget & Financial Planning",
   "Transportation & Travel",
   "Language Learning",
@@ -119,17 +119,39 @@ const helpTopics = [
 ];
 
 const tipCategories = [
-  { key: "socialTips", label: "Social & Friendship Tips", placeholder: "How to make friends, join activities, meet locals..." },
-  { key: "culturalTips", label: "Cultural Adaptation Tips", placeholder: "Language barriers, customs, traditions to be aware of..." },
-  { key: "travelTips", label: "Travel & Exploration Tips", placeholder: "Best places to visit, travel deals, weekend trips..." },
-  { key: "academicTips", label: "Academic Success Tips", placeholder: "Study strategies, professor relationships, exam preparation..." },
-  { key: "practicalTips", label: "Practical Life Tips", placeholder: "Banking, shopping, public transport, administrative tasks..." },
+  {
+    key: "socialTips",
+    label: "Social & Friendship Tips",
+    placeholder: "How to make friends, join activities, meet locals...",
+  },
+  {
+    key: "culturalTips",
+    label: "Cultural Adaptation Tips",
+    placeholder: "Language barriers, customs, traditions to be aware of...",
+  },
+  {
+    key: "travelTips",
+    label: "Travel & Exploration Tips",
+    placeholder: "Best places to visit, travel deals, weekend trips...",
+  },
+  {
+    key: "academicTips",
+    label: "Academic Success Tips",
+    placeholder:
+      "Study strategies, professor relationships, exam preparation...",
+  },
+  {
+    key: "practicalTips",
+    label: "Practical Life Tips",
+    placeholder: "Banking, shopping, public transport, administrative tasks...",
+  },
 ];
 
 export default function ExperienceStory() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { submitForm, isSubmitting, getSubmissionsByUser } = useFormSubmissions();
+  const { submitForm, isSubmitting, getSubmissionsByUser } =
+    useFormSubmissions();
   const [currentStep, setCurrentStep] = useState(1);
   const [existingBasicInfo, setExistingBasicInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -142,7 +164,7 @@ export default function ExperienceStory() {
     favoriteMemory: "",
     biggestChallenge: "",
     unexpectedDiscovery: "",
-    
+
     // Ratings (1-5 scale)
     academicRating: 0,
     socialLifeRating: 0,
@@ -150,17 +172,17 @@ export default function ExperienceStory() {
     costOfLivingRating: 0,
     accommodationRating: 0,
     overallRating: 0,
-    
+
     // Tips by category
     socialTips: "",
     culturalTips: "",
     travelTips: "",
     academicTips: "",
     practicalTips: "",
-    
+
     // Help topics
     helpTopics: [] as string[],
-    
+
     // Contact preferences
     publicProfile: "no",
     wantToHelp: "no",
@@ -172,7 +194,7 @@ export default function ExperienceStory() {
     personalWebsite: "",
     phoneNumber: "",
     nickname: "",
-    
+
     // Additional details
     languagesLearned: "",
     skillsDeveloped: "",
@@ -189,12 +211,12 @@ export default function ExperienceStory() {
         try {
           const submissions = await getSubmissionsByUser();
           const basicInfo = submissions.find((s) => s.type === "BASIC_INFO");
-          
+
           if (basicInfo) {
             setExistingBasicInfo(basicInfo);
             // Pre-populate email if available
             if (basicInfo.data?.email) {
-              setFormData(prev => ({ ...prev, email: basicInfo.data.email }));
+              setFormData((prev) => ({ ...prev, email: basicInfo.data.email }));
             }
           }
         } catch (error) {
@@ -250,7 +272,9 @@ export default function ExperienceStory() {
         return true;
       case 3:
         // Tips are optional but at least one should be provided
-        const hasTips = tipCategories.some(cat => formData[cat.key as keyof typeof formData]?.toString().trim());
+        const hasTips = tipCategories.some((cat) =>
+          formData[cat.key as keyof typeof formData]?.toString().trim(),
+        );
         if (!hasTips) {
           toast.error("Please provide at least one tip for future students");
           return false;
@@ -298,18 +322,26 @@ export default function ExperienceStory() {
       formData.culturalImmersionRating,
       formData.costOfLivingRating,
       formData.accommodationRating,
-    ].filter(r => r > 0);
-    
+    ].filter((r) => r > 0);
+
     if (ratings.length === 0) return 0;
-    return Math.round(ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length);
+    return Math.round(
+      ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length,
+    );
   };
 
   useEffect(() => {
     const overall = calculateOverallRating();
     if (overall > 0 && overall !== formData.overallRating) {
-      setFormData(prev => ({ ...prev, overallRating: overall }));
+      setFormData((prev) => ({ ...prev, overallRating: overall }));
     }
-  }, [formData.academicRating, formData.socialLifeRating, formData.culturalImmersionRating, formData.costOfLivingRating, formData.accommodationRating]);
+  }, [
+    formData.academicRating,
+    formData.socialLifeRating,
+    formData.culturalImmersionRating,
+    formData.costOfLivingRating,
+    formData.accommodationRating,
+  ]);
 
   const handleSubmit = async () => {
     if (!validateStep(4)) return;
@@ -320,7 +352,7 @@ export default function ExperienceStory() {
         "My Erasmus Experience & Story",
         formData,
         "submitted",
-        existingBasicInfo?.id
+        existingBasicInfo?.id,
       );
 
       toast.success("Your experience story has been submitted successfully!");
@@ -393,8 +425,9 @@ export default function ExperienceStory() {
                 Share Your Erasmus Experience
               </h1>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                Tell your complete story to inspire and guide future students. 
-                Your experience can make their journey smoother and more successful.
+                Tell your complete story to inspire and guide future students.
+                Your experience can make their journey smoother and more
+                successful.
               </p>
             </div>
 
@@ -413,16 +446,32 @@ export default function ExperienceStory() {
                 ></div>
               </div>
               <div className="flex justify-between mt-2 text-xs text-gray-500">
-                <span className={currentStep >= 1 ? "text-blue-600 font-medium" : ""}>
+                <span
+                  className={
+                    currentStep >= 1 ? "text-blue-600 font-medium" : ""
+                  }
+                >
                   Story
                 </span>
-                <span className={currentStep >= 2 ? "text-blue-600 font-medium" : ""}>
+                <span
+                  className={
+                    currentStep >= 2 ? "text-blue-600 font-medium" : ""
+                  }
+                >
                   Ratings
                 </span>
-                <span className={currentStep >= 3 ? "text-blue-600 font-medium" : ""}>
+                <span
+                  className={
+                    currentStep >= 3 ? "text-blue-600 font-medium" : ""
+                  }
+                >
                   Tips
                 </span>
-                <span className={currentStep >= 4 ? "text-blue-600 font-medium" : ""}>
+                <span
+                  className={
+                    currentStep >= 4 ? "text-blue-600 font-medium" : ""
+                  }
+                >
                   Contact
                 </span>
               </div>
@@ -440,13 +489,16 @@ export default function ExperienceStory() {
                 <CardContent className="space-y-6">
                   <FormField>
                     <Label htmlFor="personalExperience">
-                      Tell us about your personal experience <span className="text-red-500">*</span>
+                      Tell us about your personal experience{" "}
+                      <span className="text-red-500">*</span>
                     </Label>
                     <EnhancedTextarea
                       id="personalExperience"
                       placeholder="Describe your overall Erasmus experience. What was it like? What did you enjoy most? How did it change you as a person? Be detailed and authentic..."
                       value={formData.personalExperience}
-                      onChange={(e) => handleInputChange("personalExperience", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("personalExperience", e.target.value)
+                      }
                       rows={6}
                       required
                     />
@@ -454,13 +506,19 @@ export default function ExperienceStory() {
 
                   <FormField>
                     <Label htmlFor="adviceForFutureStudents">
-                      Advice for future students <span className="text-red-500">*</span>
+                      Advice for future students{" "}
+                      <span className="text-red-500">*</span>
                     </Label>
                     <EnhancedTextarea
                       id="adviceForFutureStudents"
                       placeholder="What advice would you give to students considering a similar exchange? What do you wish you had known before going?"
                       value={formData.adviceForFutureStudents}
-                      onChange={(e) => handleInputChange("adviceForFutureStudents", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "adviceForFutureStudents",
+                          e.target.value,
+                        )
+                      }
                       rows={4}
                       required
                     />
@@ -473,30 +531,40 @@ export default function ExperienceStory() {
                         id="favoriteMemory"
                         placeholder="What's your most cherished memory from your exchange?"
                         value={formData.favoriteMemory}
-                        onChange={(e) => handleInputChange("favoriteMemory", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("favoriteMemory", e.target.value)
+                        }
                         rows={3}
                       />
                     </FormField>
 
                     <FormField>
-                      <Label htmlFor="biggestChallenge">Biggest challenge</Label>
+                      <Label htmlFor="biggestChallenge">
+                        Biggest challenge
+                      </Label>
                       <EnhancedTextarea
                         id="biggestChallenge"
                         placeholder="What was the most difficult part and how did you overcome it?"
                         value={formData.biggestChallenge}
-                        onChange={(e) => handleInputChange("biggestChallenge", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("biggestChallenge", e.target.value)
+                        }
                         rows={3}
                       />
                     </FormField>
                   </FormGrid>
 
                   <FormField>
-                    <Label htmlFor="unexpectedDiscovery">Unexpected discovery</Label>
+                    <Label htmlFor="unexpectedDiscovery">
+                      Unexpected discovery
+                    </Label>
                     <EnhancedTextarea
                       id="unexpectedDiscovery"
                       placeholder="What surprised you the most? What did you discover that you didn't expect?"
                       value={formData.unexpectedDiscovery}
-                      onChange={(e) => handleInputChange("unexpectedDiscovery", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("unexpectedDiscovery", e.target.value)
+                      }
                       rows={3}
                     />
                   </FormField>
@@ -516,40 +584,56 @@ export default function ExperienceStory() {
                 <CardContent className="space-y-8">
                   {ratingFields.map((field) => {
                     const IconComponent = field.icon;
-                    const value = formData[field.key as keyof typeof formData] as number;
-                    
+                    const value = formData[
+                      field.key as keyof typeof formData
+                    ] as number;
+
                     return (
                       <div key={field.key} className="space-y-3">
                         <div className="flex items-center space-x-3">
                           <IconComponent className="h-5 w-5 text-blue-600" />
                           <div>
-                            <Label className="text-base font-medium">{field.label}</Label>
-                            <p className="text-sm text-gray-600">{field.description}</p>
+                            <Label className="text-base font-medium">
+                              {field.label}
+                            </Label>
+                            <p className="text-sm text-gray-600">
+                              {field.description}
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-4">
-                          <span className="text-sm text-gray-500 w-8">Poor</span>
+                          <span className="text-sm text-gray-500 w-8">
+                            Poor
+                          </span>
                           <Slider
                             value={[value]}
-                            onValueChange={(v) => handleRatingChange(field.key, v)}
+                            onValueChange={(v) =>
+                              handleRatingChange(field.key, v)
+                            }
                             max={5}
                             min={1}
                             step={1}
                             className="flex-1"
                           />
-                          <span className="text-sm text-gray-500 w-12">Excellent</span>
+                          <span className="text-sm text-gray-500 w-12">
+                            Excellent
+                          </span>
                           <div className="w-16 text-center">
                             <div className="flex items-center justify-center space-x-1">
                               {[1, 2, 3, 4, 5].map((star) => (
                                 <Star
                                   key={star}
                                   className={`h-4 w-4 ${
-                                    star <= value ? "text-yellow-400 fill-current" : "text-gray-300"
+                                    star <= value
+                                      ? "text-yellow-400 fill-current"
+                                      : "text-gray-300"
                                   }`}
                                 />
                               ))}
                             </div>
-                            <span className="text-sm font-medium">{value > 0 ? value : "-"}/5</span>
+                            <span className="text-sm font-medium">
+                              {value > 0 ? value : "-"}/5
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -559,8 +643,12 @@ export default function ExperienceStory() {
                   <div className="pt-6 border-t">
                     <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
                       <div>
-                        <Label className="text-lg font-semibold">Overall Rating</Label>
-                        <p className="text-sm text-gray-600">Calculated from your ratings above</p>
+                        <Label className="text-lg font-semibold">
+                          Overall Rating
+                        </Label>
+                        <p className="text-sm text-gray-600">
+                          Calculated from your ratings above
+                        </p>
                       </div>
                       <div className="text-center">
                         <div className="flex items-center space-x-1 mb-1">
@@ -568,13 +656,18 @@ export default function ExperienceStory() {
                             <Star
                               key={star}
                               className={`h-6 w-6 ${
-                                star <= formData.overallRating ? "text-yellow-400 fill-current" : "text-gray-300"
+                                star <= formData.overallRating
+                                  ? "text-yellow-400 fill-current"
+                                  : "text-gray-300"
                               }`}
                             />
                           ))}
                         </div>
                         <span className="text-xl font-bold text-blue-600">
-                          {formData.overallRating > 0 ? formData.overallRating : "-"}/5
+                          {formData.overallRating > 0
+                            ? formData.overallRating
+                            : "-"}
+                          /5
                         </span>
                       </div>
                     </div>
@@ -600,8 +693,14 @@ export default function ExperienceStory() {
                         <EnhancedTextarea
                           id={category.key}
                           placeholder={category.placeholder}
-                          value={formData[category.key as keyof typeof formData] as string}
-                          onChange={(e) => handleInputChange(category.key, e.target.value)}
+                          value={
+                            formData[
+                              category.key as keyof typeof formData
+                            ] as string
+                          }
+                          onChange={(e) =>
+                            handleInputChange(category.key, e.target.value)
+                          }
                           rows={3}
                         />
                       </FormField>
@@ -609,37 +708,54 @@ export default function ExperienceStory() {
                   </div>
 
                   <div className="border-t pt-6 space-y-4">
-                    <h3 className="text-lg font-semibold">Personal Development</h3>
-                    
+                    <h3 className="text-lg font-semibold">
+                      Personal Development
+                    </h3>
+
                     <FormGrid cols={2}>
                       <FormField>
-                        <Label htmlFor="languagesLearned">Languages learned/improved</Label>
+                        <Label htmlFor="languagesLearned">
+                          Languages learned/improved
+                        </Label>
                         <EnhancedInput
                           id="languagesLearned"
                           placeholder="e.g., Spanish (intermediate), French (basic)"
                           value={formData.languagesLearned}
-                          onChange={(e) => handleInputChange("languagesLearned", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange(
+                              "languagesLearned",
+                              e.target.value,
+                            )
+                          }
                         />
                       </FormField>
 
                       <FormField>
-                        <Label htmlFor="skillsDeveloped">Skills developed</Label>
+                        <Label htmlFor="skillsDeveloped">
+                          Skills developed
+                        </Label>
                         <EnhancedInput
                           id="skillsDeveloped"
                           placeholder="e.g., independence, adaptability, communication"
                           value={formData.skillsDeveloped}
-                          onChange={(e) => handleInputChange("skillsDeveloped", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("skillsDeveloped", e.target.value)
+                          }
                         />
                       </FormField>
                     </FormGrid>
 
                     <FormField>
-                      <Label htmlFor="careerImpact">Impact on career/studies</Label>
+                      <Label htmlFor="careerImpact">
+                        Impact on career/studies
+                      </Label>
                       <EnhancedTextarea
                         id="careerImpact"
                         placeholder="How has this experience influenced your career goals or academic path?"
                         value={formData.careerImpact}
-                        onChange={(e) => handleInputChange("careerImpact", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("careerImpact", e.target.value)
+                        }
                         rows={3}
                       />
                     </FormField>
@@ -650,7 +766,9 @@ export default function ExperienceStory() {
                         id="personalGrowth"
                         placeholder="How have you grown as a person? What have you learned about yourself?"
                         value={formData.personalGrowth}
-                        onChange={(e) => handleInputChange("personalGrowth", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("personalGrowth", e.target.value)
+                        }
                         rows={3}
                       />
                     </FormField>
@@ -661,7 +779,9 @@ export default function ExperienceStory() {
                       <Label>Would you recommend an Erasmus exchange?</Label>
                       <RadioGroup
                         value={formData.recommendExchange}
-                        onValueChange={(value) => handleInputChange("recommendExchange", value)}
+                        onValueChange={(value) =>
+                          handleInputChange("recommendExchange", value)
+                        }
                         className="flex space-x-6"
                       >
                         <div className="flex items-center space-x-2">
@@ -685,7 +805,12 @@ export default function ExperienceStory() {
                         id="recommendationReason"
                         placeholder="Explain your recommendation..."
                         value={formData.recommendationReason}
-                        onChange={(e) => handleInputChange("recommendationReason", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            "recommendationReason",
+                            e.target.value,
+                          )
+                        }
                         rows={3}
                       />
                     </FormField>
@@ -708,52 +833,77 @@ export default function ExperienceStory() {
                     <Label>Would you like to help future students?</Label>
                     <RadioGroup
                       value={formData.wantToHelp}
-                      onValueChange={(value) => handleInputChange("wantToHelp", value)}
+                      onValueChange={(value) =>
+                        handleInputChange("wantToHelp", value)
+                      }
                       className="space-y-3"
                     >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="yes" id="help-yes" />
-                        <Label htmlFor="help-yes">Yes, I'd love to mentor and answer questions</Label>
+                        <Label htmlFor="help-yes">
+                          Yes, I'd love to mentor and answer questions
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="maybe" id="help-maybe" />
-                        <Label htmlFor="help-maybe">Maybe, contact me first</Label>
+                        <Label htmlFor="help-maybe">
+                          Maybe, contact me first
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="no" id="help-no" />
-                        <Label htmlFor="help-no">No, just sharing my story</Label>
+                        <Label htmlFor="help-no">
+                          No, just sharing my story
+                        </Label>
                       </div>
                     </RadioGroup>
                   </FormField>
 
-                  {(formData.wantToHelp === "yes" || formData.wantToHelp === "maybe") && (
+                  {(formData.wantToHelp === "yes" ||
+                    formData.wantToHelp === "maybe") && (
                     <div className="space-y-6 p-4 bg-green-50 rounded-lg border border-green-200">
-                      <h3 className="font-semibold text-green-800">Mentor Profile Setup</h3>
-                      
+                      <h3 className="font-semibold text-green-800">
+                        Mentor Profile Setup
+                      </h3>
+
                       <FormField>
                         <Label htmlFor="nickname">
-                          Display name/nickname <span className="text-red-500">*</span>
+                          Display name/nickname{" "}
+                          <span className="text-red-500">*</span>
                         </Label>
                         <EnhancedInput
                           id="nickname"
                           placeholder="How should students know you? (e.g., Alex_Barcelona_2023)"
                           value={formData.nickname}
-                          onChange={(e) => handleInputChange("nickname", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("nickname", e.target.value)
+                          }
                           required={formData.wantToHelp === "yes"}
                         />
                       </FormField>
 
                       <FormField>
-                        <Label>What topics can you help with? <span className="text-red-500">*</span></Label>
+                        <Label>
+                          What topics can you help with?{" "}
+                          <span className="text-red-500">*</span>
+                        </Label>
                         <div className="grid grid-cols-2 gap-3 mt-2">
                           {helpTopics.map((topic) => (
-                            <div key={topic} className="flex items-center space-x-2">
+                            <div
+                              key={topic}
+                              className="flex items-center space-x-2"
+                            >
                               <Checkbox
                                 id={`topic-${topic}`}
                                 checked={formData.helpTopics.includes(topic)}
-                                onCheckedChange={() => handleHelpTopicToggle(topic)}
+                                onCheckedChange={() =>
+                                  handleHelpTopicToggle(topic)
+                                }
                               />
-                              <Label htmlFor={`topic-${topic}`} className="text-sm">
+                              <Label
+                                htmlFor={`topic-${topic}`}
+                                className="text-sm"
+                              >
                                 {topic}
                               </Label>
                             </div>
@@ -762,20 +912,35 @@ export default function ExperienceStory() {
                       </FormField>
 
                       <FormField>
-                        <Label>Preferred contact method <span className="text-red-500">*</span></Label>
+                        <Label>
+                          Preferred contact method{" "}
+                          <span className="text-red-500">*</span>
+                        </Label>
                         <EnhancedSelect
                           value={formData.contactMethod}
-                          onValueChange={(value) => handleInputChange("contactMethod", value)}
+                          onValueChange={(value) =>
+                            handleInputChange("contactMethod", value)
+                          }
                         >
                           <EnhancedSelectTrigger>
                             <EnhancedSelectValue placeholder="Choose how students can reach you" />
                           </EnhancedSelectTrigger>
                           <EnhancedSelectContent>
-                            <EnhancedSelectItem value="email">Email</EnhancedSelectItem>
-                            <EnhancedSelectItem value="instagram">Instagram</EnhancedSelectItem>
-                            <EnhancedSelectItem value="facebook">Facebook</EnhancedSelectItem>
-                            <EnhancedSelectItem value="linkedin">LinkedIn</EnhancedSelectItem>
-                            <EnhancedSelectItem value="website">Personal Website</EnhancedSelectItem>
+                            <EnhancedSelectItem value="email">
+                              Email
+                            </EnhancedSelectItem>
+                            <EnhancedSelectItem value="instagram">
+                              Instagram
+                            </EnhancedSelectItem>
+                            <EnhancedSelectItem value="facebook">
+                              Facebook
+                            </EnhancedSelectItem>
+                            <EnhancedSelectItem value="linkedin">
+                              LinkedIn
+                            </EnhancedSelectItem>
+                            <EnhancedSelectItem value="website">
+                              Personal Website
+                            </EnhancedSelectItem>
                           </EnhancedSelectContent>
                         </EnhancedSelect>
                       </FormField>
@@ -784,14 +949,17 @@ export default function ExperienceStory() {
                         {formData.contactMethod === "email" && (
                           <FormField>
                             <Label htmlFor="email">
-                              Email address <span className="text-red-500">*</span>
+                              Email address{" "}
+                              <span className="text-red-500">*</span>
                             </Label>
                             <EnhancedInput
                               id="email"
                               type="email"
                               placeholder="your.email@example.com"
                               value={formData.email}
-                              onChange={(e) => handleInputChange("email", e.target.value)}
+                              onChange={(e) =>
+                                handleInputChange("email", e.target.value)
+                              }
                               required
                             />
                           </FormField>
@@ -799,48 +967,76 @@ export default function ExperienceStory() {
 
                         {formData.contactMethod === "instagram" && (
                           <FormField>
-                            <Label htmlFor="instagramUsername">Instagram username</Label>
+                            <Label htmlFor="instagramUsername">
+                              Instagram username
+                            </Label>
                             <EnhancedInput
                               id="instagramUsername"
                               placeholder="@yourusername"
                               value={formData.instagramUsername}
-                              onChange={(e) => handleInputChange("instagramUsername", e.target.value)}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  "instagramUsername",
+                                  e.target.value,
+                                )
+                              }
                             />
                           </FormField>
                         )}
 
                         {formData.contactMethod === "facebook" && (
                           <FormField>
-                            <Label htmlFor="facebookLink">Facebook profile</Label>
+                            <Label htmlFor="facebookLink">
+                              Facebook profile
+                            </Label>
                             <EnhancedInput
                               id="facebookLink"
                               placeholder="https://facebook.com/yourprofile"
                               value={formData.facebookLink}
-                              onChange={(e) => handleInputChange("facebookLink", e.target.value)}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  "facebookLink",
+                                  e.target.value,
+                                )
+                              }
                             />
                           </FormField>
                         )}
 
                         {formData.contactMethod === "linkedin" && (
                           <FormField>
-                            <Label htmlFor="linkedinProfile">LinkedIn profile</Label>
+                            <Label htmlFor="linkedinProfile">
+                              LinkedIn profile
+                            </Label>
                             <EnhancedInput
                               id="linkedinProfile"
                               placeholder="https://linkedin.com/in/yourprofile"
                               value={formData.linkedinProfile}
-                              onChange={(e) => handleInputChange("linkedinProfile", e.target.value)}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  "linkedinProfile",
+                                  e.target.value,
+                                )
+                              }
                             />
                           </FormField>
                         )}
 
                         {formData.contactMethod === "website" && (
                           <FormField>
-                            <Label htmlFor="personalWebsite">Personal website</Label>
+                            <Label htmlFor="personalWebsite">
+                              Personal website
+                            </Label>
                             <EnhancedInput
                               id="personalWebsite"
                               placeholder="https://yourwebsite.com"
                               value={formData.personalWebsite}
-                              onChange={(e) => handleInputChange("personalWebsite", e.target.value)}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  "personalWebsite",
+                                  e.target.value,
+                                )
+                              }
                             />
                           </FormField>
                         )}
@@ -852,16 +1048,22 @@ export default function ExperienceStory() {
                     <Label>Make my profile public?</Label>
                     <RadioGroup
                       value={formData.publicProfile}
-                      onValueChange={(value) => handleInputChange("publicProfile", value)}
+                      onValueChange={(value) =>
+                        handleInputChange("publicProfile", value)
+                      }
                       className="space-y-3"
                     >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="yes" id="public-yes" />
-                        <Label htmlFor="public-yes">Yes, share my story and contact info publicly</Label>
+                        <Label htmlFor="public-yes">
+                          Yes, share my story and contact info publicly
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="no" id="public-no" />
-                        <Label htmlFor="public-no">No, keep my story anonymous</Label>
+                        <Label htmlFor="public-no">
+                          No, keep my story anonymous
+                        </Label>
                       </div>
                     </RadioGroup>
                   </FormField>
@@ -904,8 +1106,8 @@ export default function ExperienceStory() {
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 ) : (
-                  <Button 
-                    onClick={handleSubmit} 
+                  <Button
+                    onClick={handleSubmit}
                     disabled={isSubmitting}
                     className="bg-green-600 hover:bg-green-700"
                   >
