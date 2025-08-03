@@ -285,18 +285,6 @@ export const experienceStorySchema = z.object({
   personalWebsite: z.string().url().optional().or(z.literal("")),
   phoneNumber: z.string().optional(),
 });
-    .number()
-    .min(0, "Other expenses must be positive")
-    .optional(),
-
-  // Total Monthly Budget (calculated or entered)
-  totalMonthlyBudget: z.coerce
-    .number()
-    .min(0, "Total budget must be positive")
-    .optional(),
-
-  // Income Information
-  monthlyIncomeSource: z.string().optional(),
   monthlyIncomeAmount: z.coerce
     .number()
     .min(0, "Income amount must be positive")
