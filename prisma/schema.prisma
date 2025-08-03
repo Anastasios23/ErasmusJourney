@@ -286,6 +286,39 @@ model CustomDestination {
   @@map("custom_destinations")
 }
 
+model AdminDestination {
+  id           String   @id @default(cuid())
+  name         String   // Display name (e.g., "Barcelona, Spain")
+  city         String   // City name for matching with student data
+  country      String   // Country name for matching with student data
+  
+  // Admin-curated content
+  description  String   // Rich description of the destination
+  imageUrl     String?  // Hero image URL
+  climate      String?  // Climate information
+  highlights   Json?    // Array of highlight strings
+  
+  // Official information
+  officialUniversities Json? // Array of university objects {name, website, programs[]}
+  generalInfo  Json?    // {language, currency, timeZone, publicTransport, etc.}
+  
+  // Student data cache (automatically updated)
+  studentDataCache Json?    // Cached CityAggregatedData
+  hasStudentData   Boolean @default(false)
+  lastDataUpdate   DateTime?
+  
+  // Admin management
+  featured     Boolean  @default(false)
+  active       Boolean  @default(true)
+  createdBy    String   // Admin user ID
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Ensure unique city/country combinations
+  @@unique([city, country])
+  @@map("admin_destinations")
+}
+
 model UniversityExchange {
   id                  String   @id @default(cuid())
   hostUniversity      String

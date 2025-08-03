@@ -21,6 +21,7 @@ import {
   CardTitle,
 } from "../src/components/ui/card";
 import Header from "../components/Header";
+import CityDataCard from "../components/CityDataCard";
 import {
   MapPin,
   Star,
@@ -29,6 +30,8 @@ import {
   Search,
   ArrowRight,
   FilterX,
+  TrendingUp,
+  ThumbsUp,
 } from "lucide-react";
 import { DestinationSkeleton } from "../src/components/ui/destination-skeleton";
 import { OptimizedImage } from "../src/components/ui/OptimizedImage";
@@ -36,6 +39,55 @@ import {
   ErasmusIcon,
   DestinationIcon,
 } from "../src/components/icons/CustomIcons";
+
+// City aggregation data interface
+interface CityAggregatedData {
+  city: string;
+  country: string;
+  totalSubmissions: number;
+  livingCosts: {
+    avgMonthlyRent: number;
+    avgMonthlyFood: number;
+    avgMonthlyTransport: number;
+    avgMonthlyEntertainment: number;
+    avgMonthlyUtilities: number;
+    avgMonthlyOther: number;
+    avgTotalMonthly: number;
+    costSubmissions: number;
+  };
+  ratings: {
+    avgOverallRating: number;
+    avgAcademicRating: number;
+    avgSocialLifeRating: number;
+    avgCulturalImmersionRating: number;
+    avgCostOfLivingRating: number;
+    avgAccommodationRating: number;
+    ratingSubmissions: number;
+  };
+  accommodation: {
+    types: Array<{
+      type: string;
+      count: number;
+      avgRent: number;
+      percentage: number;
+    }>;
+    totalAccommodationSubmissions: number;
+  };
+  recommendations: {
+    wouldRecommendCount: number;
+    totalRecommendationResponses: number;
+    recommendationPercentage: number;
+  };
+  topTips: Array<{
+    category: string;
+    tip: string;
+    frequency: number;
+  }>;
+  universities: Array<{
+    name: string;
+    studentCount: number;
+  }>;
+}
 
 export default function Destinations() {
   const router = useRouter();
@@ -45,6 +97,10 @@ export default function Destinations() {
   const [isLoading, setIsLoading] = useState(true);
   const [destinations, setDestinations] = useState([]); // Make this dynamic
   const [error, setError] = useState<string | null>(null);
+  const [cityAggregatedData, setCityAggregatedData] = useState<
+    Record<string, CityAggregatedData>
+  >({});
+  const [loadingCityData, setLoadingCityData] = useState(false);
 
   // Load dynamic destination data
   useEffect(() => {
@@ -86,6 +142,59 @@ export default function Destinations() {
     };
 
     fetchDestinations();
+  }, []);
+
+  // Load city aggregated data
+  useEffect(() => {
+    const fetchCityAggregatedData = async () => {
+      try {
+        setLoadingCityData(true);
+        const response = await fetch(
+          "/api/destinations/city-aggregated?all=true",
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log("City aggregated API response:", result);
+
+          // Check if we have cities data
+          const citiesData = result.cities || result.data || [];
+
+          if (Array.isArray(citiesData)) {
+            // Convert array to object keyed by city-country
+            const dataMap = citiesData.reduce(
+              (
+                acc: Record<string, CityAggregatedData>,
+                cityData: CityAggregatedData,
+              ) => {
+                const key = `${cityData.city.toLowerCase()}-${cityData.country.toLowerCase()}`;
+                acc[key] = cityData;
+                return acc;
+              },
+              {},
+            );
+            setCityAggregatedData(dataMap);
+            console.log(
+              `Loaded city data for ${Object.keys(dataMap).length} cities`,
+            );
+          } else {
+            console.warn("No cities data found in API response");
+          }
+        } else {
+          console.error(
+            "Failed to fetch city data:",
+            response.status,
+            response.statusText,
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching city aggregated data:", error);
+      } finally {
+        setLoadingCityData(false);
+      }
+    };
+
+    fetchCityAggregatedData();
   }, []);
 
   const getRegionFromCountry = (country: string) => {
@@ -510,6 +619,16 @@ export default function Destinations() {
                           <p className="text-gray-600 mb-4 line-clamp-3">
                             {destination.description}
                           </p>
+
+                          {/* City Aggregated Data */}
+                          <CityDataCard
+                            cityData={
+                              cityAggregatedData[
+                                `${destination.city.toLowerCase()}-${destination.country.toLowerCase()}`
+                              ]
+                            }
+                            loading={loadingCityData}
+                          />
 
                           {/* Stats */}
                           <div className="flex justify-between items-center mb-4">

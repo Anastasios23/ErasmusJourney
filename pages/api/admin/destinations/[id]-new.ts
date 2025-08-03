@@ -18,30 +18,30 @@ export default async function handler(
 
   try {
     const session = await getServerSession(req, res, authOptions);
-    
+
     switch (req.method) {
       case "GET":
         return handleGetDestination(req, res, id);
       case "PUT":
         if (!session || !session.user?.email) {
-          return res.status(401).json({ 
-            success: false, 
-            message: "Authentication required" 
+          return res.status(401).json({
+            success: false,
+            message: "Authentication required",
           });
         }
         return handleUpdateDestination(req, res, id);
       case "DELETE":
         if (!session || !session.user?.email) {
-          return res.status(401).json({ 
-            success: false, 
-            message: "Authentication required" 
+          return res.status(401).json({
+            success: false,
+            message: "Authentication required",
           });
         }
         return handleDeleteDestination(req, res, id);
       default:
-        return res.status(405).json({ 
-          success: false, 
-          message: "Method not allowed" 
+        return res.status(405).json({
+          success: false,
+          message: "Method not allowed",
         });
     }
   } catch (error) {
@@ -71,22 +71,23 @@ async function handleGetDestination(
   }
 
   // Return admin data only or complete data with student insights
-  const responseData = withStudentData === "true" 
-    ? destination 
-    : {
-        id: destination.id,
-        name: destination.name,
-        city: destination.city,
-        country: destination.country,
-        description: destination.description,
-        imageUrl: destination.imageUrl,
-        climate: destination.climate,
-        highlights: destination.highlights,
-        officialUniversities: destination.officialUniversities,
-        generalInfo: destination.generalInfo,
-        featured: destination.featured,
-        active: destination.active,
-      };
+  const responseData =
+    withStudentData === "true"
+      ? destination
+      : {
+          id: destination.id,
+          name: destination.name,
+          city: destination.city,
+          country: destination.country,
+          description: destination.description,
+          imageUrl: destination.imageUrl,
+          climate: destination.climate,
+          highlights: destination.highlights,
+          officialUniversities: destination.officialUniversities,
+          generalInfo: destination.generalInfo,
+          featured: destination.featured,
+          active: destination.active,
+        };
 
   return res.status(200).json({
     success: true,
@@ -101,7 +102,10 @@ async function handleUpdateDestination(
 ) {
   const updateData = req.body;
 
-  const destination = await DestinationDataService.updateDestination(id, updateData);
+  const destination = await DestinationDataService.updateDestination(
+    id,
+    updateData,
+  );
 
   return res.status(200).json({
     success: true,
@@ -116,8 +120,8 @@ async function handleDeleteDestination(
   id: string,
 ) {
   // For now, we'll just deactivate instead of deleting
-  const destination = await DestinationDataService.updateDestination(id, { 
-    active: false 
+  const destination = await DestinationDataService.updateDestination(id, {
+    active: false,
   });
 
   return res.status(200).json({

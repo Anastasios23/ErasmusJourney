@@ -12,9 +12,11 @@
     "start-backend": "node start-backend.js",
     "backend": "cd server && npm run dev",
     "db:generate": "prisma generate",
-    "db:push": "prisma db push",
+    "db:push": "prisma db push && npx tsx scripts/ensure-permanent-admin.ts",
     "db:migrate": "prisma migrate dev",
-    "db:seed": "npx tsx scripts/migrate-data.ts",
+    "db:seed": "npx tsx scripts/migrate-data.ts && npx tsx scripts/ensure-permanent-admin.ts",
+    "db:seed-admin": "npx tsx scripts/ensure-permanent-admin.ts",
+    "db:test-admin": "npx tsx scripts/test-admin-user.ts",
     "db:reset": "prisma migrate reset --force && npm run db:seed"
   },
   "dependencies": {

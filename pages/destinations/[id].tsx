@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import InteractiveCostCalculator from "../../src/components/InteractiveCostCalculator";
 import StudentReviews from "../../src/components/StudentReviews";
+import StudentDataOverview from "../../components/StudentDataOverview";
 import {
   useDestination,
   useDestinationAverages,
@@ -352,6 +353,12 @@ export default function DestinationDetailPage() {
               </div>
             </div>
           </div>
+
+          {/* Student Data Overview */}
+          <StudentDataOverview
+            city={destination.city}
+            country={destination.country}
+          />
 
           {/* Photo Gallery Section */}
           {(destination as any).photos &&
