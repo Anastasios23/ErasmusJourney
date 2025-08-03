@@ -22,6 +22,7 @@ import {
 } from "../src/components/ui/card";
 import Header from "../components/Header";
 import CityDataCard from "../components/CityDataCard";
+import safeFetch from "../src/utils/safeFetch";
 import {
   MapPin,
   Star,
