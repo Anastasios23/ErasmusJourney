@@ -44,6 +44,7 @@ interface CourseMatchingExperience {
   academicPreparationAdvice?: string;
   bestCoursesRecommendation?: string;
   coursesToAvoid?: string;
+  hasLinkedStory?: boolean;
   hostCourses?: Array<{
     name: string;
     code?: string;
@@ -247,8 +248,8 @@ export default function CourseMatchingExperienceCard({
               <span className="font-medium text-blue-900">Key Advice</span>
             </div>
             <p className="text-sm text-blue-800">
-              {courseMatching.academicAdviceForFuture || 
-               courseMatching.courseSelectionTips || 
+              {courseMatching.academicAdviceForFuture ||
+               courseMatching.courseSelectionTips ||
                courseMatching.biggestCourseChallenge}
             </p>
           </div>
