@@ -174,8 +174,19 @@ export const enhancedAccommodationSchema = z.object({
   amenities: z.array(z.string()).optional(),
 });
 
-// Course Matching Schema - Academic course information with numeric validation
+// Course Matching Schema - Academic course information with numeric validation and detailed equivalency data
 export const courseMatchingSchema = z.object({
+  // Basic University Information
+  homeUniversity: z.string().min(1, "Home university is required"),
+  homeDepartment: z.string().min(1, "Home department is required"),
+  hostUniversity: z.string().min(1, "Host university is required"),
+  hostDepartment: z.string().min(1, "Host department is required"),
+
+  // Academic Level
+  levelOfStudy: z.enum(["Bachelor", "Master", "PhD"], {
+    required_error: "Level of study is required",
+  }),
+
   // Course Counts
   hostCourseCount: z.coerce
     .number()
@@ -186,7 +197,7 @@ export const courseMatchingSchema = z.object({
     .min(1, "Must have at least 1 equivalent course")
     .max(20, "Too many courses"),
 
-  // Course Matching Process
+  // Course Matching Process Experience
   courseMatchingDifficult: z.enum(
     ["Very Easy", "Easy", "Moderate", "Difficult", "Very Difficult"],
     {
@@ -194,12 +205,28 @@ export const courseMatchingSchema = z.object({
     },
   ),
   courseMatchingChallenges: z.string().optional(),
+  timeSpentOnMatching: z.enum([
+    "Less than 1 week",
+    "1-2 weeks",
+    "3-4 weeks",
+    "1-2 months",
+    "More than 2 months"
+  ]).optional(),
 
-  // Course Recommendations
+  // Credit Transfer Success
+  creditsTransferredSuccessfully: z.coerce.number().min(0).max(300).optional(),
+  totalCreditsAttempted: z.coerce.number().min(0).max(300).optional(),
+
+  // Course Recommendations and Quality
   recommendCourses: z.enum(["Yes", "No", "Some"], {
     required_error: "Please indicate if you recommend the courses",
   }),
   recommendationReason: z.string().optional(),
+  overallAcademicExperience: z.coerce.number().min(1).max(5).optional(),
+
+  // Biggest Challenge and Advice
+  biggestCourseChallenge: z.string().optional(),
+  academicAdviceForFuture: z.string().min(20, "Please provide specific advice for future students").optional(),
 
   // Detailed Course Information
   hostCourses: z
@@ -217,7 +244,10 @@ export const courseMatchingSchema = z.object({
             "Very Difficult",
           ])
           .optional(),
-        examTypes: z.string().optional(),
+        examTypes: z.array(z.string()).default([]),
+        teachingStyle: z.string().optional(),
+        workload: z.enum(["Very Light", "Light", "Moderate", "Heavy", "Very Heavy"]).optional(),
+        recommendation: z.string().optional(),
         type: z.enum(["Core", "Elective", "Language", "Other"]).optional(),
       }),
     )
@@ -228,11 +258,27 @@ export const courseMatchingSchema = z.object({
       z.object({
         hostCourseName: z.string(),
         homeCourseName: z.string(),
+        hostCourseCode: z.string().optional(),
+        homeCourseCode: z.string().optional(),
         ects: z.coerce.number().min(0).max(30),
         matchQuality: z.enum(["Perfect", "Good", "Partial", "Poor"]).optional(),
+        approvalDifficulty: z.enum(["Easy", "Moderate", "Difficult"]).optional(),
+        notes: z.string().optional(),
       }),
     )
     .optional(),
+
+  // Teaching and Learning Environment
+  teachingQuality: z.coerce.number().min(1).max(5).optional(),
+  languageOfInstruction: z.string().optional(),
+  classSize: z.enum(["Small (<20)", "Medium (20-50)", "Large (50-100)", "Very Large (100+)"]).optional(),
+  studentSupportServices: z.coerce.number().min(1).max(5).optional(),
+
+  // Tips and Recommendations for Future Students
+  courseSelectionTips: z.string().optional(),
+  academicPreparationAdvice: z.string().optional(),
+  bestCoursesRecommendation: z.string().optional(),
+  coursesToAvoid: z.string().optional(),
 });
 
 // Experience Story Schema - Comprehensive experience narrative and ratings
