@@ -3,6 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useQuery } from "@tanstack/react-query";
 import Header from "../components/Header";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
