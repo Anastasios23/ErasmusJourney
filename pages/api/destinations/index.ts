@@ -34,20 +34,34 @@ export default async function handler(
     }
 
     // Get accommodation data for cost information
-    const accommodationSubmissions = await prisma.formSubmission.findMany({
-      where: {
-        status: "SUBMITTED",
-        type: "ACCOMMODATION",
-      },
-    });
+    let accommodationSubmissions = [];
+    try {
+      accommodationSubmissions = await prisma.formSubmission.findMany({
+        where: {
+          status: "SUBMITTED",
+          type: "ACCOMMODATION",
+        },
+      });
+      console.log(`Found ${accommodationSubmissions.length} accommodation submissions`);
+    } catch (accommodationError) {
+      console.error("Error fetching accommodation submissions:", accommodationError);
+      accommodationSubmissions = [];
+    }
 
     // Get living expenses data
-    const expenseSubmissions = await prisma.formSubmission.findMany({
-      where: {
-        status: "SUBMITTED",
-        type: "LIVING_EXPENSES",
-      },
-    });
+    let expenseSubmissions = [];
+    try {
+      expenseSubmissions = await prisma.formSubmission.findMany({
+        where: {
+          status: "SUBMITTED",
+          type: "LIVING_EXPENSES",
+        },
+      });
+      console.log(`Found ${expenseSubmissions.length} expense submissions`);
+    } catch (expenseError) {
+      console.error("Error fetching expense submissions:", expenseError);
+      expenseSubmissions = [];
+    }
 
     // Get custom destination overrides
     const customDestinations = await prisma.customDestination.findMany();
