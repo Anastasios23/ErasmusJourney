@@ -107,6 +107,11 @@ export async function getCourseMatchingExperiences(): Promise<{
       );
       const basicData = basicInfo?.data as any;
 
+      // Check if user has linked experience/story submissions
+      const hasLinkedStory = submission.user?.formSubmissions.some(
+        (s) => s.type === "EXPERIENCE" || s.type === "STORY"
+      ) || false;
+
       // Create anonymized student name
       const studentName = generateAnonymousName(submission.userId);
 
