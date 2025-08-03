@@ -617,7 +617,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
           city: (basicInfo?.data as any)?.hostCity || "Unknown City",
           country: (basicInfo?.data as any)?.hostCountry || "Unknown Country",
           story: (submission.data as any).personalExperience || (submission.data as any).adviceForFutureStudents || "No story provided",
-          createdAt: submission.createdAt,
+          createdAt: submission.createdAt.toISOString(),
           isPublic: (submission.data as any).publicProfile === "yes",
         };
       })
