@@ -158,7 +158,7 @@ export default async function handler(
       });
     }
 
-    const { type, title, data, status = "submitted", basicInfoId } = req.body;
+    const { type, title, data, status = "published", basicInfoId } = req.body;
 
     console.log("Form submission request:", {
       type,
