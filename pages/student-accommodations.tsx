@@ -359,7 +359,18 @@ export default function StudentAccommodations() {
             {/* Section Navigation */}
             <nav className="mb-8">
               <div className="flex justify-center">
-                <div className="bg-white rounded-lg border p-1 inline-flex">
+              <div className="bg-white rounded-lg border p-1 inline-flex">
+                  <button
+                    onClick={() => setActiveSection("experiences")}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      activeSection === "experiences"
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    <Users className="h-4 w-4 inline mr-2" />
+                    Student Experiences
+                  </button>
                   <button
                     onClick={() => setActiveSection("accommodations")}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -369,7 +380,7 @@ export default function StudentAccommodations() {
                     }`}
                   >
                     <Home className="h-4 w-4 inline mr-2" />
-                    Accommodations
+                    Platform Listings
                   </button>
                   <button
                     onClick={() => setActiveSection("platforms")}
