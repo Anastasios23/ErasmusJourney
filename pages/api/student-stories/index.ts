@@ -104,7 +104,7 @@ export default async function handler(
           contactInfo:
             (submission.data as any).publicProfile === "yes" &&
             (submission.data as any).contactMethod === "email"
-              ? ((submission.data as any).email || userData?.email)
+              ? (submission.data as any).email || userData?.email
               : null,
           accommodationTips:
             (accommodationInfo?.data as any)?.additionalNotes || null,

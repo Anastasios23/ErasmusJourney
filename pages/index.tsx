@@ -612,17 +612,23 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
 
         return {
           id: submission.id,
-          studentName: (submission.data as any).nickname || userData?.firstName || "Anonymous Student",
-          university: (basicInfo?.data as any)?.hostUniversity || "Unknown University",
+          studentName:
+            (submission.data as any).nickname ||
+            userData?.firstName ||
+            "Anonymous Student",
+          university:
+            (basicInfo?.data as any)?.hostUniversity || "Unknown University",
           city: (basicInfo?.data as any)?.hostCity || "Unknown City",
           country: (basicInfo?.data as any)?.hostCountry || "Unknown Country",
-          story: (submission.data as any).personalExperience || (submission.data as any).adviceForFutureStudents || "No story provided",
+          story:
+            (submission.data as any).personalExperience ||
+            (submission.data as any).adviceForFutureStudents ||
+            "No story provided",
           createdAt: submission.createdAt.toISOString(),
           isPublic: (submission.data as any).publicProfile === "yes",
         };
-      })
+      }),
     );
-
 
     return {
       props: {
