@@ -611,8 +611,57 @@ export default function StudentAccommodations() {
                     </section>
                   )}
 
+                  {/* Loading state */}
+                  {isLoading && (
+                    <section className="mb-12">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[1, 2, 3, 4, 5, 6].map((i) => (
+                          <Card key={i} className="animate-pulse">
+                            <CardHeader>
+                              <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+                              <div className="h-3 bg-gray-300 rounded w-1/2"></div>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="space-y-2">
+                                <div className="h-3 bg-gray-300 rounded"></div>
+                                <div className="h-3 bg-gray-300 rounded w-5/6"></div>
+                                <div className="h-3 bg-gray-300 rounded w-4/6"></div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </section>
+                  )}
+
+                  {/* Error state */}
+                  {error && (
+                    <section className="mb-12">
+                      <Card className="bg-red-50 border-red-200">
+                        <CardContent className="pt-8 pb-8 text-center">
+                          <div className="max-w-2xl mx-auto">
+                            <div className="h-12 w-12 text-red-600 mx-auto mb-4">⚠️</div>
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                              Failed to load accommodation experiences
+                            </h3>
+                            <p className="text-gray-600 mb-6">
+                              There was an error loading the accommodation data. Please try refreshing the page.
+                            </p>
+                            <Button
+                              onClick={() => window.location.reload()}
+                              variant="outline"
+                              size="lg"
+                            >
+                              Refresh Page
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </section>
+                  )}
+
                   {/* No experiences message */}
-                  {!realAccommodationsLoading && filteredRealAccommodations.length === 0 && (
+                  {!isLoading && !error && accommodations.length === 0 && (
                     <section className="mb-12">
                       <Card className="bg-blue-50 border-blue-200">
                         <CardContent className="pt-8 pb-8 text-center">
