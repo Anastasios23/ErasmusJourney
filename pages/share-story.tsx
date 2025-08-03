@@ -33,6 +33,16 @@ export default function ShareStory() {
       link: "/basic-information",
     },
     {
+      icon: Star,
+      title: "Experience Story & Ratings",
+      description:
+        "Share your complete Erasmus story with ratings, tips, and advice for future students",
+      time: "10-15 minutes",
+      impact: "Provides comprehensive guidance and inspiration",
+      color: "bg-purple-100 text-purple-600",
+      link: "/experience-story",
+    },
+    {
       icon: Camera,
       title: "Photo Story",
       description:
