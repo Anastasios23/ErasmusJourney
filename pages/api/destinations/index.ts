@@ -11,22 +11,26 @@ export default async function handler(
   }
 
   try {
-    // Get all basic info submissions
-    const basicInfoSubmissions = await prisma.formSubmission.findMany({
-      where: {
-        status: "SUBMITTED",
-        type: "BASIC_INFO",
-      },
-      include: {
-        user: {
-          select: { firstName: true, lastName: true, email: true },
-        },
-      },
-    });
+    console.log("Starting destinations API...");
 
-    console.log(`Found ${basicInfoSubmissions.length} basic info submissions`);
-    if (basicInfoSubmissions.length > 0) {
-      console.log("Sample submission:", basicInfoSubmissions[0]);
+    // Get all basic info submissions
+    let basicInfoSubmissions = [];
+    try {
+      basicInfoSubmissions = await prisma.formSubmission.findMany({
+        where: {
+          status: "SUBMITTED",
+          type: "BASIC_INFO",
+        },
+        include: {
+          user: {
+            select: { firstName: true, lastName: true, email: true },
+          },
+        },
+      });
+      console.log(`Found ${basicInfoSubmissions.length} basic info submissions`);
+    } catch (submissionError) {
+      console.error("Error fetching basic info submissions:", submissionError);
+      basicInfoSubmissions = []; // Continue with empty array
     }
 
     // Get accommodation data for cost information
