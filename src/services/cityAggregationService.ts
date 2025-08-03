@@ -39,6 +39,25 @@ export interface CityAggregatedData {
     totalAccommodationSubmissions: number;
   };
 
+  // Course Matching Analysis
+  courseMatching: {
+    avgDifficulty: number;
+    difficultyBreakdown: Record<string, number>;
+    avgCoursesMatched: number;
+    avgCreditsTransferred: number;
+    successRate: number;
+    recommendationRate: number;
+    totalCourseMatchingSubmissions: number;
+    commonChallenges: string[];
+    topAdvice: string[];
+    departmentInsights: Array<{
+      department: string;
+      studentCount: number;
+      avgDifficulty: number;
+      avgSuccess: number;
+    }>;
+  };
+
   // Recommendations
   recommendations: {
     wouldRecommendCount: number;
