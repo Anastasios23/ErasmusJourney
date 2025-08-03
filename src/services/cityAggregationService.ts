@@ -731,37 +731,42 @@ export async function aggregateCityData(
       experienceSubmissions.forEach((submission) => {
         const data = submission.data as any;
 
+        // Handle ratings (ensure they're numbers and within valid range 1-5)
         if (data.overallRating && !isNaN(parseFloat(data.overallRating))) {
-          ratings.overall.push(parseFloat(data.overallRating));
+          const rating = parseFloat(data.overallRating);
+          if (rating >= 1 && rating <= 5) {
+            ratings.overall.push(rating);
+          }
         }
         if (data.academicRating && !isNaN(parseFloat(data.academicRating))) {
-          ratings.academic.push(parseFloat(data.academicRating));
+          const rating = parseFloat(data.academicRating);
+          if (rating >= 1 && rating <= 5) {
+            ratings.academic.push(rating);
+          }
         }
-        if (
-          data.socialLifeRating &&
-          !isNaN(parseFloat(data.socialLifeRating))
-        ) {
-          ratings.socialLife.push(parseFloat(data.socialLifeRating));
+        if (data.socialLifeRating && !isNaN(parseFloat(data.socialLifeRating))) {
+          const rating = parseFloat(data.socialLifeRating);
+          if (rating >= 1 && rating <= 5) {
+            ratings.socialLife.push(rating);
+          }
         }
-        if (
-          data.culturalImmersionRating &&
-          !isNaN(parseFloat(data.culturalImmersionRating))
-        ) {
-          ratings.culturalImmersion.push(
-            parseFloat(data.culturalImmersionRating),
-          );
+        if (data.culturalImmersionRating && !isNaN(parseFloat(data.culturalImmersionRating))) {
+          const rating = parseFloat(data.culturalImmersionRating);
+          if (rating >= 1 && rating <= 5) {
+            ratings.culturalImmersion.push(rating);
+          }
         }
-        if (
-          data.costOfLivingRating &&
-          !isNaN(parseFloat(data.costOfLivingRating))
-        ) {
-          ratings.costOfLiving.push(parseFloat(data.costOfLivingRating));
+        if (data.costOfLivingRating && !isNaN(parseFloat(data.costOfLivingRating))) {
+          const rating = parseFloat(data.costOfLivingRating);
+          if (rating >= 1 && rating <= 5) {
+            ratings.costOfLiving.push(rating);
+          }
         }
-        if (
-          data.accommodationRating &&
-          !isNaN(parseFloat(data.accommodationRating))
-        ) {
-          ratings.accommodation.push(parseFloat(data.accommodationRating));
+        if (data.accommodationRating && !isNaN(parseFloat(data.accommodationRating))) {
+          const rating = parseFloat(data.accommodationRating);
+          if (rating >= 1 && rating <= 5) {
+            ratings.accommodation.push(rating);
+          }
         }
       });
 
@@ -839,13 +844,23 @@ export async function aggregateCityData(
       };
     }
 
-    // Calculate recommendation percentage
+    // Calculate recommendation percentage from multiple sources
     let recommendCount = 0;
     let totalRecommendationResponses = 0;
 
+    // Check experience submissions for recommendations
     experienceSubmissions.forEach((submission) => {
       const data = submission.data as any;
-      if (data.wouldRecommend !== undefined) {
+
+      // Check new experience form field
+      if (data.recommendExchange !== undefined) {
+        totalRecommendationResponses++;
+        if (data.recommendExchange === "yes") {
+          recommendCount++;
+        }
+      }
+      // Check legacy fields
+      else if (data.wouldRecommend !== undefined) {
         totalRecommendationResponses++;
         if (
           data.wouldRecommend === "yes" ||
@@ -857,12 +872,15 @@ export async function aggregateCityData(
       }
     });
 
+    // Check accommodation submissions for recommendations
     accommodationSubmissions.forEach((submission) => {
       const data = submission.data as any;
       if (data.wouldRecommend !== undefined) {
         totalRecommendationResponses++;
         if (
           data.wouldRecommend === "yes" ||
+          data.wouldRecommend === "Definitely" ||
+          data.wouldRecommend === "Probably" ||
           data.wouldRecommend === true ||
           data.wouldRecommend === "true"
         ) {
@@ -899,12 +917,19 @@ export async function aggregateCityData(
     experienceSubmissions.forEach((submission) => {
       const data = submission.data as any;
 
-      // Look for various tip fields
+      // Look for various tip fields including new experience form fields
       const tipFields = [
+        // New experience form fields
+        "socialTips",
+        "culturalTips",
+        "travelTips",
+        "academicTips",
+        "practicalTips",
+        "adviceForFutureStudents",
+        // Legacy and other fields
         "budgetTips",
         "transportationTips",
         "socialLifeTips",
-        "travelTips",
         "tips",
         "recommendations",
         "advice",
@@ -912,19 +937,20 @@ export async function aggregateCityData(
       ];
 
       tipFields.forEach((field) => {
-        if (
-          data[field] &&
-          typeof data[field] === "string" &&
-          data[field].length > 10
-        ) {
+        if (data[field] && typeof data[field] === "string" && data[field].length > 10) {
           // Split tips by common delimiters and clean them
           const tips = data[field]
             .split(/[.!?;]/)
             .map((tip: string) => tip.trim())
-            .filter((tip: string) => tip.length > 15);
+            .filter((tip: string) => tip.length > 15 && tip.length < 200); // Not too long
+
           tips.forEach((tip: string) => {
-            const normalizedTip = tip.toLowerCase();
-            tipsMap.set(tip, (tipsMap.get(normalizedTip) || 0) + 1);
+            // Clean and normalize tip
+            const cleanTip = tip.replace(/^[-*•]\s*/, '').trim(); // Remove bullet points
+            if (cleanTip.length > 15) {
+              const normalizedTip = cleanTip.toLowerCase();
+              tipsMap.set(cleanTip, (tipsMap.get(normalizedTip) || 0) + 1);
+            }
           });
         }
       });
