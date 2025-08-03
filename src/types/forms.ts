@@ -3,7 +3,9 @@ export type FormType =
   | "course-matching"
   | "accommodation"
   | "living-expenses" // Add this explicitly
-  | "help-future-students";
+  | "help-future-students"
+  | "experience" // Add experience/story form
+  | "story"; // Legacy support
 
 export type FormStatus = "draft" | "submitted" | "published" | "loading";
 
