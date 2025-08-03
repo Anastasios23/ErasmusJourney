@@ -78,14 +78,21 @@ export default async function handler(
     }
 
     // Get published destinations from admin panel
-    const publishedDestinations = await prisma.destination.findMany({
-      where: {
-        featured: true, // Only get featured/published destinations
-      },
-      orderBy: {
-        updatedAt: "desc",
-      },
-    });
+    let publishedDestinations = [];
+    try {
+      publishedDestinations = await prisma.destination.findMany({
+        where: {
+          featured: true, // Only get featured/published destinations
+        },
+        orderBy: {
+          updatedAt: "desc",
+        },
+      });
+      console.log(`Found ${publishedDestinations.length} published destinations`);
+    } catch (publishedError) {
+      console.error("Error fetching published destinations:", publishedError);
+      publishedDestinations = [];
+    }
 
     // Aggregate destinations data
     const destinationMap = new Map();
