@@ -107,8 +107,8 @@ export default function Destinations() {
     const fetchDestinations = async () => {
       try {
         setIsLoading(true);
-        console.log("Fetching destinations from /api/destinations");
-        const response = await fetch("/api/destinations");
+        console.log("Fetching destinations from /api/destinations-simple");
+        const response = await fetch("/api/destinations-simple");
 
         console.log("Response status:", response.status);
         console.log("Response headers:", response.headers);
