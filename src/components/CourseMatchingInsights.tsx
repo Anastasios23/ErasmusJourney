@@ -123,8 +123,10 @@ export default function CourseMatchingInsights({
   const fetchCourseMatchingInsights = async () => {
     try {
       setLoading(true);
+      // Create destination ID from city and country (e.g., "paris-france")
+      const destinationId = `${city.toLowerCase()}-${country.toLowerCase()}`;
       const response = await fetch(
-        `/api/destinations/${encodeURIComponent(city)}/course-matching?country=${encodeURIComponent(country)}`
+        `/api/destinations/${encodeURIComponent(destinationId)}/course-matching?country=${encodeURIComponent(country)}`
       );
       if (!response.ok) {
         if (response.status === 404) {
@@ -235,21 +237,21 @@ export default function CourseMatchingInsights({
               </div>
               <div className="text-sm text-blue-800">Avg Courses Matched</div>
             </div>
-            
+
             <div className="bg-green-50 p-4 rounded-lg text-center">
               <div className="text-2xl font-bold text-green-600">
                 {Math.round(insights.successRate)}%
               </div>
               <div className="text-sm text-green-800">Success Rate</div>
             </div>
-            
+
             <div className="bg-purple-50 p-4 rounded-lg text-center">
               <div className="text-2xl font-bold text-purple-600">
                 {Math.round(insights.recommendationRate)}%
               </div>
               <div className="text-sm text-purple-800">Recommend</div>
             </div>
-            
+
             <div className="bg-orange-50 p-4 rounded-lg text-center">
               <Badge className={getDifficultyColor(insights.avgDifficulty)}>
                 {getDifficultyLabel(insights.avgDifficulty)}
