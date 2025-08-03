@@ -6,6 +6,7 @@ import Header from "../../components/Header";
 import { Button } from "../../src/components/ui/button";
 import { Badge } from "../../src/components/ui/badge";
 import { Input } from "../../src/components/ui/input";
+import CourseMatchingInsights from "../../src/components/CourseMatchingInsights";
 import {
   Card,
   CardContent,
