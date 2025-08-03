@@ -109,7 +109,7 @@ export default function Destinations() {
       try {
         setIsLoading(true);
         console.log("Fetching destinations from /api/destinations");
-        const response = await fetch("/api/destinations");
+        const response = await safeFetch("/api/destinations");
 
         console.log("Response status:", response.status);
 
