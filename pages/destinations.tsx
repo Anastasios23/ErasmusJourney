@@ -141,8 +141,25 @@ export default function Destinations() {
         setDestinations(transformedDestinations);
       } catch (error) {
         console.error("Error fetching destinations:", error);
-        setError("Failed to load destinations");
-        setDestinations([]);
+        setError(error instanceof Error ? error.message : "Failed to load destinations");
+
+        // Set fallback destinations so the page doesn't break completely
+        setDestinations([
+          {
+            id: "fallback-prague",
+            city: "Prague",
+            country: "Czech Republic",
+            image: "/images/destinations/prague.svg",
+            description: "Historic city with affordable living and great universities",
+            costLevel: "low",
+            rating: 4.2,
+            studentCount: 0,
+            popularUniversities: ["Charles University"],
+            highlights: ["Affordable Living", "Beautiful Architecture", "Central Europe"],
+            avgCostPerMonth: 800,
+            region: "Central Europe",
+          }
+        ]);
       } finally {
         setIsLoading(false);
       }
