@@ -78,7 +78,9 @@ export default async function handler(
         return {
           id: submission.id,
           studentName:
-            (submission.data as any).nickname || submission.user?.firstName,
+            (submission.data as any).nickname ||
+            submission.user?.firstName ||
+            "Anonymous Student",
           university:
             (basicInfo?.data as any)?.hostUniversity || "Unknown University",
           city: (basicInfo?.data as any)?.hostCity || "Unknown City",
