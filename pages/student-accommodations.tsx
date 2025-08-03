@@ -129,16 +129,17 @@ export default function StudentAccommodations() {
   const { content: generatedContent, loading: contentLoading } =
     useGeneratedContent("accommodations");
 
-  // Get real accommodation experiences from form submissions (like destinations page)
-  const [accommodationExperiences, setAccommodationExperiences] = useState([]);
-  const [experiencesLoading, setExperiencesLoading] = useState(false);
+  // Real accommodation experiences from form submissions
+  const [realAccommodations, setRealAccommodations] = useState([]);
+  const [realAccommodationsLoading, setRealAccommodationsLoading] = useState(false);
+  const [accommodationStats, setAccommodationStats] = useState(null);
 
   // User profile and preferences
   const { getDraftData } = useFormSubmissions();
   const { addRecentItem } = useRecentlyViewed();
   const [userProfile, setUserProfile] = useState(null);
   const [wishlist, setWishlist] = useState(new Set());
-  const [activeSection, setActiveSection] = useState("accommodations");
+  const [activeSection, setActiveSection] = useState("experiences");
 
   // Load user profile from form data
   useEffect(() => {
@@ -162,39 +163,84 @@ export default function StudentAccommodations() {
     }
   }, []); // Remove getDraftData dependency to prevent infinite loop
 
-  // Fetch accommodation experiences
+  // Fetch real accommodation experiences with filtering
   useEffect(() => {
-    const fetchExperiences = async () => {
-      setExperiencesLoading(true);
+    const fetchRealAccommodations = async () => {
+      setRealAccommodationsLoading(true);
       try {
-        const response = await fetch("/api/accommodation/experiences");
+        const queryParams = new URLSearchParams();
+        if (filters.city) queryParams.append('city', filters.city);
+        if (filters.country) queryParams.append('country', filters.country);
+        if (filters.type) queryParams.append('accommodationType', filters.type);
+
+        const response = await fetch(`/api/student-accommodations?${queryParams.toString()}`);
         if (response.ok) {
           const data = await response.json();
-          setAccommodationExperiences(data.accommodations || []);
+          setRealAccommodations(data.accommodations || []);
+          setAccommodationStats(data.destinationStats || null);
         }
       } catch (error) {
-        console.error("Error fetching accommodation experiences:", error);
+        console.error("Error fetching real accommodations:", error);
       } finally {
-        setExperiencesLoading(false);
+        setRealAccommodationsLoading(false);
       }
     };
 
-    fetchExperiences();
-  }, []);
+    fetchRealAccommodations();
+  }, [filters]);
 
-  // Combine generated content with existing data, ensuring unique IDs
+  // Filter real accommodations based on search and filters
+  const filteredRealAccommodations = useMemo(() => {
+    let filtered = realAccommodations;
+
+    // Apply search filter
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      filtered = filtered.filter(acc =>
+        acc.city?.toLowerCase().includes(searchLower) ||
+        acc.country?.toLowerCase().includes(searchLower) ||
+        acc.university?.toLowerCase().includes(searchLower) ||
+        acc.accommodationType?.toLowerCase().includes(searchLower) ||
+        acc.neighborhood?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Apply budget filter
+    if (filters.maxBudget) {
+      filtered = filtered.filter(acc => acc.monthlyRent <= filters.maxBudget);
+    }
+
+    // Apply rating filter
+    if (filters.minRating) {
+      filtered = filtered.filter(acc => acc.rating >= filters.minRating);
+    }
+
+    return filtered;
+  }, [realAccommodations, filters]);
+
+  // Combine real accommodations with API data, prioritizing real experiences
   const allAccommodations = [
-    ...(generatedContent?.accommodations || []).map((item, index) => ({
+    ...filteredRealAccommodations.map((item, index) => ({
       ...item,
-      id: item.id ? `generated-${item.id}` : `generated-${index}`,
+      id: `real-${item.id}`,
+      source: 'student_experience',
+      isReal: true,
     })),
     ...(accommodations || []).map((item, index) => ({
       ...item,
       id: item.id ? `api-${item.id}` : `api-${index}`,
+      source: 'api',
+      isReal: false,
+    })),
+    ...(generatedContent?.accommodations || []).map((item, index) => ({
+      ...item,
+      id: item.id ? `generated-${item.id}` : `generated-${index}`,
+      source: 'generated',
+      isReal: false,
     })),
   ];
 
-  const finalLoading = isLoading || contentLoading;
+  const finalLoading = isLoading || contentLoading || realAccommodationsLoading;
 
   // Pagination
   const totalPages = Math.ceil(allAccommodations.length / ITEMS_PER_PAGE);
