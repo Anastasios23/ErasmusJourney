@@ -588,6 +588,7 @@ export async function aggregateCityData(
       livingExpensesSubmissions,
       accommodationSubmissions,
       experienceSubmissions,
+      courseMatchingSubmissions,
     ] = await Promise.all([
       // Living expenses
       prisma.formSubmission.findMany({
@@ -612,6 +613,15 @@ export async function aggregateCityData(
         where: {
           status: "PUBLISHED",
           type: { in: ["EXPERIENCE", "STORY"] },
+          userId: { in: userIds },
+        },
+      }),
+
+      // Course Matching submissions
+      prisma.formSubmission.findMany({
+        where: {
+          status: "PUBLISHED",
+          type: "COURSE_MATCHING",
           userId: { in: userIds },
         },
       }),
