@@ -33,11 +33,6 @@ export default async function handler(
           },
         ],
       },
-      include: {
-        user: {
-          select: { firstName: true, lastName: true, email: true },
-        },
-      },
       orderBy: {
         createdAt: "desc",
       },
@@ -46,10 +41,11 @@ export default async function handler(
     // Get related basic info for each story
     const stories = await Promise.all(
       storySubmissions.map(async (submission) => {
-        // Type assertion to include the user property
-        const submissionWithUser = submission as typeof submission & {
-          user?: { firstName: string | null; lastName: string | null; email: string };
-        };
+        // Get user data separately to avoid nullable field issues
+        const userData = await prisma.user.findUnique({
+          where: { id: submission.userId },
+          select: { firstName: true, lastName: true, email: true },
+        });
 
         const basicInfo = await prisma.formSubmission.findFirst({
           where: {
@@ -79,7 +75,7 @@ export default async function handler(
           id: submission.id,
           studentName:
             (submission.data as any).nickname ||
-            submission.user?.firstName ||
+            userData?.firstName ||
             "Anonymous Student",
           university:
             (basicInfo?.data as any)?.hostUniversity || "Unknown University",
@@ -108,7 +104,7 @@ export default async function handler(
           contactInfo:
             (submission.data as any).publicProfile === "yes" &&
             (submission.data as any).contactMethod === "email"
-              ? (submission.data as any).email
+              ? ((submission.data as any).email || userData?.email)
               : null,
           accommodationTips:
             (accommodationInfo?.data as any)?.additionalNotes || null,
