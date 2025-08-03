@@ -824,7 +824,7 @@ export default function StudentAccommodations() {
                 )}
 
                 {/* Student Accommodation Experiences Loading */}
-                {experiencesLoading && (
+                {realAccommodationsLoading && (
                   <section className="mb-12">
                     <div className="mb-6">
                       <Skeleton className="h-8 w-64 mb-2" />
@@ -846,7 +846,7 @@ export default function StudentAccommodations() {
                 )}
 
                 {/* Student Accommodation Experiences */}
-                {!experiencesLoading && accommodationExperiences.length > 0 && (
+                {!realAccommodationsLoading && realAccommodations.length > 0 && (
                   <section className="mb-12">
                     <div className="flex items-center justify-between mb-6">
                       <div>
@@ -862,13 +862,13 @@ export default function StudentAccommodations() {
                         variant="outline"
                         className="text-blue-600 border-blue-600"
                       >
-                        {accommodationExperiences.length} Experience
-                        {accommodationExperiences.length === 1 ? "" : "s"}
+                        {realAccommodations.length} Experience
+                        {realAccommodations.length === 1 ? "" : "s"}
                       </Badge>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {accommodationExperiences
+                      {realAccommodations
                         .slice(0, 6)
                         .map((experience) => (
                           <Card
@@ -1003,10 +1003,10 @@ export default function StudentAccommodations() {
                         ))}
                     </div>
 
-                    {accommodationExperiences.length > 6 && (
+                    {realAccommodations.length > 6 && (
                       <div className="text-center mt-6">
                         <Button variant="outline">
-                          View All {accommodationExperiences.length} Experiences
+                          View All {realAccommodations.length} Experiences
                         </Button>
                       </div>
                     )}
