@@ -309,6 +309,15 @@ export default function UniversityDetailPage() {
               </Card>
             </div>
 
+            {/* Course Matching Insights */}
+            <div className="mb-8">
+              <CourseMatchingInsights
+                city={university.city}
+                country={university.country}
+                className="mb-8"
+              />
+            </div>
+
             <Tabs defaultValue="departments" className="space-y-6">
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="departments">Departments</TabsTrigger>
