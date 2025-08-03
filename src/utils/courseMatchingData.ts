@@ -150,6 +150,7 @@ export async function getCourseMatchingExperiences(): Promise<{
         academicPreparationAdvice: courseData.academicPreparationAdvice,
         bestCoursesRecommendation: courseData.bestCoursesRecommendation,
         coursesToAvoid: courseData.coursesToAvoid,
+        hasLinkedStory,
         hostCourses: courseData.hostCourses || [],
         equivalentCourses: courseData.equivalentCourses || [],
       };
