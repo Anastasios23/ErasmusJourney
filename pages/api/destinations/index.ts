@@ -64,11 +64,18 @@ export default async function handler(
     }
 
     // Get custom destination overrides
-    const customDestinations = await prisma.customDestination.findMany();
+    let customDestinations = [];
     const customDestinationMap = new Map();
-    customDestinations.forEach((custom) => {
-      customDestinationMap.set(custom.destinationId, custom.data);
-    });
+    try {
+      customDestinations = await prisma.customDestination.findMany();
+      customDestinations.forEach((custom) => {
+        customDestinationMap.set(custom.destinationId, custom.data);
+      });
+      console.log(`Found ${customDestinations.length} custom destinations`);
+    } catch (customError) {
+      console.error("Error fetching custom destinations:", customError);
+      // Continue without custom destinations
+    }
 
     // Get published destinations from admin panel
     const publishedDestinations = await prisma.destination.findMany({
