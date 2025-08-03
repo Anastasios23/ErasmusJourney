@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
+import { prisma } from "../../lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -66,15 +67,71 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async (context) => {
   const { id } = context.params!;
   try {
-    const res = await fetch(`http://localhost:3000/api/student-stories/${id}`);
-    if (!res.ok) {
-      // Return a 404-like state if the story is not found
-      if (res.status === 404) {
-        return { props: { story: null } };
-      }
-      throw new Error(`Failed to fetch story with status: ${res.status}`);
+    // Query the database directly instead of using HTTP fetch
+    const submission = await prisma.formSubmission.findUnique({
+      where: { id: id as string },
+    });
+
+    if (!submission) {
+      return { props: { story: null } };
     }
-    const story = await res.json();
+
+    const userData = await prisma.user.findUnique({
+      where: { id: submission.userId },
+      select: { firstName: true, email: true },
+    });
+
+    const basicInfo = await prisma.formSubmission.findFirst({
+      where: {
+        userId: submission.userId,
+        type: "BASIC_INFO",
+        status: "SUBMITTED",
+      },
+    });
+
+    const accommodationInfo = await prisma.formSubmission.findFirst({
+      where: {
+        userId: submission.userId,
+        type: "ACCOMMODATION",
+        status: "SUBMITTED",
+      },
+    });
+
+    const expensesInfo = await prisma.formSubmission.findFirst({
+      where: {
+        userId: submission.userId,
+        type: "LIVING_EXPENSES",
+        status: "SUBMITTED",
+      },
+    });
+
+    const story = {
+      id: submission.id,
+      studentName: (submission.data as any).nickname || userData?.firstName || "Anonymous Student",
+      university: (basicInfo?.data as any)?.hostUniversity || "Unknown University",
+      city: (basicInfo?.data as any)?.hostCity || "Unknown City",
+      country: (basicInfo?.data as any)?.hostCountry || "Unknown Country",
+      department: (basicInfo?.data as any)?.departmentInCyprus || "Unknown Department",
+      levelOfStudy: (basicInfo?.data as any)?.levelOfStudy || "Unknown Level",
+      exchangePeriod: (basicInfo?.data as any)?.exchangePeriod || "Unknown Period",
+      story: (submission.data as any).personalExperience || (submission.data as any).adviceForFutureStudents || "No story provided",
+      tips: (submission.data as any).budgetTips || (expensesInfo?.data as any)?.overallBudgetAdvice || [],
+      helpTopics: (submission.data as any).helpTopics || [],
+      contactMethod: (submission.data as any).publicProfile === "yes" ? (submission.data as any).contactMethod : null,
+      contactInfo: (submission.data as any).publicProfile === "yes" && (submission.data as any).contactMethod === "email" ? ((submission.data as any).email || userData?.email) : null,
+      accommodationTips: (accommodationInfo?.data as any)?.additionalNotes || null,
+      budgetTips: expensesInfo?.data ? {
+        cheapGroceries: (expensesInfo.data as any).cheapGroceryPlaces,
+        cheapEating: (expensesInfo.data as any).cheapEatingPlaces,
+        transportation: (expensesInfo.data as any).transportationTips,
+        socialLife: (expensesInfo.data as any).socialLifeTips,
+        travel: (expensesInfo.data as any).travelTips,
+        overall: (expensesInfo.data as any).overallBudgetAdvice,
+      } : null,
+      createdAt: submission.createdAt.toISOString(),
+      isPublic: (submission.data as any).publicProfile === "yes",
+    };
+
     return { props: { story } };
   } catch (error) {
     console.error(`Error fetching story ${id}:`, error);
