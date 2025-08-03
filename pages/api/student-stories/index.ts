@@ -48,7 +48,7 @@ export default async function handler(
       storySubmissions.map(async (submission) => {
         // Type assertion to include the user property
         const submissionWithUser = submission as typeof submission & {
-          user?: { firstName: string; lastName: string; email: string };
+          user?: { firstName: string | null; lastName: string | null; email: string };
         };
 
         const basicInfo = await prisma.formSubmission.findFirst({
