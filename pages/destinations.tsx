@@ -179,7 +179,7 @@ export default function Destinations() {
     const fetchCityAggregatedData = async () => {
       try {
         setLoadingCityData(true);
-        const response = await fetch(
+        const response = await safeFetch(
           "/api/destinations/city-aggregated?all=true",
         );
 
