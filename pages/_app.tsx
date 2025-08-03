@@ -57,7 +57,7 @@ export default function App({
             <NotificationProvider>
               <TooltipProvider>
                 <FormProgressProvider>
-                  <HMRErrorHandler />
+                  {/* <HMRErrorHandler /> */}
                   <EnhancedOfflineIndicator />
                   <Toaster />
                   <Sonner />
