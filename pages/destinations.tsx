@@ -111,16 +111,21 @@ export default function Destinations() {
         const response = await fetch("/api/destinations-simple");
 
         console.log("Response status:", response.status);
-        console.log("Response headers:", response.headers);
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("API Error Response:", errorText);
-          throw new Error(`Failed to fetch destinations: ${response.status} - ${errorText}`);
+        // Read the response body only once
+        let data;
+        try {
+          data = await response.json();
+          console.log("Destinations data received:", data);
+        } catch (parseError) {
+          console.error("Failed to parse response as JSON:", parseError);
+          throw new Error(`Failed to parse destinations response: ${response.status}`);
         }
 
-        const data = await response.json();
-        console.log("Destinations data received:", data);
+        if (!response.ok) {
+          console.error("API Error Response:", data);
+          throw new Error(`Failed to fetch destinations: ${response.status} - ${data.message || 'Unknown error'}`);
+        }
 
         // Transform API data to match component expectations
         const transformedDestinations = data.destinations.map((dest: any) => ({
