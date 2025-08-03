@@ -120,12 +120,16 @@ export default function Destinations() {
           console.log("Destinations data received:", data);
         } catch (parseError) {
           console.error("Failed to parse response as JSON:", parseError);
-          throw new Error(`Failed to parse destinations response: ${response.status}`);
+          throw new Error(
+            `Failed to parse destinations response: ${response.status}`,
+          );
         }
 
         if (!response.ok) {
           console.error("API Error Response:", data);
-          throw new Error(`Failed to fetch destinations: ${response.status} - ${data.message || 'Unknown error'}`);
+          throw new Error(
+            `Failed to fetch destinations: ${response.status} - ${data.message || "Unknown error"}`,
+          );
         }
 
         // Transform API data to match component expectations
@@ -147,7 +151,11 @@ export default function Destinations() {
         setDestinations(transformedDestinations);
       } catch (error) {
         console.error("Error fetching destinations:", error);
-        setError(error instanceof Error ? error.message : "Failed to load destinations");
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Failed to load destinations",
+        );
 
         // Set fallback destinations so the page doesn't break completely
         setDestinations([
@@ -156,15 +164,20 @@ export default function Destinations() {
             city: "Prague",
             country: "Czech Republic",
             image: "/images/destinations/prague.svg",
-            description: "Historic city with affordable living and great universities",
+            description:
+              "Historic city with affordable living and great universities",
             costLevel: "low",
             rating: 4.2,
             studentCount: 0,
             popularUniversities: ["Charles University"],
-            highlights: ["Affordable Living", "Beautiful Architecture", "Central Europe"],
+            highlights: [
+              "Affordable Living",
+              "Beautiful Architecture",
+              "Central Europe",
+            ],
             avgCostPerMonth: 800,
             region: "Central Europe",
-          }
+          },
         ]);
       } finally {
         setIsLoading(false);
