@@ -228,39 +228,14 @@ export default function StudentAccommodations() {
 
     fetchAccommodationStats();
   }, []);
-        acc.country?.toLowerCase().includes(searchLower) ||
-        acc.university?.toLowerCase().includes(searchLower) ||
-        acc.accommodationType?.toLowerCase().includes(searchLower) ||
-        acc.neighborhood?.toLowerCase().includes(searchLower)
-      );
-    }
 
-    // Apply budget filter
-    if (filters.maxBudget) {
-      filtered = filtered.filter(acc => acc.monthlyRent <= filters.maxBudget);
-    }
-
-    // Apply rating filter
-    if (filters.minRating) {
-      filtered = filtered.filter(acc => acc.rating >= filters.minRating);
-    }
-
-    return filtered;
-  }, [realAccommodations, filters]);
-
-  // Combine real accommodations with API data, prioritizing real experiences
+  // Combine real accommodations with generated content as fallback
   const allAccommodations = [
-    ...filteredRealAccommodations.map((item, index) => ({
-      ...item,
-      id: `real-${item.id}`,
-      source: 'student_experience',
-      isReal: true,
-    })),
     ...(accommodations || []).map((item, index) => ({
       ...item,
       id: item.id ? `api-${item.id}` : `api-${index}`,
-      source: 'api',
-      isReal: false,
+      source: 'student_experience',
+      isReal: true,
     })),
     ...(generatedContent?.accommodations || []).map((item, index) => ({
       ...item,
@@ -270,7 +245,7 @@ export default function StudentAccommodations() {
     })),
   ];
 
-  const finalLoading = isLoading || contentLoading || realAccommodationsLoading;
+  const finalLoading = isLoading || contentLoading;
 
   // Pagination
   const totalPages = Math.ceil(allAccommodations.length / ITEMS_PER_PAGE);
