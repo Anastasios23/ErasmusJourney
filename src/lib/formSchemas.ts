@@ -101,6 +101,194 @@ export const enhancedLivingExpensesSchema = z.object({
     .min(0, "Other expenses must be positive")
     .optional(),
 
+  // Income
+  monthlyIncomeAmount: z.coerce
+    .number()
+    .min(0, "Income must be positive")
+    .optional(),
+
+  // Budget Tips and Advice
+  spendingHabit: z.string().optional(),
+  budgetTips: z.string().optional(),
+  cheapGroceryPlaces: z.string().optional(),
+  cheapEatingPlaces: z.string().optional(),
+  transportationTips: z.string().optional(),
+  socialLifeTips: z.string().optional(),
+  travelTips: z.string().optional(),
+  overallBudgetAdvice: z.string().optional(),
+
+  // Calculated fields
+  totalMonthlyBudget: z.coerce.number().optional(),
+  expenses: z.record(z.coerce.number()).optional(),
+});
+
+// Enhanced Accommodation Schema - Detailed housing information with numeric validation
+export const enhancedAccommodationSchema = z.object({
+  // Basic Accommodation Info
+  accommodationType: z.enum([
+    "Student Residence",
+    "Shared Apartment",
+    "Private Apartment",
+    "Host Family",
+    "Private Room",
+    "Studio",
+    "Other"
+  ], { required_error: "Accommodation type is required" }),
+
+  accommodationAddress: z.string().min(1, "Address is required"),
+  neighborhood: z.string().optional(),
+
+  // Cost Information (numeric for calculations)
+  monthlyRent: z.coerce.number().min(0, "Monthly rent must be positive"),
+  billsIncluded: z.enum(["Yes", "No", "Partially"], {
+    required_error: "Please specify if bills are included",
+  }),
+  avgUtilityCost: z.coerce.number().min(0).optional(),
+
+  // Experience Ratings (1-5 scale)
+  accommodationRating: z.coerce
+    .number()
+    .min(1, "Please provide a rating")
+    .max(5, "Rating must be between 1 and 5"),
+
+  // Experience Questions
+  easyToFind: z.enum(["Very Easy", "Easy", "Moderate", "Difficult", "Very Difficult"], {
+    required_error: "Please indicate difficulty of finding accommodation",
+  }),
+  wouldRecommend: z.enum(["Definitely", "Probably", "Maybe", "Probably Not", "Definitely Not"], {
+    required_error: "Please indicate if you would recommend",
+  }),
+
+  // Additional Details
+  roommates: z.string().optional(),
+  additionalNotes: z.string().optional(),
+  amenities: z.array(z.string()).optional(),
+});
+
+// Course Matching Schema - Academic course information with numeric validation
+export const courseMatchingSchema = z.object({
+  // Course Counts
+  hostCourseCount: z.coerce
+    .number()
+    .min(1, "Must take at least 1 course")
+    .max(20, "Too many courses"),
+  homeCourseCount: z.coerce
+    .number()
+    .min(1, "Must have at least 1 equivalent course")
+    .max(20, "Too many courses"),
+
+  // Course Matching Process
+  courseMatchingDifficult: z.enum(["Very Easy", "Easy", "Moderate", "Difficult", "Very Difficult"], {
+    required_error: "Please rate the difficulty of course matching",
+  }),
+  courseMatchingChallenges: z.string().optional(),
+
+  // Course Recommendations
+  recommendCourses: z.enum(["Yes", "No", "Some"], {
+    required_error: "Please indicate if you recommend the courses",
+  }),
+  recommendationReason: z.string().optional(),
+
+  // Detailed Course Information
+  hostCourses: z.array(z.object({
+    name: z.string().min(1, "Course name is required"),
+    code: z.string().optional(),
+    ects: z.coerce.number().min(0).max(30),
+    difficulty: z.enum(["Very Easy", "Easy", "Moderate", "Difficult", "Very Difficult"]).optional(),
+    examTypes: z.string().optional(),
+    type: z.enum(["Core", "Elective", "Language", "Other"]).optional(),
+  })).optional(),
+
+  equivalentCourses: z.array(z.object({
+    hostCourseName: z.string(),
+    homeCourseName: z.string(),
+    ects: z.coerce.number().min(0).max(30),
+    matchQuality: z.enum(["Perfect", "Good", "Partial", "Poor"]).optional(),
+  })).optional(),
+});
+
+// Experience Story Schema - Comprehensive experience narrative and ratings
+export const experienceStorySchema = z.object({
+  // Core Story Elements
+  personalExperience: z.string().min(50, "Please provide a detailed personal experience (at least 50 characters)"),
+  adviceForFutureStudents: z.string().min(20, "Please provide advice for future students"),
+  favoriteMemory: z.string().optional(),
+  biggestChallenge: z.string().optional(),
+  unexpectedDiscovery: z.string().optional(),
+
+  // Experience Ratings (1-5 scale)
+  academicRating: z.coerce
+    .number()
+    .min(1, "Academic rating must be between 1 and 5")
+    .max(5, "Academic rating must be between 1 and 5")
+    .optional(),
+  socialLifeRating: z.coerce
+    .number()
+    .min(1, "Social life rating must be between 1 and 5")
+    .max(5, "Social life rating must be between 1 and 5")
+    .optional(),
+  culturalImmersionRating: z.coerce
+    .number()
+    .min(1, "Cultural immersion rating must be between 1 and 5")
+    .max(5, "Cultural immersion rating must be between 1 and 5")
+    .optional(),
+  costOfLivingRating: z.coerce
+    .number()
+    .min(1, "Cost of living rating must be between 1 and 5")
+    .max(5, "Cost of living rating must be between 1 and 5")
+    .optional(),
+  accommodationRating: z.coerce
+    .number()
+    .min(1, "Accommodation rating must be between 1 and 5")
+    .max(5, "Accommodation rating must be between 1 and 5")
+    .optional(),
+  overallRating: z.coerce
+    .number()
+    .min(1, "Overall rating is required and must be between 1 and 5")
+    .max(5, "Overall rating must be between 1 and 5"),
+
+  // Tips by Category
+  socialTips: z.string().optional(),
+  culturalTips: z.string().optional(),
+  travelTips: z.string().optional(),
+  academicTips: z.string().optional(),
+  practicalTips: z.string().optional(),
+
+  // Personal Development
+  languagesLearned: z.string().optional(),
+  skillsDeveloped: z.string().optional(),
+  careerImpact: z.string().optional(),
+  personalGrowth: z.string().optional(),
+
+  // Recommendation
+  recommendExchange: z.enum(["yes", "maybe", "no"], {
+    required_error: "Please indicate if you would recommend an exchange",
+  }),
+  recommendationReason: z.string().optional(),
+
+  // Help & Contact Information
+  wantToHelp: z.enum(["yes", "maybe", "no"], {
+    required_error: "Please indicate if you want to help future students",
+  }),
+  helpTopics: z.array(z.string()).optional(),
+
+  // Contact Details (conditional validation handled in component)
+  publicProfile: z.enum(["yes", "no"], {
+    required_error: "Please choose if you want a public profile",
+  }),
+  contactMethod: z.string().optional(),
+  email: z.string().email().optional(),
+  nickname: z.string().optional(),
+  instagramUsername: z.string().optional(),
+  facebookLink: z.string().url().optional().or(z.literal("")),
+  linkedinProfile: z.string().url().optional().or(z.literal("")),
+  personalWebsite: z.string().url().optional().or(z.literal("")),
+  phoneNumber: z.string().optional(),
+});
+    .number()
+    .min(0, "Other expenses must be positive")
+    .optional(),
+
   // Total Monthly Budget (calculated or entered)
   totalMonthlyBudget: z.coerce
     .number()
