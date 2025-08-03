@@ -30,6 +30,7 @@ export interface CourseMatchingExperience {
   academicPreparationAdvice?: string;
   bestCoursesRecommendation?: string;
   coursesToAvoid?: string;
+  hasLinkedStory?: boolean;
   hostCourses?: Array<{
     name: string;
     code?: string;
@@ -99,7 +100,7 @@ export async function getCourseMatchingExperiences(): Promise<{
 
     for (const submission of courseMatchingSubmissions) {
       const courseData = submission.data as any;
-      
+
       // Get linked basic info for additional student details
       const basicInfo = submission.user?.formSubmissions.find(
         (s) => s.type === "BASIC_INFO"
@@ -108,7 +109,7 @@ export async function getCourseMatchingExperiences(): Promise<{
 
       // Create anonymized student name
       const studentName = generateAnonymousName(submission.userId);
-      
+
       // Ensure we have required fields
       if (!courseData.hostUniversity || !courseData.homeUniversity) {
         continue;
@@ -165,18 +166,18 @@ export async function getCourseMatchingExperiences(): Promise<{
  * Get course matching experiences for a specific city/university
  */
 export async function getCourseMatchingExperiencesByDestination(
-  city: string, 
-  country?: string, 
+  city: string,
+  country?: string,
   university?: string
 ): Promise<CourseMatchingExperience[]> {
   try {
     const { experiences } = await getCourseMatchingExperiences();
-    
+
     return experiences.filter(exp => {
       const matchesCity = exp.hostCity.toLowerCase() === city.toLowerCase();
       const matchesCountry = !country || exp.hostCountry.toLowerCase() === country.toLowerCase();
       const matchesUniversity = !university || exp.hostUniversity.toLowerCase().includes(university.toLowerCase());
-      
+
       return matchesCity && matchesCountry && matchesUniversity;
     });
   } catch (error) {
@@ -193,18 +194,18 @@ function generateAnonymousName(userId: string): string {
     "Alex", "Jordan", "Sam", "Taylor", "Casey", "Morgan", "Jamie", "Riley",
     "Avery", "Cameron", "Quinn", "Rowan", "Sage", "River", "Phoenix", "Eden"
   ];
-  
+
   const lastInitials = ["A.", "B.", "C.", "D.", "E.", "F.", "G.", "H.", "I.", "J.", "K.", "L.", "M.", "N.", "O.", "P."];
-  
+
   // Use user ID to generate consistent but anonymous names
   const hash = userId.split('').reduce((a, b) => {
     a = ((a << 5) - a) + b.charCodeAt(0);
     return a & a;
   }, 0);
-  
+
   const firstName = firstNames[Math.abs(hash) % firstNames.length];
   const lastInitial = lastInitials[Math.abs(hash >> 4) % lastInitials.length];
-  
+
   return `${firstName} ${lastInitial}`;
 }
 
@@ -234,7 +235,7 @@ function calculateCourseMatchingStats(experiences: CourseMatchingExperience[]): 
   const experiencesWithTransferData = experiences.filter(
     exp => exp.creditsTransferredSuccessfully && exp.totalCreditsAttempted
   );
-  
+
   const successRate = experiencesWithTransferData.length > 0
     ? experiencesWithTransferData.reduce((sum, exp) => {
         return sum + ((exp.creditsTransferredSuccessfully! / exp.totalCreditsAttempted!) * 100);
@@ -252,7 +253,7 @@ function calculateCourseMatchingStats(experiences: CourseMatchingExperience[]): 
     const destination = `${exp.hostCity}, ${exp.hostCountry}`;
     destinationCounts.set(destination, (destinationCounts.get(destination) || 0) + 1);
   });
-  
+
   const topDestinations = Array.from(destinationCounts.entries())
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count)
@@ -263,7 +264,7 @@ function calculateCourseMatchingStats(experiences: CourseMatchingExperience[]): 
   experiences.forEach(exp => {
     departmentCounts.set(exp.hostDepartment, (departmentCounts.get(exp.hostDepartment) || 0) + 1);
   });
-  
+
   const topDepartments = Array.from(departmentCounts.entries())
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count)
@@ -313,18 +314,18 @@ function getEmptyStats(): CourseMatchingStats {
 export async function getCourseMatchingInsights(city: string, country: string) {
   try {
     const experiences = await getCourseMatchingExperiencesByDestination(city, country);
-    
+
     if (experiences.length === 0) {
       return null;
     }
 
     const stats = calculateCourseMatchingStats(experiences);
-    
+
     // Additional insights specific to this destination
     const commonChallenges = extractCommonChallenges(experiences);
     const bestAdvice = extractBestAdvice(experiences);
     const departmentInsights = calculateDepartmentInsights(experiences);
-    
+
     return {
       ...stats,
       experiences: experiences.slice(0, 6), // Latest 6 experiences
@@ -343,7 +344,7 @@ export async function getCourseMatchingInsights(city: string, country: string) {
  */
 function extractCommonChallenges(experiences: CourseMatchingExperience[]): string[] {
   const challenges: string[] = [];
-  
+
   experiences.forEach(exp => {
     if (exp.courseMatchingChallenges) {
       challenges.push(exp.courseMatchingChallenges);
@@ -352,7 +353,7 @@ function extractCommonChallenges(experiences: CourseMatchingExperience[]): strin
       challenges.push(exp.biggestCourseChallenge);
     }
   });
-  
+
   // Return most common challenges (simplified - could use better text analysis)
   return challenges.slice(0, 3);
 }
@@ -362,7 +363,7 @@ function extractCommonChallenges(experiences: CourseMatchingExperience[]): strin
  */
 function extractBestAdvice(experiences: CourseMatchingExperience[]): string[] {
   const advice: string[] = [];
-  
+
   experiences.forEach(exp => {
     if (exp.academicAdviceForFuture) {
       advice.push(exp.academicAdviceForFuture);
@@ -374,7 +375,7 @@ function extractBestAdvice(experiences: CourseMatchingExperience[]): string[] {
       advice.push(exp.academicPreparationAdvice);
     }
   });
-  
+
   return advice.slice(0, 3);
 }
 
@@ -388,7 +389,7 @@ function calculateDepartmentInsights(experiences: CourseMatchingExperience[]) {
     avgSuccess: number;
     difficulties: string[];
   }>();
-  
+
   const difficultyMap: Record<string, number> = {
     "Very Easy": 1,
     "Easy": 2,
@@ -396,7 +397,7 @@ function calculateDepartmentInsights(experiences: CourseMatchingExperience[]) {
     "Difficult": 4,
     "Very Difficult": 5,
   };
-  
+
   experiences.forEach(exp => {
     const dept = exp.hostDepartment;
     if (!departmentData.has(dept)) {
@@ -407,19 +408,19 @@ function calculateDepartmentInsights(experiences: CourseMatchingExperience[]) {
         difficulties: [],
       });
     }
-    
+
     const data = departmentData.get(dept)!;
     data.count++;
     data.difficulties.push(exp.courseMatchingDifficult);
   });
-  
+
   // Calculate averages
   departmentData.forEach((data, dept) => {
     data.avgDifficulty = data.difficulties.reduce((sum, diff) => {
       return sum + (difficultyMap[diff] || 3);
     }, 0) / data.difficulties.length;
   });
-  
+
   return Array.from(departmentData.entries()).map(([name, data]) => ({
     department: name,
     studentCount: data.count,
