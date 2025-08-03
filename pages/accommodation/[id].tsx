@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { GetServerSideProps } from "next";
+import { prisma } from "../../lib/prisma";
 import Header from "../../components/Header";
 import { useGeneratedContent } from "../../src/hooks/useFormSubmissions";
 import { Button } from "../../src/components/ui/button";
