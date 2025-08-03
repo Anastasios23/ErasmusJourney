@@ -7,6 +7,7 @@ import Header from "../../components/Header";
 import InteractiveCostCalculator from "../../src/components/InteractiveCostCalculator";
 import StudentReviews from "../../src/components/StudentReviews";
 import StudentDataOverview from "../../components/StudentDataOverview";
+import CourseMatchingInsights from "../../src/components/CourseMatchingInsights";
 import {
   useDestination,
   useDestinationAverages,
