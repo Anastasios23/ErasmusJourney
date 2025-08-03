@@ -907,11 +907,12 @@ export default function DestinationDetailPage() {
                             <div className="space-y-4">
                               {averagesData.recentSubmissions.map(
                                 (submission) => (
-                                  <div
+                                  <Link
                                     key={submission.id}
-                                    className="border-l-4 border-green-500 pl-4 py-2"
+                                    href={`/stories/${submission.id}`}
+                                    className="block border-l-4 border-green-500 pl-4 py-2 hover:bg-gray-50 rounded-r transition-colors cursor-pointer"
                                   >
-                                    <h4 className="font-medium">
+                                    <h4 className="font-medium text-blue-600 hover:text-blue-800">
                                       {submission.title}
                                     </h4>
                                     <p className="text-sm text-gray-600 mt-1">
@@ -931,8 +932,9 @@ export default function DestinationDetailPage() {
                                       >
                                         {submission.type.replace("-", " ")}
                                       </Badge>
+                                      <ExternalLink className="h-3 w-3 text-gray-400" />
                                     </div>
-                                  </div>
+                                  </Link>
                                 ),
                               )}
                             </div>
