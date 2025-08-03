@@ -575,18 +575,54 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
   try {
     const totalUniversities = await prisma.university.count();
 
-    const protocol = context.req.headers["x-forwarded-proto"] || "http";
-    const host = context.req.headers.host;
-    const apiUrl = `${protocol}://${host}/api/student-stories`;
+    // Use direct database query instead of HTTP fetch to avoid SSL issues
+    const storySubmissions = await prisma.formSubmission.findMany({
+      where: {
+        OR: [
+          {
+            type: "EXPERIENCE",
+            status: { in: ["SUBMITTED", "PUBLISHED"] },
+          },
+          {
+            type: "STORY",
+            status: { in: ["SUBMITTED", "PUBLISHED"] },
+          },
+        ],
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 3,
+    });
 
-    const storiesRes = await fetch(apiUrl);
-    if (!storiesRes.ok) {
-      throw new Error(
-        `Failed to fetch stories with status: ${storiesRes.status}`,
-      );
-    }
-    const storiesData = await storiesRes.json();
-    const latestStories = storiesData.stories.slice(0, 3); // Take the top 3
+    const latestStories = await Promise.all(
+      storySubmissions.map(async (submission) => {
+        const userData = await prisma.user.findUnique({
+          where: { id: submission.userId },
+          select: { firstName: true, email: true },
+        });
+
+        const basicInfo = await prisma.formSubmission.findFirst({
+          where: {
+            userId: submission.userId,
+            type: "BASIC_INFO",
+            status: "SUBMITTED",
+          },
+        });
+
+        return {
+          id: submission.id,
+          studentName: (submission.data as any).nickname || userData?.firstName || "Anonymous Student",
+          university: (basicInfo?.data as any)?.hostUniversity || "Unknown University",
+          city: (basicInfo?.data as any)?.hostCity || "Unknown City",
+          country: (basicInfo?.data as any)?.hostCountry || "Unknown Country",
+          story: (submission.data as any).personalExperience || (submission.data as any).adviceForFutureStudents || "No story provided",
+          createdAt: submission.createdAt,
+          isPublic: (submission.data as any).publicProfile === "yes",
+        };
+      })
+    );
+
 
     return {
       props: {
