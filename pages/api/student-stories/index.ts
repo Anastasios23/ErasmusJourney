@@ -44,7 +44,7 @@ export default async function handler(
         // Get user data separately to avoid nullable field issues
         const userData = await prisma.user.findUnique({
           where: { id: submission.userId },
-          select: { firstName: true, lastName: true, email: true },
+          select: { firstName: true, email: true },
         });
 
         const basicInfo = await prisma.formSubmission.findFirst({
