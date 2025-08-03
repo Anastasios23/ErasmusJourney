@@ -107,8 +107,8 @@ export default function Destinations() {
     const fetchDestinations = async () => {
       try {
         setIsLoading(true);
-        console.log("Fetching destinations from /api/destinations-simple");
-        const response = await fetch("/api/destinations-simple");
+        console.log("Fetching destinations from /api/destinations");
+        const response = await fetch("/api/destinations");
 
         console.log("Response status:", response.status);
 
@@ -752,7 +752,7 @@ export default function Destinations() {
                                         Average Rent:
                                       </span>
                                       <span className="font-medium">
-                                        €{destination.dataInsights.avgRent}/mo
+                                        ���{destination.dataInsights.avgRent}/mo
                                       </span>
                                     </div>
                                   )}
