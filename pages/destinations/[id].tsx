@@ -65,6 +65,8 @@ function TableOfContents({ destination }: TableOfContentsProps) {
       const sections = [
         "overview",
         "universities",
+        "student-data",
+        "course-matching",
         "costs",
         "life",
         "practical",
