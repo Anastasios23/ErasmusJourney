@@ -180,9 +180,7 @@ export default function StudentAccommodations() {
   const { content: generatedContent, loading: contentLoading } =
     useGeneratedContent("accommodations");
 
-  // Real accommodation experiences from form submissions
-  const [realAccommodations, setRealAccommodations] = useState([]);
-  const [realAccommodationsLoading, setRealAccommodationsLoading] = useState(false);
+  // Accommodation statistics
   const [accommodationStats, setAccommodationStats] = useState(null);
 
   // User profile and preferences
