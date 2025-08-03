@@ -129,7 +129,32 @@ export const getServerSideProps: GetServerSideProps<{
         overall: (expensesInfo.data as any).overallBudgetAdvice,
       } : null,
       createdAt: submission.createdAt.toISOString(),
+      updatedAt: submission.updatedAt.toISOString(),
       isPublic: (submission.data as any).publicProfile === "yes",
+      // Add missing properties expected by the component
+      title: `${userData?.firstName || "Anonymous"}'s Experience in ${(basicInfo?.data as any)?.hostCity || "Unknown City"}`,
+      content: (submission.data as any).personalExperience || (submission.data as any).adviceForFutureStudents || "No story provided",
+      excerpt: ((submission.data as any).personalExperience || (submission.data as any).adviceForFutureStudents || "No story provided").substring(0, 200) + "...",
+      imageUrl: null,
+      location: {
+        city: (basicInfo?.data as any)?.hostCity || "Unknown City",
+        country: (basicInfo?.data as any)?.hostCountry || "Unknown Country",
+        university: (basicInfo?.data as any)?.hostUniversity || "Unknown University",
+      },
+      author: {
+        name: userData?.firstName || "Anonymous Student",
+        university: (basicInfo?.data as any)?.hostUniversity || "Unknown University",
+        avatar: null,
+        bio: null,
+        program: (basicInfo?.data as any)?.departmentInCyprus || "Unknown Department",
+      },
+      period: (basicInfo?.data as any)?.exchangePeriod || "Unknown Period",
+      tags: (submission.data as any).helpTopics || [],
+      likes: 0,
+      views: 0,
+      comments: 0,
+      readingTime: Math.ceil(((submission.data as any).personalExperience || (submission.data as any).adviceForFutureStudents || "").length / 200),
+      featured: false,
     };
 
     return { props: { story } };
