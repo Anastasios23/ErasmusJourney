@@ -122,7 +122,6 @@ export const enhancedLivingExpensesSchema = z.object({
   expenses: z.record(z.coerce.number()).optional(),
 });
 
-<<<<<<< HEAD
 // Enhanced Accommodation Schema - Detailed housing information with numeric validation
 export const enhancedAccommodationSchema = z.object({
   // Basic Accommodation Info
@@ -176,9 +175,6 @@ export const enhancedAccommodationSchema = z.object({
 });
 
 // Course Matching Schema - Academic course information with numeric validation and detailed equivalency data
-=======
-// Course Matching Schema - Academic course information with numeric validation
->>>>>>> origin/main
 export const courseMatchingSchema = z.object({
   // Basic University Information
   homeUniversity: z.string().min(1, "Home university is required"),
