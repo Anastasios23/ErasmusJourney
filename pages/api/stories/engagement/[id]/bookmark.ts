@@ -18,7 +18,7 @@ export default async function handler(
     return res.status(400).json({ error: "Story ID is required" });
   }
 
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
   const userId = session?.user?.id;
 
   if (!userId) {
