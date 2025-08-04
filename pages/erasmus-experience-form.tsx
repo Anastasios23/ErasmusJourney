@@ -20,7 +20,7 @@ interface FormStep {
   id: number;
   title: string;
   subtitle: string;
-  icon: React.ComponentType<{ className?: string }>;
+  iconType: "users" | "book" | "home" | "cost" | "favorite";
   component: React.ComponentType<{
     data: any;
     onComplete: (data: any) => void;
