@@ -99,19 +99,26 @@ export function useStoryEngagement(storyId: string) {
 
   const incrementView = async () => {
     try {
-      await fetch(`/api/stories/engagement/${storyId}/view`, {
+      const response = await fetch(`/api/stories/engagement/${storyId}/view`, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
-      setEngagement((prev) =>
-        prev
-          ? {
-              ...prev,
-              views: prev.views + 1,
-              lastViewed: new Date(),
-            }
-          : null,
-      );
+      if (response.ok) {
+        setEngagement((prev) =>
+          prev
+            ? {
+                ...prev,
+                views: prev.views + 1,
+                lastViewed: new Date(),
+              }
+            : null,
+        );
+      } else {
+        console.warn("Failed to increment view, server responded with:", response.status);
+      }
     } catch (error) {
       console.error("Error incrementing view:", error);
     }
