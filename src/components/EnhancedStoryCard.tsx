@@ -79,8 +79,13 @@ export default function EnhancedStoryCard({
 
   useEffect(() => {
     // Increment view count when card is viewed
-    incrementView();
-  }, [incrementView]);
+    // Only increment if we have a valid story ID
+    if (story.id && incrementView) {
+      incrementView().catch((error) => {
+        console.warn("Failed to increment view for story:", story.id, error);
+      });
+    }
+  }, [incrementView, story.id]);
 
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
