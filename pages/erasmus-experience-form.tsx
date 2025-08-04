@@ -271,7 +271,7 @@ export default function ErasmusExperienceForm() {
 
             {/* Step Progress */}
             <div className="flex items-center space-x-4 mb-6">
-            {FORM_STEPS.map((step, index) => {
+              {FORM_STEPS.map((step, index) => {
                 const isCompleted = completedSteps.includes(step.id);
                 const isCurrent = currentStep === step.id;
 
@@ -301,7 +301,11 @@ export default function ErasmusExperienceForm() {
                       {isCompleted ? (
                         <StandardIcon icon="success" size="lg" color="white" />
                       ) : (
-                        <StandardIcon icon={step.iconType} size="md" color="white" />
+                        <StandardIcon
+                          icon={step.iconType}
+                          size="md"
+                          color="white"
+                        />
                       )}
                     </button>
                     {index < FORM_STEPS.length - 1 && (
