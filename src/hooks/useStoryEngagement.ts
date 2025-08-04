@@ -117,7 +117,10 @@ export function useStoryEngagement(storyId: string) {
             : null,
         );
       } else {
-        console.warn("Failed to increment view, server responded with:", response.status);
+        console.warn(
+          "Failed to increment view, server responded with:",
+          response.status,
+        );
       }
     } catch (error) {
       console.error("Error incrementing view:", error);

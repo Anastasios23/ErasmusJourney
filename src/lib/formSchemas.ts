@@ -205,13 +205,15 @@ export const courseMatchingSchema = z.object({
     },
   ),
   courseMatchingChallenges: z.string().optional(),
-  timeSpentOnMatching: z.enum([
-    "Less than 1 week",
-    "1-2 weeks",
-    "3-4 weeks",
-    "1-2 months",
-    "More than 2 months"
-  ]).optional(),
+  timeSpentOnMatching: z
+    .enum([
+      "Less than 1 week",
+      "1-2 weeks",
+      "3-4 weeks",
+      "1-2 months",
+      "More than 2 months",
+    ])
+    .optional(),
 
   // Credit Transfer Success
   creditsTransferredSuccessfully: z.coerce.number().min(0).max(300).optional(),
@@ -226,7 +228,10 @@ export const courseMatchingSchema = z.object({
 
   // Biggest Challenge and Advice
   biggestCourseChallenge: z.string().optional(),
-  academicAdviceForFuture: z.string().min(20, "Please provide specific advice for future students").optional(),
+  academicAdviceForFuture: z
+    .string()
+    .min(20, "Please provide specific advice for future students")
+    .optional(),
 
   // Detailed Course Information
   hostCourses: z
@@ -246,7 +251,9 @@ export const courseMatchingSchema = z.object({
           .optional(),
         examTypes: z.array(z.string()).default([]),
         teachingStyle: z.string().optional(),
-        workload: z.enum(["Very Light", "Light", "Moderate", "Heavy", "Very Heavy"]).optional(),
+        workload: z
+          .enum(["Very Light", "Light", "Moderate", "Heavy", "Very Heavy"])
+          .optional(),
         recommendation: z.string().optional(),
         type: z.enum(["Core", "Elective", "Language", "Other"]).optional(),
       }),
@@ -262,7 +269,9 @@ export const courseMatchingSchema = z.object({
         homeCourseCode: z.string().optional(),
         ects: z.coerce.number().min(0).max(30),
         matchQuality: z.enum(["Perfect", "Good", "Partial", "Poor"]).optional(),
-        approvalDifficulty: z.enum(["Easy", "Moderate", "Difficult"]).optional(),
+        approvalDifficulty: z
+          .enum(["Easy", "Moderate", "Difficult"])
+          .optional(),
         notes: z.string().optional(),
       }),
     )
@@ -271,7 +280,14 @@ export const courseMatchingSchema = z.object({
   // Teaching and Learning Environment
   teachingQuality: z.coerce.number().min(1).max(5).optional(),
   languageOfInstruction: z.string().optional(),
-  classSize: z.enum(["Small (<20)", "Medium (20-50)", "Large (50-100)", "Very Large (100+)"]).optional(),
+  classSize: z
+    .enum([
+      "Small (<20)",
+      "Medium (20-50)",
+      "Large (50-100)",
+      "Very Large (100+)",
+    ])
+    .optional(),
   studentSupportServices: z.coerce.number().min(1).max(5).optional(),
 
   // Tips and Recommendations for Future Students
