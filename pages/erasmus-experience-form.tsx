@@ -2,19 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  DocumentIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/24/outline";
-import {
-  UserIcon,
-  BookOpenIcon,
-  HomeIcon,
-  CurrencyEuroIcon,
-  HeartIcon,
-} from "@heroicons/react/24/solid";
+import StandardIcon from "../src/components/StandardIcon";
 
 // Form step components
 import BasicInformationStep from "../components/forms/steps/BasicInformationStep";
