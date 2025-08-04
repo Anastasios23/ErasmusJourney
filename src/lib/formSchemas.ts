@@ -123,7 +123,7 @@ export const enhancedLivingExpensesSchema = z.object({
 });
 
 // Enhanced Accommodation Schema - Detailed housing information with numeric validation
-export const enhancedAccommodationSchema = z.object({
+export const accommodationSchema = z.object({
   // Basic Accommodation Info
   accommodationType: z.enum(
     [
