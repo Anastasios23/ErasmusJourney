@@ -1,3 +1,15 @@
+/*
+ * React Hook Form Components
+ *
+ * IMPORTANT: These components require a FormProvider context from react-hook-form.
+ * They should only be used with forms that are managed by react-hook-form.
+ *
+ * For simple forms without react-hook-form, use components from:
+ * - form-components.tsx (FormField, FormSection, FormGrid, ErrorMessage)
+ *
+ * These components are for advanced forms with complex validation and state management.
+ */
+
 import * as React from "react";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";

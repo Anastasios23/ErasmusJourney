@@ -150,8 +150,12 @@ const tipCategories = [
 export default function ExperienceStory() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { submitForm, isSubmitting, getSubmissionsByUser } =
-    useFormSubmissions();
+  const {
+    submitForm,
+    loading: isSubmitting,
+    submissions,
+    refreshSubmissions,
+  } = useFormSubmissions();
   const [currentStep, setCurrentStep] = useState(1);
   const [existingBasicInfo, setExistingBasicInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -209,8 +213,7 @@ export default function ExperienceStory() {
     const loadExistingData = async () => {
       if (status === "authenticated" && session?.user?.id) {
         try {
-          const submissions = await getSubmissionsByUser();
-          const basicInfo = submissions.find((s) => s.type === "BASIC_INFO");
+          const basicInfo = submissions.find((s) => s.type === "basic-info");
 
           if (basicInfo) {
             setExistingBasicInfo(basicInfo);
@@ -227,7 +230,7 @@ export default function ExperienceStory() {
     };
 
     loadExistingData();
-  }, [status, session, getSubmissionsByUser]);
+  }, [status, session, submissions]);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({
@@ -524,7 +527,7 @@ export default function ExperienceStory() {
                     />
                   </FormField>
 
-                  <FormGrid cols={2}>
+                  <FormGrid columns={2}>
                     <FormField>
                       <Label htmlFor="favoriteMemory">Favorite memory</Label>
                       <EnhancedTextarea
@@ -712,7 +715,7 @@ export default function ExperienceStory() {
                       Personal Development
                     </h3>
 
-                    <FormGrid cols={2}>
+                    <FormGrid columns={2}>
                       <FormField>
                         <Label htmlFor="languagesLearned">
                           Languages learned/improved
@@ -945,7 +948,7 @@ export default function ExperienceStory() {
                         </EnhancedSelect>
                       </FormField>
 
-                      <FormGrid cols={2}>
+                      <FormGrid columns={2}>
                         {formData.contactMethod === "email" && (
                           <FormField>
                             <Label htmlFor="email">

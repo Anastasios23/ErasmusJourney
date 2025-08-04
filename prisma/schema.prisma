@@ -60,6 +60,7 @@ model User {
   sessions        Session[]
   applications    Application[]
   formSubmissions FormSubmission[]
+  erasmusExperience ErasmusExperience? // One-to-one relationship
   stories         Story[]
   storyEngagements Engagement[]
 
@@ -274,6 +275,40 @@ model FormSubmission {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("form_submissions")
+}
+
+model ErasmusExperience {
+  id              String    @id @default(cuid())
+  userId          String    @unique // One submission per user
+  
+  // Progress tracking
+  currentStep     Int       @default(1)
+  completedSteps  String    @default("[]") // JSON array of completed step numbers
+  isComplete      Boolean   @default(false)
+  
+  // Form data sections
+  basicInfo       Json?     // Step 1: Basic Information
+  courses         Json?     // Step 2: Course Matching
+  accommodation   Json?     // Step 3: Accommodation
+  livingExpenses  Json?     // Step 4: Living Expenses
+  experience      Json?     // Step 5: Experience & Help Future Students
+  
+  // Metadata
+  status          String    @default("DRAFT") // DRAFT, IN_PROGRESS, COMPLETED, PUBLISHED
+  isPublic        Boolean   @default(false)
+  lastSavedAt     DateTime  @default(now())
+  submittedAt     DateTime?
+  publishedAt     DateTime?
+  
+  // Admin management
+  adminNotes      String?
+  adminApproved   Boolean   @default(false)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("erasmus_experiences")
 }
 
 model CustomDestination {

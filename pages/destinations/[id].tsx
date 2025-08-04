@@ -345,7 +345,7 @@ export default function DestinationDetailPage() {
 
               {/* Popular Programs */}
               <div className="flex flex-wrap gap-2">
-                {destination.popularWith.map((program, index) => (
+                {(destination.popularWith || []).map((program, index) => (
                   <Badge key={index} variant="secondary">
                     {program}
                   </Badge>

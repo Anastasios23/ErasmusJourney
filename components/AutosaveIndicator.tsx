@@ -1,17 +1,19 @@
-import { AutosaveState } from "../src/hooks/useAutosave";
+import React from "react";
 
 interface AutosaveIndicatorProps {
-  autosaveState: AutosaveState;
-  lastSavedText: string | null;
+  isSaving: boolean;
+  lastSaved: Date | null;
+  error: string | null;
   className?: string;
 }
 
 export function AutosaveIndicator({
-  autosaveState,
-  lastSavedText,
+  isSaving,
+  lastSaved,
+  error,
   className = "",
 }: AutosaveIndicatorProps) {
-  if (autosaveState.isSaving) {
+  if (isSaving) {
     return (
       <div
         className={`flex items-center gap-2 text-blue-600 text-sm ${className}`}
@@ -22,22 +24,22 @@ export function AutosaveIndicator({
     );
   }
 
-  if (autosaveState.saveError) {
+  if (error) {
     return (
       <div
         className={`flex items-center gap-2 text-red-600 text-sm ${className}`}
       >
-        <span>���️ Save failed</span>
+        <span>⚠️ {error}</span>
       </div>
     );
   }
 
-  if (lastSavedText) {
+  if (lastSaved) {
     return (
       <div
         className={`flex items-center gap-2 text-green-600 text-sm ${className}`}
       >
-        <span>✓ {lastSavedText}</span>
+        <span>✓ Saved at {lastSaved.toLocaleTimeString()}</span>
       </div>
     );
   }

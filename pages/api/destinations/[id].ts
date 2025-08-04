@@ -17,9 +17,139 @@ export default async function handler(
   }
 
   try {
-    // First check if this is a database destination
+    // First, try to get dynamically generated destination from form submissions
+    // This matches the logic from the main destinations API
+
+    // Get all basic info submissions to build dynamic destinations
+    let basicInfoSubmissions = [];
+    try {
+      basicInfoSubmissions = await prisma.formSubmission.findMany({
+        where: {
+          status: "SUBMITTED",
+          type: "BASIC_INFO",
+        },
+        include: {
+          user: {
+            select: { firstName: true, lastName: true, email: true },
+          },
+        },
+      });
+    } catch (submissionError) {
+      console.error("Error fetching basic info submissions:", submissionError);
+    }
+
+    // Build destination map from submissions (same logic as main API)
+    const destinationMap = new Map();
+
+    for (const submission of basicInfoSubmissions) {
+      const data = submission.data as any;
+      const hostCity = data.hostCity;
+      const hostCountry = data.hostCountry;
+
+      if (!hostCity || !hostCountry) continue;
+
+      const key = `${hostCity}-${hostCountry}`;
+      const destinationId = key.toLowerCase().replace(/\s+/g, "-");
+
+      if (!destinationMap.has(key)) {
+        destinationMap.set(key, {
+          id: destinationId,
+          city: hostCity,
+          country: hostCountry,
+          universities: new Set(),
+          studentCount: 0,
+          experiences: [],
+          accommodationCount: 0,
+          avgRent: 0,
+          avgLivingExpenses: 0,
+          avgAccommodationRating: 0,
+          expenseSubmissionCount: 0,
+        });
+      }
+
+      const destination = destinationMap.get(key);
+      destination.universities.add(data.hostUniversity);
+      destination.studentCount++;
+
+      const userName =
+        submission.user?.firstName && submission.user?.lastName
+          ? `${submission.user.firstName} ${submission.user.lastName}`
+          : "Anonymous Student";
+
+      destination.experiences.push({
+        studentName: userName,
+        university: data.hostUniversity,
+        submissionId: submission.id,
+      });
+    }
+
+    // Check if this ID matches a dynamically generated destination
+    const dynamicDestination = Array.from(destinationMap.values()).find(
+      (dest: any) => dest.id === id,
+    );
+
+    if (dynamicDestination) {
+      // Build full destination data like the main API does
+      const totalMonthlyCost =
+        (dynamicDestination.avgRent || 0) +
+        (dynamicDestination.avgLivingExpenses || 0);
+
+      const getCostLevel = (cost: number) => {
+        if (cost < 600) return "low";
+        if (cost < 1000) return "medium";
+        return "high";
+      };
+
+      const result = {
+        ...dynamicDestination,
+        universities: Array.from(dynamicDestination.universities),
+        imageUrl: `/images/destinations/${dynamicDestination.city.toLowerCase().replace(/\s+/g, "-")}.svg`,
+        description: `Experience ${dynamicDestination.city} through the eyes of ${dynamicDestination.studentCount} Erasmus student${dynamicDestination.studentCount !== 1 ? "s" : ""}. A wonderful destination for your Erasmus exchange experience.`,
+        costOfLiving: getCostLevel(totalMonthlyCost),
+        averageRent: dynamicDestination.avgRent || 0,
+        rating:
+          dynamicDestination.avgAccommodationRating > 0
+            ? Math.round(dynamicDestination.avgAccommodationRating * 10) / 10
+            : 4,
+        avgCostPerMonth: totalMonthlyCost,
+        popularUniversities: Array.from(dynamicDestination.universities),
+        popularWith: Array.from(dynamicDestination.universities), // Map to expected field name
+        partnerUniversities: Array.from(dynamicDestination.universities),
+        university:
+          Array.from(dynamicDestination.universities)[0] ||
+          "Partner University",
+        universityShort: "PU",
+        language: "English/Local",
+        highlights: ["European Culture", "Student Life", "Academic Excellence"],
+        cityInfo: {
+          population: "Information not available",
+          language: "Local language",
+          currency: "EUR",
+          climate: "European climate",
+          topAttractions: [],
+          practicalInfo: {
+            englishFriendly: "Moderate",
+            safetyRating: "Good",
+          },
+        },
+        dataInsights: {
+          hasAccommodationData: dynamicDestination.accommodationCount > 0,
+          hasExpenseData: dynamicDestination.expenseSubmissionCount > 0,
+          avgRent: dynamicDestination.avgRent,
+          avgLivingExpenses: dynamicDestination.avgLivingExpenses,
+          accommodationRating: dynamicDestination.avgAccommodationRating,
+        },
+        userStories: [],
+        userAccommodationTips: [],
+        userCourseMatches: [],
+        userReviews: [],
+      };
+
+      return res.status(200).json(result);
+    }
+
+    // If no dynamic destination found, check database and static destinations
     let baseDestination = null;
-    let isDbDestination = false;
 
     try {
       const dbDestination = await prisma.destination.findFirst({
@@ -29,16 +159,13 @@ export default async function handler(
       });
 
       if (dbDestination) {
-        isDbDestination = true;
         // Parse highlights field which may contain enhanced data
         let parsedHighlights: any = {};
         try {
           if (dbDestination.highlights) {
-            // Try to parse as JSON first (new format)
             try {
               parsedHighlights = JSON.parse(dbDestination.highlights);
             } catch {
-              // Fallback to old string format
               parsedHighlights = { highlights: dbDestination.highlights };
             }
           }
@@ -51,7 +178,7 @@ export default async function handler(
           id: dbDestination.id,
           city: dbDestination.name.split(",")[0].trim(),
           country: dbDestination.country,
-          university: "Partner University", // Default, will be enriched from submissions
+          university: "Partner University",
           universityShort: "PU",
           partnerUniversities: [],
           language: "English/Local",
@@ -78,7 +205,6 @@ export default async function handler(
     }
 
     // Fetch user-generated content related to this destination
-    // This includes stories, accommodation tips, course matches, etc.
     let userStories = [];
     let userAccommodationTips = [];
     let userCourseMatches = [];
@@ -88,7 +214,7 @@ export default async function handler(
       // Fetch form submissions related to this destination
       const submissions = await prisma.formSubmission.findMany({
         where: {
-          status: "PUBLISHED", // Only use published submissions
+          status: "PUBLISHED",
         },
         orderBy: { createdAt: "desc" },
       });
@@ -101,163 +227,93 @@ export default async function handler(
         );
       });
 
-      // Process submissions by type
-      userStories = citySubmissions
-        .filter((sub) => sub.type === "STORY")
-        .map((sub) => {
-          const data = sub.data as any;
-          return {
-            id: sub.id,
-            title: sub.title,
-            excerpt:
-              data.personalExperience?.substring(0, 150) + "..." ||
-              "Student story",
-            author: `${data.firstName || "Anonymous"} ${data.lastName ? data.lastName.charAt(0) + "." : ""}`,
-            createdAt: sub.createdAt.toISOString(),
-          };
-        });
+      // Process different types of submissions
+      citySubmissions.forEach((submission) => {
+        const data = submission.data as any;
 
-      userAccommodationTips = citySubmissions
-        .filter((sub) => sub.type === "ACCOMMODATION")
-        .map((sub) => {
-          const data = sub.data as any;
-          return {
-            id: sub.id,
-            title: sub.title || `Accommodation in ${baseDestination.city}`,
-            type: data.accommodationType || "Unknown",
-            monthlyRent: data.monthlyRent,
-            rating: data.accommodationRating,
-            tips: data.topTips || [],
-            createdAt: sub.createdAt.toISOString(),
-          };
-        });
-
-      userCourseMatches = citySubmissions
-        .filter((sub) => sub.type === "COURSE_MATCHING")
-        .map((sub) => {
-          const data = sub.data as any;
-          return {
-            id: sub.id,
-            title: sub.title || `Course Matching in ${baseDestination.city}`,
-            hostUniversity: data.hostUniversity,
-            courses: data.courses || [],
-            createdAt: sub.createdAt.toISOString(),
-          };
-        });
-
-      userReviews = citySubmissions
-        .filter((sub) =>
-          ["BASIC_INFO", "ACCOMMODATION", "COURSE_MATCHING", "STORY"].includes(
-            sub.type,
-          ),
-        )
-        .map((sub) => {
-          const data = sub.data as any;
-          return {
-            id: sub.id,
-            type: sub.type,
+        if (submission.type === "EXPERIENCE") {
+          userStories.push({
+            id: submission.id,
+            title: data.overallExperienceTitle || "Study Experience",
+            content: data.overallExperienceContent || data.personalExperience,
+            author: `${data.firstName || "Anonymous"} ${data.lastName || "Student"}`,
             rating: data.overallRating,
-            review: data.personalExperience || data.challenges || "",
-            createdAt: sub.createdAt.toISOString(),
-          };
-        });
+            createdAt: submission.createdAt,
+          });
+        }
+
+        if (submission.type === "ACCOMMODATION") {
+          userAccommodationTips.push({
+            id: submission.id,
+            type: data.accommodationType,
+            address: data.accommodationAddress,
+            rent: data.monthlyRent,
+            rating: data.accommodationRating,
+            tips: data.additionalNotes || data.recommendationReason,
+            author: `${data.firstName || "Anonymous"} ${data.lastName || "Student"}`,
+          });
+        }
+
+        if (submission.type === "COURSE_MATCHING") {
+          userCourseMatches.push({
+            id: submission.id,
+            hostUniversity: data.hostUniversity,
+            hostCourses: data.hostCourses || [],
+            difficulty: data.courseMatchingDifficult,
+            recommendation: data.recommendCourses,
+            tips: data.courseMatchingChallenges,
+            author: `${data.firstName || "Anonymous"} ${data.lastName || "Student"}`,
+          });
+        }
+      });
     } catch (error) {
-      console.error(
-        `Error fetching user content for ${baseDestination.city}:`,
-        error,
-      );
-      // Continue with empty arrays if there's an error
+      console.error("Error fetching user-generated content:", error);
     }
 
+    // Build the enriched destination response
     const enrichedDestination = {
       ...baseDestination,
       userStories,
       userAccommodationTips,
       userCourseMatches,
       userReviews,
-      // Add detailed information that might come from forms
       detailedInfo: {
-        population: getPopulationForCity(baseDestination.city),
-        language: baseDestination.language,
-        currency: getCurrencyForCountry(baseDestination.country),
-        climate: getClimateInfo(baseDestination.city),
-        timezone: getTimezoneInfo(baseDestination.city),
+        population: 1000000,
+        currency: "EUR",
+        climate: "Temperate continental climate",
+        timezone: "Central European Time (CET)",
       },
       livingCosts: {
-        accommodation: {
-          min: Math.floor(baseDestination.averageRent * 0.7),
-          max: Math.floor(baseDestination.averageRent * 1.3),
-        },
+        accommodation: { min: 300, max: 600 },
         food: { min: 200, max: 400 },
         transport: 50,
         entertainment: { min: 100, max: 200 },
       },
       transportation: {
-        publicTransport: "Excellent public transport system",
+        publicTransport: "Good public transport system",
         bikeRentals: true,
-        walkability: 8,
+        walkability: 7,
         nearestAirport: `${baseDestination.city} Airport`,
       },
       attractions: [],
       studentLife: {
-        nightlife: 8,
-        culture: 9,
-        sports: 7,
-        internationalCommunity: 9,
+        nightlife: 7,
+        culture: 8,
+        sports: 6,
+        internationalCommunity: 8,
       },
       practicalInfo: {
         visa: "EU citizens do not need a visa",
         healthcare: "European Health Insurance Card accepted",
-        bankingTips: "Major banks available, easy account opening for students",
-        simCard: "Prepaid SIM cards available at airports and stores",
+        bankingTips: "Major banks available",
+        simCard: "Prepaid SIM cards available",
       },
-      gallery: [baseDestination.imageUrl],
+      gallery: [baseDestination.imageUrl || "/placeholder.svg"],
     };
 
-    res.status(200).json(enrichedDestination);
+    return res.status(200).json(enrichedDestination);
   } catch (error) {
-    console.error("Error fetching destination details:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error in destination detail API:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
-}
-
-// Helper functions to generate realistic data
-function getPopulationForCity(city: string): number {
-  const populations: Record<string, number> = {
-    Berlin: 3700000,
-    Barcelona: 1620000,
-    Prague: 1300000,
-    Vienna: 1900000,
-    Amsterdam: 870000,
-    Stockholm: 980000,
-    Budapest: 1750000,
-    Warsaw: 1790000,
-    Copenhagen: 650000,
-    Helsinki: 660000,
-  };
-  return populations[city] || 1000000;
-}
-
-function getCurrencyForCountry(country: string): string {
-  const currencies: Record<string, string> = {
-    Germany: "EUR",
-    Spain: "EUR",
-    "Czech Republic": "CZK",
-    Austria: "EUR",
-    Netherlands: "EUR",
-    Sweden: "SEK",
-    Hungary: "HUF",
-    Poland: "PLN",
-    Denmark: "DKK",
-    Finland: "EUR",
-  };
-  return currencies[country] || "EUR";
-}
-
-function getClimateInfo(city: string): string {
-  return "Temperate continental climate with warm summers and cold winters";
-}
-
-function getTimezoneInfo(city: string): string {
-  return "Central European Time (CET)";
 }

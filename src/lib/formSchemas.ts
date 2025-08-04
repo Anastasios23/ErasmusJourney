@@ -122,58 +122,6 @@ export const enhancedLivingExpensesSchema = z.object({
   expenses: z.record(z.coerce.number()).optional(),
 });
 
-// Enhanced Accommodation Schema - Detailed housing information with numeric validation
-export const enhancedAccommodationSchema = z.object({
-  // Basic Accommodation Info
-  accommodationType: z.enum(
-    [
-      "Student Residence",
-      "Shared Apartment",
-      "Private Apartment",
-      "Host Family",
-      "Private Room",
-      "Studio",
-      "Other",
-    ],
-    { required_error: "Accommodation type is required" },
-  ),
-
-  accommodationAddress: z.string().min(1, "Address is required"),
-  neighborhood: z.string().optional(),
-
-  // Cost Information (numeric for calculations)
-  monthlyRent: z.coerce.number().min(0, "Monthly rent must be positive"),
-  billsIncluded: z.enum(["Yes", "No", "Partially"], {
-    required_error: "Please specify if bills are included",
-  }),
-  avgUtilityCost: z.coerce.number().min(0).optional(),
-
-  // Experience Ratings (1-5 scale)
-  accommodationRating: z.coerce
-    .number()
-    .min(1, "Please provide a rating")
-    .max(5, "Rating must be between 1 and 5"),
-
-  // Experience Questions
-  easyToFind: z.enum(
-    ["Very Easy", "Easy", "Moderate", "Difficult", "Very Difficult"],
-    {
-      required_error: "Please indicate difficulty of finding accommodation",
-    },
-  ),
-  wouldRecommend: z.enum(
-    ["Definitely", "Probably", "Maybe", "Probably Not", "Definitely Not"],
-    {
-      required_error: "Please indicate if you would recommend",
-    },
-  ),
-
-  // Additional Details
-  roommates: z.string().optional(),
-  additionalNotes: z.string().optional(),
-  amenities: z.array(z.string()).optional(),
-});
-
 // Course Matching Schema - Academic course information with numeric validation
 export const courseMatchingSchema = z.object({
   // Course Counts
@@ -320,30 +268,6 @@ export const experienceStorySchema = z.object({
   personalWebsite: z.string().url().optional().or(z.literal("")),
   phoneNumber: z.string().optional(),
 });
-
-// Validation function for all form types
-export function validateFormData(type: string, data: any) {
-  switch (type) {
-    case "experience":
-    case "EXPERIENCE":
-      return experienceStorySchema.parse(data);
-    case "basic-info":
-    case "BASIC_INFO":
-      return basicInformationSchema.parse(data);
-    case "accommodation":
-    case "ACCOMMODATION":
-      return enhancedAccommodationSchema.parse(data);
-    case "living-expenses":
-    case "LIVING_EXPENSES":
-      return enhancedLivingExpensesSchema.parse(data);
-    case "course-matching":
-    case "COURSE_MATCHING":
-      return courseMatchingSchema.parse(data);
-    default:
-      // For unknown types, just return the data as-is
-      return data;
-  }
-}
 
 // Enhanced Accommodation Schema - Housing details and recommendations
 export const enhancedAccommodationSchema = z.object({

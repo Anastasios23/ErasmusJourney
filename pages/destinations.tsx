@@ -579,10 +579,12 @@ export default function Destinations() {
                       >
                         <div className="relative h-48 overflow-hidden">
                           <OptimizedImage
-                            src={
-                              destination.image ||
-                              `/images/destinations/${destination.city.toLowerCase().replace(/\s+/g, "-")}-custom.svg`
-                            }
+                            src={destination.image}
+                            fallbacks={[
+                              `/images/destinations/${destination.city.toLowerCase().replace(/\s+/g, "-")}-custom.svg`,
+                              `/images/destinations/${destination.city.toLowerCase().replace(/\s+/g, "-")}.svg`,
+                              `/images/destinations/placeholder.svg`,
+                            ]}
                             alt={`${destination.city}, ${destination.country} - Study abroad destination with Erasmus program`}
                             fill
                             className="object-cover transition-transform duration-500 group-hover:scale-110"

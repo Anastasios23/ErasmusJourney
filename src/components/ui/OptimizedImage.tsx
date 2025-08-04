@@ -12,6 +12,7 @@ interface OptimizedImageProps {
   sizes?: string;
   quality?: number;
   fill?: boolean;
+  fallbacks?: string[]; // Array of fallback image URLs
 }
 
 export const OptimizedImage: React.FC<OptimizedImageProps> = ({
@@ -25,9 +26,19 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
   quality = 85,
   fill = false,
+  fallbacks = [],
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [currentSrcIndex, setCurrentSrcIndex] = useState(0);
+
+  // Build array of all possible sources: original + fallbacks
+  const allSources = [
+    src,
+    ...fallbacks,
+    "/images/destinations/placeholder.svg",
+  ];
+  const currentSrc = allSources[currentSrcIndex];
 
   const handleLoad = () => {
     setIsLoading(false);
@@ -35,15 +46,27 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
   const handleError = () => {
     setIsLoading(false);
-    setHasError(true);
+
+    // Try next fallback if available
+    if (currentSrcIndex < allSources.length - 1) {
+      setCurrentSrcIndex((prev) => prev + 1);
+      setIsLoading(true); // Start loading next image
+    } else {
+      setHasError(true);
+    }
   };
 
   if (hasError) {
     return (
       <div
-        className={`bg-gray-200 flex items-center justify-center ${className}`}
+        className={`bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center ${className}`}
       >
-        <span className="text-gray-500 text-sm">Image unavailable</span>
+        <div className="text-center p-4">
+          <div className="text-blue-600 text-2xl mb-2">🏛️</div>
+          <span className="text-blue-700 text-sm font-medium">
+            Destination Image
+          </span>
+        </div>
       </div>
     );
   }
@@ -54,7 +77,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse" />
       )}
       <Image
-        src={src}
+        src={currentSrc}
         alt={alt}
         width={!fill ? width : undefined}
         height={!fill ? height : undefined}
@@ -68,6 +91,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         quality={quality}
         onLoad={handleLoad}
         onError={handleError}
+        key={currentSrc} // Force re-render when source changes
       />
     </div>
   );
