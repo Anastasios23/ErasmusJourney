@@ -43,7 +43,7 @@ import {
 } from "lucide-react";
 import { useCommunityStats } from "../src/hooks/useCommunityStats";
 import { Skeleton } from "../src/components/ui/skeleton";
-import { FormMessage } from "../src/components/ui/form"; // Add this import
+// Removed FormMessage import as it requires FormProvider context
 import { useFormValidation } from "../src/hooks/useFormValidation";
 import { FormErrorSummary } from "../src/components/FormErrorSummary";
 
@@ -460,12 +460,9 @@ export default function HelpFutureStudents() {
                       </div>
                     </RadioGroup>
                     {fieldErrors.wantToHelp && (
-                      <FormMessage
-                        id="wantToHelp-error"
-                        className="text-red-500 text-sm mt-1"
-                      >
+                      <p className="text-red-500 text-sm mt-1" role="alert">
                         {fieldErrors.wantToHelp}
-                      </FormMessage>
+                      </p>
                     )}
                   </div>
 
@@ -541,12 +538,9 @@ export default function HelpFutureStudents() {
                           }
                         />
                         {fieldErrors.email && (
-                          <FormMessage
-                            id="email-error"
-                            className="text-red-500 text-sm mt-1"
-                          >
+                          <p className="text-red-500 text-sm mt-1" role="alert">
                             {fieldErrors.email}
-                          </FormMessage>
+                          </p>
                         )}
                       </div>
 

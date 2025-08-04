@@ -122,6 +122,7 @@ export const enhancedLivingExpensesSchema = z.object({
   expenses: z.record(z.coerce.number()).optional(),
 });
 
+<<<<<<< HEAD
 // Enhanced Accommodation Schema - Detailed housing information with numeric validation
 export const enhancedAccommodationSchema = z.object({
   // Basic Accommodation Info
@@ -175,6 +176,9 @@ export const enhancedAccommodationSchema = z.object({
 });
 
 // Course Matching Schema - Academic course information with numeric validation and detailed equivalency data
+=======
+// Course Matching Schema - Academic course information with numeric validation
+>>>>>>> origin/main
 export const courseMatchingSchema = z.object({
   // Basic University Information
   homeUniversity: z.string().min(1, "Home university is required"),
@@ -366,30 +370,6 @@ export const experienceStorySchema = z.object({
   personalWebsite: z.string().url().optional().or(z.literal("")),
   phoneNumber: z.string().optional(),
 });
-
-// Validation function for all form types
-export function validateFormData(type: string, data: any) {
-  switch (type) {
-    case "experience":
-    case "EXPERIENCE":
-      return experienceStorySchema.parse(data);
-    case "basic-info":
-    case "BASIC_INFO":
-      return basicInformationSchema.parse(data);
-    case "accommodation":
-    case "ACCOMMODATION":
-      return enhancedAccommodationSchema.parse(data);
-    case "living-expenses":
-    case "LIVING_EXPENSES":
-      return enhancedLivingExpensesSchema.parse(data);
-    case "course-matching":
-    case "COURSE_MATCHING":
-      return courseMatchingSchema.parse(data);
-    default:
-      // For unknown types, just return the data as-is
-      return data;
-  }
-}
 
 // Enhanced Accommodation Schema - Housing details and recommendations
 export const enhancedAccommodationSchema = z.object({

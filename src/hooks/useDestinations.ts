@@ -11,6 +11,7 @@ export interface EnrichedDestination {
   costOfLiving: "low" | "medium" | "high";
   averageRent: number;
   popularWith: string[];
+  popularUniversities?: string[];
   imageUrl: string;
   description: string;
   // Enhanced fields from API

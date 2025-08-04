@@ -1,3 +1,19 @@
+/*
+ * Simple Form Components
+ *
+ * These components are for basic forms that don't require react-hook-form.
+ * They provide consistent styling and structure without complex form state management.
+ *
+ * Components included:
+ * - FormField: Container for form fields with label, error messages, and helper text
+ * - FormSection: Groups related form fields with title and subtitle
+ * - FormGrid: Responsive grid layout for form fields
+ * - DisabledFieldHint: Shows hints for disabled fields
+ * - ErrorMessage: Displays validation error messages
+ *
+ * For advanced forms with react-hook-form, use components from form.tsx instead.
+ */
+
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
@@ -163,4 +179,29 @@ const DisabledFieldHint = React.forwardRef<
 });
 DisabledFieldHint.displayName = "DisabledFieldHint";
 
-export { FormField, FormSection, FormGrid, DisabledFieldHint };
+interface ErrorMessageProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const ErrorMessage = React.forwardRef<HTMLParagraphElement, ErrorMessageProps>(
+  ({ children, className, ...props }, ref) => {
+    if (!children) {
+      return null;
+    }
+
+    return (
+      <p
+        ref={ref}
+        className={cn("text-sm text-red-500 mt-1", className)}
+        role="alert"
+        {...props}
+      >
+        {children}
+      </p>
+    );
+  },
+);
+ErrorMessage.displayName = "ErrorMessage";
+
+export { FormField, FormSection, FormGrid, DisabledFieldHint, ErrorMessage };
