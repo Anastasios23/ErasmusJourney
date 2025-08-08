@@ -18,8 +18,8 @@ export default async function handler(
     try {
       basicInfoSubmissions = await prisma.formSubmission.findMany({
         where: {
-          status: "SUBMITTED",
-          type: "BASIC_INFO",
+          status: "APPROVED", // Only show approved submissions on public destinations
+          type: "basic-info",
         },
         include: {
           user: {
@@ -27,7 +27,9 @@ export default async function handler(
           },
         },
       });
-      console.log(`Found ${basicInfoSubmissions.length} basic info submissions`);
+      console.log(
+        `Found ${basicInfoSubmissions.length} basic info submissions`,
+      );
     } catch (submissionError) {
       console.error("Error fetching basic info submissions:", submissionError);
       basicInfoSubmissions = []; // Continue with empty array
@@ -38,13 +40,18 @@ export default async function handler(
     try {
       accommodationSubmissions = await prisma.formSubmission.findMany({
         where: {
-          status: "SUBMITTED",
-          type: "ACCOMMODATION",
+          status: "APPROVED", // Only show approved submissions
+          type: "accommodation",
         },
       });
-      console.log(`Found ${accommodationSubmissions.length} accommodation submissions`);
+      console.log(
+        `Found ${accommodationSubmissions.length} accommodation submissions`,
+      );
     } catch (accommodationError) {
-      console.error("Error fetching accommodation submissions:", accommodationError);
+      console.error(
+        "Error fetching accommodation submissions:",
+        accommodationError,
+      );
       accommodationSubmissions = [];
     }
 
@@ -53,8 +60,8 @@ export default async function handler(
     try {
       expenseSubmissions = await prisma.formSubmission.findMany({
         where: {
-          status: "SUBMITTED",
-          type: "LIVING_EXPENSES",
+          status: "APPROVED", // Only show approved submissions
+          type: "living-expenses",
         },
       });
       console.log(`Found ${expenseSubmissions.length} expense submissions`);
@@ -88,7 +95,9 @@ export default async function handler(
           updatedAt: "desc",
         },
       });
-      console.log(`Found ${publishedDestinations.length} published destinations`);
+      console.log(
+        `Found ${publishedDestinations.length} published destinations`,
+      );
     } catch (publishedError) {
       console.error("Error fetching published destinations:", publishedError);
       publishedDestinations = [];

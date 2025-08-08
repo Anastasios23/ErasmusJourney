@@ -42,7 +42,7 @@ export default async function handler(
   try {
     // Get all basic info submissions for university data
     const basicInfoSubmissions = await prisma.formSubmission.findMany({
-      where: { type: "BASIC_INFO" },
+      where: { type: "basic-info" },
       select: {
         id: true,
         data: true,
@@ -51,7 +51,7 @@ export default async function handler(
 
     // Get all course matching submissions
     const courseMatchingSubmissions = await prisma.formSubmission.findMany({
-      where: { type: "COURSE_MATCHING" },
+      where: { type: "course-matching" },
       select: {
         id: true,
         data: true,

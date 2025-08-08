@@ -53,14 +53,14 @@ export default async function handler(
     // Fetch all BASIC_INFO submissions
     const submissions = await prisma.formSubmission.findMany({
       where: {
-        type: "BASIC_INFO",
+        type: "basic-info",
       },
     });
 
     // Fetch course matching submissions for detailed course information
     const courseMatchingSubmissions = await prisma.formSubmission.findMany({
       where: {
-        type: "COURSE_MATCHING",
+        type: "course-matching",
       },
     });
 

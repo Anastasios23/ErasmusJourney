@@ -25,8 +25,8 @@ export default async function handler(
     try {
       basicInfoSubmissions = await prisma.formSubmission.findMany({
         where: {
-          status: "SUBMITTED",
-          type: "BASIC_INFO",
+          status: "APPROVED",
+          type: "basic-info", // Using standardized lowercase form type
         },
         include: {
           user: {
@@ -89,10 +89,109 @@ export default async function handler(
     );
 
     if (dynamicDestination) {
-      // Build full destination data like the main API does
+      // Fetch all related submissions for this destination
+      let allSubmissions = [];
+      try {
+        allSubmissions = await prisma.formSubmission.findMany({
+          where: {
+            status: "APPROVED",
+          },
+        });
+      } catch (submissionsError) {
+        console.error("Error fetching submissions:", submissionsError);
+      }
+
+      // Filter submissions by destination city
+      const experienceSubmissions = allSubmissions.filter((submission) => {
+        const data = submission.data as any;
+        return (
+          submission.type === "erasmus-experience" &&
+          data.hostCity === dynamicDestination.city
+        );
+      });
+
+      const accommodationSubmissions = allSubmissions.filter((submission) => {
+        const data = submission.data as any;
+        return (
+          submission.type === "accommodation" &&
+          data.hostCity === dynamicDestination.city
+        );
+      });
+
+      // Calculate enhanced stats from all submissions
+      let totalRating = 0;
+      let ratingCount = 0;
+      let highlights = new Set<string>();
+      let recommendations = [];
+      let totalRent = 0;
+      let rentCount = 0;
+      let totalFood = 0;
+      let foodCount = 0;
+      let totalTransport = 0;
+      let transportCount = 0;
+      let totalEntertainment = 0;
+      let entertainmentCount = 0;
+
+      // Process experience submissions
+      experienceSubmissions.forEach((submission) => {
+        const data = submission.data as any;
+
+        // Collect ratings
+        if (data.overallRating) {
+          totalRating += parseFloat(data.overallRating);
+          ratingCount++;
+        }
+
+        // Collect highlights
+        if (data.highlights && Array.isArray(data.highlights)) {
+          data.highlights.forEach((highlight) => highlights.add(highlight));
+        }
+
+        // Collect recommendations
+        if (data.recommendations) {
+          recommendations.push(data.recommendations);
+        }
+      });
+
+      // Process accommodation submissions
+      accommodationSubmissions.forEach((submission) => {
+        const data = submission.data as any;
+
+        // Collect rent costs
+        if (data.monthlyRent) {
+          totalRent += parseFloat(data.monthlyRent);
+          rentCount++;
+        }
+
+        // Collect other expenses
+        if (data.foodExpenses) {
+          totalFood += parseFloat(data.foodExpenses);
+          foodCount++;
+        }
+
+        if (data.transportExpenses) {
+          totalTransport += parseFloat(data.transportExpenses);
+          transportCount++;
+        }
+
+        if (data.entertainmentExpenses) {
+          totalEntertainment += parseFloat(data.entertainmentExpenses);
+          entertainmentCount++;
+        }
+      });
+
+      // Calculate averages
+      const avgRating = ratingCount > 0 ? totalRating / ratingCount : 0;
+      const avgRent =
+        rentCount > 0 ? totalRent / rentCount : dynamicDestination.avgRent || 0;
+      const avgFood = foodCount > 0 ? totalFood / foodCount : 0;
+      const avgTransport =
+        transportCount > 0 ? totalTransport / transportCount : 0;
+      const avgEntertainment =
+        entertainmentCount > 0 ? totalEntertainment / entertainmentCount : 0;
+
       const totalMonthlyCost =
-        (dynamicDestination.avgRent || 0) +
-        (dynamicDestination.avgLivingExpenses || 0);
+        avgRent + avgFood + avgTransport + avgEntertainment;
 
       const getCostLevel = (cost: number) => {
         if (cost < 600) return "low";
@@ -104,13 +203,14 @@ export default async function handler(
         ...dynamicDestination,
         universities: Array.from(dynamicDestination.universities),
         imageUrl: `/images/destinations/${dynamicDestination.city.toLowerCase().replace(/\s+/g, "-")}.svg`,
-        description: `Experience ${dynamicDestination.city} through the eyes of ${dynamicDestination.studentCount} Erasmus student${dynamicDestination.studentCount !== 1 ? "s" : ""}. A wonderful destination for your Erasmus exchange experience.`,
+        description:
+          experienceSubmissions.length > 0 &&
+          experienceSubmissions[0].data.experienceDescription
+            ? (experienceSubmissions[0].data as any).experienceDescription
+            : `Experience ${dynamicDestination.city} through the eyes of ${dynamicDestination.studentCount} Erasmus student${dynamicDestination.studentCount !== 1 ? "s" : ""}. A wonderful destination for your Erasmus exchange experience.`,
         costOfLiving: getCostLevel(totalMonthlyCost),
-        averageRent: dynamicDestination.avgRent || 0,
-        rating:
-          dynamicDestination.avgAccommodationRating > 0
-            ? Math.round(dynamicDestination.avgAccommodationRating * 10) / 10
-            : 4,
+        averageRent: avgRent,
+        rating: avgRating > 0 ? Math.round(avgRating * 10) / 10 : 4,
         avgCostPerMonth: totalMonthlyCost,
         popularUniversities: Array.from(dynamicDestination.universities),
         popularWith: Array.from(dynamicDestination.universities), // Map to expected field name
@@ -120,7 +220,11 @@ export default async function handler(
           "Partner University",
         universityShort: "PU",
         language: "English/Local",
-        highlights: ["European Culture", "Student Life", "Academic Excellence"],
+        highlights:
+          highlights.size > 0
+            ? Array.from(highlights)
+            : ["European Culture", "Student Life", "Academic Excellence"],
+        recommendations: recommendations.length > 0 ? recommendations : [],
         cityInfo: {
           population: "Information not available",
           language: "Local language",
@@ -133,16 +237,73 @@ export default async function handler(
           },
         },
         dataInsights: {
-          hasAccommodationData: dynamicDestination.accommodationCount > 0,
-          hasExpenseData: dynamicDestination.expenseSubmissionCount > 0,
-          avgRent: dynamicDestination.avgRent,
-          avgLivingExpenses: dynamicDestination.avgLivingExpenses,
-          accommodationRating: dynamicDestination.avgAccommodationRating,
+          hasAccommodationData: accommodationSubmissions.length > 0,
+          hasExpenseData: accommodationSubmissions.length > 0,
+          avgRent: avgRent,
+          avgFood: avgFood,
+          avgTransport: avgTransport,
+          avgEntertainment: avgEntertainment,
+          avgLivingExpenses: avgFood + avgTransport + avgEntertainment,
+          accommodationRating: avgRating,
+          totalSubmissions:
+            experienceSubmissions.length + accommodationSubmissions.length,
         },
-        userStories: [],
-        userAccommodationTips: [],
+        expenseBreakdown: {
+          rent: {
+            average: avgRent,
+            count: rentCount,
+          },
+          food: {
+            average: avgFood,
+            count: foodCount,
+          },
+          transport: {
+            average: avgTransport,
+            count: transportCount,
+          },
+          entertainment: {
+            average: avgEntertainment,
+            count: entertainmentCount,
+          },
+          total: totalMonthlyCost,
+        },
+        userStories: experienceSubmissions.map((submission) => {
+          const data = submission.data as any;
+          return {
+            id: submission.id,
+            studentName: data.studentName || "Anonymous Student",
+            universityInCyprus: data.universityInCyprus || "University",
+            hostUniversity: data.hostUniversity || "Host University",
+            experienceDescription: data.experienceDescription || "",
+            overallRating: data.overallRating || 4,
+            wouldRecommend: data.wouldRecommend || true,
+            highlights: data.highlights || [],
+            recommendations: data.recommendations || "",
+            createdAt: submission.createdAt,
+          };
+        }),
+        userAccommodationTips: accommodationSubmissions.map((submission) => {
+          const data = submission.data as any;
+          return {
+            id: submission.id,
+            accommodationType: data.accommodationType || "Student Apartment",
+            monthlyRent: data.monthlyRent || 0,
+            accommodationRating: data.accommodationRating || 4,
+            accommodationTips: data.accommodationTips || "",
+            createdAt: submission.createdAt,
+          };
+        }),
         userCourseMatches: [],
-        userReviews: [],
+        userReviews: experienceSubmissions.map((submission) => {
+          const data = submission.data as any;
+          return {
+            id: submission.id,
+            studentName: data.studentName || "Anonymous",
+            rating: data.overallRating || 4,
+            comment: data.experienceDescription || "",
+            date: submission.createdAt,
+          };
+        }),
       };
 
       return res.status(200).json(result);
@@ -270,6 +431,84 @@ export default async function handler(
       console.error("Error fetching user-generated content:", error);
     }
 
+    // Calculate living costs for the enriched destination
+    let enrichedAvgRent = 0;
+    let enrichedAvgFood = 0;
+    let enrichedAvgTransport = 0;
+    let enrichedAvgEntertainment = 0;
+    let enrichedTotalCost = 0;
+
+    // Try to get costs from submissions for this city
+    try {
+      const allCitySubmissions = await prisma.formSubmission.findMany({
+        where: {
+          status: "APPROVED",
+        },
+      });
+
+      // Filter manually by city
+      const citySubmissions = allCitySubmissions.filter((submission) => {
+        const data = submission.data as any;
+        return (
+          data.city === baseDestination.city ||
+          data.hostCity === baseDestination.city
+        );
+      });
+
+      // Extract costs from submissions
+      let rentTotal = 0,
+        rentCount = 0;
+      let foodTotal = 0,
+        foodCount = 0;
+      let transportTotal = 0,
+        transportCount = 0;
+      let entertainmentTotal = 0,
+        entertainmentCount = 0;
+
+      citySubmissions.forEach((submission) => {
+        const data = submission.data as any;
+
+        if (data.monthlyRent) {
+          rentTotal += parseFloat(data.monthlyRent);
+          rentCount++;
+        }
+
+        if (data.foodExpenses) {
+          foodTotal += parseFloat(data.foodExpenses);
+          foodCount++;
+        }
+
+        if (data.transportExpenses) {
+          transportTotal += parseFloat(data.transportExpenses);
+          transportCount++;
+        }
+
+        if (data.entertainmentExpenses) {
+          entertainmentTotal += parseFloat(data.entertainmentExpenses);
+          entertainmentCount++;
+        }
+      });
+
+      enrichedAvgRent = rentCount > 0 ? rentTotal / rentCount : 500;
+      enrichedAvgFood = foodCount > 0 ? foodTotal / foodCount : 250;
+      enrichedAvgTransport =
+        transportCount > 0 ? transportTotal / transportCount : 50;
+      enrichedAvgEntertainment =
+        entertainmentCount > 0 ? entertainmentTotal / entertainmentCount : 100;
+      enrichedTotalCost =
+        enrichedAvgRent +
+        enrichedAvgFood +
+        enrichedAvgTransport +
+        enrichedAvgEntertainment;
+    } catch (error) {
+      console.error("Error calculating costs for enriched destination:", error);
+      enrichedAvgRent = 500;
+      enrichedAvgFood = 250;
+      enrichedAvgTransport = 50;
+      enrichedAvgEntertainment = 100;
+      enrichedTotalCost = 900;
+    }
+
     // Build the enriched destination response
     const enrichedDestination = {
       ...baseDestination,
@@ -284,10 +523,30 @@ export default async function handler(
         timezone: "Central European Time (CET)",
       },
       livingCosts: {
-        accommodation: { min: 300, max: 600 },
-        food: { min: 200, max: 400 },
-        transport: 50,
-        entertainment: { min: 100, max: 200 },
+        accommodation: {
+          min: Math.max(enrichedAvgRent * 0.8, enrichedAvgRent - 100),
+          max: enrichedAvgRent * 1.2,
+          avg: enrichedAvgRent,
+        },
+        food: {
+          min: Math.max(enrichedAvgFood * 0.8, enrichedAvgFood - 50),
+          max: enrichedAvgFood * 1.2,
+          avg: enrichedAvgFood,
+        },
+        transport: enrichedAvgTransport,
+        entertainment: {
+          min: Math.max(
+            enrichedAvgEntertainment * 0.8,
+            enrichedAvgEntertainment - 30,
+          ),
+          max: enrichedAvgEntertainment * 1.2,
+          avg: enrichedAvgEntertainment,
+        },
+        total: {
+          min: enrichedTotalCost * 0.9,
+          max: enrichedTotalCost * 1.1,
+          avg: enrichedTotalCost,
+        },
       },
       transportation: {
         publicTransport: "Good public transport system",

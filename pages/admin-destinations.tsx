@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
 import { Textarea } from "../src/components/ui/textarea";
+import { Label } from "../src/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -46,21 +47,116 @@ import {
   Globe,
   Clock,
   Thermometer,
+  Eye,
+  Check,
+  X,
 } from "lucide-react";
 import { toast } from "../src/components/ui/use-toast";
+
+interface FormSubmissionData {
+  // Location/Destination Information
+  hostCity?: string;
+  city?: string;
+  hostCountry?: string;
+  country?: string;
+  hostUniversity?: string;
+  university?: string;
+  institutionName?: string;
+
+  // Student Information
+  studentName?: string;
+  name?: string;
+  fullName?: string;
+  studentId?: string;
+  email?: string;
+  studentEmail?: string;
+  homeUniversity?: string;
+  originUniversity?: string;
+  studyField?: string;
+  major?: string;
+  field?: string;
+
+  // Experience Details
+  experienceDescription?: string;
+  description?: string;
+  experience?: string;
+  summary?: string;
+  highlights?: string[];
+
+  // Financial Information
+  monthlyRent?: number;
+  rent?: number;
+  foodExpenses?: number;
+  food?: number;
+  transportExpenses?: number;
+  transport?: number;
+  transportation?: number;
+  entertainmentExpenses?: number;
+  entertainment?: number;
+  leisure?: number;
+  totalMonthlyBudget?: number;
+  totalBudget?: number;
+  budget?: number;
+
+  // Ratings
+  overallRating?: number;
+  rating?: number;
+  satisfaction?: number;
+  accommodationRating?: number;
+  academicRating?: number;
+  universityRating?: number;
+  socialLifeRating?: number;
+  socialRating?: number;
+
+  // Media and Resources
+  image?: string;
+  imageUrl?: string;
+  photo?: string;
+  gallery?: string[];
+
+  // Metadata
+  submissionType?: string;
+  formType?: string;
+  processedAt?: string;
+
+  // Catch-all for any additional fields
+  [key: string]: any;
+}
+
+interface FormSubmission {
+  id: string;
+  type: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  userId?: string;
+  data: FormSubmissionData;
+}
 
 interface Destination {
   id: string;
   city: string;
   country: string;
-  description: string;
-  image: string;
-  costLevel: string;
-  rating: number;
+  description?: string;
+  image?: string;
+  costLevel?: string;
+  rating?: number;
   studentCount: number;
-  avgCostPerMonth: number;
-  popularUniversities: string[];
-  highlights: string[];
+  avgCostPerMonth?: number;
+  avgRent: number;
+  avgLivingExpenses: number;
+  avgAccommodationRating: number;
+  universities: string[];
+  popularUniversities?: string[];
+  highlights?: string[];
+  experiences: Array<{
+    studentName: string;
+    university: string;
+    submissionId: string;
+  }>;
+  accommodationCount: number;
+  expenseSubmissionCount: number;
+  courseSubmissionCount: number;
   cityInfo?: {
     population: string;
     language: string;
@@ -93,36 +189,578 @@ interface Destination {
   };
 }
 
+// Helper function to determine cost level from available data
+const getCostLevel = (destination: Destination): string => {
+  const totalCost =
+    (destination.avgRent || 0) + (destination.avgLivingExpenses || 0);
+  if (totalCost < 800) return "low";
+  if (totalCost < 1200) return "medium";
+  return "high";
+};
+
+// Helper functions for data extraction and normalization
+const extractField = (
+  data: any,
+  fields: string[],
+  defaultValue: any = null,
+): any => {
+  if (!data) return defaultValue;
+
+  for (const field of fields) {
+    if (data[field] !== undefined && data[field] !== null) {
+      return data[field];
+    }
+  }
+
+  return defaultValue;
+};
+
+const normalizeNumericValue = (value: any): number => {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") {
+    // Remove currency symbols and commas
+    const cleaned = value.replace(/[€$,]/g, "").trim();
+    const parsed = parseFloat(cleaned);
+    return isNaN(parsed) ? 0 : parsed;
+  }
+  return 0;
+};
+
+const extractArrayField = (data: any, field: string): string[] => {
+  if (!data) return [];
+
+  if (Array.isArray(data[field])) {
+    return data[field];
+  } else if (typeof data[field] === "string") {
+    // Handle comma-separated string
+    return data[field]
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+};
+
 export default function AdminDestinations() {
   const router = useRouter();
+  const [pendingSubmissions, setPendingSubmissions] = useState<
+    FormSubmission[]
+  >([]);
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingDestination, setEditingDestination] =
     useState<Destination | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedSubmission, setSelectedSubmission] =
+    useState<FormSubmission | null>(null);
+  const [isSubmissionDialogOpen, setIsSubmissionDialogOpen] = useState(false);
+  const [imagePreview, setImagePreview] = useState("");
+  const [dataFetched, setDataFetched] = useState(false);
 
-  // Load destinations
+  // Load destinations and pending submissions
   useEffect(() => {
-    loadDestinations();
+    // Use a flag to prevent multiple fetches on mount
+    const controller = new AbortController();
+
+    const fetchInitialData = async () => {
+      try {
+        setIsLoading(true);
+        await Promise.all([loadDestinations(), fetchAllSubmissionData()]);
+      } catch (error) {
+        console.error("Error loading initial data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInitialData();
+
+    // Cleanup function to handle component unmount
+    return () => {
+      controller.abort();
+    };
   }, []);
 
+  // Helper function to fetch all relevant submission types
+  const fetchAllSubmissionData = async () => {
+    try {
+      console.log("Fetching comprehensive submission data...");
+
+      // Get all submissions regardless of type and aggregate them
+      await fetchAndAggregateSubmissions();
+
+      return true;
+    } catch (error) {
+      console.error("Error fetching comprehensive submission data:", error);
+      return false;
+    }
+  };
+
+  // Function to fetch all submission types and aggregate them by user
+  const fetchAndAggregateSubmissions = async () => {
+    try {
+      setIsLoading(true);
+      console.log("Fetching and aggregating all submission types...");
+
+      // Fetch all form submissions regardless of type
+      const response = await fetch(
+        "/api/admin/form-submissions?status=SUBMITTED&limit=200",
+      );
+
+      if (!response.ok) {
+        console.error(`API Error: ${response.status} ${response.statusText}`);
+        throw new Error("Failed to fetch submissions");
+      }
+
+      const submissions = await response.json();
+      console.log("Raw API response:", submissions);
+
+      if (!Array.isArray(submissions)) {
+        console.error("API returned non-array response:", submissions);
+        throw new Error("Invalid API response format");
+      }
+
+      // Group submissions by userId
+      const submissionsByUser = {};
+
+      // First, process all submissions with valid data
+      submissions.forEach((submission) => {
+        try {
+          // Parse data if needed
+          const data =
+            typeof submission.data === "string"
+              ? JSON.parse(submission.data)
+              : submission.data;
+
+          const userId = submission.userId || data.userId || "unknown-user";
+          const type = submission.type || "unknown";
+
+          // Initialize user entry if it doesn't exist
+          if (!submissionsByUser[userId]) {
+            submissionsByUser[userId] = {
+              userId: userId,
+              submissionParts: {},
+              createdAt: submission.createdAt,
+              updatedAt: submission.updatedAt,
+              combinedData: {},
+            };
+          }
+
+          // Add this submission part
+          submissionsByUser[userId].submissionParts[type] = {
+            id: submission.id,
+            data: data,
+            type: type,
+            createdAt: submission.createdAt,
+            updatedAt: submission.updatedAt,
+          };
+
+          // Update timestamps if this submission is newer
+          if (
+            new Date(submission.updatedAt) >
+            new Date(submissionsByUser[userId].updatedAt)
+          ) {
+            submissionsByUser[userId].updatedAt = submission.updatedAt;
+          }
+        } catch (error) {
+          console.error("Error processing submission:", error, submission);
+        }
+      });
+
+      console.log("Grouped submissions by user:", submissionsByUser);
+
+      // Now create consolidated submissions from the grouped data
+      const consolidatedSubmissions = Object.values(submissionsByUser).map(
+        (userSubmissions: {
+          userId: string;
+          submissionParts: Record<string, any>;
+          createdAt: string;
+          updatedAt: string;
+          combinedData: Record<string, any>;
+        }) => {
+          // Create a consolidated submission with combined data from all parts
+          const combinedData = {};
+          const submissionIds = [];
+          const submissionTypes = [];
+          let mostRecentId = null;
+          let mostRecentDate = new Date(0);
+
+          // Merge data from all submission parts
+          Object.entries(userSubmissions.submissionParts).forEach(
+            ([type, submission]) => {
+              const submissionData = submission.data;
+              const id = submission.id;
+
+              // Track this submission part
+              submissionIds.push(id);
+              submissionTypes.push(type);
+
+              // Check if this is the most recent submission
+              const submissionDate = new Date(submission.updatedAt);
+              if (submissionDate > mostRecentDate) {
+                mostRecentDate = submissionDate;
+                mostRecentId = id;
+              }
+
+              // Merge this part's data into the combined data
+              Object.assign(combinedData, submissionData);
+
+              // Explicitly track which type this field came from
+              combinedData[`${type}Data`] = submissionData;
+            },
+          );
+
+          // Create the consolidated submission
+          return {
+            id:
+              mostRecentId ||
+              submissionIds[0] ||
+              `consolidated-${Math.random().toString(36).substring(2, 11)}`,
+            type: "consolidated",
+            status: "SUBMITTED",
+            createdAt: userSubmissions.createdAt,
+            updatedAt: userSubmissions.updatedAt,
+            userId: userSubmissions.userId,
+            data: {
+              ...combinedData,
+              // Metadata about this consolidated submission
+              submissionMeta: {
+                parts: submissionTypes,
+                ids: submissionIds,
+                primaryId: mostRecentId,
+                completedSteps: submissionTypes.length,
+                isComplete: [
+                  "basic-info",
+                  "course-matching",
+                  "accommodation",
+                  "living-expenses",
+                ].every((step) => submissionTypes.includes(step)),
+              },
+            },
+          };
+        },
+      );
+
+      console.log(
+        `Consolidated ${submissions.length} individual submissions into ${consolidatedSubmissions.length} user submissions`,
+      );
+
+      // Process these consolidated submissions
+      const processedSubmissions = processConsolidatedSubmissions(
+        consolidatedSubmissions,
+      );
+
+      // Update state with the processed submissions
+      setPendingSubmissions(processedSubmissions);
+      setDataFetched(true);
+
+      return processedSubmissions;
+    } catch (error) {
+      console.error("Error aggregating submissions:", error);
+      toast({
+        title: "Error",
+        description: `Failed to process submissions: ${error instanceof Error ? error.message : "Unknown error"}`,
+        variant: "destructive",
+      });
+      setPendingSubmissions([]);
+      setDataFetched(true);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const loadDestinations = async () => {
     try {
       setIsLoading(true);
+      console.log("Fetching destinations...");
+
       const response = await fetch("/api/destinations");
-      if (!response.ok) throw new Error("Failed to fetch destinations");
+
+      if (!response.ok) {
+        console.error(`API Error: ${response.status} ${response.statusText}`);
+        throw new Error("Failed to fetch destinations");
+      }
 
       const data = await response.json();
-      setDestinations(data.destinations || []);
+      console.log("Destinations API response:", data);
+
+      // Ensure we have an array of destinations
+      const destinationsArray = data.destinations || [];
+      if (!Array.isArray(destinationsArray)) {
+        console.error("API returned invalid destinations format:", data);
+        throw new Error("Invalid destinations data format");
+      }
+
+      setDestinations(destinationsArray);
     } catch (error) {
       console.error("Error loading destinations:", error);
       toast({
         title: "Error",
-        description: "Failed to load destinations",
+        description: `Failed to load destinations: ${error instanceof Error ? error.message : "Unknown error"}`,
         variant: "destructive",
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Legacy function maintained for backward compatibility
+  const fetchPendingSubmissions = async () => {
+    // Now just calls the more comprehensive aggregation function
+    return fetchAndAggregateSubmissions();
+  };
+
+  // Function to process consolidated submissions and extract/normalize all data
+  const processConsolidatedSubmissions = (submissions) => {
+    try {
+      // Format consolidated submission data for display with comprehensive validation
+      const processedSubmissions = submissions.map((submission) => {
+        try {
+          // Ensure we have valid data
+          const data = submission.data || {};
+
+          // Extract data from each step, with preference order
+          // 1. basic-info: Student details, home university
+          // 2. course-matching: Host university, academic details
+          // 3. accommodation: Living situation
+          // 4. living-expenses: Budget information
+
+          // Track which steps we have
+          const basicInfo = data["basic-infoData"] || {};
+          const courseMatching = data["course-matchingData"] || {};
+          const accommodation = data["accommodationData"] || {};
+          const expenses = data["living-expensesData"] || {};
+
+          console.log(`Processing submission with steps:`, {
+            basicInfo: !!Object.keys(basicInfo).length,
+            courseMatching: !!Object.keys(courseMatching).length,
+            accommodation: !!Object.keys(accommodation).length,
+            expenses: !!Object.keys(expenses).length,
+          });
+
+          // Extract student information primarily from basic-info
+          const studentName = extractField(
+            data,
+            ["firstName", "lastName", "studentName", "name", "fullName"],
+            "Anonymous",
+          );
+
+          const formattedStudentName =
+            typeof studentName === "string"
+              ? studentName
+              : `${studentName.firstName || ""} ${studentName.lastName || ""}`.trim() ||
+                "Anonymous";
+
+          // Normalize and consolidate data from all steps
+          const sanitizedData = {
+            // Location data from course matching primarily
+            hostCity: extractField(
+              data,
+              ["hostCity", "city", "cityName", "location"],
+              "Unknown",
+            ),
+            hostCountry: extractField(
+              data,
+              ["hostCountry", "country", "countryName"],
+              "Unknown",
+            ),
+            hostUniversity: extractField(
+              data,
+              [
+                "hostUniversity",
+                "university",
+                "institutionName",
+                "hostInstitution",
+              ],
+              "Not specified",
+            ),
+
+            // Student information primarily from basic info
+            studentName: formattedStudentName,
+            studentEmail: extractField(data, ["email", "studentEmail"], ""),
+            studentId: extractField(data, ["studentId", "id"], ""),
+            homeUniversity: extractField(
+              data,
+              ["homeUniversity", "originUniversity", "university"],
+              "",
+            ),
+            studyField: extractField(
+              data,
+              ["studyField", "field", "major", "levelOfStudy", "fieldOfStudy"],
+              "",
+            ),
+
+            // Academic information from course-matching
+            hostCourses: data.hostCourses || courseMatching.hostCourses || [],
+            homeCourses: data.homeCourses || courseMatching.homeCourses || [],
+            academicExperience:
+              data.academicExperience ||
+              courseMatching.academicExperience ||
+              "",
+
+            // Accommodation information from accommodation step
+            accommodationAddress:
+              data.accommodationAddress ||
+              accommodation.accommodationAddress ||
+              "",
+            accommodationType:
+              data.accommodationType || accommodation.accommodationType || "",
+            accommodationRent: normalizeNumericValue(
+              data.accommodationRent || accommodation.accommodationRent || 0,
+            ),
+            roommates: data.roommates || accommodation.roommates || 0,
+
+            // Financial information from expenses step
+            monthlyRent: normalizeNumericValue(
+              data.monthlyRent ||
+                expenses.monthlyRent ||
+                accommodation.accommodationRent ||
+                0,
+            ),
+            foodExpenses: normalizeNumericValue(
+              data.foodExpenses || expenses.foodExpenses || 0,
+            ),
+            transportExpenses: normalizeNumericValue(
+              data.transportExpenses || expenses.transportExpenses || 0,
+            ),
+            entertainmentExpenses: normalizeNumericValue(
+              data.entertainmentExpenses || expenses.entertainmentExpenses || 0,
+            ),
+            totalMonthlyBudget: normalizeNumericValue(
+              data.totalMonthlyBudget ||
+                expenses.totalMonthlyBudget ||
+                normalizeNumericValue(data.monthlyRent || 0) +
+                  normalizeNumericValue(data.foodExpenses || 0) +
+                  normalizeNumericValue(data.transportExpenses || 0) +
+                  normalizeNumericValue(data.entertainmentExpenses || 0),
+            ),
+
+            // Experience and feedback
+            experienceDescription: extractField(
+              data,
+              [
+                "experienceDescription",
+                "description",
+                "experience",
+                "summary",
+                "comments",
+                "feedback",
+              ],
+              "",
+            ),
+            highlights: Array.isArray(data.highlights)
+              ? data.highlights
+              : typeof data.highlights === "string"
+                ? data.highlights.split(",").map((h) => h.trim())
+                : [],
+
+            // Ratings
+            overallRating: normalizeNumericValue(
+              data.overallRating || data.rating || data.satisfaction || 0,
+            ),
+            accommodationRating: normalizeNumericValue(
+              data.accommodationRating ||
+                accommodation.accommodationRating ||
+                0,
+            ),
+            academicRating: normalizeNumericValue(
+              data.academicRating || data.universityRating || 0,
+            ),
+            socialLifeRating: normalizeNumericValue(
+              data.socialLifeRating || data.socialRating || 0,
+            ),
+
+            // Media
+            image: data.image || data.imageUrl || data.photo || "",
+            gallery: Array.isArray(data.gallery) ? data.gallery : [],
+
+            // Include all original data for reference
+            ...data,
+
+            // Add metadata for UI display
+            submissionMeta: data.submissionMeta || {},
+            completedSteps: Object.values({
+              basicInfo: !!Object.keys(basicInfo).length,
+              courseMatching: !!Object.keys(courseMatching).length,
+              accommodation: !!Object.keys(accommodation).length,
+              expenses: !!Object.keys(expenses).length,
+            }).filter(Boolean).length,
+            totalSteps: 4,
+            processedAt: new Date().toISOString(),
+          };
+
+          return {
+            ...submission,
+            data: sanitizedData,
+          };
+        } catch (formatError) {
+          console.error(
+            "Error formatting consolidated submission:",
+            formatError,
+            submission,
+          );
+
+          // Return a minimal valid submission to prevent UI crashes
+          return {
+            id:
+              submission.id ||
+              `error-${Math.random().toString(36).substring(2, 11)}`,
+            type: "consolidated",
+            status: "SUBMITTED",
+            createdAt: submission.createdAt || new Date().toISOString(),
+            updatedAt: submission.updatedAt || new Date().toISOString(),
+            data: {
+              hostCity: "Error",
+              hostCountry: "Failed to process submission",
+              hostUniversity: "N/A",
+              studentName: "N/A",
+              completedSteps: 0,
+              totalSteps: 4,
+              submissionMeta: {
+                error: true,
+                errorMessage: formatError.message,
+              },
+            },
+          };
+        }
+      });
+
+      // Log detailed statistics about the processed submissions
+      const submissionStats = {
+        total: processedSubmissions.length,
+        byCompletionLevel: processedSubmissions.reduce((acc, sub) => {
+          const completionLevel = sub.data?.completedSteps || 0;
+          acc[completionLevel] = (acc[completionLevel] || 0) + 1;
+          return acc;
+        }, {}),
+        completeSubmissions: processedSubmissions.filter(
+          (s) => s.data?.completedSteps === 4,
+        ).length,
+      };
+
+      console.log("Consolidated submission statistics:", submissionStats);
+      if (processedSubmissions.length > 0) {
+        console.log("Sample processed submission:", processedSubmissions[0]);
+      }
+
+      // Sort submissions by completion level (most complete first), then by date
+      const sortedSubmissions = [...processedSubmissions].sort((a, b) => {
+        // First sort by number of completed steps (descending)
+        const completionDiff =
+          (b.data?.completedSteps || 0) - (a.data?.completedSteps || 0);
+        if (completionDiff !== 0) return completionDiff;
+
+        // Then sort by date (newest first)
+        return (
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+      });
+
+      return sortedSubmissions;
+    } catch (error) {
+      console.error("Error processing consolidated submissions:", error);
+      return [];
     }
   };
 
@@ -187,6 +825,308 @@ export default function AdminDestinations() {
         description: "Failed to delete destination",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleApproveSubmission = async (
+    submissionId: string,
+    destinationData: FormSubmissionData,
+  ) => {
+    if (!submissionId) {
+      console.error("Cannot approve submission with missing ID");
+      toast({
+        title: "Error",
+        description: "Invalid submission data (missing ID)",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      console.log(`Approving submission ${submissionId}`, destinationData);
+
+      // For consolidated submissions, we need to approve all individual submissions
+      if (
+        destinationData.submissionMeta &&
+        Array.isArray(destinationData.submissionMeta.ids)
+      ) {
+        console.log(
+          `Consolidated submission with ${destinationData.submissionMeta.ids.length} parts`,
+        );
+
+        // Approve all related submissions
+        const submissionIds = destinationData.submissionMeta.ids;
+        let allSuccessful = true;
+        let lastResponse = null;
+
+        for (const id of submissionIds) {
+          console.log(`Approving part submission: ${id}`);
+          try {
+            const approveResponse = await fetch(
+              `/api/admin/form-submissions/${id}`,
+              {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: "APPROVED" }),
+              },
+            );
+
+            lastResponse = approveResponse;
+
+            if (!approveResponse.ok) {
+              console.warn(
+                `Warning: Failed to approve part submission ${id}: ${approveResponse.status} ${approveResponse.statusText}`,
+              );
+              allSuccessful = false;
+            }
+          } catch (error) {
+            console.warn(`Error approving part submission ${id}:`, error);
+            allSuccessful = false;
+            // Continue with other parts even if one fails
+          }
+        }
+
+        if (!allSuccessful && lastResponse) {
+          console.warn(
+            "Some submissions failed to be approved, but continuing with destination creation",
+          );
+        }
+      } else {
+        // Original behavior for single submissions
+        const approveResponse = await fetch(
+          `/api/admin/form-submissions/${submissionId}`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "APPROVED" }),
+          },
+        );
+
+        if (!approveResponse.ok) {
+          throw new Error(
+            `Failed to approve submission: ${approveResponse.status} ${approveResponse.statusText}`,
+          );
+        }
+      }
+
+      // Format destination data for API with comprehensive data integration
+      const formattedData = {
+        name:
+          destinationData.name ??
+          `${destinationData.hostCity ?? "Unknown"}, ${destinationData.hostCountry ?? "Unknown"}`,
+        city:
+          destinationData.city ?? destinationData.hostCity ?? "Unknown City",
+        country:
+          destinationData.country ??
+          destinationData.hostCountry ??
+          "Unknown Country",
+        description:
+          destinationData.description ??
+          destinationData.experienceDescription ??
+          "Student experience destination",
+        imageUrl: destinationData.image ?? destinationData.imageUrl ?? "",
+        featured: true,
+        highlights: Array.isArray(destinationData.highlights)
+          ? destinationData.highlights
+          : [],
+        officialUniversities: [
+          destinationData.hostUniversity ||
+            destinationData.university ||
+            "Unknown University",
+        ],
+        generalInfo: {
+          costOfLiving: {
+            averageRent: Number(destinationData.monthlyRent) || 0,
+            averageFood: Number(destinationData.foodExpenses) || 0,
+            averageTransport: Number(destinationData.transportExpenses) || 0,
+            averageEntertainment:
+              Number(destinationData.entertainmentExpenses) || 0,
+            averageTotal:
+              Number(destinationData.totalMonthlyBudget) ||
+              (Number(destinationData.monthlyRent) || 0) +
+                (Number(destinationData.foodExpenses) || 0) +
+                (Number(destinationData.transportExpenses) || 0) +
+                (Number(destinationData.entertainmentExpenses) || 0),
+          },
+          studentCount: 1,
+          averageRating: Number(destinationData.overallRating) || 4,
+          // Additional enriched data from our enhanced submission format
+          submissionSource: submissionId,
+          submissionType: destinationData.submissionType || "consolidated",
+          submissionDate: new Date().toISOString(),
+          studentProfile: {
+            name: destinationData.studentName || "Anonymous",
+            email: destinationData.studentEmail || "",
+            homeUniversity: destinationData.homeUniversity || "",
+            studyField: destinationData.studyField || "",
+          },
+          ratings: {
+            overall: Number(destinationData.overallRating) || 0,
+            accommodation: Number(destinationData.accommodationRating) || 0,
+            academic: Number(destinationData.academicRating) || 0,
+            socialLife: Number(destinationData.socialLifeRating) || 0,
+          },
+          // Include any available media resources
+          media: {
+            mainImage: destinationData.image || destinationData.imageUrl || "",
+            gallery: Array.isArray(destinationData.gallery)
+              ? destinationData.gallery
+              : [],
+          },
+        },
+      };
+
+      console.log("Sending destination data to API:", formattedData);
+
+      // Create or update destination
+      const destinationResponse = await fetch("/api/admin/destinations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formattedData),
+      });
+
+      if (!destinationResponse.ok) {
+        const errorText = await destinationResponse.text();
+        console.error("Destination API error response:", errorText);
+        throw new Error(
+          `Failed to create destination: ${destinationResponse.status} ${destinationResponse.statusText}. Response: ${errorText}`,
+        );
+      }
+
+      const responseData = await destinationResponse.json();
+      console.log("Destination API response:", responseData);
+
+      // Refresh data
+      toast({
+        title: "Success",
+        description: `${formattedData.city}, ${formattedData.country} has been approved and published.`,
+      });
+
+      // Reload data to show the changes
+      await fetchPendingSubmissions();
+      await loadDestinations();
+    } catch (error) {
+      console.error("Error approving submission:", error);
+
+      // More specific error handling
+      let errorMessage = "Unknown error occurred";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+
+        // Check for specific error types
+        if (error.message.includes("Failed to create destination")) {
+          errorMessage =
+            "Failed to create destination. Please check the submission data and try again.";
+        } else if (error.message.includes("Failed to approve submission")) {
+          errorMessage =
+            "Failed to approve submission. The submission may have already been processed.";
+        } else if (error.message.includes("Authentication required")) {
+          errorMessage = "Authentication required. Please log in again.";
+        } else if (error.message.includes("Admin access required")) {
+          errorMessage =
+            "Admin access required. Please contact an administrator.";
+        }
+      }
+
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRejectSubmission = async (submissionId: string) => {
+    if (!submissionId) {
+      console.error("Cannot reject submission with missing ID");
+      toast({
+        title: "Error",
+        description: "Invalid submission data (missing ID)",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      console.log(`Rejecting submission ${submissionId}`);
+
+      // Find the submission to check if it's consolidated
+      const submissionToReject = pendingSubmissions.find(
+        (s) => s.id === submissionId,
+      );
+
+      // For consolidated submissions, we need to reject all individual submissions
+      if (
+        submissionToReject?.data?.submissionMeta &&
+        Array.isArray(submissionToReject.data.submissionMeta.ids)
+      ) {
+        console.log(
+          `Consolidated submission with ${submissionToReject.data.submissionMeta.ids.length} parts`,
+        );
+
+        // Reject all related submissions
+        const submissionIds = submissionToReject.data.submissionMeta.ids;
+        for (const id of submissionIds) {
+          console.log(`Rejecting part submission: ${id}`);
+          try {
+            const rejectResponse = await fetch(
+              `/api/admin/form-submissions/${id}`,
+              {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: "REJECTED" }),
+              },
+            );
+
+            if (!rejectResponse.ok) {
+              console.warn(
+                `Warning: Failed to reject part submission ${id}: ${rejectResponse.status} ${rejectResponse.statusText}`,
+              );
+            }
+          } catch (error) {
+            console.warn(`Error rejecting part submission ${id}:`, error);
+            // Continue with other parts even if one fails
+          }
+        }
+      } else {
+        // Original behavior for single submissions
+        const response = await fetch(
+          `/api/admin/form-submissions/${submissionId}`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "REJECTED" }),
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to reject submission: ${response.status} ${response.statusText}`,
+          );
+        }
+      }
+
+      // The response has already been checked inside the conditional blocks above
+
+      toast({
+        title: "Success",
+        description: "Submission rejected successfully",
+      });
+
+      await fetchPendingSubmissions();
+    } catch (error) {
+      console.error("Error rejecting submission:", error);
+      toast({
+        title: "Error",
+        description: `Failed to reject submission: ${error instanceof Error ? error.message : "Unknown error"}`,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -260,91 +1200,302 @@ export default function AdminDestinations() {
               </Badge>
             </div>
 
-            {/* Destinations Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {destinations.map((destination) => (
-                <Card
-                  key={destination.id}
-                  className="hover:shadow-lg transition-shadow"
-                >
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle className="text-lg">
-                          {destination.city}
-                        </CardTitle>
-                        <p className="text-sm text-gray-600 flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          {destination.country}
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleEdit(destination)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleDelete(destination.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardHeader>
+            {/* Tabs for Pending Submissions and Published Destinations */}
+            <Tabs defaultValue="pending">
+              <TabsList>
+                <TabsTrigger value="pending">Pending Submissions</TabsTrigger>
+                <TabsTrigger value="published">
+                  Published Destinations
+                </TabsTrigger>
+              </TabsList>
 
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex justify-between text-sm">
-                        <span className="flex items-center gap-1">
-                          <Users className="h-4 w-4 text-blue-500" />
-                          {destination.studentCount} students
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Euro className="h-4 w-4 text-green-500" />€
-                          {destination.avgCostPerMonth}/mo
-                        </span>
-                      </div>
+              <TabsContent value="pending">
+                {/* Pending Submissions Tab */}
+                {!dataFetched ? (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">Loading submissions...</p>
+                  </div>
+                ) : pendingSubmissions.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No pending submissions</p>
+                  </div>
+                ) : (
+                  pendingSubmissions.map((submission) => {
+                    // Calculate border color based on completion status
+                    const completionLevel =
+                      submission.data?.completedSteps || 0;
+                    const totalSteps = submission.data?.totalSteps || 4;
+                    const isComplete = completionLevel === totalSteps;
 
-                      <div className="flex justify-between text-sm">
-                        <span className="flex items-center gap-1">
-                          <Star className="h-4 w-4 text-yellow-500" />
-                          {destination.rating}
-                        </span>
-                        <Badge
-                          className={
-                            destination.costLevel === "low"
-                              ? "bg-green-500"
-                              : destination.costLevel === "medium"
-                                ? "bg-yellow-500"
-                                : "bg-red-500"
-                          }
-                        >
-                          {destination.costLevel} cost
-                        </Badge>
-                      </div>
+                    // Set border color based on completion status
+                    const borderColorClass = isComplete
+                      ? "border-l-green-500"
+                      : completionLevel >= 2
+                        ? "border-l-blue-400"
+                        : "border-l-yellow-400";
 
-                      <div className="text-xs text-gray-600">
-                        <p className="line-clamp-2">
-                          {destination.description}
-                        </p>
-                      </div>
+                    return (
+                      <Card
+                        key={submission.id}
+                        className={`mb-4 border-l-4 ${borderColorClass}`}
+                      >
+                        <CardContent className="pt-4">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <div className="flex justify-between items-center mb-2">
+                                <h3 className="text-lg font-semibold">
+                                  {submission.data?.hostCity ?? "Unknown"},{" "}
+                                  {submission.data?.hostCountry ?? "Unknown"}
+                                </h3>
+                                <div className="flex">
+                                  {isComplete ? (
+                                    <Badge className="bg-green-100 text-green-800 ml-2">
+                                      Complete Submission
+                                    </Badge>
+                                  ) : (
+                                    <Badge className="bg-yellow-100 text-yellow-800 ml-2">
+                                      Partial ({completionLevel}/{totalSteps})
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
 
-                      {destination.cityInfo && (
-                        <div className="flex items-center gap-1 text-xs text-blue-600">
-                          <Info className="h-3 w-3" />
-                          General city data available
+                              <div className="text-xs text-blue-600 mb-2">
+                                <span className="inline-flex items-center">
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  {new Date(
+                                    submission.createdAt,
+                                  ).toLocaleDateString()}{" "}
+                                  • Consolidated Form
+                                </span>
+                              </div>
+
+                              {/* Form steps progress indicators */}
+                              <div className="flex gap-1 mb-3">
+                                {[
+                                  "basic-info",
+                                  "course-matching",
+                                  "accommodation",
+                                  "living-expenses",
+                                ].map((stepType) => {
+                                  const hasStep =
+                                    submission.data?.submissionMeta?.parts?.includes(
+                                      stepType,
+                                    );
+                                  return (
+                                    <Badge
+                                      key={stepType}
+                                      className={`text-xs ${
+                                        hasStep
+                                          ? "bg-green-100 text-green-800"
+                                          : "bg-gray-100 text-gray-500"
+                                      }`}
+                                    >
+                                      {hasStep ? "✓" : "○"}{" "}
+                                      {stepType.replace("-", " ")}
+                                    </Badge>
+                                  );
+                                })}
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-4 mb-3">
+                                <div>
+                                  <p className="text-sm text-gray-600">
+                                    <MapPin className="h-4 w-4 inline mr-1" />
+                                    University:{" "}
+                                    {submission.data?.hostUniversity ??
+                                      "Not specified"}
+                                  </p>
+                                  <p className="text-sm text-gray-600">
+                                    <Users className="h-4 w-4 inline mr-1" />
+                                    Student:{" "}
+                                    {submission.data?.studentName ??
+                                      "Anonymous"}
+                                    {submission.data?.studyField
+                                      ? ` (${submission.data.studyField})`
+                                      : ""}
+                                  </p>
+                                  {submission.data?.homeUniversity && (
+                                    <p className="text-xs text-gray-500">
+                                      From: {submission.data.homeUniversity}
+                                    </p>
+                                  )}
+                                </div>
+                                <div>
+                                  <p className="text-sm text-gray-600">
+                                    <Euro className="h-4 w-4 inline mr-1" />
+                                    Budget: €
+                                    {submission.data?.totalMonthlyBudget
+                                      ? submission.data.totalMonthlyBudget.toFixed(
+                                          0,
+                                        )
+                                      : "Not specified"}
+                                  </p>
+                                  <p className="text-sm text-gray-600">
+                                    <Star className="h-4 w-4 inline mr-1" />
+                                    Rating:{" "}
+                                    {submission.data?.overallRating
+                                      ? `${submission.data.overallRating}/5`
+                                      : "Not rated"}
+                                  </p>
+                                  {submission.data?.image && (
+                                    <p className="text-xs text-blue-600">
+                                      <ImageIcon className="h-3 w-3 inline mr-1" />
+                                      Image available
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setSelectedSubmission(submission);
+                                  setIsSubmissionDialogOpen(true);
+                                }}
+                              >
+                                <Eye className="h-4 w-4 mr-1" /> View
+                              </Button>
+                              <Button
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700"
+                                onClick={() =>
+                                  handleApproveSubmission(submission.id, {
+                                    name: `${submission.data?.hostCity ?? "Unknown"}, ${submission.data?.hostCountry ?? "Unknown"}`,
+                                    city:
+                                      submission.data?.hostCity ?? "Unknown",
+                                    country:
+                                      submission.data?.hostCountry ?? "Unknown",
+                                    description:
+                                      submission.data?.experienceDescription ??
+                                      "",
+                                    ...submission.data,
+                                  })
+                                }
+                              >
+                                <Check className="h-4 w-4 mr-1" /> Approve
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-red-600 border-red-600 hover:bg-red-50"
+                                onClick={() =>
+                                  handleRejectSubmission(submission.id)
+                                }
+                              >
+                                <X className="h-4 w-4 mr-1" /> Reject
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })
+                )}
+              </TabsContent>
+
+              <TabsContent value="published">
+                {/* Published Destinations Tab */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {destinations.map((destination) => (
+                    <Card
+                      key={destination.id}
+                      className="hover:shadow-lg transition-shadow"
+                    >
+                      <CardHeader>
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <CardTitle className="text-lg">
+                              {destination.city}
+                            </CardTitle>
+                            <p className="text-sm text-gray-600 flex items-center gap-1">
+                              <MapPin className="h-4 w-4" />
+                              {destination.country}
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEdit(destination)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDelete(destination.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                      </CardHeader>
+
+                      <CardContent>
+                        <div className="space-y-3">
+                          <div className="flex justify-between text-sm">
+                            <span className="flex items-center gap-1">
+                              <Users className="h-4 w-4 text-blue-500" />
+                              {destination.studentCount} students
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Euro className="h-4 w-4 text-green-500" />€
+                              {destination.avgCostPerMonth ||
+                                Math.round(
+                                  destination.avgRent +
+                                    destination.avgLivingExpenses,
+                                )}
+                              /mo
+                            </span>
+                          </div>
+
+                          <div className="flex justify-between text-sm">
+                            <span className="flex items-center gap-1">
+                              <Star className="h-4 w-4 text-yellow-500" />
+                              {destination.rating ||
+                                destination.avgAccommodationRating ||
+                                "N/A"}
+                            </span>
+                            <Badge
+                              className={
+                                (destination.costLevel ||
+                                  getCostLevel(destination)) === "low"
+                                  ? "bg-green-500"
+                                  : (destination.costLevel ||
+                                        getCostLevel(destination)) === "medium"
+                                    ? "bg-yellow-500"
+                                    : "bg-red-500"
+                              }
+                            >
+                              {destination.costLevel ||
+                                getCostLevel(destination)}{" "}
+                              cost
+                            </Badge>
+                          </div>
+
+                          <div className="text-xs text-gray-600">
+                            <p className="line-clamp-2">
+                              {destination.description ||
+                                `${destination.city}, ${destination.country} - Based on ${destination.studentCount} student submission${destination.studentCount !== 1 ? "s" : ""}`}
+                            </p>
+                          </div>
+
+                          {destination.cityInfo && (
+                            <div className="flex items-center gap-1 text-xs text-blue-600">
+                              <Info className="h-3 w-3" />
+                              General city data available
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </TabsContent>
+            </Tabs>
 
             {/* Edit Dialog */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -439,7 +1590,11 @@ export default function AdminDestinations() {
                             step="0.1"
                             min="1"
                             max="5"
-                            value={editingDestination.rating}
+                            value={
+                              editingDestination.rating ||
+                              editingDestination.avgAccommodationRating ||
+                              0
+                            }
                             onChange={(e) =>
                               updateEditingField(
                                 "rating",
@@ -469,7 +1624,13 @@ export default function AdminDestinations() {
                           </label>
                           <Input
                             type="number"
-                            value={editingDestination.avgCostPerMonth}
+                            value={
+                              editingDestination.avgCostPerMonth ||
+                              Math.round(
+                                (editingDestination.avgRent || 0) +
+                                  (editingDestination.avgLivingExpenses || 0),
+                              )
+                            }
                             onChange={(e) =>
                               updateEditingField(
                                 "avgCostPerMonth",
@@ -485,7 +1646,10 @@ export default function AdminDestinations() {
                           Cost Level
                         </label>
                         <Select
-                          value={editingDestination.costLevel}
+                          value={
+                            editingDestination.costLevel ||
+                            getCostLevel(editingDestination)
+                          }
                           onValueChange={(value) =>
                             updateEditingField("costLevel", value)
                           }
@@ -507,9 +1671,10 @@ export default function AdminDestinations() {
                         </label>
                         <Textarea
                           value={
-                            editingDestination.popularUniversities?.join(
-                              ", ",
-                            ) || ""
+                            (
+                              editingDestination.popularUniversities ||
+                              editingDestination.universities
+                            )?.join(", ") || ""
                           }
                           onChange={(e) =>
                             updateEditingField(
@@ -804,6 +1969,392 @@ export default function AdminDestinations() {
                     Save Changes
                   </Button>
                 </div>
+              </DialogContent>
+            </Dialog>
+
+            {/* Submission Preview Dialog */}
+            <Dialog
+              open={isSubmissionDialogOpen}
+              onOpenChange={setIsSubmissionDialogOpen}
+            >
+              <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader className="pb-2 border-b">
+                  <div className="flex justify-between items-center">
+                    <DialogTitle className="text-2xl font-bold">
+                      {selectedSubmission &&
+                        `${selectedSubmission.data.hostCity}, ${selectedSubmission.data.hostCountry}`}
+                    </DialogTitle>
+                    <Badge className="ml-auto">PREVIEW</Badge>
+                  </div>
+                </DialogHeader>
+
+                {selectedSubmission && (
+                  <div className="space-y-6">
+                    <div className="flex flex-col md:flex-row md:gap-6">
+                      {/* Hero section with image */}
+                      <div className="w-full md:w-1/2 bg-gray-200 rounded-lg relative h-64">
+                        {imagePreview ? (
+                          <img
+                            src={imagePreview}
+                            alt="Destination preview"
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                        ) : (
+                          <div className="flex items-center justify-center h-full">
+                            <div className="text-center">
+                              <ImageIcon className="h-16 w-16 text-gray-400 mx-auto mb-2" />
+                              <p className="text-gray-500 text-sm">
+                                No destination image yet
+                              </p>
+                              <Input
+                                type="file"
+                                accept="image/*"
+                                className="mt-4"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = (e) => {
+                                      setImagePreview(
+                                        e.target?.result as string,
+                                      );
+                                    };
+                                    reader.readAsDataURL(file);
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Right side content - overview */}
+                      <div className="w-full md:w-1/2 mt-4 md:mt-0">
+                        <div className="flex items-center gap-2 mb-3">
+                          <MapPin className="h-5 w-5 text-blue-500" />
+                          <h3 className="text-lg font-semibold">
+                            <Input
+                              value={selectedSubmission.data.hostCity || ""}
+                              onChange={(e) => {
+                                setSelectedSubmission({
+                                  ...selectedSubmission,
+                                  data: {
+                                    ...selectedSubmission.data,
+                                    hostCity: e.target.value,
+                                  },
+                                });
+                              }}
+                              className="border-0 p-0 h-7 font-semibold text-lg focus-visible:ring-0"
+                            />
+                            ,{" "}
+                            <Input
+                              value={selectedSubmission.data.hostCountry || ""}
+                              onChange={(e) => {
+                                setSelectedSubmission({
+                                  ...selectedSubmission,
+                                  data: {
+                                    ...selectedSubmission.data,
+                                    hostCountry: e.target.value,
+                                  },
+                                });
+                              }}
+                              className="border-0 p-0 h-7 font-semibold text-lg focus-visible:ring-0"
+                            />
+                          </h3>
+                        </div>
+
+                        {/* University */}
+                        <div className="mb-4">
+                          <Label className="text-sm font-medium mb-1 block">
+                            Host University
+                          </Label>
+                          <Input
+                            value={selectedSubmission.data.hostUniversity || ""}
+                            onChange={(e) => {
+                              setSelectedSubmission({
+                                ...selectedSubmission,
+                                data: {
+                                  ...selectedSubmission.data,
+                                  hostUniversity: e.target.value,
+                                },
+                              });
+                            }}
+                          />
+                        </div>
+
+                        {/* Rating and badges */}
+                        <div className="flex items-center gap-3 mb-6">
+                          <div className="flex items-center">
+                            <Star className="h-5 w-5 text-yellow-500 mr-1" />
+                            <Input
+                              type="number"
+                              min="1"
+                              max="5"
+                              step="0.5"
+                              value={selectedSubmission.data.overallRating || 4}
+                              onChange={(e) => {
+                                setSelectedSubmission({
+                                  ...selectedSubmission,
+                                  data: {
+                                    ...selectedSubmission.data,
+                                    overallRating: parseFloat(e.target.value),
+                                  },
+                                });
+                              }}
+                              className="w-16 h-8 p-0 px-2 inline-block"
+                            />
+                            <span className="text-gray-500">/5</span>
+                          </div>
+
+                          <Badge className="bg-green-500">
+                            {selectedSubmission.data.monthlyRent &&
+                            selectedSubmission.data.foodExpenses
+                              ? selectedSubmission.data.monthlyRent +
+                                  selectedSubmission.data.foodExpenses <
+                                800
+                                ? "Low Cost"
+                                : selectedSubmission.data.monthlyRent +
+                                      selectedSubmission.data.foodExpenses <
+                                    1200
+                                  ? "Medium Cost"
+                                  : "High Cost"
+                              : "Cost Unknown"}
+                          </Badge>
+                        </div>
+
+                        {/* Cost breakdown */}
+                        <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                          <h4 className="font-medium mb-3">
+                            Monthly Cost Breakdown
+                          </h4>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <Label className="text-xs text-gray-500">
+                                Rent (€)
+                              </Label>
+                              <Input
+                                type="number"
+                                value={selectedSubmission.data.monthlyRent || 0}
+                                onChange={(e) => {
+                                  setSelectedSubmission({
+                                    ...selectedSubmission,
+                                    data: {
+                                      ...selectedSubmission.data,
+                                      monthlyRent: parseFloat(e.target.value),
+                                    },
+                                  });
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-xs text-gray-500">
+                                Food (€)
+                              </Label>
+                              <Input
+                                type="number"
+                                value={
+                                  selectedSubmission.data.foodExpenses || 0
+                                }
+                                onChange={(e) => {
+                                  setSelectedSubmission({
+                                    ...selectedSubmission,
+                                    data: {
+                                      ...selectedSubmission.data,
+                                      foodExpenses: parseFloat(e.target.value),
+                                    },
+                                  });
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-xs text-gray-500">
+                                Transport (€)
+                              </Label>
+                              <Input
+                                type="number"
+                                value={
+                                  selectedSubmission.data.transportExpenses || 0
+                                }
+                                onChange={(e) => {
+                                  setSelectedSubmission({
+                                    ...selectedSubmission,
+                                    data: {
+                                      ...selectedSubmission.data,
+                                      transportExpenses: parseFloat(
+                                        e.target.value,
+                                      ),
+                                    },
+                                  });
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-xs text-gray-500">
+                                Entertainment (€)
+                              </Label>
+                              <Input
+                                type="number"
+                                value={
+                                  selectedSubmission.data
+                                    .entertainmentExpenses || 0
+                                }
+                                onChange={(e) => {
+                                  setSelectedSubmission({
+                                    ...selectedSubmission,
+                                    data: {
+                                      ...selectedSubmission.data,
+                                      entertainmentExpenses: parseFloat(
+                                        e.target.value,
+                                      ),
+                                    },
+                                  });
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <div className="mt-3 pt-3 border-t border-gray-200">
+                            <div className="flex justify-between items-center">
+                              <span className="font-medium">Total Monthly</span>
+                              <span className="font-bold">
+                                €
+                                {(
+                                  (selectedSubmission.data.monthlyRent || 0) +
+                                  (selectedSubmission.data.foodExpenses || 0) +
+                                  (selectedSubmission.data.transportExpenses ||
+                                    0) +
+                                  (selectedSubmission.data
+                                    .entertainmentExpenses || 0)
+                                ).toFixed(2)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Experience Description */}
+                    <div className="border-t pt-4">
+                      <h3 className="font-semibold text-lg mb-2">
+                        Student Experience
+                      </h3>
+                      <Textarea
+                        value={
+                          selectedSubmission.data.experienceDescription || ""
+                        }
+                        rows={4}
+                        placeholder="Student's experience description goes here..."
+                        onChange={(e) => {
+                          setSelectedSubmission({
+                            ...selectedSubmission,
+                            data: {
+                              ...selectedSubmission.data,
+                              experienceDescription: e.target.value,
+                            },
+                          });
+                        }}
+                        className="mb-4"
+                      />
+
+                      {/* Recommendations */}
+                      <h4 className="font-medium mb-2">
+                        Student Recommendations
+                      </h4>
+                      <Textarea
+                        value={selectedSubmission.data.recommendations || ""}
+                        rows={3}
+                        placeholder="Student's recommendations for future students..."
+                        onChange={(e) => {
+                          setSelectedSubmission({
+                            ...selectedSubmission,
+                            data: {
+                              ...selectedSubmission.data,
+                              recommendations: e.target.value,
+                            },
+                          });
+                        }}
+                      />
+                    </div>
+
+                    {/* Highlights */}
+                    <div className="border-t pt-4">
+                      <h3 className="font-semibold text-lg mb-2">Highlights</h3>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {selectedSubmission.data.highlights &&
+                        Array.isArray(selectedSubmission.data.highlights) ? (
+                          selectedSubmission.data.highlights.map(
+                            (highlight, index) => (
+                              <Badge
+                                key={index}
+                                className="bg-blue-100 text-blue-800 hover:bg-blue-200"
+                              >
+                                {highlight}
+                              </Badge>
+                            ),
+                          )
+                        ) : (
+                          <p className="text-gray-500 italic text-sm">
+                            No highlights provided
+                          </p>
+                        )}
+                      </div>
+                      <Input
+                        placeholder="Add highlights as comma-separated values (e.g. Nice City, Good Food, Affordable)"
+                        value={selectedSubmission.data.highlightsInput || ""}
+                        onChange={(e) => {
+                          setSelectedSubmission({
+                            ...selectedSubmission,
+                            data: {
+                              ...selectedSubmission.data,
+                              highlightsInput: e.target.value,
+                              highlights: e.target.value
+                                .split(",")
+                                .map((h) => h.trim())
+                                .filter((h) => h),
+                            },
+                          });
+                        }}
+                      />
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="flex gap-2 pt-6 border-t">
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsSubmissionDialogOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        className="bg-green-600 hover:bg-green-700"
+                        onClick={() => {
+                          handleApproveSubmission(selectedSubmission.id, {
+                            name: `${selectedSubmission.data.hostCity}, ${selectedSubmission.data.hostCountry}`,
+                            city: selectedSubmission.data.hostCity,
+                            country: selectedSubmission.data.hostCountry,
+                            description:
+                              selectedSubmission.data.experienceDescription,
+                            highlights: selectedSubmission.data.highlights,
+                            ...selectedSubmission.data,
+                            image: imagePreview || null,
+                          });
+                          setIsSubmissionDialogOpen(false);
+                        }}
+                      >
+                        <Check className="h-4 w-4 mr-1" /> Approve & Publish
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="text-red-600 border-red-600 hover:bg-red-50"
+                        onClick={() => {
+                          handleRejectSubmission(selectedSubmission.id);
+                          setIsSubmissionDialogOpen(false);
+                        }}
+                      >
+                        <X className="h-4 w-4 mr-1" /> Reject
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </DialogContent>
             </Dialog>
           </div>

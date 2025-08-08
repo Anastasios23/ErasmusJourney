@@ -7,22 +7,37 @@ import { validateFormData } from "../../../src/lib/formSchemas";
 
 // Define the correct types based on your Prisma schema
 type FormType =
-  | "BASIC_INFO"
-  | "COURSE_MATCHING"
-  | "ACCOMMODATION"
-  | "LIVING_EXPENSES"
-  | "STORY"
-  | "EXPERIENCE";
+  | "basic-info"
+  | "course-matching"
+  | "accommodation"
+  | "living-expenses"
+  | "help-future-students";
 
 type SubmissionStatus = "DRAFT" | "SUBMITTED" | "PUBLISHED" | "ARCHIVED";
 
-const typeMapping: Record<string, FormType> = {
-  "basic-info": "BASIC_INFO",
-  "course-matching": "COURSE_MATCHING",
-  accommodation: "ACCOMMODATION",
-  "living-expenses": "LIVING_EXPENSES",
-  story: "STORY",
-  experience: "EXPERIENCE",
+// Standardized form type mapping
+const normalizeFormType = (type: string): FormType => {
+  const normalizedType = type.toLowerCase().replace(/_/g, "-");
+
+  switch (normalizedType) {
+    case "basic-info":
+    case "basic_info":
+      return "basic-info";
+    case "course-matching":
+    case "course_matching":
+      return "course-matching";
+    case "accommodation":
+      return "accommodation";
+    case "living-expenses":
+    case "living_expenses":
+      return "living-expenses";
+    case "help-future-students":
+    case "experience":
+    case "story":
+      return "help-future-students";
+    default:
+      throw new Error(`Unknown form type: ${type}`);
+  }
 };
 
 const statusMapping: Record<string, SubmissionStatus> = {
@@ -34,7 +49,7 @@ const statusMapping: Record<string, SubmissionStatus> = {
 
 // Helper function to ensure numeric fields are properly converted
 function convertNumericFields(data: any, type: string): any {
-  if (type === "LIVING_EXPENSES" || type === "living-expenses") {
+  if (type === "living-expenses") {
     return {
       ...data,
       monthlyRent: data.monthlyRent
@@ -85,7 +100,7 @@ function convertNumericFields(data: any, type: string): any {
     };
   }
 
-  if (type === "COURSE_MATCHING" || type === "course-matching") {
+  if (type === "course-matching") {
     return {
       ...data,
       hostCourseCount: data.hostCourseCount
@@ -109,7 +124,7 @@ function convertNumericFields(data: any, type: string): any {
     };
   }
 
-  if (type === "EXPERIENCE" || type === "experience" || type === "story") {
+  if (type === "help-future-students") {
     return {
       ...data,
       academicRating: data.academicRating
@@ -210,17 +225,25 @@ export default async function handler(
       }
     }
 
-    // Map string types to enum values
-    const formType = typeMapping[type];
-    const submissionStatus = statusMapping[status];
-
-    if (!formType) {
+    // Normalize form type and validate
+    let formType: FormType;
+    try {
+      formType = normalizeFormType(type);
+    } catch (error) {
       return res.status(400).json({
         error: "Invalid form type",
         message: `Type '${type}' is not supported`,
-        supportedTypes: Object.keys(typeMapping),
+        supportedTypes: [
+          "basic-info",
+          "course-matching",
+          "accommodation",
+          "living-expenses",
+          "help-future-students",
+        ],
       });
     }
+
+    const submissionStatus = statusMapping[status];
 
     if (!submissionStatus) {
       return res.status(400).json({
@@ -248,8 +271,10 @@ export default async function handler(
     // For other types, link them to the basic info submission
     let linkingData = processedData;
 
-    if (type !== "basic-info" && basicInfoId) {
-      console.log(`Linking ${type} submission to basicInfoId: ${basicInfoId}`);
+    if (formType !== "basic-info" && basicInfoId) {
+      console.log(
+        `Linking ${formType} submission to basicInfoId: ${basicInfoId}`,
+      );
 
       try {
         // Verify the basic info submission exists and belongs to the user
@@ -257,7 +282,7 @@ export default async function handler(
           where: {
             id: basicInfoId,
             userId: session.user.id,
-            type: "BASIC_INFO",
+            type: "basic-info",
           },
         });
 
@@ -281,7 +306,7 @@ export default async function handler(
       }
     }
 
-    console.log("About to create form submission:", {
+    console.log("About to create/update form submission:", {
       userId: session.user.id,
       type: formType,
       title,
@@ -289,27 +314,46 @@ export default async function handler(
       status: submissionStatus,
     });
 
-    // Create form submission in database
-    const submission = await prisma.formSubmission.create({
-      data: {
+    // Check if submission already exists for this user and form type
+    const existingSubmission = await prisma.formSubmission.findFirst({
+      where: {
         userId: session.user.id,
         type: formType,
-        title,
-        data: linkingData,
-        status: submissionStatus,
-      },
-      include: {
-        user: {
-          select: {
-            firstName: true,
-            lastName: true,
-            email: true,
-          },
-        },
       },
     });
 
-    console.log(`Successfully created ${type} submission:`, submission.id);
+    let submission;
+
+    if (existingSubmission) {
+      // Update existing submission
+      submission = await prisma.formSubmission.update({
+        where: { id: existingSubmission.id },
+        data: {
+          title,
+          data: linkingData,
+          status: submissionStatus,
+          updatedAt: new Date(),
+        },
+      });
+      console.log(`Updated existing submission: ${existingSubmission.id}`);
+    } else {
+      // Create new submission
+      submission = await prisma.formSubmission.create({
+        data: {
+          userId: session.user.id,
+          type: formType,
+          title,
+          data: linkingData,
+          status: submissionStatus,
+        },
+      });
+      console.log(`Created new submission: ${submission.id}`);
+    }
+
+    console.log(
+      `Successfully created/updated ${formType} submission:`,
+      submission.id,
+    );
 
     res.status(201).json({
       message: "Form submitted successfully",
@@ -320,7 +364,6 @@ export default async function handler(
         title: submission.title,
         status: submission.status,
         createdAt: submission.createdAt,
-        user: submission.user,
         isLinked: !!basicInfoId,
       },
     });
