@@ -6,8 +6,11 @@ import { Toaster as Sonner } from "../src/components/ui/sonner";
 import { TooltipProvider } from "../src/components/ui/tooltip";
 import { NotificationProvider } from "../src/context/NotificationContext";
 import { FormProgressProvider } from "../src/context/FormProgressContext";
-import { ToastProvider } from "../src/components/ToastProvider";
-import ErrorBoundary from "../src/components/ErrorBoundary";
+import { ToastProvider as LegacyToastProvider } from "../src/components/ToastProvider";
+import { ToastProvider } from "../src/components/ui/toast-provider";
+import { LoadingProvider } from "../src/components/ui/loading-provider";
+import { ErrorBoundary } from "../src/components/ui/error-boundary";
+import LegacyErrorBoundary from "../src/components/ErrorBoundary";
 import HMRErrorHandler from "../src/components/HMRErrorHandler";
 import EnhancedOfflineIndicator from "../src/components/EnhancedOfflineIndicator";
 import "../src/index.css";
@@ -48,19 +51,23 @@ export default function App({
         refetchWhenOffline={false} // Don't refetch when offline
       >
         <QueryClientProvider client={queryClient}>
-          <ToastProvider>
-            <NotificationProvider>
-              <TooltipProvider>
-                <FormProgressProvider>
-                  {/* <HMRErrorHandler /> */}
-                  <EnhancedOfflineIndicator />
-                  <Toaster />
-                  <Sonner />
-                  <Component {...pageProps} />
-                </FormProgressProvider>
-              </TooltipProvider>
-            </NotificationProvider>
-          </ToastProvider>
+          <LoadingProvider>
+            <ToastProvider>
+              <LegacyToastProvider>
+                <NotificationProvider>
+                  <TooltipProvider>
+                    <FormProgressProvider>
+                      {/* <HMRErrorHandler /> */}
+                      <EnhancedOfflineIndicator />
+                      <Toaster />
+                      <Sonner />
+                      <Component {...pageProps} />
+                    </FormProgressProvider>
+                  </TooltipProvider>
+                </NotificationProvider>
+              </LegacyToastProvider>
+            </ToastProvider>
+          </LoadingProvider>
         </QueryClientProvider>
       </SessionProvider>
     </ErrorBoundary>

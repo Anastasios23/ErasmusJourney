@@ -374,3 +374,158 @@ model UniversityExchange {
 
   @@map("university_exchanges")
 }
+
+// New models for auto-generated destination content
+
+model GeneratedDestination {
+  id                    String   @id @default(cuid())
+  slug                  String   @unique // e.g., "berlin-germany"
+  city                  String
+  country               String
+  
+  // Aggregated data from student submissions
+  totalSubmissions      Int      @default(0)
+  averageRating         Float?
+  averageMonthlyCost    Float?
+  averageAccommodationCost Float?
+  
+  // Calculated insights from submissions
+  topNeighborhoods      Json?    // Array of most mentioned neighborhoods
+  commonPros            Json?    // Array of frequently mentioned positives
+  commonCons            Json?    // Array of frequently mentioned issues
+  budgetBreakdown       Json?    // {groceries: avg, transport: avg, social: avg, etc.}
+  
+  // Admin-editable content
+  adminTitle            String?  // Custom title override
+  adminDescription      String?  // Admin-written description
+  adminImageUrl         String?  // Hero image
+  adminHighlights       Json?    // Admin-curated highlights
+  adminGeneralInfo      Json?    // Visa, climate, transport info
+  
+  // Status and metadata
+  status                String   @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
+  featured              Boolean  @default(false)
+  lastCalculated        DateTime @default(now())
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  // Relations
+  accommodations        GeneratedAccommodation[]
+  courseExchanges       GeneratedCourseExchange[]
+  
+  @@unique([city, country])
+  @@map("generated_destinations")
+}
+
+model GeneratedAccommodation {
+  id                   String   @id @default(cuid())
+  destinationId        String
+  sourceExperienceId   String   // Reference to original ErasmusExperience
+  
+  // Student experience data
+  studentName          String?  // First name or anonymous
+  accommodationType    String   // Dorm, apartment, shared, etc.
+  neighborhood         String?
+  monthlyRent          Float?
+  currency             String   @default("EUR")
+  
+  // Experience details
+  title                String   // e.g., "Student Dorm in Kreuzberg"
+  description          String   // Student's experience
+  pros                 Json?    // Array of positive aspects
+  cons                 Json?    // Array of negative aspects
+  tips                 Json?    // Array of tips for future students
+  bookingAdvice        String?  // How they found/booked it
+  
+  // Admin controls
+  featured             Boolean  @default(false)
+  visible              Boolean  @default(true)
+  adminNotes           String?  // Internal admin notes
+  
+  // Metadata
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  
+  // Relations
+  destination          GeneratedDestination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  
+  @@map("generated_accommodations")
+}
+
+model GeneratedCourseExchange {
+  id                   String   @id @default(cuid())
+  destinationId        String
+  sourceExperienceId   String   // Reference to original ErasmusExperience
+  
+  // Student and academic info
+  studentName          String?  // First name or anonymous
+  hostUniversity       String
+  fieldOfStudy         String?
+  studyLevel           String?  // Bachelor, Master, etc.
+  semester             String?  // Fall 2024, Spring 2025, etc.
+  
+  // Academic experience
+  title                String   // e.g., "Computer Science at TU Berlin"
+  description          String   // Student's academic experience
+  courseQuality        Int?     // Rating 1-5
+  professorQuality     Int?     // Rating 1-5
+  facilityQuality      Int?     // Rating 1-5
+  
+  // Course details
+  coursesEnrolled      Json?    // Array of course objects
+  creditsEarned        Int?     // ECTS credits
+  language             String?  // Language of instruction
+  
+  // Experience details
+  academicChallenges   String?  // Challenges faced
+  academicHighlights   String?  // Best parts of academic experience
+  tips                 Json?    // Array of academic tips
+  
+  // Admin controls
+  featured             Boolean  @default(false)
+  visible              Boolean  @default(true)
+  adminNotes           String?  // Internal admin notes
+  
+  // Metadata
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  
+  // Relations
+  destination          GeneratedDestination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  
+  @@map("generated_course_exchanges")
+}
+
+model PartnershipTracking {
+  id                   String   @id @default(cuid())
+  homeUniversityName   String   // e.g., "University of Cyprus"
+  partnerUniversityName String  // e.g., "Technical University of Berlin"
+  partnerCity          String
+  partnerCountry       String
+  
+  // Agreement details
+  agreementType        String?  // ERASMUS, BILATERAL, etc.
+  fieldOfStudy         String?  // If agreement is field-specific
+  isActive             Boolean  @default(true)
+  
+  // Performance metrics (auto-calculated)
+  totalSubmissions     Int      @default(0)
+  averageRating        Float?   // Average student satisfaction
+  averageAcademicRating Float?  // Average academic experience rating
+  lastSubmissionDate   DateTime?
+  
+  // Trend data
+  submissionsByYear    Json?    // {2024: 5, 2025: 8, etc.}
+  ratingTrend          Json?    // Monthly/yearly rating trends
+  
+  // Admin tracking
+  adminNotes           String?  // Notes about partnership performance
+  needsAttention       Boolean  @default(false) // Flag for partnerships needing review
+  
+  // Metadata
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  
+  @@unique([homeUniversityName, partnerUniversityName, partnerCity])
+  @@map("partnership_tracking")
+}

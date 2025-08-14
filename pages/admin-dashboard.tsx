@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Head from "next/head";
+import Link from "next/link";
 import Header from "../components/Header";
 import AdminDestinationsManager from "../components/AdminDestinationsManager";
 import {
@@ -15,6 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../src/components/ui/card";
+import { Button } from "../src/components/ui/button";
 import {
   Building,
   Users,
@@ -23,6 +25,9 @@ import {
   Settings,
   Database,
   FileText,
+  BarChart3,
+  Handshake,
+  ExternalLink,
 } from "lucide-react";
 
 export default function AdminPage() {
@@ -51,8 +56,52 @@ export default function AdminPage() {
             </p>
           </div>
 
+          {/* Partnership Analytics Quick Access */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <Card className="border-blue-200 bg-blue-50">
+              <CardHeader>
+                <CardTitle className="flex items-center text-blue-800">
+                  <BarChart3 className="h-5 w-5 mr-2" />
+                  Partnership Analytics
+                </CardTitle>
+                <CardDescription>
+                  View detailed analytics and performance metrics for university
+                  partnerships
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link href="/partnership-analytics">
+                  <Button className="w-full">
+                    View Analytics Dashboard
+                    <ExternalLink className="h-4 w-4 ml-2" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card className="border-green-200 bg-green-50">
+              <CardHeader>
+                <CardTitle className="flex items-center text-green-800">
+                  <Handshake className="h-5 w-5 mr-2" />
+                  Partnership Management
+                </CardTitle>
+                <CardDescription>
+                  Manage university partnerships, agreements, and collaborations
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link href="/partnership-management">
+                  <Button className="w-full" variant="outline">
+                    Manage Partnerships
+                    <ExternalLink className="h-4 w-4 ml-2" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center space-x-2">
@@ -60,6 +109,18 @@ export default function AdminPage() {
                   <div>
                     <p className="text-sm text-gray-600">Active Destinations</p>
                     <p className="text-2xl font-bold">12</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-2">
+                  <Handshake className="h-5 w-5 text-purple-600" />
+                  <div>
+                    <p className="text-sm text-gray-600">Active Partnerships</p>
+                    <p className="text-2xl font-bold">8</p>
                   </div>
                 </div>
               </CardContent>
@@ -92,7 +153,7 @@ export default function AdminPage() {
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center space-x-2">
-                  <TrendingUp className="h-5 w-5 text-purple-600" />
+                  <TrendingUp className="h-5 w-5 text-orange-600" />
                   <div>
                     <p className="text-sm text-gray-600">This Month</p>
                     <p className="text-2xl font-bold">+15%</p>

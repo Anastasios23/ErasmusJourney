@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../auth/[...nextauth]";
-import DestinationDataService from "../../../../src/services/destinationDataService";
+import { prisma } from "../../../../../lib/prisma";
 
 export default async function handler(
   req: NextApiRequest,
@@ -9,120 +7,77 @@ export default async function handler(
 ) {
   const { id } = req.query;
 
-  if (!id || typeof id !== "string") {
-    return res.status(400).json({
-      success: false,
-      message: "Destination ID is required",
-    });
-  }
+  if (req.method === "GET") {
+    try {
+      const destination = await prisma.generatedDestination.findUnique({
+        where: { id: id as string },
+        include: {
+          accommodations: {
+            orderBy: { createdAt: "desc" },
+          },
+          courseExchanges: {
+            orderBy: { createdAt: "desc" },
+          },
+        },
+      });
 
-  try {
-    const session = await getServerSession(req, res, authOptions);
-    
-    switch (req.method) {
-      case "GET":
-        return handleGetDestination(req, res, id);
-      case "PUT":
-        if (!session || !session.user?.email) {
-          return res.status(401).json({ 
-            success: false, 
-            message: "Authentication required" 
-          });
-        }
-        return handleUpdateDestination(req, res, id);
-      case "DELETE":
-        if (!session || !session.user?.email) {
-          return res.status(401).json({ 
-            success: false, 
-            message: "Authentication required" 
-          });
-        }
-        return handleDeleteDestination(req, res, id);
-      default:
-        return res.status(405).json({ 
-          success: false, 
-          message: "Method not allowed" 
-        });
+      if (!destination) {
+        return res.status(404).json({ error: "Destination not found" });
+      }
+
+      res.status(200).json(destination);
+    } catch (error) {
+      console.error("Error fetching destination:", error);
+      res.status(500).json({ error: "Failed to fetch destination" });
     }
-  } catch (error) {
-    console.error("Destination API error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
+  } else if (req.method === "PATCH") {
+    try {
+      const {
+        status,
+        featured,
+        adminTitle,
+        adminDescription,
+        adminImageUrl,
+        adminHighlights,
+        adminGeneralInfo,
+      } = req.body;
+
+      const destination = await prisma.generatedDestination.update({
+        where: { id: id as string },
+        data: {
+          ...(status && { status }),
+          ...(typeof featured === "boolean" && { featured }),
+          ...(adminTitle && { adminTitle }),
+          ...(adminDescription && { adminDescription }),
+          ...(adminImageUrl && { adminImageUrl }),
+          ...(adminHighlights && { adminHighlights }),
+          ...(adminGeneralInfo && { adminGeneralInfo }),
+          updatedAt: new Date(),
+        },
+        include: {
+          accommodations: true,
+          courseExchanges: true,
+        },
+      });
+
+      res.status(200).json(destination);
+    } catch (error) {
+      console.error("Error updating destination:", error);
+      res.status(500).json({ error: "Failed to update destination" });
+    }
+  } else if (req.method === "DELETE") {
+    try {
+      await prisma.generatedDestination.delete({
+        where: { id: id as string },
+      });
+
+      res.status(200).json({ message: "Destination deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting destination:", error);
+      res.status(500).json({ error: "Failed to delete destination" });
+    }
+  } else {
+    res.setHeader("Allow", ["GET", "PATCH", "DELETE"]);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
-}
-
-async function handleGetDestination(
-  req: NextApiRequest,
-  res: NextApiResponse,
-  id: string,
-) {
-  const { withStudentData = "true" } = req.query;
-
-  const destination = await DestinationDataService.getCompleteDestination(id);
-
-  if (!destination) {
-    return res.status(404).json({
-      success: false,
-      message: "Destination not found",
-    });
-  }
-
-  // Return admin data only or complete data with student insights
-  const responseData = withStudentData === "true" 
-    ? destination 
-    : {
-        id: destination.id,
-        name: destination.name,
-        city: destination.city,
-        country: destination.country,
-        description: destination.description,
-        imageUrl: destination.imageUrl,
-        climate: destination.climate,
-        highlights: destination.highlights,
-        officialUniversities: destination.officialUniversities,
-        generalInfo: destination.generalInfo,
-        featured: destination.featured,
-        active: destination.active,
-      };
-
-  return res.status(200).json({
-    success: true,
-    data: responseData,
-  });
-}
-
-async function handleUpdateDestination(
-  req: NextApiRequest,
-  res: NextApiResponse,
-  id: string,
-) {
-  const updateData = req.body;
-
-  const destination = await DestinationDataService.updateDestination(id, updateData);
-
-  return res.status(200).json({
-    success: true,
-    data: destination,
-    message: "Destination updated successfully",
-  });
-}
-
-async function handleDeleteDestination(
-  req: NextApiRequest,
-  res: NextApiResponse,
-  id: string,
-) {
-  // For now, we'll just deactivate instead of deleting
-  const destination = await DestinationDataService.updateDestination(id, { 
-    active: false 
-  });
-
-  return res.status(200).json({
-    success: true,
-    data: destination,
-    message: "Destination deactivated successfully",
-  });
 }
