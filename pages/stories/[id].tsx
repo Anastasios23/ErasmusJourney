@@ -194,6 +194,7 @@ export const getServerSideProps: GetServerSideProps<{
         ).length / 200,
       ),
       featured: false,
+      photos: [], // Add empty photos array to satisfy type
     };
 
     return { props: { story } };

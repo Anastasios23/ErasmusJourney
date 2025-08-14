@@ -51,28 +51,24 @@ import {
   getPartnerCountries,
 } from "../src/data/universityAgreements";
 import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp";
-import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
+import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
 import { basicInformationRequiredSchema } from "../src/lib/schemas";
 import { ZodError } from "zod";
 import { handleApiError } from "../src/utils/apiErrorHandler";
 import { Alert, AlertDescription } from "../src/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { StepIndicator } from "../src/components/StepIndicator";
-import { useFormProgress } from "../src/context/FormProgressContext";
 
 export default function BasicInformation() {
-  const { markStepCompleted } = useFormProgress();
   // 1. ALL HOOKS FIRST - NEVER CONDITIONAL
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
   const {
-    submitForm,
-    getDraftData,
-    saveDraft,
-    setBasicInfoId,
-    loading: submissionsLoading,
-    error: submissionsError,
-  } = useFormSubmissions();
+    data: experienceData,
+    loading: experienceLoading,
+    error: experienceError,
+    saveProgress,
+  } = useErasmusExperience();
 
   const draftLoaded = useRef(false);
   const autoSaveTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -164,44 +160,27 @@ export default function BasicInformation() {
   useEffect(() => {
     if (
       sessionStatus !== "loading" &&
-      !submissionsLoading &&
-      !draftLoaded.current
+      !experienceLoading &&
+      !draftLoaded.current &&
+      experienceData
     ) {
-      // Load from navigation data first (user came back from next page)
-      const savedFormData = localStorage.getItem("erasmus_form_basic-info");
-      if (savedFormData) {
-        try {
-          const parsedData = JSON.parse(savedFormData);
-          console.log("Loading saved basic-info data:", parsedData);
+      // Load from experience data (single source of truth)
+      console.log("Loading experience data:", experienceData);
 
-          isLoadingDraft.current = true;
-          setFormData((prevData) => ({ ...prevData, ...parsedData }));
-          setDraftApplied(true);
+      isLoadingDraft.current = true;
+      setFormData((prevData) => ({
+        ...prevData,
+        ...experienceData.basicInfo,
+      }));
+      setDraftApplied(true);
 
-          setTimeout(() => {
-            isLoadingDraft.current = false;
-          }, 100);
-        } catch (error) {
-          console.error("Error loading saved basic-info data:", error);
-        }
-      } else {
-        // Fallback to draft data
-        const draft = getDraftData("basic-info");
-        if (draft) {
-          console.log("DRAFT DATA FOUND. APPLYING TO FORM:", draft);
+      setTimeout(() => {
+        isLoadingDraft.current = false;
+      }, 100);
 
-          isLoadingDraft.current = true;
-          setFormData((prevData) => ({ ...prevData, ...draft }));
-          setDraftApplied(true);
-
-          setTimeout(() => {
-            isLoadingDraft.current = false;
-          }, 100);
-        }
-      }
       draftLoaded.current = true;
     }
-  }, [sessionStatus, submissionsLoading, getDraftData]);
+  }, [sessionStatus, experienceLoading, experienceData]);
 
   // Debug session state
   useEffect(() => {
@@ -220,41 +199,6 @@ export default function BasicInformation() {
     console.log("- levelOfStudy:", formData.levelOfStudy);
   }, [formData]);
 
-  // Silent save function that doesn't refresh submissions (for autosave)
-  const silentSaveDraft = useCallback(
-    async (formData: any) => {
-      if (sessionStatus === "authenticated" && session) {
-        // Save to server without refreshing submissions
-        const response = await fetch("/api/forms/saveDraft", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            type: "basic-info", // Changed from "basic-information"
-            title: "Basic Information Draft",
-            data: formData,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Failed to save draft: ${response.status}`);
-        }
-      } else {
-        // Save to localStorage for unauthenticated users
-        const draftKey = `erasmus_draft_basic-info`;
-        const draftData = {
-          type: "basic-info",
-          title: "Basic Information Draft",
-          data: formData,
-          timestamp: new Date().toISOString(),
-        };
-        localStorage.setItem(draftKey, JSON.stringify(draftData));
-      }
-    },
-    [sessionStatus, session],
-  );
-
   // Auto-save function with debouncing
   const autoSaveForm = useCallback(
     async (formData: any, silent: boolean = true) => {
@@ -270,13 +214,10 @@ export default function BasicInformation() {
       try {
         setIsAutoSaving(true);
 
-        if (silent) {
-          // Use silent save for autosave to avoid page refresh
-          await silentSaveDraft(formData);
-        } else {
-          // Use regular save for manual save (shows in submissions list)
-          await saveDraft("basic-info", "Basic Information Draft", formData);
-        }
+        // Use new experience API for saving progress
+        await saveProgress({
+          basicInfo: formData,
+        });
 
         setLastSaved(new Date());
 
@@ -299,7 +240,7 @@ export default function BasicInformation() {
         setIsAutoSaving(false);
       }
     },
-    [sessionStatus, session, saveDraft, silentSaveDraft],
+    [saveProgress],
   );
 
   // Auto-save when form data changes (debounced) - less aggressive
@@ -521,30 +462,13 @@ export default function BasicInformation() {
       // Validate form data
       basicInformationRequiredSchema.parse(formData);
 
-      // Always save data to localStorage for navigation back
-      localStorage.setItem("erasmus_form_basic-info", JSON.stringify(formData));
+      // Save progress to the experience with the current form data
+      await saveProgress({
+        basicInfo: formData,
+      });
 
-      // Submit the form
-      const response = await submitForm(
-        "basic-info",
-        "Basic Information Form",
-        formData,
-        "submitted",
-      );
-
-      if (response?.submissionId) {
-        // Update states synchronously
-        setBasicInfoId(response.submissionId);
-        markStepCompleted("basic-info");
-
-        // Remove draft but keep navigation data
-        localStorage.removeItem("erasmus_draft_basic-info");
-
-        // Navigate immediately
-        router.push("/course-matching");
-      } else {
-        throw new Error("No submission ID received");
-      }
+      // Navigate to next step
+      router.push("/course-matching");
     } catch (error) {
       setIsSubmitting(false);
       if (error instanceof ZodError) {
@@ -595,7 +519,7 @@ export default function BasicInformation() {
   // Determine what to render based on session and loading status
   let content;
 
-  if (sessionStatus === "loading" || submissionsLoading) {
+  if (sessionStatus === "loading" || experienceLoading) {
     content = (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -1042,9 +966,9 @@ export default function BasicInformation() {
               type="button"
               variant="outline"
               onClick={handleSaveDraft}
-              disabled={submissionsLoading || isSubmitting || isAutoSaving}
+              disabled={experienceLoading || isSubmitting || isAutoSaving}
             >
-              {submissionsLoading
+              {experienceLoading
                 ? "Loading..."
                 : isAutoSaving
                   ? "Saving..."
@@ -1052,12 +976,12 @@ export default function BasicInformation() {
             </Button>
             <Button
               type="submit"
-              disabled={submissionsLoading || isSubmitting || isAutoSaving}
+              disabled={experienceLoading || isSubmitting || isAutoSaving}
             >
-              {submissionsLoading
-                ? "Loading draft..."
+              {experienceLoading
+                ? "Loading..."
                 : isSubmitting
-                  ? "Saving & Submitting..."
+                  ? "Saving & Continuing..."
                   : "Continue to Course Matching"}
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
@@ -1104,11 +1028,11 @@ export default function BasicInformation() {
               </p>
             </div>
 
-            {/* Error/Success Alerts - Render outside of content conditional to always show */}
-            {submissionsError && (
+            {/* Error/Success Alerts */}
+            {experienceError && (
               <Alert variant="destructive" className="mb-4">
                 <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{submissionsError}</AlertDescription>
+                <AlertDescription>{experienceError}</AlertDescription>
               </Alert>
             )}
             {submitError && (

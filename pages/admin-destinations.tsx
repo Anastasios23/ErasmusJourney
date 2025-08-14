@@ -266,7 +266,7 @@ export default function AdminDestinations() {
     const fetchInitialData = async () => {
       try {
         setIsLoading(true);
-        await Promise.all([loadDestinations(), fetchAllSubmissionData()]);
+        await Promise.all([loadDestinations(), fetchSubmittedExperiences()]);
       } catch (error) {
         console.error("Error loading initial data:", error);
       } finally {
@@ -288,12 +288,110 @@ export default function AdminDestinations() {
       console.log("Fetching comprehensive submission data...");
 
       // Get all submissions regardless of type and aggregate them
-      await fetchAndAggregateSubmissions();
+      await fetchSubmittedExperiences();
 
       return true;
     } catch (error) {
       console.error("Error fetching comprehensive submission data:", error);
       return false;
+    }
+  };
+
+  // Helper function to process consolidated submissions from the new system
+  const processConsolidatedSubmissions = (experiences: any[]) => {
+    return experiences.map((experience) => ({
+      id: experience.id,
+      type: "experience" as const,
+      status: experience.status,
+      createdAt: experience.createdAt,
+      updatedAt: experience.updatedAt,
+      email: experience.email,
+      submittedAt: experience.submittedAt || experience.createdAt,
+      data: {
+        ...experience,
+        // Transform data for compatibility with existing admin interface
+        basicInformation: {
+          firstName: experience.firstName,
+          lastName: experience.lastName,
+          studentId: experience.studentId,
+          email: experience.email,
+          phone: experience.phone,
+          dateOfBirth: experience.dateOfBirth,
+          nationality: experience.nationality,
+          homeUniversity: experience.homeUniversity,
+          studyProgram: experience.studyProgram,
+          yearOfStudy: experience.yearOfStudy,
+          academicYear: experience.academicYear,
+        },
+        exchangeDetails: {
+          hostUniversity: experience.hostUniversity,
+          hostCity: experience.hostCity,
+          hostCountry: experience.hostCountry,
+          exchangePeriod: experience.exchangePeriod,
+          facultyDepartment: experience.facultyDepartment,
+        },
+        courses: experience.courses || [],
+        accommodation: experience.accommodation || {},
+        livingExpenses: experience.livingExpenses || {},
+        overallReflection: experience.overallReflection || {},
+        // Add fields that the admin interface expects
+        hostCity: experience.hostCity,
+        hostCountry: experience.hostCountry,
+        hostUniversity: experience.hostUniversity,
+        studentName:
+          `${experience.firstName || ""} ${experience.lastName || ""}`.trim(),
+        studentEmail: experience.email,
+        experienceDescription:
+          experience.overallReflection?.wouldRecommend ||
+          experience.overallReflection?.additionalComments ||
+          "",
+        completedSteps: 4, // Unified experiences are always complete
+        totalSteps: 4,
+      },
+    }));
+  };
+
+  // Function to fetch submitted experiences using the new unified system
+  const fetchSubmittedExperiences = async () => {
+    try {
+      setIsLoading(true);
+      console.log("Fetching submitted experiences...");
+
+      const response = await fetch("/api/admin/erasmus-experiences");
+
+      if (!response.ok) {
+        console.error(`API Error: ${response.status} ${response.statusText}`);
+        throw new Error("Failed to fetch experiences");
+      }
+
+      const experiences = await response.json();
+      console.log("Experiences API response:", experiences);
+
+      if (!Array.isArray(experiences)) {
+        console.error("API returned non-array response:", experiences);
+        throw new Error("Invalid API response format");
+      }
+
+      // Process these experiences (similar format to before)
+      const processedSubmissions = processConsolidatedSubmissions(experiences);
+
+      // Update state with the processed submissions
+      setPendingSubmissions(processedSubmissions);
+      setDataFetched(true);
+
+      return processedSubmissions;
+    } catch (error) {
+      console.error("Error fetching experiences:", error);
+      toast({
+        title: "Error",
+        description: `Failed to fetch experiences: ${error instanceof Error ? error.message : "Unknown error"}`,
+        variant: "destructive",
+      });
+      setPendingSubmissions([]);
+      setDataFetched(true);
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -508,260 +606,7 @@ export default function AdminDestinations() {
   // Legacy function maintained for backward compatibility
   const fetchPendingSubmissions = async () => {
     // Now just calls the more comprehensive aggregation function
-    return fetchAndAggregateSubmissions();
-  };
-
-  // Function to process consolidated submissions and extract/normalize all data
-  const processConsolidatedSubmissions = (submissions) => {
-    try {
-      // Format consolidated submission data for display with comprehensive validation
-      const processedSubmissions = submissions.map((submission) => {
-        try {
-          // Ensure we have valid data
-          const data = submission.data || {};
-
-          // Extract data from each step, with preference order
-          // 1. basic-info: Student details, home university
-          // 2. course-matching: Host university, academic details
-          // 3. accommodation: Living situation
-          // 4. living-expenses: Budget information
-
-          // Track which steps we have
-          const basicInfo = data["basic-infoData"] || {};
-          const courseMatching = data["course-matchingData"] || {};
-          const accommodation = data["accommodationData"] || {};
-          const expenses = data["living-expensesData"] || {};
-
-          console.log(`Processing submission with steps:`, {
-            basicInfo: !!Object.keys(basicInfo).length,
-            courseMatching: !!Object.keys(courseMatching).length,
-            accommodation: !!Object.keys(accommodation).length,
-            expenses: !!Object.keys(expenses).length,
-          });
-
-          // Extract student information primarily from basic-info
-          const studentName = extractField(
-            data,
-            ["firstName", "lastName", "studentName", "name", "fullName"],
-            "Anonymous",
-          );
-
-          const formattedStudentName =
-            typeof studentName === "string"
-              ? studentName
-              : `${studentName.firstName || ""} ${studentName.lastName || ""}`.trim() ||
-                "Anonymous";
-
-          // Normalize and consolidate data from all steps
-          const sanitizedData = {
-            // Location data from course matching primarily
-            hostCity: extractField(
-              data,
-              ["hostCity", "city", "cityName", "location"],
-              "Unknown",
-            ),
-            hostCountry: extractField(
-              data,
-              ["hostCountry", "country", "countryName"],
-              "Unknown",
-            ),
-            hostUniversity: extractField(
-              data,
-              [
-                "hostUniversity",
-                "university",
-                "institutionName",
-                "hostInstitution",
-              ],
-              "Not specified",
-            ),
-
-            // Student information primarily from basic info
-            studentName: formattedStudentName,
-            studentEmail: extractField(data, ["email", "studentEmail"], ""),
-            studentId: extractField(data, ["studentId", "id"], ""),
-            homeUniversity: extractField(
-              data,
-              ["homeUniversity", "originUniversity", "university"],
-              "",
-            ),
-            studyField: extractField(
-              data,
-              ["studyField", "field", "major", "levelOfStudy", "fieldOfStudy"],
-              "",
-            ),
-
-            // Academic information from course-matching
-            hostCourses: data.hostCourses || courseMatching.hostCourses || [],
-            homeCourses: data.homeCourses || courseMatching.homeCourses || [],
-            academicExperience:
-              data.academicExperience ||
-              courseMatching.academicExperience ||
-              "",
-
-            // Accommodation information from accommodation step
-            accommodationAddress:
-              data.accommodationAddress ||
-              accommodation.accommodationAddress ||
-              "",
-            accommodationType:
-              data.accommodationType || accommodation.accommodationType || "",
-            accommodationRent: normalizeNumericValue(
-              data.accommodationRent || accommodation.accommodationRent || 0,
-            ),
-            roommates: data.roommates || accommodation.roommates || 0,
-
-            // Financial information from expenses step
-            monthlyRent: normalizeNumericValue(
-              data.monthlyRent ||
-                expenses.monthlyRent ||
-                accommodation.accommodationRent ||
-                0,
-            ),
-            foodExpenses: normalizeNumericValue(
-              data.foodExpenses || expenses.foodExpenses || 0,
-            ),
-            transportExpenses: normalizeNumericValue(
-              data.transportExpenses || expenses.transportExpenses || 0,
-            ),
-            entertainmentExpenses: normalizeNumericValue(
-              data.entertainmentExpenses || expenses.entertainmentExpenses || 0,
-            ),
-            totalMonthlyBudget: normalizeNumericValue(
-              data.totalMonthlyBudget ||
-                expenses.totalMonthlyBudget ||
-                normalizeNumericValue(data.monthlyRent || 0) +
-                  normalizeNumericValue(data.foodExpenses || 0) +
-                  normalizeNumericValue(data.transportExpenses || 0) +
-                  normalizeNumericValue(data.entertainmentExpenses || 0),
-            ),
-
-            // Experience and feedback
-            experienceDescription: extractField(
-              data,
-              [
-                "experienceDescription",
-                "description",
-                "experience",
-                "summary",
-                "comments",
-                "feedback",
-              ],
-              "",
-            ),
-            highlights: Array.isArray(data.highlights)
-              ? data.highlights
-              : typeof data.highlights === "string"
-                ? data.highlights.split(",").map((h) => h.trim())
-                : [],
-
-            // Ratings
-            overallRating: normalizeNumericValue(
-              data.overallRating || data.rating || data.satisfaction || 0,
-            ),
-            accommodationRating: normalizeNumericValue(
-              data.accommodationRating ||
-                accommodation.accommodationRating ||
-                0,
-            ),
-            academicRating: normalizeNumericValue(
-              data.academicRating || data.universityRating || 0,
-            ),
-            socialLifeRating: normalizeNumericValue(
-              data.socialLifeRating || data.socialRating || 0,
-            ),
-
-            // Media
-            image: data.image || data.imageUrl || data.photo || "",
-            gallery: Array.isArray(data.gallery) ? data.gallery : [],
-
-            // Include all original data for reference
-            ...data,
-
-            // Add metadata for UI display
-            submissionMeta: data.submissionMeta || {},
-            completedSteps: Object.values({
-              basicInfo: !!Object.keys(basicInfo).length,
-              courseMatching: !!Object.keys(courseMatching).length,
-              accommodation: !!Object.keys(accommodation).length,
-              expenses: !!Object.keys(expenses).length,
-            }).filter(Boolean).length,
-            totalSteps: 4,
-            processedAt: new Date().toISOString(),
-          };
-
-          return {
-            ...submission,
-            data: sanitizedData,
-          };
-        } catch (formatError) {
-          console.error(
-            "Error formatting consolidated submission:",
-            formatError,
-            submission,
-          );
-
-          // Return a minimal valid submission to prevent UI crashes
-          return {
-            id:
-              submission.id ||
-              `error-${Math.random().toString(36).substring(2, 11)}`,
-            type: "consolidated",
-            status: "SUBMITTED",
-            createdAt: submission.createdAt || new Date().toISOString(),
-            updatedAt: submission.updatedAt || new Date().toISOString(),
-            data: {
-              hostCity: "Error",
-              hostCountry: "Failed to process submission",
-              hostUniversity: "N/A",
-              studentName: "N/A",
-              completedSteps: 0,
-              totalSteps: 4,
-              submissionMeta: {
-                error: true,
-                errorMessage: formatError.message,
-              },
-            },
-          };
-        }
-      });
-
-      // Log detailed statistics about the processed submissions
-      const submissionStats = {
-        total: processedSubmissions.length,
-        byCompletionLevel: processedSubmissions.reduce((acc, sub) => {
-          const completionLevel = sub.data?.completedSteps || 0;
-          acc[completionLevel] = (acc[completionLevel] || 0) + 1;
-          return acc;
-        }, {}),
-        completeSubmissions: processedSubmissions.filter(
-          (s) => s.data?.completedSteps === 4,
-        ).length,
-      };
-
-      console.log("Consolidated submission statistics:", submissionStats);
-      if (processedSubmissions.length > 0) {
-        console.log("Sample processed submission:", processedSubmissions[0]);
-      }
-
-      // Sort submissions by completion level (most complete first), then by date
-      const sortedSubmissions = [...processedSubmissions].sort((a, b) => {
-        // First sort by number of completed steps (descending)
-        const completionDiff =
-          (b.data?.completedSteps || 0) - (a.data?.completedSteps || 0);
-        if (completionDiff !== 0) return completionDiff;
-
-        // Then sort by date (newest first)
-        return (
-          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-        );
-      });
-
-      return sortedSubmissions;
-    } catch (error) {
-      console.error("Error processing consolidated submissions:", error);
-      return [];
-    }
+    return fetchSubmittedExperiences();
   };
 
   const handleEdit = (destination: Destination) => {
@@ -844,70 +689,22 @@ export default function AdminDestinations() {
 
     try {
       setIsLoading(true);
-      console.log(`Approving submission ${submissionId}`, destinationData);
+      console.log(`Approving experience ${submissionId}`, destinationData);
 
-      // For consolidated submissions, we need to approve all individual submissions
-      if (
-        destinationData.submissionMeta &&
-        Array.isArray(destinationData.submissionMeta.ids)
-      ) {
-        console.log(
-          `Consolidated submission with ${destinationData.submissionMeta.ids.length} parts`,
+      // Approve the unified experience submission using the new API
+      const approveResponse = await fetch("/api/admin/erasmus-experiences", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: submissionId,
+          action: "approve",
+        }),
+      });
+
+      if (!approveResponse.ok) {
+        throw new Error(
+          `Failed to approve experience: ${approveResponse.status} ${approveResponse.statusText}`,
         );
-
-        // Approve all related submissions
-        const submissionIds = destinationData.submissionMeta.ids;
-        let allSuccessful = true;
-        let lastResponse = null;
-
-        for (const id of submissionIds) {
-          console.log(`Approving part submission: ${id}`);
-          try {
-            const approveResponse = await fetch(
-              `/api/admin/form-submissions/${id}`,
-              {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status: "APPROVED" }),
-              },
-            );
-
-            lastResponse = approveResponse;
-
-            if (!approveResponse.ok) {
-              console.warn(
-                `Warning: Failed to approve part submission ${id}: ${approveResponse.status} ${approveResponse.statusText}`,
-              );
-              allSuccessful = false;
-            }
-          } catch (error) {
-            console.warn(`Error approving part submission ${id}:`, error);
-            allSuccessful = false;
-            // Continue with other parts even if one fails
-          }
-        }
-
-        if (!allSuccessful && lastResponse) {
-          console.warn(
-            "Some submissions failed to be approved, but continuing with destination creation",
-          );
-        }
-      } else {
-        // Original behavior for single submissions
-        const approveResponse = await fetch(
-          `/api/admin/form-submissions/${submissionId}`,
-          {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: "APPROVED" }),
-          },
-        );
-
-        if (!approveResponse.ok) {
-          throw new Error(
-            `Failed to approve submission: ${approveResponse.status} ${approveResponse.statusText}`,
-          );
-        }
       }
 
       // Format destination data for API with comprehensive data integration
@@ -1004,7 +801,8 @@ export default function AdminDestinations() {
       });
 
       // Reload data to show the changes
-      await fetchPendingSubmissions();
+      // Refresh the submissions list
+      await fetchSubmittedExperiences();
       await loadDestinations();
     } catch (error) {
       console.error("Error approving submission:", error);
@@ -1052,72 +850,30 @@ export default function AdminDestinations() {
 
     try {
       setIsLoading(true);
-      console.log(`Rejecting submission ${submissionId}`);
+      console.log(`Rejecting experience ${submissionId}`);
 
-      // Find the submission to check if it's consolidated
-      const submissionToReject = pendingSubmissions.find(
-        (s) => s.id === submissionId,
-      );
+      // Reject the unified experience submission using the new API
+      const rejectResponse = await fetch("/api/admin/erasmus-experiences", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: submissionId,
+          action: "reject",
+        }),
+      });
 
-      // For consolidated submissions, we need to reject all individual submissions
-      if (
-        submissionToReject?.data?.submissionMeta &&
-        Array.isArray(submissionToReject.data.submissionMeta.ids)
-      ) {
-        console.log(
-          `Consolidated submission with ${submissionToReject.data.submissionMeta.ids.length} parts`,
+      if (!rejectResponse.ok) {
+        throw new Error(
+          `Failed to reject experience: ${rejectResponse.status} ${rejectResponse.statusText}`,
         );
-
-        // Reject all related submissions
-        const submissionIds = submissionToReject.data.submissionMeta.ids;
-        for (const id of submissionIds) {
-          console.log(`Rejecting part submission: ${id}`);
-          try {
-            const rejectResponse = await fetch(
-              `/api/admin/form-submissions/${id}`,
-              {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status: "REJECTED" }),
-              },
-            );
-
-            if (!rejectResponse.ok) {
-              console.warn(
-                `Warning: Failed to reject part submission ${id}: ${rejectResponse.status} ${rejectResponse.statusText}`,
-              );
-            }
-          } catch (error) {
-            console.warn(`Error rejecting part submission ${id}:`, error);
-            // Continue with other parts even if one fails
-          }
-        }
-      } else {
-        // Original behavior for single submissions
-        const response = await fetch(
-          `/api/admin/form-submissions/${submissionId}`,
-          {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: "REJECTED" }),
-          },
-        );
-
-        if (!response.ok) {
-          throw new Error(
-            `Failed to reject submission: ${response.status} ${response.statusText}`,
-          );
-        }
       }
-
-      // The response has already been checked inside the conditional blocks above
 
       toast({
         title: "Success",
-        description: "Submission rejected successfully",
+        description: "Experience rejected successfully",
       });
 
-      await fetchPendingSubmissions();
+      await fetchSubmittedExperiences();
     } catch (error) {
       console.error("Error rejecting submission:", error);
       toast({

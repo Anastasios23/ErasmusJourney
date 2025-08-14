@@ -53,25 +53,20 @@ import {
   GraduationCap,
 } from "lucide-react";
 import { Toaster } from "../src/components/ui/toaster";
-import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
-import { useFormAutoSave } from "../src/hooks/useFormAutoSave";
-import { useFormProgress } from "../src/context/FormProgressContext";
+import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
 
 export default function Accommodation() {
-  const { markStepCompleted } = useFormProgress();
   const { data: session } = useSession();
   const router = useRouter();
 
-  // Form submissions hook
+  // Experience hook for new single-submission system
   const {
-    submitForm,
-    getDraftData,
-    getFormData,
-    saveDraft,
-    getBasicInfoId,
-    loading: submissionsLoading,
-    error: submissionsError,
-  } = useFormSubmissions();
+    data: experienceData,
+    loading: experienceLoading,
+    error: experienceError,
+    saveProgress,
+    submitExperience,
+  } = useErasmusExperience();
 
   // Authentication temporarily disabled - all users can access
 
@@ -122,33 +117,26 @@ export default function Accommodation() {
   // Load basic info data to get city/country information
   const [basicInfoData, setBasicInfoData] = useState<any>(null);
 
+  // Load experience data when component mounts
   useEffect(() => {
-    // Load from navigation data first (user came back from next page)
-    const savedFormData = localStorage.getItem("erasmus_form_accommodation");
-    if (savedFormData) {
-      try {
-        const parsedData = JSON.parse(savedFormData);
-        console.log("Loading saved accommodation data:", parsedData);
-        setFormData(parsedData);
-      } catch (error) {
-        console.error("Error loading saved accommodation data:", error);
-      }
-    } else {
-      // Fallback to draft data
-      const draftData = getDraftData("accommodation");
-      if (draftData) {
-        setFormData(draftData);
-      }
-    }
+    if (!experienceLoading && experienceData) {
+      console.log("Loading experience data for accommodation:", experienceData);
 
-    // Get basic info data - use sync method to avoid extra API calls
-    const basicInfo =
-      getDraftData("basic-info") ||
-      JSON.parse(localStorage.getItem("erasmus_form_basic-info") || "null");
-    if (basicInfo) {
-      setBasicInfoData(basicInfo);
+      // Load basic info data
+      if (experienceData.basicInfo) {
+        setBasicInfoData(experienceData.basicInfo);
+      }
+
+      // Load accommodation data if available
+      if (experienceData.accommodation) {
+        console.log(
+          "Loading accommodation data:",
+          experienceData.accommodation,
+        );
+        setFormData(experienceData.accommodation);
+      }
     }
-  }, []); // Remove dependencies to prevent re-runs
+  }, [experienceLoading, experienceData]); // Remove dependencies to prevent re-runs
 
   // Load draft data when component mounts
   useEffect(() => {
@@ -183,11 +171,8 @@ export default function Accommodation() {
     setSubmitError(null);
 
     try {
-      // Get basic info and basicInfoId
-      const basicInfo =
-        getFormData("basic-info") ||
-        JSON.parse(localStorage.getItem("erasmus_form_basic-info") || "null");
-      const basicInfoId = getBasicInfoId();
+      // Get basic info for city/country enrichment
+      const basicInfo = experienceData?.basicInfo;
 
       const enrichedFormData = {
         ...formData,
@@ -196,32 +181,13 @@ export default function Accommodation() {
         university: basicInfo?.hostUniversity || "",
       };
 
-      // Always save data to localStorage for navigation back
-      localStorage.setItem(
-        "erasmus_form_accommodation",
-        JSON.stringify(enrichedFormData),
-      );
+      // Save progress with accommodation data
+      await saveProgress({
+        accommodation: enrichedFormData,
+      });
 
-      const response = await submitForm(
-        "accommodation",
-        "Accommodation Experience",
-        enrichedFormData,
-        "submitted",
-        basicInfoId,
-      );
-
-      if (response?.submissionId) {
-        // Remove draft but keep navigation data
-        localStorage.removeItem("erasmus_draft_accommodation");
-
-        // Mark step as completed
-        markStepCompleted("accommodation");
-
-        // Navigate immediately
-        router.push("/living-expenses");
-      } else {
-        throw new Error("No submission ID received");
-      }
+      // Navigate to next step
+      router.push("/living-expenses");
     } catch (error) {
       console.error("Error submitting accommodation form:", error);
       setSubmitError("Failed to submit form. Please try again.");
@@ -254,13 +220,18 @@ export default function Accommodation() {
     "Parks/Recreation",
   ];
 
-  // Add auto-save hook
-  const { isAutoSaving, showSavedIndicator, setIsNavigating } = useFormAutoSave(
-    "accommodation",
-    "Accommodation Experience",
-    formData,
-    isSubmitting,
-  );
+  // Auto-save function
+  const handleSaveDraft = async () => {
+    try {
+      await saveProgress({
+        accommodation: formData,
+      });
+      toast("Draft saved successfully!");
+    } catch (error) {
+      console.error("Error saving draft:", error);
+      toast("Failed to save draft. Please try again.");
+    }
+  };
 
   return (
     <>
@@ -813,34 +784,16 @@ export default function Accommodation() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => {
-                    try {
-                      saveDraft(
-                        "accommodation",
-                        "Accommodation Experience",
-                        formData,
-                      );
-                      toast("Draft saved", {
-                        description:
-                          "Your accommodation information has been saved as a draft.",
-                      });
-                    } catch (error) {
-                      console.error("Error saving draft:", error);
-                      toast.error("Error saving draft", {
-                        description:
-                          "There was a problem saving your draft. Please try again.",
-                      });
-                    }
-                  }}
-                  disabled={isSubmitting || isAutoSaving}
+                  onClick={handleSaveDraft}
+                  disabled={isSubmitting || experienceLoading}
                   className="flex items-center gap-2"
                 >
-                  {isAutoSaving ? "Auto-saving..." : "Save Draft"}
+                  {experienceLoading ? "Saving..." : "Save Draft"}
                 </Button>
 
                 <Button
                   type="submit"
-                  disabled={isSubmitting || isAutoSaving}
+                  disabled={isSubmitting || experienceLoading}
                   className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
                 >
                   {isSubmitting ? (
@@ -856,15 +809,6 @@ export default function Accommodation() {
                   )}
                 </Button>
               </div>
-            </div>
-
-            {/* Auto-save indicator */}
-            <div className="fixed top-20 right-4 z-40">
-              {showSavedIndicator && (
-                <div className="bg-gray-800 bg-opacity-90 text-white px-2 py-1 rounded text-xs shadow-lg transition-all duration-300 ease-in-out">
-                  ✓ Auto-saved
-                </div>
-              )}
             </div>
           </form>
         </div>

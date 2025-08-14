@@ -18,103 +18,73 @@ export default async function handler(
   }
 
   try {
-    const { userId, formData } = req.body;
+    const userId = session.user.id;
 
-    if (userId !== session.user.id) {
-      return res.status(403).json({ error: "Forbidden" });
-    }
+    // Check if user already has a completed submission
+    const existingExperience = await prisma.erasmusExperience.findUnique({
+      where: { userId },
+    });
 
-    // Create or update form submissions for all sections
-    const formSubmissions = [];
-
-    if (formData?.basicInfo) {
-      formSubmissions.push({
-        userId,
-        type: "BASIC_INFO",
-        title: "Basic Information",
-        data: formData.basicInfo,
+    if (existingExperience && existingExperience.status === "COMPLETED") {
+      return res.status(400).json({
+        error: "You have already submitted your Erasmus experience",
       });
     }
 
-    if (formData?.courses) {
-      formSubmissions.push({
-        userId,
-        type: "COURSE_MATCHING",
-        title: "Course Matching",
-        data: formData.courses,
+    if (!existingExperience || !existingExperience.isComplete) {
+      return res.status(400).json({
+        error: "Please complete all form steps before submitting",
       });
     }
 
-    if (formData?.accommodation) {
-      formSubmissions.push({
-        userId,
-        type: "ACCOMMODATION",
-        title: "Accommodation",
-        data: formData.accommodation,
+    // Validate that all required sections are present
+    if (
+      !existingExperience.basicInfo ||
+      !existingExperience.courses ||
+      !existingExperience.accommodation ||
+      !existingExperience.livingExpenses
+    ) {
+      return res.status(400).json({
+        error: "All form sections must be completed before submission",
       });
     }
 
-    if (formData?.livingExpenses) {
-      formSubmissions.push({
+    // Update experience to completed status
+    const submittedExperience = await prisma.erasmusExperience.update({
+      where: { userId },
+      data: {
+        status: "COMPLETED",
+        submittedAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
+
+    // Create a single FormSubmission record for admin review (backwards compatibility)
+    const consolidatedData = {
+      basicInfo: existingExperience.basicInfo,
+      courses: existingExperience.courses,
+      accommodation: existingExperience.accommodation,
+      livingExpenses: existingExperience.livingExpenses,
+      experience: existingExperience.experience,
+      submissionType: "consolidated",
+      completedSteps: 4,
+      totalSteps: 4,
+    };
+
+    await prisma.formSubmission.create({
+      data: {
         userId,
-        type: "LIVING_EXPENSES",
-        title: "Living Expenses",
-        data: formData.livingExpenses,
-      });
-    }
-
-    if (formData?.experience) {
-      formSubmissions.push({
-        userId,
-        type: "EXPERIENCE",
-        title: "Experience Story",
-        data: formData.experience,
-      });
-    }
-
-    // Create all form submissions for backward compatibility
-    for (const submission of formSubmissions) {
-      try {
-        // Try to find existing submission
-        const existing = await prisma.formSubmission.findFirst({
-          where: {
-            userId: submission.userId,
-            type: submission.type,
-          },
-        });
-
-        if (existing) {
-          // Update existing
-          await prisma.formSubmission.update({
-            where: { id: existing.id },
-            data: {
-              data: submission.data,
-              status: "SUBMITTED",
-              updatedAt: new Date(),
-            },
-          });
-        } else {
-          // Create new
-          await prisma.formSubmission.create({
-            data: {
-              ...submission,
-              status: "SUBMITTED",
-            },
-          });
-        }
-      } catch (error) {
-        console.error(
-          `Error creating/updating form submission ${submission.type}:`,
-          error,
-        );
-        // Continue with other submissions even if one fails
-      }
-    }
+        type: "consolidated",
+        title: "Complete Erasmus Experience",
+        data: consolidatedData,
+        status: "SUBMITTED",
+      },
+    });
 
     return res.json({
       success: true,
-      submittedAt: new Date(),
-      submissionsCount: formSubmissions.length,
+      submittedAt: submittedExperience.submittedAt,
+      message: "Your Erasmus experience has been submitted successfully!",
     });
   } catch (error) {
     console.error("Error submitting Erasmus experience:", error);

@@ -3,7 +3,6 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
-import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
 import { Badge } from "../src/components/ui/badge";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
@@ -43,15 +42,19 @@ import {
 } from "lucide-react";
 import { useCommunityStats } from "../src/hooks/useCommunityStats";
 import { Skeleton } from "../src/components/ui/skeleton";
-// Removed FormMessage import as it requires FormProvider context
 import { useFormValidation } from "../src/hooks/useFormValidation";
 import { FormErrorSummary } from "../src/components/FormErrorSummary";
+import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
 
 export default function HelpFutureStudents() {
   const router = useRouter();
-  const { submitForm, getDraftData, saveDraft, getBasicInfoId } =
-    useFormSubmissions(); // Remove isSubmitting from destructuring
   const { stats, loading } = useCommunityStats();
+  const {
+    data: experienceData,
+    saveProgress,
+    submitExperience,
+    error: experienceError,
+  } = useErasmusExperience();
 
   // Keep the local isSubmitting state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -90,80 +93,101 @@ export default function HelpFutureStudents() {
     setFormError,
   } = useFormValidation();
 
-  // Load saved data when component mounts
+  // Load saved data when component mounts (prefer unified experience record)
   useEffect(() => {
-    // Load from navigation data first (user came back from next page)
     const savedFormData = localStorage.getItem(
       "erasmus_form_help-future-students",
     );
+
+    // Prefer unified experience record (nested under experience.helpForStudents)
+    const unifiedHelp = (experienceData?.experience as any)?.helpForStudents;
+    if (unifiedHelp) {
+      try {
+        setFormData((prev) => ({
+          ...prev,
+          ...unifiedHelp,
+          wantToHelp:
+            typeof unifiedHelp.wantToHelp === "boolean"
+              ? unifiedHelp.wantToHelp
+                ? "yes"
+                : "no"
+              : prev.wantToHelp,
+        }));
+        return;
+      } catch (e) {
+        // fallback to localStorage
+      }
+    }
+
     if (savedFormData) {
       try {
         const parsedData = JSON.parse(savedFormData);
-        console.log("Loading saved help-future-students data:", parsedData);
         setFormData(parsedData);
       } catch (error) {
         console.error("Error loading saved help-future-students data:", error);
       }
-    } else {
-      // Fallback to draft data
-      const draftData = getDraftData("help-future-students");
-      if (draftData) {
-        setFormData(draftData);
-      }
     }
-  }, []);
+  }, [experienceData]);
 
-  // Auto-save functionality
-  const saveFormData = useCallback(async () => {
-    try {
-      await saveDraft(
-        "help-future-students",
-        "Help Future Students Information",
-        formData,
-      );
-    } catch (error) {
-      console.error("Error saving draft:", error);
-    }
-  }, [formData, saveDraft]);
+  // Save-as-draft using unified API (nested experience.helpForStudents)
+  const saveUnifiedDraft = useCallback(async () => {
+    const payload = {
+      experience: {
+        helpForStudents: {
+          ...formData,
+          wantToHelp:
+            formData.wantToHelp === "yes"
+              ? true
+              : formData.wantToHelp === "no"
+                ? false
+                : undefined,
+        },
+      },
+    } as any;
+
+    await saveProgress(payload);
+  }, [formData, saveProgress]);
 
   // Auto-save when form data changes (debounced)
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (
-        Object.values(formData).some((value) =>
-          typeof value === "string"
-            ? value.trim() !== ""
-            : Array.isArray(value)
-              ? value.length > 0
-              : false,
-        )
-      ) {
-        saveFormData();
+      const hasContent = Object.values(formData).some((value) =>
+        typeof value === "string"
+          ? value.trim() !== ""
+          : Array.isArray(value)
+            ? value.length > 0
+            : false,
+      );
+      if (hasContent) {
+        saveUnifiedDraft();
       }
-    }, 1000); // 1 second debounce
+    }, 1000);
 
     return () => clearTimeout(timer);
-  }, [formData, saveFormData]);
+  }, [formData, saveUnifiedDraft]);
 
   // Save before navigation
   useEffect(() => {
     const handleBeforeUnload = () => {
-      if (
-        Object.values(formData).some((value) =>
-          typeof value === "string"
-            ? value.trim() !== ""
-            : Array.isArray(value)
-              ? value.length > 0
-              : false,
-        )
-      ) {
-        saveFormData();
+      const hasContent = Object.values(formData).some((value) =>
+        typeof value === "string"
+          ? value.trim() !== ""
+          : Array.isArray(value)
+            ? value.length > 0
+            : false,
+      );
+      if (hasContent) {
+        // best-effort local save for UX only
+        localStorage.setItem(
+          "erasmus_form_help-future-students",
+          JSON.stringify(formData),
+        );
       }
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [formData, saveFormData]);
+  }, [formData]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -213,85 +237,59 @@ export default function HelpFutureStudents() {
     e.preventDefault();
     clearErrors();
 
-    // Validate all fields at once
-    const validationErrors: Record<string, string> = {};
-
+    const errors: Record<string, string> = {};
     if (!formData.wantToHelp) {
-      validationErrors.wantToHelp =
-        "Please indicate if you want to help future students";
+      errors.wantToHelp = "Please indicate if you want to help future students";
     }
 
-    if (formData.wantToHelp === "yes") {
-      if (!formData.contactMethod) {
-        validationErrors.contactMethod =
-          "Please select a preferred contact method";
-      }
-      if (formData.contactMethod === "email" && !formData.email) {
-        validationErrors.email = "Please provide your email address";
-      }
-      if (formData.helpTopics.length === 0) {
-        validationErrors.helpTopics =
-          "Please select at least one topic you can help with";
-      }
-      if (!formData.availabilityLevel) {
-        validationErrors.availabilityLevel =
-          "Please select your availability level";
-      }
-    }
-
-    // If there are validation errors, show them all at once
-    if (Object.keys(validationErrors).length > 0) {
-      Object.entries(validationErrors).forEach(([field, message]) => {
-        setError(message, field);
-      });
-      document.getElementById(Object.keys(validationErrors)[0])?.focus();
+    if (Object.keys(errors).length > 0) {
+      Object.entries(errors).forEach(([field, message]) =>
+        setError(message, field),
+      );
+      document.getElementById(Object.keys(errors)[0])?.focus();
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // Prepare submission data
-      const submissionData = {
-        ...formData,
-        submissionType: "mentorship",
-        wantToHelp: formData.wantToHelp === "yes",
+      // Persist to unified draft
+      await saveUnifiedDraft();
+
+      // Pass the help data to submit to ensure validation passes
+      const helpData = {
+        helpForStudents: {
+          ...formData,
+          wantToHelp:
+            formData.wantToHelp === "yes"
+              ? true
+              : formData.wantToHelp === "no"
+                ? false
+                : undefined,
+        },
       };
 
-      // Always save data to localStorage for navigation back
-      localStorage.setItem(
-        "erasmus_form_help-future-students",
-        JSON.stringify(submissionData),
-      );
+      console.log("Attempting to submit with helpData:", helpData);
+      console.log("Current formData:", formData);
 
-      // Get the basicInfoId from the session manager
-      const basicInfoId = getBasicInfoId();
+      // Final submit of entire experience
+      const ok = await submitExperience(helpData);
+      console.log("submitExperience returned:", ok);
 
-      if (!basicInfoId) {
-        console.warn(
-          "No basicInfoId found. This form will not be linked to the Basic Information form.",
-        );
+      if (!ok) {
+        // Get the specific error from the hook
+        console.log("Submission failed, checking hook error state");
+        throw new Error(experienceError || "Failed to submit experience");
       }
 
-      await submitForm(
-        "experience", // This will be converted to "EXPERIENCE" enum by the API
-        `Mentorship Application - ${formData.nickname || "Anonymous"}`,
-        submissionData,
-        formData.publicProfile === "yes" ? "published" : "submitted", // Public mentors get published status
-        basicInfoId,
+      // Clean up local cache and navigate
+      localStorage.removeItem("erasmus_form_help-future-students");
+      router.push("/submission-confirmation");
+    } catch (err) {
+      console.error("Final submission failed:", err);
+      toast.error(
+        err instanceof Error ? err.message : "Failed to submit experience",
       );
-
-      // Remove draft but keep navigation data
-      localStorage.removeItem("erasmus_draft_help-future-students");
-
-      toast.success("Thank you for joining our mentor community! 🎉");
-
-      // Redirect to community page after a short delay
-      setTimeout(() => {
-        router.push("/community");
-      }, 2000);
-    } catch (error) {
-      setError("Failed to submit form. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -975,7 +973,7 @@ export default function HelpFutureStudents() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={saveFormData}
+                  onClick={saveUnifiedDraft}
                   className="flex items-center gap-2"
                   disabled={isSubmitting}
                 >

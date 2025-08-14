@@ -44,10 +44,9 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useNotifications } from "../src/hooks/useNotifications";
-import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
+import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
 import { FormType } from "../src/types/forms";
 import { ValidationError } from "../src/utils/apiErrorHandler";
-import { useFormProgress } from "../src/context/FormProgressContext";
 
 interface ExpenseCategory {
   groceries: string;
@@ -63,19 +62,14 @@ export default function LivingExpenses() {
   const router = useRouter();
   const { addNotification } = useNotifications();
 
-  // Form submissions hook
+  // Experience hook for new single-submission system
   const {
-    submitForm,
-    getDraftData,
-    getFormData,
-    saveDraft,
-    getBasicInfoId,
-    loading: submissionsLoading,
-    error: submissionsError,
-  } = useFormSubmissions();
-
-  // Add FormProgress context
-  const { markStepCompleted } = useFormProgress();
+    data: experienceData,
+    loading: experienceLoading,
+    error: experienceError,
+    saveProgress,
+    submitExperience,
+  } = useErasmusExperience();
 
   const [formData, setFormData] = useState({
     spendingHabit: "",
@@ -109,35 +103,28 @@ export default function LivingExpenses() {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Load saved data when component mounts
+  // Load experience data when component mounts
   useEffect(() => {
-    // Load from navigation data first (user came back from next page)
-    const savedFormData = localStorage.getItem("erasmus_form_living-expenses");
-    if (savedFormData) {
-      try {
-        const parsedData = JSON.parse(savedFormData);
-        console.log("Loading saved living-expenses data:", parsedData);
+    if (!experienceLoading && experienceData) {
+      console.log(
+        "Loading experience data for living expenses:",
+        experienceData,
+      );
 
-        if (parsedData.expenses) {
-          setExpenses(parsedData.expenses);
+      // Load living expenses data if available
+      if (experienceData.livingExpenses) {
+        const livingData = experienceData.livingExpenses;
+        console.log("Loading living expenses data:", livingData);
+
+        if (livingData.expenses) {
+          setExpenses(livingData.expenses);
         }
         // Remove expenses from formData to avoid duplication
-        const { expenses: _, ...restData } = parsedData;
-        setFormData(restData);
-      } catch (error) {
-        console.error("Error loading saved living-expenses data:", error);
-      }
-    } else {
-      // Fallback to draft data
-      const draftData = getDraftData("living-expenses");
-      if (draftData) {
-        if (draftData.expenses) {
-          setExpenses(draftData.expenses);
-        }
-        const { expenses: _, ...restData } = draftData;
+        const { expenses: _, ...restData } = livingData;
         setFormData(restData);
       }
     }
-  }, []);
+  }, [experienceLoading, experienceData]);
 
   const saveFormData = useCallback(async () => {
     try {
@@ -146,11 +133,9 @@ export default function LivingExpenses() {
         ...formData,
         expenses: expenses,
       };
-      await saveDraft(
-        "living-expenses",
-        "Living Expenses Information",
-        dataToSave,
-      );
+      await saveProgress({
+        livingExpenses: dataToSave,
+      });
       setIsAutoSaving(false);
     } catch (error) {
       if (error instanceof ValidationError) {
@@ -161,7 +146,7 @@ export default function LivingExpenses() {
         toast.error("Failed to save draft. Please try again.");
       }
     }
-  }, [formData, expenses, saveDraft]);
+  }, [formData, expenses, saveProgress]);
 
   // Auto-save when form data changes (debounced)
   useEffect(() => {
@@ -224,37 +209,15 @@ export default function LivingExpenses() {
         expenses: expenses,
       };
 
-      // Always save data to localStorage for navigation back
-      localStorage.setItem(
-        "erasmus_form_living-expenses",
-        JSON.stringify(livingExpensesData),
-      );
+      // Save the current step data
+      await saveProgress({
+        livingExpenses: livingExpensesData,
+      });
 
-      const basicInfoId = getBasicInfoId();
-
-      // Submit the form
-      const response = await submitForm(
-        "living-expenses",
-        "Living Expenses Information",
-        livingExpensesData,
-        "submitted",
-        basicInfoId,
-      );
-
-      if (response?.submissionId) {
-        // Remove draft but keep navigation data
-        localStorage.removeItem("erasmus_draft_living-expenses");
-
-        // Mark step as completed using context function
-        markStepCompleted("living-expenses");
-
-        // Navigate immediately - no setTimeout needed
-        router.push("/help-future-students");
-      } else {
-        throw new Error("No submission ID received");
-      }
+      // Navigate to final step (Help Future Students)
+      router.push("/help-future-students");
     } catch (error) {
-      console.error("Error submitting living expenses form:", error);
+      console.error("Error proceeding from living expenses:", error);
       const errorMessage =
         error instanceof ValidationError
           ? error.message
@@ -654,7 +617,7 @@ export default function LivingExpenses() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
+                  className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2 px-8"
                 >
                   {isSubmitting ? (
                     <>
@@ -663,8 +626,8 @@ export default function LivingExpenses() {
                     </>
                   ) : (
                     <>
-                      Continue to Help Future Students
                       <ArrowRight className="h-4 w-4" />
+                      Continue to Help Future Students
                     </>
                   )}
                 </Button>

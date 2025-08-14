@@ -4,7 +4,7 @@ import { toast } from "../src/hooks/use-toast";
 import { Alert, AlertDescription } from "../src/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { ValidationError } from "../src/utils/apiErrorHandler";
-import { useFormProgress } from "../src/context/FormProgressContext";
+import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
 
 import Head from "next/head";
 import Link from "next/link";
@@ -54,7 +54,6 @@ import {
   getAgreementsByUniversityAndLevel,
 } from "../src/data/universityAgreements";
 import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp";
-import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
 import { useFormAutoSave } from "../src/hooks/useFormAutoSave";
 // import { markStepCompleted } from "../src/utils/progress";
 
@@ -75,18 +74,15 @@ interface EquivalentCourse {
 export default function CourseMatching() {
   const { data: session } = useSession();
   const router = useRouter();
-  const { markStepCompleted } = useFormProgress();
 
-  // Form submissions hook
+  // Experience hook for new single-submission system
   const {
-    submitForm,
-    getDraftData,
-    getFormData,
-    saveDraft,
-    getBasicInfoId,
-    loading: submissionsLoading,
-    error: submissionsError,
-  } = useFormSubmissions();
+    data: experienceData,
+    loading: experienceLoading,
+    error: experienceError,
+    saveProgress,
+    submitExperience,
+  } = useErasmusExperience();
 
   // Authentication temporarily disabled - all users can access
 
@@ -135,106 +131,73 @@ export default function CourseMatching() {
             ?.departments || []
         : [];
 
-  // Load draft data on component mount
+  // Load experience data on component mount
   useEffect(() => {
-    const loadDraftData = async () => {
-      try {
-        console.log("Loading basic info data...");
-        // Use getFormData instead of direct API call
-        const draftData = getFormData("basic-info"); // Remove "basic-information"
-        console.log("Draft data loaded:", draftData);
+    if (!experienceLoading && experienceData) {
+      console.log("Loading experience data...", experienceData);
 
-        if (draftData) {
-          console.log("Pre-populating form with:", {
-            levelOfStudy: draftData.levelOfStudy,
-            universityInCyprus: draftData.universityInCyprus,
-            departmentInCyprus: draftData.departmentInCyprus,
-            preferredHostUniversity: draftData.preferredHostUniversity,
-          });
+      // Pre-populate form fields with data from basic info
+      if (experienceData.basicInfo) {
+        const basicInfo = experienceData.basicInfo;
 
-          // Pre-populate form fields with data from basic-information
-          setFormData((prev) => ({
-            ...prev,
-            levelOfStudy: draftData.levelOfStudy || "",
-            homeUniversity: draftData.universityInCyprus || "",
-            homeDepartment: draftData.departmentInCyprus || "",
-            hostUniversity: draftData.preferredHostUniversity || "",
-          }));
+        console.log("Pre-populating form with:", {
+          levelOfStudy: basicInfo.levelOfStudy,
+          universityInCyprus: basicInfo.universityInCyprus,
+          departmentInCyprus: basicInfo.departmentInCyprus,
+          hostUniversity: basicInfo.hostUniversity,
+        });
 
-          // Set the selected home university ID for department filtering
-          if (draftData.universityInCyprus) {
-            const university = cyprusUniversities.find(
-              (u) => u.name === draftData.universityInCyprus,
-            );
-            console.log("Found university:", university);
-            if (university) {
-              setSelectedHomeUniversityId(university.code);
-            }
-          }
-        } else {
-          console.log("No draft data found");
-        }
-      } catch (error) {
-        console.error("Error loading draft data:", error);
-      }
-    };
+        setFormData((prev) => ({
+          ...prev,
+          levelOfStudy: basicInfo.levelOfStudy || "",
+          homeUniversity: basicInfo.universityInCyprus || "",
+          homeDepartment: basicInfo.departmentInCyprus || "",
+          hostUniversity: basicInfo.hostUniversity || "",
+        }));
 
-    // Only load once
-    loadDraftData();
-  }, []); // Remove getFormData from dependencies to prevent re-runs
-
-  // Load course-matching draft data
-  useEffect(() => {
-    const courseMatchingDraft = getDraftData("course-matching");
-    if (courseMatchingDraft) {
-      // Load form data
-      const { courses: draftCourses, ...restFormData } = courseMatchingDraft;
-      setFormData((prev) => ({ ...prev, ...restFormData }));
-
-      // Load courses if they exist
-      if (draftCourses && Array.isArray(draftCourses)) {
-        const hostCourses = draftCourses.filter((c) => c.type === "host");
-        const homeCourses = draftCourses.filter((c) => c.type === "home");
-
-        if (hostCourses.length > 0) {
-          setCourses(hostCourses.map(({ type, ...course }) => course));
-        }
-
-        if (homeCourses.length > 0) {
-          setEquivalentCourses(
-            homeCourses.map(
-              ({ type, difficulty, examTypes, ...course }) => course,
-            ),
+        // Set the selected home university ID for department filtering
+        if (basicInfo.universityInCyprus) {
+          const university = cyprusUniversities.find(
+            (u) => u.name === basicInfo.universityInCyprus,
           );
+          console.log("Found university:", university);
+          if (university) {
+            setSelectedHomeUniversityId(university.code);
+          }
+        }
+      }
+
+      // Load course data if available
+      if (experienceData.courses) {
+        const courseData = experienceData.courses;
+        setFormData((prev) => ({ ...prev, ...courseData }));
+
+        if (courseData.hostCourses) {
+          setCourses(courseData.hostCourses);
+        }
+        if (courseData.equivalentCourses) {
+          setEquivalentCourses(courseData.equivalentCourses);
         }
       }
     }
-  }, []);
+  }, [experienceLoading, experienceData]);
 
   // Auto-save functionality
   const saveFormData = useCallback(async () => {
     try {
       const dataToSave = {
         ...formData,
-        courses: [
-          ...courses.map((course) => ({ ...course, type: "host" })),
-          ...equivalentCourses.map((course) => ({
-            ...course,
-            difficulty: "",
-            examTypes: [],
-            type: "home",
-          })),
-        ],
+        hostCourses: courses,
+        equivalentCourses: equivalentCourses,
       };
-      await saveDraft(
-        "course-matching",
-        "Course Matching Information",
-        dataToSave,
-      );
+
+      await saveProgress({
+        courses: dataToSave,
+      });
     } catch (error) {
-      console.error("Error saving draft:", error);
+      console.error("Error saving progress:", error);
     }
-  }, [formData, courses, equivalentCourses, saveDraft]);
+  }, [formData, courses, equivalentCourses, saveProgress]);
 
   // Add auto-save hook
   const { isAutoSaving, showSavedIndicator, setIsNavigating } = useFormAutoSave(
@@ -444,26 +407,6 @@ export default function CourseMatching() {
     setValidationErrors({});
 
     try {
-      // Save current form data before submission
-      const courseMatchingData = {
-        ...formData,
-        courses: [
-          ...courses.map((course) => ({ ...course, type: "host" })),
-          ...equivalentCourses.map((course) => ({
-            ...course,
-            difficulty: "",
-            examTypes: [],
-            type: "home",
-          })),
-        ],
-      };
-
-      // Always save data to localStorage for navigation back
-      localStorage.setItem(
-        "erasmus_form_course-matching",
-        JSON.stringify(courseMatchingData),
-      );
-
       // Basic validation
       if (!formData.hostCourseCount || !formData.homeCourseCount) {
         setValidationErrors({
@@ -475,30 +418,19 @@ export default function CourseMatching() {
         return;
       }
 
-      // Get the basicInfoId
-      const basicInfoId = getBasicInfoId();
+      // Save progress with course data
+      const courseData = {
+        ...formData,
+        hostCourses: courses,
+        equivalentCourses: equivalentCourses,
+      };
 
-      // Submit the form
-      const response = await submitForm(
-        "course-matching",
-        "Course Matching Information",
-        courseMatchingData,
-        "submitted",
-        basicInfoId,
-      );
+      await saveProgress({
+        courses: courseData,
+      });
 
-      if (response?.submissionId) {
-        // Remove draft but keep navigation data
-        localStorage.removeItem("erasmus_draft_course-matching");
-
-        // Mark step as completed
-        markStepCompleted("course-matching");
-
-        // Navigate immediately
-        router.push("/accommodation");
-      } else {
-        throw new Error("No submission ID received");
-      }
+      // Navigate to next step
+      router.push("/accommodation");
     } catch (error) {
       console.error("Error submitting course matching form:", error);
       if (error instanceof ValidationError) {
@@ -519,99 +451,6 @@ export default function CourseMatching() {
       setIsSubmitting(false);
     }
   };
-
-  // Load saved form data when component mounts
-  useEffect(() => {
-    // Load from navigation data first (user came back from next page)
-    const savedFormData = localStorage.getItem("erasmus_form_course-matching");
-    if (savedFormData) {
-      try {
-        const parsedData = JSON.parse(savedFormData);
-        console.log("Loading saved course-matching data:", parsedData);
-
-        // Load form data
-        const { courses: savedCourses, ...restFormData } = parsedData;
-        setFormData((prev) => ({ ...prev, ...restFormData }));
-
-        // Load courses if they exist
-        if (savedCourses && Array.isArray(savedCourses)) {
-          const hostCourses = savedCourses.filter((c) => c.type === "host");
-          const homeCourses = savedCourses.filter((c) => c.type === "home");
-
-          if (hostCourses.length > 0) {
-            setCourses(hostCourses.map(({ type, ...course }) => course));
-          }
-
-          if (homeCourses.length > 0) {
-            setEquivalentCourses(
-              homeCourses.map(
-                ({ type, difficulty, examTypes, ...course }) => course,
-              ),
-            );
-          }
-        }
-      } catch (error) {
-        console.error("Error loading saved course-matching data:", error);
-      }
-    } else {
-      // Fallback to draft data
-      const courseMatchingDraft = getDraftData("course-matching");
-      if (courseMatchingDraft) {
-        // Load form data
-        const { courses: draftCourses, ...restFormData } = courseMatchingDraft;
-        setFormData((prev) => ({ ...prev, ...restFormData }));
-
-        // Load courses if they exist
-        if (draftCourses && Array.isArray(draftCourses)) {
-          const hostCourses = draftCourses.filter((c) => c.type === "host");
-          const homeCourses = draftCourses.filter((c) => c.type === "home");
-
-          if (hostCourses.length > 0) {
-            setCourses(hostCourses.map(({ type, ...course }) => course));
-          }
-
-          if (homeCourses.length > 0) {
-            setEquivalentCourses(
-              homeCourses.map(
-                ({ type, difficulty, examTypes, ...course }) => course,
-              ),
-            );
-          }
-        }
-      }
-    }
-
-    // Load basic info data to get university information
-    const basicInfoData =
-      localStorage.getItem("erasmus_form_basic-info") ||
-      getDraftData("basic-info");
-
-    if (basicInfoData) {
-      const parsedBasicInfo =
-        typeof basicInfoData === "string"
-          ? JSON.parse(basicInfoData)
-          : basicInfoData;
-
-      // Pre-populate form fields with data from basic-information
-      setFormData((prev) => ({
-        ...prev,
-        levelOfStudy: parsedBasicInfo.levelOfStudy || "",
-        homeUniversity: parsedBasicInfo.universityInCyprus || "",
-        homeDepartment: parsedBasicInfo.departmentInCyprus || "",
-        hostUniversity: parsedBasicInfo.hostUniversity || "",
-      }));
-
-      // Set the selected home university ID for department filtering
-      if (parsedBasicInfo.universityInCyprus) {
-        const university = cyprusUniversities.find(
-          (u) => u.code === parsedBasicInfo.universityInCyprus,
-        );
-        if (university) {
-          setSelectedHomeUniversityId(university.code);
-        }
-      }
-    }
-  }, []);
 
   return (
     <>
@@ -1270,15 +1109,13 @@ export default function CourseMatching() {
                   variant="outline"
                   onClick={() => {
                     try {
-                      saveDraft(
-                        "course-matching",
-                        "Course Matching Information",
-                        {
+                      saveProgress({
+                        courses: {
                           ...formData,
-                          courses,
-                          equivalentCourses,
+                          hostCourses: courses,
+                          equivalentCourses: equivalentCourses,
                         },
-                      );
+                      });
                       toast({
                         title: "Draft saved",
                         description:
