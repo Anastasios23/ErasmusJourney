@@ -86,41 +86,49 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     });
 
     // Create potential destination data from unprocessed submissions
-    const potentialDestinations = Object.entries(locationGroups).map(([location, submissions]) => {
-      const [city, country] = location.split(", ");
-      
-      return {
-        id: `potential-${city}-${country}`.toLowerCase().replace(/\s+/g, "-"),
-        name: location,
-        city,
-        country,
-        status: "potential",
-        description: `Potential destination from ${submissions.length} unprocessed submissions`,
-        submissionCount: submissions.length,
-        source: "user_generated",
-        submissions: submissions.map(s => ({
-          id: s.id,
-          title: s.title,
-          userId: s.userId,
-          createdAt: s.createdAt,
-          user: s.user,
-        })),
-      };
-    });
+    const potentialDestinations = Object.entries(locationGroups).map(
+      ([location, submissions]) => {
+        const [city, country] = location.split(", ");
+
+        return {
+          id: `potential-${city}-${country}`.toLowerCase().replace(/\s+/g, "-"),
+          name: location,
+          city,
+          country,
+          status: "potential",
+          description: `Potential destination from ${submissions.length} unprocessed submissions`,
+          submissionCount: submissions.length,
+          source: "user_generated",
+          submissions: submissions.map((s) => ({
+            id: s.id,
+            title: s.title,
+            userId: s.userId,
+            createdAt: s.createdAt,
+            user: s.user,
+          })),
+        };
+      },
+    );
 
     // Format existing destinations with enhanced data
     const formattedDestinations = await Promise.all(
       destinations.map(async (dest) => {
         let aggregatedData = dest.aggregatedData;
-        
+
         // Refresh aggregated data if requested and if stale
         if (includeAggregations === "true") {
-          const isStale = dest.lastDataUpdate < new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours
+          const isStale =
+            dest.lastDataUpdate < new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours
           if (isStale && dest.linkedSubmissions.length > 0) {
             try {
-              const submissions = dest.linkedSubmissions.map(link => link.submission);
-              aggregatedData = await ContentManagementService.aggregateSubmissionData(submissions);
-              
+              const submissions = dest.linkedSubmissions.map(
+                (link) => link.submission,
+              );
+              aggregatedData =
+                await ContentManagementService.aggregateSubmissionData(
+                  submissions,
+                );
+
               // Update in database
               await prisma.destination.update({
                 where: { id: dest.id },
@@ -140,9 +148,10 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
           submissionCount: dest.linkedSubmissions.length,
           lastUpdated: dest.lastDataUpdate,
           hasAggregatedData: !!aggregatedData,
-          aggregatedData: includeAggregations === "true" ? aggregatedData : undefined,
+          aggregatedData:
+            includeAggregations === "true" ? aggregatedData : undefined,
           linkedSubmissionCount: dest.linkedSubmissions.length,
-          linkedSubmissions: dest.linkedSubmissions.map(link => ({
+          linkedSubmissions: dest.linkedSubmissions.map((link) => ({
             id: link.id,
             contributionType: link.contributionType,
             weight: link.weight,
@@ -155,7 +164,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
             },
           })),
         };
-      })
+      }),
     );
 
     res.status(200).json({
@@ -164,33 +173,41 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
       stats: {
         total: formattedDestinations.length,
         potential: potentialDestinations.length,
-        adminCreated: formattedDestinations.filter(d => d.source === "admin_created").length,
-        userGenerated: formattedDestinations.filter(d => d.source === "user_generated").length,
-        hybrid: formattedDestinations.filter(d => d.source === "hybrid").length,
-        needsReview: formattedDestinations.filter(d => d.status === "under_review").length,
-        published: formattedDestinations.filter(d => d.status === "published").length,
+        adminCreated: formattedDestinations.filter(
+          (d) => d.source === "admin_created",
+        ).length,
+        userGenerated: formattedDestinations.filter(
+          (d) => d.source === "user_generated",
+        ).length,
+        hybrid: formattedDestinations.filter((d) => d.source === "hybrid")
+          .length,
+        needsReview: formattedDestinations.filter(
+          (d) => d.status === "under_review",
+        ).length,
+        published: formattedDestinations.filter((d) => d.status === "published")
+          .length,
       },
     });
   } catch (error) {
     console.error("Error fetching enhanced destinations:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: "Internal server error",
-      message: error instanceof Error ? error.message : "Unknown error"
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { 
-      action, 
-      city, 
-      country, 
-      name, 
-      description, 
-      imageUrl, 
+    const {
+      action,
+      city,
+      country,
+      name,
+      description,
+      imageUrl,
       adminOverrides = {},
-      submissionIds = [] 
+      submissionIds = [],
     } = req.body;
 
     if (action === "create_from_submissions") {
@@ -203,16 +220,17 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
       }
 
       try {
-        const destination = await ContentManagementService.createDestinationFromSubmissions(
-          city,
-          country,
-          {
-            name,
-            description,
-            imageUrl,
-            ...adminOverrides,
-          }
-        );
+        const destination =
+          await ContentManagementService.createDestinationFromSubmissions(
+            city,
+            country,
+            {
+              name,
+              description,
+              imageUrl,
+              ...adminOverrides,
+            },
+          );
 
         return res.status(201).json({
           message: "Destination created successfully from submissions",
@@ -253,7 +271,8 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
           name,
           city,
           country,
-          description: description || `Study destination in ${city}, ${country}`,
+          description:
+            description || `Study destination in ${city}, ${country}`,
           imageUrl,
           status: "published",
           source: "admin_created",
@@ -273,9 +292,9 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     });
   } catch (error) {
     console.error("Error creating destination:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: "Internal server error",
-      message: error instanceof Error ? error.message : "Unknown error"
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }
@@ -320,9 +339,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     });
   } catch (error) {
     console.error("Error updating destination:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: "Internal server error",
-      message: error instanceof Error ? error.message : "Unknown error"
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }

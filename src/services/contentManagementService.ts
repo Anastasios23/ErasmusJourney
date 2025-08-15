@@ -27,7 +27,7 @@ export class ContentManagementService {
   static async createDestinationFromSubmissions(
     city: string,
     country: string,
-    adminOverrides: any = {}
+    adminOverrides: any = {},
   ) {
     try {
       // Get all relevant submissions for this location
@@ -64,7 +64,8 @@ export class ContentManagementService {
         name: adminOverrides.name || `${city}, ${country}`,
         city,
         country,
-        description: adminOverrides.description || 
+        description:
+          adminOverrides.description ||
           `Study destination in ${city}, ${country} based on ${submissions.length} student experiences`,
         imageUrl: adminOverrides.imageUrl,
         featured: adminOverrides.featured || false,
@@ -95,7 +96,7 @@ export class ContentManagementService {
       // Mark submissions as processed
       await prisma.formSubmission.updateMany({
         where: {
-          id: { in: submissions.map(s => s.id) },
+          id: { in: submissions.map((s) => s.id) },
         },
         data: { processed: true },
       });
@@ -110,41 +111,57 @@ export class ContentManagementService {
   /**
    * Aggregate data from multiple submissions
    */
-  static async aggregateSubmissionData(submissions: any[]): Promise<DestinationAggregation> {
-    const basicInfoSubmissions = submissions.filter(s => s.type === "basic-info");
-    const accommodationSubmissions = submissions.filter(s => s.type === "accommodation");
-    const livingExpensesSubmissions = submissions.filter(s => s.type === "living-expenses");
-    const experienceSubmissions = submissions.filter(s => s.type === "help-future-students");
+  static async aggregateSubmissionData(
+    submissions: any[],
+  ): Promise<DestinationAggregation> {
+    const basicInfoSubmissions = submissions.filter(
+      (s) => s.type === "basic-info",
+    );
+    const accommodationSubmissions = submissions.filter(
+      (s) => s.type === "accommodation",
+    );
+    const livingExpensesSubmissions = submissions.filter(
+      (s) => s.type === "living-expenses",
+    );
+    const experienceSubmissions = submissions.filter(
+      (s) => s.type === "help-future-students",
+    );
 
     // Calculate average rating
     const ratings = experienceSubmissions
-      .map(s => s.data?.overallRating || s.data?.ratings?.overallRating)
-      .filter(r => r !== null && r !== undefined);
-    const averageRating = ratings.length > 0 
-      ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length 
-      : null;
+      .map((s) => s.data?.overallRating || s.data?.ratings?.overallRating)
+      .filter((r) => r !== null && r !== undefined);
+    const averageRating =
+      ratings.length > 0
+        ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
+        : null;
 
     // Calculate average cost
     const costs = livingExpensesSubmissions
-      .map(s => s.data?.totalMonthlyBudget)
-      .filter(c => c !== null && c !== undefined);
-    const averageCost = costs.length > 0
-      ? costs.reduce((sum, cost) => sum + cost, 0) / costs.length
-      : null;
+      .map((s) => s.data?.totalMonthlyBudget)
+      .filter((c) => c !== null && c !== undefined);
+    const averageCost =
+      costs.length > 0
+        ? costs.reduce((sum, cost) => sum + cost, 0) / costs.length
+        : null;
 
     // Aggregate accommodation data
-    const accommodationData = this.aggregateAccommodationData(accommodationSubmissions);
+    const accommodationData = this.aggregateAccommodationData(
+      accommodationSubmissions,
+    );
 
     // Aggregate course data
     const courseData = this.aggregateCourseData(
-      submissions.filter(s => s.type === "course-matching")
+      submissions.filter((s) => s.type === "course-matching"),
     );
 
     // Aggregate living expenses data
-    const livingExpensesData = this.aggregateLivingExpensesData(livingExpensesSubmissions);
+    const livingExpensesData = this.aggregateLivingExpensesData(
+      livingExpensesSubmissions,
+    );
 
     // Extract user experiences
-    const userExperiences = experienceSubmissions.map(s => ({
+    const userExperiences = experienceSubmissions.map((s) => ({
       id: s.id,
       userId: s.userId,
       title: s.title,
@@ -178,12 +195,12 @@ export class ContentManagementService {
     const rentRanges = [];
     const ratings = [];
 
-    submissions.forEach(submission => {
+    submissions.forEach((submission) => {
       const data = submission.data;
-      
+
       // Count accommodation types
       if (data.accommodationType) {
-        accommodationTypes[data.accommodationType] = 
+        accommodationTypes[data.accommodationType] =
           (accommodationTypes[data.accommodationType] || 0) + 1;
       }
 
@@ -198,25 +215,30 @@ export class ContentManagementService {
       }
     });
 
-    const averageRent = rentRanges.length > 0
-      ? rentRanges.reduce((sum, rent) => sum + rent, 0) / rentRanges.length
-      : null;
+    const averageRent =
+      rentRanges.length > 0
+        ? rentRanges.reduce((sum, rent) => sum + rent, 0) / rentRanges.length
+        : null;
 
-    const averageRating = ratings.length > 0
-      ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
-      : null;
+    const averageRating =
+      ratings.length > 0
+        ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
+        : null;
 
     return {
       totalSubmissions: submissions.length,
       accommodationTypes,
       averageRent,
-      rentRange: rentRanges.length > 0 ? {
-        min: Math.min(...rentRanges),
-        max: Math.max(...rentRanges),
-      } : null,
+      rentRange:
+        rentRanges.length > 0
+          ? {
+              min: Math.min(...rentRanges),
+              max: Math.max(...rentRanges),
+            }
+          : null,
       averageRating,
       popularOptions: Object.entries(accommodationTypes)
-        .sort(([,a], [,b]) => (b as number) - (a as number))
+        .sort(([, a], [, b]) => (b as number) - (a as number))
         .slice(0, 3),
     };
   }
@@ -231,11 +253,11 @@ export class ContentManagementService {
     const courseCounts = [];
     const difficulties = [];
 
-    submissions.forEach(submission => {
+    submissions.forEach((submission) => {
       const data = submission.data;
-      
+
       if (data.hostDepartment) {
-        departments[data.hostDepartment] = 
+        departments[data.hostDepartment] =
           (departments[data.hostDepartment] || 0) + 1;
       }
 
@@ -251,11 +273,13 @@ export class ContentManagementService {
     return {
       totalSubmissions: submissions.length,
       popularDepartments: Object.entries(departments)
-        .sort(([,a], [,b]) => (b as number) - (a as number))
+        .sort(([, a], [, b]) => (b as number) - (a as number))
         .slice(0, 5),
-      averageCourseCount: courseCounts.length > 0
-        ? courseCounts.reduce((sum, count) => sum + count, 0) / courseCounts.length
-        : null,
+      averageCourseCount:
+        courseCounts.length > 0
+          ? courseCounts.reduce((sum, count) => sum + count, 0) /
+            courseCounts.length
+          : null,
       difficultyDistribution: difficulties.reduce((acc, diff) => {
         acc[diff] = (acc[diff] || 0) + 1;
         return acc;
@@ -277,13 +301,14 @@ export class ContentManagementService {
       total: [],
     };
 
-    submissions.forEach(submission => {
+    submissions.forEach((submission) => {
       const data = submission.data;
-      
+
       if (data.monthlyRent) expenses.rent.push(data.monthlyRent);
       if (data.monthlyFood) expenses.food.push(data.monthlyFood);
       if (data.monthlyTransport) expenses.transport.push(data.monthlyTransport);
-      if (data.monthlyEntertainment) expenses.entertainment.push(data.monthlyEntertainment);
+      if (data.monthlyEntertainment)
+        expenses.entertainment.push(data.monthlyEntertainment);
       if (data.totalMonthlyBudget) expenses.total.push(data.totalMonthlyBudget);
     });
 
@@ -318,29 +343,32 @@ export class ContentManagementService {
     const homeCountries = {};
     const studyLevels = {};
 
-    submissions.forEach(submission => {
+    submissions.forEach((submission) => {
       const data = submission.data;
-      
+
       if (data.nationality) {
-        nationalities[data.nationality] = (nationalities[data.nationality] || 0) + 1;
+        nationalities[data.nationality] =
+          (nationalities[data.nationality] || 0) + 1;
       }
 
       if (data.homeCountry) {
-        homeCountries[data.homeCountry] = (homeCountries[data.homeCountry] || 0) + 1;
+        homeCountries[data.homeCountry] =
+          (homeCountries[data.homeCountry] || 0) + 1;
       }
 
       if (data.levelOfStudy) {
-        studyLevels[data.levelOfStudy] = (studyLevels[data.levelOfStudy] || 0) + 1;
+        studyLevels[data.levelOfStudy] =
+          (studyLevels[data.levelOfStudy] || 0) + 1;
       }
     });
 
     return {
       totalStudents: submissions.length,
       topNationalities: Object.entries(nationalities)
-        .sort(([,a], [,b]) => (b as number) - (a as number))
+        .sort(([, a], [, b]) => (b as number) - (a as number))
         .slice(0, 5),
       topHomeCountries: Object.entries(homeCountries)
-        .sort(([,a], [,b]) => (b as number) - (a as number))
+        .sort(([, a], [, b]) => (b as number) - (a as number))
         .slice(0, 5),
       studyLevelDistribution: studyLevels,
     };
@@ -349,8 +377,11 @@ export class ContentManagementService {
   /**
    * Link submissions to destination
    */
-  static async linkSubmissionsToDestination(destinationId: string, submissions: any[]) {
-    const links = submissions.map(submission => ({
+  static async linkSubmissionsToDestination(
+    destinationId: string,
+    submissions: any[],
+  ) {
+    const links = submissions.map((submission) => ({
       destinationId,
       submissionId: submission.id,
       contributionType: this.determineContributionType(submission),
@@ -395,8 +426,10 @@ export class ContentManagementService {
     weight *= completeness;
 
     // Adjust based on recency (newer submissions get slightly higher weight)
-    const daysOld = (Date.now() - new Date(submission.createdAt).getTime()) / (1000 * 60 * 60 * 24);
-    const recencyFactor = Math.max(0.5, 1 - (daysOld / 365)); // Decay over a year
+    const daysOld =
+      (Date.now() - new Date(submission.createdAt).getTime()) /
+      (1000 * 60 * 60 * 24);
+    const recencyFactor = Math.max(0.5, 1 - daysOld / 365); // Decay over a year
     weight *= recencyFactor;
 
     return Math.max(0.1, Math.min(2.0, weight)); // Clamp between 0.1 and 2.0
@@ -408,7 +441,7 @@ export class ContentManagementService {
   static calculateDataCompleteness(data: any, type: string): number {
     const requiredFields = {
       "basic-info": ["hostCity", "hostCountry", "hostUniversity"],
-      "accommodation": ["accommodationType", "monthlyRent"],
+      accommodation: ["accommodationType", "monthlyRent"],
       "living-expenses": ["totalMonthlyBudget"],
       "course-matching": ["hostCourseCount"],
       "help-future-students": ["overallRating", "advice"],
@@ -417,7 +450,7 @@ export class ContentManagementService {
     const fields = requiredFields[type] || [];
     if (fields.length === 0) return 1.0;
 
-    const completedFields = fields.filter(field => {
+    const completedFields = fields.filter((field) => {
       const value = data[field];
       return value !== null && value !== undefined && value !== "";
     });
@@ -455,11 +488,14 @@ export class ContentManagementService {
     }
 
     // If aggregated data is stale, refresh it
-    const isStale = destination.lastDataUpdate < new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours
+    const isStale =
+      destination.lastDataUpdate < new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours
     if (isStale && destination.linkedSubmissions.length > 0) {
-      const submissions = destination.linkedSubmissions.map(link => link.submission);
+      const submissions = destination.linkedSubmissions.map(
+        (link) => link.submission,
+      );
       const freshAggregation = await this.aggregateSubmissionData(submissions);
-      
+
       await prisma.destination.update({
         where: { id: destinationId },
         data: {
@@ -477,7 +513,10 @@ export class ContentManagementService {
   /**
    * Update destination with admin overrides
    */
-  static async updateDestinationOverrides(destinationId: string, overrides: any) {
+  static async updateDestinationOverrides(
+    destinationId: string,
+    overrides: any,
+  ) {
     return await prisma.destination.update({
       where: { id: destinationId },
       data: {
