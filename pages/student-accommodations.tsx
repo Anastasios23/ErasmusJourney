@@ -899,7 +899,7 @@ export default function StudentAccommodations() {
                 )}
 
                 {/* Student Accommodation Experiences */}
-                {!realAccommodationsLoading && realAccommodations.length > 0 && (
+                {!contentLoading && generatedContent && generatedContent.length > 0 && (
                   <section className="mb-12">
                     <div className="flex items-center justify-between mb-6">
                       <div>
