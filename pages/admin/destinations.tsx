@@ -1,14 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import Header from "../../components/Header";
-import { Button } from "../../src/components/ui/button";
-import { Input } from "../../src/components/ui/input";
-import { Textarea } from "../../src/components/ui/textarea";
-import { Badge } from "../../src/components/ui/badge";
-import { Label } from "../../src/components/ui/label";
 import {
   Card,
   CardContent,
@@ -21,765 +15,547 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../src/components/ui/tabs";
+import { Badge } from "../../src/components/ui/badge";
+import { Button } from "../../src/components/ui/button";
+import { Input } from "../../src/components/ui/input";
+import { Textarea } from "../../src/components/ui/textarea";
+import { Label } from "../../src/components/ui/label";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../../src/components/ui/table";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "../../src/components/ui/dialog";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../../src/components/ui/alert-dialog";
-import {
-  Eye,
-  CheckCircle,
-  XCircle,
-  Clock,
-  MapPin,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../src/components/ui/select";
+import { 
+  MapPin, 
+  Plus, 
+  Eye, 
+  Edit, 
+  Check, 
+  X,
+  Save,
   Users,
   Euro,
-  Calendar,
-  Upload,
-  Edit3,
-  Trash2,
   Star,
-  AlertTriangle,
-  Image as ImageIcon,
-  Save,
-  RefreshCw,
+  Home,
+  BookOpen,
+  ArrowLeft
 } from "lucide-react";
 
-interface FormSubmissionData {
+interface FormSubmission {
   id: string;
   userId: string;
   type: string;
   title: string;
-  data: {
-    // Basic Information
-    studentName?: string;
-    email?: string;
-    universityInCyprus?: string;
-    hostCountry?: string;
-    hostCity?: string;
-    hostUniversity?: string;
-    studyLevel?: string;
-    studyPeriod?: string;
-
-    // Living Expenses
-    monthlyRent?: number;
-    foodExpenses?: number;
-    transportExpenses?: number;
-    entertainmentExpenses?: number;
-    totalMonthlyBudget?: number;
-
-    // Student Story
-    overallRating?: number;
-    experienceDescription?: string;
-    recommendations?: string;
-    highlights?: string[];
-    wouldRecommend?: boolean;
-  };
-  status: "SUBMITTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
+  status: string;
   createdAt: string;
-  updatedAt: string;
+  data: any;
+  user?: {
+    firstName?: string;
+    lastName?: string;
+    email: string;
+  };
 }
 
-interface DestinationData {
+interface Destination {
   id: string;
   name: string;
+  city: string;
   country: string;
+  status: string;
   description?: string;
   imageUrl?: string;
-  featured: boolean;
-  climate?: string;
-  costOfLiving?: {
-    averageRent: number;
-    averageFood: number;
-    averageTransport: number;
-    averageTotal: number;
-  };
-  highlights?: string;
-  studentCount: number;
-  averageRating: number;
-  status: "DRAFT" | "PUBLISHED";
+  submissionCount: number;
+  averageRating?: number;
+  averageCost?: number;
 }
 
-export default function AdminDestinations() {
+export default function DestinationsAdmin() {
+  const { data: session, status } = useSession();
   const router = useRouter();
-  const [pendingSubmissions, setPendingSubmissions] = useState<
-    FormSubmissionData[]
-  >([]);
-  const [liveDestinations, setLiveDestinations] = useState<DestinationData[]>(
-    [],
-  );
-  const [selectedSubmission, setSelectedSubmission] =
-    useState<FormSubmissionData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>("");
-  const [imageUpload, setImageUpload] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>("");
+  const [activeTab, setActiveTab] = useState("submissions");
+  const [submissions, setSubmissions] = useState<FormSubmission[]>([]);
+  const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [selectedSubmission, setSelectedSubmission] = useState<FormSubmission | null>(null);
+  const [editingDestination, setEditingDestination] = useState<Destination | null>(null);
+  const [newDestination, setNewDestination] = useState({
+    name: "",
+    city: "",
+    country: "",
+    description: "",
+    imageUrl: "",
+  });
 
-  // Add state for editing live destinations
-  const [editingDestination, setEditingDestination] =
-    useState<DestinationData | null>(null);
-
-  // Function to handle editing a live destination
-  const handleEditDestination = (destination: DestinationData) => {
-    setEditingDestination(destination);
-  };
-
-  // Function to handle viewing a destination on the public page
-  const handleViewDestination = (destination: DestinationData) => {
-    const destinationSlug = destination.name
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, "-");
-    window.open(`/destinations/${destinationSlug}`, "_blank");
-  };
-
-  // Fetch pending submissions
   useEffect(() => {
-    fetchPendingSubmissions();
-    fetchLiveDestinations();
-  }, []);
+    if (status === "loading") return;
 
-  const fetchPendingSubmissions = async () => {
+    if (!session || session.user?.role !== "ADMIN") {
+      router.push("/login");
+      return;
+    }
+
+    setLoading(false);
+    fetchData();
+  }, [session, status, router]);
+
+  const fetchData = async () => {
     try {
-      const response = await fetch(
-        "/api/admin/form-submissions?status=SUBMITTED",
-      );
-
-      if (response.status === 403) {
-        setError("Unauthorized: Admin access required");
-        router.push("/login");
-        return;
+      // Fetch destination-related submissions
+      const submissionsRes = await fetch("/api/admin/form-submissions?status=SUBMITTED");
+      if (submissionsRes.ok) {
+        const submissionsData = await submissionsRes.json();
+        setSubmissions(submissionsData.submissions?.filter((s: FormSubmission) => 
+          ['basic-info', 'accommodation', 'living-expenses', 'help-future-students'].includes(s.type)
+        ) || []);
       }
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      // Fetch existing destinations
+      const destinationsRes = await fetch("/api/destinations");
+      if (destinationsRes.ok) {
+        const destinationsData = await destinationsRes.json();
+        setDestinations(destinationsData.destinations || []);
       }
-
-      const submissions = await response.json();
-
-      // Ensure submissions is an array before filtering
-      if (!Array.isArray(submissions)) {
-        console.error(
-          "Expected array but got:",
-          typeof submissions,
-          submissions,
-        );
-        setPendingSubmissions([]);
-        return;
-      }
-
-      // Filter for submissions that contain destination data
-      const destinationSubmissions = submissions.filter(
-        (sub: FormSubmissionData) => sub.data.hostCity && sub.data.hostCountry,
-      );
-
-      setPendingSubmissions(destinationSubmissions);
     } catch (error) {
-      console.error("Error fetching submissions:", error);
-      setError("Failed to fetch submissions");
-      setPendingSubmissions([]);
-    } finally {
-      setLoading(false);
+      console.error("Error fetching destinations data:", error);
     }
   };
 
-  const fetchLiveDestinations = async () => {
+  const createDestinationFromSubmission = async (submission: FormSubmission) => {
     try {
-      const response = await fetch("/api/admin/destinations");
-
-      if (response.status === 403) {
-        setError("Unauthorized: Admin access required");
-        router.push("/login");
-        return;
-      }
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const destinations = await response.json();
-
-      // Ensure destinations is an array before setting
-      if (!Array.isArray(destinations)) {
-        console.error(
-          "Expected array but got:",
-          typeof destinations,
-          destinations,
-        );
-        setLiveDestinations([]);
-        return;
-      }
-
-      setLiveDestinations(destinations);
-    } catch (error) {
-      console.error("Error fetching destinations:", error);
-      setLiveDestinations([]);
-    }
-  };
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setImageUpload(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
+      const basicInfoData = submission.data;
+      const destinationData = {
+        name: `${basicInfoData.hostCity}, ${basicInfoData.hostCountry}`,
+        city: basicInfoData.hostCity,
+        country: basicInfoData.hostCountry,
+        description: `Study destination in ${basicInfoData.hostCity}, ${basicInfoData.hostCountry}`,
+        source: "user_generated",
+        submissionId: submission.id,
       };
-      reader.readAsDataURL(file);
-    }
-  };
 
-  const approveSubmission = async (
-    submissionId: string,
-    destinationData: Partial<DestinationData>,
-  ) => {
-    try {
-      console.log("Approving submission:", submissionId);
-      console.log("Destination data:", destinationData);
-      console.log("Image URL:", imagePreview);
-
-      // First approve the submission
-      const submissionResponse = await fetch(
-        `/api/admin/form-submissions/${submissionId}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: "APPROVED" }),
-        },
-      );
-
-      if (!submissionResponse.ok) {
-        const errorData = await submissionResponse.json();
-        throw new Error(`Failed to approve submission: ${errorData.error}`);
-      }
-
-      console.log("✅ Submission approved successfully");
-
-      // Then create/update destination
-      const destinationResponse = await fetch("/api/admin/destinations", {
+      const response = await fetch("/api/admin/destinations", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          destinationData,
-          imageUrl: imagePreview || null,
-        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(destinationData),
       });
 
-      if (!destinationResponse.ok) {
-        const errorData = await destinationResponse.json();
-        throw new Error(`Failed to create destination: ${errorData.error}`);
+      if (response.ok) {
+        // Mark submission as processed
+        await fetch(`/api/admin/form-submissions/${submission.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: "PUBLISHED" }),
+        });
+
+        await fetchData(); // Refresh data
       }
-
-      const createdDestination = await destinationResponse.json();
-      console.log("✅ Destination created successfully:", createdDestination);
-
-      // Show success message
-      alert(`✅ Successfully approved and published: ${destinationData.name}`);
-
-      // Refresh data
-      fetchPendingSubmissions();
-      fetchLiveDestinations();
-      setSelectedSubmission(null);
-      setImageUpload(null);
-      setImagePreview("");
     } catch (error) {
-      console.error("❌ Error approving submission:", error);
-      alert(`❌ Error: ${error.message}`);
+      console.error("Error creating destination:", error);
     }
   };
 
-  const rejectSubmission = async (submissionId: string, reason: string) => {
+  const handleSubmissionApproval = async (submissionId: string, action: "approve" | "reject") => {
     try {
-      await fetch(`/api/admin/form-submissions/${submissionId}`, {
+      const newStatus = action === "approve" ? "PUBLISHED" : "ARCHIVED";
+      
+      const response = await fetch(`/api/admin/form-submissions/${submissionId}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (response.ok) {
+        await fetchData(); // Refresh data
+        setSelectedSubmission(null);
+      }
+    } catch (error) {
+      console.error("Error updating submission:", error);
+    }
+  };
+
+  const createNewDestination = async () => {
+    try {
+      const response = await fetch("/api/admin/destinations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          status: "REJECTED",
-          rejectionReason: reason,
+          ...newDestination,
+          source: "admin_created",
         }),
       });
 
-      fetchPendingSubmissions();
-      setSelectedSubmission(null);
+      if (response.ok) {
+        setNewDestination({
+          name: "",
+          city: "",
+          country: "",
+          description: "",
+          imageUrl: "",
+        });
+        await fetchData(); // Refresh data
+      }
     } catch (error) {
-      console.error("Error rejecting submission:", error);
+      console.error("Error creating destination:", error);
     }
   };
 
-  return (
-    <>
-      <Head>
-        <title>Admin - Destinations Management</title>
-      </Head>
+  const getTypeIcon = (type: string) => {
+    const iconMap = {
+      "basic-info": Users,
+      "accommodation": Home,
+      "living-expenses": Euro,
+      "help-future-students": Star,
+    };
+    
+    const IconComponent = iconMap[type as keyof typeof iconMap] || MapPin;
+    return <IconComponent className="h-4 w-4" />;
+  };
 
+  const getLocationFromSubmission = (submission: FormSubmission) => {
+    const data = submission.data;
+    if (submission.type === "basic-info") {
+      return `${data.hostCity || 'Unknown'}, ${data.hostCountry || 'Unknown'}`;
+    }
+    return "Location not specified";
+  };
+
+  if (loading || status === "loading") {
+    return (
       <div className="min-h-screen bg-gray-50">
         <Header />
-        <main className="pt-20 pb-16 px-4">
-          <div className="max-w-7xl mx-auto">
-            {/* Header */}
-            <div className="flex justify-between items-center mb-8">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">
-                  Destinations Management
-                </h1>
-                <p className="text-gray-600 mt-2">
-                  Review and manage destination submissions and published
-                  destinations
-                </p>
-              </div>
-              <Button
-                variant="outline"
-                onClick={() => window.location.reload()}
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Refresh
-              </Button>
-            </div>
-
-            {error && (
-              <Card className="mb-6 border-red-200 bg-red-50">
-                <CardContent className="pt-6">
-                  <div className="flex items-center">
-                    <AlertTriangle className="h-5 w-5 text-red-500 mr-2" />
-                    <span className="text-red-700">{error}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="mt-4 text-gray-600">Loading destinations...</p>
-              </div>
-            ) : (
-              <Tabs defaultValue="pending" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger
-                    value="pending"
-                    className="flex items-center gap-2"
-                  >
-                    <Clock className="h-4 w-4" />
-                    Pending Review ({pendingSubmissions.length})
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="published"
-                    className="flex items-center gap-2"
-                  >
-                    <CheckCircle className="h-4 w-4" />
-                    Published ({liveDestinations.length})
-                  </TabsTrigger>
-                </TabsList>
-
-                {/* Pending Submissions Tab */}
-                <TabsContent value="pending" className="space-y-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Clock className="h-5 w-5" />
-                        Pending Destination Submissions
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {pendingSubmissions.length === 0 ? (
-                        <div className="text-center py-8">
-                          <Clock className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                          <p className="text-gray-500">
-                            No pending submissions
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="grid gap-4">
-                          {pendingSubmissions.map((submission) => (
-                            <Card
-                              key={submission.id}
-                              className="border-l-4 border-l-yellow-400"
-                            >
-                              <CardContent className="pt-6">
-                                <div className="flex justify-between items-start">
-                                  <div className="flex-1">
-                                    <h3 className="font-semibold text-lg mb-2">
-                                      {submission.data.hostCity},{" "}
-                                      {submission.data.hostCountry}
-                                    </h3>
-                                    <div className="grid grid-cols-2 gap-4 mb-4">
-                                      <div>
-                                        <p className="text-sm text-gray-600">
-                                          <MapPin className="h-4 w-4 inline mr-1" />
-                                          University:{" "}
-                                          {submission.data.hostUniversity}
-                                        </p>
-                                        <p className="text-sm text-gray-600">
-                                          <Users className="h-4 w-4 inline mr-1" />
-                                          Student:{" "}
-                                          {submission.data.studentName ||
-                                            "Unknown"}
-                                        </p>
-                                      </div>
-                                      <div>
-                                        <p className="text-sm text-gray-600">
-                                          <Calendar className="h-4 w-4 inline mr-1" />
-                                          Submitted:{" "}
-                                          {new Date(
-                                            submission.createdAt,
-                                          ).toLocaleDateString()}
-                                        </p>
-                                        <p className="text-sm text-gray-600">
-                                          <Euro className="h-4 w-4 inline mr-1" />
-                                          Budget: €
-                                          {submission.data.totalMonthlyBudget ||
-                                            "Not specified"}
-                                        </p>
-                                      </div>
-                                    </div>
-
-                                    {submission.data.experienceDescription && (
-                                      <div className="mb-4">
-                                        <h4 className="font-medium mb-2">
-                                          Experience Description:
-                                        </h4>
-                                        <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
-                                          {
-                                            submission.data
-                                              .experienceDescription
-                                          }
-                                        </p>
-                                      </div>
-                                    )}
-
-                                    {submission.data.highlights &&
-                                      submission.data.highlights.length > 0 && (
-                                        <div className="mb-4">
-                                          <h4 className="font-medium mb-2">
-                                            Highlights:
-                                          </h4>
-                                          <div className="flex flex-wrap gap-1">
-                                            {submission.data.highlights.map(
-                                              (highlight, index) => (
-                                                <Badge
-                                                  key={index}
-                                                  variant="secondary"
-                                                >
-                                                  {highlight}
-                                                </Badge>
-                                              ),
-                                            )}
-                                          </div>
-                                        </div>
-                                      )}
-
-                                    <div className="flex items-center gap-2 mb-4">
-                                      <Star className="h-4 w-4 text-yellow-500" />
-                                      <span className="text-sm">
-                                        Rating:{" "}
-                                        {submission.data.overallRating ||
-                                          "Not rated"}
-                                        /5
-                                      </span>
-                                      {submission.data.wouldRecommend && (
-                                        <Badge
-                                          variant="outline"
-                                          className="text-green-600"
-                                        >
-                                          Recommended
-                                        </Badge>
-                                      )}
-                                    </div>
-                                  </div>
-
-                                  <div className="flex flex-col gap-2 ml-4">
-                                    <Dialog>
-                                      <DialogTrigger asChild>
-                                        <Button variant="outline" size="sm">
-                                          <Eye className="h-4 w-4 mr-1" />
-                                          Review
-                                        </Button>
-                                      </DialogTrigger>
-                                      <DialogContent className="max-w-2xl">
-                                        <DialogHeader>
-                                          <DialogTitle>
-                                            Review Destination:{" "}
-                                            {submission.data.hostCity},{" "}
-                                            {submission.data.hostCountry}
-                                          </DialogTitle>
-                                          <DialogDescription>
-                                            Review this submission and decide
-                                            whether to approve as a new
-                                            destination.
-                                          </DialogDescription>
-                                        </DialogHeader>
-
-                                        <div className="space-y-4">
-                                          <div className="grid grid-cols-2 gap-4">
-                                            <div>
-                                              <Label htmlFor="city">City</Label>
-                                              <Input
-                                                id="city"
-                                                value={submission.data.hostCity}
-                                                readOnly
-                                              />
-                                            </div>
-                                            <div>
-                                              <Label htmlFor="country">
-                                                Country
-                                              </Label>
-                                              <Input
-                                                id="country"
-                                                value={
-                                                  submission.data.hostCountry
-                                                }
-                                                readOnly
-                                              />
-                                            </div>
-                                          </div>
-
-                                          <div>
-                                            <Label htmlFor="university">
-                                              University
-                                            </Label>
-                                            <Input
-                                              id="university"
-                                              value={
-                                                submission.data.hostUniversity
-                                              }
-                                              readOnly
-                                            />
-                                          </div>
-
-                                          <div>
-                                            <Label htmlFor="description">
-                                              Description
-                                            </Label>
-                                            <Textarea
-                                              id="description"
-                                              value={
-                                                submission.data
-                                                  .experienceDescription || ""
-                                              }
-                                              readOnly
-                                              rows={4}
-                                            />
-                                          </div>
-
-                                          <div>
-                                            <Label htmlFor="image-upload">
-                                              Destination Image
-                                            </Label>
-                                            <Input
-                                              id="image-upload"
-                                              type="file"
-                                              accept="image/*"
-                                              onChange={handleImageUpload}
-                                            />
-                                            {imagePreview && (
-                                              <div className="mt-2">
-                                                <img
-                                                  src={imagePreview}
-                                                  alt="Preview"
-                                                  className="w-full h-48 object-cover rounded"
-                                                />
-                                              </div>
-                                            )}
-                                          </div>
-                                        </div>
-
-                                        <DialogFooter className="gap-2">
-                                          <AlertDialog>
-                                            <AlertDialogTrigger asChild>
-                                              <Button variant="destructive">
-                                                <XCircle className="h-4 w-4 mr-1" />
-                                                Reject
-                                              </Button>
-                                            </AlertDialogTrigger>
-                                            <AlertDialogContent>
-                                              <AlertDialogHeader>
-                                                <AlertDialogTitle>
-                                                  Reject Submission
-                                                </AlertDialogTitle>
-                                                <AlertDialogDescription>
-                                                  Are you sure you want to
-                                                  reject this destination
-                                                  submission? This action cannot
-                                                  be undone.
-                                                </AlertDialogDescription>
-                                              </AlertDialogHeader>
-                                              <AlertDialogFooter>
-                                                <AlertDialogCancel>
-                                                  Cancel
-                                                </AlertDialogCancel>
-                                                <AlertDialogAction
-                                                  onClick={() =>
-                                                    rejectSubmission(
-                                                      submission.id,
-                                                      "Quality standards not met",
-                                                    )
-                                                  }
-                                                  className="bg-red-600 hover:bg-red-700"
-                                                >
-                                                  Reject
-                                                </AlertDialogAction>
-                                              </AlertDialogFooter>
-                                            </AlertDialogContent>
-                                          </AlertDialog>
-
-                                          <Button
-                                            onClick={() => {
-                                              const destinationData = {
-                                                name: `${submission.data.hostCity}, ${submission.data.hostCountry}`,
-                                                city: submission.data.hostCity,
-                                                country:
-                                                  submission.data.hostCountry,
-                                                description:
-                                                  submission.data
-                                                    .experienceDescription,
-                                                featured: true,
-                                                status: "PUBLISHED" as const,
-                                                studentCount: 1,
-                                                averageRating:
-                                                  submission.data
-                                                    .overallRating || 4.0,
-                                              };
-                                              approveSubmission(
-                                                submission.id,
-                                                destinationData,
-                                              );
-                                            }}
-                                            className="bg-green-600 hover:bg-green-700"
-                                          >
-                                            <CheckCircle className="h-4 w-4 mr-1" />
-                                            Approve & Publish
-                                          </Button>
-                                        </DialogFooter>
-                                      </DialogContent>
-                                    </Dialog>
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          ))}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                {/* Published Destinations Tab */}
-                <TabsContent value="published" className="space-y-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <CheckCircle className="h-5 w-5" />
-                        Published Destinations
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {liveDestinations.length === 0 ? (
-                        <div className="text-center py-8">
-                          <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                          <p className="text-gray-500">
-                            No published destinations yet
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="grid gap-4">
-                          {liveDestinations.map((destination) => (
-                            <Card
-                              key={destination.id}
-                              className="border-l-4 border-l-green-400"
-                            >
-                              <CardContent className="pt-6">
-                                <div className="flex justify-between items-start">
-                                  <div className="flex-1">
-                                    <h3 className="font-semibold text-lg mb-2">
-                                      {destination.name}
-                                    </h3>
-                                    <div className="grid grid-cols-2 gap-4 mb-4">
-                                      <div>
-                                        <p className="text-sm text-gray-600">
-                                          <MapPin className="h-4 w-4 inline mr-1" />
-                                          Country: {destination.country}
-                                        </p>
-                                        <p className="text-sm text-gray-600">
-                                          <Users className="h-4 w-4 inline mr-1" />
-                                          Students: {destination.studentCount}
-                                        </p>
-                                      </div>
-                                      <div>
-                                        <p className="text-sm text-gray-600">
-                                          <Star className="h-4 w-4 inline mr-1" />
-                                          Rating: {destination.averageRating}/5
-                                        </p>
-                                        <Badge
-                                          variant={
-                                            destination.featured
-                                              ? "default"
-                                              : "secondary"
-                                          }
-                                        >
-                                          {destination.featured
-                                            ? "Featured"
-                                            : "Standard"}
-                                        </Badge>
-                                      </div>
-                                    </div>
-
-                                    {destination.description && (
-                                      <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded mb-4">
-                                        {destination.description}
-                                      </p>
-                                    )}
-                                  </div>
-
-                                  <div className="flex flex-col gap-2 ml-4">
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() =>
-                                        handleViewDestination(destination)
-                                      }
-                                    >
-                                      <Eye className="h-4 w-4 mr-1" />
-                                      View
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() =>
-                                        handleEditDestination(destination)
-                                      }
-                                    >
-                                      <Edit3 className="h-4 w-4 mr-1" />
-                                      Edit
-                                    </Button>
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          ))}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </Tabs>
-            )}
+        <div className="container mx-auto px-4 py-8">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+            <div className="h-32 bg-gray-200 rounded"></div>
           </div>
-        </main>
+        </div>
       </div>
-    </>
+    );
+  }
+
+  if (!session || session.user?.role !== "ADMIN") {
+    return null;
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Head>
+        <title>Destinations Management - Admin</title>
+      </Head>
+      
+      <Header />
+      
+      <div className="container mx-auto px-4 py-8 mt-16">
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={() => router.push('/admin')}
+              className="mb-4"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Admin Dashboard
+            </Button>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Destinations Management</h1>
+            <p className="text-gray-600">Review submissions and manage destination content</p>
+          </div>
+        </div>
+
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="submissions">
+              Pending Submissions ({submissions.filter(s => s.status === "SUBMITTED").length})
+            </TabsTrigger>
+            <TabsTrigger value="destinations">Published Destinations</TabsTrigger>
+            <TabsTrigger value="create">Create New</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="submissions" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>User Submissions for Review</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {submissions.filter(s => s.status === "SUBMITTED").length === 0 ? (
+                  <div className="text-center py-8">
+                    <Check className="h-16 w-16 text-green-600 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">All caught up!</h3>
+                    <p className="text-gray-600">No destination submissions waiting for review.</p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Location</TableHead>
+                        <TableHead>User</TableHead>
+                        <TableHead>Created</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {submissions.filter(s => s.status === "SUBMITTED").map((submission) => (
+                        <TableRow key={submission.id}>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              {getTypeIcon(submission.type)}
+                              <span className="capitalize">{submission.type.replace('-', ' ')}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>{getLocationFromSubmission(submission)}</TableCell>
+                          <TableCell>
+                            {submission.user ? 
+                              `${submission.user.firstName || ''} ${submission.user.lastName || ''}`.trim() || submission.user.email
+                              : 'Unknown User'
+                            }
+                          </TableCell>
+                          <TableCell>{new Date(submission.createdAt).toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => setSelectedSubmission(submission)}
+                                  >
+                                    <Eye className="h-4 w-4 mr-1" />
+                                    Review
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                                  <DialogHeader>
+                                    <DialogTitle>
+                                      Review: {submission.title}
+                                    </DialogTitle>
+                                  </DialogHeader>
+                                  {selectedSubmission && (
+                                    <div className="space-y-4">
+                                      <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                          <strong>Type:</strong> {selectedSubmission.type.replace('-', ' ')}
+                                        </div>
+                                        <div>
+                                          <strong>Location:</strong> {getLocationFromSubmission(selectedSubmission)}
+                                        </div>
+                                      </div>
+                                      
+                                      <div>
+                                        <strong>Submission Data:</strong>
+                                        <div className="mt-2 p-4 bg-gray-100 rounded text-sm overflow-auto max-h-96">
+                                          {Object.entries(selectedSubmission.data).map(([key, value]) => (
+                                            <div key={key} className="mb-2">
+                                              <strong>{key}:</strong> {JSON.stringify(value, null, 2)}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+
+                                      <div className="flex space-x-2 pt-4 border-t">
+                                        <Button 
+                                          onClick={() => handleSubmissionApproval(selectedSubmission.id, "approve")}
+                                          className="bg-green-600 hover:bg-green-700"
+                                        >
+                                          <Check className="h-4 w-4 mr-1" />
+                                          Approve
+                                        </Button>
+                                        {selectedSubmission.type === "basic-info" && (
+                                          <Button 
+                                            onClick={() => createDestinationFromSubmission(selectedSubmission)}
+                                            className="bg-blue-600 hover:bg-blue-700"
+                                          >
+                                            <MapPin className="h-4 w-4 mr-1" />
+                                            Create Destination
+                                          </Button>
+                                        )}
+                                        <Button 
+                                          onClick={() => handleSubmissionApproval(selectedSubmission.id, "reject")}
+                                          variant="destructive"
+                                        >
+                                          <X className="h-4 w-4 mr-1" />
+                                          Reject
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  )}
+                                </DialogContent>
+                              </Dialog>
+
+                              <Button 
+                                onClick={() => handleSubmissionApproval(submission.id, "approve")}
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700"
+                              >
+                                <Check className="h-4 w-4" />
+                              </Button>
+                              
+                              <Button 
+                                onClick={() => handleSubmissionApproval(submission.id, "reject")}
+                                size="sm"
+                                variant="destructive"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="destinations" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Published Destinations</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>City</TableHead>
+                      <TableHead>Country</TableHead>
+                      <TableHead>Submissions</TableHead>
+                      <TableHead>Rating</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {destinations.map((destination) => (
+                      <TableRow key={destination.id}>
+                        <TableCell className="font-medium">{destination.name}</TableCell>
+                        <TableCell>{destination.city}</TableCell>
+                        <TableCell>{destination.country}</TableCell>
+                        <TableCell>{destination.submissionCount}</TableCell>
+                        <TableCell>
+                          {destination.averageRating ? (
+                            <div className="flex items-center">
+                              <Star className="h-4 w-4 text-yellow-500 mr-1" />
+                              {destination.averageRating.toFixed(1)}
+                            </div>
+                          ) : (
+                            <span className="text-gray-400">No ratings</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex space-x-2">
+                            <Button variant="outline" size="sm">
+                              <Eye className="h-4 w-4 mr-1" />
+                              View
+                            </Button>
+                            <Button variant="outline" size="sm">
+                              <Edit className="h-4 w-4 mr-1" />
+                              Edit
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="create" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Create New Destination</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="city">City</Label>
+                    <Input
+                      id="city"
+                      value={newDestination.city}
+                      onChange={(e) => setNewDestination({...newDestination, city: e.target.value})}
+                      placeholder="e.g., Barcelona"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="country">Country</Label>
+                    <Input
+                      id="country"
+                      value={newDestination.country}
+                      onChange={(e) => setNewDestination({...newDestination, country: e.target.value})}
+                      placeholder="e.g., Spain"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="name">Destination Name</Label>
+                  <Input
+                    id="name"
+                    value={newDestination.name}
+                    onChange={(e) => setNewDestination({...newDestination, name: e.target.value})}
+                    placeholder="e.g., Barcelona, Spain"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={newDestination.description}
+                    onChange={(e) => setNewDestination({...newDestination, description: e.target.value})}
+                    placeholder="Brief description of the destination..."
+                    rows={3}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="imageUrl">Image URL (optional)</Label>
+                  <Input
+                    id="imageUrl"
+                    value={newDestination.imageUrl}
+                    onChange={(e) => setNewDestination({...newDestination, imageUrl: e.target.value})}
+                    placeholder="https://example.com/image.jpg"
+                  />
+                </div>
+
+                <Button 
+                  onClick={createNewDestination}
+                  disabled={!newDestination.city || !newDestination.country || !newDestination.name}
+                  className="w-full"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Destination
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
   );
 }
