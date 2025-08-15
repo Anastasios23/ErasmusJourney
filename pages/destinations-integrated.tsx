@@ -56,7 +56,9 @@ export default function EnhancedDestinationsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("all");
-  const [sortBy, setSortBy] = useState<"students" | "rating" | "name" | "updated">("students");
+  const [sortBy, setSortBy] = useState<
+    "students" | "rating" | "name" | "updated"
+  >("students");
   const [showFeatured, setShowFeatured] = useState(false);
 
   // Fetch enhanced destinations
@@ -87,25 +89,26 @@ export default function EnhancedDestinationsPage() {
     if (!searchQuery.trim()) return destinations;
 
     const query = searchQuery.toLowerCase();
-    return destinations.filter(dest =>
-      dest.name.toLowerCase().includes(query) ||
-      dest.city.toLowerCase().includes(query) ||
-      dest.country.toLowerCase().includes(query) ||
-      dest.description?.toLowerCase().includes(query)
+    return destinations.filter(
+      (dest) =>
+        dest.name.toLowerCase().includes(query) ||
+        dest.city.toLowerCase().includes(query) ||
+        dest.country.toLowerCase().includes(query) ||
+        dest.description?.toLowerCase().includes(query),
     );
   }, [destinations, searchQuery]);
 
   // Get unique countries for filter
   const countries = useMemo(() => {
     const uniqueCountries = Array.from(
-      new Set(destinations.map(dest => dest.country))
+      new Set(destinations.map((dest) => dest.country)),
     ).sort();
     return uniqueCountries;
   }, [destinations]);
 
   // Get featured destinations for hero section
   const featuredDestinations = useMemo(() => {
-    return destinations.filter(dest => dest.featured).slice(0, 3);
+    return destinations.filter((dest) => dest.featured).slice(0, 3);
   }, [destinations]);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -118,9 +121,9 @@ export default function EnhancedDestinationsPage() {
     ContentIntegrationService.trackContentInteraction(
       destination.id,
       "destination",
-      "view"
+      "view",
     );
-    
+
     router.push(`/destinations/${destination.id}`);
   };
 
@@ -135,13 +138,13 @@ export default function EnhancedDestinationsPage() {
     <div className="min-h-screen bg-gray-50">
       <Head>
         <title>Study Abroad Destinations - Erasmus Journey</title>
-        <meta 
-          name="description" 
-          content="Discover the best study abroad destinations based on real student experiences. Find accommodation, costs, courses, and student stories." 
+        <meta
+          name="description"
+          content="Discover the best study abroad destinations based on real student experiences. Find accommodation, costs, courses, and student stories."
         />
-        <meta 
-          name="keywords" 
-          content="erasmus, study abroad, destinations, universities, student exchange, accommodation, costs" 
+        <meta
+          name="keywords"
+          content="erasmus, study abroad, destinations, universities, student exchange, accommodation, costs"
         />
       </Head>
 
@@ -155,9 +158,10 @@ export default function EnhancedDestinationsPage() {
               Find Your Perfect Study Abroad Destination
             </h1>
             <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-              Discover destinations based on real experiences from {destinations.length}+ student stories
+              Discover destinations based on real experiences from{" "}
+              {destinations.length}+ student stories
             </p>
-            
+
             {/* Search Bar */}
             <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
               <div className="relative">
@@ -190,8 +194,8 @@ export default function EnhancedDestinationsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {featuredDestinations.map((destination) => (
-                <Card 
-                  key={destination.id} 
+                <Card
+                  key={destination.id}
                   className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
                   onClick={() => handleDestinationClick(destination)}
                 >
@@ -220,7 +224,8 @@ export default function EnhancedDestinationsPage() {
                       {destination.name}
                     </h3>
                     <p className="text-gray-600 mb-4 line-clamp-2">
-                      {destination.description || `Study abroad in ${destination.city}, ${destination.country}`}
+                      {destination.description ||
+                        `Study abroad in ${destination.city}, ${destination.country}`}
                     </p>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
@@ -255,7 +260,10 @@ export default function EnhancedDestinationsPage() {
           {/* Filters */}
           <div className="mb-8">
             <div className="flex flex-wrap items-center gap-4 mb-6">
-              <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+              <Select
+                value={selectedCountry}
+                onValueChange={setSelectedCountry}
+              >
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Select country" />
                 </SelectTrigger>
@@ -269,7 +277,10 @@ export default function EnhancedDestinationsPage() {
                 </SelectContent>
               </Select>
 
-              <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+              <Select
+                value={sortBy}
+                onValueChange={(value: any) => setSortBy(value)}
+              >
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
@@ -332,16 +343,14 @@ export default function EnhancedDestinationsPage() {
                 <p className="text-gray-600 mb-4">
                   Try adjusting your search criteria or filters
                 </p>
-                <Button onClick={clearFilters}>
-                  Clear all filters
-                </Button>
+                <Button onClick={clearFilters}>Clear all filters</Button>
               </CardContent>
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredDestinations.map((destination) => (
-                <Card 
-                  key={destination.id} 
+                <Card
+                  key={destination.id}
                   className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
                   onClick={() => handleDestinationClick(destination)}
                 >
@@ -379,13 +388,16 @@ export default function EnhancedDestinationsPage() {
                       {destination.name}
                     </h3>
                     <p className="text-gray-600 mb-4 line-clamp-2">
-                      {destination.description || `Study abroad in ${destination.city}, ${destination.country}`}
+                      {destination.description ||
+                        `Study abroad in ${destination.city}, ${destination.country}`}
                     </p>
 
                     <div className="space-y-2 mb-4">
                       {destination.averageRating && (
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Average Rating</span>
+                          <span className="text-sm text-gray-600">
+                            Average Rating
+                          </span>
                           <div className="flex items-center">
                             <Star className="h-4 w-4 text-yellow-500 mr-1" />
                             <span className="font-medium">
@@ -394,10 +406,12 @@ export default function EnhancedDestinationsPage() {
                           </div>
                         </div>
                       )}
-                      
+
                       {destination.averageCost && (
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Avg. Monthly Cost</span>
+                          <span className="text-sm text-gray-600">
+                            Avg. Monthly Cost
+                          </span>
                           <div className="flex items-center">
                             <Euro className="h-4 w-4 text-green-600 mr-1" />
                             <span className="font-medium">
@@ -408,11 +422,15 @@ export default function EnhancedDestinationsPage() {
                       )}
 
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Last Updated</span>
+                        <span className="text-sm text-gray-600">
+                          Last Updated
+                        </span>
                         <div className="flex items-center">
                           <Calendar className="h-4 w-4 text-gray-400 mr-1" />
                           <span className="text-sm text-gray-600">
-                            {new Date(destination.lastUpdated).toLocaleDateString()}
+                            {new Date(
+                              destination.lastUpdated,
+                            ).toLocaleDateString()}
                           </span>
                         </div>
                       </div>
@@ -439,21 +457,22 @@ export default function EnhancedDestinationsPage() {
             Don't see your destination?
           </h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Help other students by sharing your exchange experience and creating new destination guides
+            Help other students by sharing your exchange experience and creating
+            new destination guides
           </p>
           <div className="space-x-4">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="secondary"
-              onClick={() => router.push('/erasmus-experience-form')}
+              onClick={() => router.push("/erasmus-experience-form")}
             >
               Share Your Experience
             </Button>
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="outline"
               className="border-white text-white hover:bg-white hover:text-blue-600"
-              onClick={() => router.push('/help-future-students')}
+              onClick={() => router.push("/help-future-students")}
             >
               Help Future Students
             </Button>

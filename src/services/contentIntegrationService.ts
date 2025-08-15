@@ -10,7 +10,7 @@ interface EnhancedDestinationData {
   description: string;
   imageUrl?: string;
   featured: boolean;
-  
+
   // Aggregated statistics
   stats: {
     totalStudents: number;
@@ -19,7 +19,7 @@ interface EnhancedDestinationData {
     submissionCount: number;
     lastUpdated: Date;
   };
-  
+
   // Detailed breakdowns
   accommodation: {
     types: Record<string, number>;
@@ -27,13 +27,13 @@ interface EnhancedDestinationData {
     rentRange: { min: number; max: number } | null;
     popularOptions: [string, number][];
   };
-  
+
   courses: {
     popularDepartments: [string, number][];
     averageCourseCount: number | null;
     difficultyDistribution: Record<string, number>;
   };
-  
+
   livingCosts: {
     breakdown: {
       rent: number | null;
@@ -43,7 +43,7 @@ interface EnhancedDestinationData {
     };
     totalMonthly: number | null;
   };
-  
+
   userExperiences: {
     id: string;
     title: string;
@@ -52,7 +52,7 @@ interface EnhancedDestinationData {
     author: string;
     createdAt: Date;
   }[];
-  
+
   // SEO and metadata
   seo: {
     title: string;
@@ -78,7 +78,7 @@ export class ContentIntegrationService {
    */
   static async getEnhancedDestinationForPublic(
     cityOrId: string,
-    country?: string
+    country?: string,
   ): Promise<EnhancedDestinationData | null> {
     try {
       // Find destination by ID or city/country
@@ -144,20 +144,26 @@ export class ContentIntegrationService {
 
       // Get fresh aggregated data if needed
       let aggregatedData = destination.aggregatedData;
-      const isStale = destination.lastDataUpdate < new Date(Date.now() - 24 * 60 * 60 * 1000);
-      
+      const isStale =
+        destination.lastDataUpdate < new Date(Date.now() - 24 * 60 * 60 * 1000);
+
       if (isStale && destination.linkedSubmissions.length > 0) {
-        const submissions = destination.linkedSubmissions.map(link => link.submission);
-        aggregatedData = await ContentManagementService.aggregateSubmissionData(submissions);
-        
+        const submissions = destination.linkedSubmissions.map(
+          (link) => link.submission,
+        );
+        aggregatedData =
+          await ContentManagementService.aggregateSubmissionData(submissions);
+
         // Update in background
-        prisma.destination.update({
-          where: { id: destination.id },
-          data: {
-            aggregatedData,
-            lastDataUpdate: new Date(),
-          },
-        }).catch(console.error);
+        prisma.destination
+          .update({
+            where: { id: destination.id },
+            data: {
+              aggregatedData,
+              lastDataUpdate: new Date(),
+            },
+          })
+          .catch(console.error);
       }
 
       // Apply admin overrides
@@ -176,15 +182,17 @@ export class ContentIntegrationService {
    */
   private static applyAdminOverrides(destination: any, aggregatedData: any) {
     const overrides = destination.adminOverrides || {};
-    
+
     return {
       ...destination,
       // Override basic fields if admin provided them
       name: overrides.name || destination.name,
-      description: overrides.description || destination.description || 
+      description:
+        overrides.description ||
+        destination.description ||
         `Study abroad in ${destination.city}, ${destination.country}`,
       imageUrl: overrides.imageUrl || destination.imageUrl,
-      
+
       // Merge aggregated data with overrides
       aggregatedData: {
         ...aggregatedData,
@@ -197,9 +205,11 @@ export class ContentIntegrationService {
   /**
    * Format destination data for public pages
    */
-  private static formatDestinationForPublic(destination: any): EnhancedDestinationData {
+  private static formatDestinationForPublic(
+    destination: any,
+  ): EnhancedDestinationData {
     const data = destination.aggregatedData || {};
-    
+
     return {
       id: destination.id,
       name: destination.name,
@@ -208,7 +218,7 @@ export class ContentIntegrationService {
       description: destination.description,
       imageUrl: destination.imageUrl,
       featured: destination.featured,
-      
+
       stats: {
         totalStudents: data.totalSubmissions || 0,
         averageRating: data.averageRating,
@@ -216,20 +226,20 @@ export class ContentIntegrationService {
         submissionCount: destination.submissionCount || 0,
         lastUpdated: destination.lastDataUpdate,
       },
-      
+
       accommodation: {
         types: data.accommodationData?.accommodationTypes || {},
         averageRent: data.accommodationData?.averageRent,
         rentRange: data.accommodationData?.rentRange,
         popularOptions: data.accommodationData?.popularOptions || [],
       },
-      
+
       courses: {
         popularDepartments: data.courseData?.popularDepartments || [],
         averageCourseCount: data.courseData?.averageCourseCount,
         difficultyDistribution: data.courseData?.difficultyDistribution || {},
       },
-      
+
       livingCosts: {
         breakdown: {
           rent: data.livingExpensesData?.rent?.average,
@@ -239,7 +249,7 @@ export class ContentIntegrationService {
         },
         totalMonthly: data.livingExpensesData?.total?.average,
       },
-      
+
       userExperiences: (data.userExperiences || []).map((exp: any) => ({
         id: exp.id,
         title: exp.title,
@@ -248,7 +258,7 @@ export class ContentIntegrationService {
         author: exp.authorName || "Anonymous",
         createdAt: new Date(exp.createdAt),
       })),
-      
+
       seo: this.generateSEOData(destination, data),
     };
   }
@@ -260,9 +270,9 @@ export class ContentIntegrationService {
     const { city, country, name } = destination;
     const totalStudents = aggregatedData.totalSubmissions || 0;
     const averageRating = aggregatedData.averageRating;
-    
+
     const title = `Study in ${name} - Erasmus Exchange Guide | ErasmusJourney`;
-    
+
     let description = `Complete guide to studying in ${city}, ${country}. `;
     if (totalStudents > 0) {
       description += `Based on ${totalStudents} student experiences. `;
@@ -295,14 +305,16 @@ export class ContentIntegrationService {
   /**
    * Get all published destinations for listing pages
    */
-  static async getPublishedDestinations(options: {
-    limit?: number;
-    offset?: number;
-    featured?: boolean;
-    country?: string;
-    orderBy?: "name" | "students" | "rating" | "updated";
-    order?: "asc" | "desc";
-  } = {}) {
+  static async getPublishedDestinations(
+    options: {
+      limit?: number;
+      offset?: number;
+      featured?: boolean;
+      country?: string;
+      orderBy?: "name" | "students" | "rating" | "updated";
+      order?: "asc" | "desc";
+    } = {},
+  ) {
     const {
       limit = 50,
       offset = 0,
@@ -362,7 +374,7 @@ export class ContentIntegrationService {
     });
 
     // Format for public consumption
-    const formatted = destinations.map(dest => ({
+    const formatted = destinations.map((dest) => ({
       id: dest.id,
       name: dest.name,
       city: dest.city,
@@ -391,13 +403,15 @@ export class ContentIntegrationService {
   /**
    * Get accommodation data from approved submissions
    */
-  static async getAccommodationExperiences(options: {
-    city?: string;
-    country?: string;
-    type?: string;
-    limit?: number;
-    minRating?: number;
-  } = {}) {
+  static async getAccommodationExperiences(
+    options: {
+      city?: string;
+      country?: string;
+      type?: string;
+      limit?: number;
+      minRating?: number;
+    } = {},
+  ) {
     const { city, country, type, limit = 20, minRating = 0 } = options;
 
     const where: any = {
@@ -415,7 +429,7 @@ export class ContentIntegrationService {
       } else if (country) {
         locationFilter.push(country);
       }
-      
+
       where.location = {
         in: locationFilter,
       };
@@ -438,13 +452,17 @@ export class ContentIntegrationService {
     });
 
     return submissions
-      .filter(sub => {
+      .filter((sub) => {
         const data = sub.data as any;
         if (type && data.accommodationType !== type) return false;
-        if (minRating > 0 && (!data.accommodationRating || data.accommodationRating < minRating)) return false;
+        if (
+          minRating > 0 &&
+          (!data.accommodationRating || data.accommodationRating < minRating)
+        )
+          return false;
         return true;
       })
-      .map(sub => {
+      .map((sub) => {
         const data = sub.data as any;
         return {
           id: sub.id,
@@ -455,7 +473,9 @@ export class ContentIntegrationService {
           location: sub.location,
           description: data.accommodationDescription,
           amenities: data.amenities,
-          author: `${sub.user?.firstName || ""} ${sub.user?.lastName || ""}`.trim() || "Anonymous",
+          author:
+            `${sub.user?.firstName || ""} ${sub.user?.lastName || ""}`.trim() ||
+            "Anonymous",
           createdAt: sub.createdAt,
         };
       });
@@ -464,12 +484,14 @@ export class ContentIntegrationService {
   /**
    * Get university exchange data from approved submissions
    */
-  static async getUniversityExchanges(options: {
-    university?: string;
-    country?: string;
-    department?: string;
-    limit?: number;
-  } = {}) {
+  static async getUniversityExchanges(
+    options: {
+      university?: string;
+      country?: string;
+      department?: string;
+      limit?: number;
+    } = {},
+  ) {
     const { university, country, department, limit = 20 } = options;
 
     const where: any = {
@@ -502,14 +524,20 @@ export class ContentIntegrationService {
 
     // Group by university and process
     const exchanges = new Map();
-    
-    submissions.forEach(sub => {
+
+    submissions.forEach((sub) => {
       const data = sub.data as any;
       const uni = data.hostUniversity;
-      
+
       if (!uni) return;
-      if (university && !uni.toLowerCase().includes(university.toLowerCase())) return;
-      if (department && data.hostDepartment && !data.hostDepartment.toLowerCase().includes(department.toLowerCase())) return;
+      if (university && !uni.toLowerCase().includes(university.toLowerCase()))
+        return;
+      if (
+        department &&
+        data.hostDepartment &&
+        !data.hostDepartment.toLowerCase().includes(department.toLowerCase())
+      )
+        return;
 
       if (!exchanges.has(uni)) {
         exchanges.set(uni, {
@@ -530,14 +558,16 @@ export class ContentIntegrationService {
       exchange.experiences.push({
         id: sub.id,
         title: sub.title,
-        author: `${sub.user?.firstName || ""} ${sub.user?.lastName || ""}`.trim() || "Anonymous",
+        author:
+          `${sub.user?.firstName || ""} ${sub.user?.lastName || ""}`.trim() ||
+          "Anonymous",
         createdAt: sub.createdAt,
         excerpt: data.advice?.substring(0, 150) || "",
       });
     });
 
     return Array.from(exchanges.values())
-      .map(ex => ({
+      .map((ex) => ({
         ...ex,
         departments: Array.from(ex.departments),
         experiences: ex.experiences.slice(0, 3), // Latest 3 experiences
@@ -548,10 +578,13 @@ export class ContentIntegrationService {
   /**
    * Search across all content types
    */
-  static async searchContent(query: string, options: {
-    type?: "destinations" | "accommodations" | "exchanges" | "all";
-    limit?: number;
-  } = {}) {
+  static async searchContent(
+    query: string,
+    options: {
+      type?: "destinations" | "accommodations" | "exchanges" | "all";
+      limit?: number;
+    } = {},
+  ) {
     const { type = "all", limit = 20 } = options;
     const results: any[] = [];
 
@@ -559,62 +592,82 @@ export class ContentIntegrationService {
 
     if (type === "destinations" || type === "all") {
       const destinations = await this.getPublishedDestinations({ limit: 100 });
-      const filteredDestinations = destinations.filter(dest =>
-        searchTerms.some(term =>
-          dest.name.toLowerCase().includes(term) ||
-          dest.city.toLowerCase().includes(term) ||
-          dest.country.toLowerCase().includes(term) ||
-          dest.description?.toLowerCase().includes(term)
-        )
+      const filteredDestinations = destinations.filter((dest) =>
+        searchTerms.some(
+          (term) =>
+            dest.name.toLowerCase().includes(term) ||
+            dest.city.toLowerCase().includes(term) ||
+            dest.country.toLowerCase().includes(term) ||
+            dest.description?.toLowerCase().includes(term),
+        ),
       );
-      
-      results.push(...filteredDestinations.map(dest => ({
-        ...dest,
-        type: "destination",
-        relevance: this.calculateRelevance(query, `${dest.name} ${dest.description}`),
-      })));
+
+      results.push(
+        ...filteredDestinations.map((dest) => ({
+          ...dest,
+          type: "destination",
+          relevance: this.calculateRelevance(
+            query,
+            `${dest.name} ${dest.description}`,
+          ),
+        })),
+      );
     }
 
     if (type === "accommodations" || type === "all") {
-      const accommodations = await this.getAccommodationExperiences({ limit: 50 });
-      const filteredAccommodations = accommodations.filter(acc =>
-        searchTerms.some(term =>
-          acc.title.toLowerCase().includes(term) ||
-          acc.location?.toLowerCase().includes(term) ||
-          acc.type?.toLowerCase().includes(term) ||
-          acc.description?.toLowerCase().includes(term)
-        )
+      const accommodations = await this.getAccommodationExperiences({
+        limit: 50,
+      });
+      const filteredAccommodations = accommodations.filter((acc) =>
+        searchTerms.some(
+          (term) =>
+            acc.title.toLowerCase().includes(term) ||
+            acc.location?.toLowerCase().includes(term) ||
+            acc.type?.toLowerCase().includes(term) ||
+            acc.description?.toLowerCase().includes(term),
+        ),
       );
-      
-      results.push(...filteredAccommodations.map(acc => ({
-        ...acc,
-        type: "accommodation",
-        relevance: this.calculateRelevance(query, `${acc.title} ${acc.description}`),
-      })));
+
+      results.push(
+        ...filteredAccommodations.map((acc) => ({
+          ...acc,
+          type: "accommodation",
+          relevance: this.calculateRelevance(
+            query,
+            `${acc.title} ${acc.description}`,
+          ),
+        })),
+      );
     }
 
     if (type === "exchanges" || type === "all") {
       const exchanges = await this.getUniversityExchanges({ limit: 50 });
-      const filteredExchanges = exchanges.filter(ex =>
-        searchTerms.some(term =>
-          ex.university.toLowerCase().includes(term) ||
-          ex.city?.toLowerCase().includes(term) ||
-          ex.country?.toLowerCase().includes(term) ||
-          ex.departments.some((dept: string) => dept.toLowerCase().includes(term))
-        )
+      const filteredExchanges = exchanges.filter((ex) =>
+        searchTerms.some(
+          (term) =>
+            ex.university.toLowerCase().includes(term) ||
+            ex.city?.toLowerCase().includes(term) ||
+            ex.country?.toLowerCase().includes(term) ||
+            ex.departments.some((dept: string) =>
+              dept.toLowerCase().includes(term),
+            ),
+        ),
       );
-      
-      results.push(...filteredExchanges.map(ex => ({
-        ...ex,
-        type: "exchange",
-        relevance: this.calculateRelevance(query, `${ex.university} ${ex.departments.join(" ")}`),
-      })));
+
+      results.push(
+        ...filteredExchanges.map((ex) => ({
+          ...ex,
+          type: "exchange",
+          relevance: this.calculateRelevance(
+            query,
+            `${ex.university} ${ex.departments.join(" ")}`,
+          ),
+        })),
+      );
     }
 
     // Sort by relevance and limit
-    return results
-      .sort((a, b) => b.relevance - a.relevance)
-      .slice(0, limit);
+    return results.sort((a, b) => b.relevance - a.relevance).slice(0, limit);
   }
 
   /**
@@ -623,9 +676,9 @@ export class ContentIntegrationService {
   private static calculateRelevance(query: string, content: string): number {
     const queryTerms = query.toLowerCase().split(" ");
     const contentLower = content.toLowerCase();
-    
+
     let score = 0;
-    queryTerms.forEach(term => {
+    queryTerms.forEach((term) => {
       if (contentLower.includes(term)) {
         // Exact match gets higher score
         if (contentLower.includes(query.toLowerCase())) {
@@ -633,21 +686,24 @@ export class ContentIntegrationService {
         } else {
           score += 5;
         }
-        
+
         // Bonus for title/beginning matches
         if (contentLower.startsWith(term)) {
           score += 3;
         }
       }
     });
-    
+
     return score;
   }
 
   /**
    * Get analytics data for content performance
    */
-  static async getContentAnalytics(contentId: string, contentType: string): Promise<ContentAnalytics> {
+  static async getContentAnalytics(
+    contentId: string,
+    contentType: string,
+  ): Promise<ContentAnalytics> {
     // This would integrate with your analytics service (Google Analytics, custom tracking, etc.)
     // For now, return mock data structure
     return {
@@ -668,10 +724,12 @@ export class ContentIntegrationService {
     contentId: string,
     contentType: string,
     action: string,
-    userId?: string
+    userId?: string,
   ) {
     // Implementation would depend on your analytics setup
     // Could use Google Analytics, Mixpanel, custom database tracking, etc.
-    console.log(`Tracking: ${action} on ${contentType} ${contentId} by user ${userId || "anonymous"}`);
+    console.log(
+      `Tracking: ${action} on ${contentType} ${contentId} by user ${userId || "anonymous"}`,
+    );
   }
 }

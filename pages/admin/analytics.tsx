@@ -32,7 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../src/components/ui/table";
-import { 
+import {
   BarChart3,
   TrendingUp,
   Users,
@@ -49,7 +49,7 @@ import {
   Home,
   Euro,
   Clock,
-  Zap
+  Zap,
 } from "lucide-react";
 
 interface AnalyticsData {
@@ -107,16 +107,22 @@ export default function AdvancedAnalyticsDashboard() {
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch analytics data from various sources
       const [destinations, submissions, users] = await Promise.all([
-        fetch("/api/admin/destinations/enhanced").then(r => r.json()),
-        fetch("/api/admin/form-submissions?limit=1000").then(r => r.json()),
-        fetch("/api/admin/analytics").then(r => r.json()).catch(() => ({ users: [] })),
+        fetch("/api/admin/destinations/enhanced").then((r) => r.json()),
+        fetch("/api/admin/form-submissions?limit=1000").then((r) => r.json()),
+        fetch("/api/admin/analytics")
+          .then((r) => r.json())
+          .catch(() => ({ users: [] })),
       ]);
 
       // Process and aggregate data
-      const analyticsData = processAnalyticsData(destinations, submissions, users);
+      const analyticsData = processAnalyticsData(
+        destinations,
+        submissions,
+        users,
+      );
       setAnalytics(analyticsData);
     } catch (error) {
       console.error("Error fetching analytics:", error);
@@ -125,18 +131,25 @@ export default function AdvancedAnalyticsDashboard() {
     }
   };
 
-  const processAnalyticsData = (destinations: any, submissions: any, users: any): AnalyticsData => {
+  const processAnalyticsData = (
+    destinations: any,
+    submissions: any,
+    users: any,
+  ): AnalyticsData => {
     const destData = destinations.destinations || [];
     const submissionData = submissions.submissions || [];
 
     // Calculate overview metrics
     const totalDestinations = destData.length;
     const totalSubmissions = submissionData.length;
-    const publishedSubmissions = submissionData.filter((s: any) => s.status === "PUBLISHED").length;
-    const averageRating = destData
-      .filter((d: any) => d.averageRating)
-      .reduce((sum: number, d: any) => sum + d.averageRating, 0) / 
-      destData.filter((d: any) => d.averageRating).length || 0;
+    const publishedSubmissions = submissionData.filter(
+      (s: any) => s.status === "PUBLISHED",
+    ).length;
+    const averageRating =
+      destData
+        .filter((d: any) => d.averageRating)
+        .reduce((sum: number, d: any) => sum + d.averageRating, 0) /
+        destData.filter((d: any) => d.averageRating).length || 0;
 
     // Process submissions by type
     const submissionsByType = submissionData.reduce((acc: any, sub: any) => {
@@ -165,7 +178,9 @@ export default function AdvancedAnalyticsDashboard() {
     // Destinations needing attention
     const needAttention = destData
       .filter((d: any) => {
-        const isStale = new Date(d.lastUpdated) < new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const isStale =
+          new Date(d.lastUpdated) <
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
         const lowRating = d.averageRating && d.averageRating < 3;
         const lowSubmissions = d.submissionCount < 3;
         return isStale || lowRating || lowSubmissions;
@@ -174,7 +189,10 @@ export default function AdvancedAnalyticsDashboard() {
 
     // Recently updated
     const recentlyUpdated = destData
-      .sort((a: any, b: any) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime())
+      .sort(
+        (a: any, b: any) =>
+          new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime(),
+      )
       .slice(0, 5);
 
     return {
@@ -183,7 +201,10 @@ export default function AdvancedAnalyticsDashboard() {
         totalSubmissions,
         totalUsers: new Set(submissionData.map((s: any) => s.userId)).size,
         averageRating: Math.round(averageRating * 10) / 10,
-        conversionRate: totalSubmissions > 0 ? Math.round((publishedSubmissions / totalSubmissions) * 100) : 0,
+        conversionRate:
+          totalSubmissions > 0
+            ? Math.round((publishedSubmissions / totalSubmissions) * 100)
+            : 0,
         lastWeekGrowth: 8.5, // Mock data - would calculate from time series
       },
       destinations: {
@@ -208,12 +229,11 @@ export default function AdvancedAnalyticsDashboard() {
           "Medium Engagement": Math.floor(totalSubmissions * 0.5),
           "Low Engagement": Math.floor(totalSubmissions * 0.3),
         },
-        topContributors: submissionData
-          .reduce((acc: any, sub: any) => {
-            const userId = sub.userId;
-            acc[userId] = (acc[userId] || 0) + 1;
-            return acc;
-          }, {})
+        topContributors: submissionData.reduce((acc: any, sub: any) => {
+          const userId = sub.userId;
+          acc[userId] = (acc[userId] || 0) + 1;
+          return acc;
+        }, {}),
       },
       content: {
         performanceMetrics: destData.map((d: any) => ({
@@ -222,7 +242,13 @@ export default function AdvancedAnalyticsDashboard() {
           rating: d.averageRating,
           submissions: d.submissionCount,
         })),
-        popularSearches: ["Barcelona", "Berlin", "Amsterdam", "Prague", "Vienna"],
+        popularSearches: [
+          "Barcelona",
+          "Berlin",
+          "Amsterdam",
+          "Prague",
+          "Vienna",
+        ],
         topReferrers: ["Google", "Direct", "Social Media", "University Sites"],
       },
     };
@@ -231,18 +257,18 @@ export default function AdvancedAnalyticsDashboard() {
   const exportAnalytics = async () => {
     // Implementation for exporting analytics data
     const csvContent = generateCSVReport(analytics);
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `analytics-${timeRange}-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `analytics-${timeRange}-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   };
 
   const generateCSVReport = (data: AnalyticsData | null) => {
     if (!data) return "";
-    
+
     let csv = "Analytics Report\n\n";
     csv += "Overview Metrics\n";
     csv += "Metric,Value\n";
@@ -251,7 +277,7 @@ export default function AdvancedAnalyticsDashboard() {
     csv += `Total Users,${data.overview.totalUsers}\n`;
     csv += `Average Rating,${data.overview.averageRating}\n`;
     csv += `Conversion Rate,${data.overview.conversionRate}%\n\n`;
-    
+
     return csv;
   };
 
@@ -278,24 +304,29 @@ export default function AdvancedAnalyticsDashboard() {
       <Head>
         <title>Advanced Analytics - Admin Dashboard</title>
       </Head>
-      
+
       <Header />
-      
+
       <div className="container mx-auto px-4 py-8 mt-16">
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <Button 
-              variant="outline" 
-              onClick={() => router.push('/admin')}
+            <Button
+              variant="outline"
+              onClick={() => router.push("/admin")}
               className="mb-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Admin Dashboard
             </Button>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Advanced Analytics</h1>
-            <p className="text-gray-600">Comprehensive insights into platform performance and user engagement</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Advanced Analytics
+            </h1>
+            <p className="text-gray-600">
+              Comprehensive insights into platform performance and user
+              engagement
+            </p>
           </div>
-          
+
           <div className="flex items-center space-x-4">
             <Select value={timeRange} onValueChange={setTimeRange}>
               <SelectTrigger className="w-[180px]">
@@ -308,7 +339,7 @@ export default function AdvancedAnalyticsDashboard() {
                 <SelectItem value="1y">Last year</SelectItem>
               </SelectContent>
             </Select>
-            
+
             <Button onClick={exportAnalytics} variant="outline">
               <Download className="h-4 w-4 mr-2" />
               Export Report
@@ -324,8 +355,12 @@ export default function AdvancedAnalyticsDashboard() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Destinations</p>
-                      <p className="text-3xl font-bold text-blue-600">{analytics.overview.totalDestinations}</p>
+                      <p className="text-sm font-medium text-gray-600">
+                        Destinations
+                      </p>
+                      <p className="text-3xl font-bold text-blue-600">
+                        {analytics.overview.totalDestinations}
+                      </p>
                     </div>
                     <MapPin className="h-8 w-8 text-blue-600" />
                   </div>
@@ -336,8 +371,12 @@ export default function AdvancedAnalyticsDashboard() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Submissions</p>
-                      <p className="text-3xl font-bold text-green-600">{analytics.overview.totalSubmissions}</p>
+                      <p className="text-sm font-medium text-gray-600">
+                        Submissions
+                      </p>
+                      <p className="text-3xl font-bold text-green-600">
+                        {analytics.overview.totalSubmissions}
+                      </p>
                     </div>
                     <BookOpen className="h-8 w-8 text-green-600" />
                   </div>
@@ -349,7 +388,9 @@ export default function AdvancedAnalyticsDashboard() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-600">Users</p>
-                      <p className="text-3xl font-bold text-purple-600">{analytics.overview.totalUsers}</p>
+                      <p className="text-3xl font-bold text-purple-600">
+                        {analytics.overview.totalUsers}
+                      </p>
                     </div>
                     <Users className="h-8 w-8 text-purple-600" />
                   </div>
@@ -360,8 +401,12 @@ export default function AdvancedAnalyticsDashboard() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Avg. Rating</p>
-                      <p className="text-3xl font-bold text-yellow-600">{analytics.overview.averageRating}</p>
+                      <p className="text-sm font-medium text-gray-600">
+                        Avg. Rating
+                      </p>
+                      <p className="text-3xl font-bold text-yellow-600">
+                        {analytics.overview.averageRating}
+                      </p>
                     </div>
                     <Star className="h-8 w-8 text-yellow-600" />
                   </div>
@@ -372,8 +417,12 @@ export default function AdvancedAnalyticsDashboard() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Conversion</p>
-                      <p className="text-3xl font-bold text-indigo-600">{analytics.overview.conversionRate}%</p>
+                      <p className="text-sm font-medium text-gray-600">
+                        Conversion
+                      </p>
+                      <p className="text-3xl font-bold text-indigo-600">
+                        {analytics.overview.conversionRate}%
+                      </p>
                     </div>
                     <Target className="h-8 w-8 text-indigo-600" />
                   </div>
@@ -384,8 +433,12 @@ export default function AdvancedAnalyticsDashboard() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Growth</p>
-                      <p className="text-3xl font-bold text-green-600">+{analytics.overview.lastWeekGrowth}%</p>
+                      <p className="text-sm font-medium text-gray-600">
+                        Growth
+                      </p>
+                      <p className="text-3xl font-bold text-green-600">
+                        +{analytics.overview.lastWeekGrowth}%
+                      </p>
                     </div>
                     <TrendingUp className="h-8 w-8 text-green-600" />
                   </div>
@@ -413,18 +466,27 @@ export default function AdvancedAnalyticsDashboard() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {analytics.destinations.topPerforming.map((dest, index) => (
-                          <div key={dest.id} className="flex items-center justify-between">
-                            <div>
-                              <p className="font-medium">{dest.name}</p>
-                              <p className="text-sm text-gray-600">{dest.submissionCount} submissions</p>
+                        {analytics.destinations.topPerforming.map(
+                          (dest, index) => (
+                            <div
+                              key={dest.id}
+                              className="flex items-center justify-between"
+                            >
+                              <div>
+                                <p className="font-medium">{dest.name}</p>
+                                <p className="text-sm text-gray-600">
+                                  {dest.submissionCount} submissions
+                                </p>
+                              </div>
+                              <div className="flex items-center">
+                                <Star className="h-4 w-4 text-yellow-500 mr-1" />
+                                <span className="font-semibold">
+                                  {dest.averageRating?.toFixed(1) || "N/A"}
+                                </span>
+                              </div>
                             </div>
-                            <div className="flex items-center">
-                              <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                              <span className="font-semibold">{dest.averageRating?.toFixed(1) || "N/A"}</span>
-                            </div>
-                          </div>
-                        ))}
+                          ),
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -440,12 +502,18 @@ export default function AdvancedAnalyticsDashboard() {
                     <CardContent>
                       <div className="space-y-4">
                         {analytics.destinations.needAttention.map((dest) => (
-                          <div key={dest.id} className="flex items-center justify-between">
+                          <div
+                            key={dest.id}
+                            className="flex items-center justify-between"
+                          >
                             <div>
                               <p className="font-medium">{dest.name}</p>
                               <p className="text-sm text-gray-600">
-                                {dest.submissionCount} submissions • 
-                                Last updated: {new Date(dest.lastUpdated).toLocaleDateString()}
+                                {dest.submissionCount} submissions • Last
+                                updated:{" "}
+                                {new Date(
+                                  dest.lastUpdated,
+                                ).toLocaleDateString()}
                               </p>
                             </div>
                             <Badge variant="outline" className="text-red-600">
@@ -468,12 +536,19 @@ export default function AdvancedAnalyticsDashboard() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        {Object.entries(analytics.submissions.byType).map(([type, count]) => (
-                          <div key={type} className="flex items-center justify-between">
-                            <span className="capitalize text-gray-700">{type.replace('-', ' ')}</span>
-                            <Badge variant="outline">{count}</Badge>
-                          </div>
-                        ))}
+                        {Object.entries(analytics.submissions.byType).map(
+                          ([type, count]) => (
+                            <div
+                              key={type}
+                              className="flex items-center justify-between"
+                            >
+                              <span className="capitalize text-gray-700">
+                                {type.replace("-", " ")}
+                              </span>
+                              <Badge variant="outline">{count}</Badge>
+                            </div>
+                          ),
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -485,18 +560,28 @@ export default function AdvancedAnalyticsDashboard() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        {Object.entries(analytics.submissions.byStatus).map(([status, count]) => (
-                          <div key={status} className="flex items-center justify-between">
-                            <span className="text-gray-700">{status}</span>
-                            <Badge 
-                              variant="outline"
-                              className={status === "PUBLISHED" ? "text-green-600" : 
-                                        status === "SUBMITTED" ? "text-yellow-600" : "text-gray-600"}
+                        {Object.entries(analytics.submissions.byStatus).map(
+                          ([status, count]) => (
+                            <div
+                              key={status}
+                              className="flex items-center justify-between"
                             >
-                              {count}
-                            </Badge>
-                          </div>
-                        ))}
+                              <span className="text-gray-700">{status}</span>
+                              <Badge
+                                variant="outline"
+                                className={
+                                  status === "PUBLISHED"
+                                    ? "text-green-600"
+                                    : status === "SUBMITTED"
+                                      ? "text-yellow-600"
+                                      : "text-gray-600"
+                                }
+                              >
+                                {count}
+                              </Badge>
+                            </div>
+                          ),
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -512,12 +597,17 @@ export default function AdvancedAnalyticsDashboard() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        {Object.entries(analytics.users.engagementLevels).map(([level, count]) => (
-                          <div key={level} className="flex items-center justify-between">
-                            <span className="text-gray-700">{level}</span>
-                            <Badge variant="outline">{count} users</Badge>
-                          </div>
-                        ))}
+                        {Object.entries(analytics.users.engagementLevels).map(
+                          ([level, count]) => (
+                            <div
+                              key={level}
+                              className="flex items-center justify-between"
+                            >
+                              <span className="text-gray-700">{level}</span>
+                              <Badge variant="outline">{count} users</Badge>
+                            </div>
+                          ),
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -529,13 +619,23 @@ export default function AdvancedAnalyticsDashboard() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        {Object.entries(analytics.submissions.qualityDistribution).map(([quality, count]) => (
-                          <div key={quality} className="flex items-center justify-between">
+                        {Object.entries(
+                          analytics.submissions.qualityDistribution,
+                        ).map(([quality, count]) => (
+                          <div
+                            key={quality}
+                            className="flex items-center justify-between"
+                          >
                             <span className="text-gray-700">{quality}</span>
-                            <Badge 
+                            <Badge
                               variant="outline"
-                              className={quality.includes("High") ? "text-green-600" : 
-                                        quality.includes("Good") ? "text-blue-600" : "text-yellow-600"}
+                              className={
+                                quality.includes("High")
+                                  ? "text-green-600"
+                                  : quality.includes("Good")
+                                    ? "text-blue-600"
+                                    : "text-yellow-600"
+                              }
                             >
                               {count}
                             </Badge>
@@ -556,12 +656,17 @@ export default function AdvancedAnalyticsDashboard() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
-                        {analytics.content.popularSearches.map((search, index) => (
-                          <div key={search} className="flex items-center justify-between">
-                            <span className="text-gray-700">{search}</span>
-                            <Badge variant="outline">#{index + 1}</Badge>
-                          </div>
-                        ))}
+                        {analytics.content.popularSearches.map(
+                          (search, index) => (
+                            <div
+                              key={search}
+                              className="flex items-center justify-between"
+                            >
+                              <span className="text-gray-700">{search}</span>
+                              <Badge variant="outline">#{index + 1}</Badge>
+                            </div>
+                          ),
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -573,12 +678,17 @@ export default function AdvancedAnalyticsDashboard() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
-                        {analytics.content.topReferrers.map((referrer, index) => (
-                          <div key={referrer} className="flex items-center justify-between">
-                            <span className="text-gray-700">{referrer}</span>
-                            <Badge variant="outline">#{index + 1}</Badge>
-                          </div>
-                        ))}
+                        {analytics.content.topReferrers.map(
+                          (referrer, index) => (
+                            <div
+                              key={referrer}
+                              className="flex items-center justify-between"
+                            >
+                              <span className="text-gray-700">{referrer}</span>
+                              <Badge variant="outline">#{index + 1}</Badge>
+                            </div>
+                          ),
+                        )}
                       </div>
                     </CardContent>
                   </Card>

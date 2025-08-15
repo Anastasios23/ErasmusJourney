@@ -96,7 +96,8 @@ interface EnhancedDestinationData {
 export default function EnhancedDestinationDetail() {
   const router = useRouter();
   const { id } = router.query;
-  const [destination, setDestination] = useState<EnhancedDestinationData | null>(null);
+  const [destination, setDestination] =
+    useState<EnhancedDestinationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -111,7 +112,10 @@ export default function EnhancedDestinationDetail() {
       setLoading(true);
       setError(null);
 
-      const data = await ContentIntegrationService.getEnhancedDestinationForPublic(destinationId);
+      const data =
+        await ContentIntegrationService.getEnhancedDestinationForPublic(
+          destinationId,
+        );
 
       if (!data) {
         setError("Destination not found");
@@ -124,7 +128,7 @@ export default function EnhancedDestinationDetail() {
       ContentIntegrationService.trackContentInteraction(
         destinationId,
         "destination",
-        "page_view"
+        "page_view",
       );
     } catch (err) {
       console.error("Error fetching destination:", err);
@@ -168,9 +172,10 @@ export default function EnhancedDestinationDetail() {
             {error || "Destination not found"}
           </h2>
           <p className="text-gray-600 mb-6">
-            The destination you're looking for doesn't exist or isn't published yet.
+            The destination you're looking for doesn't exist or isn't published
+            yet.
           </p>
-          <Button onClick={() => router.push('/destinations')}>
+          <Button onClick={() => router.push("/destinations")}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Destinations
           </Button>
@@ -226,7 +231,9 @@ export default function EnhancedDestinationDetail() {
               </Button>
 
               <div className="flex items-center space-x-4 mb-4">
-                <h1 className="text-4xl md:text-6xl font-bold">{destination.name}</h1>
+                <h1 className="text-4xl md:text-6xl font-bold">
+                  {destination.name}
+                </h1>
                 {destination.featured && (
                   <Badge className="bg-yellow-500 text-yellow-900">
                     <Award className="h-4 w-4 mr-1" />
@@ -242,7 +249,9 @@ export default function EnhancedDestinationDetail() {
               <div className="flex items-center space-x-6">
                 <div className="flex items-center">
                   <Users className="h-5 w-5 mr-2" />
-                  <span>{destination.stats.totalStudents} student experiences</span>
+                  <span>
+                    {destination.stats.totalStudents} student experiences
+                  </span>
                 </div>
                 {destination.stats.averageRating && (
                   <div className="flex items-center">
@@ -253,7 +262,9 @@ export default function EnhancedDestinationDetail() {
                 {destination.stats.averageCost && (
                   <div className="flex items-center">
                     <Euro className="h-5 w-5 mr-2 text-green-400" />
-                    <span>€{Math.round(destination.stats.averageCost)}/month</span>
+                    <span>
+                      €{Math.round(destination.stats.averageCost)}/month
+                    </span>
                   </div>
                 )}
               </div>
@@ -299,25 +310,35 @@ export default function EnhancedDestinationDetail() {
                             <div className="text-3xl font-bold text-yellow-600">
                               {destination.stats.averageRating.toFixed(1)}
                             </div>
-                            <div className="text-sm text-gray-600">Avg. Rating</div>
+                            <div className="text-sm text-gray-600">
+                              Avg. Rating
+                            </div>
                           </div>
                         )}
 
                         {destination.livingCosts.totalMonthly && (
                           <div className="text-center">
                             <div className="text-3xl font-bold text-green-600">
-                              €{Math.round(destination.livingCosts.totalMonthly)}
+                              €
+                              {Math.round(destination.livingCosts.totalMonthly)}
                             </div>
-                            <div className="text-sm text-gray-600">Monthly Cost</div>
+                            <div className="text-sm text-gray-600">
+                              Monthly Cost
+                            </div>
                           </div>
                         )}
 
                         {destination.accommodation.averageRent && (
                           <div className="text-center">
                             <div className="text-3xl font-bold text-purple-600">
-                              €{Math.round(destination.accommodation.averageRent)}
+                              €
+                              {Math.round(
+                                destination.accommodation.averageRent,
+                              )}
                             </div>
-                            <div className="text-sm text-gray-600">Avg. Rent</div>
+                            <div className="text-sm text-gray-600">
+                              Avg. Rent
+                            </div>
                           </div>
                         )}
                       </div>
@@ -335,14 +356,24 @@ export default function EnhancedDestinationDetail() {
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-4">
-                          {Object.entries(destination.livingCosts.breakdown).map(([category, amount]) => (
-                            amount && (
-                              <div key={category} className="flex items-center justify-between">
-                                <span className="capitalize text-gray-600">{category}</span>
-                                <span className="font-semibold">€{Math.round(amount)}</span>
-                              </div>
-                            )
-                          ))}
+                          {Object.entries(
+                            destination.livingCosts.breakdown,
+                          ).map(
+                            ([category, amount]) =>
+                              amount && (
+                                <div
+                                  key={category}
+                                  className="flex items-center justify-between"
+                                >
+                                  <span className="capitalize text-gray-600">
+                                    {category}
+                                  </span>
+                                  <span className="font-semibold">
+                                    €{Math.round(amount)}
+                                  </span>
+                                </div>
+                              ),
+                          )}
                         </div>
                       </CardContent>
                     </Card>
@@ -361,7 +392,10 @@ export default function EnhancedDestinationDetail() {
                     <CardContent>
                       <div className="space-y-4">
                         {chartData.accommodationTypes.map(([type, count]) => (
-                          <div key={type} className="flex items-center justify-between">
+                          <div
+                            key={type}
+                            className="flex items-center justify-between"
+                          >
                             <span className="text-gray-600">{type}</span>
                             <Badge variant="outline">{count} students</Badge>
                           </div>
@@ -379,10 +413,14 @@ export default function EnhancedDestinationDetail() {
                       <CardContent>
                         <div className="text-center">
                           <div className="text-2xl font-bold text-green-600 mb-2">
-                            €{destination.accommodation.rentRange.min} - €{destination.accommodation.rentRange.max}
+                            €{destination.accommodation.rentRange.min} - €
+                            {destination.accommodation.rentRange.max}
                           </div>
                           <div className="text-gray-600">
-                            Average: ���{Math.round(destination.accommodation.averageRent || 0)}
+                            Average: ���
+                            {Math.round(
+                              destination.accommodation.averageRent || 0,
+                            )}
                           </div>
                         </div>
                       </CardContent>
@@ -402,7 +440,10 @@ export default function EnhancedDestinationDetail() {
                     <CardContent>
                       <div className="space-y-3">
                         {chartData.departments.map(([department, count]) => (
-                          <div key={department} className="flex items-center justify-between">
+                          <div
+                            key={department}
+                            className="flex items-center justify-between"
+                          >
                             <span className="text-gray-700">{department}</span>
                             <Badge variant="outline">{count} students</Badge>
                           </div>
@@ -420,7 +461,10 @@ export default function EnhancedDestinationDetail() {
                       <CardContent>
                         <div className="space-y-3">
                           {chartData.difficulty.map(([level, count]) => (
-                            <div key={level} className="flex items-center justify-between">
+                            <div
+                              key={level}
+                              className="flex items-center justify-between"
+                            >
                               <span className="text-gray-700">{level}</span>
                               <Badge variant="outline">{count} reports</Badge>
                             </div>
@@ -444,27 +488,42 @@ export default function EnhancedDestinationDetail() {
                       {destination.userExperiences.length === 0 ? (
                         <div className="text-center py-8">
                           <MessageCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                          <p className="text-gray-600">No student stories available yet.</p>
+                          <p className="text-gray-600">
+                            No student stories available yet.
+                          </p>
                         </div>
                       ) : (
                         <div className="space-y-6">
                           {destination.userExperiences.map((experience) => (
-                            <div key={experience.id} className="border-b border-gray-200 pb-6 last:border-b-0">
+                            <div
+                              key={experience.id}
+                              className="border-b border-gray-200 pb-6 last:border-b-0"
+                            >
                               <div className="flex items-start justify-between mb-3">
-                                <h4 className="font-semibold text-gray-900">{experience.title}</h4>
+                                <h4 className="font-semibold text-gray-900">
+                                  {experience.title}
+                                </h4>
                                 {experience.rating && (
                                   <div className="flex items-center">
                                     <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                                    <span className="text-sm">{experience.rating}/5</span>
+                                    <span className="text-sm">
+                                      {experience.rating}/5
+                                    </span>
                                   </div>
                                 )}
                               </div>
-                              <p className="text-gray-600 mb-3">{experience.excerpt}</p>
+                              <p className="text-gray-600 mb-3">
+                                {experience.excerpt}
+                              </p>
                               <div className="flex items-center text-sm text-gray-500">
                                 <span>by {experience.author}</span>
                                 <span className="mx-2">•</span>
                                 <Calendar className="h-4 w-4 mr-1" />
-                                <span>{new Date(experience.createdAt).toLocaleDateString()}</span>
+                                <span>
+                                  {new Date(
+                                    experience.createdAt,
+                                  ).toLocaleDateString()}
+                                </span>
                               </div>
                             </div>
                           ))}
@@ -484,7 +543,10 @@ export default function EnhancedDestinationDetail() {
                   <CardTitle>Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <Button className="w-full" onClick={() => router.push('/erasmus-experience-form')}>
+                  <Button
+                    className="w-full"
+                    onClick={() => router.push("/erasmus-experience-form")}
+                  >
                     <MessageCircle className="h-4 w-4 mr-2" />
                     Share Your Experience
                   </Button>
@@ -509,7 +571,9 @@ export default function EnhancedDestinationDetail() {
                     <div className="flex justify-between">
                       <span className="text-gray-600">Last Updated:</span>
                       <span className="font-medium">
-                        {new Date(destination.stats.lastUpdated).toLocaleDateString()}
+                        {new Date(
+                          destination.stats.lastUpdated,
+                        ).toLocaleDateString()}
                       </span>
                     </div>
                     <div className="flex justify-between">
@@ -519,7 +583,8 @@ export default function EnhancedDestinationDetail() {
                       </span>
                     </div>
                     <div className="text-xs text-gray-500 mt-3">
-                      All data is based on real student experiences and is regularly updated.
+                      All data is based on real student experiences and is
+                      regularly updated.
                     </div>
                   </div>
                 </CardContent>
@@ -538,22 +603,40 @@ export default function EnhancedDestinationDetail() {
                     <Button
                       variant="ghost"
                       className="w-full justify-start p-2 h-auto"
-                      onClick={() => router.push('/destinations?country=' + encodeURIComponent(destination.country))}
+                      onClick={() =>
+                        router.push(
+                          "/destinations?country=" +
+                            encodeURIComponent(destination.country),
+                        )
+                      }
                     >
                       <div className="text-left">
-                        <div className="font-medium text-sm">View All in {destination.country}</div>
-                        <div className="text-xs text-gray-500">Browse all destinations</div>
+                        <div className="font-medium text-sm">
+                          View All in {destination.country}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          Browse all destinations
+                        </div>
                       </div>
                     </Button>
 
                     <Button
                       variant="ghost"
                       className="w-full justify-start p-2 h-auto"
-                      onClick={() => router.push('/destinations?search=' + encodeURIComponent(destination.city))}
+                      onClick={() =>
+                        router.push(
+                          "/destinations?search=" +
+                            encodeURIComponent(destination.city),
+                        )
+                      }
                     >
                       <div className="text-left">
-                        <div className="font-medium text-sm">Similar Cities</div>
-                        <div className="text-xs text-gray-500">Find cities like {destination.city}</div>
+                        <div className="font-medium text-sm">
+                          Similar Cities
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          Find cities like {destination.city}
+                        </div>
                       </div>
                     </Button>
                   </div>
