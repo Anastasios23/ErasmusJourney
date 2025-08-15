@@ -279,17 +279,30 @@ model Destination {
 }
 
 model FormSubmission {
-  id         String   @id @default(cuid())
-  userId     String
-  type       String
-  title      String
-  data       Json
-  status     String   @default("SUBMITTED")
-  adminNotes String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id               String   @id @default(cuid())
+  userId           String
+  type             String
+  title            String
+  data             Json
+  status           String   @default("SUBMITTED") // DRAFT, SUBMITTED, PUBLISHED, ARCHIVED
+  adminNotes       String?
+  processed        Boolean  @default(false) // whether included in aggregations
+  qualityScore     Float?   // admin-assigned quality score
+  tags             String?  // comma-separated tags for categorization
 
+  // Enhanced metadata
+  location         String?  // extracted city, country for easier querying
+  submissionSource String   @default("form") // form, import, api
+
+  // Relationships
+  destinationLinks DestinationSubmission[]
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([location, status])
+  @@index([type, status])
   @@map("form_submissions")
 }
 
