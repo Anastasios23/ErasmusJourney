@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Header from "../../components/Header";
-import { Button } from "../../src/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "../../src/components/ui/card";
 import { Badge } from "../../src/components/ui/badge";
+import { Button } from "../../src/components/ui/button";
 import {
   Table,
   TableBody,
@@ -19,513 +20,438 @@ import {
   TableRow,
 } from "../../src/components/ui/table";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../../src/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../../src/components/ui/alert-dialog";
-import { Input } from "../../src/components/ui/input";
-import { Label } from "../../src/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../src/components/ui/select";
-import {
-  Search,
-  MoreHorizontal,
-  Eye,
-  Edit,
-  Trash2,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Filter,
-  Download,
-  RefreshCw,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../src/components/ui/dialog";
+import { 
+  BookOpen, 
+  Eye, 
+  Check, 
+  X,
+  Star,
+  MapPin,
+  User,
+  Calendar,
+  ArrowLeft
 } from "lucide-react";
 
-interface AdminStoryData {
+interface StorySubmission {
   id: string;
-  studentName: string;
-  university: string;
-  city: string;
-  country: string;
-  story: string;
-  status:
-    | "PENDING"
-    | "APPROVED"
-    | "REJECTED"
-    | "PUBLISHED"
-    | "SUBMITTED"
-    | "DELETED";
+  userId: string;
+  type: string;
+  title: string;
+  status: string;
   createdAt: string;
-  updatedAt: string;
-  isPublic: boolean;
-  moderatorNotes?: string;
+  data: any;
+  user?: {
+    firstName?: string;
+    lastName?: string;
+    email: string;
+  };
 }
 
-const STATUS_OPTIONS = [
-  { value: "all", label: "All Statuses" },
-  { value: "PENDING", label: "Pending Review" },
-  { value: "APPROVED", label: "Approved" },
-  { value: "PUBLISHED", label: "Published" },
-  { value: "SUBMITTED", label: "Submitted" },
-  { value: "REJECTED", label: "Rejected" },
-  { value: "DELETED", label: "Deleted" },
-];
-
-export default function AdminStoriesPage() {
+export default function StoriesAdmin() {
+  const { data: session, status } = useSession();
   const router = useRouter();
-  const [stories, setStories] = useState<AdminStoryData[]>([]);
-  const [filteredStories, setFilteredStories] = useState<AdminStoryData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [selectedStory, setSelectedStory] = useState<AdminStoryData | null>(
-    null,
-  );
+  const [stories, setStories] = useState<StorySubmission[]>([]);
+  const [selectedStory, setSelectedStory] = useState<StorySubmission | null>(null);
 
   useEffect(() => {
+    if (status === "loading") return;
+
+    if (!session || session.user?.role !== "ADMIN") {
+      router.push("/login");
+      return;
+    }
+
+    setLoading(false);
     fetchStories();
-  }, []);
-
-  useEffect(() => {
-    filterStories();
-  }, [stories, searchTerm, statusFilter]);
+  }, [session, status, router]);
 
   const fetchStories = async () => {
     try {
-      setLoading(true);
       const response = await fetch("/api/admin/stories");
-      if (!response.ok) {
-        throw new Error("Failed to fetch stories");
+      if (response.ok) {
+        const data = await response.json();
+        setStories(data.stories || []);
       }
-      const data = await response.json();
-      setStories(data);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching stories:", error);
     }
   };
 
-  const filterStories = () => {
-    let filtered = stories;
-
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (story) =>
-          story.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          story.university.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          story.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          story.story.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
-    }
-
-    if (statusFilter !== "all") {
-      filtered = filtered.filter((story) => story.status === statusFilter);
-    }
-
-    setFilteredStories(filtered);
-  };
-
-  const updateStoryStatus = async (
-    storyId: string,
-    newStatus: AdminStoryData["status"],
-    notes?: string,
-  ) => {
+  const handleStoryAction = async (storyId: string, action: "approve" | "reject" | "feature") => {
     try {
+      let newStatus = "PUBLISHED";
+      if (action === "reject") newStatus = "ARCHIVED";
+      if (action === "feature") newStatus = "FEATURED";
+
       const response = await fetch(`/api/admin/stories/${storyId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
+        body: JSON.stringify({ 
           status: newStatus,
-          moderatorNotes: notes,
+          featured: action === "feature"
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to update story status");
+      if (response.ok) {
+        await fetchStories(); // Refresh data
+        setSelectedStory(null);
       }
-
-      // Update local state
-      setStories((prev) =>
-        prev.map((story) =>
-          story.id === storyId
-            ? { ...story, status: newStatus, moderatorNotes: notes }
-            : story,
-        ),
-      );
-    } catch (err) {
-      console.error("Error updating story status:", err);
-      alert("Failed to update story status");
+    } catch (error) {
+      console.error("Error updating story:", error);
     }
   };
 
-  const deleteStory = async (storyId: string) => {
-    try {
-      const response = await fetch(`/api/admin/stories/${storyId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete story");
-      }
-
-      // Remove from local state
-      setStories((prev) => prev.filter((story) => story.id !== storyId));
-    } catch (err) {
-      console.error("Error deleting story:", err);
-      alert("Failed to delete story");
-    }
-  };
-
-  const exportStories = async () => {
-    try {
-      const response = await fetch("/api/admin/stories/export");
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `student-stories-${new Date().toISOString().split("T")[0]}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (err) {
-      console.error("Error exporting stories:", err);
-      alert("Failed to export stories");
-    }
-  };
-
-  const getStatusBadge = (status: AdminStoryData["status"]) => {
+  const getStatusBadge = (status: string) => {
     const statusConfig = {
-      PENDING: {
-        variant: "warning" as const,
-        label: "Pending Review",
-      },
-      APPROVED: {
-        variant: "success" as const,
-        label: "Approved",
-      },
-      PUBLISHED: {
-        variant: "info" as const,
-        label: "Published",
-      },
-      REJECTED: {
-        variant: "error" as const,
-        label: "Rejected",
-      },
-      SUBMITTED: {
-        variant: "secondary" as const,
-        label: "Submitted",
-      },
-      DELETED: {
-        variant: "outline" as const,
-        label: "Deleted",
-      },
+      DRAFT: { color: "bg-gray-100 text-gray-800", label: "Draft" },
+      SUBMITTED: { color: "bg-yellow-100 text-yellow-800", label: "Pending Review" },
+      PUBLISHED: { color: "bg-green-100 text-green-800", label: "Published" },
+      FEATURED: { color: "bg-blue-100 text-blue-800", label: "Featured" },
+      ARCHIVED: { color: "bg-red-100 text-red-800", label: "Archived" },
     };
 
-    const config = statusConfig[status] || {
-      variant: "outline" as const,
-      label: status,
-    };
-
-    return <Badge variant={config.variant}>{config.label}</Badge>;
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.DRAFT;
+    return (
+      <Badge className={config.color}>
+        {config.label}
+      </Badge>
+    );
   };
 
-  if (loading) {
+  const getLocationFromStory = (story: StorySubmission) => {
+    const data = story.data;
+    if (data.hostCity && data.hostCountry) {
+      return `${data.hostCity}, ${data.hostCountry}`;
+    }
+    if (data.city && data.country) {
+      return `${data.city}, ${data.country}`;
+    }
+    return "Location not specified";
+  };
+
+  const getRatingFromStory = (story: StorySubmission) => {
+    const data = story.data;
+    if (data.overallRating) {
+      return data.overallRating;
+    }
+    if (data.ratings && data.ratings.overallRating) {
+      return data.ratings.overallRating;
+    }
+    return null;
+  };
+
+  if (loading || status === "loading") {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
-        <main className="pt-20 pb-16 px-4">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading stories...</p>
-            </div>
+        <div className="container mx-auto px-4 py-8">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+            <div className="h-32 bg-gray-200 rounded"></div>
           </div>
-        </main>
+        </div>
       </div>
     );
   }
 
+  if (!session || session.user?.role !== "ADMIN") {
+    return null;
+  }
+
+  const pendingStories = stories.filter(s => s.status === "SUBMITTED");
+  const publishedStories = stories.filter(s => s.status === "PUBLISHED");
+  const featuredStories = stories.filter(s => s.status === "FEATURED");
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
-        <title>Admin - Student Stories | Erasmus Journey</title>
-        <meta
-          name="description"
-          content="Manage and moderate student stories"
-        />
+        <title>Stories Management - Admin</title>
       </Head>
-
+      
       <Header />
+      
+      <div className="container mx-auto px-4 py-8 mt-16">
+        <div className="mb-8">
+          <Button 
+            variant="outline" 
+            onClick={() => router.push('/admin')}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Admin Dashboard
+          </Button>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Stories Management</h1>
+          <p className="text-gray-600">Review and manage student stories and experiences</p>
+        </div>
 
-      <main className="pt-20 pb-16 px-4">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                Story Management
-              </h1>
-              <p className="text-gray-600 mt-2">
-                Review, moderate, and manage student stories
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={exportStories}>
-                <Download className="h-4 w-4 mr-2" />
-                Export CSV
-              </Button>
-              <Button variant="outline" onClick={fetchStories}>
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Refresh
-              </Button>
-            </div>
-          </div>
-
-          {/* Filters */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg">Filters</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="search">Search Stories</Label>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <Input
-                      id="search"
-                      placeholder="Search by name, university, city..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
+                  <p className="text-sm font-medium text-gray-600">Pending Review</p>
+                  <p className="text-2xl font-bold text-yellow-600">{pendingStories.length}</p>
                 </div>
-                <div>
-                  <Label htmlFor="status-filter">Status Filter</Label>
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {STATUS_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <BookOpen className="h-8 w-8 text-yellow-600" />
               </div>
             </CardContent>
           </Card>
 
-          {/* Statistics */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-2xl font-bold text-gray-900">
-                  {stories.filter((s) => s.status === "PENDING").length}
-                </div>
-                <p className="text-sm text-gray-600">Pending Review</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-2xl font-bold text-green-600">
-                  {stories.filter((s) => s.status === "PUBLISHED").length}
-                </div>
-                <p className="text-sm text-gray-600">Published</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-2xl font-bold text-blue-600">
-                  {stories.filter((s) => s.status === "APPROVED").length}
-                </div>
-                <p className="text-sm text-gray-600">Approved</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-2xl font-bold text-red-600">
-                  {stories.filter((s) => s.status === "REJECTED").length}
-                </div>
-                <p className="text-sm text-gray-600">Rejected</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Stories Table */}
           <Card>
-            <CardHeader>
-              <CardTitle>
-                Stories ({filteredStories.length} of {stories.length})
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {error && (
-                <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
-                  <p className="text-red-800">{error}</p>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Published</p>
+                  <p className="text-2xl font-bold text-green-600">{publishedStories.length}</p>
                 </div>
-              )}
-
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Student</TableHead>
-                      <TableHead>University</TableHead>
-                      <TableHead>Location</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Created</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredStories.map((story) => (
-                      <TableRow key={story.id}>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium">
-                              {story.studentName}
-                            </div>
-                            <div className="text-sm text-gray-500 truncate max-w-xs">
-                              {story.story.substring(0, 50)}...
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>{story.university}</TableCell>
-                        <TableCell>
-                          {story.city}, {story.country}
-                        </TableCell>
-                        <TableCell>{getStatusBadge(story.status)}</TableCell>
-                        <TableCell>
-                          {new Date(story.createdAt).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  router.push(`/stories/${story.id}`)
-                                }
-                              >
-                                <Eye className="mr-2 h-4 w-4" />
-                                View
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  updateStoryStatus(story.id, "APPROVED")
-                                }
-                                disabled={story.status === "APPROVED"}
-                              >
-                                <CheckCircle className="mr-2 h-4 w-4" />
-                                Approve
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  updateStoryStatus(story.id, "PUBLISHED")
-                                }
-                                disabled={story.status === "PUBLISHED"}
-                              >
-                                <CheckCircle className="mr-2 h-4 w-4" />
-                                Publish
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  updateStoryStatus(story.id, "REJECTED")
-                                }
-                                disabled={story.status === "REJECTED"}
-                              >
-                                <XCircle className="mr-2 h-4 w-4" />
-                                Reject
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <DropdownMenuItem
-                                    onSelect={(e) => e.preventDefault()}
-                                  >
-                                    <Trash2 className="mr-2 h-4 w-4" />
-                                    Delete
-                                  </DropdownMenuItem>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>
-                                      Delete Story
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Are you sure you want to delete this
-                                      story? This action cannot be undone.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>
-                                      Cancel
-                                    </AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => deleteStory(story.id)}
-                                      className="bg-red-600 hover:bg-red-700"
-                                    >
-                                      Delete
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <Check className="h-8 w-8 text-green-600" />
               </div>
+            </CardContent>
+          </Card>
 
-              {filteredStories.length === 0 && (
-                <div className="text-center py-8">
-                  <p className="text-gray-500">
-                    No stories found matching your criteria.
-                  </p>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Featured</p>
+                  <p className="text-2xl font-bold text-blue-600">{featuredStories.length}</p>
                 </div>
-              )}
+                <Star className="h-8 w-8 text-blue-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Stories</p>
+                  <p className="text-2xl font-bold text-gray-900">{stories.length}</p>
+                </div>
+                <BookOpen className="h-8 w-8 text-gray-600" />
+              </div>
             </CardContent>
           </Card>
         </div>
-      </main>
+
+        {/* Pending Stories Section */}
+        {pendingStories.length > 0 && (
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <BookOpen className="h-5 w-5 mr-2 text-yellow-600" />
+                Stories Pending Review ({pendingStories.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Author</TableHead>
+                    <TableHead>Rating</TableHead>
+                    <TableHead>Created</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {pendingStories.map((story) => (
+                    <TableRow key={story.id}>
+                      <TableCell className="font-medium max-w-xs truncate">
+                        {story.title}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center">
+                          <MapPin className="h-4 w-4 mr-1 text-gray-400" />
+                          {getLocationFromStory(story)}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center">
+                          <User className="h-4 w-4 mr-1 text-gray-400" />
+                          {story.user ? 
+                            `${story.user.firstName || ''} ${story.user.lastName || ''}`.trim() || story.user.email
+                            : 'Unknown User'
+                          }
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {getRatingFromStory(story) ? (
+                          <div className="flex items-center">
+                            <Star className="h-4 w-4 text-yellow-500 mr-1" />
+                            {getRatingFromStory(story)}/5
+                          </div>
+                        ) : (
+                          <span className="text-gray-400">No rating</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center">
+                          <Calendar className="h-4 w-4 mr-1 text-gray-400" />
+                          {new Date(story.createdAt).toLocaleDateString()}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => setSelectedStory(story)}
+                              >
+                                <Eye className="h-4 w-4 mr-1" />
+                                Review
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                              <DialogHeader>
+                                <DialogTitle>
+                                  Review Story: {story.title}
+                                </DialogTitle>
+                              </DialogHeader>
+                              {selectedStory && (
+                                <div className="space-y-4">
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                      <strong>Location:</strong> {getLocationFromStory(selectedStory)}
+                                    </div>
+                                    <div>
+                                      <strong>Rating:</strong> {getRatingFromStory(selectedStory) || "No rating"}
+                                    </div>
+                                  </div>
+                                  
+                                  <div>
+                                    <strong>Story Content:</strong>
+                                    <div className="mt-2 p-4 bg-gray-100 rounded text-sm overflow-auto max-h-96">
+                                      {Object.entries(selectedStory.data).map(([key, value]) => (
+                                        <div key={key} className="mb-3">
+                                          <strong className="block text-gray-700">{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</strong>
+                                          <div className="mt-1 pl-2 border-l-2 border-gray-300">
+                                            {typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  <div className="flex space-x-2 pt-4 border-t">
+                                    <Button 
+                                      onClick={() => handleStoryAction(selectedStory.id, "approve")}
+                                      className="bg-green-600 hover:bg-green-700"
+                                    >
+                                      <Check className="h-4 w-4 mr-1" />
+                                      Approve
+                                    </Button>
+                                    <Button 
+                                      onClick={() => handleStoryAction(selectedStory.id, "feature")}
+                                      className="bg-blue-600 hover:bg-blue-700"
+                                    >
+                                      <Star className="h-4 w-4 mr-1" />
+                                      Feature
+                                    </Button>
+                                    <Button 
+                                      onClick={() => handleStoryAction(selectedStory.id, "reject")}
+                                      variant="destructive"
+                                    >
+                                      <X className="h-4 w-4 mr-1" />
+                                      Reject
+                                    </Button>
+                                  </div>
+                                </div>
+                              )}
+                            </DialogContent>
+                          </Dialog>
+
+                          <Button 
+                            onClick={() => handleStoryAction(story.id, "approve")}
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            <Check className="h-4 w-4" />
+                          </Button>
+
+                          <Button 
+                            onClick={() => handleStoryAction(story.id, "feature")}
+                            size="sm"
+                            className="bg-blue-600 hover:bg-blue-700"
+                          >
+                            <Star className="h-4 w-4" />
+                          </Button>
+                          
+                          <Button 
+                            onClick={() => handleStoryAction(story.id, "reject")}
+                            size="sm"
+                            variant="destructive"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* All Stories Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>All Stories</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Location</TableHead>
+                  <TableHead>Author</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {stories.map((story) => (
+                  <TableRow key={story.id}>
+                    <TableCell className="font-medium max-w-xs truncate">
+                      {story.title}
+                    </TableCell>
+                    <TableCell>{getStatusBadge(story.status)}</TableCell>
+                    <TableCell>{getLocationFromStory(story)}</TableCell>
+                    <TableCell>
+                      {story.user ? 
+                        `${story.user.firstName || ''} ${story.user.lastName || ''}`.trim() || story.user.email
+                        : 'Unknown User'
+                      }
+                    </TableCell>
+                    <TableCell>{new Date(story.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      <Button variant="outline" size="sm">
+                        <Eye className="h-4 w-4 mr-1" />
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
