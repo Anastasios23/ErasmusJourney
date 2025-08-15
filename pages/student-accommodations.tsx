@@ -137,35 +137,36 @@ export default function StudentAccommodations() {
 
       if (filters.search) {
         const search = filters.search.toLowerCase();
-        filtered = filtered.filter((acc: any) =>
-          acc.studentName?.toLowerCase().includes(search) ||
-          acc.accommodationAddress?.toLowerCase().includes(search) ||
-          acc.accommodationType?.toLowerCase().includes(search) ||
-          acc.neighborhood?.toLowerCase().includes(search)
+        filtered = filtered.filter(
+          (acc: any) =>
+            acc.studentName?.toLowerCase().includes(search) ||
+            acc.accommodationAddress?.toLowerCase().includes(search) ||
+            acc.accommodationType?.toLowerCase().includes(search) ||
+            acc.neighborhood?.toLowerCase().includes(search),
         );
       }
 
       if (filters.city) {
-        filtered = filtered.filter((acc: any) =>
-          acc.city?.toLowerCase() === filters.city?.toLowerCase()
+        filtered = filtered.filter(
+          (acc: any) => acc.city?.toLowerCase() === filters.city?.toLowerCase(),
         );
       }
 
       if (filters.type) {
-        filtered = filtered.filter((acc: any) =>
-          acc.accommodationType === filters.type
+        filtered = filtered.filter(
+          (acc: any) => acc.accommodationType === filters.type,
         );
       }
 
       if (filters.maxBudget) {
-        filtered = filtered.filter((acc: any) =>
-          acc.monthlyRent <= filters.maxBudget!
+        filtered = filtered.filter(
+          (acc: any) => acc.monthlyRent <= filters.maxBudget!,
         );
       }
 
       if (filters.minRating) {
-        filtered = filtered.filter((acc: any) =>
-          acc.rating >= filters.minRating!
+        filtered = filtered.filter(
+          (acc: any) => acc.rating >= filters.minRating!,
         );
       }
 
@@ -216,7 +217,7 @@ export default function StudentAccommodations() {
   useEffect(() => {
     const fetchAccommodationStats = async () => {
       try {
-        const response = await fetch('/api/student-accommodations/stats');
+        const response = await fetch("/api/student-accommodations/stats");
         if (response.ok) {
           const data = await response.json();
           setAccommodationStats(data.destinationStats || null);
@@ -234,13 +235,13 @@ export default function StudentAccommodations() {
     ...(accommodations || []).map((item, index) => ({
       ...item,
       id: item.id ? `api-${item.id}` : `api-${index}`,
-      source: 'student_experience',
+      source: "student_experience",
       isReal: true,
     })),
     ...(generatedContent?.accommodations || []).map((item, index) => ({
       ...item,
       id: item.id ? `generated-${item.id}` : `generated-${index}`,
-      source: 'generated',
+      source: "generated",
       isReal: false,
     })),
   ];
@@ -363,7 +364,7 @@ export default function StudentAccommodations() {
             {/* Section Navigation */}
             <nav className="mb-8">
               <div className="flex justify-center">
-              <div className="bg-white rounded-lg border p-1 inline-flex">
+                <div className="bg-white rounded-lg border p-1 inline-flex">
                   <button
                     onClick={() => setActiveSection("experiences")}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -470,179 +471,191 @@ export default function StudentAccommodations() {
               </section>
             )}
 
-              {activeSection === "experiences" && (
-                <>
-                  {/* Student Accommodation Experiences */}
-                  {!isLoading && accommodations.length > 0 && (
-                    <section className="mb-12">
-                      <div className="flex items-center justify-between mb-6">
-                        <div>
-                          <h2 className="text-2xl font-bold text-gray-900">
-                            Real Student Accommodation Experiences
-                          </h2>
-                          <p className="text-gray-600">
-                            Detailed reviews and tips from actual exchange students
-                          </p>
-                        </div>
-                        <Badge
-                          variant="outline"
-                          className="text-blue-600 border-blue-600"
-                        >
-                          {accommodations.length} Experience
-                          {accommodations.length === 1 ? "" : "s"}
-                        </Badge>
+            {activeSection === "experiences" && (
+              <>
+                {/* Student Accommodation Experiences */}
+                {!isLoading && accommodations.length > 0 && (
+                  <section className="mb-12">
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <h2 className="text-2xl font-bold text-gray-900">
+                          Real Student Accommodation Experiences
+                        </h2>
+                        <p className="text-gray-600">
+                          Detailed reviews and tips from actual exchange
+                          students
+                        </p>
                       </div>
+                      <Badge
+                        variant="outline"
+                        className="text-blue-600 border-blue-600"
+                      >
+                        {accommodations.length} Experience
+                        {accommodations.length === 1 ? "" : "s"}
+                      </Badge>
+                    </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {accommodations.map((accommodation) => (
-                          <AccommodationExperienceCard
-                            key={accommodation.id}
-                            accommodation={{
-                              ...accommodation,
-                              isReal: true,
-                              source: 'student_experience',
-                            }}
-                            onSaveToWishlist={(id) => {
-                              const newWishlist = new Set(wishlist);
-                              if (wishlist.has(id)) {
-                                newWishlist.delete(id);
-                              } else {
-                                newWishlist.add(id);
-                              }
-                              setWishlist(newWishlist);
-                              if (typeof window !== "undefined") {
-                                localStorage.setItem("accommodation_wishlist", JSON.stringify(Array.from(newWishlist)));
-                              }
-                            }}
-                            isInWishlist={wishlist.has(accommodation.id)}
-                          />
-                        ))}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {accommodations.map((accommodation) => (
+                        <AccommodationExperienceCard
+                          key={accommodation.id}
+                          accommodation={{
+                            ...accommodation,
+                            isReal: true,
+                            source: "student_experience",
+                          }}
+                          onSaveToWishlist={(id) => {
+                            const newWishlist = new Set(wishlist);
+                            if (wishlist.has(id)) {
+                              newWishlist.delete(id);
+                            } else {
+                              newWishlist.add(id);
+                            }
+                            setWishlist(newWishlist);
+                            if (typeof window !== "undefined") {
+                              localStorage.setItem(
+                                "accommodation_wishlist",
+                                JSON.stringify(Array.from(newWishlist)),
+                              );
+                            }
+                          }}
+                          isInWishlist={wishlist.has(accommodation.id)}
+                        />
+                      ))}
+                    </div>
+
+                    {(generatedContent?.length || 0) > 6 && (
+                      <div className="text-center mt-6">
+                        <Button variant="outline">
+                          View All {generatedContent?.length || 0} Experiences
+                        </Button>
                       </div>
+                    )}
+                  </section>
+                )}
 
-                      {(generatedContent?.length || 0) > 6 && (
-                        <div className="text-center mt-6">
-                          <Button variant="outline">
-                            View All {generatedContent?.length || 0} Experiences
-                          </Button>
-                        </div>
-                      )}
-                    </section>
-                  )}
-
-                  {/* Stats Overview */}
-                  {accommodationStats && accommodationStats.length > 0 && (
-                    <section className="mb-12">
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {accommodationStats.slice(0, 4).map((stat, index) => (
-                          <Card key={index}>
-                            <CardContent className="pt-6">
-                              <div className="text-center">
-                                <h3 className="font-semibold text-lg mb-2">
-                                  {stat.city}, {stat.country}
-                                </h3>
-                                <div className="space-y-2">
-                                  <div>
-                                    <div className="text-2xl font-bold text-blue-600">
-                                      €{stat.avgRent}
-                                    </div>
-                                    <div className="text-sm text-gray-600">Avg. Rent</div>
+                {/* Stats Overview */}
+                {accommodationStats && accommodationStats.length > 0 && (
+                  <section className="mb-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                      {accommodationStats.slice(0, 4).map((stat, index) => (
+                        <Card key={index}>
+                          <CardContent className="pt-6">
+                            <div className="text-center">
+                              <h3 className="font-semibold text-lg mb-2">
+                                {stat.city}, {stat.country}
+                              </h3>
+                              <div className="space-y-2">
+                                <div>
+                                  <div className="text-2xl font-bold text-blue-600">
+                                    €{stat.avgRent}
                                   </div>
-                                  <div>
-                                    <div className="text-lg font-semibold text-green-600">
-                                      ⭐ {stat.avgRating}
-                                    </div>
-                                    <div className="text-sm text-gray-600">Avg. Rating</div>
-                                  </div>
-                                  <div className="text-sm text-gray-500">
-                                    {stat.accommodationCount} experiences
+                                  <div className="text-sm text-gray-600">
+                                    Avg. Rent
                                   </div>
                                 </div>
+                                <div>
+                                  <div className="text-lg font-semibold text-green-600">
+                                    ⭐ {stat.avgRating}
+                                  </div>
+                                  <div className="text-sm text-gray-600">
+                                    Avg. Rating
+                                  </div>
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                  {stat.accommodationCount} experiences
+                                </div>
                               </div>
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-                    </section>
-                  )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </section>
+                )}
 
-                  {/* Loading state */}
-                  {isLoading && (
-                    <section className="mb-12">
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {[1, 2, 3, 4, 5, 6].map((i) => (
-                          <Card key={i} className="animate-pulse">
-                            <CardHeader>
-                              <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                              <div className="h-3 bg-gray-300 rounded w-1/2"></div>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="space-y-2">
-                                <div className="h-3 bg-gray-300 rounded"></div>
-                                <div className="h-3 bg-gray-300 rounded w-5/6"></div>
-                                <div className="h-3 bg-gray-300 rounded w-4/6"></div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-                    </section>
-                  )}
+                {/* Loading state */}
+                {isLoading && (
+                  <section className="mb-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {[1, 2, 3, 4, 5, 6].map((i) => (
+                        <Card key={i} className="animate-pulse">
+                          <CardHeader>
+                            <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+                            <div className="h-3 bg-gray-300 rounded w-1/2"></div>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-2">
+                              <div className="h-3 bg-gray-300 rounded"></div>
+                              <div className="h-3 bg-gray-300 rounded w-5/6"></div>
+                              <div className="h-3 bg-gray-300 rounded w-4/6"></div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </section>
+                )}
 
-                  {/* Error state */}
-                  {error && (
-                    <section className="mb-12">
-                      <Card className="bg-red-50 border-red-200">
-                        <CardContent className="pt-8 pb-8 text-center">
-                          <div className="max-w-2xl mx-auto">
-                            <div className="h-12 w-12 text-red-600 mx-auto mb-4">⚠️</div>
-                            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                              Failed to load accommodation experiences
-                            </h3>
-                            <p className="text-gray-600 mb-6">
-                              There was an error loading the accommodation data. Please try refreshing the page.
-                            </p>
-                            <Button
-                              onClick={() => window.location.reload()}
-                              variant="outline"
-                              size="lg"
-                            >
-                              Refresh Page
+                {/* Error state */}
+                {error && (
+                  <section className="mb-12">
+                    <Card className="bg-red-50 border-red-200">
+                      <CardContent className="pt-8 pb-8 text-center">
+                        <div className="max-w-2xl mx-auto">
+                          <div className="h-12 w-12 text-red-600 mx-auto mb-4">
+                            ⚠️
+                          </div>
+                          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                            Failed to load accommodation experiences
+                          </h3>
+                          <p className="text-gray-600 mb-6">
+                            There was an error loading the accommodation data.
+                            Please try refreshing the page.
+                          </p>
+                          <Button
+                            onClick={() => window.location.reload()}
+                            variant="outline"
+                            size="lg"
+                          >
+                            Refresh Page
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </section>
+                )}
+
+                {/* No experiences message */}
+                {!isLoading && !error && accommodations.length === 0 && (
+                  <section className="mb-12">
+                    <Card className="bg-blue-50 border-blue-200">
+                      <CardContent className="pt-8 pb-8 text-center">
+                        <div className="max-w-2xl mx-auto">
+                          <Home className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                            No accommodation experiences yet
+                          </h3>
+                          <p className="text-gray-600 mb-6">
+                            Be the first to share your accommodation experience
+                            to help future students find great places to stay.
+                          </p>
+                          <Link href="/accommodation">
+                            <Button size="lg">
+                              <Home className="h-5 w-5 mr-2" />
+                              Share Your Accommodation Experience
                             </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </section>
-                  )}
+                          </Link>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </section>
+                )}
 
-                  {/* No experiences message */}
-                  {!isLoading && !error && accommodations.length === 0 && (
-                    <section className="mb-12">
-                      <Card className="bg-blue-50 border-blue-200">
-                        <CardContent className="pt-8 pb-8 text-center">
-                          <div className="max-w-2xl mx-auto">
-                            <Home className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                              No accommodation experiences yet
-                            </h3>
-                            <p className="text-gray-600 mb-6">
-                              Be the first to share your accommodation experience to help future students find great places to stay.
-                            </p>
-                            <Link href="/accommodation">
-                              <Button size="lg">
-                                <Home className="h-5 w-5 mr-2" />
-                                Share Your Accommodation Experience
-                              </Button>
-                            </Link>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </section>
-                  )}
-
-                  {/* Recently Viewed Section */}
-                  <div className="mb-8">
-                    <RecentlyViewed maxItems={3} />
-                  </div>
+                {/* Recently Viewed Section */}
+                <div className="mb-8">
+                  <RecentlyViewed maxItems={3} />
+                </div>
 
                 {/* Search and Filters */}
                 <section aria-label="Search and filter accommodations">
@@ -899,172 +912,174 @@ export default function StudentAccommodations() {
                 )}
 
                 {/* Student Accommodation Experiences */}
-                {!contentLoading && generatedContent && generatedContent.length > 0 && (
-                  <section className="mb-12">
-                    <div className="flex items-center justify-between mb-6">
-                      <div>
-                        <h2 className="text-2xl font-bold text-gray-900">
-                          Real Student Experiences
-                        </h2>
-                        <p className="text-gray-600">
-                          Accommodation reviews and tips from actual exchange
-                          students
-                        </p>
+                {!contentLoading &&
+                  generatedContent &&
+                  generatedContent.length > 0 && (
+                    <section className="mb-12">
+                      <div className="flex items-center justify-between mb-6">
+                        <div>
+                          <h2 className="text-2xl font-bold text-gray-900">
+                            Real Student Experiences
+                          </h2>
+                          <p className="text-gray-600">
+                            Accommodation reviews and tips from actual exchange
+                            students
+                          </p>
+                        </div>
+                        <Badge
+                          variant="outline"
+                          className="text-blue-600 border-blue-600"
+                        >
+                          {generatedContent?.length || 0} Experience
+                          {(generatedContent?.length || 0) === 1 ? "" : "s"}
+                        </Badge>
                       </div>
-                      <Badge
-                        variant="outline"
-                        className="text-blue-600 border-blue-600"
-                      >
-                        {generatedContent?.length || 0} Experience
-                        {(generatedContent?.length || 0) === 1 ? "" : "s"}
-                      </Badge>
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {(generatedContent || [])
-                        .slice(0, 6)
-                        .map((experience) => (
-                          <Card
-                            key={experience.id}
-                            className="hover:shadow-lg transition-shadow"
-                          >
-                            <CardContent className="pt-6">
-                              <div className="space-y-4">
-                                {/* Header */}
-                                <div>
-                                  <div className="flex items-start justify-between mb-2">
-                                    <h3 className="font-semibold text-lg">
-                                      {experience.accommodationType}
-                                    </h3>
-                                    {experience.rating && (
-                                      <div className="flex items-center gap-1">
-                                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                                        <span className="text-sm font-medium">
-                                          {experience.rating}
-                                        </span>
-                                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {(generatedContent || [])
+                          .slice(0, 6)
+                          .map((experience) => (
+                            <Card
+                              key={experience.id}
+                              className="hover:shadow-lg transition-shadow"
+                            >
+                              <CardContent className="pt-6">
+                                <div className="space-y-4">
+                                  {/* Header */}
+                                  <div>
+                                    <div className="flex items-start justify-between mb-2">
+                                      <h3 className="font-semibold text-lg">
+                                        {experience.accommodationType}
+                                      </h3>
+                                      {experience.rating && (
+                                        <div className="flex items-center gap-1">
+                                          <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                                          <span className="text-sm font-medium">
+                                            {experience.rating}
+                                          </span>
+                                        </div>
+                                      )}
+                                    </div>
+                                    <div className="flex items-center gap-2 text-gray-600 text-sm">
+                                      <MapPin className="h-4 w-4" />
+                                      <span>
+                                        {experience.city}, {experience.country}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  {/* Student Info */}
+                                  <div className="bg-blue-50 rounded-lg p-3">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <Users className="h-4 w-4 text-blue-600" />
+                                      <span className="text-sm font-medium text-blue-900">
+                                        {experience.studentName}
+                                      </span>
+                                    </div>
+                                    {experience.universityInCyprus && (
+                                      <p className="text-xs text-blue-700">
+                                        {experience.universityInCyprus} →{" "}
+                                        {experience.university}
+                                      </p>
                                     )}
                                   </div>
-                                  <div className="flex items-center gap-2 text-gray-600 text-sm">
-                                    <MapPin className="h-4 w-4" />
-                                    <span>
-                                      {experience.city}, {experience.country}
-                                    </span>
-                                  </div>
-                                </div>
 
-                                {/* Student Info */}
-                                <div className="bg-blue-50 rounded-lg p-3">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <Users className="h-4 w-4 text-blue-600" />
-                                    <span className="text-sm font-medium text-blue-900">
-                                      {experience.studentName}
-                                    </span>
-                                  </div>
-                                  {experience.universityInCyprus && (
-                                    <p className="text-xs text-blue-700">
-                                      {experience.universityInCyprus} →{" "}
-                                      {experience.university}
-                                    </p>
-                                  )}
-                                </div>
-
-                                {/* Financial Info */}
-                                {experience.monthlyRent && (
-                                  <div className="flex items-center justify-between py-2 border-t border-gray-100">
-                                    <span className="text-sm text-gray-600">
-                                      Monthly Rent:
-                                    </span>
-                                    <span className="font-semibold text-green-600">
-                                      €{experience.monthlyRent}
-                                      {experience.billsIncluded && (
-                                        <span className="text-xs text-green-500 ml-1">
-                                          (bills incl.)
-                                        </span>
-                                      )}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {/* Experience Highlights */}
-                                {experience.pros &&
-                                  experience.pros.length > 0 && (
-                                    <div>
-                                      <h4 className="text-sm font-medium text-gray-900 mb-2">
-                                        Pros:
-                                      </h4>
-                                      <div className="space-y-1">
-                                        {experience.pros
-                                          .slice(0, 2)
-                                          .map((pro, index) => (
-                                            <div
-                                              key={index}
-                                              className="flex items-start gap-2"
-                                            >
-                                              <CheckCircle className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
-                                              <span className="text-xs text-gray-700">
-                                                {pro}
-                                              </span>
-                                            </div>
-                                          ))}
-                                      </div>
+                                  {/* Financial Info */}
+                                  {experience.monthlyRent && (
+                                    <div className="flex items-center justify-between py-2 border-t border-gray-100">
+                                      <span className="text-sm text-gray-600">
+                                        Monthly Rent:
+                                      </span>
+                                      <span className="font-semibold text-green-600">
+                                        €{experience.monthlyRent}
+                                        {experience.billsIncluded && (
+                                          <span className="text-xs text-green-500 ml-1">
+                                            (bills incl.)
+                                          </span>
+                                        )}
+                                      </span>
                                     </div>
                                   )}
 
-                                {/* Tips */}
-                                {experience.tips && (
-                                  <div className="bg-yellow-50 rounded-lg p-3">
-                                    <h4 className="text-sm font-medium text-yellow-900 mb-1">
-                                      Tip:
-                                    </h4>
-                                    <p className="text-xs text-yellow-800 line-clamp-2">
-                                      {experience.tips}
-                                    </p>
-                                  </div>
-                                )}
+                                  {/* Experience Highlights */}
+                                  {experience.pros &&
+                                    experience.pros.length > 0 && (
+                                      <div>
+                                        <h4 className="text-sm font-medium text-gray-900 mb-2">
+                                          Pros:
+                                        </h4>
+                                        <div className="space-y-1">
+                                          {experience.pros
+                                            .slice(0, 2)
+                                            .map((pro, index) => (
+                                              <div
+                                                key={index}
+                                                className="flex items-start gap-2"
+                                              >
+                                                <CheckCircle className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
+                                                <span className="text-xs text-gray-700">
+                                                  {pro}
+                                                </span>
+                                              </div>
+                                            ))}
+                                        </div>
+                                      </div>
+                                    )}
 
-                                {/* Recommendation */}
-                                {experience.wouldRecommend !== undefined && (
-                                  <div className="flex items-center gap-2 text-sm">
-                                    <span className="text-gray-600">
-                                      Would recommend:
-                                    </span>
-                                    <span
-                                      className={
-                                        experience.wouldRecommend
-                                          ? "text-green-600"
-                                          : "text-red-600"
-                                      }
-                                    >
-                                      {experience.wouldRecommend
-                                        ? "✅ Yes"
-                                        : "❌ No"}
-                                    </span>
-                                  </div>
-                                )}
+                                  {/* Tips */}
+                                  {experience.tips && (
+                                    <div className="bg-yellow-50 rounded-lg p-3">
+                                      <h4 className="text-sm font-medium text-yellow-900 mb-1">
+                                        Tip:
+                                      </h4>
+                                      <p className="text-xs text-yellow-800 line-clamp-2">
+                                        {experience.tips}
+                                      </p>
+                                    </div>
+                                  )}
 
-                                {/* Date */}
-                                <div className="text-xs text-gray-500 pt-2 border-t border-gray-100">
-                                  Shared{" "}
-                                  {new Date(
-                                    experience.createdAt,
-                                  ).toLocaleDateString()}
+                                  {/* Recommendation */}
+                                  {experience.wouldRecommend !== undefined && (
+                                    <div className="flex items-center gap-2 text-sm">
+                                      <span className="text-gray-600">
+                                        Would recommend:
+                                      </span>
+                                      <span
+                                        className={
+                                          experience.wouldRecommend
+                                            ? "text-green-600"
+                                            : "text-red-600"
+                                        }
+                                      >
+                                        {experience.wouldRecommend
+                                          ? "✅ Yes"
+                                          : "❌ No"}
+                                      </span>
+                                    </div>
+                                  )}
+
+                                  {/* Date */}
+                                  <div className="text-xs text-gray-500 pt-2 border-t border-gray-100">
+                                    Shared{" "}
+                                    {new Date(
+                                      experience.createdAt,
+                                    ).toLocaleDateString()}
+                                  </div>
                                 </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        ))}
-                    </div>
-
-                    {(generatedContent?.length || 0) > 6 && (
-                      <div className="text-center mt-6">
-                        <Button variant="outline">
-                          View All {generatedContent?.length || 0} Experiences
-                        </Button>
+                              </CardContent>
+                            </Card>
+                          ))}
                       </div>
-                    )}
-                  </section>
-                )}
+
+                      {(generatedContent?.length || 0) > 6 && (
+                        <div className="text-center mt-6">
+                          <Button variant="outline">
+                            View All {generatedContent?.length || 0} Experiences
+                          </Button>
+                        </div>
+                      )}
+                    </section>
+                  )}
 
                 {/* CTA Section */}
                 <section className="mt-12">
