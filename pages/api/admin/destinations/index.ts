@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]";
 import { prisma } from "../../../../lib/prisma";
+import { ContentManagementService } from "../../../../src/services/contentManagementService";
 
 export default async function handler(
   req: NextApiRequest,
