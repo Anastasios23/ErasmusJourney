@@ -877,7 +877,7 @@ export default function StudentAccommodations() {
                 )}
 
                 {/* Student Accommodation Experiences Loading */}
-                {realAccommodationsLoading && (
+                {contentLoading && (
                   <section className="mb-12">
                     <div className="mb-6">
                       <Skeleton className="h-8 w-64 mb-2" />
