@@ -1056,10 +1056,10 @@ export default function StudentAccommodations() {
                         ))}
                     </div>
 
-                    {realAccommodations.length > 6 && (
+                    {(generatedContent?.length || 0) > 6 && (
                       <div className="text-center mt-6">
                         <Button variant="outline">
-                          View All {realAccommodations.length} Experiences
+                          View All {generatedContent?.length || 0} Experiences
                         </Button>
                       </div>
                     )}
