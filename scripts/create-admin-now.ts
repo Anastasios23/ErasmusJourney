@@ -35,7 +35,6 @@ async function createAdminUser() {
         homeCountry: "Greece",
         homeCity: "Athens",
         nationality: "Greek",
-        emailVerified: new Date(),
       },
     });
 
@@ -46,7 +45,7 @@ async function createAdminUser() {
     console.log(`🔐 Password: ${adminPassword}`);
     console.log(`👤 User ID: ${adminUser.id}`);
     console.log(`🎯 Role: ${adminUser.role}`);
-    
+
     console.log("\n🌐 Admin Access URLs:");
     console.log("• http://localhost:3000/admin");
     console.log("• http://localhost:3000/admin-dashboard");
