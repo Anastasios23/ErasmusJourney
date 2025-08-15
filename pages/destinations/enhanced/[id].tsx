@@ -44,7 +44,7 @@ interface EnhancedDestinationData {
   description: string;
   imageUrl?: string;
   featured: boolean;
-  
+
   stats: {
     totalStudents: number;
     averageRating: number | null;
@@ -52,20 +52,20 @@ interface EnhancedDestinationData {
     submissionCount: number;
     lastUpdated: Date;
   };
-  
+
   accommodation: {
     types: Record<string, number>;
     averageRent: number | null;
     rentRange: { min: number; max: number } | null;
     popularOptions: [string, number][];
   };
-  
+
   courses: {
     popularDepartments: [string, number][];
     averageCourseCount: number | null;
     difficultyDistribution: Record<string, number>;
   };
-  
+
   livingCosts: {
     breakdown: {
       rent: number | null;
@@ -75,7 +75,7 @@ interface EnhancedDestinationData {
     };
     totalMonthly: number | null;
   };
-  
+
   userExperiences: {
     id: string;
     title: string;
@@ -84,7 +84,7 @@ interface EnhancedDestinationData {
     author: string;
     createdAt: Date;
   }[];
-  
+
   seo: {
     title: string;
     description: string;
@@ -110,16 +110,16 @@ export default function EnhancedDestinationDetail() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const data = await ContentIntegrationService.getEnhancedDestinationForPublic(destinationId);
-      
+
       if (!data) {
         setError("Destination not found");
         return;
       }
-      
+
       setDestination(data);
-      
+
       // Track page view
       ContentIntegrationService.trackContentInteraction(
         destinationId,
@@ -216,15 +216,15 @@ export default function EnhancedDestinationDetail() {
         <div className="absolute inset-0 flex items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="text-white">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 className="text-white hover:bg-white/20 mb-4"
                 onClick={() => router.back()}
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
-              
+
               <div className="flex items-center space-x-4 mb-4">
                 <h1 className="text-4xl md:text-6xl font-bold">{destination.name}</h1>
                 {destination.featured && (
@@ -234,11 +234,11 @@ export default function EnhancedDestinationDetail() {
                   </Badge>
                 )}
               </div>
-              
+
               <p className="text-xl md:text-2xl mb-6 max-w-3xl">
                 {destination.description}
               </p>
-              
+
               <div className="flex items-center space-x-6">
                 <div className="flex items-center">
                   <Users className="h-5 w-5 mr-2" />
@@ -293,7 +293,7 @@ export default function EnhancedDestinationDetail() {
                           </div>
                           <div className="text-sm text-gray-600">Students</div>
                         </div>
-                        
+
                         {destination.stats.averageRating && (
                           <div className="text-center">
                             <div className="text-3xl font-bold text-yellow-600">
@@ -302,7 +302,7 @@ export default function EnhancedDestinationDetail() {
                             <div className="text-sm text-gray-600">Avg. Rating</div>
                           </div>
                         )}
-                        
+
                         {destination.livingCosts.totalMonthly && (
                           <div className="text-center">
                             <div className="text-3xl font-bold text-green-600">
@@ -311,7 +311,7 @@ export default function EnhancedDestinationDetail() {
                             <div className="text-sm text-gray-600">Monthly Cost</div>
                           </div>
                         )}
-                        
+
                         {destination.accommodation.averageRent && (
                           <div className="text-center">
                             <div className="text-3xl font-bold text-purple-600">
@@ -382,7 +382,7 @@ export default function EnhancedDestinationDetail() {
                             €{destination.accommodation.rentRange.min} - €{destination.accommodation.rentRange.max}
                           </div>
                           <div className="text-gray-600">
-                            Average: €{Math.round(destination.accommodation.averageRent || 0)}
+                            Average: ���{Math.round(destination.accommodation.averageRent || 0)}
                           </div>
                         </div>
                       </CardContent>
@@ -531,10 +531,32 @@ export default function EnhancedDestinationDetail() {
                   <CardTitle>Related Destinations</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600 mb-4">
                     Other popular destinations in {destination.country}
                   </div>
-                  {/* This would show related destinations */}
+                  <div className="space-y-3">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start p-2 h-auto"
+                      onClick={() => router.push('/destinations?country=' + encodeURIComponent(destination.country))}
+                    >
+                      <div className="text-left">
+                        <div className="font-medium text-sm">View All in {destination.country}</div>
+                        <div className="text-xs text-gray-500">Browse all destinations</div>
+                      </div>
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start p-2 h-auto"
+                      onClick={() => router.push('/destinations?search=' + encodeURIComponent(destination.city))}
+                    >
+                      <div className="text-left">
+                        <div className="font-medium text-sm">Similar Cities</div>
+                        <div className="text-xs text-gray-500">Find cities like {destination.city}</div>
+                      </div>
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </div>
