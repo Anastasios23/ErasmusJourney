@@ -157,7 +157,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     // Check if destination already exists
     const existingDestination = await prisma.destination.findFirst({
       where: {
-        city: city,
+        name: name,
         country: country,
       },
     });
@@ -174,11 +174,9 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     const destination = await prisma.destination.create({
       data: {
         name,
-        city,
         country,
-        description: description || `Study destination in ${city}, ${country}`,
+        description: description || `Study destination in ${name}, ${country}`,
         imageUrl,
-        status: "published",
         // Add additional fields as needed based on your schema
       },
     });

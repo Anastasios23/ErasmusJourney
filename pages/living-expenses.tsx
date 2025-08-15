@@ -152,8 +152,12 @@ export default function LivingExpenses() {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (
-        Object.values(formData).some((value) => value.trim() !== "") ||
-        Object.values(expenses).some((value) => value.trim() !== "")
+        Object.values(formData).some((value) =>
+          typeof value === "string" ? value.trim() !== "" : !!value,
+        ) ||
+        Object.values(expenses).some((value) =>
+          typeof value === "string" ? value.trim() !== "" : !!value,
+        )
       ) {
         saveFormData();
       }
@@ -166,8 +170,12 @@ export default function LivingExpenses() {
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (
-        Object.values(formData).some((value) => value.trim() !== "") ||
-        Object.values(expenses).some((value) => value.trim() !== "")
+        Object.values(formData).some((value) =>
+          typeof value === "string" ? value.trim() !== "" : !!value,
+        ) ||
+        Object.values(expenses).some((value) =>
+          typeof value === "string" ? value.trim() !== "" : !!value,
+        )
       ) {
         saveFormData();
       }

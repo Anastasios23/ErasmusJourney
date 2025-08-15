@@ -109,8 +109,8 @@ export default function Accommodation() {
     setFormData((prev) => ({
       ...prev,
       nearbyAmenities: checked
-        ? [...prev.nearbyAmenities, amenity]
-        : prev.nearbyAmenities.filter((a) => a !== amenity),
+        ? [...(prev.nearbyAmenities || []), amenity]
+        : (prev.nearbyAmenities || []).filter((a) => a !== amenity),
     }));
   };
 
