@@ -619,7 +619,9 @@ export default function Accommodation() {
                       >
                         <Checkbox
                           id={amenity}
-                          checked={(formData.nearbyAmenities || []).includes(amenity)}
+                          checked={(formData.nearbyAmenities || []).includes(
+                            amenity,
+                          )}
                           onCheckedChange={(checked) =>
                             handleAmenityChange(amenity, checked as boolean)
                           }
