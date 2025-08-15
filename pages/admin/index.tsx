@@ -1,244 +1,539 @@
-import React from "react";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import Header from "../../components/Header";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../../src/components/ui/card";
-import { Button } from "../../src/components/ui/button";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../src/components/ui/tabs";
 import { Badge } from "../../src/components/ui/badge";
-import Link from "next/link";
+import { Button } from "../../src/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../../src/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../src/components/ui/dialog";
+import { 
+  Users, 
+  MapPin, 
+  Home, 
+  BookOpen, 
+  FileText, 
+  Eye, 
+  Edit, 
+  Check, 
+  X,
+  Clock,
+  TrendingUp
+} from "lucide-react";
 
-export default function AdminDashboard() {
+interface FormSubmission {
+  id: string;
+  userId: string;
+  type: string;
+  title: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  data: any;
+  user?: {
+    firstName?: string;
+    lastName?: string;
+    email: string;
+  };
+}
+
+interface AdminStats {
+  totalSubmissions: number;
+  pendingReview: number;
+  published: number;
+  drafts: number;
+  users: number;
+}
+
+export default function UnifiedAdminDashboard() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [submissions, setSubmissions] = useState<FormSubmission[]>([]);
+  const [stats, setStats] = useState<AdminStats>({
+    totalSubmissions: 0,
+    pendingReview: 0,
+    published: 0,
+    drafts: 0,
+    users: 0,
+  });
+  const [selectedSubmission, setSelectedSubmission] = useState<FormSubmission | null>(null);
+  const [activeTab, setActiveTab] = useState("overview");
+
+  useEffect(() => {
+    if (status === "loading") return;
+
+    if (!session || session.user?.role !== "ADMIN") {
+      router.push("/login");
+      return;
+    }
+
+    setLoading(false);
+    fetchData();
+  }, [session, status, router]);
+
+  const fetchData = async () => {
+    try {
+      // Fetch submissions
+      const submissionsRes = await fetch("/api/admin/form-submissions?limit=100");
+      if (submissionsRes.ok) {
+        const submissionsData = await submissionsRes.json();
+        setSubmissions(submissionsData.submissions || []);
+        
+        // Calculate stats
+        const submissions = submissionsData.submissions || [];
+        const stats = {
+          totalSubmissions: submissions.length,
+          pendingReview: submissions.filter((s: FormSubmission) => s.status === "SUBMITTED").length,
+          published: submissions.filter((s: FormSubmission) => s.status === "PUBLISHED").length,
+          drafts: submissions.filter((s: FormSubmission) => s.status === "DRAFT").length,
+          users: new Set(submissions.map((s: FormSubmission) => s.userId)).size,
+        };
+        setStats(stats);
+      }
+    } catch (error) {
+      console.error("Error fetching admin data:", error);
+    }
+  };
+
+  const handleStatusUpdate = async (submissionId: string, newStatus: string) => {
+    try {
+      const response = await fetch(`/api/admin/form-submissions/${submissionId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (response.ok) {
+        await fetchData(); // Refresh data
+        setSelectedSubmission(null);
+      }
+    } catch (error) {
+      console.error("Error updating submission status:", error);
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      DRAFT: { color: "bg-gray-100 text-gray-800", label: "Draft" },
+      SUBMITTED: { color: "bg-yellow-100 text-yellow-800", label: "Pending Review" },
+      PUBLISHED: { color: "bg-green-100 text-green-800", label: "Published" },
+      ARCHIVED: { color: "bg-red-100 text-red-800", label: "Archived" },
+    };
+
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.DRAFT;
+    return (
+      <Badge className={config.color}>
+        {config.label}
+      </Badge>
+    );
+  };
+
+  const getTypeIcon = (type: string) => {
+    const iconMap = {
+      "basic-info": Users,
+      "course-matching": BookOpen,
+      "accommodation": Home,
+      "living-expenses": FileText,
+      "help-future-students": MapPin,
+    };
+    
+    const IconComponent = iconMap[type as keyof typeof iconMap] || FileText;
+    return <IconComponent className="h-4 w-4" />;
+  };
+
+  if (loading || status === "loading") {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+            <div className="h-32 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session || session.user?.role !== "ADMIN") {
+    return null;
+  }
+
   return (
-    <div className="container mx-auto p-6 max-w-6xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">
-          🛡️ Admin Dashboard
-        </h1>
-        <p className="text-gray-600">
-          Manage form submissions and review content for all pages
-        </p>
+    <div className="min-h-screen bg-gray-50">
+      <Head>
+        <title>Admin Dashboard - Erasmus Journey</title>
+      </Head>
+      
+      <Header />
+      
+      <div className="container mx-auto px-4 py-8 mt-16">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+          <p className="text-gray-600">Manage user submissions and content</p>
+        </div>
+
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Submissions</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.totalSubmissions}</p>
+                </div>
+                <FileText className="h-8 w-8 text-blue-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Pending Review</p>
+                  <p className="text-2xl font-bold text-yellow-600">{stats.pendingReview}</p>
+                </div>
+                <Clock className="h-8 w-8 text-yellow-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Published</p>
+                  <p className="text-2xl font-bold text-green-600">{stats.published}</p>
+                </div>
+                <Check className="h-8 w-8 text-green-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Drafts</p>
+                  <p className="text-2xl font-bold text-gray-600">{stats.drafts}</p>
+                </div>
+                <Edit className="h-8 w-8 text-gray-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Users</p>
+                  <p className="text-2xl font-bold text-blue-600">{stats.users}</p>
+                </div>
+                <Users className="h-8 w-8 text-blue-600" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="pending">Pending Review ({stats.pendingReview})</TabsTrigger>
+            <TabsTrigger value="destinations">Destinations</TabsTrigger>
+            <TabsTrigger value="stories">Stories</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Submissions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Type</TableHead>
+                      <TableHead>User</TableHead>
+                      <TableHead>Title</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Created</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {submissions.slice(0, 10).map((submission) => (
+                      <TableRow key={submission.id}>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            {getTypeIcon(submission.type)}
+                            <span className="capitalize">{submission.type.replace('-', ' ')}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {submission.user ? 
+                            `${submission.user.firstName || ''} ${submission.user.lastName || ''}`.trim() || submission.user.email
+                            : 'Unknown User'
+                          }
+                        </TableCell>
+                        <TableCell className="max-w-xs truncate">{submission.title}</TableCell>
+                        <TableCell>{getStatusBadge(submission.status)}</TableCell>
+                        <TableCell>{new Date(submission.createdAt).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => setSelectedSubmission(submission)}
+                              >
+                                <Eye className="h-4 w-4 mr-1" />
+                                View
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                              <DialogHeader>
+                                <DialogTitle>
+                                  {submission.title} - {submission.type.replace('-', ' ')}
+                                </DialogTitle>
+                              </DialogHeader>
+                              {selectedSubmission && (
+                                <div className="space-y-4">
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                      <strong>Status:</strong> {getStatusBadge(selectedSubmission.status)}
+                                    </div>
+                                    <div>
+                                      <strong>Created:</strong> {new Date(selectedSubmission.createdAt).toLocaleString()}
+                                    </div>
+                                  </div>
+                                  
+                                  <div>
+                                    <strong>Data:</strong>
+                                    <pre className="mt-2 p-4 bg-gray-100 rounded text-sm overflow-auto max-h-96">
+                                      {JSON.stringify(selectedSubmission.data, null, 2)}
+                                    </pre>
+                                  </div>
+
+                                  {selectedSubmission.status === "SUBMITTED" && (
+                                    <div className="flex space-x-2 pt-4 border-t">
+                                      <Button 
+                                        onClick={() => handleStatusUpdate(selectedSubmission.id, "PUBLISHED")}
+                                        className="bg-green-600 hover:bg-green-700"
+                                      >
+                                        <Check className="h-4 w-4 mr-1" />
+                                        Approve & Publish
+                                      </Button>
+                                      <Button 
+                                        onClick={() => handleStatusUpdate(selectedSubmission.id, "ARCHIVED")}
+                                        variant="destructive"
+                                      >
+                                        <X className="h-4 w-4 mr-1" />
+                                        Reject
+                                      </Button>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </DialogContent>
+                          </Dialog>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="pending" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Submissions Pending Review</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {submissions.filter(s => s.status === "SUBMITTED").length === 0 ? (
+                  <div className="text-center py-8">
+                    <Check className="h-16 w-16 text-green-600 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">All caught up!</h3>
+                    <p className="text-gray-600">No submissions waiting for review.</p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Type</TableHead>
+                        <TableHead>User</TableHead>
+                        <TableHead>Title</TableHead>
+                        <TableHead>Created</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {submissions.filter(s => s.status === "SUBMITTED").map((submission) => (
+                        <TableRow key={submission.id}>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              {getTypeIcon(submission.type)}
+                              <span className="capitalize">{submission.type.replace('-', ' ')}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {submission.user ? 
+                              `${submission.user.firstName || ''} ${submission.user.lastName || ''}`.trim() || submission.user.email
+                              : 'Unknown User'
+                            }
+                          </TableCell>
+                          <TableCell className="max-w-xs truncate">{submission.title}</TableCell>
+                          <TableCell>{new Date(submission.createdAt).toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => setSelectedSubmission(submission)}
+                                  >
+                                    <Eye className="h-4 w-4 mr-1" />
+                                    Review
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                                  <DialogHeader>
+                                    <DialogTitle>
+                                      Review: {submission.title}
+                                    </DialogTitle>
+                                  </DialogHeader>
+                                  {selectedSubmission && (
+                                    <div className="space-y-4">
+                                      <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                          <strong>Type:</strong> {selectedSubmission.type.replace('-', ' ')}
+                                        </div>
+                                        <div>
+                                          <strong>Created:</strong> {new Date(selectedSubmission.createdAt).toLocaleString()}
+                                        </div>
+                                      </div>
+                                      
+                                      <div>
+                                        <strong>Data:</strong>
+                                        <pre className="mt-2 p-4 bg-gray-100 rounded text-sm overflow-auto max-h-96">
+                                          {JSON.stringify(selectedSubmission.data, null, 2)}
+                                        </pre>
+                                      </div>
+
+                                      <div className="flex space-x-2 pt-4 border-t">
+                                        <Button 
+                                          onClick={() => handleStatusUpdate(selectedSubmission.id, "PUBLISHED")}
+                                          className="bg-green-600 hover:bg-green-700"
+                                        >
+                                          <Check className="h-4 w-4 mr-1" />
+                                          Approve & Publish
+                                        </Button>
+                                        <Button 
+                                          onClick={() => handleStatusUpdate(selectedSubmission.id, "ARCHIVED")}
+                                          variant="destructive"
+                                        >
+                                          <X className="h-4 w-4 mr-1" />
+                                          Reject
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  )}
+                                </DialogContent>
+                              </Dialog>
+
+                              <Button 
+                                onClick={() => handleStatusUpdate(submission.id, "PUBLISHED")}
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700"
+                              >
+                                <Check className="h-4 w-4" />
+                              </Button>
+                              
+                              <Button 
+                                onClick={() => handleStatusUpdate(submission.id, "ARCHIVED")}
+                                size="sm"
+                                variant="destructive"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="destinations" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Destination Management</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 mb-4">
+                  Manage destination content created from user submissions and add your own.
+                </p>
+                <Button onClick={() => router.push('/admin/destinations')}>
+                  <MapPin className="h-4 w-4 mr-1" />
+                  Manage Destinations
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="stories" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Story Management</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 mb-4">
+                  Review and manage student stories and experiences.
+                </p>
+                <Button onClick={() => router.push('/admin/stories')}>
+                  <BookOpen className="h-4 w-4 mr-1" />
+                  Manage Stories
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
-
-      {/* Quick Access Testing */}
-      <Card className="mb-8 bg-blue-50 border-blue-200">
-        <CardHeader>
-          <CardTitle className="text-blue-900">🧪 Quick Testing</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-blue-700 mb-4">
-            Create test form submissions and start testing the admin systems
-          </p>
-          <Link href="/test-admin">
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              🧪 Go to Testing Page
-            </Button>
-          </Link>
-        </CardContent>
-      </Card>
-
-      {/* Admin Systems */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {/* Destinations */}
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center">
-                📍 Destinations
-              </CardTitle>
-              <Badge variant="secondary">basic-information</Badge>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600 mb-4">
-              Review student destination experiences and create public
-              destination guides
-            </p>
-
-            <div className="space-y-2 mb-4">
-              <div className="text-xs">
-                <span className="font-medium">Data Sources:</span>
-                <ul className="mt-1 text-gray-500">
-                  <li>• Student destination experiences</li>
-                  <li>• Cultural highlights & challenges</li>
-                  <li>• Cost of living information</li>
-                  <li>• Weather & transport details</li>
-                </ul>
-              </div>
-            </div>
-
-            <Link href="/admin/destinations">
-              <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                📍 Manage Destinations
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-
-        {/* University Exchanges */}
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center">
-                🏛️ Universities
-              </CardTitle>
-              <Badge variant="secondary">course-matching</Badge>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600 mb-4">
-              Review course matching data and create university exchange
-              programs
-            </p>
-
-            <div className="space-y-2 mb-4">
-              <div className="text-xs">
-                <span className="font-medium">Data Sources:</span>
-                <ul className="mt-1 text-gray-500">
-                  <li>• Course details & ECTS credits</li>
-                  <li>• Difficulty levels & exam types</li>
-                  <li>• Academic requirements</li>
-                  <li>• Partnership information</li>
-                </ul>
-              </div>
-            </div>
-
-            <Link href="/admin/university-exchanges">
-              <Button className="w-full bg-purple-600 hover:bg-purple-700">
-                🏛️ Manage Universities
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-
-        {/* Student Accommodations */}
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center">
-                🏠 Accommodations
-              </CardTitle>
-              <Badge variant="secondary">accommodation</Badge>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600 mb-4">
-              Review accommodation submissions and create verified housing
-              listings
-            </p>
-
-            <div className="space-y-2 mb-4">
-              <div className="text-xs">
-                <span className="font-medium">Data Sources:</span>
-                <ul className="mt-1 text-gray-500">
-                  <li>• Housing costs & room details</li>
-                  <li>• Student ratings & reviews</li>
-                  <li>• Amenities & location info</li>
-                  <li>• Admin photos & verification</li>
-                </ul>
-              </div>
-            </div>
-
-            <Link href="/admin/student-accommodations">
-              <Button className="w-full bg-green-600 hover:bg-green-700">
-                🏠 Manage Accommodations
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* System Overview */}
-      <Card>
-        <CardHeader>
-          <CardTitle>📊 System Overview</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-semibold mb-3">🎯 How It Works</h4>
-              <div className="space-y-2 text-sm text-gray-600">
-                <div className="flex items-start">
-                  <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-0.5">
-                    1
-                  </span>
-                  <span>
-                    Students fill forms (Basic Information, Course Matching,
-                    Accommodation)
-                  </span>
-                </div>
-                <div className="flex items-start">
-                  <span className="w-6 h-6 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-0.5">
-                    2
-                  </span>
-                  <span>
-                    Submissions appear in admin panels with status "SUBMITTED"
-                  </span>
-                </div>
-                <div className="flex items-start">
-                  <span className="w-6 h-6 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-0.5">
-                    3
-                  </span>
-                  <span>
-                    Admins review student data and add professional content
-                  </span>
-                </div>
-                <div className="flex items-start">
-                  <span className="w-6 h-6 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-0.5">
-                    4
-                  </span>
-                  <span>
-                    Approved submissions become public content on
-                    destination/university/accommodation pages
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-3">✅ Key Features</h4>
-              <ul className="space-y-1 text-sm text-gray-600">
-                <li>
-                  • <strong>Data-driven content:</strong> All public pages fed
-                  by student experiences
-                </li>
-                <li>
-                  • <strong>Quality control:</strong> Admin review before
-                  publishing
-                </li>
-                <li>
-                  • <strong>Professional presentation:</strong> Admin-added
-                  photos and descriptions
-                </li>
-                <li>
-                  • <strong>Verified information:</strong> Admin-checked
-                  contacts and details
-                </li>
-                <li>
-                  • <strong>Student authenticity:</strong> Real experiences and
-                  ratings
-                </li>
-                <li>
-                  • <strong>Simplified workflow:</strong> No unnecessary fields
-                  or processes
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <h4 className="font-semibold mb-2">🔧 Recent Improvements</h4>
-            <p className="text-sm text-gray-600">
-              Based on your feedback, we've simplified the accommodation system
-              by removing study level tracking, application process details, and
-              student photo submissions. Only admins can now add photos,
-              ensuring professional quality control while maintaining student
-              authenticity in experiences and ratings.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
