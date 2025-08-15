@@ -34,7 +34,14 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     const submissionData = await prisma.formSubmission.findMany({
       where: {
         status: "PUBLISHED",
-        type: { in: ["basic-info", "accommodation", "living-expenses", "help-future-students"] },
+        type: {
+          in: [
+            "basic-info",
+            "accommodation",
+            "living-expenses",
+            "help-future-students",
+          ],
+        },
       },
       include: {
         user: {
@@ -61,42 +68,51 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     });
 
     // Create aggregated destination data
-    const aggregatedDestinations = Object.entries(locationGroups).map(([location, submissions]) => {
-      const [city, country] = location.split(", ");
-      
-      // Calculate statistics
-      const submissionCount = submissions.length;
-      const ratings = submissions
-        .filter((s) => s.data?.ratings)
-        .map((s) => s.data.ratings)
-        .filter(Boolean);
-      
-      const averageRating = ratings.length > 0 
-        ? ratings.reduce((sum, rating) => sum + (rating.overallRating || 0), 0) / ratings.length
-        : null;
+    const aggregatedDestinations = Object.entries(locationGroups).map(
+      ([location, submissions]) => {
+        const [city, country] = location.split(", ");
 
-      const costs = submissions
-        .filter((s) => s.data?.totalMonthlyBudget)
-        .map((s) => s.data.totalMonthlyBudget)
-        .filter(Boolean);
-      
-      const averageCost = costs.length > 0
-        ? costs.reduce((sum, cost) => sum + cost, 0) / costs.length
-        : null;
+        // Calculate statistics
+        const submissionCount = submissions.length;
+        const ratings = submissions
+          .filter((s) => s.data?.ratings)
+          .map((s) => s.data.ratings)
+          .filter(Boolean);
 
-      return {
-        id: `aggregated-${city}-${country}`.toLowerCase().replace(/\s+/g, "-"),
-        name: location,
-        city,
-        country,
-        status: "aggregated",
-        description: `Study destination based on ${submissionCount} student submissions`,
-        submissionCount,
-        averageRating,
-        averageCost,
-        source: "user_generated",
-      };
-    });
+        const averageRating =
+          ratings.length > 0
+            ? ratings.reduce(
+                (sum, rating) => sum + (rating.overallRating || 0),
+                0,
+              ) / ratings.length
+            : null;
+
+        const costs = submissions
+          .filter((s) => s.data?.totalMonthlyBudget)
+          .map((s) => s.data.totalMonthlyBudget)
+          .filter(Boolean);
+
+        const averageCost =
+          costs.length > 0
+            ? costs.reduce((sum, cost) => sum + cost, 0) / costs.length
+            : null;
+
+        return {
+          id: `aggregated-${city}-${country}`
+            .toLowerCase()
+            .replace(/\s+/g, "-"),
+          name: location,
+          city,
+          country,
+          status: "aggregated",
+          description: `Study destination based on ${submissionCount} student submissions`,
+          submissionCount,
+          averageRating,
+          averageCost,
+          source: "user_generated",
+        };
+      },
+    );
 
     // Combine with manually created destinations
     const allDestinations = [
@@ -118,16 +134,17 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     });
   } catch (error) {
     console.error("Error fetching destinations:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: "Internal server error",
-      message: error instanceof Error ? error.message : "Unknown error"
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { name, city, country, description, imageUrl, source, submissionId } = req.body;
+    const { name, city, country, description, imageUrl, source, submissionId } =
+      req.body;
 
     if (!name || !city || !country) {
       return res.status(400).json({
@@ -173,7 +190,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
         data: {
           status: "PUBLISHED",
           data: {
-            ...(typeof req.body.data === 'object' ? req.body.data : {}),
+            ...(typeof req.body.data === "object" ? req.body.data : {}),
             destinationId: destination.id,
           },
         },
@@ -186,9 +203,9 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     });
   } catch (error) {
     console.error("Error creating destination:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: "Internal server error",
-      message: error instanceof Error ? error.message : "Unknown error"
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }

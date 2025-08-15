@@ -42,12 +42,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../src/components/ui/select";
-import { 
-  MapPin, 
-  Plus, 
-  Eye, 
-  Edit, 
-  Check, 
+import {
+  MapPin,
+  Plus,
+  Eye,
+  Edit,
+  Check,
   X,
   Save,
   Users,
@@ -55,7 +55,7 @@ import {
   Star,
   Home,
   BookOpen,
-  ArrowLeft
+  ArrowLeft,
 } from "lucide-react";
 
 interface FormSubmission {
@@ -93,8 +93,10 @@ export default function DestinationsAdmin() {
   const [activeTab, setActiveTab] = useState("submissions");
   const [submissions, setSubmissions] = useState<FormSubmission[]>([]);
   const [destinations, setDestinations] = useState<Destination[]>([]);
-  const [selectedSubmission, setSelectedSubmission] = useState<FormSubmission | null>(null);
-  const [editingDestination, setEditingDestination] = useState<Destination | null>(null);
+  const [selectedSubmission, setSelectedSubmission] =
+    useState<FormSubmission | null>(null);
+  const [editingDestination, setEditingDestination] =
+    useState<Destination | null>(null);
   const [newDestination, setNewDestination] = useState({
     name: "",
     city: "",
@@ -118,12 +120,21 @@ export default function DestinationsAdmin() {
   const fetchData = async () => {
     try {
       // Fetch destination-related submissions
-      const submissionsRes = await fetch("/api/admin/form-submissions?status=SUBMITTED");
+      const submissionsRes = await fetch(
+        "/api/admin/form-submissions?status=SUBMITTED",
+      );
       if (submissionsRes.ok) {
         const submissionsData = await submissionsRes.json();
-        setSubmissions(submissionsData.submissions?.filter((s: FormSubmission) => 
-          ['basic-info', 'accommodation', 'living-expenses', 'help-future-students'].includes(s.type)
-        ) || []);
+        setSubmissions(
+          submissionsData.submissions?.filter((s: FormSubmission) =>
+            [
+              "basic-info",
+              "accommodation",
+              "living-expenses",
+              "help-future-students",
+            ].includes(s.type),
+          ) || [],
+        );
       }
 
       // Fetch existing destinations
@@ -137,7 +148,9 @@ export default function DestinationsAdmin() {
     }
   };
 
-  const createDestinationFromSubmission = async (submission: FormSubmission) => {
+  const createDestinationFromSubmission = async (
+    submission: FormSubmission,
+  ) => {
     try {
       const basicInfoData = submission.data;
       const destinationData = {
@@ -174,17 +187,23 @@ export default function DestinationsAdmin() {
     }
   };
 
-  const handleSubmissionApproval = async (submissionId: string, action: "approve" | "reject") => {
+  const handleSubmissionApproval = async (
+    submissionId: string,
+    action: "approve" | "reject",
+  ) => {
     try {
       const newStatus = action === "approve" ? "PUBLISHED" : "ARCHIVED";
-      
-      const response = await fetch(`/api/admin/form-submissions/${submissionId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
+
+      const response = await fetch(
+        `/api/admin/form-submissions/${submissionId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: newStatus }),
         },
-        body: JSON.stringify({ status: newStatus }),
-      });
+      );
 
       if (response.ok) {
         await fetchData(); // Refresh data
@@ -226,11 +245,11 @@ export default function DestinationsAdmin() {
   const getTypeIcon = (type: string) => {
     const iconMap = {
       "basic-info": Users,
-      "accommodation": Home,
+      accommodation: Home,
       "living-expenses": Euro,
       "help-future-students": Star,
     };
-    
+
     const IconComponent = iconMap[type as keyof typeof iconMap] || MapPin;
     return <IconComponent className="h-4 w-4" />;
   };
@@ -238,7 +257,7 @@ export default function DestinationsAdmin() {
   const getLocationFromSubmission = (submission: FormSubmission) => {
     const data = submission.data;
     if (submission.type === "basic-info") {
-      return `${data.hostCity || 'Unknown'}, ${data.hostCountry || 'Unknown'}`;
+      return `${data.hostCity || "Unknown"}, ${data.hostCountry || "Unknown"}`;
     }
     return "Location not specified";
   };
@@ -266,31 +285,42 @@ export default function DestinationsAdmin() {
       <Head>
         <title>Destinations Management - Admin</title>
       </Head>
-      
+
       <Header />
-      
+
       <div className="container mx-auto px-4 py-8 mt-16">
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <Button 
-              variant="outline" 
-              onClick={() => router.push('/admin')}
+            <Button
+              variant="outline"
+              onClick={() => router.push("/admin")}
               className="mb-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Admin Dashboard
             </Button>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Destinations Management</h1>
-            <p className="text-gray-600">Review submissions and manage destination content</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Destinations Management
+            </h1>
+            <p className="text-gray-600">
+              Review submissions and manage destination content
+            </p>
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="submissions">
-              Pending Submissions ({submissions.filter(s => s.status === "SUBMITTED").length})
+              Pending Submissions (
+              {submissions.filter((s) => s.status === "SUBMITTED").length})
             </TabsTrigger>
-            <TabsTrigger value="destinations">Published Destinations</TabsTrigger>
+            <TabsTrigger value="destinations">
+              Published Destinations
+            </TabsTrigger>
             <TabsTrigger value="create">Create New</TabsTrigger>
           </TabsList>
 
@@ -300,11 +330,16 @@ export default function DestinationsAdmin() {
                 <CardTitle>User Submissions for Review</CardTitle>
               </CardHeader>
               <CardContent>
-                {submissions.filter(s => s.status === "SUBMITTED").length === 0 ? (
+                {submissions.filter((s) => s.status === "SUBMITTED").length ===
+                0 ? (
                   <div className="text-center py-8">
                     <Check className="h-16 w-16 text-green-600 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">All caught up!</h3>
-                    <p className="text-gray-600">No destination submissions waiting for review.</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      All caught up!
+                    </h3>
+                    <p className="text-gray-600">
+                      No destination submissions waiting for review.
+                    </p>
                   </div>
                 ) : (
                   <Table>
@@ -318,112 +353,159 @@ export default function DestinationsAdmin() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {submissions.filter(s => s.status === "SUBMITTED").map((submission) => (
-                        <TableRow key={submission.id}>
-                          <TableCell>
-                            <div className="flex items-center space-x-2">
-                              {getTypeIcon(submission.type)}
-                              <span className="capitalize">{submission.type.replace('-', ' ')}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>{getLocationFromSubmission(submission)}</TableCell>
-                          <TableCell>
-                            {submission.user ? 
-                              `${submission.user.firstName || ''} ${submission.user.lastName || ''}`.trim() || submission.user.email
-                              : 'Unknown User'
-                            }
-                          </TableCell>
-                          <TableCell>{new Date(submission.createdAt).toLocaleDateString()}</TableCell>
-                          <TableCell>
-                            <div className="flex space-x-2">
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm"
-                                    onClick={() => setSelectedSubmission(submission)}
-                                  >
-                                    <Eye className="h-4 w-4 mr-1" />
-                                    Review
-                                  </Button>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                                  <DialogHeader>
-                                    <DialogTitle>
-                                      Review: {submission.title}
-                                    </DialogTitle>
-                                  </DialogHeader>
-                                  {selectedSubmission && (
-                                    <div className="space-y-4">
-                                      <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                          <strong>Type:</strong> {selectedSubmission.type.replace('-', ' ')}
+                      {submissions
+                        .filter((s) => s.status === "SUBMITTED")
+                        .map((submission) => (
+                          <TableRow key={submission.id}>
+                            <TableCell>
+                              <div className="flex items-center space-x-2">
+                                {getTypeIcon(submission.type)}
+                                <span className="capitalize">
+                                  {submission.type.replace("-", " ")}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {getLocationFromSubmission(submission)}
+                            </TableCell>
+                            <TableCell>
+                              {submission.user
+                                ? `${submission.user.firstName || ""} ${submission.user.lastName || ""}`.trim() ||
+                                  submission.user.email
+                                : "Unknown User"}
+                            </TableCell>
+                            <TableCell>
+                              {new Date(
+                                submission.createdAt,
+                              ).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex space-x-2">
+                                <Dialog>
+                                  <DialogTrigger asChild>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() =>
+                                        setSelectedSubmission(submission)
+                                      }
+                                    >
+                                      <Eye className="h-4 w-4 mr-1" />
+                                      Review
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                                    <DialogHeader>
+                                      <DialogTitle>
+                                        Review: {submission.title}
+                                      </DialogTitle>
+                                    </DialogHeader>
+                                    {selectedSubmission && (
+                                      <div className="space-y-4">
+                                        <div className="grid grid-cols-2 gap-4">
+                                          <div>
+                                            <strong>Type:</strong>{" "}
+                                            {selectedSubmission.type.replace(
+                                              "-",
+                                              " ",
+                                            )}
+                                          </div>
+                                          <div>
+                                            <strong>Location:</strong>{" "}
+                                            {getLocationFromSubmission(
+                                              selectedSubmission,
+                                            )}
+                                          </div>
                                         </div>
-                                        <div>
-                                          <strong>Location:</strong> {getLocationFromSubmission(selectedSubmission)}
-                                        </div>
-                                      </div>
-                                      
-                                      <div>
-                                        <strong>Submission Data:</strong>
-                                        <div className="mt-2 p-4 bg-gray-100 rounded text-sm overflow-auto max-h-96">
-                                          {Object.entries(selectedSubmission.data).map(([key, value]) => (
-                                            <div key={key} className="mb-2">
-                                              <strong>{key}:</strong> {JSON.stringify(value, null, 2)}
-                                            </div>
-                                          ))}
-                                        </div>
-                                      </div>
 
-                                      <div className="flex space-x-2 pt-4 border-t">
-                                        <Button 
-                                          onClick={() => handleSubmissionApproval(selectedSubmission.id, "approve")}
-                                          className="bg-green-600 hover:bg-green-700"
-                                        >
-                                          <Check className="h-4 w-4 mr-1" />
-                                          Approve
-                                        </Button>
-                                        {selectedSubmission.type === "basic-info" && (
-                                          <Button 
-                                            onClick={() => createDestinationFromSubmission(selectedSubmission)}
-                                            className="bg-blue-600 hover:bg-blue-700"
+                                        <div>
+                                          <strong>Submission Data:</strong>
+                                          <div className="mt-2 p-4 bg-gray-100 rounded text-sm overflow-auto max-h-96">
+                                            {Object.entries(
+                                              selectedSubmission.data,
+                                            ).map(([key, value]) => (
+                                              <div key={key} className="mb-2">
+                                                <strong>{key}:</strong>{" "}
+                                                {JSON.stringify(value, null, 2)}
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+
+                                        <div className="flex space-x-2 pt-4 border-t">
+                                          <Button
+                                            onClick={() =>
+                                              handleSubmissionApproval(
+                                                selectedSubmission.id,
+                                                "approve",
+                                              )
+                                            }
+                                            className="bg-green-600 hover:bg-green-700"
                                           >
-                                            <MapPin className="h-4 w-4 mr-1" />
-                                            Create Destination
+                                            <Check className="h-4 w-4 mr-1" />
+                                            Approve
                                           </Button>
-                                        )}
-                                        <Button 
-                                          onClick={() => handleSubmissionApproval(selectedSubmission.id, "reject")}
-                                          variant="destructive"
-                                        >
-                                          <X className="h-4 w-4 mr-1" />
-                                          Reject
-                                        </Button>
+                                          {selectedSubmission.type ===
+                                            "basic-info" && (
+                                            <Button
+                                              onClick={() =>
+                                                createDestinationFromSubmission(
+                                                  selectedSubmission,
+                                                )
+                                              }
+                                              className="bg-blue-600 hover:bg-blue-700"
+                                            >
+                                              <MapPin className="h-4 w-4 mr-1" />
+                                              Create Destination
+                                            </Button>
+                                          )}
+                                          <Button
+                                            onClick={() =>
+                                              handleSubmissionApproval(
+                                                selectedSubmission.id,
+                                                "reject",
+                                              )
+                                            }
+                                            variant="destructive"
+                                          >
+                                            <X className="h-4 w-4 mr-1" />
+                                            Reject
+                                          </Button>
+                                        </div>
                                       </div>
-                                    </div>
-                                  )}
-                                </DialogContent>
-                              </Dialog>
+                                    )}
+                                  </DialogContent>
+                                </Dialog>
 
-                              <Button 
-                                onClick={() => handleSubmissionApproval(submission.id, "approve")}
-                                size="sm"
-                                className="bg-green-600 hover:bg-green-700"
-                              >
-                                <Check className="h-4 w-4" />
-                              </Button>
-                              
-                              <Button 
-                                onClick={() => handleSubmissionApproval(submission.id, "reject")}
-                                size="sm"
-                                variant="destructive"
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                                <Button
+                                  onClick={() =>
+                                    handleSubmissionApproval(
+                                      submission.id,
+                                      "approve",
+                                    )
+                                  }
+                                  size="sm"
+                                  className="bg-green-600 hover:bg-green-700"
+                                >
+                                  <Check className="h-4 w-4" />
+                                </Button>
+
+                                <Button
+                                  onClick={() =>
+                                    handleSubmissionApproval(
+                                      submission.id,
+                                      "reject",
+                                    )
+                                  }
+                                  size="sm"
+                                  variant="destructive"
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
                     </TableBody>
                   </Table>
                 )}
@@ -451,7 +533,9 @@ export default function DestinationsAdmin() {
                   <TableBody>
                     {destinations.map((destination) => (
                       <TableRow key={destination.id}>
-                        <TableCell className="font-medium">{destination.name}</TableCell>
+                        <TableCell className="font-medium">
+                          {destination.name}
+                        </TableCell>
                         <TableCell>{destination.city}</TableCell>
                         <TableCell>{destination.country}</TableCell>
                         <TableCell>{destination.submissionCount}</TableCell>
@@ -497,7 +581,12 @@ export default function DestinationsAdmin() {
                     <Input
                       id="city"
                       value={newDestination.city}
-                      onChange={(e) => setNewDestination({...newDestination, city: e.target.value})}
+                      onChange={(e) =>
+                        setNewDestination({
+                          ...newDestination,
+                          city: e.target.value,
+                        })
+                      }
                       placeholder="e.g., Barcelona"
                     />
                   </div>
@@ -506,7 +595,12 @@ export default function DestinationsAdmin() {
                     <Input
                       id="country"
                       value={newDestination.country}
-                      onChange={(e) => setNewDestination({...newDestination, country: e.target.value})}
+                      onChange={(e) =>
+                        setNewDestination({
+                          ...newDestination,
+                          country: e.target.value,
+                        })
+                      }
                       placeholder="e.g., Spain"
                     />
                   </div>
@@ -517,7 +611,12 @@ export default function DestinationsAdmin() {
                   <Input
                     id="name"
                     value={newDestination.name}
-                    onChange={(e) => setNewDestination({...newDestination, name: e.target.value})}
+                    onChange={(e) =>
+                      setNewDestination({
+                        ...newDestination,
+                        name: e.target.value,
+                      })
+                    }
                     placeholder="e.g., Barcelona, Spain"
                   />
                 </div>
@@ -527,7 +626,12 @@ export default function DestinationsAdmin() {
                   <Textarea
                     id="description"
                     value={newDestination.description}
-                    onChange={(e) => setNewDestination({...newDestination, description: e.target.value})}
+                    onChange={(e) =>
+                      setNewDestination({
+                        ...newDestination,
+                        description: e.target.value,
+                      })
+                    }
                     placeholder="Brief description of the destination..."
                     rows={3}
                   />
@@ -538,14 +642,23 @@ export default function DestinationsAdmin() {
                   <Input
                     id="imageUrl"
                     value={newDestination.imageUrl}
-                    onChange={(e) => setNewDestination({...newDestination, imageUrl: e.target.value})}
+                    onChange={(e) =>
+                      setNewDestination({
+                        ...newDestination,
+                        imageUrl: e.target.value,
+                      })
+                    }
                     placeholder="https://example.com/image.jpg"
                   />
                 </div>
 
-                <Button 
+                <Button
                   onClick={createNewDestination}
-                  disabled={!newDestination.city || !newDestination.country || !newDestination.name}
+                  disabled={
+                    !newDestination.city ||
+                    !newDestination.country ||
+                    !newDestination.name
+                  }
                   className="w-full"
                 >
                   <Plus className="h-4 w-4 mr-2" />

@@ -26,16 +26,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../src/components/ui/dialog";
-import { 
-  BookOpen, 
-  Eye, 
-  Check, 
+import {
+  BookOpen,
+  Eye,
+  Check,
   X,
   Star,
   MapPin,
   User,
   Calendar,
-  ArrowLeft
+  ArrowLeft,
 } from "lucide-react";
 
 interface StorySubmission {
@@ -58,7 +58,9 @@ export default function StoriesAdmin() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [stories, setStories] = useState<StorySubmission[]>([]);
-  const [selectedStory, setSelectedStory] = useState<StorySubmission | null>(null);
+  const [selectedStory, setSelectedStory] = useState<StorySubmission | null>(
+    null,
+  );
 
   useEffect(() => {
     if (status === "loading") return;
@@ -84,7 +86,10 @@ export default function StoriesAdmin() {
     }
   };
 
-  const handleStoryAction = async (storyId: string, action: "approve" | "reject" | "feature") => {
+  const handleStoryAction = async (
+    storyId: string,
+    action: "approve" | "reject" | "feature",
+  ) => {
     try {
       let newStatus = "PUBLISHED";
       if (action === "reject") newStatus = "ARCHIVED";
@@ -95,9 +100,9 @@ export default function StoriesAdmin() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           status: newStatus,
-          featured: action === "feature"
+          featured: action === "feature",
         }),
       });
 
@@ -113,18 +118,18 @@ export default function StoriesAdmin() {
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       DRAFT: { color: "bg-gray-100 text-gray-800", label: "Draft" },
-      SUBMITTED: { color: "bg-yellow-100 text-yellow-800", label: "Pending Review" },
+      SUBMITTED: {
+        color: "bg-yellow-100 text-yellow-800",
+        label: "Pending Review",
+      },
       PUBLISHED: { color: "bg-green-100 text-green-800", label: "Published" },
       FEATURED: { color: "bg-blue-100 text-blue-800", label: "Featured" },
       ARCHIVED: { color: "bg-red-100 text-red-800", label: "Archived" },
     };
 
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.DRAFT;
-    return (
-      <Badge className={config.color}>
-        {config.label}
-      </Badge>
-    );
+    const config =
+      statusConfig[status as keyof typeof statusConfig] || statusConfig.DRAFT;
+    return <Badge className={config.color}>{config.label}</Badge>;
   };
 
   const getLocationFromStory = (story: StorySubmission) => {
@@ -167,30 +172,34 @@ export default function StoriesAdmin() {
     return null;
   }
 
-  const pendingStories = stories.filter(s => s.status === "SUBMITTED");
-  const publishedStories = stories.filter(s => s.status === "PUBLISHED");
-  const featuredStories = stories.filter(s => s.status === "FEATURED");
+  const pendingStories = stories.filter((s) => s.status === "SUBMITTED");
+  const publishedStories = stories.filter((s) => s.status === "PUBLISHED");
+  const featuredStories = stories.filter((s) => s.status === "FEATURED");
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
         <title>Stories Management - Admin</title>
       </Head>
-      
+
       <Header />
-      
+
       <div className="container mx-auto px-4 py-8 mt-16">
         <div className="mb-8">
-          <Button 
-            variant="outline" 
-            onClick={() => router.push('/admin')}
+          <Button
+            variant="outline"
+            onClick={() => router.push("/admin")}
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Admin Dashboard
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Stories Management</h1>
-          <p className="text-gray-600">Review and manage student stories and experiences</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Stories Management
+          </h1>
+          <p className="text-gray-600">
+            Review and manage student stories and experiences
+          </p>
         </div>
 
         {/* Stats Cards */}
@@ -199,8 +208,12 @@ export default function StoriesAdmin() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Pending Review</p>
-                  <p className="text-2xl font-bold text-yellow-600">{pendingStories.length}</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Pending Review
+                  </p>
+                  <p className="text-2xl font-bold text-yellow-600">
+                    {pendingStories.length}
+                  </p>
                 </div>
                 <BookOpen className="h-8 w-8 text-yellow-600" />
               </div>
@@ -212,7 +225,9 @@ export default function StoriesAdmin() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Published</p>
-                  <p className="text-2xl font-bold text-green-600">{publishedStories.length}</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {publishedStories.length}
+                  </p>
                 </div>
                 <Check className="h-8 w-8 text-green-600" />
               </div>
@@ -224,7 +239,9 @@ export default function StoriesAdmin() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Featured</p>
-                  <p className="text-2xl font-bold text-blue-600">{featuredStories.length}</p>
+                  <p className="text-2xl font-bold text-blue-600">
+                    {featuredStories.length}
+                  </p>
                 </div>
                 <Star className="h-8 w-8 text-blue-600" />
               </div>
@@ -235,8 +252,12 @@ export default function StoriesAdmin() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Stories</p>
-                  <p className="text-2xl font-bold text-gray-900">{stories.length}</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Total Stories
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stories.length}
+                  </p>
                 </div>
                 <BookOpen className="h-8 w-8 text-gray-600" />
               </div>
@@ -280,10 +301,10 @@ export default function StoriesAdmin() {
                       <TableCell>
                         <div className="flex items-center">
                           <User className="h-4 w-4 mr-1 text-gray-400" />
-                          {story.user ? 
-                            `${story.user.firstName || ''} ${story.user.lastName || ''}`.trim() || story.user.email
-                            : 'Unknown User'
-                          }
+                          {story.user
+                            ? `${story.user.firstName || ""} ${story.user.lastName || ""}`.trim() ||
+                              story.user.email
+                            : "Unknown User"}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -306,8 +327,8 @@ export default function StoriesAdmin() {
                         <div className="flex space-x-2">
                           <Dialog>
                             <DialogTrigger asChild>
-                              <Button 
-                                variant="outline" 
+                              <Button
+                                variant="outline"
                                 size="sm"
                                 onClick={() => setSelectedStory(story)}
                               >
@@ -325,44 +346,77 @@ export default function StoriesAdmin() {
                                 <div className="space-y-4">
                                   <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                      <strong>Location:</strong> {getLocationFromStory(selectedStory)}
+                                      <strong>Location:</strong>{" "}
+                                      {getLocationFromStory(selectedStory)}
                                     </div>
                                     <div>
-                                      <strong>Rating:</strong> {getRatingFromStory(selectedStory) || "No rating"}
+                                      <strong>Rating:</strong>{" "}
+                                      {getRatingFromStory(selectedStory) ||
+                                        "No rating"}
                                     </div>
                                   </div>
-                                  
+
                                   <div>
                                     <strong>Story Content:</strong>
                                     <div className="mt-2 p-4 bg-gray-100 rounded text-sm overflow-auto max-h-96">
-                                      {Object.entries(selectedStory.data).map(([key, value]) => (
-                                        <div key={key} className="mb-3">
-                                          <strong className="block text-gray-700">{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</strong>
-                                          <div className="mt-1 pl-2 border-l-2 border-gray-300">
-                                            {typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
+                                      {Object.entries(selectedStory.data).map(
+                                        ([key, value]) => (
+                                          <div key={key} className="mb-3">
+                                            <strong className="block text-gray-700">
+                                              {key
+                                                .replace(/([A-Z])/g, " $1")
+                                                .replace(/^./, (str) =>
+                                                  str.toUpperCase(),
+                                                )}
+                                              :
+                                            </strong>
+                                            <div className="mt-1 pl-2 border-l-2 border-gray-300">
+                                              {typeof value === "string"
+                                                ? value
+                                                : JSON.stringify(
+                                                    value,
+                                                    null,
+                                                    2,
+                                                  )}
+                                            </div>
                                           </div>
-                                        </div>
-                                      ))}
+                                        ),
+                                      )}
                                     </div>
                                   </div>
 
                                   <div className="flex space-x-2 pt-4 border-t">
-                                    <Button 
-                                      onClick={() => handleStoryAction(selectedStory.id, "approve")}
+                                    <Button
+                                      onClick={() =>
+                                        handleStoryAction(
+                                          selectedStory.id,
+                                          "approve",
+                                        )
+                                      }
                                       className="bg-green-600 hover:bg-green-700"
                                     >
                                       <Check className="h-4 w-4 mr-1" />
                                       Approve
                                     </Button>
-                                    <Button 
-                                      onClick={() => handleStoryAction(selectedStory.id, "feature")}
+                                    <Button
+                                      onClick={() =>
+                                        handleStoryAction(
+                                          selectedStory.id,
+                                          "feature",
+                                        )
+                                      }
                                       className="bg-blue-600 hover:bg-blue-700"
                                     >
                                       <Star className="h-4 w-4 mr-1" />
                                       Feature
                                     </Button>
-                                    <Button 
-                                      onClick={() => handleStoryAction(selectedStory.id, "reject")}
+                                    <Button
+                                      onClick={() =>
+                                        handleStoryAction(
+                                          selectedStory.id,
+                                          "reject",
+                                        )
+                                      }
                                       variant="destructive"
                                     >
                                       <X className="h-4 w-4 mr-1" />
@@ -374,24 +428,30 @@ export default function StoriesAdmin() {
                             </DialogContent>
                           </Dialog>
 
-                          <Button 
-                            onClick={() => handleStoryAction(story.id, "approve")}
+                          <Button
+                            onClick={() =>
+                              handleStoryAction(story.id, "approve")
+                            }
                             size="sm"
                             className="bg-green-600 hover:bg-green-700"
                           >
                             <Check className="h-4 w-4" />
                           </Button>
 
-                          <Button 
-                            onClick={() => handleStoryAction(story.id, "feature")}
+                          <Button
+                            onClick={() =>
+                              handleStoryAction(story.id, "feature")
+                            }
                             size="sm"
                             className="bg-blue-600 hover:bg-blue-700"
                           >
                             <Star className="h-4 w-4" />
                           </Button>
-                          
-                          <Button 
-                            onClick={() => handleStoryAction(story.id, "reject")}
+
+                          <Button
+                            onClick={() =>
+                              handleStoryAction(story.id, "reject")
+                            }
                             size="sm"
                             variant="destructive"
                           >
@@ -433,12 +493,14 @@ export default function StoriesAdmin() {
                     <TableCell>{getStatusBadge(story.status)}</TableCell>
                     <TableCell>{getLocationFromStory(story)}</TableCell>
                     <TableCell>
-                      {story.user ? 
-                        `${story.user.firstName || ''} ${story.user.lastName || ''}`.trim() || story.user.email
-                        : 'Unknown User'
-                      }
+                      {story.user
+                        ? `${story.user.firstName || ""} ${story.user.lastName || ""}`.trim() ||
+                          story.user.email
+                        : "Unknown User"}
                     </TableCell>
-                    <TableCell>{new Date(story.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      {new Date(story.createdAt).toLocaleDateString()}
+                    </TableCell>
                     <TableCell>
                       <Button variant="outline" size="sm">
                         <Eye className="h-4 w-4 mr-1" />
