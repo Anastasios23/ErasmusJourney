@@ -915,8 +915,8 @@ export default function StudentAccommodations() {
                         variant="outline"
                         className="text-blue-600 border-blue-600"
                       >
-                        {realAccommodations.length} Experience
-                        {realAccommodations.length === 1 ? "" : "s"}
+                        {generatedContent?.length || 0} Experience
+                        {(generatedContent?.length || 0) === 1 ? "" : "s"}
                       </Badge>
                     </div>
 
