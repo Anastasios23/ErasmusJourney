@@ -32,10 +32,10 @@ interface FormSubmissionRequest {
 function generateSlug(name: string): string {
   return name
     .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-    .replace(/\s+/g, '-')         // Replace spaces with hyphens
-    .replace(/-+/g, '-')          // Replace multiple hyphens with single
-    .trim();                      // Remove leading/trailing whitespace
+    .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/-+/g, "-") // Replace multiple hyphens with single
+    .trim(); // Remove leading/trailing whitespace
 }
 
 // Helper function to ensure unique slug in database
@@ -104,23 +104,27 @@ export default async function handler(
   if (req.method === "POST") {
     try {
       // Validate request body structure
-      const { destination, accommodations, courseExchanges }: FormSubmissionRequest = req.body;
+      const {
+        destination,
+        accommodations,
+        courseExchanges,
+      }: FormSubmissionRequest = req.body;
 
       if (!destination || !destination.name || !destination.country) {
-        return res.status(400).json({ 
-          error: "Missing required destination fields (name, country)" 
+        return res.status(400).json({
+          error: "Missing required destination fields (name, country)",
         });
       }
 
       if (!Array.isArray(accommodations)) {
-        return res.status(400).json({ 
-          error: "Accommodations must be an array" 
+        return res.status(400).json({
+          error: "Accommodations must be an array",
         });
       }
 
       if (!Array.isArray(courseExchanges)) {
-        return res.status(400).json({ 
-          error: "Course exchanges must be an array" 
+        return res.status(400).json({
+          error: "Course exchanges must be an array",
         });
       }
 
@@ -142,7 +146,7 @@ export default async function handler(
         // 2. Create accommodations if any provided
         if (accommodations.length > 0) {
           await tx.accommodation.createMany({
-            data: accommodations.map(acc => ({
+            data: accommodations.map((acc) => ({
               destinationId: newDestination.id,
               type: acc.type,
               name: acc.name,
@@ -155,7 +159,7 @@ export default async function handler(
         // 3. Create course exchanges if any provided
         if (courseExchanges.length > 0) {
           await tx.courseExchange.createMany({
-            data: courseExchanges.map(course => ({
+            data: courseExchanges.map((course) => ({
               destinationId: newDestination.id,
               homeCourse: course.homeCourse,
               hostCourse: course.hostCourse,
@@ -174,11 +178,10 @@ export default async function handler(
         url: `/destinations/${result.slug}`,
         message: "Destination and related data saved!",
       });
-
     } catch (error) {
       console.error("Error creating destination:", error);
-      return res.status(500).json({ 
-        error: "Something went wrong while saving the destination" 
+      return res.status(500).json({
+        error: "Something went wrong while saving the destination",
       });
     }
   }

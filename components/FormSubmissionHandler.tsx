@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useState } from "react";
+import { useRouter } from "next/router";
 
 // TypeScript interfaces matching the API
 interface AccommodationData {
@@ -52,14 +52,14 @@ export function useFormSubmission() {
     try {
       // Validate required fields before sending
       if (!formData.destination.name || !formData.destination.country) {
-        throw new Error('Destination name and country are required');
+        throw new Error("Destination name and country are required");
       }
 
       // Make POST request to our API
-      const response = await fetch('/api/form-submissions', {
-        method: 'POST',
+      const response = await fetch("/api/form-submissions", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
@@ -70,19 +70,21 @@ export function useFormSubmission() {
       if (!response.ok) {
         // Handle API errors
         const errorData = responseData as ApiError;
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        throw new Error(
+          errorData.error || `HTTP error! status: ${response.status}`,
+        );
       }
 
       // Success - redirect to the new destination page
       const successData = responseData as ApiResponse;
       await router.push(successData.url);
-      
     } catch (err) {
       // Handle any errors that occurred during submission
-      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
+      const errorMessage =
+        err instanceof Error ? err.message : "An unexpected error occurred";
       setError(errorMessage);
-      console.error('Form submission error:', err);
-      
+      console.error("Form submission error:", err);
+
       // Show error to user (you can replace this with a toast notification)
       alert(`Error: ${errorMessage}`);
     } finally {
@@ -148,27 +150,28 @@ export function ExampleFormComponent() {
   return (
     <form onSubmit={handleFormSubmit}>
       {/* Your form inputs go here */}
-      
+
       {/* Error display */}
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           {error}
         </div>
       )}
-      
+
       {/* Submit button */}
       <button
         type="submit"
         disabled={isSubmitting}
         className={`
           px-4 py-2 rounded font-medium
-          ${isSubmitting 
-            ? 'bg-gray-400 cursor-not-allowed' 
-            : 'bg-blue-600 hover:bg-blue-700 text-white'
+          ${
+            isSubmitting
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700 text-white"
           }
         `}
       >
-        {isSubmitting ? 'Submitting...' : 'Submit Destination'}
+        {isSubmitting ? "Submitting..." : "Submit Destination"}
       </button>
     </form>
   );
@@ -177,10 +180,10 @@ export function ExampleFormComponent() {
 // Standalone function version (if you prefer not to use the hook)
 export async function submitFormData(formData: FormData): Promise<ApiResponse> {
   try {
-    const response = await fetch('/api/form-submissions', {
-      method: 'POST',
+    const response = await fetch("/api/form-submissions", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
     });
@@ -189,12 +192,14 @@ export async function submitFormData(formData: FormData): Promise<ApiResponse> {
 
     if (!response.ok) {
       const errorData = responseData as ApiError;
-      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      throw new Error(
+        errorData.error || `HTTP error! status: ${response.status}`,
+      );
     }
 
     return responseData as ApiResponse;
   } catch (error) {
-    console.error('Form submission error:', error);
+    console.error("Form submission error:", error);
     throw error;
   }
 }
