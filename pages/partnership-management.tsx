@@ -138,7 +138,8 @@ function useToast() {
 export default function PartnershipManagement() {
   return (
     <div className="container mx-auto py-10">
-      <PartnershipManagementContent />
+      {/* TODO: Implement PartnershipManagementContent or use correct component */}
+      {/* <PartnershipManagementContent /> */}
     </div>
   );
 }
