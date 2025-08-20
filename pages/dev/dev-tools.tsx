@@ -1,13 +1,8 @@
 import { useState } from "react";
-import { Button } from "../src/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../src/components/ui/card";
-import { Alert, AlertDescription } from "../src/components/ui/alert";
-import Header from "../components/Header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+// import Header from "@/components/Header";
 import Link from "next/link";
 import {
   Database,
@@ -54,7 +49,7 @@ export default function DevTools() {
   return (
     <>
       <div className="min-h-screen bg-gray-50">
-        <Header />
+        {/* <Header /> */}
 
         <div className="pt-20 pb-16 px-4">
           <div className="max-w-4xl mx-auto">

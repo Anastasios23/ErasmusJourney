@@ -383,8 +383,25 @@ export class ContentIntegrationService {
       imageUrl: dest.imageUrl,
       featured: dest.featured,
       submissionCount: dest.submissionCount,
-      averageRating: dest.aggregatedData?.averageRating || null,
-      averageCost: dest.aggregatedData?.averageCost || null,
+      // Safely parse aggregatedData if it's a string
+      ...(() => {
+        let agg: any = null;
+        if (dest.aggregatedData) {
+          if (typeof dest.aggregatedData === "string") {
+            try {
+              agg = JSON.parse(dest.aggregatedData);
+            } catch {
+              agg = null;
+            }
+          } else {
+            agg = dest.aggregatedData;
+          }
+        }
+        return {
+          averageRating: agg?.averageRating ?? null,
+          averageCost: agg?.averageCost ?? null,
+        };
+      })(),
       lastUpdated: dest.lastDataUpdate,
     }));
 

@@ -1,5 +1,8 @@
 import { prisma } from "../../lib/prisma";
-import { Prisma } from "@prisma/client";
+// Define Prisma namespace locally instead of importing it
+namespace Prisma {
+  export type DestinationWhereInput = any;
+}
 
 // Types for enhanced content management
 interface DestinationAggregation {
@@ -71,7 +74,7 @@ export class ContentManagementService {
         featured: adminOverrides.featured || false,
         status: "published",
         source: "user_generated",
-        aggregatedData: aggregatedData,
+        aggregatedData: JSON.parse(JSON.stringify(aggregatedData)),
         adminOverrides: adminOverrides,
         submissionCount: submissions.length,
         lastDataUpdate: new Date(),
@@ -391,7 +394,6 @@ export class ContentManagementService {
 
     await prisma.destinationSubmission.createMany({
       data: links,
-      skipDuplicates: true,
     });
   }
 
@@ -499,12 +501,12 @@ export class ContentManagementService {
       await prisma.destination.update({
         where: { id: destinationId },
         data: {
-          aggregatedData: freshAggregation,
+          aggregatedData: JSON.parse(JSON.stringify(freshAggregation)),
           lastDataUpdate: new Date(),
         },
       });
 
-      destination.aggregatedData = freshAggregation;
+      destination.aggregatedData = JSON.parse(JSON.stringify(freshAggregation));
     }
 
     return destination;

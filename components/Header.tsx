@@ -4,8 +4,11 @@ import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Button } from "../src/components/ui/button";
+import { Button } from "@/components/ui/button";
+// import BackButton from "@/components/BackButton";
+// If BackButton exists elsewhere, update the path accordingly, e.g.:
 import BackButton from "./BackButton";
+// Or comment/remove if not needed and remove all usages of <BackButton />
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +18,7 @@ import {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-} from "../src/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import {
   Menu,
   X,
@@ -29,8 +32,8 @@ import {
   ChevronDown,
   ClipboardList,
 } from "lucide-react";
-import NotificationDropdown from "../src/components/NotificationDropdown";
-import { ErasmusIcon } from "../src/components/icons/CustomIcons";
+import NotificationDropdown from "@/components/NotificationDropdown";
+import { ErasmusIcon } from "@/components/icons/CustomIcons";
 
 export default function Header() {
   const { data: session, status } = useSession();
