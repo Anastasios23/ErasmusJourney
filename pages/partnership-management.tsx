@@ -133,3 +133,12 @@ function useToast() {
     },
   };
 }
+
+// Add default export for Next.js page
+export default function PartnershipManagement() {
+  return (
+    <div className="container mx-auto py-10">
+      <PartnershipManagementContent />
+    </div>
+  );
+}

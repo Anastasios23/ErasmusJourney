@@ -102,6 +102,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   const {
     name,
+    city,
     country,
     description,
     imageUrl,
@@ -114,13 +115,16 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   } = req.body;
 
   // Validation
-  if (!name || !country) {
-    return res.status(400).json({ error: "Name and country are required" });
+  if (!name || !city || !country) {
+    return res
+      .status(400)
+      .json({ error: "Name, city, and country are required" });
   }
 
   const destination = await prisma.destination.create({
     data: {
       name,
+      city,
       country,
       description,
       imageUrl,

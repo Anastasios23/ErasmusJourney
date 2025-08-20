@@ -124,10 +124,13 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
               const submissions = dest.linkedSubmissions.map(
                 (link) => link.submission,
               );
-              aggregatedData =
-                await ContentManagementService.aggregateSubmissionData(
-                  submissions,
-                );
+              aggregatedData = JSON.parse(
+                JSON.stringify(
+                  await ContentManagementService.aggregateSubmissionData(
+                    submissions,
+                  ),
+                ),
+              );
 
               // Update in database
               await prisma.destination.update({
