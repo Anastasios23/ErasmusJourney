@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { Award } from "lucide-react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Header from "../../components/Header";
