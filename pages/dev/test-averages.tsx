@@ -2,7 +2,7 @@ import { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Header from "../../components/Header";
-import { useDestinationAverages } from "../hooks/useDestinations";
+import { useDestinationAverages } from "@/hooks/useDestinations";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
