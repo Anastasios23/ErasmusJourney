@@ -128,8 +128,13 @@ export default function Destinations() {
         if (!response.ok) {
           console.error("API Error Response:", data);
           throw new Error(
-            `Failed to fetch destinations: ${response.status} - ${data.message || "Unknown error"}`,
+            `Failed to fetch destinations: ${response.status} - ${data?.message || data?.error || "Unknown error"}`,
           );
+        }
+
+        // Validate that we have valid data
+        if (!data) {
+          throw new Error("No data received from destinations API");
         }
 
         // Ensure data is an array
