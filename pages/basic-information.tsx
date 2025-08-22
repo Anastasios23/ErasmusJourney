@@ -58,11 +58,13 @@ import { handleApiError } from "../src/utils/apiErrorHandler";
 import { Alert, AlertDescription } from "../src/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { StepIndicator } from "../src/components/StepIndicator";
+import { useFormProgress } from "../src/context/FormProgressContext";
 
 export default function BasicInformation() {
   // 1. ALL HOOKS FIRST - NEVER CONDITIONAL
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
+  const { setCurrentStep } = useFormProgress();
   const {
     data: experienceData,
     loading: experienceLoading,
@@ -155,6 +157,10 @@ export default function BasicInformation() {
       router.replace(`/login?callbackUrl=${encodeURIComponent(router.asPath)}`);
     }
   }, [sessionStatus, router]);
+
+  useEffect(() => {
+    setCurrentStep("basic-info");
+  }, [setCurrentStep]);
 
   // Load saved data when component mounts
   useEffect(() => {

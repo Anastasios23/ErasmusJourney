@@ -5,6 +5,7 @@ import { Alert, AlertDescription } from "../src/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { ValidationError } from "../src/utils/apiErrorHandler";
 import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
+import { useFormProgress } from "../src/context/FormProgressContext";
 
 import Head from "next/head";
 import Link from "next/link";
@@ -74,6 +75,7 @@ interface EquivalentCourse {
 export default function CourseMatching() {
   const { data: session } = useSession();
   const router = useRouter();
+  const { setCurrentStep } = useFormProgress();
 
   // Experience hook for new single-submission system
   const {
@@ -181,6 +183,10 @@ export default function CourseMatching() {
       }
     }
   }, [experienceLoading, experienceData]);
+
+  useEffect(() => {
+    setCurrentStep("course-matching");
+  }, [setCurrentStep]);
 
   // Auto-save functionality
   const saveFormData = useCallback(async () => {
