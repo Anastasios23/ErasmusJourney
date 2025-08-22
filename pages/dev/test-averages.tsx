@@ -1,24 +1,19 @@
 import { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import Header from "../components/Header";
-import { useDestinationAverages } from "../src/hooks/useDestinations";
-import { Button } from "../src/components/ui/button";
-import { Badge } from "../src/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../src/components/ui/card";
+import Header from "../../components/Header";
+import { useDestinationAverages } from "@/hooks/useDestinations";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../src/components/ui/select";
-import { Skeleton } from "../src/components/ui/skeleton";
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Star,
   Users,
@@ -278,7 +273,7 @@ export default function TestAveragesPage() {
                                     ))}
                                   </div>
                                   <span className="text-sm font-medium">
-                                    {value}/5
+                                    {String(value)}/5
                                   </span>
                                 </div>
                               </div>

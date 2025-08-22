@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql" 
+  url = env("DATABASE_URL")
+  
 }
 
 model Account {
@@ -42,27 +43,27 @@ model VerificationToken {
 }
 
 model User {
-  id              String           @id @default(cuid())
-  firstName       String?
-  lastName        String?
-  email           String           @unique
-  emailVerified   DateTime?
-  image           String?
-  password        String?
-  role            String           @default("USER")
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  studentId       String?
-  nationality     String?
-  homeCity        String?
-  homeCountry     String?
-  accounts        Account[]
-  sessions        Session[]
-  applications    Application[]
-  formSubmissions FormSubmission[]
-  erasmusExperience ErasmusExperience? // One-to-one relationship
-  stories         Story[]
-  storyEngagements Engagement[]
+  id                String             @id @default(cuid())
+  firstName         String?
+  lastName          String?
+  email             String             @unique
+  emailVerified     DateTime?
+  image             String?
+  password          String?
+  role              String             @default("USER")
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  studentId         String?
+  nationality       String?
+  homeCity          String?
+  homeCountry       String?
+  accounts          Account[]
+  sessions          Session[]
+  applications      Application[]
+  erasmusExperience ErasmusExperience?
+  formSubmissions   FormSubmission[]
+  stories           Story[]
+  storyEngagements  Engagement[]
 
   @@map("users")
 }
@@ -179,25 +180,25 @@ model Application {
 }
 
 model Story {
-  id           String             @id @default(cuid())
+  id           String       @id @default(cuid())
   title        String
   content      String
   excerpt      String?
   imageUrl     String?
-  isPublic     Boolean            @default(true)
-  isPinned     Boolean            @default(false)
+  isPublic     Boolean      @default(true)
+  isPinned     Boolean      @default(false)
   authorId     String
   universityId String?
   country      String?
   city         String?
-  category     String             @default("EXPERIENCE")
+  category     String       @default("EXPERIENCE")
   tags         String?
-  likes        Int                @default(0)
-  views        Int                @default(0)
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-  author       User               @relation(fields: [authorId], references: [id])
-  university   University?        @relation(fields: [universityId], references: [id])
+  likes        Int          @default(0)
+  views        Int          @default(0)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  author       User         @relation(fields: [authorId], references: [id])
+  university   University?  @relation(fields: [universityId], references: [id])
   engagements  Engagement[]
 
   @@index([city, country])
@@ -205,20 +206,20 @@ model Story {
 }
 
 model Engagement {
-  id          String    @id @default(cuid())
-  storyId     String
-  userId      String
-  liked       Boolean   @default(false)
-  bookmarked  Boolean   @default(false)
-  rating      Int       @default(0)
-  views       Int       @default(0)
-  likes       Int       @default(0)
-  comments    Int       @default(0)
-  lastViewed  DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  story       Story     @relation(fields: [storyId], references: [id], onDelete: Cascade)
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String    @id @default(cuid())
+  storyId    String
+  userId     String
+  liked      Boolean   @default(false)
+  bookmarked Boolean   @default(false)
+  rating     Int       @default(0)
+  views      Int       @default(0)
+  likes      Int       @default(0)
+  comments   Int       @default(0)
+  lastViewed DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  story      Story     @relation(fields: [storyId], references: [id], onDelete: Cascade)
 
   @@unique([storyId, userId])
   @@map("story_engagements")
@@ -281,6 +282,7 @@ model Accommodation {
   @@map("accommodations")
 }
 
+<<<<<<< HEAD
 model CourseExchange {
   id            String   @id @default(cuid())
   destinationId String
@@ -293,30 +295,52 @@ model CourseExchange {
   updatedAt     DateTime @updatedAt
 
   @@map("course_exchanges")
+=======
+model Destination {
+  id                String                  @id @default(cuid())
+  name              String
+  city              String
+  country           String
+  description       String?
+  imageUrl          String?
+  featured          Boolean                 @default(false)
+  status            String                  @default("published")
+  source            String                  @default("admin_created")
+  climate           String?
+  costOfLiving      Json?
+  highlights        String?
+  photos            Json?
+  generalInfo       Json?
+  aggregatedData    Json?
+  adminOverrides    Json?
+  submissionCount   Int                     @default(0)
+  lastDataUpdate    DateTime                @default(now())
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+  linkedSubmissions DestinationSubmission[]
+
+  @@unique([city, country])
+  @@map("destinations")
+>>>>>>> refs/remotes/origin/main
 }
 
 model FormSubmission {
-  id               String   @id @default(cuid())
+  id               String                  @id @default(cuid())
   userId           String
   type             String
   title            String
   data             Json
-  status           String   @default("SUBMITTED") // DRAFT, SUBMITTED, PUBLISHED, ARCHIVED
+  status           String                  @default("SUBMITTED")
   adminNotes       String?
-  processed        Boolean  @default(false) // whether included in aggregations
-  qualityScore     Float?   // admin-assigned quality score
-  tags             String?  // comma-separated tags for categorization
-
-  // Enhanced metadata
-  location         String?  // extracted city, country for easier querying
-  submissionSource String   @default("form") // form, import, api
-
-  // Relationships
+  processed        Boolean                 @default(false)
+  qualityScore     Float?
+  tags             String?
+  location         String?
+  submissionSource String                  @default("form")
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
   destinationLinks DestinationSubmission[]
-
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([location, status])
   @@index([type, status])
@@ -324,54 +348,43 @@ model FormSubmission {
 }
 
 model DestinationSubmission {
-  id             String   @id @default(cuid())
-  destinationId  String
-  submissionId   String
-  contributionType String // primary, supporting, reference
-  weight         Float    @default(1.0) // how much this submission contributes to aggregation
-  adminApproved  Boolean  @default(false)
-  notes          String?
-
-  destination    Destination     @relation(fields: [destinationId], references: [id], onDelete: Cascade)
-  submission     FormSubmission  @relation(fields: [submissionId], references: [id], onDelete: Cascade)
-
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id               String         @id @default(cuid())
+  destinationId    String
+  submissionId     String
+  contributionType String
+  weight           Float          @default(1.0)
+  adminApproved    Boolean        @default(false)
+  notes            String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  submission       FormSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  destination      Destination    @relation(fields: [destinationId], references: [id], onDelete: Cascade)
 
   @@unique([destinationId, submissionId])
   @@map("destination_submissions")
 }
 
 model ErasmusExperience {
-  id              String    @id @default(cuid())
-  userId          String    @unique // One submission per user
-
-  // Progress tracking
-  currentStep     Int       @default(1)
-  completedSteps  String    @default("[]") // JSON array of completed step numbers
-  isComplete      Boolean   @default(false)
-
-  // Form data sections
-  basicInfo       Json?     // Step 1: Basic Information
-  courses         Json?     // Step 2: Course Matching
-  accommodation   Json?     // Step 3: Accommodation
-  livingExpenses  Json?     // Step 4: Living Expenses
-  experience      Json?     // Step 5: Experience & Help Future Students
-
-  // Metadata
-  status          String    @default("DRAFT") // DRAFT, IN_PROGRESS, COMPLETED, PUBLISHED
-  isPublic        Boolean   @default(false)
-  lastSavedAt     DateTime  @default(now())
-  submittedAt     DateTime?
-  publishedAt     DateTime?
-
-  // Admin management
-  adminNotes      String?
-  adminApproved   Boolean   @default(false)
-
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String    @id @default(cuid())
+  userId         String    @unique
+  currentStep    Int       @default(1)
+  completedSteps String    @default("[]")
+  isComplete     Boolean   @default(false)
+  basicInfo      Json?
+  courses        Json?
+  accommodation  Json?
+  livingExpenses Json?
+  experience     Json?
+  status         String    @default("DRAFT")
+  isPublic       Boolean   @default(false)
+  lastSavedAt    DateTime  @default(now())
+  submittedAt    DateTime?
+  publishedAt    DateTime?
+  adminNotes     String?
+  adminApproved  Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("erasmus_experiences")
 }
@@ -387,34 +400,25 @@ model CustomDestination {
 }
 
 model AdminDestination {
-  id           String   @id @default(cuid())
-  name         String   // Display name (e.g., "Barcelona, Spain")
-  city         String   // City name for matching with student data
-  country      String   // Country name for matching with student data
+  id                   String    @id @default(cuid())
+  name                 String
+  city                 String
+  country              String
+  description          String
+  imageUrl             String?
+  climate              String?
+  highlights           Json?
+  officialUniversities Json?
+  generalInfo          Json?
+  studentDataCache     Json?
+  hasStudentData       Boolean   @default(false)
+  lastDataUpdate       DateTime?
+  featured             Boolean   @default(false)
+  active               Boolean   @default(true)
+  createdBy            String
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
-  // Admin-curated content
-  description  String   // Rich description of the destination
-  imageUrl     String?  // Hero image URL
-  climate      String?  // Climate information
-  highlights   Json?    // Array of highlight strings
-
-  // Official information
-  officialUniversities Json? // Array of university objects {name, website, programs[]}
-  generalInfo  Json?    // {language, currency, timeZone, publicTransport, etc.}
-
-  // Student data cache (automatically updated)
-  studentDataCache Json?    // Cached CityAggregatedData
-  hasStudentData   Boolean @default(false)
-  lastDataUpdate   DateTime?
-
-  // Admin management
-  featured     Boolean  @default(false)
-  active       Boolean  @default(true)
-  createdBy    String   // Admin user ID
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  // Ensure unique city/country combinations
   @@unique([city, country])
   @@map("admin_destinations")
 }
@@ -440,156 +444,110 @@ model UniversityExchange {
   @@map("university_exchanges")
 }
 
-// New models for auto-generated destination content
-
 model GeneratedDestination {
-  id                    String   @id @default(cuid())
-  slug                  String   @unique // e.g., "berlin-germany"
-  city                  String
-  country               String
-
-  // Aggregated data from student submissions
-  totalSubmissions      Int      @default(0)
-  averageRating         Float?
-  averageMonthlyCost    Float?
+  id                       String                    @id @default(cuid())
+  slug                     String                    @unique
+  city                     String
+  country                  String
+  totalSubmissions         Int                       @default(0)
+  averageRating            Float?
+  averageMonthlyCost       Float?
   averageAccommodationCost Float?
-
-  // Calculated insights from submissions
-  topNeighborhoods      Json?    // Array of most mentioned neighborhoods
-  commonPros            Json?    // Array of frequently mentioned positives
-  commonCons            Json?    // Array of frequently mentioned issues
-  budgetBreakdown       Json?    // {groceries: avg, transport: avg, social: avg, etc.}
-
-  // Admin-editable content
-  adminTitle            String?  // Custom title override
-  adminDescription      String?  // Admin-written description
-  adminImageUrl         String?  // Hero image
-  adminHighlights       Json?    // Admin-curated highlights
-  adminGeneralInfo      Json?    // Visa, climate, transport info
-
-  // Status and metadata
-  status                String   @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
-  featured              Boolean  @default(false)
-  lastCalculated        DateTime @default(now())
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-
-  // Relations
-  accommodations        GeneratedAccommodation[]
-  courseExchanges       GeneratedCourseExchange[]
+  topNeighborhoods         Json?
+  commonPros               Json?
+  commonCons               Json?
+  budgetBreakdown          Json?
+  adminTitle               String?
+  adminDescription         String?
+  adminImageUrl            String?
+  adminHighlights          Json?
+  adminGeneralInfo         Json?
+  status                   String                    @default("DRAFT")
+  featured                 Boolean                   @default(false)
+  lastCalculated           DateTime                  @default(now())
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  accommodations           GeneratedAccommodation[]
+  courseExchanges          GeneratedCourseExchange[]
 
   @@unique([city, country])
   @@map("generated_destinations")
 }
 
 model GeneratedAccommodation {
-  id                   String   @id @default(cuid())
-  destinationId        String
-  sourceExperienceId   String   // Reference to original ErasmusExperience
-
-  // Student experience data
-  studentName          String?  // First name or anonymous
-  accommodationType    String   // Dorm, apartment, shared, etc.
-  neighborhood         String?
-  monthlyRent          Float?
-  currency             String   @default("EUR")
-
-  // Experience details
-  title                String   // e.g., "Student Dorm in Kreuzberg"
-  description          String   // Student's experience
-  pros                 Json?    // Array of positive aspects
-  cons                 Json?    // Array of negative aspects
-  tips                 Json?    // Array of tips for future students
-  bookingAdvice        String?  // How they found/booked it
-
-  // Admin controls
-  featured             Boolean  @default(false)
-  visible              Boolean  @default(true)
-  adminNotes           String?  // Internal admin notes
-
-  // Metadata
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-
-  // Relations
-  destination          GeneratedDestination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  id                 String               @id @default(cuid())
+  destinationId      String
+  sourceExperienceId String
+  studentName        String?
+  accommodationType  String
+  neighborhood       String?
+  monthlyRent        Float?
+  currency           String               @default("EUR")
+  title              String
+  description        String
+  pros               Json?
+  cons               Json?
+  tips               Json?
+  bookingAdvice      String?
+  featured           Boolean              @default(false)
+  visible            Boolean              @default(true)
+  adminNotes         String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  destination        GeneratedDestination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
 
   @@map("generated_accommodations")
 }
 
 model GeneratedCourseExchange {
-  id                   String   @id @default(cuid())
-  destinationId        String
-  sourceExperienceId   String   // Reference to original ErasmusExperience
-
-  // Student and academic info
-  studentName          String?  // First name or anonymous
-  hostUniversity       String
-  fieldOfStudy         String?
-  studyLevel           String?  // Bachelor, Master, etc.
-  semester             String?  // Fall 2024, Spring 2025, etc.
-
-  // Academic experience
-  title                String   // e.g., "Computer Science at TU Berlin"
-  description          String   // Student's academic experience
-  courseQuality        Int?     // Rating 1-5
-  professorQuality     Int?     // Rating 1-5
-  facilityQuality      Int?     // Rating 1-5
-
-  // Course details
-  coursesEnrolled      Json?    // Array of course objects
-  creditsEarned        Int?     // ECTS credits
-  language             String?  // Language of instruction
-
-  // Experience details
-  academicChallenges   String?  // Challenges faced
-  academicHighlights   String?  // Best parts of academic experience
-  tips                 Json?    // Array of academic tips
-
-  // Admin controls
-  featured             Boolean  @default(false)
-  visible              Boolean  @default(true)
-  adminNotes           String?  // Internal admin notes
-
-  // Metadata
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-
-  // Relations
-  destination          GeneratedDestination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  id                 String               @id @default(cuid())
+  destinationId      String
+  sourceExperienceId String
+  studentName        String?
+  hostUniversity     String
+  fieldOfStudy       String?
+  studyLevel         String?
+  semester           String?
+  title              String
+  description        String
+  courseQuality      Int?
+  professorQuality   Int?
+  facilityQuality    Int?
+  coursesEnrolled    Json?
+  creditsEarned      Int?
+  language           String?
+  academicChallenges String?
+  academicHighlights String?
+  tips               Json?
+  featured           Boolean              @default(false)
+  visible            Boolean              @default(true)
+  adminNotes         String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  destination        GeneratedDestination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
 
   @@map("generated_course_exchanges")
 }
 
 model PartnershipTracking {
-  id                   String   @id @default(cuid())
-  homeUniversityName   String   // e.g., "University of Cyprus"
-  partnerUniversityName String  // e.g., "Technical University of Berlin"
-  partnerCity          String
-  partnerCountry       String
-
-  // Agreement details
-  agreementType        String?  // ERASMUS, BILATERAL, etc.
-  fieldOfStudy         String?  // If agreement is field-specific
-  isActive             Boolean  @default(true)
-
-  // Performance metrics (auto-calculated)
-  totalSubmissions     Int      @default(0)
-  averageRating        Float?   // Average student satisfaction
-  averageAcademicRating Float?  // Average academic experience rating
-  lastSubmissionDate   DateTime?
-
-  // Trend data
-  submissionsByYear    Json?    // {2024: 5, 2025: 8, etc.}
-  ratingTrend          Json?    // Monthly/yearly rating trends
-
-  // Admin tracking
-  adminNotes           String?  // Notes about partnership performance
-  needsAttention       Boolean  @default(false) // Flag for partnerships needing review
-
-  // Metadata
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  id                    String    @id @default(cuid())
+  homeUniversityName    String
+  partnerUniversityName String
+  partnerCity           String
+  partnerCountry        String
+  agreementType         String?
+  fieldOfStudy          String?
+  isActive              Boolean   @default(true)
+  totalSubmissions      Int       @default(0)
+  averageRating         Float?
+  averageAcademicRating Float?
+  lastSubmissionDate    DateTime?
+  submissionsByYear     Json?
+  ratingTrend           Json?
+  adminNotes            String?
+  needsAttention        Boolean   @default(false)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
   @@unique([homeUniversityName, partnerUniversityName, partnerCity])
   @@map("partnership_tracking")

@@ -1,16 +1,12 @@
 import { useState } from "react";
 import Head from "next/head";
-import { Button } from "../src/components/ui/button";
-import { Input } from "../src/components/ui/input";
-import { Label } from "../src/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../src/components/ui/card";
-import { Badge } from "../src/components/ui/badge";
-import Header from "../components/Header";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+// Update the import path below to the correct relative path if Header exists elsewhere, for example:
+import Header from "../../components/Header";
 
 export default function TestCityAggregation() {
   const [city, setCity] = useState("Barcelona");
@@ -36,7 +32,7 @@ export default function TestCityAggregation() {
 
       const data = await response.json();
       setResults(data);
-      
+
       if (data.aggregatedData) {
         setAggregationData(data.aggregatedData);
       }
@@ -52,7 +48,7 @@ export default function TestCityAggregation() {
     setIsTesting(true);
     try {
       const response = await fetch(
-        `/api/destinations/city-aggregated?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`
+        `/api/destinations/city-aggregated?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`,
       );
       const data = await response.json();
       setAggregationData(data.success ? data.data : data);
@@ -67,7 +63,9 @@ export default function TestCityAggregation() {
   const getAllCities = async () => {
     setIsTesting(true);
     try {
-      const response = await fetch("/api/destinations/city-aggregated?all=true");
+      const response = await fetch(
+        "/api/destinations/city-aggregated?all=true",
+      );
       const data = await response.json();
       setAggregationData(data);
     } catch (error) {
@@ -86,7 +84,7 @@ export default function TestCityAggregation() {
 
       <div className="min-h-screen bg-gray-50">
         <Header />
-        
+
         <main className="pt-20 pb-16">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8">
@@ -130,13 +128,15 @@ export default function TestCityAggregation() {
                       id="count"
                       type="number"
                       value={testDataCount}
-                      onChange={(e) => setTestDataCount(parseInt(e.target.value))}
+                      onChange={(e) =>
+                        setTestDataCount(parseInt(e.target.value))
+                      }
                       min="1"
                       max="10"
                     />
                   </div>
                 </div>
-                
+
                 <div className="flex gap-4">
                   <Button
                     onClick={generateTestData}
@@ -190,7 +190,9 @@ export default function TestCityAggregation() {
                     </div>
                   ) : aggregationData.cities ? (
                     <div>
-                      <h3 className="font-semibold mb-2">All Cities ({aggregationData.totalCities})</h3>
+                      <h3 className="font-semibold mb-2">
+                        All Cities ({aggregationData.totalCities})
+                      </h3>
                       <pre className="bg-gray-100 p-4 rounded-lg overflow-auto text-sm">
                         {JSON.stringify(aggregationData, null, 2)}
                       </pre>
@@ -207,25 +209,41 @@ export default function TestCityAggregation() {
                               <div className="text-2xl font-bold text-blue-600">
                                 {aggregationData.totalSubmissions}
                               </div>
-                              <div className="text-sm text-gray-600">Students</div>
+                              <div className="text-sm text-gray-600">
+                                Students
+                              </div>
                             </div>
                             <div className="text-center">
                               <div className="text-2xl font-bold text-green-600">
-                                {aggregationData.recommendations?.recommendationPercentage || 0}%
+                                {aggregationData.recommendations
+                                  ?.recommendationPercentage || 0}
+                                %
                               </div>
-                              <div className="text-sm text-gray-600">Recommend</div>
+                              <div className="text-sm text-gray-600">
+                                Recommend
+                              </div>
                             </div>
                             <div className="text-center">
                               <div className="text-2xl font-bold text-purple-600">
-                                {aggregationData.ratings?.avgOverallRating?.toFixed(1) || 'N/A'}
+                                {aggregationData.ratings?.avgOverallRating?.toFixed(
+                                  1,
+                                ) || "N/A"}
                               </div>
-                              <div className="text-sm text-gray-600">Rating</div>
+                              <div className="text-sm text-gray-600">
+                                Rating
+                              </div>
                             </div>
                             <div className="text-center">
                               <div className="text-2xl font-bold text-orange-600">
-                                €{Math.round(aggregationData.livingCosts?.avgTotalMonthly || 0)}
+                                €
+                                {Math.round(
+                                  aggregationData.livingCosts
+                                    ?.avgTotalMonthly || 0,
+                                )}
                               </div>
-                              <div className="text-sm text-gray-600">Monthly</div>
+                              <div className="text-sm text-gray-600">
+                                Monthly
+                              </div>
                             </div>
                           </div>
                         </div>

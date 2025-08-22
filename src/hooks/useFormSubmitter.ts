@@ -75,7 +75,13 @@ export function useFormSubmitter(options: SubmitterOptions) {
         localStorage.removeItem(`erasmus_draft_${formType}`);
 
         // Mark step as completed
-        markStepCompleted(formType);
+        // Map legacy/extra FormType values to a valid FormStep for progress tracking
+        const validFormStep = (
+          formType === "story" || formType === "experience"
+            ? "help-future-students"
+            : formType
+        ) as any;
+        markStepCompleted(validFormStep);
 
         // Call after submit hook if provided
         if (onAfterSubmit) {

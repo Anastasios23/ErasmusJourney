@@ -174,6 +174,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     const destination = await prisma.destination.create({
       data: {
         name,
+        city,
         country,
         description: description || `Study destination in ${name}, ${country}`,
         imageUrl,
