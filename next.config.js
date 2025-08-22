@@ -105,6 +105,15 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/admin-redirect",
+        destination: "/admin",
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {
