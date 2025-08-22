@@ -83,7 +83,7 @@ async function displayAdminInstructions() {
   console.log("3. 🔐 Enter password: Admin123!");
   console.log("4. ✅ Click 'Sign In'");
   console.log("\nAfter signing in, test these admin features:");
-  console.log("• 🏛️  Destination Management: /admin-destination-management");
+  console.log("• 🏛️  Destination Management: /admin/destinations");
   console.log("• 📊 Form Reviews: /admin");
   console.log("• 🎓 University Exchanges: /admin/university-exchanges");
   console.log("• 🏠 Student Accommodations: /admin/student-accommodations");

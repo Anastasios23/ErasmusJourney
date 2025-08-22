@@ -223,7 +223,7 @@ async function testCompleteFlow() {
     // Note: This would require admin authentication in real usage
     console.log("⚠️  Admin interface check requires authentication");
     console.log("📍 Experience ID for manual verification:", experienceId);
-    console.log("🔗 Check at: http://localhost:3000/admin-destinations");
+    console.log("🔗 Check at: http://localhost:3000/admin");
 
     console.log("\n🎉 End-to-End Test COMPLETED Successfully!");
     console.log("\n📋 Test Summary:");
