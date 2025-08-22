@@ -63,7 +63,7 @@ async function createAdminUser() {
     console.log("1. Go to http://localhost:3000/login");
     console.log("2. Use the credentials above to log in");
     console.log("3. Access admin pages at:");
-    console.log("   - /admin/destinations");
+    console.log("   - /admin/destinations-enhanced");
     console.log("   - /admin/university-exchanges");
     console.log("   - /admin/student-accommodations");
     console.log("");

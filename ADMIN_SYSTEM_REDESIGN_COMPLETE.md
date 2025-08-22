@@ -27,7 +27,7 @@ Successfully implemented Phase 1 (Consolidate Admin Interface) and Phase 3 (Clea
 - **Batch Actions**: Quick approve/reject buttons for efficiency
 - **Detailed Review**: Full submission data viewable in modal dialogs
 
-### **3. Enhanced Destinations Management (`/admin/destinations`)**
+### **3. Enhanced Destinations Management (`/admin/destinations-enhanced`)**
 
 - **Submission-to-Destination Pipeline**: Convert user submissions into destination pages
 - **Manual Creation**: Admin can create destinations independently
@@ -177,7 +177,7 @@ pages/api/admin/destinations/
 ### **For Admins:**
 
 - **Main Dashboard**: `/admin`
-- **Destinations**: `/admin/destinations`
+- **Destinations**: `/admin/destinations-enhanced`
 - **Stories**: `/admin/stories`
 
 ### **API Endpoints:**

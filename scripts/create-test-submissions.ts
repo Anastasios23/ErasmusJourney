@@ -30,7 +30,9 @@ async function main() {
   );
 
   console.log("\n🎉 Test submissions created! Ready for admin testing:");
-  console.log("📍 Visit /admin/destinations to test destination reviews");
+  console.log(
+    "📍 Visit /admin/destinations-enhanced to test destination reviews",
+  );
   console.log(
     "🏛️ Visit /admin/university-exchanges to test university reviews",
   );

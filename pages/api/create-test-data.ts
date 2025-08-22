@@ -151,7 +151,7 @@ export default async function handler(
         accommodation: accommodationSubmission.id,
       },
       testInstructions: {
-        destinations: "/admin/destinations",
+        destinations: "/admin/destinations-enhanced",
         universities: "/admin/university-exchanges",
         accommodations: "/admin/student-accommodations",
       },

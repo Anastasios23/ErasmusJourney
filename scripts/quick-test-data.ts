@@ -140,7 +140,7 @@ async function main() {
   console.log(`🏠 Accommodation: ${accommodationSubmission.title}`);
 
   console.log("\n🎉 Test data ready! You can now test the admin systems:");
-  console.log("📍 /admin/destinations");
+  console.log("📍 /admin/destinations-enhanced");
   console.log("🏛️ /admin/university-exchanges");
   console.log("🏠 /admin/student-accommodations");
 }

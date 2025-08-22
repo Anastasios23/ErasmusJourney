@@ -628,7 +628,9 @@ export default function UnifiedAdminDashboard() {
                   Manage destination content created from user submissions and
                   add your own.
                 </p>
-                <Button onClick={() => router.push("/admin/destinations")}>
+                <Button
+                  onClick={() => router.push("/admin/destinations-enhanced")}
+                >
                   <MapPin className="h-4 w-4 mr-1" />
                   Manage Destinations
                 </Button>
