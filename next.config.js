@@ -12,13 +12,6 @@ const nextConfig = {
   },
   // Enhanced webpack config for cloud environment stability
   webpack: (config, { dev, isServer }) => {
-    // Add a rule to handle .ts files with JavaScript
-    config.module.rules.push({
-      test: /\.ts$/,
-      use: 'babel-loader',
-      exclude: /node_modules/,
-    });
-    
     // Add fallback for @prisma/client
     config.resolve.fallback = {
       ...config.resolve.fallback,
