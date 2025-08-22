@@ -6,10 +6,8 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Disable Babel configuration
-  experimental: {
-    forceSwcTransforms: true,
-  },
+  // Ensure SWC is used instead of Babel
+  swcMinify: true,
   // Enhanced webpack config for cloud environment stability
   webpack: (config, { dev, isServer }) => {
     // Add fallback for @prisma/client
