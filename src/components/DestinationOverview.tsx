@@ -12,6 +12,7 @@ import {
   ThumbsUp,
   ThumbsDown,
   PieChart,
+  GraduationCap,
 } from "lucide-react";
 import { GeneratedDestinationData } from "../hooks/useGeneratedDestinations";
 
@@ -53,6 +54,22 @@ export default function DestinationOverview({
       </div>
     );
   };
+
+  const expenseLabels: Record<string, string> = {
+    accommodation: "Rent",
+    groceries: "Groceries",
+    transport: "Transportation",
+    social: "Eating Out",
+    other: "Bills & Other",
+  };
+
+  const universities = Array.from(
+    new Set(
+      (destination.courseExchanges || [])
+        .map((course) => course.hostUniversity)
+        .filter(Boolean),
+    ),
+  );
 
   return (
     <div className="space-y-6">
@@ -164,31 +181,51 @@ export default function DestinationOverview({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-2 gap-4">
-              {Object.entries(destination.budgetBreakdown).map(
-                ([category, amount]) => (
-                  <div
-                    key={category}
-                    className="flex items-center justify-between"
-                  >
-                    <span className="capitalize text-sm font-medium">
-                      {category}
-                    </span>
-                    <span className="font-bold">
-                      {formatPrice(amount as number)}
-                    </span>
-                  </div>
-                ),
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+              <div className="grid md:grid-cols-2 gap-4">
+                {Object.entries(destination.budgetBreakdown).map(
+                  ([category, amount]) => (
+                    <div
+                      key={category}
+                      className="flex items-center justify-between"
+                    >
+                      <span className="capitalize text-sm font-medium">
+                        {expenseLabels[category] || category}
+                      </span>
+                      <span className="font-bold">
+                        {formatPrice(amount as number)}
+                      </span>
+                    </div>
+                  ),
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
-      {/* Top Neighborhoods */}
-      {destination.topNeighborhoods &&
-        destination.topNeighborhoods.length > 0 && (
+        {universities.length > 0 && (
           <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <GraduationCap className="h-5 w-5" />
+                Available Universities
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {universities.map((uni) => (
+                  <Badge key={uni} variant="secondary" className="text-sm">
+                    {uni}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Top Neighborhoods */}
+        {destination.topNeighborhoods &&
+          destination.topNeighborhoods.length > 0 && (
+            <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MapPin className="h-5 w-5" />
