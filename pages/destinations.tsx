@@ -149,8 +149,11 @@ export default function Destinations() {
             id: dest.id,
             city: dest.city,
             country: dest.country,
-            image: dest.imageUrl || `/images/destinations/${dest.city?.toLowerCase()}.svg`, // API returns imageUrl
-            description: dest.description || `Explore ${dest.city}, ${dest.country}`,
+            image:
+              dest.imageUrl ||
+              `/images/destinations/${dest.city?.toLowerCase()}.svg`, // API returns imageUrl
+            description:
+              dest.description || `Explore ${dest.city}, ${dest.country}`,
             costLevel: dest.costOfLiving || "medium", // API returns costOfLiving
             rating: dest.averageRating || 4.0, // API returns averageRating
             studentCount: dest.studentCount || 0,
@@ -160,7 +163,9 @@ export default function Destinations() {
             region: getRegionFromCountry(dest.country),
           }));
 
-        console.log(`Successfully transformed ${transformedDestinations.length} destinations`);
+        console.log(
+          `Successfully transformed ${transformedDestinations.length} destinations`,
+        );
         setDestinations(transformedDestinations);
       } catch (error) {
         console.error("Error fetching destinations:", error);
@@ -581,10 +586,10 @@ export default function Destinations() {
                 {filteredDestinations.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredDestinations.map((destination, index) => (
-                        <Card
-                          key={destination.id}
-                          className="overflow-hidden hover:shadow-xl transition-all duration-300 group border-0 shadow-md hover:shadow-2xl hover:-translate-y-1"
-                        >
+                      <Card
+                        key={destination.id}
+                        className="overflow-hidden hover:shadow-xl transition-all duration-300 group border-0 shadow-md hover:shadow-2xl hover:-translate-y-1"
+                      >
                         <div className="relative h-48 overflow-hidden">
                           <OptimizedImage
                             src={destination.image}
@@ -901,7 +906,10 @@ export default function Destinations() {
                             </div>
                           )}
 
-                          <Link href={`/destinations/${destination.id}`} className="block">
+                          <Link
+                            href={`/destinations/${destination.id}`}
+                            className="block"
+                          >
                             <Button className="w-full" variant="outline">
                               See More
                               <ArrowRight className="h-4 w-4 ml-2" />
