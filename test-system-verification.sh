@@ -75,7 +75,7 @@ echo ""
 echo "🎯 System Status Summary:"
 echo "   📍 Server: Running at http://localhost:3000"
 echo "   🗄️  Database: Prisma Studio at http://localhost:5556"
-echo "   👑 Admin Interface: http://localhost:3000/admin-destinations"
+echo "   👑 Admin Interface: http://localhost:3000/admin"
 echo ""
 
 # Test 6: Final Integration Test

@@ -25,7 +25,7 @@ Phase 3 successfully implements a comprehensive admin management interface for t
 
 ### 3. Admin Dashboard Pages
 
-#### Analytics Dashboard (`/admin-analytics`)
+#### Analytics Dashboard (`/admin/analytics`)
 
 - **Overview Statistics**: Total destinations, published count, featured count, submission count
 - **Performance Metrics**: Average ratings, monthly costs, submissions per destination
@@ -34,7 +34,7 @@ Phase 3 successfully implements a comprehensive admin management interface for t
 - **Status Distribution**: Visual breakdown of draft/published/archived content
 - **Quick Actions**: Direct links to management pages and bulk operations
 
-#### Destinations Management (`/admin-generated-destinations`)
+#### Destinations Management (`/admin/destinations`)
 
 - **Destination Listing**: Card-based view with key metrics and status indicators
 - **Filtering**: Filter by status (Draft/Published/Archived)
@@ -107,8 +107,8 @@ Phase 3 successfully implements a comprehensive admin management interface for t
 
 ### Access Points
 
-- **Analytics Dashboard**: `http://localhost:3001/admin-analytics`
-- **Destinations Management**: `http://localhost:3001/admin-generated-destinations`
+- **Analytics Dashboard**: `http://localhost:3001/admin/analytics`
+- **Destinations Management**: `http://localhost:3001/admin/destinations`
 - **Individual Destination Editor**: `http://localhost:3001/admin/destinations/[id]`
 
 ### Next Steps (Optional Enhancements)

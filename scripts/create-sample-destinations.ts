@@ -175,7 +175,7 @@ async function createSampleDestinations() {
       "- Enhanced Destinations: http://localhost:3000/enhanced-destinations",
     );
     console.log(
-      "- Admin Management: http://localhost:3000/admin-destination-management",
+      "- Admin Management: http://localhost:3000/admin/destinations",
     );
   } catch (error) {
     console.error("Error creating sample destinations:", error);
