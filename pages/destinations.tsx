@@ -140,22 +140,27 @@ export default function Destinations() {
         // Ensure data is an array
         const destinationsArray = Array.isArray(data) ? data : [];
 
-        // Transform API data to match component expectations
-        const transformedDestinations = destinationsArray.map((dest: any) => ({
-          id: dest.id,
-          city: dest.city,
-          country: dest.country,
-          image: dest.imageUrl || `/images/destinations/${dest.city?.toLowerCase()}.svg`, // API returns imageUrl
-          description: dest.description,
-          costLevel: dest.costOfLiving || "medium", // API returns costOfLiving
-          rating: dest.averageRating || 4.0, // API returns averageRating
-          studentCount: dest.studentCount,
-          popularUniversities: dest.popularUniversities || [],
-          highlights: dest.highlights || [], // API returns highlights directly
-          avgCostPerMonth: dest.avgCostPerMonth || dest.averageRent,
-          region: getRegionFromCountry(dest.country),
-        }));
+        console.log(`Processing ${destinationsArray.length} destinations`);
 
+        // Transform API data to match component expectations
+        const transformedDestinations = destinationsArray
+          .filter((dest: any) => dest && dest.id && dest.city && dest.country) // Filter out invalid entries
+          .map((dest: any) => ({
+            id: dest.id,
+            city: dest.city,
+            country: dest.country,
+            image: dest.imageUrl || `/images/destinations/${dest.city?.toLowerCase()}.svg`, // API returns imageUrl
+            description: dest.description || `Explore ${dest.city}, ${dest.country}`,
+            costLevel: dest.costOfLiving || "medium", // API returns costOfLiving
+            rating: dest.averageRating || 4.0, // API returns averageRating
+            studentCount: dest.studentCount || 0,
+            popularUniversities: dest.popularUniversities || [],
+            highlights: dest.highlights || [], // API returns highlights directly
+            avgCostPerMonth: dest.avgCostPerMonth || dest.averageRent || 0,
+            region: getRegionFromCountry(dest.country),
+          }));
+
+        console.log(`Successfully transformed ${transformedDestinations.length} destinations`);
         setDestinations(transformedDestinations);
       } catch (error) {
         console.error("Error fetching destinations:", error);
