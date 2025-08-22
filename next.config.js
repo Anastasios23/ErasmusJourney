@@ -11,9 +11,9 @@ const nextConfig = {
     // Add fallback for @prisma/client
     config.resolve.fallback = {
       ...config.resolve.fallback,
-      '@prisma/client': false,
+      "@prisma/client": false,
     };
-    
+
     if (dev && !isServer) {
       // Improve file watching for cloud environments
       config.watchOptions = {
