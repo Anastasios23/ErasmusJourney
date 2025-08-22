@@ -105,7 +105,7 @@ GET /api/health
 1. **Admin Portal** (`/admin-portal`) - Main navigation hub
 2. **Partnership Analytics** (`/partnership-analytics`) - Comprehensive analytics dashboard
 3. **Partnership Management** (`/partnership-management`) - Partnership CRUD interface
-4. **Enhanced Admin Dashboard** (`/admin-dashboard`) - Updated with partnership links
+4. **Enhanced Admin Dashboard** (`/admin`) - Updated with partnership links
 5. **System Status** (`/system-status`) - Real-time system monitoring
 
 ### Key UI Features
@@ -270,7 +270,7 @@ const universityScore = weightedAverage([
 - `pages/partnership-management.tsx` - Management interface
 - `pages/admin-portal.tsx` - Navigation hub
 - `pages/system-status.tsx` - System monitoring
-- `pages/admin-dashboard.tsx` - Enhanced with partnership links
+- `pages/admin/index.tsx` - Enhanced with partnership links
 
 **Key Technologies**: Next.js, TypeScript, React Query, Tailwind CSS, Prisma, SQLite
 

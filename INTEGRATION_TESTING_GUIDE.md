@@ -14,7 +14,7 @@ The **useErasmusExperience** hook integration has been successfully completed! H
 ### Step 1: Access Your Application
 
 - **Frontend**: http://localhost:3000
-- **Admin Panel**: http://localhost:3000/admin-destinations
+- **Admin Panel**: http://localhost:3000/admin
 - **Database**: http://localhost:5556 (Prisma Studio)
 
 ### Step 2: Test Form Submission Flow
@@ -42,7 +42,7 @@ The **useErasmusExperience** hook integration has been successfully completed! H
 
 ### Step 5: Test Admin Interface
 
-1. **Go to Admin Panel**: http://localhost:3000/admin-destinations
+1. **Go to Admin Panel**: http://localhost:3000/admin
 2. **Verify submitted experiences appear**
 3. **Test admin approval workflow**
 
