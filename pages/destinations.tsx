@@ -132,19 +132,22 @@ export default function Destinations() {
           );
         }
 
+        // Ensure data is an array
+        const destinationsArray = Array.isArray(data) ? data : [];
+
         // Transform API data to match component expectations
-        const transformedDestinations = data.destinations.map((dest: any) => ({
+        const transformedDestinations = destinationsArray.map((dest: any) => ({
           id: dest.id,
           city: dest.city,
           country: dest.country,
-          image: dest.image,
+          image: dest.imageUrl || `/images/destinations/${dest.city?.toLowerCase()}.svg`, // API returns imageUrl
           description: dest.description,
-          costLevel: dest.costLevel,
-          rating: dest.rating,
+          costLevel: dest.costOfLiving || "medium", // API returns costOfLiving
+          rating: dest.averageRating || 4.0, // API returns averageRating
           studentCount: dest.studentCount,
-          popularUniversities: dest.popularUniversities,
-          highlights: dest.universities ? dest.universities.slice(0, 3) : [], // Use universities as highlights for now
-          avgCostPerMonth: dest.avgCostPerMonth,
+          popularUniversities: dest.popularUniversities || [],
+          highlights: dest.highlights || [], // API returns highlights directly
+          avgCostPerMonth: dest.avgCostPerMonth || dest.averageRent,
           region: getRegionFromCountry(dest.country),
         }));
 
