@@ -15,7 +15,7 @@ Property 'erasmusExperience' does not exist on type 'PrismaClient'
 
 ### **Solution Implemented**
 
-Instead of fighting the Prisma client generation issue, I implemented a **backward-compatible solution** using the existing `FormSubmission` model.
+Initial work used the existing `FormSubmission` model, but the application now saves drafts in a single `ErasmusExperience` record and only creates a consolidated `FormSubmission` on final submission.
 
 ## **🎯 Current Implementation**
 
@@ -27,18 +27,14 @@ Instead of fighting the Prisma client generation issue, I implemented a **backwa
    - Auto-save functionality
    - Form validation
 
-2. **API Endpoints** (Using existing FormSubmission model)
+2. **API Endpoints**
    - `GET /api/erasmus-experience/[userId]` - Load form data
    - `PUT /api/erasmus-experience/[userId]` - Save form data
    - `POST /api/erasmus-experience/submit` - Submit complete form
 
 3. **Data Storage Strategy**
-   - Uses existing `FormSubmission` model with type-based separation:
-     - `BASIC_INFO` → Step 1 data
-     - `COURSE_MATCHING` → Step 2 data
-     - `ACCOMMODATION` → Step 3 data
-     - `LIVING_EXPENSES` → Step 4 data
-     - `EXPERIENCE` → Step 5 data
+   - All step data stored in one `ErasmusExperience` row with JSON fields for each section
+   - Final submission creates a consolidated entry in `FormSubmission` for admin review
 
 4. **Progress Tracking**
    - Determines completed steps based on existing submissions
@@ -67,7 +63,7 @@ Instead of fighting the Prisma client generation issue, I implemented a **backwa
 ### **Progressive Form Completion**
 
 1. User visits `/erasmus-experience-form`
-2. System loads any existing progress from FormSubmissions
+2. System loads any existing progress from `ErasmusExperience`
 3. User fills Step 1 (Basic Information)
 4. Data auto-saves on every change
 5. User can navigate to next step or return later
@@ -93,7 +89,7 @@ Instead of fighting the Prisma client generation issue, I implemented a **backwa
 ### **For Admins**
 
 - ✅ All data appears in existing admin systems
-- ✅ Uses existing FormSubmission infrastructure
+- ✅ Final submissions mirrored to legacy `FormSubmission` infrastructure
 - ✅ Backward compatible with current workflows
 - ✅ No database migration required
 

@@ -47,6 +47,7 @@ import { useNotifications } from "../src/hooks/useNotifications";
 import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
 import { FormType } from "../src/types/forms";
 import { ValidationError } from "../src/utils/apiErrorHandler";
+import { useFormProgress } from "../src/context/FormProgressContext";
 
 interface ExpenseCategory {
   groceries: string;
@@ -61,6 +62,7 @@ export default function LivingExpenses() {
   const { data: session } = useSession();
   const router = useRouter();
   const { addNotification } = useNotifications();
+  const { setCurrentStep } = useFormProgress();
 
   // Experience hook for new single-submission system
   const {
@@ -125,6 +127,10 @@ export default function LivingExpenses() {
       }
     }
   }, [experienceLoading, experienceData]);
+
+  useEffect(() => {
+    setCurrentStep("living-expenses");
+  }, [setCurrentStep]);
 
   const saveFormData = useCallback(async () => {
     try {
