@@ -53,6 +53,8 @@ const nextConfig = {
   compress: false, // Disable compression in dev to reduce processing
   // Experimental features for better cloud support
   experimental: {
+    // Force SWC instead of Babel
+    forceSwcTransforms: true,
     // Reduce memory usage and improve stability
     workerThreads: false,
     cpus: 1,
