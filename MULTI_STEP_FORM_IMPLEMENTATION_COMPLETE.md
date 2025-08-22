@@ -8,7 +8,7 @@
 - One submission per user (unique constraint)
 - Progress tracking (currentStep, completedSteps)
 - Auto-save functionality with timestamps
-- Backward compatibility with existing `FormSubmission` model
+- Final submissions mirrored to legacy `FormSubmission` model for admin compatibility
 
 ### **2. Main Form System**
 
@@ -121,7 +121,7 @@
 The new system is designed to coexist with existing forms:
 
 - **New Users**: Use the unified form (`/erasmus-experience-form`)
-- **Existing Data**: Remains in `FormSubmission` table
+- **Final Submissions**: Also stored in `FormSubmission` table for admin tools
 - **API Compatibility**: New submissions create both formats
 - **Gradual Migration**: Slowly phase out individual form pages
 

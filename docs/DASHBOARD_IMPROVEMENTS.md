@@ -8,7 +8,7 @@ Enhanced the Erasmus Journey dashboard with dynamic progress tracking, improved 
 
 ### 1. **Dynamic Progress Tracking**
 
-- **Integration**: Connected with `useFormSubmissions` hook for real-time completion status
+- **Integration**: Connected with `useErasmusExperience` hook for real-time completion status
 - **Features**:
   - Automatic detection of completed application steps
   - Dynamic "Next Step" identification based on user progress
@@ -66,7 +66,7 @@ Enhanced the Erasmus Journey dashboard with dynamic progress tracking, improved 
 ### Key Files Modified:
 
 1. **`pages/dashboard.tsx`**
-   - Added `useFormSubmissions` integration
+   - Added `useErasmusExperience` integration
    - Implemented dynamic completion checking
    - Enhanced application progress section with visual indicators
    - Added next step detection logic
@@ -105,7 +105,7 @@ Enhanced the Erasmus Journey dashboard with dynamic progress tracking, improved 
 
 ## Performance Optimizations
 
-- **Efficient Hooks**: Using `useFormSubmissions` for centralized form state
+- **Efficient Hooks**: Using `useErasmusExperience` for centralized experience state
 - **Conditional Rendering**: Only showing relevant UI elements
 - **Smart Caching**: Leveraging existing form data without additional API calls
 

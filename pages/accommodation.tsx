@@ -54,10 +54,12 @@ import {
 } from "lucide-react";
 import { Toaster } from "../src/components/ui/toaster";
 import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
+import { useFormProgress } from "../src/context/FormProgressContext";
 
 export default function Accommodation() {
   const { data: session } = useSession();
   const router = useRouter();
+  const { setCurrentStep } = useFormProgress();
 
   // Experience hook for new single-submission system
   const {
@@ -137,6 +139,10 @@ export default function Accommodation() {
       }
     }
   }, [experienceLoading, experienceData]); // Remove dependencies to prevent re-runs
+
+  useEffect(() => {
+    setCurrentStep("accommodation");
+  }, [setCurrentStep]);
 
   // Load draft data when component mounts
   useEffect(() => {

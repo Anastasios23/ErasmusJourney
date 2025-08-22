@@ -21,40 +21,23 @@ export default async function handler(
 
   switch (req.method) {
     case "GET":
-      return handleGet(req, res, userId as string);
+      return handleGet(res, userId as string);
     case "PUT":
       return handlePut(req, res, userId as string);
     case "DELETE":
-      return handleDelete(req, res, userId as string);
+      return handleDelete(res, userId as string);
     default:
       return res.status(405).json({ error: "Method not allowed" });
   }
 }
 
-async function handleGet(
-  req: NextApiRequest,
-  res: NextApiResponse,
-  userId: string,
-) {
+async function handleGet(res: NextApiResponse, userId: string) {
   try {
-    // Use existing FormSubmission model to get user's form data
-    const submissions = await prisma.formSubmission.findMany({
-      where: {
-        userId,
-        type: {
-          in: [
-            "BASIC_INFO",
-            "COURSE_MATCHING",
-            "ACCOMMODATION",
-            "LIVING_EXPENSES",
-            "EXPERIENCE",
-          ],
-        },
-      },
+    const experience = await prisma.erasmusExperience.findUnique({
+      where: { userId },
     });
 
-    if (submissions.length === 0) {
-      // Return default structure for new users
+    if (!experience) {
       return res.json({
         currentStep: 1,
         completedSteps: [],
@@ -64,51 +47,19 @@ async function handleGet(
       });
     }
 
-    // Combine submissions into formData
-    const formData: any = {};
-    const completedSteps: number[] = [];
-
-    submissions.forEach((submission) => {
-      switch (submission.type) {
-        case "BASIC_INFO":
-          formData.basicInfo = submission.data;
-          completedSteps.push(1);
-          break;
-        case "COURSE_MATCHING":
-          formData.courses = submission.data;
-          completedSteps.push(2);
-          break;
-        case "ACCOMMODATION":
-          formData.accommodation = submission.data;
-          completedSteps.push(3);
-          break;
-        case "LIVING_EXPENSES":
-          formData.livingExpenses = submission.data;
-          completedSteps.push(4);
-          break;
-        case "EXPERIENCE":
-          formData.experience = submission.data;
-          completedSteps.push(5);
-          break;
-      }
-    });
-
-    const currentStep = Math.max(...completedSteps, 1);
-    const isComplete = completedSteps.length >= 5;
-
     return res.json({
-      currentStep,
-      completedSteps: completedSteps.sort(),
-      formData,
-      status: isComplete
-        ? "COMPLETED"
-        : currentStep > 1
-          ? "IN_PROGRESS"
-          : "DRAFT",
-      isComplete,
-      lastSavedAt: Math.max(
-        ...submissions.map((s) => new Date(s.updatedAt).getTime()),
-      ),
+      currentStep: experience.currentStep,
+      completedSteps: JSON.parse(experience.completedSteps || "[]"),
+      formData: {
+        basicInfo: experience.basicInfo,
+        courses: experience.courses,
+        accommodation: experience.accommodation,
+        livingExpenses: experience.livingExpenses,
+        experience: experience.experience,
+      },
+      status: experience.status,
+      isComplete: experience.isComplete,
+      lastSavedAt: experience.lastSavedAt,
     });
   } catch (error) {
     console.error("Error fetching Erasmus experience:", error);
@@ -123,181 +74,45 @@ async function handlePut(
 ) {
   try {
     const { formData, currentStep, completedSteps } = req.body;
-
-    // Create or update individual form submissions
-    const promises = [];
-
-    if (formData?.basicInfo) {
-      promises.push(
-        prisma.formSubmission
-          .upsert({
-            where: {
-              id: await getSubmissionId(userId, "BASIC_INFO"),
-            },
-            update: {
-              data: formData.basicInfo,
-              updatedAt: new Date(),
-            },
-            create: {
-              userId,
-              type: "BASIC_INFO",
-              title: "Basic Information",
-              data: formData.basicInfo,
-            },
-          })
-          .catch(() =>
-            prisma.formSubmission.create({
-              data: {
-                userId,
-                type: "BASIC_INFO",
-                title: "Basic Information",
-                data: formData.basicInfo,
-              },
-            }),
-          ),
-      );
-    }
-
-    if (formData?.courses) {
-      promises.push(
-        prisma.formSubmission
-          .upsert({
-            where: {
-              id: await getSubmissionId(userId, "COURSE_MATCHING"),
-            },
-            update: {
-              data: formData.courses,
-              updatedAt: new Date(),
-            },
-            create: {
-              userId,
-              type: "COURSE_MATCHING",
-              title: "Course Matching",
-              data: formData.courses,
-            },
-          })
-          .catch(() =>
-            prisma.formSubmission.create({
-              data: {
-                userId,
-                type: "COURSE_MATCHING",
-                title: "Course Matching",
-                data: formData.courses,
-              },
-            }),
-          ),
-      );
-    }
-
-    if (formData?.accommodation) {
-      promises.push(
-        prisma.formSubmission
-          .upsert({
-            where: {
-              id: await getSubmissionId(userId, "ACCOMMODATION"),
-            },
-            update: {
-              data: formData.accommodation,
-              updatedAt: new Date(),
-            },
-            create: {
-              userId,
-              type: "ACCOMMODATION",
-              title: "Accommodation",
-              data: formData.accommodation,
-            },
-          })
-          .catch(() =>
-            prisma.formSubmission.create({
-              data: {
-                userId,
-                type: "ACCOMMODATION",
-                title: "Accommodation",
-                data: formData.accommodation,
-              },
-            }),
-          ),
-      );
-    }
-
-    if (formData?.livingExpenses) {
-      promises.push(
-        prisma.formSubmission
-          .upsert({
-            where: {
-              id: await getSubmissionId(userId, "LIVING_EXPENSES"),
-            },
-            update: {
-              data: formData.livingExpenses,
-              updatedAt: new Date(),
-            },
-            create: {
-              userId,
-              type: "LIVING_EXPENSES",
-              title: "Living Expenses",
-              data: formData.livingExpenses,
-            },
-          })
-          .catch(() =>
-            prisma.formSubmission.create({
-              data: {
-                userId,
-                type: "LIVING_EXPENSES",
-                title: "Living Expenses",
-                data: formData.livingExpenses,
-              },
-            }),
-          ),
-      );
-    }
-
-    if (formData?.experience) {
-      promises.push(
-        prisma.formSubmission
-          .upsert({
-            where: {
-              id: await getSubmissionId(userId, "EXPERIENCE"),
-            },
-            update: {
-              data: formData.experience,
-              updatedAt: new Date(),
-            },
-            create: {
-              userId,
-              type: "EXPERIENCE",
-              title: "Experience Story",
-              data: formData.experience,
-            },
-          })
-          .catch(() =>
-            prisma.formSubmission.create({
-              data: {
-                userId,
-                type: "EXPERIENCE",
-                title: "Experience Story",
-                data: formData.experience,
-              },
-            }),
-          ),
-      );
-    }
-
-    await Promise.all(promises);
-
-    // Determine completion status
-    const isComplete = completedSteps?.length >= 5;
+    const completed: number[] = completedSteps || [];
+    const step = currentStep || 1;
+    const isComplete = completed.length >= 5;
     const status = isComplete
       ? "COMPLETED"
-      : currentStep > 1
+      : step > 1
         ? "IN_PROGRESS"
         : "DRAFT";
 
-    return res.json({
-      currentStep: currentStep || 1,
-      completedSteps: completedSteps || [],
-      status,
+    const data: any = {
+      currentStep: step,
+      completedSteps: JSON.stringify(completed),
       isComplete,
+      status,
       lastSavedAt: new Date(),
+    };
+
+    if (formData) {
+      if (formData.basicInfo !== undefined) data.basicInfo = formData.basicInfo;
+      if (formData.courses !== undefined) data.courses = formData.courses;
+      if (formData.accommodation !== undefined)
+        data.accommodation = formData.accommodation;
+      if (formData.livingExpenses !== undefined)
+        data.livingExpenses = formData.livingExpenses;
+      if (formData.experience !== undefined) data.experience = formData.experience;
+    }
+
+    const experience = await prisma.erasmusExperience.upsert({
+      where: { userId },
+      create: { userId, ...data },
+      update: data,
+    });
+
+    return res.json({
+      currentStep: experience.currentStep,
+      completedSteps: JSON.parse(experience.completedSteps),
+      status: experience.status,
+      isComplete: experience.isComplete,
+      lastSavedAt: experience.lastSavedAt,
     });
   } catch (error) {
     console.error("Error saving Erasmus experience:", error);
@@ -305,35 +120,10 @@ async function handlePut(
   }
 }
 
-// Helper function to get submission ID
-async function getSubmissionId(userId: string, type: string): Promise<string> {
-  const submission = await prisma.formSubmission.findFirst({
-    where: { userId, type },
-    select: { id: true },
-  });
-  return submission?.id || "non-existent-id";
-}
-
-async function handleDelete(
-  req: NextApiRequest,
-  res: NextApiResponse,
-  userId: string,
-) {
+async function handleDelete(res: NextApiResponse, userId: string) {
   try {
-    // Delete all form submissions for this user
-    await prisma.formSubmission.deleteMany({
-      where: {
-        userId,
-        type: {
-          in: [
-            "BASIC_INFO",
-            "COURSE_MATCHING",
-            "ACCOMMODATION",
-            "LIVING_EXPENSES",
-            "EXPERIENCE",
-          ],
-        },
-      },
+    await prisma.erasmusExperience.deleteMany({
+      where: { userId },
     });
 
     return res.json({ success: true });

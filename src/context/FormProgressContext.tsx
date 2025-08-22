@@ -23,6 +23,7 @@ interface FormProgressContextType {
   isStepCompleted: (step: FormStep) => boolean;
   canAccessStep: (step: FormStep) => boolean;
   markStepCompleted: (step: FormStep) => void;
+  setCurrentStep: (step: FormStep) => void;
   cacheFormData: (type: string, data: any) => void;
   getCachedFormData: (type: string) => any;
 }
@@ -142,6 +143,7 @@ export function FormProgressProvider({
       isStepCompleted,
       canAccessStep,
       markStepCompleted,
+      setCurrentStep,
       cacheFormData,
       getCachedFormData,
     }),
@@ -151,6 +153,7 @@ export function FormProgressProvider({
       isStepCompleted,
       canAccessStep,
       markStepCompleted,
+      setCurrentStep,
       cacheFormData,
       getCachedFormData,
     ],

@@ -45,6 +45,7 @@ import { Skeleton } from "../src/components/ui/skeleton";
 import { useFormValidation } from "../src/hooks/useFormValidation";
 import { FormErrorSummary } from "../src/components/FormErrorSummary";
 import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
+import { useFormProgress } from "../src/context/FormProgressContext";
 
 export default function HelpFutureStudents() {
   const router = useRouter();
@@ -55,6 +56,7 @@ export default function HelpFutureStudents() {
     submitExperience,
     error: experienceError,
   } = useErasmusExperience();
+  const { setCurrentStep } = useFormProgress();
 
   // Keep the local isSubmitting state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -128,6 +130,10 @@ export default function HelpFutureStudents() {
       }
     }
   }, [experienceData]);
+
+  useEffect(() => {
+    setCurrentStep("help-future-students");
+  }, [setCurrentStep]);
 
   // Save-as-draft using unified API (nested experience.helpForStudents)
   const saveUnifiedDraft = useCallback(async () => {
@@ -257,33 +263,42 @@ export default function HelpFutureStudents() {
       await saveUnifiedDraft();
 
       // Pass the help data to submit to ensure validation passes
-      const helpData = {
-        helpForStudents: {
-          ...formData,
-          wantToHelp:
-            formData.wantToHelp === "yes"
-              ? true
-              : formData.wantToHelp === "no"
-                ? false
-                : undefined,
+      const submissionData: any = {
+        basicInfo: experienceData?.basicInfo || {},
+        courses: experienceData?.courses || [],
+        accommodation: experienceData?.accommodation || {},
+        livingExpenses: experienceData?.livingExpenses || {},
+        experience: {
+          ...(experienceData?.experience || {}),
+          helpForStudents: {
+            ...formData,
+            wantToHelp:
+              formData.wantToHelp === "yes"
+                ? true
+                : formData.wantToHelp === "no"
+                  ? false
+                  : undefined,
+          },
         },
       };
 
-      console.log("Attempting to submit with helpData:", helpData);
-      console.log("Current formData:", formData);
-
-      // Final submit of entire experience
-      const ok = await submitExperience(helpData);
-      console.log("submitExperience returned:", ok);
+      const ok = await submitExperience(submissionData);
 
       if (!ok) {
-        // Get the specific error from the hook
-        console.log("Submission failed, checking hook error state");
         throw new Error(experienceError || "Failed to submit experience");
       }
 
-      // Clean up local cache and navigate
-      localStorage.removeItem("erasmus_form_help-future-students");
+      [
+        "basic-info",
+        "course-matching",
+        "accommodation",
+        "living-expenses",
+        "help-future-students",
+      ].forEach((step) => {
+        localStorage.removeItem(`erasmus_form_${step}`);
+        localStorage.removeItem(`erasmus_draft_${step}`);
+      });
+
       router.push("/submission-confirmation");
     } catch (err) {
       console.error("Final submission failed:", err);
