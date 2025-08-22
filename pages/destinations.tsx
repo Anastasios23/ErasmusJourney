@@ -339,10 +339,6 @@ export default function Destinations() {
     }
   };
 
-  const handleDestinationClick = (destinationId: string) => {
-    router.push(`/destinations/${destinationId}`);
-  };
-
   const clearFilters = () => {
     setSearchTerm("");
     setSelectedCostLevel("");
@@ -572,11 +568,10 @@ export default function Destinations() {
                 {filteredDestinations.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredDestinations.map((destination, index) => (
-                      <Card
-                        key={destination.id}
-                        className="overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer border-0 shadow-md hover:shadow-2xl hover:-translate-y-1"
-                        onClick={() => handleDestinationClick(destination.id)}
-                      >
+                        <Card
+                          key={destination.id}
+                          className="overflow-hidden hover:shadow-xl transition-all duration-300 group border-0 shadow-md hover:shadow-2xl hover:-translate-y-1"
+                        >
                         <div className="relative h-48 overflow-hidden">
                           <OptimizedImage
                             src={destination.image}
@@ -893,10 +888,12 @@ export default function Destinations() {
                             </div>
                           )}
 
-                          <Button className="w-full" variant="outline">
-                            Learn More
-                            <ArrowRight className="h-4 w-4 ml-2" />
-                          </Button>
+                          <Link href={`/destinations/${destination.id}`} className="block">
+                            <Button className="w-full" variant="outline">
+                              See More
+                              <ArrowRight className="h-4 w-4 ml-2" />
+                            </Button>
+                          </Link>
                         </CardContent>
                       </Card>
                     ))}
