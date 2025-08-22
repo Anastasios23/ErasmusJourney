@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import Header from "../../components/Header";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "../../src/components/ui/card";
@@ -44,6 +46,8 @@ import {
   X,
   Clock,
   TrendingUp,
+  BarChart3,
+  ExternalLink,
 } from "lucide-react";
 
 interface FormSubmission {
@@ -293,6 +297,29 @@ export default function UnifiedAdminDashboard() {
                 </div>
                 <Users className="h-8 w-8 text-blue-600" />
               </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Quick Links */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <Card className="border-blue-200 bg-blue-50">
+            <CardHeader>
+              <CardTitle className="flex items-center text-blue-800">
+                <BarChart3 className="h-5 w-5 mr-2" />
+                Analytics Dashboard
+              </CardTitle>
+              <CardDescription>
+                View analytics for destinations and submissions
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/admin/analytics">
+                <Button className="w-full">
+                  View Analytics
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </div>
