@@ -30,7 +30,9 @@ interface BrowseEntry {
 }
 
 const LocationBrowser = () => {
-  const { data: session } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session } = useSession();
+  const session = { user: { id: 'anonymous', email: 'anonymous@example.com' } };
   const [selectedCity, setSelectedCity] = useState("");
   const [results, setResults] = useState<BrowseEntry[]>([]);
   const [showEmailCapture, setShowEmailCapture] = useState(false);
