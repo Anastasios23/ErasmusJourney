@@ -150,8 +150,8 @@ const tipCategories = [
 export default function ExperienceStory() {
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const { data: session, status } = useSession();
-  const session = { user: { id: 'anonymous', email: 'anonymous@example.com' } };
-  const status = 'authenticated';
+  const session = { user: { id: "anonymous", email: "anonymous@example.com" } };
+  const status = "authenticated";
   const router = useRouter();
   const {
     submitForm,

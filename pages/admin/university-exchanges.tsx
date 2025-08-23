@@ -150,13 +150,27 @@ export default function AdminUniversityExchanges() {
   });
 
   // safeFetch function to bypass FullStory interference using XMLHttpRequest
-  const safeFetch = async (url: string, options: { method?: string; body?: string; headers?: Record<string, string> } = {}, retries = 3) => {
-    const method = options.method || 'GET';
-    console.log(`${method} ${url} using XMLHttpRequest to bypass FullStory interference...`);
+  const safeFetch = async (
+    url: string,
+    options: {
+      method?: string;
+      body?: string;
+      headers?: Record<string, string>;
+    } = {},
+    retries = 3,
+  ) => {
+    const method = options.method || "GET";
+    console.log(
+      `${method} ${url} using XMLHttpRequest to bypass FullStory interference...`,
+    );
 
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
-        const response = await new Promise<{ok: boolean; status: number; json: () => Promise<any>}>((resolve, reject) => {
+        const response = await new Promise<{
+          ok: boolean;
+          status: number;
+          json: () => Promise<any>;
+        }>((resolve, reject) => {
           const xhr = new XMLHttpRequest();
           xhr.open(method, url, true);
 
@@ -169,28 +183,37 @@ export default function AdminUniversityExchanges() {
 
           xhr.onload = () => {
             try {
-              const responseData = xhr.responseText ? JSON.parse(xhr.responseText) : {};
+              const responseData = xhr.responseText
+                ? JSON.parse(xhr.responseText)
+                : {};
               resolve({
                 ok: xhr.status >= 200 && xhr.status < 300,
                 status: xhr.status,
-                json: async () => responseData
+                json: async () => responseData,
               });
             } catch (parseError) {
-              console.warn(`JSON parse error on attempt ${attempt}:`, parseError);
+              console.warn(
+                `JSON parse error on attempt ${attempt}:`,
+                parseError,
+              );
               resolve({
                 ok: false,
                 status: xhr.status,
-                json: async () => ({})
+                json: async () => ({}),
               });
             }
           };
 
           xhr.onerror = () => {
-            reject(new Error(`XMLHttpRequest failed: ${xhr.status} ${xhr.statusText}`));
+            reject(
+              new Error(
+                `XMLHttpRequest failed: ${xhr.status} ${xhr.statusText}`,
+              ),
+            );
           };
 
           xhr.ontimeout = () => {
-            reject(new Error('XMLHttpRequest timeout'));
+            reject(new Error("XMLHttpRequest timeout"));
           };
 
           xhr.timeout = 30000; // 30 second timeout
@@ -205,7 +228,10 @@ export default function AdminUniversityExchanges() {
         console.log(`${method} ${url} completed with status:`, response.status);
         return response;
       } catch (error) {
-        console.warn(`Attempt ${attempt}/${retries} failed for ${method} ${url}:`, error);
+        console.warn(
+          `Attempt ${attempt}/${retries} failed for ${method} ${url}:`,
+          error,
+        );
 
         if (attempt === retries) {
           throw error;
@@ -213,7 +239,7 @@ export default function AdminUniversityExchanges() {
 
         // Exponential backoff
         const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
 
@@ -227,12 +253,15 @@ export default function AdminUniversityExchanges() {
 
   const fetchPendingSubmissions = async () => {
     try {
-      console.log('Fetching pending university submissions...');
+      console.log("Fetching pending university submissions...");
       const response = await safeFetch(
         "/api/admin/university-submissions?status=SUBMITTED",
       );
       const data = await response.json();
-      console.log('Pending submissions fetched successfully:', data?.length || 0);
+      console.log(
+        "Pending submissions fetched successfully:",
+        data?.length || 0,
+      );
       setPendingSubmissions(data || []);
     } catch (error) {
       console.error("Error fetching submissions:", error);
@@ -244,10 +273,10 @@ export default function AdminUniversityExchanges() {
 
   const fetchLiveExchanges = async () => {
     try {
-      console.log('Fetching live university exchanges...');
+      console.log("Fetching live university exchanges...");
       const response = await safeFetch("/api/admin/university-exchanges");
       const data = await response.json();
-      console.log('Live exchanges fetched successfully:', data?.length || 0);
+      console.log("Live exchanges fetched successfully:", data?.length || 0);
       setLiveExchanges(data || []);
     } catch (error) {
       console.error("Error fetching exchanges:", error);
@@ -274,7 +303,7 @@ export default function AdminUniversityExchanges() {
     if (!selectedSubmission) return;
 
     try {
-      console.log('Approving university submission:', selectedSubmission.id);
+      console.log("Approving university submission:", selectedSubmission.id);
       // Approve the submission and create university exchange
       const response = await safeFetch(
         `/api/admin/university-submissions/${selectedSubmission.id}`,
@@ -291,7 +320,8 @@ export default function AdminUniversityExchanges() {
               country: selectedSubmission.basicInfo.hostCountry,
               studyLevel: selectedSubmission.basicInfo.studyLevel,
               fieldOfStudy: selectedSubmission.basicInfo.fieldOfStudy,
-              availableCourses: selectedSubmission.courseMatching.availableCourses,
+              availableCourses:
+                selectedSubmission.courseMatching.availableCourses,
               totalEcts: selectedSubmission.courseMatching.totalEcts,
             },
           }),
@@ -299,7 +329,7 @@ export default function AdminUniversityExchanges() {
       );
 
       if (response.ok) {
-        console.log('Successfully approved university submission');
+        console.log("Successfully approved university submission");
         // Refresh data
         fetchPendingSubmissions();
         fetchLiveExchanges();
@@ -317,7 +347,7 @@ export default function AdminUniversityExchanges() {
           additionalNotes: "",
         });
       } else {
-        console.error('Failed to approve submission, status:', response.status);
+        console.error("Failed to approve submission, status:", response.status);
       }
     } catch (error) {
       console.error("Error approving submission:", error);
@@ -326,20 +356,28 @@ export default function AdminUniversityExchanges() {
 
   const rejectSubmission = async (submissionId: string, reason: string) => {
     try {
-      console.log('Rejecting university submission:', submissionId, 'with reason:', reason);
-      const response = await safeFetch(`/api/admin/university-submissions/${submissionId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          status: "REJECTED",
-          adminNotes: reason
-        }),
-      });
+      console.log(
+        "Rejecting university submission:",
+        submissionId,
+        "with reason:",
+        reason,
+      );
+      const response = await safeFetch(
+        `/api/admin/university-submissions/${submissionId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            status: "REJECTED",
+            adminNotes: reason,
+          }),
+        },
+      );
 
       if (response.ok) {
-        console.log('Successfully rejected university submission');
+        console.log("Successfully rejected university submission");
       } else {
-        console.error('Failed to reject submission, status:', response.status);
+        console.error("Failed to reject submission, status:", response.status);
       }
 
       fetchPendingSubmissions();

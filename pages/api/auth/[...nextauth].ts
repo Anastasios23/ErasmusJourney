@@ -24,12 +24,14 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     // Only include Google provider if credentials are available
-    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [
-      GoogleProvider({
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      })
-    ] : []),
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? [
+          GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          }),
+        ]
+      : []),
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -123,7 +125,10 @@ export const authOptions: NextAuthOptions = {
         sameSite: "lax",
         path: "/",
         secure: process.env.NODE_ENV === "production",
-        domain: process.env.NODE_ENV === "production" ? process.env.NEXTAUTH_URL?.replace(/https?:\/\//, "") : undefined,
+        domain:
+          process.env.NODE_ENV === "production"
+            ? process.env.NEXTAUTH_URL?.replace(/https?:\/\//, "")
+            : undefined,
       },
     },
     callbackUrl: {
@@ -151,7 +156,10 @@ export const authOptions: NextAuthOptions = {
     error(code, metadata) {
       // Filter out client-side fetch errors to reduce noise
       if (code === "CLIENT_FETCH_ERROR") {
-        console.warn("NextAuth Client Fetch Error (this is usually harmless):", metadata?.message);
+        console.warn(
+          "NextAuth Client Fetch Error (this is usually harmless):",
+          metadata?.message,
+        );
         return;
       }
       console.error("NextAuth Error:", code, metadata);

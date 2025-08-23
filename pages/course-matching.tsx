@@ -75,7 +75,7 @@ interface EquivalentCourse {
 export default function CourseMatching() {
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const { data: session } = useSession();
-  const session = { user: { id: 'anonymous', email: 'anonymous@example.com' } };
+  const session = { user: { id: "anonymous", email: "anonymous@example.com" } };
   const router = useRouter();
   const { setCurrentStep } = useFormProgress();
 
@@ -178,14 +178,14 @@ export default function CourseMatching() {
         // Ensure all form data values are strings, not undefined
         const safeCourseData = Object.entries(courseData).reduce(
           (acc, [key, value]) => {
-            if (key === 'hostCourses' || key === 'equivalentCourses') {
+            if (key === "hostCourses" || key === "equivalentCourses") {
               acc[key] = value; // Keep arrays as is
             } else {
               acc[key] = value ?? ""; // Convert undefined to empty string
             }
             return acc;
           },
-          {} as Record<string, any>
+          {} as Record<string, any>,
         );
 
         setFormData((prev) => ({ ...prev, ...safeCourseData }));

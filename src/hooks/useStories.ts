@@ -98,20 +98,18 @@ export function useStories() {
           errorMessage = `Failed to fetch stories: ${response.statusText}`;
         }
 
-        throw new StudentStoryError(
-          errorMessage,
-          "API_ERROR",
-          { status: response.status },
-        );
+        throw new StudentStoryError(errorMessage, "API_ERROR", {
+          status: response.status,
+        });
       }
 
       const rawData = await response.json();
 
       // Basic validation - check if response has expected structure
-      if (!rawData || typeof rawData !== 'object') {
+      if (!rawData || typeof rawData !== "object") {
         throw new StudentStoryError(
           "Invalid response format received",
-          "VALIDATION_ERROR"
+          "VALIDATION_ERROR",
         );
       }
 
@@ -121,7 +119,10 @@ export function useStories() {
         const validatedData = validateStudentStoriesResponse(rawData);
         stories = validatedData.stories;
       } catch (validationError) {
-        console.warn("Story validation failed, using raw data:", validationError);
+        console.warn(
+          "Story validation failed, using raw data:",
+          validationError,
+        );
         // Fallback to using raw data if validation fails
         stories = Array.isArray(rawData.stories) ? rawData.stories : [];
       }
@@ -142,12 +143,14 @@ export function useStories() {
       } else if (err instanceof TypeError && err.message.includes("fetch")) {
         error = new StudentStoryError(
           "Network connection failed. Please check your internet connection.",
-          "NETWORK_ERROR"
+          "NETWORK_ERROR",
         );
       } else {
         error = new StudentStoryError(
-          err instanceof Error ? err.message : "An unexpected error occurred while loading stories",
-          "UNKNOWN_ERROR"
+          err instanceof Error
+            ? err.message
+            : "An unexpected error occurred while loading stories",
+          "UNKNOWN_ERROR",
         );
       }
 

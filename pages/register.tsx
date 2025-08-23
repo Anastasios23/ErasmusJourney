@@ -68,7 +68,7 @@ export default function Register() {
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const { data: session, status } = useSession();
   const session = null;
-  const status = 'unauthenticated';
+  const status = "unauthenticated";
   const router = useRouter();
 
   const [formData, setFormData] = useState({

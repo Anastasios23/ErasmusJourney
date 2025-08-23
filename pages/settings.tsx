@@ -37,8 +37,14 @@ import { toast } from "sonner";
 export default function SettingsPage() {
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const { data: session, status } = useSession();
-  const session = { user: { id: 'anonymous', name: 'Anonymous User', email: 'anonymous@example.com' } };
-  const status = 'authenticated';
+  const session = {
+    user: {
+      id: "anonymous",
+      name: "Anonymous User",
+      email: "anonymous@example.com",
+    },
+  };
+  const status = "authenticated";
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 

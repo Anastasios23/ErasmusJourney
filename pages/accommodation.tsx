@@ -59,7 +59,7 @@ import { useFormProgress } from "../src/context/FormProgressContext";
 export default function Accommodation() {
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const { data: session } = useSession();
-  const session = { user: { id: 'anonymous', email: 'anonymous@example.com' } };
+  const session = { user: { id: "anonymous", email: "anonymous@example.com" } };
   const router = useRouter();
   const { setCurrentStep } = useFormProgress();
 
@@ -134,7 +134,7 @@ export default function Accommodation() {
             acc[key] = value ?? "";
             return acc;
           },
-          {} as Record<string, any>
+          {} as Record<string, any>,
         );
         setBasicInfoData(safeBasicInfo);
       }
@@ -147,7 +147,9 @@ export default function Accommodation() {
         );
 
         // Ensure all form data values are strings, not undefined
-        const safeAccommodationData = Object.entries(experienceData.accommodation).reduce(
+        const safeAccommodationData = Object.entries(
+          experienceData.accommodation,
+        ).reduce(
           (acc, [key, value]) => {
             if (Array.isArray(value)) {
               acc[key] = value; // Keep arrays as is
@@ -156,7 +158,7 @@ export default function Accommodation() {
             }
             return acc;
           },
-          {} as Record<string, any>
+          {} as Record<string, any>,
         );
 
         setFormData(safeAccommodationData);

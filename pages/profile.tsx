@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { MOCK_SESSION_USER, MOCK_SESSION_UPDATE, MOCK_STATUS_AUTHENTICATED } from "@/utils/mockSession";
+import {
+  MOCK_SESSION_USER,
+  MOCK_SESSION_UPDATE,
+  MOCK_STATUS_AUTHENTICATED,
+} from "@/utils/mockSession";
 
 import Head from "next/head";
 import { useRouter } from "next/router";

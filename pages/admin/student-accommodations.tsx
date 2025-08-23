@@ -113,13 +113,27 @@ export default function AdminStudentAccommodations() {
   });
 
   // safeFetch function to bypass FullStory interference using XMLHttpRequest
-  const safeFetch = async (url: string, options: { method?: string; body?: string; headers?: Record<string, string> } = {}, retries = 3) => {
-    const method = options.method || 'GET';
-    console.log(`${method} ${url} using XMLHttpRequest to bypass FullStory interference...`);
+  const safeFetch = async (
+    url: string,
+    options: {
+      method?: string;
+      body?: string;
+      headers?: Record<string, string>;
+    } = {},
+    retries = 3,
+  ) => {
+    const method = options.method || "GET";
+    console.log(
+      `${method} ${url} using XMLHttpRequest to bypass FullStory interference...`,
+    );
 
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
-        const response = await new Promise<{ok: boolean; status: number; json: () => Promise<any>}>((resolve, reject) => {
+        const response = await new Promise<{
+          ok: boolean;
+          status: number;
+          json: () => Promise<any>;
+        }>((resolve, reject) => {
           const xhr = new XMLHttpRequest();
           xhr.open(method, url, true);
 
@@ -132,28 +146,37 @@ export default function AdminStudentAccommodations() {
 
           xhr.onload = () => {
             try {
-              const responseData = xhr.responseText ? JSON.parse(xhr.responseText) : {};
+              const responseData = xhr.responseText
+                ? JSON.parse(xhr.responseText)
+                : {};
               resolve({
                 ok: xhr.status >= 200 && xhr.status < 300,
                 status: xhr.status,
-                json: async () => responseData
+                json: async () => responseData,
               });
             } catch (parseError) {
-              console.warn(`JSON parse error on attempt ${attempt}:`, parseError);
+              console.warn(
+                `JSON parse error on attempt ${attempt}:`,
+                parseError,
+              );
               resolve({
                 ok: false,
                 status: xhr.status,
-                json: async () => ({})
+                json: async () => ({}),
               });
             }
           };
 
           xhr.onerror = () => {
-            reject(new Error(`XMLHttpRequest failed: ${xhr.status} ${xhr.statusText}`));
+            reject(
+              new Error(
+                `XMLHttpRequest failed: ${xhr.status} ${xhr.statusText}`,
+              ),
+            );
           };
 
           xhr.ontimeout = () => {
-            reject(new Error('XMLHttpRequest timeout'));
+            reject(new Error("XMLHttpRequest timeout"));
           };
 
           xhr.timeout = 30000; // 30 second timeout
@@ -168,7 +191,10 @@ export default function AdminStudentAccommodations() {
         console.log(`${method} ${url} completed with status:`, response.status);
         return response;
       } catch (error) {
-        console.warn(`Attempt ${attempt}/${retries} failed for ${method} ${url}:`, error);
+        console.warn(
+          `Attempt ${attempt}/${retries} failed for ${method} ${url}:`,
+          error,
+        );
 
         if (attempt === retries) {
           throw error;
@@ -176,7 +202,7 @@ export default function AdminStudentAccommodations() {
 
         // Exponential backoff
         const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
 
@@ -190,13 +216,16 @@ export default function AdminStudentAccommodations() {
 
   const fetchPendingSubmissions = async () => {
     try {
-      console.log('Fetching pending accommodation submissions...');
+      console.log("Fetching pending accommodation submissions...");
       const response = await safeFetch(
         "/api/admin/accommodation-submissions?status=SUBMITTED",
       );
       if (!response.ok) throw new Error("Failed to fetch submissions");
       const data = await response.json();
-      console.log('Pending submissions fetched successfully:', data?.length || 0);
+      console.log(
+        "Pending submissions fetched successfully:",
+        data?.length || 0,
+      );
       setPendingSubmissions(data || []);
     } catch (error) {
       console.error("Error fetching submissions:", error);
@@ -208,11 +237,14 @@ export default function AdminStudentAccommodations() {
 
   const fetchLiveAccommodations = async () => {
     try {
-      console.log('Fetching live accommodations...');
+      console.log("Fetching live accommodations...");
       const response = await safeFetch("/api/admin/student-accommodations");
       if (!response.ok) throw new Error("Failed to fetch accommodations");
       const data = await response.json();
-      console.log('Live accommodations fetched successfully:', data?.length || 0);
+      console.log(
+        "Live accommodations fetched successfully:",
+        data?.length || 0,
+      );
       setLiveAccommodations(data || []);
     } catch (error) {
       console.error("Error fetching accommodations:", error);
@@ -238,7 +270,7 @@ export default function AdminStudentAccommodations() {
     if (!selectedSubmission) return;
 
     try {
-      console.log('Approving accommodation submission:', selectedSubmission.id);
+      console.log("Approving accommodation submission:", selectedSubmission.id);
       const response = await safeFetch(
         `/api/admin/accommodation-submissions/${selectedSubmission.id}`,
         {
@@ -253,13 +285,13 @@ export default function AdminStudentAccommodations() {
       );
 
       if (response.ok) {
-        console.log('Successfully approved accommodation submission');
+        console.log("Successfully approved accommodation submission");
         fetchPendingSubmissions();
         fetchLiveAccommodations();
         setReviewDialogOpen(false);
         alert("Accommodation approved and published!");
       } else {
-        console.error('Failed to approve submission, status:', response.status);
+        console.error("Failed to approve submission, status:", response.status);
       }
     } catch (error) {
       console.error("Error approving submission:", error);
@@ -271,7 +303,12 @@ export default function AdminStudentAccommodations() {
       const reason = prompt("Reason for rejection:");
       if (!reason) return;
 
-      console.log('Rejecting accommodation submission:', submissionId, 'with reason:', reason);
+      console.log(
+        "Rejecting accommodation submission:",
+        submissionId,
+        "with reason:",
+        reason,
+      );
       const response = await safeFetch(
         `/api/admin/accommodation-submissions/${submissionId}`,
         {
@@ -285,10 +322,10 @@ export default function AdminStudentAccommodations() {
       );
 
       if (response.ok) {
-        console.log('Successfully rejected accommodation submission');
+        console.log("Successfully rejected accommodation submission");
         fetchPendingSubmissions();
       } else {
-        console.error('Failed to reject submission, status:', response.status);
+        console.error("Failed to reject submission, status:", response.status);
       }
     } catch (error) {
       console.error("Error rejecting submission:", error);

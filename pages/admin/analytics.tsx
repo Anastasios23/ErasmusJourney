@@ -88,8 +88,10 @@ interface AnalyticsData {
 export default function AdvancedAnalyticsDashboard() {
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const { data: session, status } = useSession();
-  const session = { user: { id: 'anonymous', role: 'ADMIN', email: 'admin@example.com' } };
-  const status = 'authenticated';
+  const session = {
+    user: { id: "anonymous", role: "ADMIN", email: "admin@example.com" },
+  };
+  const status = "authenticated";
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
@@ -105,7 +107,7 @@ export default function AdvancedAnalyticsDashboard() {
     //   return;
     // }
 
-    console.log('Initializing analytics dashboard...');
+    console.log("Initializing analytics dashboard...");
     fetchAnalytics();
   }, [timeRange]); // Removed session dependencies since auth is disabled
 
@@ -123,14 +125,16 @@ export default function AdvancedAnalyticsDashboard() {
       };
 
       const safeFetch = async (url: string, retries = 3) => {
-        console.log(`Fetching ${url} using XMLHttpRequest to bypass FullStory interference...`);
+        console.log(
+          `Fetching ${url} using XMLHttpRequest to bypass FullStory interference...`,
+        );
         for (let i = 0; i < retries; i++) {
           try {
             // Use XMLHttpRequest as fallback to bypass FullStory fetch interception
             const xhr = new XMLHttpRequest();
             const result = await new Promise((resolve, reject) => {
-              xhr.open('GET', url, true);
-              xhr.setRequestHeader('Content-Type', 'application/json');
+              xhr.open("GET", url, true);
+              xhr.setRequestHeader("Content-Type", "application/json");
               xhr.onreadystatechange = () => {
                 if (xhr.readyState === 4) {
                   if (xhr.status >= 200 && xhr.status < 300) {
@@ -141,15 +145,18 @@ export default function AdvancedAnalyticsDashboard() {
                   }
                 }
               };
-              xhr.onerror = () => reject(new Error('Network error'));
+              xhr.onerror = () => reject(new Error("Network error"));
               xhr.send();
             });
             return result;
           } catch (error) {
-            console.warn(`Fetch attempt ${i + 1}/${retries} failed for ${url}:`, error);
+            console.warn(
+              `Fetch attempt ${i + 1}/${retries} failed for ${url}:`,
+              error,
+            );
             if (i === retries - 1) throw error;
             // Wait before retry
-            await new Promise(resolve => setTimeout(resolve, 500 * (i + 1)));
+            await new Promise((resolve) => setTimeout(resolve, 500 * (i + 1)));
           }
         }
       };
@@ -166,8 +173,12 @@ export default function AdvancedAnalyticsDashboard() {
 
       const fetchSubmissions = async () => {
         try {
-          const data = await safeFetch("/api/admin/form-submissions?limit=1000");
-          return Array.isArray(data) ? { submissions: data } : data || { submissions: [] };
+          const data = await safeFetch(
+            "/api/admin/form-submissions?limit=1000",
+          );
+          return Array.isArray(data)
+            ? { submissions: data }
+            : data || { submissions: [] };
         } catch (error) {
           console.error("Error fetching submissions:", error);
           return { submissions: [] };
@@ -198,10 +209,13 @@ export default function AdvancedAnalyticsDashboard() {
       );
       setAnalytics(analyticsData);
 
-      console.log('Analytics data loaded successfully:', {
+      console.log("Analytics data loaded successfully:", {
         destinations: destinations?.destinations?.length || 0,
-        submissions: submissions?.submissions?.length || Array.isArray(submissions) ? submissions.length : 0,
-        users: users?.users?.length || 0
+        submissions:
+          submissions?.submissions?.length || Array.isArray(submissions)
+            ? submissions.length
+            : 0,
+        users: users?.users?.length || 0,
       });
     } catch (error) {
       console.error("Error fetching analytics:", error);
@@ -251,14 +265,14 @@ export default function AdvancedAnalyticsDashboard() {
     const destData = Array.isArray(destinations?.destinations)
       ? destinations.destinations
       : Array.isArray(destinations)
-      ? destinations
-      : [];
+        ? destinations
+        : [];
 
     const submissionData = Array.isArray(submissions?.submissions)
       ? submissions.submissions
       : Array.isArray(submissions)
-      ? submissions
-      : [];
+        ? submissions
+        : [];
 
     const userData = users?.users || users || [];
 
@@ -268,10 +282,16 @@ export default function AdvancedAnalyticsDashboard() {
     const publishedSubmissions = submissionData.filter(
       (s: any) => s.status === "PUBLISHED",
     ).length;
-    const ratedDestinations = destData.filter((d: any) => d?.averageRating && typeof d.averageRating === 'number');
-    const averageRating = ratedDestinations.length > 0
-      ? ratedDestinations.reduce((sum: number, d: any) => sum + d.averageRating, 0) / ratedDestinations.length
-      : 0;
+    const ratedDestinations = destData.filter(
+      (d: any) => d?.averageRating && typeof d.averageRating === "number",
+    );
+    const averageRating =
+      ratedDestinations.length > 0
+        ? ratedDestinations.reduce(
+            (sum: number, d: any) => sum + d.averageRating,
+            0,
+          ) / ratedDestinations.length
+        : 0;
 
     // Process submissions by type with safety checks
     const submissionsByType = submissionData.reduce((acc: any, sub: any) => {
@@ -291,7 +311,7 @@ export default function AdvancedAnalyticsDashboard() {
 
     // Process by country (from destinations) with safety checks
     const submissionsByCountry = destData.reduce((acc: any, dest: any) => {
-      if (dest?.country && typeof dest.submissionCount === 'number') {
+      if (dest?.country && typeof dest.submissionCount === "number") {
         acc[dest.country] = (acc[dest.country] || 0) + dest.submissionCount;
       }
       return acc;

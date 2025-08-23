@@ -63,10 +63,15 @@ export default function Dashboard() {
 
   // Mock session for development
   const session: ExtendedSession = {
-    user: { id: 'anonymous', role: 'user', name: 'Anonymous User', email: 'anonymous@example.com' },
-    expires: '2025-12-31'
+    user: {
+      id: "anonymous",
+      role: "user",
+      name: "Anonymous User",
+      email: "anonymous@example.com",
+    },
+    expires: "2025-12-31",
   };
-  const status = 'authenticated';
+  const status = "authenticated";
   const router = useRouter();
   const { getFormData, loading: formsLoading } = useFormSubmissions();
   const [completionStatus, setCompletionStatus] = useState<

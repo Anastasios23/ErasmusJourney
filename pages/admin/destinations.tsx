@@ -89,8 +89,10 @@ interface Destination {
 export default function DestinationsAdmin() {
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const { data: session, status } = useSession();
-  const session = { user: { id: 'anonymous', role: 'ADMIN', email: 'admin@example.com' } };
-  const status = 'authenticated';
+  const session = {
+    user: { id: "anonymous", role: "ADMIN", email: "admin@example.com" },
+  };
+  const status = "authenticated";
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("submissions");
@@ -117,7 +119,7 @@ export default function DestinationsAdmin() {
     //   return;
     // }
 
-    console.log('Initializing destinations admin dashboard...');
+    console.log("Initializing destinations admin dashboard...");
     setLoading(false);
     fetchData();
   }, []); // Removed dependencies since auth is disabled
@@ -131,9 +133,19 @@ export default function DestinationsAdmin() {
     }
   };
 
-  const safeFetch = async (url: string, options: { method?: string; body?: string; headers?: Record<string, string> } = {}, retries = 3) => {
-    const method = options.method || 'GET';
-    console.log(`${method} ${url} using XMLHttpRequest to bypass FullStory interference...`);
+  const safeFetch = async (
+    url: string,
+    options: {
+      method?: string;
+      body?: string;
+      headers?: Record<string, string>;
+    } = {},
+    retries = 3,
+  ) => {
+    const method = options.method || "GET";
+    console.log(
+      `${method} ${url} using XMLHttpRequest to bypass FullStory interference...`,
+    );
 
     for (let i = 0; i < retries; i++) {
       try {
@@ -143,7 +155,7 @@ export default function DestinationsAdmin() {
           xhr.open(method, url, true);
 
           // Set default headers
-          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.setRequestHeader("Content-Type", "application/json");
 
           // Set custom headers if provided
           if (options.headers) {
@@ -155,24 +167,29 @@ export default function DestinationsAdmin() {
           xhr.onreadystatechange = () => {
             if (xhr.readyState === 4) {
               if (xhr.status >= 200 && xhr.status < 300) {
-                const data = xhr.responseText ? safeJsonParse(xhr.responseText) : { ok: true };
+                const data = xhr.responseText
+                  ? safeJsonParse(xhr.responseText)
+                  : { ok: true };
                 resolve(data);
               } else {
                 reject(new Error(`HTTP ${xhr.status}`));
               }
             }
           };
-          xhr.onerror = () => reject(new Error('Network error'));
+          xhr.onerror = () => reject(new Error("Network error"));
 
           // Send body if provided
           xhr.send(options.body || null);
         });
         return result;
       } catch (error) {
-        console.warn(`${method} attempt ${i + 1}/${retries} failed for ${url}:`, error);
+        console.warn(
+          `${method} attempt ${i + 1}/${retries} failed for ${url}:`,
+          error,
+        );
         if (i === retries - 1) throw error;
         // Wait before retry
-        await new Promise(resolve => setTimeout(resolve, 500 * (i + 1)));
+        await new Promise((resolve) => setTimeout(resolve, 500 * (i + 1)));
       }
     }
   };
@@ -180,7 +197,9 @@ export default function DestinationsAdmin() {
   const fetchData = async () => {
     try {
       // Fetch destination-related submissions using safeFetch
-      const submissionsData = await safeFetch("/api/admin/form-submissions?status=SUBMITTED");
+      const submissionsData = await safeFetch(
+        "/api/admin/form-submissions?status=SUBMITTED",
+      );
       if (submissionsData) {
         setSubmissions(
           submissionsData.submissions?.filter((s: FormSubmission) =>
@@ -190,26 +209,34 @@ export default function DestinationsAdmin() {
               "living-expenses",
               "help-future-students",
             ].includes(s.type),
-          ) || submissionsData.filter?.((s: FormSubmission) =>
-            [
-              "basic-info",
-              "accommodation",
-              "living-expenses",
-              "help-future-students",
-            ].includes(s.type),
-          ) || [],
+          ) ||
+            submissionsData.filter?.((s: FormSubmission) =>
+              [
+                "basic-info",
+                "accommodation",
+                "living-expenses",
+                "help-future-students",
+              ].includes(s.type),
+            ) ||
+            [],
         );
       }
 
       // Fetch existing destinations using safeFetch
       const destinationsData = await safeFetch("/api/destinations");
       if (destinationsData) {
-        setDestinations(destinationsData.destinations || destinationsData || []);
+        setDestinations(
+          destinationsData.destinations || destinationsData || [],
+        );
       }
 
-      console.log('Destinations data loaded successfully:', {
-        submissions: submissionsData?.submissions?.length || submissionsData?.length || 0,
-        destinations: destinationsData?.destinations?.length || destinationsData?.length || 0
+      console.log("Destinations data loaded successfully:", {
+        submissions:
+          submissionsData?.submissions?.length || submissionsData?.length || 0,
+        destinations:
+          destinationsData?.destinations?.length ||
+          destinationsData?.length ||
+          0,
       });
     } catch (error) {
       console.error("Error fetching destinations data:", error);

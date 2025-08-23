@@ -4,7 +4,10 @@ import { useRouter } from "next/router";
 import Header from "../components/Header";
 import LoginPrompt from "../src/components/LoginPrompt";
 import Breadcrumb from "../components/Breadcrumb";
-import { MOCK_SESSION_ADMIN, MOCK_STATUS_AUTHENTICATED } from "@/utils/mockSession";
+import {
+  MOCK_SESSION_ADMIN,
+  MOCK_STATUS_AUTHENTICATED,
+} from "@/utils/mockSession";
 
 type Submission = {
   id: string;
@@ -26,10 +29,13 @@ export default function SubmissionsPage() {
   const [error, setError] = useState("");
 
   // SafeFetch function to bypass FullStory interference
-  const safeFetch = async (url: string, options: RequestInit = {}): Promise<Response> => {
+  const safeFetch = async (
+    url: string,
+    options: RequestInit = {},
+  ): Promise<Response> => {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      const method = options.method || 'GET';
+      const method = options.method || "GET";
 
       xhr.open(method, url, true);
 
@@ -49,11 +55,11 @@ export default function SubmissionsPage() {
       };
 
       xhr.onerror = () => {
-        reject(new Error('Network error'));
+        reject(new Error("Network error"));
       };
 
       xhr.ontimeout = () => {
-        reject(new Error('Request timeout'));
+        reject(new Error("Request timeout"));
       };
 
       xhr.timeout = 10000; // 10 second timeout

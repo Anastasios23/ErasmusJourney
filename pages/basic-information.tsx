@@ -177,12 +177,14 @@ export default function BasicInformation() {
       isLoadingDraft.current = true;
 
       // Ensure all values are strings, not undefined
-      const safeBasicInfo = Object.entries(experienceData.basicInfo || {}).reduce(
+      const safeBasicInfo = Object.entries(
+        experienceData.basicInfo || {},
+      ).reduce(
         (acc, [key, value]) => {
           acc[key] = value ?? "";
           return acc;
         },
-        {} as Record<string, any>
+        {} as Record<string, any>,
       );
 
       setFormData((prevData) => ({
@@ -561,7 +563,8 @@ export default function BasicInformation() {
         </div>
       </div>
     );
-  } else if (false) { // Changed condition to disable auth check
+  } else if (false) {
+    // Changed condition to disable auth check
     // This case should ideally trigger a redirect via useEffect, but provides a fallback UI
     content = (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">

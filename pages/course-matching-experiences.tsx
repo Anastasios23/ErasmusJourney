@@ -98,8 +98,12 @@ interface FilterStats {
 
 export default function CourseMatchingExperiences() {
   const router = useRouter();
-  const [experiences, setExperiences] = useState<CourseMatchingExperience[]>([]);
-  const [filteredExperiences, setFilteredExperiences] = useState<CourseMatchingExperience[]>([]);
+  const [experiences, setExperiences] = useState<CourseMatchingExperience[]>(
+    [],
+  );
+  const [filteredExperiences, setFilteredExperiences] = useState<
+    CourseMatchingExperience[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filterStats, setFilterStats] = useState<FilterStats | null>(null);
@@ -162,14 +166,14 @@ export default function CourseMatchingExperiences() {
           exp.homeDepartment.toLowerCase().includes(search) ||
           exp.hostCity.toLowerCase().includes(search) ||
           exp.hostCountry.toLowerCase().includes(search) ||
-          exp.studentName.toLowerCase().includes(search)
+          exp.studentName.toLowerCase().includes(search),
       );
     }
 
     // Destination filter
     if (selectedDestination && selectedDestination !== "all") {
-      filtered = filtered.filter((exp) =>
-        `${exp.hostCity}, ${exp.hostCountry}` === selectedDestination
+      filtered = filtered.filter(
+        (exp) => `${exp.hostCity}, ${exp.hostCountry}` === selectedDestination,
       );
     }
 
@@ -178,14 +182,14 @@ export default function CourseMatchingExperiences() {
       filtered = filtered.filter(
         (exp) =>
           exp.hostDepartment === selectedDepartment ||
-          exp.homeDepartment === selectedDepartment
+          exp.homeDepartment === selectedDepartment,
       );
     }
 
     // Difficulty filter
     if (selectedDifficulty && selectedDifficulty !== "all") {
       filtered = filtered.filter(
-        (exp) => exp.courseMatchingDifficult === selectedDifficulty
+        (exp) => exp.courseMatchingDifficult === selectedDifficulty,
       );
     }
 
@@ -217,9 +221,7 @@ export default function CourseMatchingExperiences() {
 
   // Get unique values for filter dropdowns
   const uniqueDestinations = [
-    ...new Set(
-      experiences.map((exp) => `${exp.hostCity}, ${exp.hostCountry}`)
-    ),
+    ...new Set(experiences.map((exp) => `${exp.hostCity}, ${exp.hostCountry}`)),
   ].sort();
 
   const uniqueDepartments = [
@@ -282,8 +284,9 @@ export default function CourseMatchingExperiences() {
               Course Matching Experiences
             </h1>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Discover how other students navigated course selection and credit transfer 
-              during their Erasmus exchanges. Learn from their challenges and successes.
+              Discover how other students navigated course selection and credit
+              transfer during their Erasmus exchanges. Learn from their
+              challenges and successes.
             </p>
           </div>
         </div>
@@ -377,7 +380,10 @@ export default function CourseMatchingExperiences() {
                 />
               </div>
 
-              <Select value={selectedDestination} onValueChange={setSelectedDestination}>
+              <Select
+                value={selectedDestination}
+                onValueChange={setSelectedDestination}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select destination" />
                 </SelectTrigger>
@@ -391,7 +397,10 @@ export default function CourseMatchingExperiences() {
                 </SelectContent>
               </Select>
 
-              <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+              <Select
+                value={selectedDepartment}
+                onValueChange={setSelectedDepartment}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select department" />
                 </SelectTrigger>
@@ -405,7 +414,10 @@ export default function CourseMatchingExperiences() {
                 </SelectContent>
               </Select>
 
-              <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
+              <Select
+                value={selectedDifficulty}
+                onValueChange={setSelectedDifficulty}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Difficulty level" />
                 </SelectTrigger>
@@ -437,7 +449,8 @@ export default function CourseMatchingExperiences() {
 
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">
-                  {filteredExperiences.length} of {experiences.length} experiences
+                  {filteredExperiences.length} of {experiences.length}{" "}
+                  experiences
                 </span>
                 <Button variant="outline" size="sm" onClick={clearFilters}>
                   Clear Filters

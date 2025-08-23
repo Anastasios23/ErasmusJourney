@@ -64,8 +64,10 @@ interface StorySubmission {
 export default function StoriesAdmin() {
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const { data: session, status } = useSession();
-  const session = { user: { id: 'anonymous', role: 'ADMIN', email: 'admin@example.com' } };
-  const status = 'authenticated';
+  const session = {
+    user: { id: "anonymous", role: "ADMIN", email: "admin@example.com" },
+  };
+  const status = "authenticated";
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [stories, setStories] = useState<StorySubmission[]>([]);
@@ -74,13 +76,27 @@ export default function StoriesAdmin() {
   );
 
   // safeFetch function to bypass FullStory interference using XMLHttpRequest
-  const safeFetch = async (url: string, options: { method?: string; body?: string; headers?: Record<string, string> } = {}, retries = 3) => {
-    const method = options.method || 'GET';
-    console.log(`${method} ${url} using XMLHttpRequest to bypass FullStory interference...`);
+  const safeFetch = async (
+    url: string,
+    options: {
+      method?: string;
+      body?: string;
+      headers?: Record<string, string>;
+    } = {},
+    retries = 3,
+  ) => {
+    const method = options.method || "GET";
+    console.log(
+      `${method} ${url} using XMLHttpRequest to bypass FullStory interference...`,
+    );
 
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
-        const response = await new Promise<{ok: boolean; status: number; json: () => Promise<any>}>((resolve, reject) => {
+        const response = await new Promise<{
+          ok: boolean;
+          status: number;
+          json: () => Promise<any>;
+        }>((resolve, reject) => {
           const xhr = new XMLHttpRequest();
           xhr.open(method, url, true);
 
@@ -93,28 +109,37 @@ export default function StoriesAdmin() {
 
           xhr.onload = () => {
             try {
-              const responseData = xhr.responseText ? JSON.parse(xhr.responseText) : {};
+              const responseData = xhr.responseText
+                ? JSON.parse(xhr.responseText)
+                : {};
               resolve({
                 ok: xhr.status >= 200 && xhr.status < 300,
                 status: xhr.status,
-                json: async () => responseData
+                json: async () => responseData,
               });
             } catch (parseError) {
-              console.warn(`JSON parse error on attempt ${attempt}:`, parseError);
+              console.warn(
+                `JSON parse error on attempt ${attempt}:`,
+                parseError,
+              );
               resolve({
                 ok: false,
                 status: xhr.status,
-                json: async () => ({})
+                json: async () => ({}),
               });
             }
           };
 
           xhr.onerror = () => {
-            reject(new Error(`XMLHttpRequest failed: ${xhr.status} ${xhr.statusText}`));
+            reject(
+              new Error(
+                `XMLHttpRequest failed: ${xhr.status} ${xhr.statusText}`,
+              ),
+            );
           };
 
           xhr.ontimeout = () => {
-            reject(new Error('XMLHttpRequest timeout'));
+            reject(new Error("XMLHttpRequest timeout"));
           };
 
           xhr.timeout = 30000; // 30 second timeout
@@ -129,7 +154,10 @@ export default function StoriesAdmin() {
         console.log(`${method} ${url} completed with status:`, response.status);
         return response;
       } catch (error) {
-        console.warn(`Attempt ${attempt}/${retries} failed for ${method} ${url}:`, error);
+        console.warn(
+          `Attempt ${attempt}/${retries} failed for ${method} ${url}:`,
+          error,
+        );
 
         if (attempt === retries) {
           throw error;
@@ -137,37 +165,45 @@ export default function StoriesAdmin() {
 
         // Exponential backoff
         const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
 
     throw new Error(`All ${retries} attempts failed for ${method} ${url}`);
   };
 
-  useEffect(() => {
-    if (status === "loading") return;
+  useEffect(
+    () => {
+      if (status === "loading") return;
 
-    // AUTHENTICATION DISABLED - Comment out to re-enable
-    // if (!session || session.user?.role !== "ADMIN") {
-    //   router.push("/login");
-    //   return;
-    // }
+      // AUTHENTICATION DISABLED - Comment out to re-enable
+      // if (!session || session.user?.role !== "ADMIN") {
+      //   router.push("/login");
+      //   return;
+      // }
 
-    setLoading(false);
-    fetchStories();
-  }, [/*session, status, router*/]);
+      setLoading(false);
+      fetchStories();
+    },
+    [
+      /*session, status, router*/
+    ],
+  );
 
   const fetchStories = async () => {
     try {
-      console.log('Fetching stories...');
+      console.log("Fetching stories...");
       const response = await safeFetch("/api/admin/stories");
       if (response.ok) {
         const data = await response.json();
-        console.log('Stories fetched successfully:', Array.isArray(data) ? data.length : 0);
+        console.log(
+          "Stories fetched successfully:",
+          Array.isArray(data) ? data.length : 0,
+        );
         // API returns stories array directly, not wrapped in data.stories
         setStories(Array.isArray(data) ? data : []);
       } else {
-        console.error('Failed to fetch stories, status:', response.status);
+        console.error("Failed to fetch stories, status:", response.status);
       }
     } catch (error) {
       console.error("Error fetching stories:", error);
@@ -184,7 +220,7 @@ export default function StoriesAdmin() {
       if (action === "reject") newStatus = "ARCHIVED";
       if (action === "feature") newStatus = "FEATURED";
 
-      console.log(`${action} story:`, storyId, 'to status:', newStatus);
+      console.log(`${action} story:`, storyId, "to status:", newStatus);
 
       const response = await safeFetch(`/api/admin/stories/${storyId}`, {
         method: "PATCH",
@@ -387,7 +423,9 @@ export default function StoriesAdmin() {
                       <TableCell>
                         <div className="flex items-center">
                           <User className="h-4 w-4 mr-1 text-gray-400" />
-                          {story.studentName || story.userEmail || "Unknown User"}
+                          {story.studentName ||
+                            story.userEmail ||
+                            "Unknown User"}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -422,7 +460,8 @@ export default function StoriesAdmin() {
                             <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                               <DialogHeader>
                                 <DialogTitle>
-                                  Review Story: {story.studentName || "Untitled Story"}
+                                  Review Story:{" "}
+                                  {story.studentName || "Untitled Story"}
                                 </DialogTitle>
                               </DialogHeader>
                               {selectedStory && (
@@ -443,34 +482,45 @@ export default function StoriesAdmin() {
                                     <strong>Story Content:</strong>
                                     <div className="mt-2 p-4 bg-gray-100 rounded text-sm overflow-auto max-h-96">
                                       <div className="mb-3">
-                                        <strong className="block text-gray-700">University:</strong>
+                                        <strong className="block text-gray-700">
+                                          University:
+                                        </strong>
                                         <div className="mt-1 pl-2 border-l-2 border-gray-300">
                                           {selectedStory.university}
                                         </div>
                                       </div>
                                       <div className="mb-3">
-                                        <strong className="block text-gray-700">Department:</strong>
+                                        <strong className="block text-gray-700">
+                                          Department:
+                                        </strong>
                                         <div className="mt-1 pl-2 border-l-2 border-gray-300">
                                           {selectedStory.department}
                                         </div>
                                       </div>
                                       <div className="mb-3">
-                                        <strong className="block text-gray-700">Story:</strong>
+                                        <strong className="block text-gray-700">
+                                          Story:
+                                        </strong>
                                         <div className="mt-1 pl-2 border-l-2 border-gray-300">
                                           {selectedStory.story}
                                         </div>
                                       </div>
-                                      {selectedStory.tips && selectedStory.tips.length > 0 && (
-                                        <div className="mb-3">
-                                          <strong className="block text-gray-700">Tips:</strong>
-                                          <div className="mt-1 pl-2 border-l-2 border-gray-300">
-                                            {selectedStory.tips.join(", ")}
+                                      {selectedStory.tips &&
+                                        selectedStory.tips.length > 0 && (
+                                          <div className="mb-3">
+                                            <strong className="block text-gray-700">
+                                              Tips:
+                                            </strong>
+                                            <div className="mt-1 pl-2 border-l-2 border-gray-300">
+                                              {selectedStory.tips.join(", ")}
+                                            </div>
                                           </div>
-                                        </div>
-                                      )}
+                                        )}
                                       {selectedStory.accommodationTips && (
                                         <div className="mb-3">
-                                          <strong className="block text-gray-700">Accommodation Tips:</strong>
+                                          <strong className="block text-gray-700">
+                                            Accommodation Tips:
+                                          </strong>
                                           <div className="mt-1 pl-2 border-l-2 border-gray-300">
                                             {selectedStory.accommodationTips}
                                           </div>
@@ -478,7 +528,9 @@ export default function StoriesAdmin() {
                                       )}
                                       {selectedStory.budgetTips && (
                                         <div className="mb-3">
-                                          <strong className="block text-gray-700">Budget Tips:</strong>
+                                          <strong className="block text-gray-700">
+                                            Budget Tips:
+                                          </strong>
                                           <div className="mt-1 pl-2 border-l-2 border-gray-300">
                                             {selectedStory.budgetTips}
                                           </div>

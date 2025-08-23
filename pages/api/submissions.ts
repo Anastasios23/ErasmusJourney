@@ -33,7 +33,9 @@ export default async function handler(
   // }
 
   // Mock session for disabled authentication
-  const session = { user: { id: 'anonymous', email: 'admin@example.com', role: 'ADMIN' } };
+  const session = {
+    user: { id: "anonymous", email: "admin@example.com", role: "ADMIN" },
+  };
 
   try {
     const submissions = await prisma.application.findMany({

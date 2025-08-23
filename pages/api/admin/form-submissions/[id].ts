@@ -88,17 +88,20 @@ export default async function handler(
 async function createDestinationFromSubmission(submission: any) {
   try {
     const data = submission.data as any;
-    
+
     // Extract destination info
     const city = data.hostCity || data.city;
     const country = data.hostCountry || data.country;
-    
+
     if (!city || !country) {
       return; // Skip if no city/country info
     }
 
-    const slug = `${city.toLowerCase()}-${country.toLowerCase()}`.replace(/[^a-z0-9-]/g, '-');
-    
+    const slug = `${city.toLowerCase()}-${country.toLowerCase()}`.replace(
+      /[^a-z0-9-]/g,
+      "-",
+    );
+
     // Check if destination already exists
     let destination = await prisma.destination.findUnique({
       where: { slug },
@@ -126,7 +129,8 @@ async function createDestinationFromSubmission(submission: any) {
         data: {
           destinationId: destination.id,
           type: data.accommodationType,
-          name: data.accommodationName || `${data.accommodationType} in ${city}`,
+          name:
+            data.accommodationName || `${data.accommodationType} in ${city}`,
           url: data.accommodationUrl,
           pricePerMonth: data.monthlyRent ? parseInt(data.monthlyRent) : null,
           description: data.accommodationDescription,

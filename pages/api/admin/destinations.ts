@@ -28,17 +28,21 @@ export default async function handler(
     // }
 
     // Mock session for disabled authentication
-    const session = { user: { id: 'anonymous', email: 'admin@example.com' } };
+    const session = { user: { id: "anonymous", email: "admin@example.com" } };
 
     switch (req.method) {
       case "GET":
         return handleGetDestinations(req, res);
       case "POST":
-        return handleCreateDestination(req, res, session.user.id || session.user.email);
+        return handleCreateDestination(
+          req,
+          res,
+          session.user.id || session.user.email,
+        );
       default:
         return res.status(405).json({
           success: false,
-          message: "Method not allowed"
+          message: "Method not allowed",
         });
     }
   } catch (error) {
@@ -51,7 +55,10 @@ export default async function handler(
   }
 }
 
-async function handleGetDestinations(req: NextApiRequest, res: NextApiResponse) {
+async function handleGetDestinations(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   const { featured, withStudentData } = req.query;
 
   const destinations = await DestinationDataService.getAllDestinations({

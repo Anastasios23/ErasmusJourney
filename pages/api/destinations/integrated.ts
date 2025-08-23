@@ -7,8 +7,10 @@ const mockDestinations = [
     name: "Berlin, Germany",
     city: "Berlin",
     country: "Germany",
-    description: "Vibrant cultural capital with excellent universities and student life",
-    imageUrl: "https://images.unsplash.com/photo-1560930950-5cc20e80d392?w=400&h=250&fit=crop",
+    description:
+      "Vibrant cultural capital with excellent universities and student life",
+    imageUrl:
+      "https://images.unsplash.com/photo-1560930950-5cc20e80d392?w=400&h=250&fit=crop",
     featured: true,
     submissionCount: 45,
     averageRating: 4.5,
@@ -20,8 +22,10 @@ const mockDestinations = [
     name: "Barcelona, Spain",
     city: "Barcelona",
     country: "Spain",
-    description: "Mediterranean paradise with world-class architecture and beaches",
-    imageUrl: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&h=250&fit=crop",
+    description:
+      "Mediterranean paradise with world-class architecture and beaches",
+    imageUrl:
+      "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&h=250&fit=crop",
     featured: true,
     submissionCount: 38,
     averageRating: 4.7,
@@ -33,8 +37,10 @@ const mockDestinations = [
     name: "Amsterdam, Netherlands",
     city: "Amsterdam",
     country: "Netherlands",
-    description: "Historic canals, world-renowned universities, and vibrant student culture",
-    imageUrl: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=400&h=250&fit=crop",
+    description:
+      "Historic canals, world-renowned universities, and vibrant student culture",
+    imageUrl:
+      "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=400&h=250&fit=crop",
     featured: true,
     submissionCount: 32,
     averageRating: 4.4,
@@ -47,7 +53,8 @@ const mockDestinations = [
     city: "Prague",
     country: "Czech Republic",
     description: "Stunning medieval architecture and affordable student living",
-    imageUrl: "https://images.unsplash.com/photo-1541849546-216549ae216d?w=400&h=250&fit=crop",
+    imageUrl:
+      "https://images.unsplash.com/photo-1541849546-216549ae216d?w=400&h=250&fit=crop",
     featured: false,
     submissionCount: 28,
     averageRating: 4.3,
@@ -59,8 +66,10 @@ const mockDestinations = [
     name: "Vienna, Austria",
     city: "Vienna",
     country: "Austria",
-    description: "Imperial grandeur meets modern student life in this cultural hub",
-    imageUrl: "https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=400&h=250&fit=crop",
+    description:
+      "Imperial grandeur meets modern student life in this cultural hub",
+    imageUrl:
+      "https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=400&h=250&fit=crop",
     featured: false,
     submissionCount: 25,
     averageRating: 4.2,
@@ -72,14 +81,16 @@ const mockDestinations = [
     name: "Copenhagen, Denmark",
     city: "Copenhagen",
     country: "Denmark",
-    description: "Scandinavian design, innovative education, and high quality of life",
-    imageUrl: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?w=400&h=250&fit=crop",
+    description:
+      "Scandinavian design, innovative education, and high quality of life",
+    imageUrl:
+      "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?w=400&h=250&fit=crop",
     featured: false,
     submissionCount: 22,
     averageRating: 4.6,
     averageCost: 1100,
     lastUpdated: new Date().toISOString(),
-  }
+  },
 ];
 
 export default async function handler(
@@ -99,17 +110,27 @@ export default async function handler(
       limit = 100,
     } = req.query;
 
-    console.log("Fetching destinations with options:", { featured, country, orderBy, order, limit });
+    console.log("Fetching destinations with options:", {
+      featured,
+      country,
+      orderBy,
+      order,
+      limit,
+    });
 
     let filteredDestinations = [...mockDestinations];
 
     // Apply filters
     if (featured === "true") {
-      filteredDestinations = filteredDestinations.filter(dest => dest.featured);
+      filteredDestinations = filteredDestinations.filter(
+        (dest) => dest.featured,
+      );
     }
 
     if (country && country !== "all") {
-      filteredDestinations = filteredDestinations.filter(dest => dest.country === country);
+      filteredDestinations = filteredDestinations.filter(
+        (dest) => dest.country === country,
+      );
     }
 
     // Apply sorting
@@ -156,7 +177,7 @@ export default async function handler(
     console.error("Error fetching destinations:", error);
     res.status(500).json({
       message: "Failed to fetch destinations",
-      error: error instanceof Error ? error.message : "Unknown error"
+      error: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }

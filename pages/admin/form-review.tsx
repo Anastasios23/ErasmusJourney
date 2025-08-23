@@ -79,23 +79,40 @@ interface LivingExpenses {
 export default function AdminFormReview() {
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const { data: session, status } = useSession();
-  const session = { user: { id: 'anonymous', role: 'ADMIN', email: 'admin@example.com' } };
-  const status = 'authenticated';
+  const session = {
+    user: { id: "anonymous", role: "ADMIN", email: "admin@example.com" },
+  };
+  const status = "authenticated";
   const router = useRouter();
   const [submissions, setSubmissions] = useState<FormSubmission[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedSubmission, setSelectedSubmission] = useState<FormSubmission | null>(null);
+  const [selectedSubmission, setSelectedSubmission] =
+    useState<FormSubmission | null>(null);
   const [adminNotes, setAdminNotes] = useState("");
   const [activeTab, setActiveTab] = useState("pending");
 
   // safeFetch function to bypass FullStory interference using XMLHttpRequest
-  const safeFetch = async (url: string, options: { method?: string; body?: string; headers?: Record<string, string> } = {}, retries = 3) => {
-    const method = options.method || 'GET';
-    console.log(`${method} ${url} using XMLHttpRequest to bypass FullStory interference...`);
+  const safeFetch = async (
+    url: string,
+    options: {
+      method?: string;
+      body?: string;
+      headers?: Record<string, string>;
+    } = {},
+    retries = 3,
+  ) => {
+    const method = options.method || "GET";
+    console.log(
+      `${method} ${url} using XMLHttpRequest to bypass FullStory interference...`,
+    );
 
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
-        const response = await new Promise<{ok: boolean; status: number; json: () => Promise<any>}>((resolve, reject) => {
+        const response = await new Promise<{
+          ok: boolean;
+          status: number;
+          json: () => Promise<any>;
+        }>((resolve, reject) => {
           const xhr = new XMLHttpRequest();
           xhr.open(method, url, true);
 
@@ -108,28 +125,37 @@ export default function AdminFormReview() {
 
           xhr.onload = () => {
             try {
-              const responseData = xhr.responseText ? JSON.parse(xhr.responseText) : {};
+              const responseData = xhr.responseText
+                ? JSON.parse(xhr.responseText)
+                : {};
               resolve({
                 ok: xhr.status >= 200 && xhr.status < 300,
                 status: xhr.status,
-                json: async () => responseData
+                json: async () => responseData,
               });
             } catch (parseError) {
-              console.warn(`JSON parse error on attempt ${attempt}:`, parseError);
+              console.warn(
+                `JSON parse error on attempt ${attempt}:`,
+                parseError,
+              );
               resolve({
                 ok: false,
                 status: xhr.status,
-                json: async () => ({})
+                json: async () => ({}),
               });
             }
           };
 
           xhr.onerror = () => {
-            reject(new Error(`XMLHttpRequest failed: ${xhr.status} ${xhr.statusText}`));
+            reject(
+              new Error(
+                `XMLHttpRequest failed: ${xhr.status} ${xhr.statusText}`,
+              ),
+            );
           };
 
           xhr.ontimeout = () => {
-            reject(new Error('XMLHttpRequest timeout'));
+            reject(new Error("XMLHttpRequest timeout"));
           };
 
           xhr.timeout = 30000; // 30 second timeout
@@ -144,7 +170,10 @@ export default function AdminFormReview() {
         console.log(`${method} ${url} completed with status:`, response.status);
         return response;
       } catch (error) {
-        console.warn(`Attempt ${attempt}/${retries} failed for ${method} ${url}:`, error);
+        console.warn(
+          `Attempt ${attempt}/${retries} failed for ${method} ${url}:`,
+          error,
+        );
 
         if (attempt === retries) {
           throw error;
@@ -152,36 +181,47 @@ export default function AdminFormReview() {
 
         // Exponential backoff
         const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
 
     throw new Error(`All ${retries} attempts failed for ${method} ${url}`);
   };
 
-  useEffect(() => {
-    if (status === "loading") return;
+  useEffect(
+    () => {
+      if (status === "loading") return;
 
-    // AUTHENTICATION DISABLED - Comment out to re-enable
-    // if (!session || session.user?.role !== "ADMIN") {
-    //   router.push("/login");
-    //   return;
-    // }
+      // AUTHENTICATION DISABLED - Comment out to re-enable
+      // if (!session || session.user?.role !== "ADMIN") {
+      //   router.push("/login");
+      //   return;
+      // }
 
-    fetchSubmissions();
-  }, [/*session, status, router*/]);
+      fetchSubmissions();
+    },
+    [
+      /*session, status, router*/
+    ],
+  );
 
   const fetchSubmissions = async () => {
     try {
       setLoading(true);
-      console.log('Fetching form submissions...');
+      console.log("Fetching form submissions...");
       const response = await safeFetch("/api/admin/form-submissions");
       if (response.ok) {
         const data = await response.json();
-        console.log('Form submissions fetched successfully:', data?.length || 0);
+        console.log(
+          "Form submissions fetched successfully:",
+          data?.length || 0,
+        );
         setSubmissions(data || []);
       } else {
-        console.error('Failed to fetch form submissions, status:', response.status);
+        console.error(
+          "Failed to fetch form submissions, status:",
+          response.status,
+        );
       }
     } catch (error) {
       console.error("Error fetching submissions:", error);
@@ -194,30 +234,41 @@ export default function AdminFormReview() {
   const handleSubmissionAction = async (
     submissionId: string,
     action: "approve" | "reject",
-    notes?: string
+    notes?: string,
   ) => {
     try {
       const newStatus = action === "approve" ? "PUBLISHED" : "ARCHIVED";
-      console.log(`${action === "approve" ? "Approving" : "Rejecting"} submission:`, submissionId);
+      console.log(
+        `${action === "approve" ? "Approving" : "Rejecting"} submission:`,
+        submissionId,
+      );
 
-      const response = await safeFetch(`/api/admin/form-submissions/${submissionId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await safeFetch(
+        `/api/admin/form-submissions/${submissionId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status: newStatus,
+            adminNotes: notes || adminNotes,
+          }),
         },
-        body: JSON.stringify({
-          status: newStatus,
-          adminNotes: notes || adminNotes
-        }),
-      });
+      );
 
       if (response.ok) {
-        console.log(`Successfully ${action === "approve" ? "approved" : "rejected"} submission`);
+        console.log(
+          `Successfully ${action === "approve" ? "approved" : "rejected"} submission`,
+        );
         await fetchSubmissions();
         setSelectedSubmission(null);
         setAdminNotes("");
       } else {
-        console.error(`Failed to ${action} submission, status:`, response.status);
+        console.error(
+          `Failed to ${action} submission, status:`,
+          response.status,
+        );
       }
     } catch (error) {
       console.error("Error updating submission:", error);
@@ -226,11 +277,11 @@ export default function AdminFormReview() {
 
   const getTypeIcon = (type: string) => {
     const iconMap = {
-      "BASIC_INFO": Users,
-      "ACCOMMODATION": Home,
-      "LIVING_EXPENSES": Euro,
-      "COURSE_MATCHING": GraduationCap,
-      "EXPERIENCE": Star,
+      BASIC_INFO: Users,
+      ACCOMMODATION: Home,
+      LIVING_EXPENSES: Euro,
+      COURSE_MATCHING: GraduationCap,
+      EXPERIENCE: Star,
     };
 
     const IconComponent = iconMap[type as keyof typeof iconMap] || MapPin;
@@ -250,25 +301,42 @@ export default function AdminFormReview() {
     }
   };
 
-  const getLivingExpensesFromSubmissions = (submissions: FormSubmission[]): LivingExpenses => {
-    const expenseSubmissions = submissions.filter(s => s.type === "LIVING_EXPENSES");
-    
+  const getLivingExpensesFromSubmissions = (
+    submissions: FormSubmission[],
+  ): LivingExpenses => {
+    const expenseSubmissions = submissions.filter(
+      (s) => s.type === "LIVING_EXPENSES",
+    );
+
     if (expenseSubmissions.length === 0) return {};
 
-    const expenses = ["rent", "groceries", "transportation", "eatingOut", "bills", "entertainment", "other"];
+    const expenses = [
+      "rent",
+      "groceries",
+      "transportation",
+      "eatingOut",
+      "bills",
+      "entertainment",
+      "other",
+    ];
     const result: any = {};
 
-    expenses.forEach(expense => {
+    expenses.forEach((expense) => {
       const values = expenseSubmissions
-        .map(sub => parseFloat(sub.data[expense] || "0"))
-        .filter(val => !isNaN(val) && val > 0);
-      
+        .map((sub) => parseFloat(sub.data[expense] || "0"))
+        .filter((val) => !isNaN(val) && val > 0);
+
       if (values.length > 0) {
-        result[expense] = Math.round(values.reduce((sum, val) => sum + val, 0) / values.length);
+        result[expense] = Math.round(
+          values.reduce((sum, val) => sum + val, 0) / values.length,
+        );
       }
     });
 
-    result.total = Object.values(result).reduce((sum: number, val: any) => sum + (val || 0), 0);
+    result.total = Object.values(result).reduce(
+      (sum: number, val: any) => sum + (val || 0),
+      0,
+    );
     return result;
   };
 
@@ -294,7 +362,9 @@ export default function AdminFormReview() {
                   {data.hostCity}, {data.hostCountry}
                 </p>
                 <p className="text-sm text-gray-600">{data.hostUniversity}</p>
-                <p className="text-sm text-gray-600">Duration: {data.duration}</p>
+                <p className="text-sm text-gray-600">
+                  Duration: {data.duration}
+                </p>
               </div>
             </div>
           </div>
@@ -306,20 +376,30 @@ export default function AdminFormReview() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <h4 className="font-medium">Accommodation Details</h4>
-                <p className="text-sm text-gray-600">Type: {data.accommodationType}</p>
-                <p className="text-sm text-gray-600">Monthly Rent: €{data.monthlyRent}</p>
-                <p className="text-sm text-gray-600">Location: {data.neighborhood}</p>
+                <p className="text-sm text-gray-600">
+                  Type: {data.accommodationType}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Monthly Rent: €{data.monthlyRent}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Location: {data.neighborhood}
+                </p>
               </div>
               <div>
                 <h4 className="font-medium">Experience</h4>
-                <p className="text-sm text-gray-600">{data.accommodationDescription}</p>
+                <p className="text-sm text-gray-600">
+                  {data.accommodationDescription}
+                </p>
                 {data.pros && (
                   <div className="mt-2">
                     <p className="text-xs font-medium text-green-600">Pros:</p>
                     <ul className="text-xs text-gray-600">
-                      {(Array.isArray(data.pros) ? data.pros : [data.pros]).map((pro: string, i: number) => (
-                        <li key={i}>• {pro}</li>
-                      ))}
+                      {(Array.isArray(data.pros) ? data.pros : [data.pros]).map(
+                        (pro: string, i: number) => (
+                          <li key={i}>• {pro}</li>
+                        ),
+                      )}
                     </ul>
                   </div>
                 )}
@@ -336,18 +416,26 @@ export default function AdminFormReview() {
               <div className="space-y-2">
                 <p className="text-sm">Rent: €{data.rent || 0}</p>
                 <p className="text-sm">Groceries: €{data.groceries || 0}</p>
-                <p className="text-sm">Transportation: €{data.transportation || 0}</p>
+                <p className="text-sm">
+                  Transportation: €{data.transportation || 0}
+                </p>
                 <p className="text-sm">Eating Out: €{data.eatingOut || 0}</p>
               </div>
               <div className="space-y-2">
                 <p className="text-sm">Bills: €{data.bills || 0}</p>
-                <p className="text-sm">Entertainment: €{data.entertainment || 0}</p>
+                <p className="text-sm">
+                  Entertainment: €{data.entertainment || 0}
+                </p>
                 <p className="text-sm">Other: €{data.other || 0}</p>
                 <p className="text-sm font-medium">
-                  Total: €{(parseFloat(data.rent || 0) + parseFloat(data.groceries || 0) + 
-                           parseFloat(data.transportation || 0) + parseFloat(data.eatingOut || 0) +
-                           parseFloat(data.bills || 0) + parseFloat(data.entertainment || 0) +
-                           parseFloat(data.other || 0))}
+                  Total: €
+                  {parseFloat(data.rent || 0) +
+                    parseFloat(data.groceries || 0) +
+                    parseFloat(data.transportation || 0) +
+                    parseFloat(data.eatingOut || 0) +
+                    parseFloat(data.bills || 0) +
+                    parseFloat(data.entertainment || 0) +
+                    parseFloat(data.other || 0)}
                 </p>
               </div>
             </div>
@@ -360,9 +448,15 @@ export default function AdminFormReview() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <h4 className="font-medium">Academic Info</h4>
-                <p className="text-sm text-gray-600">Host University: {data.hostUniversity}</p>
-                <p className="text-sm text-gray-600">Field of Study: {data.fieldOfStudy}</p>
-                <p className="text-sm text-gray-600">Study Level: {data.studyLevel}</p>
+                <p className="text-sm text-gray-600">
+                  Host University: {data.hostUniversity}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Field of Study: {data.fieldOfStudy}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Study Level: {data.studyLevel}
+                </p>
               </div>
               <div>
                 <h4 className="font-medium">Course Details</h4>
@@ -391,7 +485,7 @@ export default function AdminFormReview() {
     }
   };
 
-  const filteredSubmissions = submissions.filter(submission => {
+  const filteredSubmissions = submissions.filter((submission) => {
     switch (activeTab) {
       case "pending":
         return submission.status === "SUBMITTED";
@@ -443,24 +537,31 @@ export default function AdminFormReview() {
               Back to Admin Dashboard
             </Button>
             <h1 className="text-3xl font-bold text-gray-900">Form Review</h1>
-            <p className="text-gray-600">Review and approve form submissions from students</p>
+            <p className="text-gray-600">
+              Review and approve form submissions from students
+            </p>
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="pending">
-              Pending ({submissions.filter(s => s.status === "SUBMITTED").length})
+              Pending (
+              {submissions.filter((s) => s.status === "SUBMITTED").length})
             </TabsTrigger>
             <TabsTrigger value="approved">
-              Approved ({submissions.filter(s => s.status === "PUBLISHED").length})
+              Approved (
+              {submissions.filter((s) => s.status === "PUBLISHED").length})
             </TabsTrigger>
             <TabsTrigger value="rejected">
-              Rejected ({submissions.filter(s => s.status === "ARCHIVED").length})
+              Rejected (
+              {submissions.filter((s) => s.status === "ARCHIVED").length})
             </TabsTrigger>
-            <TabsTrigger value="all">
-              All ({submissions.length})
-            </TabsTrigger>
+            <TabsTrigger value="all">All ({submissions.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value={activeTab} className="space-y-6">
@@ -486,20 +587,29 @@ export default function AdminFormReview() {
                         <TableCell>
                           <div className="flex items-center space-x-2">
                             {getTypeIcon(submission.type)}
-                            <span className="text-sm">{submission.type.replace('_', ' ')}</span>
+                            <span className="text-sm">
+                              {submission.type.replace("_", " ")}
+                            </span>
                           </div>
                         </TableCell>
                         <TableCell>
                           <div>
                             <p className="font-medium">
-                              {submission.user.firstName} {submission.user.lastName}
+                              {submission.user.firstName}{" "}
+                              {submission.user.lastName}
                             </p>
-                            <p className="text-sm text-gray-600">{submission.user.email}</p>
+                            <p className="text-sm text-gray-600">
+                              {submission.user.email}
+                            </p>
                           </div>
                         </TableCell>
                         <TableCell>
-                          {submission.data.hostCity && submission.data.hostCountry ? (
-                            <span>{submission.data.hostCity}, {submission.data.hostCountry}</span>
+                          {submission.data.hostCity &&
+                          submission.data.hostCountry ? (
+                            <span>
+                              {submission.data.hostCity},{" "}
+                              {submission.data.hostCountry}
+                            </span>
                           ) : (
                             <span className="text-gray-400">Not specified</span>
                           )}
@@ -513,7 +623,9 @@ export default function AdminFormReview() {
                           <div className="flex items-center space-x-1">
                             <Clock className="h-3 w-3 text-gray-400" />
                             <span className="text-sm text-gray-600">
-                              {new Date(submission.createdAt).toLocaleDateString()}
+                              {new Date(
+                                submission.createdAt,
+                              ).toLocaleDateString()}
                             </span>
                           </div>
                         </TableCell>
@@ -524,7 +636,9 @@ export default function AdminFormReview() {
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => setSelectedSubmission(submission)}
+                                  onClick={() =>
+                                    setSelectedSubmission(submission)
+                                  }
                                 >
                                   <Eye className="h-3 w-3 mr-1" />
                                   View
@@ -532,27 +646,40 @@ export default function AdminFormReview() {
                               </DialogTrigger>
                               <DialogContent className="max-w-2xl">
                                 <DialogHeader>
-                                  <DialogTitle>Form Submission Details</DialogTitle>
+                                  <DialogTitle>
+                                    Form Submission Details
+                                  </DialogTitle>
                                 </DialogHeader>
                                 <div className="space-y-4">
-                                  {selectedSubmission && renderSubmissionDetails(selectedSubmission)}
-                                  
+                                  {selectedSubmission &&
+                                    renderSubmissionDetails(selectedSubmission)}
+
                                   <div>
                                     <label className="block text-sm font-medium mb-2">
                                       Admin Notes
                                     </label>
                                     <Textarea
                                       value={adminNotes}
-                                      onChange={(e) => setAdminNotes(e.target.value)}
+                                      onChange={(e) =>
+                                        setAdminNotes(e.target.value)
+                                      }
                                       placeholder="Add notes about this submission..."
                                       rows={3}
                                     />
                                   </div>
-                                  
-                                  {selectedSubmission?.status === "SUBMITTED" && (
+
+                                  {selectedSubmission?.status ===
+                                    "SUBMITTED" && (
                                     <div className="flex space-x-2 pt-4">
                                       <Button
-                                        onClick={() => selectedSubmission && handleSubmissionAction(selectedSubmission.id, "approve", adminNotes)}
+                                        onClick={() =>
+                                          selectedSubmission &&
+                                          handleSubmissionAction(
+                                            selectedSubmission.id,
+                                            "approve",
+                                            adminNotes,
+                                          )
+                                        }
                                         className="bg-green-600 hover:bg-green-700"
                                       >
                                         <Check className="h-4 w-4 mr-2" />
@@ -560,7 +687,14 @@ export default function AdminFormReview() {
                                       </Button>
                                       <Button
                                         variant="destructive"
-                                        onClick={() => selectedSubmission && handleSubmissionAction(selectedSubmission.id, "reject", adminNotes)}
+                                        onClick={() =>
+                                          selectedSubmission &&
+                                          handleSubmissionAction(
+                                            selectedSubmission.id,
+                                            "reject",
+                                            adminNotes,
+                                          )
+                                        }
                                       >
                                         <X className="h-4 w-4 mr-2" />
                                         Reject

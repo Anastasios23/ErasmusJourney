@@ -61,7 +61,7 @@ interface ExpenseCategory {
 export default function LivingExpenses() {
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const { data: session } = useSession();
-  const session = { user: { id: 'anonymous', email: 'anonymous@example.com' } }; // Mock session for dev
+  const session = { user: { id: "anonymous", email: "anonymous@example.com" } }; // Mock session for dev
   const router = useRouter();
   const { addNotification } = useNotifications();
   const { setCurrentStep } = useFormProgress();
@@ -127,7 +127,7 @@ export default function LivingExpenses() {
               acc[key as keyof ExpenseCategory] = value ?? "";
               return acc;
             },
-            {} as ExpenseCategory
+            {} as ExpenseCategory,
           );
           setExpenses(safeExpenses);
         }
@@ -141,7 +141,7 @@ export default function LivingExpenses() {
             acc[key] = value ?? "";
             return acc;
           },
-          {} as Record<string, any>
+          {} as Record<string, any>,
         );
 
         setFormData(safeFormData);

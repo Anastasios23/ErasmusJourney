@@ -91,8 +91,10 @@ interface PotentialDestination {
 export default function EnhancedDestinationsAdmin() {
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const { data: session, status } = useSession();
-  const session = { user: { id: 'anonymous', role: 'ADMIN', email: 'admin@example.com' } };
-  const status = 'authenticated';
+  const session = {
+    user: { id: "anonymous", role: "ADMIN", email: "admin@example.com" },
+  };
+  const status = "authenticated";
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
@@ -111,27 +113,46 @@ export default function EnhancedDestinationsAdmin() {
     imageUrl: "",
   });
 
-  useEffect(() => {
-    if (status === "loading") return;
+  useEffect(
+    () => {
+      if (status === "loading") return;
 
-    // AUTHENTICATION DISABLED - Comment out to re-enable
-    // if (!session || session.user?.role !== "ADMIN") {
-    //   router.push("/login");
-    //   return;
-    // }
+      // AUTHENTICATION DISABLED - Comment out to re-enable
+      // if (!session || session.user?.role !== "ADMIN") {
+      //   router.push("/login");
+      //   return;
+      // }
 
-    setLoading(false);
-    fetchEnhancedData();
-  }, [/*session, status, router*/]);
+      setLoading(false);
+      fetchEnhancedData();
+    },
+    [
+      /*session, status, router*/
+    ],
+  );
 
   // safeFetch function to bypass FullStory interference using XMLHttpRequest
-  const safeFetch = async (url: string, options: { method?: string; body?: string; headers?: Record<string, string> } = {}, retries = 3) => {
-    const method = options.method || 'GET';
-    console.log(`${method} ${url} using XMLHttpRequest to bypass FullStory interference...`);
+  const safeFetch = async (
+    url: string,
+    options: {
+      method?: string;
+      body?: string;
+      headers?: Record<string, string>;
+    } = {},
+    retries = 3,
+  ) => {
+    const method = options.method || "GET";
+    console.log(
+      `${method} ${url} using XMLHttpRequest to bypass FullStory interference...`,
+    );
 
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
-        const response = await new Promise<{ok: boolean; status: number; json: () => Promise<any>}>((resolve, reject) => {
+        const response = await new Promise<{
+          ok: boolean;
+          status: number;
+          json: () => Promise<any>;
+        }>((resolve, reject) => {
           const xhr = new XMLHttpRequest();
           xhr.open(method, url, true);
 
@@ -144,28 +165,37 @@ export default function EnhancedDestinationsAdmin() {
 
           xhr.onload = () => {
             try {
-              const responseData = xhr.responseText ? JSON.parse(xhr.responseText) : {};
+              const responseData = xhr.responseText
+                ? JSON.parse(xhr.responseText)
+                : {};
               resolve({
                 ok: xhr.status >= 200 && xhr.status < 300,
                 status: xhr.status,
-                json: async () => responseData
+                json: async () => responseData,
               });
             } catch (parseError) {
-              console.warn(`JSON parse error on attempt ${attempt}:`, parseError);
+              console.warn(
+                `JSON parse error on attempt ${attempt}:`,
+                parseError,
+              );
               resolve({
                 ok: false,
                 status: xhr.status,
-                json: async () => ({})
+                json: async () => ({}),
               });
             }
           };
 
           xhr.onerror = () => {
-            reject(new Error(`XMLHttpRequest failed: ${xhr.status} ${xhr.statusText}`));
+            reject(
+              new Error(
+                `XMLHttpRequest failed: ${xhr.status} ${xhr.statusText}`,
+              ),
+            );
           };
 
           xhr.ontimeout = () => {
-            reject(new Error('XMLHttpRequest timeout'));
+            reject(new Error("XMLHttpRequest timeout"));
           };
 
           xhr.timeout = 30000; // 30 second timeout
@@ -180,7 +210,10 @@ export default function EnhancedDestinationsAdmin() {
         console.log(`${method} ${url} completed with status:`, response.status);
         return response;
       } catch (error) {
-        console.warn(`Attempt ${attempt}/${retries} failed for ${method} ${url}:`, error);
+        console.warn(
+          `Attempt ${attempt}/${retries} failed for ${method} ${url}:`,
+          error,
+        );
 
         if (attempt === retries) {
           throw error;
@@ -188,7 +221,7 @@ export default function EnhancedDestinationsAdmin() {
 
         // Exponential backoff
         const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
 
@@ -197,16 +230,19 @@ export default function EnhancedDestinationsAdmin() {
 
   const fetchEnhancedData = async () => {
     try {
-      console.log('Fetching enhanced destinations data...');
+      console.log("Fetching enhanced destinations data...");
       const response = await safeFetch("/api/admin/destinations/enhanced");
       if (response.ok) {
         const data = await response.json();
-        console.log('Enhanced destinations data fetched successfully:', data);
+        console.log("Enhanced destinations data fetched successfully:", data);
         setDestinations(data.destinations || []);
         setPotentialDestinations(data.potentialDestinations || []);
         setStats(data.stats || {});
       } else {
-        console.error('Failed to fetch enhanced destinations data, status:', response.status);
+        console.error(
+          "Failed to fetch enhanced destinations data, status:",
+          response.status,
+        );
       }
     } catch (error) {
       console.error("Error fetching enhanced destinations data:", error);
@@ -223,7 +259,7 @@ export default function EnhancedDestinationsAdmin() {
     overrides: any = {},
   ) => {
     try {
-      console.log('Creating destination from submissions for:', city, country);
+      console.log("Creating destination from submissions for:", city, country);
       const response = await safeFetch("/api/admin/destinations/enhanced", {
         method: "POST",
         headers: {
@@ -238,10 +274,13 @@ export default function EnhancedDestinationsAdmin() {
       });
 
       if (response.ok) {
-        console.log('Successfully created destination from submissions');
+        console.log("Successfully created destination from submissions");
         await fetchEnhancedData(); // Refresh data
       } else {
-        console.error('Failed to create destination from submissions, status:', response.status);
+        console.error(
+          "Failed to create destination from submissions, status:",
+          response.status,
+        );
       }
     } catch (error) {
       console.error("Error creating destination from submissions:", error);
@@ -250,7 +289,7 @@ export default function EnhancedDestinationsAdmin() {
 
   const createManualDestination = async () => {
     try {
-      console.log('Creating manual destination:', newDestination);
+      console.log("Creating manual destination:", newDestination);
       const response = await safeFetch("/api/admin/destinations/enhanced", {
         method: "POST",
         headers: {
@@ -263,7 +302,7 @@ export default function EnhancedDestinationsAdmin() {
       });
 
       if (response.ok) {
-        console.log('Successfully created manual destination');
+        console.log("Successfully created manual destination");
         setNewDestination({
           name: "",
           city: "",
@@ -273,7 +312,10 @@ export default function EnhancedDestinationsAdmin() {
         });
         await fetchEnhancedData(); // Refresh data
       } else {
-        console.error('Failed to create manual destination, status:', response.status);
+        console.error(
+          "Failed to create manual destination, status:",
+          response.status,
+        );
       }
     } catch (error) {
       console.error("Error creating manual destination:", error);
@@ -282,7 +324,7 @@ export default function EnhancedDestinationsAdmin() {
 
   const updateDestination = async (destinationId: string, updates: any) => {
     try {
-      console.log('Updating destination:', destinationId, updates);
+      console.log("Updating destination:", destinationId, updates);
       const response = await safeFetch("/api/admin/destinations/enhanced", {
         method: "PUT",
         headers: {
@@ -295,10 +337,10 @@ export default function EnhancedDestinationsAdmin() {
       });
 
       if (response.ok) {
-        console.log('Successfully updated destination');
+        console.log("Successfully updated destination");
         await fetchEnhancedData(); // Refresh data
       } else {
-        console.error('Failed to update destination, status:', response.status);
+        console.error("Failed to update destination, status:", response.status);
       }
     } catch (error) {
       console.error("Error updating destination:", error);

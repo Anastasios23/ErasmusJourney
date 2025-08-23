@@ -105,7 +105,9 @@ export default async function handler(
         city: dest.city,
         country: dest.country,
         description: dest.description,
-        imageUrl: dest.imageUrl || `/images/destinations/${dest.city.toLowerCase()}.svg`,
+        imageUrl:
+          dest.imageUrl ||
+          `/images/destinations/${dest.city.toLowerCase()}.svg`,
         climate: dest.climate,
         highlights: (dest.highlights as string[]) || [],
         featured: dest.featured,
@@ -115,7 +117,11 @@ export default async function handler(
 
         // Additional fields for frontend compatibility
         university: Array.from(universities)[0] || `University of ${dest.city}`,
-        universityShort: Array.from(universities)[0]?.split(' ').map(w => w[0]).join('') || dest.city.slice(0, 3).toUpperCase(),
+        universityShort:
+          Array.from(universities)[0]
+            ?.split(" ")
+            .map((w) => w[0])
+            .join("") || dest.city.slice(0, 3).toUpperCase(),
         partnerUniversities: Array.from(universities),
         language: (dest.generalInfo as any)?.language || "English",
         costOfLiving,
@@ -131,9 +137,10 @@ export default async function handler(
     // Process form-generated destinations
     formGeneratedDestinations.forEach((dest) => {
       // Skip if we already have this destination from admin destinations
-      const existingAdmin = adminDestinations.find(admin =>
-        admin.city.toLowerCase() === dest.city?.toLowerCase() &&
-        admin.country.toLowerCase() === dest.country.toLowerCase()
+      const existingAdmin = adminDestinations.find(
+        (admin) =>
+          admin.city.toLowerCase() === dest.city?.toLowerCase() &&
+          admin.country.toLowerCase() === dest.country.toLowerCase(),
       );
 
       if (existingAdmin) return;
@@ -150,12 +157,14 @@ export default async function handler(
       });
 
       // Calculate living expenses from submissions
-      const livingExpensesSubmissions = citySubmissions.filter(sub => sub.type === "LIVING_EXPENSES");
+      const livingExpensesSubmissions = citySubmissions.filter(
+        (sub) => sub.type === "LIVING_EXPENSES",
+      );
       let avgCostPerMonth = 0;
       let costOfLiving: "low" | "medium" | "high" = "medium";
 
       if (livingExpensesSubmissions.length > 0) {
-        const totalExpenses = livingExpensesSubmissions.map(sub => {
+        const totalExpenses = livingExpensesSubmissions.map((sub) => {
           const data = sub.data as any;
           return (
             parseFloat(data.rent || 0) +
@@ -168,14 +177,17 @@ export default async function handler(
           );
         });
 
-        avgCostPerMonth = Math.round(totalExpenses.reduce((sum, val) => sum + val, 0) / totalExpenses.length);
+        avgCostPerMonth = Math.round(
+          totalExpenses.reduce((sum, val) => sum + val, 0) /
+            totalExpenses.length,
+        );
 
         if (avgCostPerMonth < 600) costOfLiving = "low";
         else if (avgCostPerMonth > 1200) costOfLiving = "high";
       }
 
       const universities = new Set<string>();
-      dest.courseExchanges.forEach(ce => {
+      dest.courseExchanges.forEach((ce) => {
         if (dest.accommodations.length > 0) {
           universities.add(`University of ${dest.city}`);
         }
@@ -186,10 +198,18 @@ export default async function handler(
         name: dest.name,
         city: dest.city || "",
         country: dest.country,
-        description: dest.description || dest.summary || `Discover ${dest.name} through real student experiences.`,
-        imageUrl: dest.imageUrl || `/images/destinations/${dest.city?.toLowerCase()}.svg`,
+        description:
+          dest.description ||
+          dest.summary ||
+          `Discover ${dest.name} through real student experiences.`,
+        imageUrl:
+          dest.imageUrl ||
+          `/images/destinations/${dest.city?.toLowerCase()}.svg`,
         climate: dest.climate || "Temperate",
-        highlights: (dest.highlights as string[]) || ["Student Reviews", "Real Experiences"],
+        highlights: (dest.highlights as string[]) || [
+          "Student Reviews",
+          "Real Experiences",
+        ],
         featured: dest.featured,
         studentCount: citySubmissions.length,
         avgCostPerMonth: avgCostPerMonth || undefined,

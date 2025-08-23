@@ -52,25 +52,25 @@ export default function App({
           refetchOnWindowFocus={false} // Disable to prevent unnecessary fetch errors
           refetchWhenOffline={false} // Don't refetch when offline
         >
-        <QueryClientProvider client={queryClient}>
-          <LoadingProvider>
-            <ToastProvider>
-              <LegacyToastProvider>
-                <NotificationProvider>
-                  <TooltipProvider>
-                    <FormProgressProvider>
-                      {/* <HMRErrorHandler /> */}
-                      <EnhancedOfflineIndicator />
-                      <Toaster />
-                      <Sonner />
-                      <Component {...pageProps} />
-                    </FormProgressProvider>
-                  </TooltipProvider>
-                </NotificationProvider>
-              </LegacyToastProvider>
-            </ToastProvider>
-          </LoadingProvider>
-        </QueryClientProvider>
+          <QueryClientProvider client={queryClient}>
+            <LoadingProvider>
+              <ToastProvider>
+                <LegacyToastProvider>
+                  <NotificationProvider>
+                    <TooltipProvider>
+                      <FormProgressProvider>
+                        {/* <HMRErrorHandler /> */}
+                        <EnhancedOfflineIndicator />
+                        <Toaster />
+                        <Sonner />
+                        <Component {...pageProps} />
+                      </FormProgressProvider>
+                    </TooltipProvider>
+                  </NotificationProvider>
+                </LegacyToastProvider>
+              </ToastProvider>
+            </LoadingProvider>
+          </QueryClientProvider>
         </SessionProvider>
       </AuthErrorBoundary>
     </ErrorBoundary>
