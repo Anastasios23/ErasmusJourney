@@ -204,10 +204,10 @@ export default function CourseMatchingExperiences() {
 
   const clearFilters = () => {
     setSearchTerm("");
-    setSelectedDestination("");
-    setSelectedDepartment("");
-    setSelectedDifficulty("");
-    setSelectedLevel("");
+    setSelectedDestination("all");
+    setSelectedDepartment("all");
+    setSelectedDifficulty("all");
+    setSelectedLevel("all");
     setRecommendedOnly(false);
   };
 
