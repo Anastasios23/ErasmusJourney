@@ -59,7 +59,9 @@ interface ExpenseCategory {
 }
 
 export default function LivingExpenses() {
-  const { data: session } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session } = useSession();
+  const session = { user: { id: 'anonymous', email: 'anonymous@example.com' } }; // Mock session for dev
   const router = useRouter();
   const { addNotification } = useNotifications();
   const { setCurrentStep } = useFormProgress();
