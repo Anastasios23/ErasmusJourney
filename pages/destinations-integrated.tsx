@@ -131,13 +131,24 @@ export default function EnhancedDestinationsPage() {
     // Search is handled by the filter effect
   };
 
-  const handleDestinationClick = (destination: EnhancedDestination) => {
-    // Track interaction
-    ContentIntegrationService.trackContentInteraction(
-      destination.id,
-      "destination",
-      "view",
-    );
+  const handleDestinationClick = async (destination: EnhancedDestination) => {
+    // Track interaction via API route
+    try {
+      await fetch("/api/content/track-interaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contentId: destination.id,
+          contentType: "destination",
+          action: "view",
+        }),
+      });
+    } catch (error) {
+      console.error("Error tracking interaction:", error);
+      // Don't block navigation if tracking fails
+    }
 
     router.push(`/destinations/${destination.id}`);
   };
