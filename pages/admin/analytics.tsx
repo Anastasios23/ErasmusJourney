@@ -123,6 +123,7 @@ export default function AdvancedAnalyticsDashboard() {
       };
 
       const safeFetch = async (url: string, retries = 3) => {
+        console.log(`Fetching ${url} using XMLHttpRequest to bypass FullStory interference...`);
         for (let i = 0; i < retries; i++) {
           try {
             // Use XMLHttpRequest as fallback to bypass FullStory fetch interception
