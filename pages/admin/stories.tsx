@@ -376,7 +376,7 @@ export default function StoriesAdmin() {
                   {pendingStories.map((story) => (
                     <TableRow key={story.id}>
                       <TableCell className="font-medium max-w-xs truncate">
-                        {story.title}
+                        {story.studentName || "Untitled Story"}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center">
@@ -387,10 +387,7 @@ export default function StoriesAdmin() {
                       <TableCell>
                         <div className="flex items-center">
                           <User className="h-4 w-4 mr-1 text-gray-400" />
-                          {story.user
-                            ? `${story.user.firstName || ""} ${story.user.lastName || ""}`.trim() ||
-                              story.user.email
-                            : "Unknown User"}
+                          {story.studentName || story.userEmail || "Unknown User"}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -425,7 +422,7 @@ export default function StoriesAdmin() {
                             <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                               <DialogHeader>
                                 <DialogTitle>
-                                  Review Story: {story.title}
+                                  Review Story: {story.studentName || "Untitled Story"}
                                 </DialogTitle>
                               </DialogHeader>
                               {selectedStory && (
@@ -445,28 +442,47 @@ export default function StoriesAdmin() {
                                   <div>
                                     <strong>Story Content:</strong>
                                     <div className="mt-2 p-4 bg-gray-100 rounded text-sm overflow-auto max-h-96">
-                                      {Object.entries(selectedStory.data).map(
-                                        ([key, value]) => (
-                                          <div key={key} className="mb-3">
-                                            <strong className="block text-gray-700">
-                                              {key
-                                                .replace(/([A-Z])/g, " $1")
-                                                .replace(/^./, (str) =>
-                                                  str.toUpperCase(),
-                                                )}
-                                              :
-                                            </strong>
-                                            <div className="mt-1 pl-2 border-l-2 border-gray-300">
-                                              {typeof value === "string"
-                                                ? value
-                                                : JSON.stringify(
-                                                    value,
-                                                    null,
-                                                    2,
-                                                  )}
-                                            </div>
+                                      <div className="mb-3">
+                                        <strong className="block text-gray-700">University:</strong>
+                                        <div className="mt-1 pl-2 border-l-2 border-gray-300">
+                                          {selectedStory.university}
+                                        </div>
+                                      </div>
+                                      <div className="mb-3">
+                                        <strong className="block text-gray-700">Department:</strong>
+                                        <div className="mt-1 pl-2 border-l-2 border-gray-300">
+                                          {selectedStory.department}
+                                        </div>
+                                      </div>
+                                      <div className="mb-3">
+                                        <strong className="block text-gray-700">Story:</strong>
+                                        <div className="mt-1 pl-2 border-l-2 border-gray-300">
+                                          {selectedStory.story}
+                                        </div>
+                                      </div>
+                                      {selectedStory.tips && selectedStory.tips.length > 0 && (
+                                        <div className="mb-3">
+                                          <strong className="block text-gray-700">Tips:</strong>
+                                          <div className="mt-1 pl-2 border-l-2 border-gray-300">
+                                            {selectedStory.tips.join(", ")}
                                           </div>
-                                        ),
+                                        </div>
+                                      )}
+                                      {selectedStory.accommodationTips && (
+                                        <div className="mb-3">
+                                          <strong className="block text-gray-700">Accommodation Tips:</strong>
+                                          <div className="mt-1 pl-2 border-l-2 border-gray-300">
+                                            {selectedStory.accommodationTips}
+                                          </div>
+                                        </div>
+                                      )}
+                                      {selectedStory.budgetTips && (
+                                        <div className="mb-3">
+                                          <strong className="block text-gray-700">Budget Tips:</strong>
+                                          <div className="mt-1 pl-2 border-l-2 border-gray-300">
+                                            {selectedStory.budgetTips}
+                                          </div>
+                                        </div>
                                       )}
                                     </div>
                                   </div>
@@ -574,15 +590,12 @@ export default function StoriesAdmin() {
                 {stories.map((story) => (
                   <TableRow key={story.id}>
                     <TableCell className="font-medium max-w-xs truncate">
-                      {story.title}
+                      {story.studentName || "Untitled Story"}
                     </TableCell>
                     <TableCell>{getStatusBadge(story.status)}</TableCell>
                     <TableCell>{getLocationFromStory(story)}</TableCell>
                     <TableCell>
-                      {story.user
-                        ? `${story.user.firstName || ""} ${story.user.lastName || ""}`.trim() ||
-                          story.user.email
-                        : "Unknown User"}
+                      {story.studentName || story.userEmail || "Unknown User"}
                     </TableCell>
                     <TableCell>
                       {new Date(story.createdAt).toLocaleDateString()}
