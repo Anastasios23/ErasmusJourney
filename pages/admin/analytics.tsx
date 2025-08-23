@@ -112,12 +112,50 @@ export default function AdvancedAnalyticsDashboard() {
     try {
       setLoading(true);
 
-      // Fetch analytics data from various sources with proper error handling
+      // Fetch analytics data from various sources with FullStory bypass and retry logic
+      const safeJsonParse = (text: string) => {
+        try {
+          return JSON.parse(text);
+        } catch {
+          return null;
+        }
+      };
+
+      const safeFetch = async (url: string, retries = 3) => {
+        for (let i = 0; i < retries; i++) {
+          try {
+            // Use XMLHttpRequest as fallback to bypass FullStory fetch interception
+            const xhr = new XMLHttpRequest();
+            const result = await new Promise((resolve, reject) => {
+              xhr.open('GET', url, true);
+              xhr.setRequestHeader('Content-Type', 'application/json');
+              xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                  if (xhr.status >= 200 && xhr.status < 300) {
+                    const data = safeJsonParse(xhr.responseText);
+                    resolve(data);
+                  } else {
+                    reject(new Error(`HTTP ${xhr.status}`));
+                  }
+                }
+              };
+              xhr.onerror = () => reject(new Error('Network error'));
+              xhr.send();
+            });
+            return result;
+          } catch (error) {
+            console.warn(`Fetch attempt ${i + 1}/${retries} failed for ${url}:`, error);
+            if (i === retries - 1) throw error;
+            // Wait before retry
+            await new Promise(resolve => setTimeout(resolve, 500 * (i + 1)));
+          }
+        }
+      };
+
       const fetchDestinations = async () => {
         try {
-          const response = await fetch("/api/admin/destinations/enhanced");
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          return await response.json();
+          const data = await safeFetch("/api/admin/destinations/enhanced");
+          return data || { destinations: [] };
         } catch (error) {
           console.error("Error fetching destinations:", error);
           return { destinations: [] };
@@ -126,9 +164,8 @@ export default function AdvancedAnalyticsDashboard() {
 
       const fetchSubmissions = async () => {
         try {
-          const response = await fetch("/api/admin/form-submissions?limit=1000");
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          return await response.json();
+          const data = await safeFetch("/api/admin/form-submissions?limit=1000");
+          return Array.isArray(data) ? { submissions: data } : data || { submissions: [] };
         } catch (error) {
           console.error("Error fetching submissions:", error);
           return { submissions: [] };
@@ -137,9 +174,8 @@ export default function AdvancedAnalyticsDashboard() {
 
       const fetchUsers = async () => {
         try {
-          const response = await fetch("/api/admin/analytics");
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          return await response.json();
+          const data = await safeFetch("/api/admin/analytics");
+          return data || { users: [] };
         } catch (error) {
           console.error("Error fetching user analytics:", error);
           return { users: [] };
