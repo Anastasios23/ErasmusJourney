@@ -9,6 +9,7 @@ import {
 } from "react";
 import { useSession } from "next-auth/react";
 import { useFormSubmissions } from "../hooks/useFormSubmissions";
+import { MOCK_SESSION_USER } from "../utils/mockSession";
 
 type FormStep =
   | "basic-info"
@@ -39,7 +40,7 @@ export function FormProgressProvider({
 }) {
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const { data: session } = useSession();
-  const session = { user: { id: 'anonymous', email: 'anonymous@example.com' } };
+  const session = MOCK_SESSION_USER;
   const { getFormData } = useFormSubmissions();
   const [completedSteps, setCompletedSteps] = useState<FormStep[]>([]);
   const [currentStep, setCurrentStep] = useState<FormStep>("basic-info");
