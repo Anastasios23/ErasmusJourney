@@ -34,7 +34,7 @@ import {
   Sparkles,
   Award,
 } from "lucide-react";
-import { ContentIntegrationService } from "../src/services/contentIntegrationService";
+// ContentIntegrationService moved to API routes to avoid client-side Prisma usage
 
 interface EnhancedDestination {
   id: string;
