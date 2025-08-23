@@ -58,10 +58,13 @@ const NotificationContext = createContext<NotificationContextType | undefined>(
   undefined,
 );
 
+// Static mock session to prevent re-renders
+const MOCK_SESSION = { user: { id: 'anonymous', email: 'anonymous@example.com' } };
+
 export function NotificationProvider({ children }: { children: ReactNode }) {
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const { data: session } = useSession();
-  const session = { user: { id: 'anonymous', email: 'anonymous@example.com' } };
+  const session = MOCK_SESSION;
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
