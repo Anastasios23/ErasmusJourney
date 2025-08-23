@@ -184,8 +184,8 @@ export default function Accommodation() {
         );
         setFormData((prev) => ({
           ...prev,
-          city: basicInfoData.hostCity,
-          country: basicInfoData.hostCountry,
+          city: basicInfoData.hostCity || "",
+          country: basicInfoData.hostCountry || "",
         }));
       }
     }
