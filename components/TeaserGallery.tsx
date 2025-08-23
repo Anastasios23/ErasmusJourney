@@ -54,7 +54,7 @@ const TeaserGallery = () => {
         excerpt:
           "Tips and tricks for finding affordable, comfortable housing in Prague. From dorms to shared apartments...",
         imageUrl:
-          "https://images.unsplash.com/photo-1542324151-ee2b73cb0d95?w=400&h=250&fit=crop",
+          "https://images.unsplash.com/photo-1541849546-216549ae216d?w=400&h=250&fit=crop",
         city: "Prague",
         rating: 5,
         studentName: "Andreas M.",
