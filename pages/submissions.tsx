@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import Header from "../components/Header";
 import LoginPrompt from "../src/components/LoginPrompt";
 import Breadcrumb from "../components/Breadcrumb";
+import { MOCK_SESSION_ADMIN, MOCK_STATUS_AUTHENTICATED } from "@/utils/mockSession";
 
 type Submission = {
   id: string;
