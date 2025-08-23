@@ -135,7 +135,21 @@ export default function Accommodation() {
           "Loading accommodation data:",
           experienceData.accommodation,
         );
-        setFormData(experienceData.accommodation);
+
+        // Ensure all form data values are strings, not undefined
+        const safeAccommodationData = Object.entries(experienceData.accommodation).reduce(
+          (acc, [key, value]) => {
+            if (Array.isArray(value)) {
+              acc[key] = value; // Keep arrays as is
+            } else {
+              acc[key] = value ?? ""; // Convert undefined to empty string
+            }
+            return acc;
+          },
+          {} as Record<string, any>
+        );
+
+        setFormData(safeAccommodationData);
       }
     }
   }, [experienceLoading, experienceData]); // Remove dependencies to prevent re-runs
