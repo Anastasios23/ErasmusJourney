@@ -274,8 +274,9 @@ export default function AdminUniversityExchanges() {
     if (!selectedSubmission) return;
 
     try {
+      console.log('Approving university submission:', selectedSubmission.id);
       // Approve the submission and create university exchange
-      const response = await fetch(
+      const response = await safeFetch(
         `/api/admin/university-submissions/${selectedSubmission.id}/approve`,
         {
           method: "POST",
@@ -288,6 +289,7 @@ export default function AdminUniversityExchanges() {
       );
 
       if (response.ok) {
+        console.log('Successfully approved university submission');
         // Refresh data
         fetchPendingSubmissions();
         fetchLiveExchanges();
@@ -304,6 +306,8 @@ export default function AdminUniversityExchanges() {
           accommodationSupport: false,
           additionalNotes: "",
         });
+      } else {
+        console.error('Failed to approve submission, status:', response.status);
       }
     } catch (error) {
       console.error("Error approving submission:", error);
@@ -312,11 +316,18 @@ export default function AdminUniversityExchanges() {
 
   const rejectSubmission = async (submissionId: string, reason: string) => {
     try {
-      await fetch(`/api/admin/university-submissions/${submissionId}/reject`, {
+      console.log('Rejecting university submission:', submissionId, 'with reason:', reason);
+      const response = await safeFetch(`/api/admin/university-submissions/${submissionId}/reject`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reason }),
       });
+
+      if (response.ok) {
+        console.log('Successfully rejected university submission');
+      } else {
+        console.error('Failed to reject submission, status:', response.status);
+      }
 
       fetchPendingSubmissions();
       setSelectedSubmission(null);
@@ -349,7 +360,7 @@ export default function AdminUniversityExchanges() {
       case "PROJECT":
         return "📋";
       case "PRESENTATION":
-        return "🎤";
+        return "��";
       case "MIXED":
         return "🔄";
       default:
