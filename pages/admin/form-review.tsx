@@ -418,9 +418,10 @@ export default function AdminFormReview() {
     );
   }
 
-  if (!session || session.user?.role !== "ADMIN") {
-    return null;
-  }
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // if (!session || session.user?.role !== "ADMIN") {
+  //   return null;
+  // }
 
   return (
     <div className="min-h-screen bg-gray-50">
