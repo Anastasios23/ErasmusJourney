@@ -223,7 +223,8 @@ export default function EnhancedDestinationsAdmin() {
     overrides: any = {},
   ) => {
     try {
-      const response = await fetch("/api/admin/destinations/enhanced", {
+      console.log('Creating destination from submissions for:', city, country);
+      const response = await safeFetch("/api/admin/destinations/enhanced", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -237,7 +238,10 @@ export default function EnhancedDestinationsAdmin() {
       });
 
       if (response.ok) {
+        console.log('Successfully created destination from submissions');
         await fetchEnhancedData(); // Refresh data
+      } else {
+        console.error('Failed to create destination from submissions, status:', response.status);
       }
     } catch (error) {
       console.error("Error creating destination from submissions:", error);
@@ -246,7 +250,8 @@ export default function EnhancedDestinationsAdmin() {
 
   const createManualDestination = async () => {
     try {
-      const response = await fetch("/api/admin/destinations/enhanced", {
+      console.log('Creating manual destination:', newDestination);
+      const response = await safeFetch("/api/admin/destinations/enhanced", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -258,6 +263,7 @@ export default function EnhancedDestinationsAdmin() {
       });
 
       if (response.ok) {
+        console.log('Successfully created manual destination');
         setNewDestination({
           name: "",
           city: "",
@@ -266,6 +272,8 @@ export default function EnhancedDestinationsAdmin() {
           imageUrl: "",
         });
         await fetchEnhancedData(); // Refresh data
+      } else {
+        console.error('Failed to create manual destination, status:', response.status);
       }
     } catch (error) {
       console.error("Error creating manual destination:", error);
@@ -274,7 +282,8 @@ export default function EnhancedDestinationsAdmin() {
 
   const updateDestination = async (destinationId: string, updates: any) => {
     try {
-      const response = await fetch("/api/admin/destinations/enhanced", {
+      console.log('Updating destination:', destinationId, updates);
+      const response = await safeFetch("/api/admin/destinations/enhanced", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -286,7 +295,10 @@ export default function EnhancedDestinationsAdmin() {
       });
 
       if (response.ok) {
+        console.log('Successfully updated destination');
         await fetchEnhancedData(); // Refresh data
+      } else {
+        console.error('Failed to update destination, status:', response.status);
       }
     } catch (error) {
       console.error("Error updating destination:", error);
