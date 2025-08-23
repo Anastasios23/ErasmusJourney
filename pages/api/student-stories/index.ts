@@ -18,14 +18,14 @@ export default async function handler(
             type: "EXPERIENCE",
             status: { in: ["SUBMITTED", "PUBLISHED"] },
             data: {
-              path: "wantToHelp",
+              path: ["wantToHelp"], // Fixed: path should be an array
               string_contains: "yes",
             },
           },
           {
             type: "EXPERIENCE",
             status: { in: ["SUBMITTED", "PUBLISHED"] },
-            // Include all experience submissions for now to debug
+            // Include all experience submissions for now
           },
           {
             type: "STORY",
