@@ -39,15 +39,24 @@ export default async function handler(
   }
 
   try {
-    // Get admin destinations (public data only)
-    const adminDestinations = await prisma.adminDestination.findMany({
-      where: { active: true },
-      orderBy: [{ featured: "desc" }, { name: "asc" }],
-    });
+    // Get both admin destinations and form-generated destinations
+    const [adminDestinations, formGeneratedDestinations] = await Promise.all([
+      prisma.adminDestination.findMany({
+        where: { active: true },
+        orderBy: [{ featured: "desc" }, { name: "asc" }],
+      }),
+      prisma.destination.findMany({
+        include: {
+          accommodations: true,
+          courseExchanges: true,
+        },
+        orderBy: [{ featured: "desc" }, { name: "asc" }],
+      }),
+    ]);
 
-    // Get form submissions to calculate student counts and additional data
+    // Get form submissions for calculating stats
     const formSubmissions = await prisma.formSubmission.findMany({
-      where: { status: "SUBMITTED" },
+      where: { status: "PUBLISHED" }, // Only approved submissions
       select: {
         data: true,
         type: true,
