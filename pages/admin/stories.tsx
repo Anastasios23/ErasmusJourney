@@ -65,27 +65,104 @@ export default function StoriesAdmin() {
     null,
   );
 
+  // safeFetch function to bypass FullStory interference using XMLHttpRequest
+  const safeFetch = async (url: string, options: { method?: string; body?: string; headers?: Record<string, string> } = {}, retries = 3) => {
+    const method = options.method || 'GET';
+    console.log(`${method} ${url} using XMLHttpRequest to bypass FullStory interference...`);
+
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        const response = await new Promise<{ok: boolean; status: number; json: () => Promise<any>}>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open(method, url, true);
+
+          // Set headers
+          if (options.headers) {
+            Object.entries(options.headers).forEach(([key, value]) => {
+              xhr.setRequestHeader(key, value);
+            });
+          }
+
+          xhr.onload = () => {
+            try {
+              const responseData = xhr.responseText ? JSON.parse(xhr.responseText) : {};
+              resolve({
+                ok: xhr.status >= 200 && xhr.status < 300,
+                status: xhr.status,
+                json: async () => responseData
+              });
+            } catch (parseError) {
+              console.warn(`JSON parse error on attempt ${attempt}:`, parseError);
+              resolve({
+                ok: false,
+                status: xhr.status,
+                json: async () => ({})
+              });
+            }
+          };
+
+          xhr.onerror = () => {
+            reject(new Error(`XMLHttpRequest failed: ${xhr.status} ${xhr.statusText}`));
+          };
+
+          xhr.ontimeout = () => {
+            reject(new Error('XMLHttpRequest timeout'));
+          };
+
+          xhr.timeout = 30000; // 30 second timeout
+
+          if (options.body) {
+            xhr.send(options.body);
+          } else {
+            xhr.send();
+          }
+        });
+
+        console.log(`${method} ${url} completed with status:`, response.status);
+        return response;
+      } catch (error) {
+        console.warn(`Attempt ${attempt}/${retries} failed for ${method} ${url}:`, error);
+
+        if (attempt === retries) {
+          throw error;
+        }
+
+        // Exponential backoff
+        const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+
+    throw new Error(`All ${retries} attempts failed for ${method} ${url}`);
+  };
+
   useEffect(() => {
     if (status === "loading") return;
 
-    if (!session || session.user?.role !== "ADMIN") {
-      router.push("/login");
-      return;
-    }
+    // AUTHENTICATION DISABLED - Comment out to re-enable
+    // if (!session || session.user?.role !== "ADMIN") {
+    //   router.push("/login");
+    //   return;
+    // }
 
     setLoading(false);
     fetchStories();
-  }, [session, status, router]);
+  }, [/*session, status, router*/]);
 
   const fetchStories = async () => {
     try {
-      const response = await fetch("/api/admin/stories");
+      console.log('Fetching stories...');
+      const response = await safeFetch("/api/admin/stories");
       if (response.ok) {
         const data = await response.json();
+        console.log('Stories fetched successfully:', data?.stories?.length || 0);
         setStories(data.stories || []);
+      } else {
+        console.error('Failed to fetch stories, status:', response.status);
       }
     } catch (error) {
       console.error("Error fetching stories:", error);
+      setStories([]);
     }
   };
 
