@@ -60,7 +60,8 @@ export default function DestinationOverview({
     groceries: "Groceries",
     transport: "Transportation",
     social: "Eating Out",
-    other: "Bills & Other",
+    bills: "Bills",
+    other: "Other",
   };
 
   const universities = Array.from(

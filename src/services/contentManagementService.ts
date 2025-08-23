@@ -298,9 +298,11 @@ export class ContentManagementService {
 
     const expenses = {
       rent: [],
-      food: [],
+      groceries: [],
       transport: [],
-      entertainment: [],
+      eatingOut: [],
+      bills: [],
+      other: [],
       total: [],
     };
 
@@ -308,10 +310,12 @@ export class ContentManagementService {
       const data = submission.data;
 
       if (data.monthlyRent) expenses.rent.push(data.monthlyRent);
-      if (data.monthlyFood) expenses.food.push(data.monthlyFood);
+      if (data.monthlyFood) expenses.groceries.push(data.monthlyFood);
       if (data.monthlyTransport) expenses.transport.push(data.monthlyTransport);
       if (data.monthlyEntertainment)
-        expenses.entertainment.push(data.monthlyEntertainment);
+        expenses.eatingOut.push(data.monthlyEntertainment);
+      if (data.monthlyUtilities) expenses.bills.push(data.monthlyUtilities);
+      if (data.monthlyOther) expenses.other.push(data.monthlyOther);
       if (data.totalMonthlyBudget) expenses.total.push(data.totalMonthlyBudget);
     });
 
@@ -329,9 +333,11 @@ export class ContentManagementService {
     return {
       totalSubmissions: submissions.length,
       rent: calculateStats(expenses.rent),
-      food: calculateStats(expenses.food),
+      groceries: calculateStats(expenses.groceries),
       transport: calculateStats(expenses.transport),
-      entertainment: calculateStats(expenses.entertainment),
+      eatingOut: calculateStats(expenses.eatingOut),
+      bills: calculateStats(expenses.bills),
+      other: calculateStats(expenses.other),
       total: calculateStats(expenses.total),
     };
   }
