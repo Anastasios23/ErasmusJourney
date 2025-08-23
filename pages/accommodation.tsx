@@ -126,7 +126,15 @@ export default function Accommodation() {
 
       // Load basic info data
       if (experienceData.basicInfo) {
-        setBasicInfoData(experienceData.basicInfo);
+        // Ensure all values are strings, not undefined
+        const safeBasicInfo = Object.entries(experienceData.basicInfo).reduce(
+          (acc, [key, value]) => {
+            acc[key] = value ?? "";
+            return acc;
+          },
+          {} as Record<string, any>
+        );
+        setBasicInfoData(safeBasicInfo);
       }
 
       // Load accommodation data if available
