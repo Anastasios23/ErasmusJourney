@@ -151,12 +151,13 @@ export default function BasicInformation() {
   const [availableCities, setAvailableCities] = useState<string[]>([]);
 
   // 2. ALL useEffect HOOKS NEXT
+  // AUTHENTICATION DISABLED - Comment out to re-enable
   // Authentication redirect in useEffect
-  useEffect(() => {
-    if (sessionStatus === "unauthenticated") {
-      router.replace(`/login?callbackUrl=${encodeURIComponent(router.asPath)}`);
-    }
-  }, [sessionStatus, router]);
+  // useEffect(() => {
+  //   if (sessionStatus === "unauthenticated") {
+  //     router.replace(`/login?callbackUrl=${encodeURIComponent(router.asPath)}`);
+  //   }
+  // }, [sessionStatus, router]);
 
   useEffect(() => {
     setCurrentStep("basic-info");
@@ -535,20 +536,32 @@ export default function BasicInformation() {
   // Determine what to render based on session and loading status
   let content;
 
-  if (sessionStatus === "loading" || experienceLoading) {
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // if (sessionStatus === "loading" || experienceLoading) {
+  //   content = (
+  //     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+  //       <div className="text-center">
+  //         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+  //         <p>
+  //           {sessionStatus === "loading"
+  //             ? "Checking authentication..."
+  //             : "Loading draft data..."}
+  //         </p>
+  //       </div>
+  //     </div>
+  //   );
+  // } else if (sessionStatus !== "authenticated") {
+
+  if (experienceLoading) {
     content = (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p>
-            {sessionStatus === "loading"
-              ? "Checking authentication..."
-              : "Loading draft data..."}
-          </p>
+          <p>Loading draft data...</p>
         </div>
       </div>
     );
-  } else if (sessionStatus !== "authenticated") {
+  } else if (false) { // Changed condition to disable auth check
     // This case should ideally trigger a redirect via useEffect, but provides a fallback UI
     content = (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
