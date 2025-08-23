@@ -174,10 +174,11 @@ export default function SettingsPage() {
     );
   }
 
+  // AUTHENTICATION DISABLED - Comment out to re-enable
   // Don't render if not authenticated (will redirect)
-  if (!session) {
-    return null;
-  }
+  // if (!session) {
+  //   return null;
+  // }
 
   return (
     <>
