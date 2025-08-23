@@ -195,8 +195,46 @@ export default function AdvancedAnalyticsDashboard() {
         users,
       );
       setAnalytics(analyticsData);
+
+      console.log('Analytics data loaded successfully:', {
+        destinations: destinations?.destinations?.length || 0,
+        submissions: submissions?.submissions?.length || Array.isArray(submissions) ? submissions.length : 0,
+        users: users?.users?.length || 0
+      });
     } catch (error) {
       console.error("Error fetching analytics:", error);
+      // Set fallback analytics data to prevent empty dashboard
+      setAnalytics({
+        overview: {
+          totalDestinations: 0,
+          totalSubmissions: 0,
+          publishedSubmissions: 0,
+          averageRating: 0,
+          conversionRate: 0,
+          lastWeekGrowth: 0,
+        },
+        destinations: {
+          topPerforming: [],
+          needAttention: [],
+          recentlyUpdated: [],
+        },
+        submissions: {
+          byType: {},
+          byStatus: {},
+          byCountry: {},
+          qualityDistribution: {},
+        },
+        users: {
+          registrationTrend: [],
+          engagementLevels: {},
+          topContributors: [],
+        },
+        content: {
+          performanceMetrics: [],
+          popularSearches: [],
+          topReferrers: [],
+        },
+      });
     } finally {
       setLoading(false);
     }
