@@ -238,7 +238,8 @@ export default function AdminStudentAccommodations() {
     if (!selectedSubmission) return;
 
     try {
-      const response = await fetch(
+      console.log('Approving accommodation submission:', selectedSubmission.id);
+      const response = await safeFetch(
         `/api/admin/accommodation-submissions/${selectedSubmission.id}`,
         {
           method: "PUT",
@@ -252,10 +253,13 @@ export default function AdminStudentAccommodations() {
       );
 
       if (response.ok) {
+        console.log('Successfully approved accommodation submission');
         fetchPendingSubmissions();
         fetchLiveAccommodations();
         setReviewDialogOpen(false);
         alert("Accommodation approved and published!");
+      } else {
+        console.error('Failed to approve submission, status:', response.status);
       }
     } catch (error) {
       console.error("Error approving submission:", error);
@@ -267,7 +271,8 @@ export default function AdminStudentAccommodations() {
       const reason = prompt("Reason for rejection:");
       if (!reason) return;
 
-      const response = await fetch(
+      console.log('Rejecting accommodation submission:', submissionId, 'with reason:', reason);
+      const response = await safeFetch(
         `/api/admin/accommodation-submissions/${submissionId}`,
         {
           method: "PUT",
@@ -280,7 +285,10 @@ export default function AdminStudentAccommodations() {
       );
 
       if (response.ok) {
+        console.log('Successfully rejected accommodation submission');
         fetchPendingSubmissions();
+      } else {
+        console.error('Failed to reject submission, status:', response.status);
       }
     } catch (error) {
       console.error("Error rejecting submission:", error);
