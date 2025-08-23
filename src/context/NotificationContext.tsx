@@ -7,6 +7,7 @@ import {
   useContext,
 } from "react";
 import { useSession } from "next-auth/react";
+import { MOCK_SESSION_USER } from "../utils/mockSession";
 
 export interface Notification {
   id: string;
@@ -59,7 +60,9 @@ const NotificationContext = createContext<NotificationContextType | undefined>(
 );
 
 export function NotificationProvider({ children }: { children: ReactNode }) {
-  const { data: session } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session } = useSession();
+  const session = MOCK_SESSION_USER;
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 

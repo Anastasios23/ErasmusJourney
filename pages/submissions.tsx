@@ -4,6 +4,10 @@ import { useRouter } from "next/router";
 import Header from "../components/Header";
 import LoginPrompt from "../src/components/LoginPrompt";
 import Breadcrumb from "../components/Breadcrumb";
+import {
+  MOCK_SESSION_ADMIN,
+  MOCK_STATUS_AUTHENTICATED,
+} from "@/utils/mockSession";
 
 type Submission = {
   id: string;
@@ -15,45 +19,99 @@ type Submission = {
 };
 
 export default function SubmissionsPage() {
-  const { data: session, status } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session, status } = useSession();
+  const session = MOCK_SESSION_ADMIN;
+  const status = MOCK_STATUS_AUTHENTICATED;
   const router = useRouter();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // SafeFetch function to bypass FullStory interference
+  const safeFetch = async (
+    url: string,
+    options: RequestInit = {},
+  ): Promise<Response> => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      const method = options.method || "GET";
+
+      xhr.open(method, url, true);
+
+      // Set headers
+      if (options.headers) {
+        Object.entries(options.headers).forEach(([key, value]) => {
+          xhr.setRequestHeader(key, value as string);
+        });
+      }
+
+      xhr.onload = () => {
+        const response = new Response(xhr.responseText, {
+          status: xhr.status,
+          statusText: xhr.statusText,
+        });
+        resolve(response);
+      };
+
+      xhr.onerror = () => {
+        reject(new Error("Network error"));
+      };
+
+      xhr.ontimeout = () => {
+        reject(new Error("Request timeout"));
+      };
+
+      xhr.timeout = 10000; // 10 second timeout
+
+      // Send the request
+      if (options.body) {
+        xhr.send(options.body as string);
+      } else {
+        xhr.send();
+      }
+    });
+  };
+
+  // AUTHENTICATION DISABLED - Comment out to re-enable
   // Redirect to login if not authenticated
+  // useEffect(() => {
+  //   if (status === "loading") return; // Still loading
+  //   if (!session) {
+  //     router.push("/login?callbackUrl=/submissions");
+  //     return;
+  //   }
+
+  //   // Check if user is admin
+  //   const user = session.user as any;
+  //   if (user.role !== "ADMIN") {
+  //     router.push("/dashboard"); // Redirect non-admin users
+  //     return;
+  //   }
+  // }, [session, status, router]);
+
   useEffect(() => {
-    if (status === "loading") return; // Still loading
-    if (!session) {
-      router.push("/login?callbackUrl=/submissions");
-      return;
-    }
+    // AUTHENTICATION DISABLED - Comment out to re-enable
+    // if (!session) return;
 
-    // Check if user is admin
-    const user = session.user as any;
-    if (user.role !== "ADMIN") {
-      router.push("/dashboard"); // Redirect non-admin users
-      return;
-    }
-  }, [session, status, router]);
-
-  useEffect(() => {
-    if (!session) return;
-
-    // Once authenticated, fetch
-    fetch("/api/submissions")
-      .then((res) => {
+    // Once authenticated, fetch using safeFetch to bypass FullStory interference
+    const fetchSubmissions = async () => {
+      try {
+        const res = await safeFetch("/api/submissions");
         if (!res.ok) {
           throw new Error(`HTTP ${res.status}: ${res.statusText}`);
         }
-        return res.json();
-      })
-      .then(({ submissions }) => setSubmissions(submissions))
-      .catch((err) => {
-        console.error(err);
+        const data = await res.json();
+        setSubmissions(data.submissions || []);
+      } catch (err) {
+        console.error("Error fetching submissions:", err);
         setError("Failed to load submissions");
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSubmissions();
   }, [session]);
 
   // Show loading while checking authentication
@@ -68,33 +126,34 @@ export default function SubmissionsPage() {
     );
   }
 
+  // AUTHENTICATION DISABLED - Comment out to re-enable
   // Don't render if not authenticated (will redirect)
-  if (!session) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <Header />
-        <main className="container mx-auto px-4 py-8">
-          <div className="max-w-3xl mx-auto">
-            <Breadcrumb
-              items={[
-                { label: "Home", href: "/" },
-                { label: "Admin", href: "/admin" },
-                { label: "Submissions", href: "/submissions" },
-              ]}
-            />
-
-            <div className="mt-8">
-              <LoginPrompt
-                title="Admin Access Required"
-                description="You need to be logged in as an administrator to view submissions."
-                currentPath="/submissions"
-              />
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
+  // if (!session) {
+  //   return (
+  //     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+  //       <Header />
+  //       <main className="container mx-auto px-4 py-8">
+  //         <div className="max-w-3xl mx-auto">
+  //           <Breadcrumb
+  //             items={[
+  //               { label: "Home", href: "/" },
+  //               { label: "Admin", href: "/admin" },
+  //               { label: "Submissions", href: "/submissions" },
+  //             ]}
+  //           />
+  //
+  //           <div className="mt-8">
+  //             <LoginPrompt
+  //               title="Admin Access Required"
+  //               description="You need to be logged in as an administrator to view submissions."
+  //               currentPath="/submissions"
+  //             />
+  //           </div>
+  //         </div>
+  //       </main>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>

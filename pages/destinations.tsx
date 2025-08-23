@@ -128,26 +128,44 @@ export default function Destinations() {
         if (!response.ok) {
           console.error("API Error Response:", data);
           throw new Error(
-            `Failed to fetch destinations: ${response.status} - ${data.message || "Unknown error"}`,
+            `Failed to fetch destinations: ${response.status} - ${data?.message || data?.error || "Unknown error"}`,
           );
         }
 
-        // Transform API data to match component expectations
-        const transformedDestinations = data.destinations.map((dest: any) => ({
-          id: dest.id,
-          city: dest.city,
-          country: dest.country,
-          image: dest.image,
-          description: dest.description,
-          costLevel: dest.costLevel,
-          rating: dest.rating,
-          studentCount: dest.studentCount,
-          popularUniversities: dest.popularUniversities,
-          highlights: dest.universities ? dest.universities.slice(0, 3) : [], // Use universities as highlights for now
-          avgCostPerMonth: dest.avgCostPerMonth,
-          region: getRegionFromCountry(dest.country),
-        }));
+        // Validate that we have valid data
+        if (!data) {
+          throw new Error("No data received from destinations API");
+        }
 
+        // Ensure data is an array
+        const destinationsArray = Array.isArray(data) ? data : [];
+
+        console.log(`Processing ${destinationsArray.length} destinations`);
+
+        // Transform API data to match component expectations
+        const transformedDestinations = destinationsArray
+          .filter((dest: any) => dest && dest.id && dest.city && dest.country) // Filter out invalid entries
+          .map((dest: any) => ({
+            id: dest.id,
+            city: dest.city,
+            country: dest.country,
+            image:
+              dest.imageUrl ||
+              `/images/destinations/${dest.city?.toLowerCase()}.svg`, // API returns imageUrl
+            description:
+              dest.description || `Explore ${dest.city}, ${dest.country}`,
+            costLevel: dest.costOfLiving || "medium", // API returns costOfLiving
+            rating: dest.averageRating || 4.0, // API returns averageRating
+            studentCount: dest.studentCount || 0,
+            popularUniversities: dest.popularUniversities || [],
+            highlights: dest.highlights || [], // API returns highlights directly
+            avgCostPerMonth: dest.avgCostPerMonth || dest.averageRent || 0,
+            region: getRegionFromCountry(dest.country),
+          }));
+
+        console.log(
+          `Successfully transformed ${transformedDestinations.length} destinations`,
+        );
         setDestinations(transformedDestinations);
       } catch (error) {
         console.error("Error fetching destinations:", error);
@@ -568,10 +586,10 @@ export default function Destinations() {
                 {filteredDestinations.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredDestinations.map((destination, index) => (
-                        <Card
-                          key={destination.id}
-                          className="overflow-hidden hover:shadow-xl transition-all duration-300 group border-0 shadow-md hover:shadow-2xl hover:-translate-y-1"
-                        >
+                      <Card
+                        key={destination.id}
+                        className="overflow-hidden hover:shadow-xl transition-all duration-300 group border-0 shadow-md hover:shadow-2xl hover:-translate-y-1"
+                      >
                         <div className="relative h-48 overflow-hidden">
                           <OptimizedImage
                             src={destination.image}
@@ -888,7 +906,10 @@ export default function Destinations() {
                             </div>
                           )}
 
-                          <Link href={`/destinations/${destination.id}`} className="block">
+                          <Link
+                            href={`/destinations/${destination.id}`}
+                            className="block"
+                          >
                             <Button className="w-full" variant="outline">
                               See More
                               <ArrowRight className="h-4 w-4 ml-2" />

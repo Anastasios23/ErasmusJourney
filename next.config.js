@@ -6,25 +6,22 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Disable Babel configuration
-  experimental: {
-    forceSwcTransforms: true,
-  },
+  // Allow cross-origin requests in development for cloud environments
+  allowedDevOrigins: [
+    // Allow the current fly.dev domain
+    "e76e6937e0ab4494b4f81584380dda25-a5461613bb5b4ba69ae071f5c.fly.dev",
+    // Allow localhost variations
+    "localhost:3000",
+    "127.0.0.1:3000",
+  ],
   // Enhanced webpack config for cloud environment stability
   webpack: (config, { dev, isServer }) => {
-    // Add a rule to handle .ts files with JavaScript
-    config.module.rules.push({
-      test: /\.ts$/,
-      use: 'babel-loader',
-      exclude: /node_modules/,
-    });
-    
     // Add fallback for @prisma/client
     config.resolve.fallback = {
       ...config.resolve.fallback,
-      '@prisma/client': false,
+      "@prisma/client": false,
     };
-    
+
     if (dev && !isServer) {
       // Improve file watching for cloud environments
       config.watchOptions = {
@@ -62,6 +59,8 @@ const nextConfig = {
   compress: false, // Disable compression in dev to reduce processing
   // Experimental features for better cloud support
   experimental: {
+    // Force SWC instead of Babel
+    forceSwcTransforms: true,
     // Reduce memory usage and improve stability
     workerThreads: false,
     cpus: 1,
@@ -104,15 +103,6 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
-  },
-  async redirects() {
-    return [
-      {
-        source: "/admin-redirect",
-        destination: "/admin",
-        permanent: true,
-      },
-    ];
   },
   async rewrites() {
     return [

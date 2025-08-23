@@ -55,10 +55,23 @@ interface ExtendedSession extends Session {
 }
 
 export default function Dashboard() {
-  const { data: session, status } = useSession() as {
-    data: ExtendedSession | null;
-    status: "loading" | "authenticated" | "unauthenticated";
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session, status } = useSession() as {
+  //   data: ExtendedSession | null;
+  //   status: "loading" | "authenticated" | "unauthenticated";
+  // };
+
+  // Mock session for development
+  const session: ExtendedSession = {
+    user: {
+      id: "anonymous",
+      role: "user",
+      name: "Anonymous User",
+      email: "anonymous@example.com",
+    },
+    expires: "2025-12-31",
   };
+  const status = "authenticated";
   const router = useRouter();
   const { getFormData, loading: formsLoading } = useFormSubmissions();
   const [completionStatus, setCompletionStatus] = useState<
@@ -102,12 +115,13 @@ export default function Dashboard() {
     }
   }, [session, getFormData, formsLoading]);
 
+  // AUTHENTICATION DISABLED - Comment out to re-enable
   // Redirect to login if not authenticated
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/dashboard");
-    }
-  }, [status, router]);
+  // useEffect(() => {
+  //   if (status === "unauthenticated") {
+  //     router.push("/login?callbackUrl=/dashboard");
+  //   }
+  // }, [status, router]);
 
   // Application steps with dynamic completion status
   const applicationSteps: ApplicationStep[] = [
@@ -190,15 +204,16 @@ export default function Dashboard() {
     );
   }
 
+  // AUTHENTICATION DISABLED - Comment out to re-enable
   // Don't render if not authenticated (will redirect)
-  if (!session) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p>Redirecting to login...</p>
-        {/* Or a loading spinner component */}
-      </div>
-    );
-  }
+  // if (!session) {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-screen">
+  //       <p>Redirecting to login...</p>
+  //       {/* Or a loading spinner component */}
+  //     </div>
+  //   );
+  // }
 
   // Check if user is new (created recently)
   const isNewUser = session?.user

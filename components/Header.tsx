@@ -34,9 +34,16 @@ import {
 } from "lucide-react";
 import NotificationDropdown from "@/components/NotificationDropdown";
 import { ErasmusIcon } from "@/components/icons/CustomIcons";
+import {
+  MOCK_SESSION_USER,
+  MOCK_STATUS_AUTHENTICATED,
+} from "@/utils/mockSession";
 
 export default function Header() {
-  const { data: session, status } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session, status } = useSession();
+  const session = MOCK_SESSION_USER;
+  const status = MOCK_STATUS_AUTHENTICATED;
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -156,107 +163,121 @@ export default function Header() {
 
           {/* User Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            {status === "loading" ? (
+            {/* AUTHENTICATION DISABLED - Comment out to re-enable */}
+            {/* {status === "loading" ? (
               // Loading skeleton
               <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
-            ) : status === "authenticated" && session ? (
-              <div className="flex items-center space-x-2">
-                <NotificationDropdown />
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="relative h-8 w-8 rounded-full"
+            ) : status === "authenticated" && session ? ( */}
+            {
+              true ? (
+                <div className="flex items-center space-x-2">
+                  <NotificationDropdown />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className="relative h-8 w-8 rounded-full"
+                      >
+                        <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
+                          <span className="text-white text-sm font-medium">
+                            {session.user.name?.[0] || session.user.email?.[0]}
+                          </span>
+                        </div>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      className="w-56"
+                      align="end"
+                      forceMount
                     >
-                      <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
-                        <span className="text-white text-sm font-medium">
-                          {session.user.name?.[0] || session.user.email?.[0]}
-                        </span>
+                      <div className="flex items-center justify-start gap-2 p-2">
+                        <div className="h-10 w-10 bg-blue-600 rounded-full flex items-center justify-center">
+                          <span className="text-white text-sm font-bold">
+                            {session.user.name?.[0] || session.user.email?.[0]}
+                          </span>
+                        </div>
+                        <div className="flex flex-col space-y-1 leading-none">
+                          <p className="font-medium text-gray-900">
+                            Welcome,{" "}
+                            {session.user.name?.split(" ")[0] ||
+                              session.user.email?.split("@")[0]}
+                            !
+                          </p>
+                          <p className="w-[200px] truncate text-sm text-muted-foreground">
+                            {session.user.email}
+                          </p>
+                        </div>
                       </div>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end" forceMount>
-                    <div className="flex items-center justify-start gap-2 p-2">
-                      <div className="h-10 w-10 bg-blue-600 rounded-full flex items-center justify-center">
-                        <span className="text-white text-sm font-bold">
-                          {session.user.name?.[0] || session.user.email?.[0]}
-                        </span>
-                      </div>
-                      <div className="flex flex-col space-y-1 leading-none">
-                        <p className="font-medium text-gray-900">
-                          Welcome,{" "}
-                          {session.user.name?.split(" ")[0] ||
-                            session.user.email?.split("@")[0]}
-                          !
-                        </p>
-                        <p className="w-[200px] truncate text-sm text-muted-foreground">
-                          {session.user.email}
-                        </p>
-                      </div>
-                    </div>
-                    <DropdownMenuSeparator />
-                    {userNavigation.map((item) => (
-                      <DropdownMenuItem key={item.name} asChild>
-                        <Link
-                          href={item.href}
-                          className="flex items-center gap-2 w-full"
-                        >
-                          <item.icon className="h-4 w-4" aria-hidden="true" />
-                          {item.name}
-                        </Link>
+                      <DropdownMenuSeparator />
+                      {userNavigation.map((item) => (
+                        <DropdownMenuItem key={item.name} asChild>
+                          <Link
+                            href={item.href}
+                            className="flex items-center gap-2 w-full"
+                          >
+                            <item.icon className="h-4 w-4" aria-hidden="true" />
+                            {item.name}
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
+                      <DropdownMenuSeparator />
+                      {/* Application Steps Submenu */}
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger className="flex items-center gap-2">
+                          <ClipboardList
+                            className="h-4 w-4"
+                            aria-hidden="true"
+                          />
+                          <span>Application Steps</span>
+                          <ChevronDown className="h-3 w-3 ml-auto" />
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuSubContent>
+                          {applicationSteps.map((step) => (
+                            <DropdownMenuItem key={step.name} asChild>
+                              <Link
+                                href={step.href}
+                                className="flex items-start gap-3 w-full p-3"
+                              >
+                                <step.icon
+                                  className="h-4 w-4 mt-0.5"
+                                  aria-hidden="true"
+                                />
+                                <div className="flex flex-col">
+                                  <span className="font-medium">
+                                    {step.name}
+                                  </span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {step.description}
+                                  </span>
+                                </div>
+                              </Link>
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuSubContent>
+                      </DropdownMenuSub>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        className="flex items-center gap-2 cursor-pointer"
+                        onClick={handleSignOut}
+                      >
+                        <LogOut className="h-4 w-4" aria-hidden="true" />
+                        Sign out
                       </DropdownMenuItem>
-                    ))}
-                    <DropdownMenuSeparator />
-                    {/* Application Steps Submenu */}
-                    <DropdownMenuSub>
-                      <DropdownMenuSubTrigger className="flex items-center gap-2">
-                        <ClipboardList className="h-4 w-4" aria-hidden="true" />
-                        <span>Application Steps</span>
-                        <ChevronDown className="h-3 w-3 ml-auto" />
-                      </DropdownMenuSubTrigger>
-                      <DropdownMenuSubContent>
-                        {applicationSteps.map((step) => (
-                          <DropdownMenuItem key={step.name} asChild>
-                            <Link
-                              href={step.href}
-                              className="flex items-start gap-3 w-full p-3"
-                            >
-                              <step.icon
-                                className="h-4 w-4 mt-0.5"
-                                aria-hidden="true"
-                              />
-                              <div className="flex flex-col">
-                                <span className="font-medium">{step.name}</span>
-                                <span className="text-xs text-muted-foreground">
-                                  {step.description}
-                                </span>
-                              </div>
-                            </Link>
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuSubContent>
-                    </DropdownMenuSub>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      className="flex items-center gap-2 cursor-pointer"
-                      onClick={handleSignOut}
-                    >
-                      <LogOut className="h-4 w-4" aria-hidden="true" />
-                      Sign out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            ) : status === "unauthenticated" ? (
-              <div className="flex items-center space-x-4">
-                <Link href="/login">
-                  <Button variant="ghost">Sign In</Button>
-                </Link>
-                <Link href="/register">
-                  <Button>Sign Up</Button>
-                </Link>
-              </div>
-            ) : null}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              ) : false ? (
+                <div className="flex items-center space-x-4">
+                  <Link href="/login">
+                    <Button variant="ghost">Sign In</Button>
+                  </Link>
+                  <Link href="/register">
+                    <Button>Sign Up</Button>
+                  </Link>
+                </div>
+              ) : null
+              /* } */
+            }
           </div>
 
           {/* Mobile menu button */}
@@ -301,12 +322,14 @@ export default function Header() {
 
               {/* Mobile User Actions */}
               <div className="pt-4 pb-3 border-t border-gray-200">
-                {status === "loading" ? (
+                {/* AUTHENTICATION DISABLED - Comment out to re-enable */}
+                {/* {status === "loading" ? (
                   <div className="px-3 py-2">
                     <div className="h-4 bg-gray-200 rounded animate-pulse mb-2"></div>
                     <div className="h-3 bg-gray-200 rounded animate-pulse w-2/3"></div>
                   </div>
-                ) : status === "authenticated" && session ? (
+                ) : status === "authenticated" && session ? ( */}
+                {true ? (
                   <div className="space-y-1">
                     <div className="px-3 py-2">
                       <div className="text-base font-medium text-gray-800">
@@ -354,7 +377,7 @@ export default function Header() {
                       Sign out
                     </button>
                   </div>
-                ) : status === "unauthenticated" ? (
+                ) : false ? (
                   <div className="space-y-1">
                     <Link
                       href="/login"

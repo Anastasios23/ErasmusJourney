@@ -40,21 +40,34 @@ import {
 
 interface StorySubmission {
   id: string;
-  userId: string;
-  type: string;
-  title: string;
+  studentName: string;
+  university: string;
+  city: string;
+  country: string;
+  department: string;
+  story: string;
+  tips: string[];
+  helpTopics: string[];
+  contactMethod?: string;
+  contactInfo?: string;
+  accommodationTips?: string;
+  budgetTips?: string;
   status: string;
+  isPublic: boolean;
   createdAt: string;
-  data: any;
-  user?: {
-    firstName?: string;
-    lastName?: string;
-    email: string;
-  };
+  updatedAt: string;
+  userId: string;
+  userEmail: string;
+  moderatorNotes?: string;
 }
 
 export default function StoriesAdmin() {
-  const { data: session, status } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session, status } = useSession();
+  const session = {
+    user: { id: "anonymous", role: "ADMIN", email: "admin@example.com" },
+  };
+  const status = "authenticated";
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [stories, setStories] = useState<StorySubmission[]>([]);
@@ -62,27 +75,139 @@ export default function StoriesAdmin() {
     null,
   );
 
-  useEffect(() => {
-    if (status === "loading") return;
+  // safeFetch function to bypass FullStory interference using XMLHttpRequest
+  const safeFetch = async (
+    url: string,
+    options: {
+      method?: string;
+      body?: string;
+      headers?: Record<string, string>;
+    } = {},
+    retries = 3,
+  ) => {
+    const method = options.method || "GET";
+    console.log(
+      `${method} ${url} using XMLHttpRequest to bypass FullStory interference...`,
+    );
 
-    if (!session || session.user?.role !== "ADMIN") {
-      router.push("/login");
-      return;
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        const response = await new Promise<{
+          ok: boolean;
+          status: number;
+          json: () => Promise<any>;
+        }>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open(method, url, true);
+
+          // Set headers
+          if (options.headers) {
+            Object.entries(options.headers).forEach(([key, value]) => {
+              xhr.setRequestHeader(key, value);
+            });
+          }
+
+          xhr.onload = () => {
+            try {
+              const responseData = xhr.responseText
+                ? JSON.parse(xhr.responseText)
+                : {};
+              resolve({
+                ok: xhr.status >= 200 && xhr.status < 300,
+                status: xhr.status,
+                json: async () => responseData,
+              });
+            } catch (parseError) {
+              console.warn(
+                `JSON parse error on attempt ${attempt}:`,
+                parseError,
+              );
+              resolve({
+                ok: false,
+                status: xhr.status,
+                json: async () => ({}),
+              });
+            }
+          };
+
+          xhr.onerror = () => {
+            reject(
+              new Error(
+                `XMLHttpRequest failed: ${xhr.status} ${xhr.statusText}`,
+              ),
+            );
+          };
+
+          xhr.ontimeout = () => {
+            reject(new Error("XMLHttpRequest timeout"));
+          };
+
+          xhr.timeout = 30000; // 30 second timeout
+
+          if (options.body) {
+            xhr.send(options.body);
+          } else {
+            xhr.send();
+          }
+        });
+
+        console.log(`${method} ${url} completed with status:`, response.status);
+        return response;
+      } catch (error) {
+        console.warn(
+          `Attempt ${attempt}/${retries} failed for ${method} ${url}:`,
+          error,
+        );
+
+        if (attempt === retries) {
+          throw error;
+        }
+
+        // Exponential backoff
+        const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
     }
 
-    setLoading(false);
-    fetchStories();
-  }, [session, status, router]);
+    throw new Error(`All ${retries} attempts failed for ${method} ${url}`);
+  };
+
+  useEffect(
+    () => {
+      if (status === "loading") return;
+
+      // AUTHENTICATION DISABLED - Comment out to re-enable
+      // if (!session || session.user?.role !== "ADMIN") {
+      //   router.push("/login");
+      //   return;
+      // }
+
+      setLoading(false);
+      fetchStories();
+    },
+    [
+      /*session, status, router*/
+    ],
+  );
 
   const fetchStories = async () => {
     try {
-      const response = await fetch("/api/admin/stories");
+      console.log("Fetching stories...");
+      const response = await safeFetch("/api/admin/stories");
       if (response.ok) {
         const data = await response.json();
-        setStories(data.stories || []);
+        console.log(
+          "Stories fetched successfully:",
+          Array.isArray(data) ? data.length : 0,
+        );
+        // API returns stories array directly, not wrapped in data.stories
+        setStories(Array.isArray(data) ? data : []);
+      } else {
+        console.error("Failed to fetch stories, status:", response.status);
       }
     } catch (error) {
       console.error("Error fetching stories:", error);
+      setStories([]);
     }
   };
 
@@ -95,7 +220,9 @@ export default function StoriesAdmin() {
       if (action === "reject") newStatus = "ARCHIVED";
       if (action === "feature") newStatus = "FEATURED";
 
-      const response = await fetch(`/api/admin/stories/${storyId}`, {
+      console.log(`${action} story:`, storyId, "to status:", newStatus);
+
+      const response = await safeFetch(`/api/admin/stories/${storyId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -107,8 +234,11 @@ export default function StoriesAdmin() {
       });
 
       if (response.ok) {
+        console.log(`Successfully ${action}d story`);
         await fetchStories(); // Refresh data
         setSelectedStory(null);
+      } else {
+        console.error(`Failed to ${action} story, status:`, response.status);
       }
     } catch (error) {
       console.error("Error updating story:", error);
@@ -133,24 +263,15 @@ export default function StoriesAdmin() {
   };
 
   const getLocationFromStory = (story: StorySubmission) => {
-    const data = story.data;
-    if (data.hostCity && data.hostCountry) {
-      return `${data.hostCity}, ${data.hostCountry}`;
-    }
-    if (data.city && data.country) {
-      return `${data.city}, ${data.country}`;
+    if (story.city && story.country) {
+      return `${story.city}, ${story.country}`;
     }
     return "Location not specified";
   };
 
   const getRatingFromStory = (story: StorySubmission) => {
-    const data = story.data;
-    if (data.overallRating) {
-      return data.overallRating;
-    }
-    if (data.ratings && data.ratings.overallRating) {
-      return data.ratings.overallRating;
-    }
+    // Rating information might not be available in the current API response
+    // Return null for now - could be added later if needed
     return null;
   };
 
@@ -168,9 +289,10 @@ export default function StoriesAdmin() {
     );
   }
 
-  if (!session || session.user?.role !== "ADMIN") {
-    return null;
-  }
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // if (!session || session.user?.role !== "ADMIN") {
+  //   return null;
+  // }
 
   const pendingStories = stories.filter((s) => s.status === "SUBMITTED");
   const publishedStories = stories.filter((s) => s.status === "PUBLISHED");
@@ -290,7 +412,7 @@ export default function StoriesAdmin() {
                   {pendingStories.map((story) => (
                     <TableRow key={story.id}>
                       <TableCell className="font-medium max-w-xs truncate">
-                        {story.title}
+                        {story.studentName || "Untitled Story"}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center">
@@ -301,10 +423,9 @@ export default function StoriesAdmin() {
                       <TableCell>
                         <div className="flex items-center">
                           <User className="h-4 w-4 mr-1 text-gray-400" />
-                          {story.user
-                            ? `${story.user.firstName || ""} ${story.user.lastName || ""}`.trim() ||
-                              story.user.email
-                            : "Unknown User"}
+                          {story.studentName ||
+                            story.userEmail ||
+                            "Unknown User"}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -339,7 +460,8 @@ export default function StoriesAdmin() {
                             <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                               <DialogHeader>
                                 <DialogTitle>
-                                  Review Story: {story.title}
+                                  Review Story:{" "}
+                                  {story.studentName || "Untitled Story"}
                                 </DialogTitle>
                               </DialogHeader>
                               {selectedStory && (
@@ -359,28 +481,60 @@ export default function StoriesAdmin() {
                                   <div>
                                     <strong>Story Content:</strong>
                                     <div className="mt-2 p-4 bg-gray-100 rounded text-sm overflow-auto max-h-96">
-                                      {Object.entries(selectedStory.data).map(
-                                        ([key, value]) => (
-                                          <div key={key} className="mb-3">
+                                      <div className="mb-3">
+                                        <strong className="block text-gray-700">
+                                          University:
+                                        </strong>
+                                        <div className="mt-1 pl-2 border-l-2 border-gray-300">
+                                          {selectedStory.university}
+                                        </div>
+                                      </div>
+                                      <div className="mb-3">
+                                        <strong className="block text-gray-700">
+                                          Department:
+                                        </strong>
+                                        <div className="mt-1 pl-2 border-l-2 border-gray-300">
+                                          {selectedStory.department}
+                                        </div>
+                                      </div>
+                                      <div className="mb-3">
+                                        <strong className="block text-gray-700">
+                                          Story:
+                                        </strong>
+                                        <div className="mt-1 pl-2 border-l-2 border-gray-300">
+                                          {selectedStory.story}
+                                        </div>
+                                      </div>
+                                      {selectedStory.tips &&
+                                        selectedStory.tips.length > 0 && (
+                                          <div className="mb-3">
                                             <strong className="block text-gray-700">
-                                              {key
-                                                .replace(/([A-Z])/g, " $1")
-                                                .replace(/^./, (str) =>
-                                                  str.toUpperCase(),
-                                                )}
-                                              :
+                                              Tips:
                                             </strong>
                                             <div className="mt-1 pl-2 border-l-2 border-gray-300">
-                                              {typeof value === "string"
-                                                ? value
-                                                : JSON.stringify(
-                                                    value,
-                                                    null,
-                                                    2,
-                                                  )}
+                                              {selectedStory.tips.join(", ")}
                                             </div>
                                           </div>
-                                        ),
+                                        )}
+                                      {selectedStory.accommodationTips && (
+                                        <div className="mb-3">
+                                          <strong className="block text-gray-700">
+                                            Accommodation Tips:
+                                          </strong>
+                                          <div className="mt-1 pl-2 border-l-2 border-gray-300">
+                                            {selectedStory.accommodationTips}
+                                          </div>
+                                        </div>
+                                      )}
+                                      {selectedStory.budgetTips && (
+                                        <div className="mb-3">
+                                          <strong className="block text-gray-700">
+                                            Budget Tips:
+                                          </strong>
+                                          <div className="mt-1 pl-2 border-l-2 border-gray-300">
+                                            {selectedStory.budgetTips}
+                                          </div>
+                                        </div>
                                       )}
                                     </div>
                                   </div>
@@ -488,15 +642,12 @@ export default function StoriesAdmin() {
                 {stories.map((story) => (
                   <TableRow key={story.id}>
                     <TableCell className="font-medium max-w-xs truncate">
-                      {story.title}
+                      {story.studentName || "Untitled Story"}
                     </TableCell>
                     <TableCell>{getStatusBadge(story.status)}</TableCell>
                     <TableCell>{getLocationFromStory(story)}</TableCell>
                     <TableCell>
-                      {story.user
-                        ? `${story.user.firstName || ""} ${story.user.lastName || ""}`.trim() ||
-                          story.user.email
-                        : "Unknown User"}
+                      {story.studentName || story.userEmail || "Unknown User"}
                     </TableCell>
                     <TableCell>
                       {new Date(story.createdAt).toLocaleDateString()}

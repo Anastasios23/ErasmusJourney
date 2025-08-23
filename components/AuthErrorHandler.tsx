@@ -20,7 +20,9 @@ export function AuthErrorHandler({
   onRetry,
   className,
 }: AuthErrorHandlerProps) {
-  const { data: session } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session } = useSession();
+  const session = { user: { id: "anonymous", email: "anonymous@example.com" } };
 
   const handleSignOutAndIn = async () => {
     try {

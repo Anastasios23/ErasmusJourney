@@ -1,5 +1,6 @@
 import { useSession } from "next-auth/react";
 import { useState, useEffect, useCallback } from "react";
+import { MOCK_SESSION_USER } from "@/utils/mockSession";
 import Link from "next/link";
 import {
   Card,
@@ -37,7 +38,9 @@ interface FormStep {
 }
 
 export default function FormProgress() {
-  const { data: session } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session } = useSession();
+  const session = MOCK_SESSION_USER;
   const { submissions, getDraftData, refreshSubmissions } =
     useFormSubmissions();
   const [formSteps, setFormSteps] = useState<FormStep[]>([

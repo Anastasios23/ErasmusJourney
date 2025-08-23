@@ -34,7 +34,7 @@ import {
   Sparkles,
   Award,
 } from "lucide-react";
-import { ContentIntegrationService } from "../src/services/contentIntegrationService";
+// ContentIntegrationService moved to API routes to avoid client-side Prisma usage
 
 interface EnhancedDestination {
   id: string;
@@ -69,13 +69,28 @@ export default function EnhancedDestinationsPage() {
   const fetchDestinations = async () => {
     try {
       setLoading(true);
-      const data = await ContentIntegrationService.getPublishedDestinations({
-        featured: showFeatured || undefined,
-        country: selectedCountry === "all" ? undefined : selectedCountry,
+
+      // Build query parameters
+      const params = new URLSearchParams({
         orderBy: sortBy,
         order: "desc",
-        limit: 100,
+        limit: "100",
       });
+
+      if (showFeatured) {
+        params.append("featured", "true");
+      }
+
+      if (selectedCountry && selectedCountry !== "all") {
+        params.append("country", selectedCountry);
+      }
+
+      const response = await fetch(`/api/destinations/integrated?${params}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
       setDestinations(data);
     } catch (error) {
       console.error("Error fetching destinations:", error);
@@ -116,13 +131,24 @@ export default function EnhancedDestinationsPage() {
     // Search is handled by the filter effect
   };
 
-  const handleDestinationClick = (destination: EnhancedDestination) => {
-    // Track interaction
-    ContentIntegrationService.trackContentInteraction(
-      destination.id,
-      "destination",
-      "view",
-    );
+  const handleDestinationClick = async (destination: EnhancedDestination) => {
+    // Track interaction via API route
+    try {
+      await fetch("/api/content/track-interaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contentId: destination.id,
+          contentType: "destination",
+          action: "view",
+        }),
+      });
+    } catch (error) {
+      console.error("Error tracking interaction:", error);
+      // Don't block navigation if tracking fails
+    }
 
     router.push(`/destinations/${destination.id}`);
   };

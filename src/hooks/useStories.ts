@@ -86,16 +86,48 @@ export function useStories() {
       const response = await safeFetch("/api/student-stories");
 
       if (!response.ok) {
-        throw new StudentStoryError(
-          `Failed to fetch stories: ${response.statusText}`,
-          "API_ERROR",
-          { status: response.status },
-        );
+        // Enhanced error messaging based on status code
+        let errorMessage = "Failed to fetch stories";
+        if (response.status === 404) {
+          errorMessage = "Stories endpoint not found";
+        } else if (response.status === 500) {
+          errorMessage = "Server error while fetching stories";
+        } else if (response.status >= 400 && response.status < 500) {
+          errorMessage = "Unable to access stories";
+        } else {
+          errorMessage = `Failed to fetch stories: ${response.statusText}`;
+        }
+
+        throw new StudentStoryError(errorMessage, "API_ERROR", {
+          status: response.status,
+        });
       }
 
       const rawData = await response.json();
-      const validatedData = validateStudentStoriesResponse(rawData);
-      setStories(validatedData.stories);
+
+      // Basic validation - check if response has expected structure
+      if (!rawData || typeof rawData !== "object") {
+        throw new StudentStoryError(
+          "Invalid response format received",
+          "VALIDATION_ERROR",
+        );
+      }
+
+      // Use direct data if validation function is not available
+      let stories: Story[];
+      try {
+        const validatedData = validateStudentStoriesResponse(rawData);
+        stories = validatedData.stories;
+      } catch (validationError) {
+        console.warn(
+          "Story validation failed, using raw data:",
+          validationError,
+        );
+        // Fallback to using raw data if validation fails
+        stories = Array.isArray(rawData.stories) ? rawData.stories : [];
+      }
+
+      setStories(stories);
       setLoadingState({
         isLoading: false,
         error: null,
@@ -103,13 +135,25 @@ export function useStories() {
       });
     } catch (err) {
       console.error("Error fetching stories:", err);
-      const error =
-        err instanceof StudentStoryError
-          ? err
-          : new StudentStoryError(
-              err instanceof Error ? err.message : "Failed to load stories",
-              "NETWORK_ERROR",
-            );
+
+      // More specific error handling
+      let error: StudentStoryError;
+      if (err instanceof StudentStoryError) {
+        error = err;
+      } else if (err instanceof TypeError && err.message.includes("fetch")) {
+        error = new StudentStoryError(
+          "Network connection failed. Please check your internet connection.",
+          "NETWORK_ERROR",
+        );
+      } else {
+        error = new StudentStoryError(
+          err instanceof Error
+            ? err.message
+            : "An unexpected error occurred while loading stories",
+          "UNKNOWN_ERROR",
+        );
+      }
+
       setLoadingState({
         isLoading: false,
         error,

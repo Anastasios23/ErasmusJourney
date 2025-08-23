@@ -59,7 +59,9 @@ interface ExpenseCategory {
 }
 
 export default function LivingExpenses() {
-  const { data: session } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session } = useSession();
+  const session = { user: { id: "anonymous", email: "anonymous@example.com" } }; // Mock session for dev
   const router = useRouter();
   const { addNotification } = useNotifications();
   const { setCurrentStep } = useFormProgress();
@@ -119,11 +121,30 @@ export default function LivingExpenses() {
         console.log("Loading living expenses data:", livingData);
 
         if (livingData.expenses) {
-          setExpenses(livingData.expenses);
+          // Ensure all expense values are strings, not undefined
+          const safeExpenses = Object.entries(livingData.expenses).reduce(
+            (acc, [key, value]) => {
+              acc[key as keyof ExpenseCategory] = value ?? "";
+              return acc;
+            },
+            {} as ExpenseCategory,
+          );
+          setExpenses(safeExpenses);
         }
+
         // Remove expenses from formData to avoid duplication
         const { expenses: _, ...restData } = livingData;
-        setFormData(restData);
+
+        // Ensure all form data values are strings, not undefined
+        const safeFormData = Object.entries(restData).reduce(
+          (acc, [key, value]) => {
+            acc[key] = value ?? "";
+            return acc;
+          },
+          {} as Record<string, any>,
+        );
+
+        setFormData(safeFormData);
       }
     }
   }, [experienceLoading, experienceData]);

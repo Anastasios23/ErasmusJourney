@@ -57,7 +57,9 @@ import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
 import { useFormProgress } from "../src/context/FormProgressContext";
 
 export default function Accommodation() {
-  const { data: session } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session } = useSession();
+  const session = { user: { id: "anonymous", email: "anonymous@example.com" } };
   const router = useRouter();
   const { setCurrentStep } = useFormProgress();
 
@@ -126,7 +128,15 @@ export default function Accommodation() {
 
       // Load basic info data
       if (experienceData.basicInfo) {
-        setBasicInfoData(experienceData.basicInfo);
+        // Ensure all values are strings, not undefined
+        const safeBasicInfo = Object.entries(experienceData.basicInfo).reduce(
+          (acc, [key, value]) => {
+            acc[key] = value ?? "";
+            return acc;
+          },
+          {} as Record<string, any>,
+        );
+        setBasicInfoData(safeBasicInfo);
       }
 
       // Load accommodation data if available
@@ -135,7 +145,23 @@ export default function Accommodation() {
           "Loading accommodation data:",
           experienceData.accommodation,
         );
-        setFormData(experienceData.accommodation);
+
+        // Ensure all form data values are strings, not undefined
+        const safeAccommodationData = Object.entries(
+          experienceData.accommodation,
+        ).reduce(
+          (acc, [key, value]) => {
+            if (Array.isArray(value)) {
+              acc[key] = value; // Keep arrays as is
+            } else {
+              acc[key] = value ?? ""; // Convert undefined to empty string
+            }
+            return acc;
+          },
+          {} as Record<string, any>,
+        );
+
+        setFormData(safeAccommodationData);
       }
     }
   }, [experienceLoading, experienceData]); // Remove dependencies to prevent re-runs
@@ -162,8 +188,8 @@ export default function Accommodation() {
         );
         setFormData((prev) => ({
           ...prev,
-          city: basicInfoData.hostCity,
-          country: basicInfoData.hostCountry,
+          city: basicInfoData.hostCity || "",
+          country: basicInfoData.hostCountry || "",
         }));
       }
     }

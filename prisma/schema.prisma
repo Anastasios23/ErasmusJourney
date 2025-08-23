@@ -225,51 +225,75 @@ model Engagement {
   @@map("story_engagements")
 }
 
+model Destination {
+  id             String           @id @default(cuid())
+  name           String
+  country        String
+  summary        String?
+  slug           String           @unique
+  accommodations Accommodation[]
+  courseExchanges CourseExchange[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  // Keep existing fields for backward compatibility
+  city             String?
+  description      String?
+  imageUrl         String?
+  featured         Boolean  @default(false)
+  status           String   @default("published")
+  source           String   @default("user_generated")
+  climate          String?
+  costOfLiving     Json?
+  highlights       String?
+  photos           Json?
+  generalInfo      Json?
+  aggregatedData   Json?
+  adminOverrides   Json?
+  submissionCount  Int      @default(0)
+  lastDataUpdate   DateTime @default(now())
+  linkedSubmissions DestinationSubmission[]
+
+  @@map("destinations")
+}
+
 model Accommodation {
   id            String   @id @default(cuid())
-  name          String
+  destinationId String
   type          String
+  name          String
+  url           String?
+  pricePerMonth Int?
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Keep existing fields for backward compatibility
   description   String?
-  address       String
-  city          String
-  country       String
-  pricePerMonth Decimal?
+  address       String?
+  city          String?
+  country       String?
   currency      String?
   imageUrl      String?
   amenities     Json?
   contactInfo   Json?
   isActive      Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
 
   @@map("accommodations")
 }
 
-model Destination {
-  id                String                  @id @default(cuid())
-  name              String
-  city              String
-  country           String
-  description       String?
-  imageUrl          String?
-  featured          Boolean                 @default(false)
-  status            String                  @default("published")
-  source            String                  @default("admin_created")
-  climate           String?
-  costOfLiving      Json?
-  highlights        String?
-  photos            Json?
-  generalInfo       Json?
-  aggregatedData    Json?
-  adminOverrides    Json?
-  submissionCount   Int                     @default(0)
-  lastDataUpdate    DateTime                @default(now())
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  linkedSubmissions DestinationSubmission[]
+model CourseExchange {
+  id            String   @id @default(cuid())
+  destinationId String
+  homeCourse    String
+  hostCourse    String
+  ects          Int?
+  approved      Boolean  @default(false)
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  @@unique([city, country])
-  @@map("destinations")
+  @@map("course_exchanges")
 }
 
 model FormSubmission {

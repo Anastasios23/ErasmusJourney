@@ -148,7 +148,10 @@ const tipCategories = [
 ];
 
 export default function ExperienceStory() {
-  const { data: session, status } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session, status } = useSession();
+  const session = { user: { id: "anonymous", email: "anonymous@example.com" } };
+  const status = "authenticated";
   const router = useRouter();
   const {
     submitForm,
@@ -380,28 +383,29 @@ export default function ExperienceStory() {
     );
   }
 
-  if (status === "unauthenticated") {
-    return (
-      <div className="min-h-screen bg-white">
-        <Header />
-        <div className="pt-20 flex items-center justify-center">
-          <Card className="w-full max-w-md">
-            <CardHeader>
-              <CardTitle className="text-center">Sign In Required</CardTitle>
-            </CardHeader>
-            <CardContent className="text-center">
-              <p className="text-gray-600 mb-4">
-                Please sign in to share your Erasmus experience.
-              </p>
-              <Link href="/login">
-                <Button>Sign In</Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // if (status === "unauthenticated") {
+  //   return (
+  //     <div className="min-h-screen bg-white">
+  //       <Header />
+  //       <div className="pt-20 flex items-center justify-center">
+  //         <Card className="w-full max-w-md">
+  //           <CardHeader>
+  //             <CardTitle className="text-center">Sign In Required</CardTitle>
+  //           </CardHeader>
+  //           <CardContent className="text-center">
+  //             <p className="text-gray-600 mb-4">
+  //               Please sign in to share your Erasmus experience.
+  //             </p>
+  //             <Link href="/login">
+  //               <Button>Sign In</Button>
+  //             </Link>
+  //           </CardContent>
+  //         </Card>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
@@ -697,9 +701,9 @@ export default function ExperienceStory() {
                           id={category.key}
                           placeholder={category.placeholder}
                           value={
-                            formData[
+                            (formData[
                               category.key as keyof typeof formData
-                            ] as string
+                            ] as string) || ""
                           }
                           onChange={(e) =>
                             handleInputChange(category.key, e.target.value)

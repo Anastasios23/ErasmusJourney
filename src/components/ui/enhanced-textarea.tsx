@@ -25,6 +25,7 @@ const EnhancedTextarea = React.forwardRef<
         )}
         ref={ref}
         {...props}
+        value={props.value ?? ""}
       />
 
       {/* Error message with proper spacing */}

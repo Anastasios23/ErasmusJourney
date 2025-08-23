@@ -13,6 +13,7 @@ import { ErrorBoundary } from "../src/components/ui/error-boundary";
 import LegacyErrorBoundary from "../src/components/ErrorBoundary";
 import HMRErrorHandler from "../src/components/HMRErrorHandler";
 import EnhancedOfflineIndicator from "../src/components/EnhancedOfflineIndicator";
+import { AuthErrorBoundary } from "../src/components/AuthErrorBoundary";
 import "../src/index.css";
 import { useEffect } from "react";
 import {
@@ -44,32 +45,34 @@ export default function App({
 
   return (
     <ErrorBoundary>
-      <SessionProvider
-        session={session}
-        refetchInterval={60} // Refetch session every minute for better responsiveness
-        refetchOnWindowFocus={true} // Refetch when window regains focus
-        refetchWhenOffline={false} // Don't refetch when offline
-      >
-        <QueryClientProvider client={queryClient}>
-          <LoadingProvider>
-            <ToastProvider>
-              <LegacyToastProvider>
-                <NotificationProvider>
-                  <TooltipProvider>
-                    <FormProgressProvider>
-                      {/* <HMRErrorHandler /> */}
-                      <EnhancedOfflineIndicator />
-                      <Toaster />
-                      <Sonner />
-                      <Component {...pageProps} />
-                    </FormProgressProvider>
-                  </TooltipProvider>
-                </NotificationProvider>
-              </LegacyToastProvider>
-            </ToastProvider>
-          </LoadingProvider>
-        </QueryClientProvider>
-      </SessionProvider>
+      <AuthErrorBoundary>
+        <SessionProvider
+          session={session}
+          refetchInterval={300} // Refetch session every 5 minutes (less aggressive)
+          refetchOnWindowFocus={false} // Disable to prevent unnecessary fetch errors
+          refetchWhenOffline={false} // Don't refetch when offline
+        >
+          <QueryClientProvider client={queryClient}>
+            <LoadingProvider>
+              <ToastProvider>
+                <LegacyToastProvider>
+                  <NotificationProvider>
+                    <TooltipProvider>
+                      <FormProgressProvider>
+                        {/* <HMRErrorHandler /> */}
+                        <EnhancedOfflineIndicator />
+                        <Toaster />
+                        <Sonner />
+                        <Component {...pageProps} />
+                      </FormProgressProvider>
+                    </TooltipProvider>
+                  </NotificationProvider>
+                </LegacyToastProvider>
+              </ToastProvider>
+            </LoadingProvider>
+          </QueryClientProvider>
+        </SessionProvider>
+      </AuthErrorBoundary>
     </ErrorBoundary>
   );
 }

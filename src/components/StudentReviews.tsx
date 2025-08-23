@@ -16,6 +16,7 @@ import {
   Flag,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { MOCK_SESSION_USER } from "../utils/mockSession";
 
 interface Review {
   id: string;
@@ -56,7 +57,9 @@ export default function StudentReviews({
   city,
   country,
 }: StudentReviewsProps) {
-  const { data: session } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session } = useSession();
+  const session = MOCK_SESSION_USER;
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [showWriteReview, setShowWriteReview] = useState(false);

@@ -87,7 +87,12 @@ interface Destination {
 }
 
 export default function DestinationsAdmin() {
-  const { data: session, status } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session, status } = useSession();
+  const session = {
+    user: { id: "anonymous", role: "ADMIN", email: "admin@example.com" },
+  };
+  const status = "authenticated";
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("submissions");
@@ -106,25 +111,96 @@ export default function DestinationsAdmin() {
   });
 
   useEffect(() => {
-    if (status === "loading") return;
+    // AUTHENTICATION DISABLED - Comment out to re-enable
+    // if (status === "loading") return;
 
-    if (!session || session.user?.role !== "ADMIN") {
-      router.push("/login");
-      return;
-    }
+    // if (!session || session.user?.role !== "ADMIN") {
+    //   router.push("/login");
+    //   return;
+    // }
 
+    console.log("Initializing destinations admin dashboard...");
     setLoading(false);
     fetchData();
-  }, [session, status, router]);
+  }, []); // Removed dependencies since auth is disabled
+
+  // Safe fetch to bypass FullStory interference
+  const safeJsonParse = (text: string) => {
+    try {
+      return JSON.parse(text);
+    } catch {
+      return null;
+    }
+  };
+
+  const safeFetch = async (
+    url: string,
+    options: {
+      method?: string;
+      body?: string;
+      headers?: Record<string, string>;
+    } = {},
+    retries = 3,
+  ) => {
+    const method = options.method || "GET";
+    console.log(
+      `${method} ${url} using XMLHttpRequest to bypass FullStory interference...`,
+    );
+
+    for (let i = 0; i < retries; i++) {
+      try {
+        // Use XMLHttpRequest as fallback to bypass FullStory fetch interception
+        const xhr = new XMLHttpRequest();
+        const result = await new Promise((resolve, reject) => {
+          xhr.open(method, url, true);
+
+          // Set default headers
+          xhr.setRequestHeader("Content-Type", "application/json");
+
+          // Set custom headers if provided
+          if (options.headers) {
+            Object.entries(options.headers).forEach(([key, value]) => {
+              xhr.setRequestHeader(key, value);
+            });
+          }
+
+          xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+              if (xhr.status >= 200 && xhr.status < 300) {
+                const data = xhr.responseText
+                  ? safeJsonParse(xhr.responseText)
+                  : { ok: true };
+                resolve(data);
+              } else {
+                reject(new Error(`HTTP ${xhr.status}`));
+              }
+            }
+          };
+          xhr.onerror = () => reject(new Error("Network error"));
+
+          // Send body if provided
+          xhr.send(options.body || null);
+        });
+        return result;
+      } catch (error) {
+        console.warn(
+          `${method} attempt ${i + 1}/${retries} failed for ${url}:`,
+          error,
+        );
+        if (i === retries - 1) throw error;
+        // Wait before retry
+        await new Promise((resolve) => setTimeout(resolve, 500 * (i + 1)));
+      }
+    }
+  };
 
   const fetchData = async () => {
     try {
-      // Fetch destination-related submissions
-      const submissionsRes = await fetch(
+      // Fetch destination-related submissions using safeFetch
+      const submissionsData = await safeFetch(
         "/api/admin/form-submissions?status=SUBMITTED",
       );
-      if (submissionsRes.ok) {
-        const submissionsData = await submissionsRes.json();
+      if (submissionsData) {
         setSubmissions(
           submissionsData.submissions?.filter((s: FormSubmission) =>
             [
@@ -133,18 +209,40 @@ export default function DestinationsAdmin() {
               "living-expenses",
               "help-future-students",
             ].includes(s.type),
-          ) || [],
+          ) ||
+            submissionsData.filter?.((s: FormSubmission) =>
+              [
+                "basic-info",
+                "accommodation",
+                "living-expenses",
+                "help-future-students",
+              ].includes(s.type),
+            ) ||
+            [],
         );
       }
 
-      // Fetch existing destinations
-      const destinationsRes = await fetch("/api/destinations");
-      if (destinationsRes.ok) {
-        const destinationsData = await destinationsRes.json();
-        setDestinations(destinationsData.destinations || []);
+      // Fetch existing destinations using safeFetch
+      const destinationsData = await safeFetch("/api/destinations");
+      if (destinationsData) {
+        setDestinations(
+          destinationsData.destinations || destinationsData || [],
+        );
       }
+
+      console.log("Destinations data loaded successfully:", {
+        submissions:
+          submissionsData?.submissions?.length || submissionsData?.length || 0,
+        destinations:
+          destinationsData?.destinations?.length ||
+          destinationsData?.length ||
+          0,
+      });
     } catch (error) {
       console.error("Error fetching destinations data:", error);
+      // Set fallback empty arrays to prevent UI crashes
+      setSubmissions([]);
+      setDestinations([]);
     }
   };
 
@@ -162,7 +260,7 @@ export default function DestinationsAdmin() {
         submissionId: submission.id,
       };
 
-      const response = await fetch("/api/admin/destinations", {
+      const response = await safeFetch("/api/admin/destinations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -170,9 +268,9 @@ export default function DestinationsAdmin() {
         body: JSON.stringify(destinationData),
       });
 
-      if (response.ok) {
+      if (response) {
         // Mark submission as processed
-        await fetch(`/api/admin/form-submissions/${submission.id}`, {
+        await safeFetch(`/api/admin/form-submissions/${submission.id}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -194,7 +292,7 @@ export default function DestinationsAdmin() {
     try {
       const newStatus = action === "approve" ? "PUBLISHED" : "ARCHIVED";
 
-      const response = await fetch(
+      const response = await safeFetch(
         `/api/admin/form-submissions/${submissionId}`,
         {
           method: "PATCH",
@@ -205,7 +303,7 @@ export default function DestinationsAdmin() {
         },
       );
 
-      if (response.ok) {
+      if (response) {
         await fetchData(); // Refresh data
         setSelectedSubmission(null);
       }
@@ -216,7 +314,7 @@ export default function DestinationsAdmin() {
 
   const createNewDestination = async () => {
     try {
-      const response = await fetch("/api/admin/destinations", {
+      const response = await safeFetch("/api/admin/destinations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -227,7 +325,7 @@ export default function DestinationsAdmin() {
         }),
       });
 
-      if (response.ok) {
+      if (response) {
         setNewDestination({
           name: "",
           city: "",
@@ -276,9 +374,10 @@ export default function DestinationsAdmin() {
     );
   }
 
-  if (!session || session.user?.role !== "ADMIN") {
-    return null;
-  }
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // if (!session || session.user?.role !== "ADMIN") {
+  //   return null;
+  // }
 
   return (
     <div className="min-h-screen bg-gray-50">

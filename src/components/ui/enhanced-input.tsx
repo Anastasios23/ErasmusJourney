@@ -27,6 +27,7 @@ const EnhancedInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
           )}
           ref={ref}
           {...props}
+          value={props.value ?? ""}
         />
 
         {/* Error message with proper spacing */}

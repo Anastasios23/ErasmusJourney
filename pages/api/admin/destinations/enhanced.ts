@@ -8,11 +8,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const session = await getServerSession(req, res, authOptions);
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const session = await getServerSession(req, res, authOptions);
 
-  if (!session || session.user?.role !== "ADMIN") {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
+  // if (!session || session.user?.role !== "ADMIN") {
+  //   return res.status(401).json({ error: "Unauthorized" });
+  // }
 
   switch (req.method) {
     case "GET":
