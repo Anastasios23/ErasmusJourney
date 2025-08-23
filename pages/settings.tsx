@@ -35,16 +35,20 @@ import {
 import { toast } from "sonner";
 
 export default function SettingsPage() {
-  const { data: session, status } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session, status } = useSession();
+  const session = { user: { id: 'anonymous', name: 'Anonymous User', email: 'anonymous@example.com' } };
+  const status = 'authenticated';
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
+  // AUTHENTICATION DISABLED - Comment out to re-enable
   // Redirect to login if not authenticated
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/settings");
-    }
-  }, [status, router]);
+  // useEffect(() => {
+  //   if (status === "unauthenticated") {
+  //     router.push("/login?callbackUrl=/settings");
+  //   }
+  // }, [status, router]);
 
   const [settings, setSettings] = useState({
     emailNotifications: true,

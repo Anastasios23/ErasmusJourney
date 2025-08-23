@@ -34,18 +34,23 @@ import { User, Calendar, Edit, Save, X, MapPin } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Profile() {
-  const { data: session, update, status } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session, update, status } = useSession();
+  const session = { user: { id: 'anonymous', name: 'Anonymous User', email: 'anonymous@example.com' } };
+  const update = async () => {};
+  const status = 'authenticated';
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isCancelAlertOpen, setIsCancelAlertOpen] = useState(false);
 
+  // AUTHENTICATION DISABLED - Comment out to re-enable
   // Redirect to login if not authenticated
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/profile");
-    }
-  }, [status, router]);
+  // useEffect(() => {
+  //   if (status === "unauthenticated") {
+  //     router.push("/login?callbackUrl=/profile");
+  //   }
+  // }, [status, router]);
 
   const [initialProfileData, setInitialProfileData] = useState({
     name: "",
