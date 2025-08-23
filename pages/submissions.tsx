@@ -73,33 +73,34 @@ export default function SubmissionsPage() {
     );
   }
 
+  // AUTHENTICATION DISABLED - Comment out to re-enable
   // Don't render if not authenticated (will redirect)
-  if (!session) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <Header />
-        <main className="container mx-auto px-4 py-8">
-          <div className="max-w-3xl mx-auto">
-            <Breadcrumb
-              items={[
-                { label: "Home", href: "/" },
-                { label: "Admin", href: "/admin" },
-                { label: "Submissions", href: "/submissions" },
-              ]}
-            />
-
-            <div className="mt-8">
-              <LoginPrompt
-                title="Admin Access Required"
-                description="You need to be logged in as an administrator to view submissions."
-                currentPath="/submissions"
-              />
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
+  // if (!session) {
+  //   return (
+  //     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+  //       <Header />
+  //       <main className="container mx-auto px-4 py-8">
+  //         <div className="max-w-3xl mx-auto">
+  //           <Breadcrumb
+  //             items={[
+  //               { label: "Home", href: "/" },
+  //               { label: "Admin", href: "/admin" },
+  //               { label: "Submissions", href: "/submissions" },
+  //             ]}
+  //           />
+  //
+  //           <div className="mt-8">
+  //             <LoginPrompt
+  //               title="Admin Access Required"
+  //               description="You need to be logged in as an administrator to view submissions."
+  //               currentPath="/submissions"
+  //             />
+  //           </div>
+  //         </div>
+  //       </main>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
