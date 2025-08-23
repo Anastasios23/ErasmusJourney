@@ -69,13 +69,28 @@ export default function EnhancedDestinationsPage() {
   const fetchDestinations = async () => {
     try {
       setLoading(true);
-      const data = await ContentIntegrationService.getPublishedDestinations({
-        featured: showFeatured || undefined,
-        country: selectedCountry === "all" ? undefined : selectedCountry,
+
+      // Build query parameters
+      const params = new URLSearchParams({
         orderBy: sortBy,
         order: "desc",
-        limit: 100,
+        limit: "100",
       });
+
+      if (showFeatured) {
+        params.append("featured", "true");
+      }
+
+      if (selectedCountry && selectedCountry !== "all") {
+        params.append("country", selectedCountry);
+      }
+
+      const response = await fetch(`/api/destinations/integrated?${params}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
       setDestinations(data);
     } catch (error) {
       console.error("Error fetching destinations:", error);
