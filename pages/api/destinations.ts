@@ -276,7 +276,7 @@ export default async function handler(
       return res.status(200).json(defaultDestinations);
     }
 
-    return res.status(200).json(publicDestinations);
+    return res.status(200).json(allDestinations);
   } catch (error) {
     console.error("Error fetching public destinations:", error);
     return res.status(500).json({
