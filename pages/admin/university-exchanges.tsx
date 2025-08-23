@@ -277,13 +277,23 @@ export default function AdminUniversityExchanges() {
       console.log('Approving university submission:', selectedSubmission.id);
       // Approve the submission and create university exchange
       const response = await safeFetch(
-        `/api/admin/university-submissions/${selectedSubmission.id}/approve`,
+        `/api/admin/university-submissions/${selectedSubmission.id}`,
         {
-          method: "POST",
+          method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            adminData,
-            imageUrl,
+            status: "APPROVED",
+            universityExchangeData: {
+              ...adminData,
+              imageUrl,
+              universityName: selectedSubmission.basicInfo.hostUniversity,
+              city: selectedSubmission.basicInfo.hostCity,
+              country: selectedSubmission.basicInfo.hostCountry,
+              studyLevel: selectedSubmission.basicInfo.studyLevel,
+              fieldOfStudy: selectedSubmission.basicInfo.fieldOfStudy,
+              availableCourses: selectedSubmission.courseMatching.availableCourses,
+              totalEcts: selectedSubmission.courseMatching.totalEcts,
+            },
           }),
         },
       );
@@ -360,7 +370,7 @@ export default function AdminUniversityExchanges() {
       case "PROJECT":
         return "📋";
       case "PRESENTATION":
-        return "��";
+        return "🎤";
       case "MIXED":
         return "🔄";
       default:
