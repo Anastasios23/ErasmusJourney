@@ -6,14 +6,21 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  // Allow cross-origin requests in development for cloud environments
+  allowedDevOrigins: [
+    // Allow any subdomain of fly.dev for cloud environments
+    /.*\.fly\.dev$/,
+    // Allow localhost for local development
+    /^localhost:\d+$/,
+  ],
   // Enhanced webpack config for cloud environment stability
   webpack: (config, { dev, isServer }) => {
     // Add fallback for @prisma/client
     config.resolve.fallback = {
       ...config.resolve.fallback,
-      "@prisma/client": false,
+      '@prisma/client': false,
     };
-
+    
     if (dev && !isServer) {
       // Improve file watching for cloud environments
       config.watchOptions = {
@@ -95,15 +102,6 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
-  },
-  async redirects() {
-    return [
-      {
-        source: "/admin-redirect",
-        destination: "/admin",
-        permanent: true,
-      },
-    ];
   },
   async rewrites() {
     return [
