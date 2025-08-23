@@ -174,9 +174,19 @@ export default function BasicInformation() {
       console.log("Loading experience data:", experienceData);
 
       isLoadingDraft.current = true;
+
+      // Ensure all values are strings, not undefined
+      const safeBasicInfo = Object.entries(experienceData.basicInfo || {}).reduce(
+        (acc, [key, value]) => {
+          acc[key] = value ?? "";
+          return acc;
+        },
+        {} as Record<string, any>
+      );
+
       setFormData((prevData) => ({
         ...prevData,
-        ...experienceData.basicInfo,
+        ...safeBasicInfo,
       }));
       setDraftApplied(true);
 

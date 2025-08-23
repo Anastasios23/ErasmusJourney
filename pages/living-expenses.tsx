@@ -119,11 +119,30 @@ export default function LivingExpenses() {
         console.log("Loading living expenses data:", livingData);
 
         if (livingData.expenses) {
-          setExpenses(livingData.expenses);
+          // Ensure all expense values are strings, not undefined
+          const safeExpenses = Object.entries(livingData.expenses).reduce(
+            (acc, [key, value]) => {
+              acc[key as keyof ExpenseCategory] = value ?? "";
+              return acc;
+            },
+            {} as ExpenseCategory
+          );
+          setExpenses(safeExpenses);
         }
+
         // Remove expenses from formData to avoid duplication
         const { expenses: _, ...restData } = livingData;
-        setFormData(restData);
+
+        // Ensure all form data values are strings, not undefined
+        const safeFormData = Object.entries(restData).reduce(
+          (acc, [key, value]) => {
+            acc[key] = value ?? "";
+            return acc;
+          },
+          {} as Record<string, any>
+        );
+
+        setFormData(safeFormData);
       }
     }
   }, [experienceLoading, experienceData]);
