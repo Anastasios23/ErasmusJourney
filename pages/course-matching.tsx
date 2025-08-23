@@ -73,7 +73,9 @@ interface EquivalentCourse {
 }
 
 export default function CourseMatching() {
-  const { data: session } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session } = useSession();
+  const session = { user: { id: 'anonymous', email: 'anonymous@example.com' } };
   const router = useRouter();
   const { setCurrentStep } = useFormProgress();
 

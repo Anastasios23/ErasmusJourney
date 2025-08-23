@@ -57,7 +57,9 @@ import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
 import { useFormProgress } from "../src/context/FormProgressContext";
 
 export default function Accommodation() {
-  const { data: session } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session } = useSession();
+  const session = { user: { id: 'anonymous', email: 'anonymous@example.com' } };
   const router = useRouter();
   const { setCurrentStep } = useFormProgress();
 
