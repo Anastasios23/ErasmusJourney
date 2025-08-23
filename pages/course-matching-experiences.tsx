@@ -106,10 +106,10 @@ export default function CourseMatchingExperiences() {
 
   // Filter states
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedDestination, setSelectedDestination] = useState("");
-  const [selectedDepartment, setSelectedDepartment] = useState("");
-  const [selectedDifficulty, setSelectedDifficulty] = useState("");
-  const [selectedLevel, setSelectedLevel] = useState("");
+  const [selectedDestination, setSelectedDestination] = useState("all");
+  const [selectedDepartment, setSelectedDepartment] = useState("all");
+  const [selectedDifficulty, setSelectedDifficulty] = useState("all");
+  const [selectedLevel, setSelectedLevel] = useState("all");
   const [recommendedOnly, setRecommendedOnly] = useState(false);
 
   // Load course matching experiences
