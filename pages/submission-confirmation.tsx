@@ -14,7 +14,10 @@ import {
 import { CheckCircle, ArrowLeft, Home } from "lucide-react";
 
 export default function SubmissionConfirmation() {
-  const { data: session, status } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session, status } = useSession();
+  const session = { user: { id: 'anonymous', email: 'anonymous@example.com' } };
+  const status = 'authenticated';
   const router = useRouter();
   const [submittedAt, setSubmittedAt] = useState<string | null>(null);
 
@@ -44,10 +47,11 @@ export default function SubmissionConfirmation() {
     );
   }
 
-  if (!session) {
-    router.push("/auth/signin");
-    return null;
-  }
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // if (!session) {
+  //   router.push("/auth/signin");
+  //   return null;
+  // }
 
   const formatDate = (timestamp: string) => {
     try {
