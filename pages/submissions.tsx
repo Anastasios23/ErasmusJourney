@@ -25,6 +25,48 @@ export default function SubmissionsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // SafeFetch function to bypass FullStory interference
+  const safeFetch = async (url: string, options: RequestInit = {}): Promise<Response> => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      const method = options.method || 'GET';
+
+      xhr.open(method, url, true);
+
+      // Set headers
+      if (options.headers) {
+        Object.entries(options.headers).forEach(([key, value]) => {
+          xhr.setRequestHeader(key, value as string);
+        });
+      }
+
+      xhr.onload = () => {
+        const response = new Response(xhr.responseText, {
+          status: xhr.status,
+          statusText: xhr.statusText,
+        });
+        resolve(response);
+      };
+
+      xhr.onerror = () => {
+        reject(new Error('Network error'));
+      };
+
+      xhr.ontimeout = () => {
+        reject(new Error('Request timeout'));
+      };
+
+      xhr.timeout = 10000; // 10 second timeout
+
+      // Send the request
+      if (options.body) {
+        xhr.send(options.body as string);
+      } else {
+        xhr.send();
+      }
+    });
+  };
+
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // Redirect to login if not authenticated
   // useEffect(() => {
