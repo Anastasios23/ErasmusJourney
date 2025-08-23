@@ -302,7 +302,7 @@ export default function DebugAdmin() {
                   Admin Dashboard
                 </Button>
               </Link>
-              <Link href="/admin/destinations">
+              <Link href="/admin/destinations-enhanced">
                 <Button variant="outline" className="w-full">
                   Destinations Admin
                 </Button>

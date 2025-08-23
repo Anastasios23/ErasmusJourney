@@ -70,7 +70,7 @@ async function displayAdminCredentials() {
   console.log(`🔐 Password: ${PERMANENT_ADMIN.password}`);
   console.log("\n🌐 Admin Access URLs:");
   console.log("• http://localhost:3000/admin");
-  console.log("• http://localhost:3000/admin/destinations");
+  console.log("• http://localhost:3000/admin/destinations-enhanced");
   console.log("\n💡 This admin user will persist across:");
   console.log("• Database resets (prisma migrate reset)");
   console.log("• Schema changes (prisma db push)");

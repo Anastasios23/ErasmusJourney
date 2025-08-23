@@ -4,7 +4,7 @@
 
 We've created 3 admin systems that need testing:
 
-1. **Destinations Admin** (`/admin/destinations`)
+1. **Destinations Admin** (`/admin/destinations-enhanced`)
 2. **University Exchanges Admin** (`/admin/university-exchanges`)
 3. **Student Accommodations Admin** (`/admin/student-accommodations`)
 
@@ -99,7 +99,7 @@ We've created 3 admin systems that need testing:
 
 ### Step 2: Test Admin Destinations
 
-1. Navigate to `/admin/destinations`
+1. Navigate to `/admin/destinations-enhanced`
 2. Should see pending submissions from basic-information forms
 3. Click "Review & Add Content" on a submission
 4. Add admin content (description, photos, highlights)
