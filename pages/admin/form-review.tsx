@@ -77,7 +77,10 @@ interface LivingExpenses {
 }
 
 export default function AdminFormReview() {
-  const { data: session, status } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session, status } = useSession();
+  const session = { user: { id: 'anonymous', role: 'ADMIN', email: 'admin@example.com' } };
+  const status = 'authenticated';
   const router = useRouter();
   const [submissions, setSubmissions] = useState<FormSubmission[]>([]);
   const [loading, setLoading] = useState(true);
