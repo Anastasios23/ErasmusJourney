@@ -56,7 +56,9 @@ export default function StudentReviews({
   city,
   country,
 }: StudentReviewsProps) {
-  const { data: session } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session } = useSession();
+  const session = { user: { id: 'anonymous', email: 'anonymous@example.com' } };
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [showWriteReview, setShowWriteReview] = useState(false);
