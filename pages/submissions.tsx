@@ -15,30 +15,35 @@ type Submission = {
 };
 
 export default function SubmissionsPage() {
-  const { data: session, status } = useSession();
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // const { data: session, status } = useSession();
+  const session = { user: { id: 'anonymous', email: 'anonymous@example.com', role: 'ADMIN' } };
+  const status = 'authenticated';
   const router = useRouter();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // AUTHENTICATION DISABLED - Comment out to re-enable
   // Redirect to login if not authenticated
-  useEffect(() => {
-    if (status === "loading") return; // Still loading
-    if (!session) {
-      router.push("/login?callbackUrl=/submissions");
-      return;
-    }
+  // useEffect(() => {
+  //   if (status === "loading") return; // Still loading
+  //   if (!session) {
+  //     router.push("/login?callbackUrl=/submissions");
+  //     return;
+  //   }
 
-    // Check if user is admin
-    const user = session.user as any;
-    if (user.role !== "ADMIN") {
-      router.push("/dashboard"); // Redirect non-admin users
-      return;
-    }
-  }, [session, status, router]);
+  //   // Check if user is admin
+  //   const user = session.user as any;
+  //   if (user.role !== "ADMIN") {
+  //     router.push("/dashboard"); // Redirect non-admin users
+  //     return;
+  //   }
+  // }, [session, status, router]);
 
   useEffect(() => {
-    if (!session) return;
+    // AUTHENTICATION DISABLED - Comment out to re-enable
+    // if (!session) return;
 
     // Once authenticated, fetch
     fetch("/api/submissions")
