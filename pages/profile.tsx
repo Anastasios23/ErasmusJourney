@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { MOCK_SESSION_USER, MOCK_SESSION_UPDATE, MOCK_STATUS_AUTHENTICATED } from "@/utils/mockSession";
 
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -36,9 +37,9 @@ import { toast } from "sonner";
 export default function Profile() {
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const { data: session, update, status } = useSession();
-  const session = { user: { id: 'anonymous', name: 'Anonymous User', email: 'anonymous@example.com' } };
-  const update = async () => {};
-  const status = 'authenticated';
+  const session = MOCK_SESSION_USER;
+  const update = MOCK_SESSION_UPDATE;
+  const status = MOCK_STATUS_AUTHENTICATED;
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
