@@ -45,12 +45,13 @@ export default function App({
 
   return (
     <ErrorBoundary>
-      <SessionProvider
-        session={session}
-        refetchInterval={60} // Refetch session every minute for better responsiveness
-        refetchOnWindowFocus={true} // Refetch when window regains focus
-        refetchWhenOffline={false} // Don't refetch when offline
-      >
+      <AuthErrorBoundary>
+        <SessionProvider
+          session={session}
+          refetchInterval={300} // Refetch session every 5 minutes (less aggressive)
+          refetchOnWindowFocus={false} // Disable to prevent unnecessary fetch errors
+          refetchWhenOffline={false} // Don't refetch when offline
+        >
         <QueryClientProvider client={queryClient}>
           <LoadingProvider>
             <ToastProvider>
@@ -70,7 +71,8 @@ export default function App({
             </ToastProvider>
           </LoadingProvider>
         </QueryClientProvider>
-      </SessionProvider>
+        </SessionProvider>
+      </AuthErrorBoundary>
     </ErrorBoundary>
   );
 }
