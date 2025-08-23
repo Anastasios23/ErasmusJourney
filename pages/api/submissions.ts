@@ -14,22 +14,26 @@ export default async function handler(
     });
   }
 
+  // AUTHENTICATION DISABLED - Comment out to re-enable
   // Check authentication
-  const session = await getServerAuthSession(req, res);
-  if (!session?.user) {
-    return res.status(401).json({
-      error: "Authentication required",
-      message: "Please sign in to access submissions",
-    });
-  }
+  // const session = await getServerAuthSession(req, res);
+  // if (!session?.user) {
+  //   return res.status(401).json({
+  //     error: "Authentication required",
+  //     message: "Please sign in to access submissions",
+  //   });
+  // }
 
   // Check if user is admin - only admins can view all submissions
-  if (!isAdmin(session)) {
-    return res.status(403).json({
-      error: "Authorization failed",
-      message: "Admin access required to view all submissions",
-    });
-  }
+  // if (!isAdmin(session)) {
+  //   return res.status(403).json({
+  //     error: "Authorization failed",
+  //     message: "Admin access required to view all submissions",
+  //   });
+  // }
+
+  // Mock session for disabled authentication
+  const session = { user: { id: 'anonymous', email: 'admin@example.com', role: 'ADMIN' } };
 
   try {
     const submissions = await prisma.application.findMany({
