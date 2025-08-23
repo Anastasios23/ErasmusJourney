@@ -13,6 +13,7 @@ import { ErrorBoundary } from "../src/components/ui/error-boundary";
 import LegacyErrorBoundary from "../src/components/ErrorBoundary";
 import HMRErrorHandler from "../src/components/HMRErrorHandler";
 import EnhancedOfflineIndicator from "../src/components/EnhancedOfflineIndicator";
+import { AuthErrorBoundary } from "../src/components/AuthErrorBoundary";
 import "../src/index.css";
 import { useEffect } from "react";
 import {
