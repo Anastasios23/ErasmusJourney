@@ -253,9 +253,10 @@ export default function StoriesAdmin() {
     );
   }
 
-  if (!session || session.user?.role !== "ADMIN") {
-    return null;
-  }
+  // AUTHENTICATION DISABLED - Comment out to re-enable
+  // if (!session || session.user?.role !== "ADMIN") {
+  //   return null;
+  // }
 
   const pendingStories = stories.filter((s) => s.status === "SUBMITTED");
   const publishedStories = stories.filter((s) => s.status === "PUBLISHED");
