@@ -18,8 +18,8 @@ type Submission = {
 export default function SubmissionsPage() {
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const { data: session, status } = useSession();
-  const session = { user: { id: 'anonymous', email: 'anonymous@example.com', role: 'ADMIN' } };
-  const status = 'authenticated';
+  const session = MOCK_SESSION_ADMIN;
+  const status = MOCK_STATUS_AUTHENTICATED;
   const router = useRouter();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
