@@ -282,7 +282,6 @@ model Accommodation {
   @@map("accommodations")
 }
 
-<<<<<<< HEAD
 model CourseExchange {
   id            String   @id @default(cuid())
   destinationId String
@@ -295,33 +294,6 @@ model CourseExchange {
   updatedAt     DateTime @updatedAt
 
   @@map("course_exchanges")
-=======
-model Destination {
-  id                String                  @id @default(cuid())
-  name              String
-  city              String
-  country           String
-  description       String?
-  imageUrl          String?
-  featured          Boolean                 @default(false)
-  status            String                  @default("published")
-  source            String                  @default("admin_created")
-  climate           String?
-  costOfLiving      Json?
-  highlights        String?
-  photos            Json?
-  generalInfo       Json?
-  aggregatedData    Json?
-  adminOverrides    Json?
-  submissionCount   Int                     @default(0)
-  lastDataUpdate    DateTime                @default(now())
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  linkedSubmissions DestinationSubmission[]
-
-  @@unique([city, country])
-  @@map("destinations")
->>>>>>> refs/remotes/origin/main
 }
 
 model FormSubmission {
