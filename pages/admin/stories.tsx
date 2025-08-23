@@ -155,8 +155,9 @@ export default function StoriesAdmin() {
       const response = await safeFetch("/api/admin/stories");
       if (response.ok) {
         const data = await response.json();
-        console.log('Stories fetched successfully:', data?.stories?.length || 0);
-        setStories(data.stories || []);
+        console.log('Stories fetched successfully:', Array.isArray(data) ? data.length : 0);
+        // API returns stories array directly, not wrapped in data.stories
+        setStories(Array.isArray(data) ? data : []);
       } else {
         console.error('Failed to fetch stories, status:', response.status);
       }
