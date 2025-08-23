@@ -697,9 +697,9 @@ export default function ExperienceStory() {
                           id={category.key}
                           placeholder={category.placeholder}
                           value={
-                            formData[
+                            (formData[
                               category.key as keyof typeof formData
-                            ] as string
+                            ] as string) || ""
                           }
                           onChange={(e) =>
                             handleInputChange(category.key, e.target.value)
