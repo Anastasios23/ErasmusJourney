@@ -159,10 +159,12 @@ export default function Header() {
 
           {/* User Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            {status === "loading" ? (
+            {/* AUTHENTICATION DISABLED - Comment out to re-enable */}
+            {/* {status === "loading" ? (
               // Loading skeleton
               <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
-            ) : status === "authenticated" && session ? (
+            ) : status === "authenticated" && session ? ( */}
+            {true ? (
               <div className="flex items-center space-x-2">
                 <NotificationDropdown />
                 <DropdownMenu>
@@ -250,7 +252,7 @@ export default function Header() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-            ) : status === "unauthenticated" ? (
+            ) : false ? (
               <div className="flex items-center space-x-4">
                 <Link href="/login">
                   <Button variant="ghost">Sign In</Button>
@@ -259,7 +261,8 @@ export default function Header() {
                   <Button>Sign Up</Button>
                 </Link>
               </div>
-            ) : null}
+            ) : null
+            /* } */}
           </div>
 
           {/* Mobile menu button */}
@@ -304,12 +307,14 @@ export default function Header() {
 
               {/* Mobile User Actions */}
               <div className="pt-4 pb-3 border-t border-gray-200">
-                {status === "loading" ? (
+                {/* AUTHENTICATION DISABLED - Comment out to re-enable */}
+                {/* {status === "loading" ? (
                   <div className="px-3 py-2">
                     <div className="h-4 bg-gray-200 rounded animate-pulse mb-2"></div>
                     <div className="h-3 bg-gray-200 rounded animate-pulse w-2/3"></div>
                   </div>
-                ) : status === "authenticated" && session ? (
+                ) : status === "authenticated" && session ? ( */}
+                {true ? (
                   <div className="space-y-1">
                     <div className="px-3 py-2">
                       <div className="text-base font-medium text-gray-800">
@@ -357,7 +362,7 @@ export default function Header() {
                       Sign out
                     </button>
                   </div>
-                ) : status === "unauthenticated" ? (
+                ) : false ? (
                   <div className="space-y-1">
                     <Link
                       href="/login"
