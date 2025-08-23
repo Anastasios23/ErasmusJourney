@@ -59,11 +59,8 @@ async function handleGetDestinations(req: NextApiRequest, res: NextApiResponse) 
     withStudentData: withStudentData === "true",
   });
 
-  return res.status(200).json({
-    success: true,
-    data: destinations,
-    count: destinations.length,
-  });
+  // Return destinations array directly to match frontend expectations
+  return res.status(200).json(destinations);
 }
 
 async function handleCreateDestination(
