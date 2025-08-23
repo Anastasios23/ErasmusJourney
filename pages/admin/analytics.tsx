@@ -112,13 +112,44 @@ export default function AdvancedAnalyticsDashboard() {
     try {
       setLoading(true);
 
-      // Fetch analytics data from various sources
+      // Fetch analytics data from various sources with proper error handling
+      const fetchDestinations = async () => {
+        try {
+          const response = await fetch("/api/admin/destinations/enhanced");
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return await response.json();
+        } catch (error) {
+          console.error("Error fetching destinations:", error);
+          return { destinations: [] };
+        }
+      };
+
+      const fetchSubmissions = async () => {
+        try {
+          const response = await fetch("/api/admin/form-submissions?limit=1000");
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return await response.json();
+        } catch (error) {
+          console.error("Error fetching submissions:", error);
+          return { submissions: [] };
+        }
+      };
+
+      const fetchUsers = async () => {
+        try {
+          const response = await fetch("/api/admin/analytics");
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return await response.json();
+        } catch (error) {
+          console.error("Error fetching user analytics:", error);
+          return { users: [] };
+        }
+      };
+
       const [destinations, submissions, users] = await Promise.all([
-        fetch("/api/admin/destinations/enhanced").then((r) => r.json()),
-        fetch("/api/admin/form-submissions?limit=1000").then((r) => r.json()),
-        fetch("/api/admin/analytics")
-          .then((r) => r.json())
-          .catch(() => ({ users: [] })),
+        fetchDestinations(),
+        fetchSubmissions(),
+        fetchUsers(),
       ]);
 
       // Process and aggregate data
