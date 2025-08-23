@@ -227,24 +227,15 @@ export default function StoriesAdmin() {
   };
 
   const getLocationFromStory = (story: StorySubmission) => {
-    const data = story.data;
-    if (data.hostCity && data.hostCountry) {
-      return `${data.hostCity}, ${data.hostCountry}`;
-    }
-    if (data.city && data.country) {
-      return `${data.city}, ${data.country}`;
+    if (story.city && story.country) {
+      return `${story.city}, ${story.country}`;
     }
     return "Location not specified";
   };
 
   const getRatingFromStory = (story: StorySubmission) => {
-    const data = story.data;
-    if (data.overallRating) {
-      return data.overallRating;
-    }
-    if (data.ratings && data.ratings.overallRating) {
-      return data.ratings.overallRating;
-    }
+    // Rating information might not be available in the current API response
+    // Return null for now - could be added later if needed
     return null;
   };
 
