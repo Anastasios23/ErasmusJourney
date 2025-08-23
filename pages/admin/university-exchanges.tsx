@@ -327,10 +327,13 @@ export default function AdminUniversityExchanges() {
   const rejectSubmission = async (submissionId: string, reason: string) => {
     try {
       console.log('Rejecting university submission:', submissionId, 'with reason:', reason);
-      const response = await safeFetch(`/api/admin/university-submissions/${submissionId}/reject`, {
-        method: "POST",
+      const response = await safeFetch(`/api/admin/university-submissions/${submissionId}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reason }),
+        body: JSON.stringify({
+          status: "REJECTED",
+          adminNotes: reason
+        }),
       });
 
       if (response.ok) {
