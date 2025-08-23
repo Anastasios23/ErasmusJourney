@@ -198,22 +198,26 @@ export default function AdminFormReview() {
   ) => {
     try {
       const newStatus = action === "approve" ? "PUBLISHED" : "ARCHIVED";
+      console.log(`${action === "approve" ? "Approving" : "Rejecting"} submission:`, submissionId);
 
-      const response = await fetch(`/api/admin/form-submissions/${submissionId}`, {
+      const response = await safeFetch(`/api/admin/form-submissions/${submissionId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           status: newStatus,
-          adminNotes: notes || adminNotes 
+          adminNotes: notes || adminNotes
         }),
       });
 
       if (response.ok) {
+        console.log(`Successfully ${action === "approve" ? "approved" : "rejected"} submission`);
         await fetchSubmissions();
         setSelectedSubmission(null);
         setAdminNotes("");
+      } else {
+        console.error(`Failed to ${action} submission, status:`, response.status);
       }
     } catch (error) {
       console.error("Error updating submission:", error);
