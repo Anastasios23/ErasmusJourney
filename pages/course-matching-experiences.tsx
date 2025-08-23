@@ -382,7 +382,7 @@ export default function CourseMatchingExperiences() {
                   <SelectValue placeholder="Select destination" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All destinations</SelectItem>
+                  <SelectItem value="all">All destinations</SelectItem>
                   {uniqueDestinations.map((dest) => (
                     <SelectItem key={dest} value={dest}>
                       {dest}
@@ -396,7 +396,7 @@ export default function CourseMatchingExperiences() {
                   <SelectValue placeholder="Select department" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All departments</SelectItem>
+                  <SelectItem value="all">All departments</SelectItem>
                   {uniqueDepartments.map((dept) => (
                     <SelectItem key={dept} value={dept}>
                       {dept}
@@ -410,7 +410,7 @@ export default function CourseMatchingExperiences() {
                   <SelectValue placeholder="Difficulty level" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All difficulties</SelectItem>
+                  <SelectItem value="all">All difficulties</SelectItem>
                   <SelectItem value="Very Easy">Very Easy</SelectItem>
                   <SelectItem value="Easy">Easy</SelectItem>
                   <SelectItem value="Moderate">Moderate</SelectItem>
