@@ -175,7 +175,9 @@ export default function StoriesAdmin() {
       if (action === "reject") newStatus = "ARCHIVED";
       if (action === "feature") newStatus = "FEATURED";
 
-      const response = await fetch(`/api/admin/stories/${storyId}`, {
+      console.log(`${action} story:`, storyId, 'to status:', newStatus);
+
+      const response = await safeFetch(`/api/admin/stories/${storyId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -187,8 +189,11 @@ export default function StoriesAdmin() {
       });
 
       if (response.ok) {
+        console.log(`Successfully ${action}d story`);
         await fetchStories(); // Refresh data
         setSelectedStory(null);
+      } else {
+        console.error(`Failed to ${action} story, status:`, response.status);
       }
     } catch (error) {
       console.error("Error updating story:", error);
