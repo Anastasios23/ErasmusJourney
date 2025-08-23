@@ -34,16 +34,13 @@ import {
 } from "lucide-react";
 import NotificationDropdown from "@/components/NotificationDropdown";
 import { ErasmusIcon } from "@/components/icons/CustomIcons";
-
-// Static mock session to prevent re-renders
-const MOCK_SESSION = { user: { id: 'anonymous', name: 'Anonymous User', email: 'anonymous@example.com' } };
-const MOCK_STATUS = 'authenticated';
+import { MOCK_SESSION_USER, MOCK_STATUS_AUTHENTICATED } from "@/utils/mockSession";
 
 export default function Header() {
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const { data: session, status } = useSession();
-  const session = MOCK_SESSION;
-  const status = MOCK_STATUS;
+  const session = MOCK_SESSION_USER;
+  const status = MOCK_STATUS_AUTHENTICATED;
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
