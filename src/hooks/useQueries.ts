@@ -252,7 +252,7 @@ const generateStories = (filters?: {
       views: 145,
       createdAt: "2024-01-10",
       image:
-        "https://images.unsplash.com/photo-1542324151-ee2b73cb0d95?w=400&h=200&fit=crop",
+        "https://images.unsplash.com/photo-1541849546-216549ae216d?w=400&h=200&fit=crop",
     },
     {
       id: "3",
