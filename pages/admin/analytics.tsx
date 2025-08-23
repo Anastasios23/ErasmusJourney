@@ -97,16 +97,17 @@ export default function AdvancedAnalyticsDashboard() {
   const [selectedMetric, setSelectedMetric] = useState("overview");
 
   useEffect(() => {
-    if (status === "loading") return;
+    // Skip loading checks since auth is disabled
+    // if (status === "loading") return;
 
-    if (!session || session.user?.role !== "ADMIN") {
-      router.push("/login");
-      return;
-    }
+    // if (!session || session.user?.role !== "ADMIN") {
+    //   router.push("/login");
+    //   return;
+    // }
 
-    setLoading(false);
+    console.log('Initializing analytics dashboard...');
     fetchAnalytics();
-  }, [session, status, router, timeRange]);
+  }, [timeRange]); // Removed session dependencies since auth is disabled
 
   const fetchAnalytics = async () => {
     try {
