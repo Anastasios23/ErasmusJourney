@@ -167,14 +167,14 @@ export default function CourseMatchingExperiences() {
     }
 
     // Destination filter
-    if (selectedDestination) {
+    if (selectedDestination && selectedDestination !== "all") {
       filtered = filtered.filter((exp) =>
         `${exp.hostCity}, ${exp.hostCountry}` === selectedDestination
       );
     }
 
     // Department filter
-    if (selectedDepartment) {
+    if (selectedDepartment && selectedDepartment !== "all") {
       filtered = filtered.filter(
         (exp) =>
           exp.hostDepartment === selectedDepartment ||
@@ -183,14 +183,14 @@ export default function CourseMatchingExperiences() {
     }
 
     // Difficulty filter
-    if (selectedDifficulty) {
+    if (selectedDifficulty && selectedDifficulty !== "all") {
       filtered = filtered.filter(
         (exp) => exp.courseMatchingDifficult === selectedDifficulty
       );
     }
 
     // Level filter
-    if (selectedLevel) {
+    if (selectedLevel && selectedLevel !== "all") {
       filtered = filtered.filter((exp) => exp.levelOfStudy === selectedLevel);
     }
 
