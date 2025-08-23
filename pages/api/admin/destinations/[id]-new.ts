@@ -17,26 +17,29 @@ export default async function handler(
   }
 
   try {
-    const session = await getServerSession(req, res, authOptions);
+    // AUTHENTICATION DISABLED - Comment out to re-enable
+    // const session = await getServerSession(req, res, authOptions);
 
     switch (req.method) {
       case "GET":
         return handleGetDestination(req, res, id);
       case "PUT":
-        if (!session || !session.user?.email) {
-          return res.status(401).json({
-            success: false,
-            message: "Authentication required",
-          });
-        }
+        // AUTHENTICATION DISABLED - Comment out to re-enable
+        // if (!session || !session.user?.email) {
+        //   return res.status(401).json({
+        //     success: false,
+        //     message: "Authentication required",
+        //   });
+        // }
         return handleUpdateDestination(req, res, id);
       case "DELETE":
-        if (!session || !session.user?.email) {
-          return res.status(401).json({
-            success: false,
-            message: "Authentication required",
-          });
-        }
+        // AUTHENTICATION DISABLED - Comment out to re-enable
+        // if (!session || !session.user?.email) {
+        //   return res.status(401).json({
+        //     success: false,
+        //     message: "Authentication required",
+        //   });
+        // }
         return handleDeleteDestination(req, res, id);
       default:
         return res.status(405).json({
