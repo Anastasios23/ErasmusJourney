@@ -8,24 +8,27 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    // Check authentication and admin privileges
-    const session = await getServerSession(req, res, authOptions);
-    if (!session || !session.user?.email) {
-      return res.status(401).json({ 
-        success: false, 
-        message: "Authentication required" 
-      });
-    }
+    // AUTHENTICATION DISABLED - Comment out to re-enable
+    // const session = await getServerSession(req, res, authOptions);
+    // if (!session || !session.user?.email) {
+    //   return res.status(401).json({
+    //     success: false,
+    //     message: "Authentication required"
+    //   });
+    // }
 
-    // For now, allow any authenticated user to be admin
-    // TODO: Implement proper admin role checking
-    const isAdmin = true; // session.user.role === 'ADMIN'
-    if (!isAdmin) {
-      return res.status(403).json({ 
-        success: false, 
-        message: "Admin access required" 
-      });
-    }
+    // // For now, allow any authenticated user to be admin
+    // // TODO: Implement proper admin role checking
+    // const isAdmin = true; // session.user.role === 'ADMIN'
+    // if (!isAdmin) {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: "Admin access required"
+    //   });
+    // }
+
+    // Mock session for disabled authentication
+    const session = { user: { id: 'anonymous', email: 'admin@example.com' } };
 
     switch (req.method) {
       case "GET":
@@ -33,9 +36,9 @@ export default async function handler(
       case "POST":
         return handleCreateDestination(req, res, session.user.id || session.user.email);
       default:
-        return res.status(405).json({ 
-          success: false, 
-          message: "Method not allowed" 
+        return res.status(405).json({
+          success: false,
+          message: "Method not allowed"
         });
     }
   } catch (error) {
