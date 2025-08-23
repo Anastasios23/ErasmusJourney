@@ -242,10 +242,12 @@ export class ContentIntegrationService {
 
       livingCosts: {
         breakdown: {
-          rent: data.livingExpensesData?.rent?.average,
-          food: data.livingExpensesData?.food?.average,
+          accommodation: data.livingExpensesData?.rent?.average,
+          groceries: data.livingExpensesData?.groceries?.average,
           transport: data.livingExpensesData?.transport?.average,
-          entertainment: data.livingExpensesData?.entertainment?.average,
+          social: data.livingExpensesData?.eatingOut?.average,
+          bills: data.livingExpensesData?.bills?.average,
+          other: data.livingExpensesData?.other?.average,
         },
         totalMonthly: data.livingExpensesData?.total?.average,
       },
