@@ -171,8 +171,20 @@ export default function AdvancedAnalyticsDashboard() {
     submissions: any,
     users: any,
   ): AnalyticsData => {
-    const destData = destinations.destinations || [];
-    const submissionData = submissions.submissions || [];
+    // Safely extract data with multiple fallback options
+    const destData = Array.isArray(destinations?.destinations)
+      ? destinations.destinations
+      : Array.isArray(destinations)
+      ? destinations
+      : [];
+
+    const submissionData = Array.isArray(submissions?.submissions)
+      ? submissions.submissions
+      : Array.isArray(submissions)
+      ? submissions
+      : [];
+
+    const userData = users?.users || users || [];
 
     // Calculate overview metrics
     const totalDestinations = destData.length;
@@ -180,27 +192,32 @@ export default function AdvancedAnalyticsDashboard() {
     const publishedSubmissions = submissionData.filter(
       (s: any) => s.status === "PUBLISHED",
     ).length;
-    const averageRating =
-      destData
-        .filter((d: any) => d.averageRating)
-        .reduce((sum: number, d: any) => sum + d.averageRating, 0) /
-        destData.filter((d: any) => d.averageRating).length || 0;
+    const ratedDestinations = destData.filter((d: any) => d?.averageRating && typeof d.averageRating === 'number');
+    const averageRating = ratedDestinations.length > 0
+      ? ratedDestinations.reduce((sum: number, d: any) => sum + d.averageRating, 0) / ratedDestinations.length
+      : 0;
 
-    // Process submissions by type
+    // Process submissions by type with safety checks
     const submissionsByType = submissionData.reduce((acc: any, sub: any) => {
-      acc[sub.type] = (acc[sub.type] || 0) + 1;
+      if (sub?.type) {
+        acc[sub.type] = (acc[sub.type] || 0) + 1;
+      }
       return acc;
     }, {});
 
-    // Process submissions by status
+    // Process submissions by status with safety checks
     const submissionsByStatus = submissionData.reduce((acc: any, sub: any) => {
-      acc[sub.status] = (acc[sub.status] || 0) + 1;
+      if (sub?.status) {
+        acc[sub.status] = (acc[sub.status] || 0) + 1;
+      }
       return acc;
     }, {});
 
-    // Process by country (from destinations)
+    // Process by country (from destinations) with safety checks
     const submissionsByCountry = destData.reduce((acc: any, dest: any) => {
-      acc[dest.country] = (acc[dest.country] || 0) + dest.submissionCount;
+      if (dest?.country && typeof dest.submissionCount === 'number') {
+        acc[dest.country] = (acc[dest.country] || 0) + dest.submissionCount;
+      }
       return acc;
     }, {});
 
