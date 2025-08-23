@@ -63,81 +63,152 @@ export default async function handler(
       },
     });
 
-    // Process destinations and add computed data
-    const publicDestinations: PublicDestination[] = adminDestinations.map(
-      (dest) => {
-        // Calculate student count based on form submissions for this destination
-        const citySubmissions = formSubmissions.filter((sub) => {
-          const data = sub.data as any;
-          const submissionCity = data.hostCity || data.city;
-          const submissionCountry = data.hostCountry || data.country;
+    // Process both admin and form-generated destinations
+    const allDestinations: PublicDestination[] = [];
 
+    // Process admin destinations
+    adminDestinations.forEach((dest) => {
+      const citySubmissions = formSubmissions.filter((sub) => {
+        const data = sub.data as any;
+        const submissionCity = data.hostCity || data.city;
+        const submissionCountry = data.hostCountry || data.country;
+
+        return (
+          submissionCity?.toLowerCase().includes(dest.city.toLowerCase()) ||
+          submissionCountry?.toLowerCase().includes(dest.country.toLowerCase())
+        );
+      });
+
+      const universities = new Set<string>();
+      citySubmissions.forEach((sub) => {
+        const data = sub.data as any;
+        if (data.hostUniversity) universities.add(data.hostUniversity);
+        if (data.university) universities.add(data.university);
+      });
+
+      let costOfLiving: "low" | "medium" | "high" = "medium";
+      let averageRent = 0;
+
+      if (dest.studentDataCache) {
+        const studentData = dest.studentDataCache as any;
+        const avgRent = studentData.livingCosts?.avgMonthlyRent || 0;
+
+        if (avgRent < 400) costOfLiving = "low";
+        else if (avgRent > 700) costOfLiving = "high";
+
+        averageRent = avgRent;
+      }
+
+      allDestinations.push({
+        id: dest.id,
+        name: dest.name,
+        city: dest.city,
+        country: dest.country,
+        description: dest.description,
+        imageUrl: dest.imageUrl || `/images/destinations/${dest.city.toLowerCase()}.svg`,
+        climate: dest.climate,
+        highlights: (dest.highlights as string[]) || [],
+        featured: dest.featured,
+        studentCount: citySubmissions.length,
+        avgCostPerMonth: averageRent || undefined,
+        popularUniversities: Array.from(universities).slice(0, 3),
+
+        // Additional fields for frontend compatibility
+        university: Array.from(universities)[0] || `University of ${dest.city}`,
+        universityShort: Array.from(universities)[0]?.split(' ').map(w => w[0]).join('') || dest.city.slice(0, 3).toUpperCase(),
+        partnerUniversities: Array.from(universities),
+        language: (dest.generalInfo as any)?.language || "English",
+        costOfLiving,
+        averageRent: averageRent || undefined,
+        popularWith: ["Business", "Engineering", "Arts"],
+        userStories: [],
+        userAccommodationTips: [],
+        userCourseMatches: [],
+        userReviews: [],
+      });
+    });
+
+    // Process form-generated destinations
+    formGeneratedDestinations.forEach((dest) => {
+      // Skip if we already have this destination from admin destinations
+      const existingAdmin = adminDestinations.find(admin =>
+        admin.city.toLowerCase() === dest.city?.toLowerCase() &&
+        admin.country.toLowerCase() === dest.country.toLowerCase()
+      );
+
+      if (existingAdmin) return;
+
+      const citySubmissions = formSubmissions.filter((sub) => {
+        const data = sub.data as any;
+        const submissionCity = data.hostCity || data.city;
+        const submissionCountry = data.hostCountry || data.country;
+
+        return (
+          submissionCity?.toLowerCase() === dest.city?.toLowerCase() &&
+          submissionCountry?.toLowerCase() === dest.country.toLowerCase()
+        );
+      });
+
+      // Calculate living expenses from submissions
+      const livingExpensesSubmissions = citySubmissions.filter(sub => sub.type === "LIVING_EXPENSES");
+      let avgCostPerMonth = 0;
+      let costOfLiving: "low" | "medium" | "high" = "medium";
+
+      if (livingExpensesSubmissions.length > 0) {
+        const totalExpenses = livingExpensesSubmissions.map(sub => {
+          const data = sub.data as any;
           return (
-            submissionCity?.toLowerCase().includes(dest.city.toLowerCase()) ||
-            submissionCountry
-              ?.toLowerCase()
-              .includes(dest.country.toLowerCase())
+            parseFloat(data.rent || 0) +
+            parseFloat(data.groceries || 0) +
+            parseFloat(data.transportation || 0) +
+            parseFloat(data.eatingOut || 0) +
+            parseFloat(data.bills || 0) +
+            parseFloat(data.entertainment || 0) +
+            parseFloat(data.other || 0)
           );
         });
 
-        // Extract universities from submissions
-        const universities = new Set<string>();
-        citySubmissions.forEach((sub) => {
-          const data = sub.data as any;
-          if (data.hostUniversity) universities.add(data.hostUniversity);
-          if (data.university) universities.add(data.university);
-        });
+        avgCostPerMonth = Math.round(totalExpenses.reduce((sum, val) => sum + val, 0) / totalExpenses.length);
 
-        // Determine cost level based on any cached student data
-        let costOfLiving: "low" | "medium" | "high" = "medium";
-        let averageRent = 0;
+        if (avgCostPerMonth < 600) costOfLiving = "low";
+        else if (avgCostPerMonth > 1200) costOfLiving = "high";
+      }
 
-        if (dest.studentDataCache) {
-          const studentData = dest.studentDataCache as any;
-          const avgRent = studentData.livingCosts?.avgMonthlyRent || 0;
-
-          if (avgRent < 400) costOfLiving = "low";
-          else if (avgRent > 700) costOfLiving = "high";
-
-          averageRent = avgRent;
+      const universities = new Set<string>();
+      dest.courseExchanges.forEach(ce => {
+        if (dest.accommodations.length > 0) {
+          universities.add(`University of ${dest.city}`);
         }
+      });
 
-        return {
-          id: dest.id,
-          name: dest.name,
-          city: dest.city,
-          country: dest.country,
-          description: dest.description,
-          imageUrl:
-            dest.imageUrl ||
-            `/images/destinations/${dest.city.toLowerCase()}.svg`,
-          climate: dest.climate,
-          highlights: (dest.highlights as string[]) || [],
-          featured: dest.featured,
-          studentCount: citySubmissions.length,
-          avgCostPerMonth: averageRent || undefined,
-          popularUniversities: Array.from(universities).slice(0, 3),
+      allDestinations.push({
+        id: dest.id,
+        name: dest.name,
+        city: dest.city || "",
+        country: dest.country,
+        description: dest.description || dest.summary || `Discover ${dest.name} through real student experiences.`,
+        imageUrl: dest.imageUrl || `/images/destinations/${dest.city?.toLowerCase()}.svg`,
+        climate: dest.climate || "Temperate",
+        highlights: (dest.highlights as string[]) || ["Student Reviews", "Real Experiences"],
+        featured: dest.featured,
+        studentCount: citySubmissions.length,
+        avgCostPerMonth: avgCostPerMonth || undefined,
+        popularUniversities: Array.from(universities).slice(0, 3),
 
-          // Additional fields for frontend compatibility
-          university:
-            Array.from(universities)[0] || `University of ${dest.city}`,
-          universityShort:
-            Array.from(universities)[0]
-              ?.split(" ")
-              .map((w) => w[0])
-              .join("") || dest.city.slice(0, 3).toUpperCase(),
-          partnerUniversities: Array.from(universities),
-          language: (dest.generalInfo as any)?.language || "English",
-          costOfLiving,
-          averageRent: averageRent || undefined,
-          popularWith: ["Business", "Engineering", "Arts"],
-          userStories: [],
-          userAccommodationTips: [],
-          userCourseMatches: [],
-          userReviews: [],
-        };
-      },
-    );
+        // Additional fields for frontend compatibility
+        university: Array.from(universities)[0] || `University of ${dest.city}`,
+        universityShort: dest.city?.slice(0, 3).toUpperCase() || "UNI",
+        partnerUniversities: Array.from(universities),
+        language: "English",
+        costOfLiving,
+        averageRent: avgCostPerMonth || undefined,
+        popularWith: ["Exchange Students", "International Students"],
+        userStories: [],
+        userAccommodationTips: [],
+        userCourseMatches: [],
+        userReviews: [],
+      });
+    });
 
     // Add some default destinations if none exist
     if (publicDestinations.length === 0) {
