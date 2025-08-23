@@ -21,6 +21,7 @@ export interface GeneratedDestinationData {
     transport?: number;
     social?: number;
     accommodation?: number;
+    bills?: number;
     other?: number;
   };
 
