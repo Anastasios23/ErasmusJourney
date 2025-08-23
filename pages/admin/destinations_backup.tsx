@@ -323,7 +323,7 @@ export default function AdminDestinations() {
       console.log("Image URL:", imagePreview);
 
       // First approve the submission
-      const submissionResponse = await fetch(
+      const submissionResponse = await safeFetch(
         `/api/admin/form-submissions/${submissionId}`,
         {
           method: "PATCH",
@@ -340,7 +340,7 @@ export default function AdminDestinations() {
       console.log("✅ Submission approved successfully");
 
       // Then create/update destination
-      const destinationResponse = await fetch("/api/admin/destinations", {
+      const destinationResponse = await safeFetch("/api/admin/destinations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -374,7 +374,8 @@ export default function AdminDestinations() {
 
   const rejectSubmission = async (submissionId: string, reason: string) => {
     try {
-      await fetch(`/api/admin/form-submissions/${submissionId}`, {
+      console.log('Rejecting submission:', submissionId, 'with reason:', reason);
+      const response = await safeFetch(`/api/admin/form-submissions/${submissionId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -382,6 +383,12 @@ export default function AdminDestinations() {
           rejectionReason: reason,
         }),
       });
+
+      if (response.ok) {
+        console.log('✅ Submission rejected successfully');
+      } else {
+        console.error('Failed to reject submission, status:', response.status);
+      }
 
       fetchPendingSubmissions();
       setSelectedSubmission(null);
