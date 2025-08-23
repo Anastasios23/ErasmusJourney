@@ -88,20 +88,24 @@ export default function SubmissionsPage() {
     // AUTHENTICATION DISABLED - Comment out to re-enable
     // if (!session) return;
 
-    // Once authenticated, fetch
-    fetch("/api/submissions")
-      .then((res) => {
+    // Once authenticated, fetch using safeFetch to bypass FullStory interference
+    const fetchSubmissions = async () => {
+      try {
+        const res = await safeFetch("/api/submissions");
         if (!res.ok) {
           throw new Error(`HTTP ${res.status}: ${res.statusText}`);
         }
-        return res.json();
-      })
-      .then(({ submissions }) => setSubmissions(submissions))
-      .catch((err) => {
-        console.error(err);
+        const data = await res.json();
+        setSubmissions(data.submissions || []);
+      } catch (err) {
+        console.error("Error fetching submissions:", err);
         setError("Failed to load submissions");
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSubmissions();
   }, [session]);
 
   // Show loading while checking authentication
