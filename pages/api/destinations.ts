@@ -211,7 +211,7 @@ export default async function handler(
     });
 
     // Add some default destinations if none exist
-    if (publicDestinations.length === 0) {
+    if (allDestinations.length === 0) {
       const defaultDestinations: PublicDestination[] = [
         {
           id: "berlin-germany",
