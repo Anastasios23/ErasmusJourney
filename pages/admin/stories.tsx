@@ -40,17 +40,25 @@ import {
 
 interface StorySubmission {
   id: string;
-  userId: string;
-  type: string;
-  title: string;
+  studentName: string;
+  university: string;
+  city: string;
+  country: string;
+  department: string;
+  story: string;
+  tips: string[];
+  helpTopics: string[];
+  contactMethod?: string;
+  contactInfo?: string;
+  accommodationTips?: string;
+  budgetTips?: string;
   status: string;
+  isPublic: boolean;
   createdAt: string;
-  data: any;
-  user?: {
-    firstName?: string;
-    lastName?: string;
-    email: string;
-  };
+  updatedAt: string;
+  userId: string;
+  userEmail: string;
+  moderatorNotes?: string;
 }
 
 export default function StoriesAdmin() {
