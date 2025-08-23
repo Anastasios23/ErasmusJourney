@@ -23,7 +23,7 @@ export default async function handler(
         type: "EXPERIENCE",
         status: { in: ["SUBMITTED", "PUBLISHED"] },
         data: {
-          path: "wantToHelp",
+          path: ["wantToHelp"], // Fixed: path should be an array
           string_contains: "yes",
         },
       },
