@@ -39,6 +39,7 @@ import { EnhancedLogo } from "@/components/ui/enhanced-logo";
 import { ApplicationProgress, createApplicationSteps } from "@/components/ui/application-progress";
 import { useFormSubmissions } from "@/hooks/useFormSubmissions";
 import { useSmartNavigation } from "@/hooks/useSmartNavigation";
+import { cn } from "@/lib/utils";
 import {
   MOCK_SESSION_USER,
   MOCK_STATUS_AUTHENTICATED,
@@ -181,9 +182,15 @@ export default function Header() {
                 </div>
               ))}
               {/* Primary CTA */}
-              <Link href="/basic-information">
-                <Button size="sm" className="ml-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-sm">
-                  Apply Now
+              <Link href={analytics.nextStep?.href || "/basic-information"}>
+                <Button size="sm" className={cn(
+                  "ml-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-sm relative",
+                  analytics.nextStep && "animate-pulse-gentle"
+                )}>
+                  {analytics.nextStep ? `Continue: ${analytics.nextStep.name}` : "Apply Now"}
+                  {analytics.nextStep && (
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-bounce" />
+                  )}
                 </Button>
               </Link>
             </div>
@@ -356,9 +363,15 @@ export default function Header() {
 
               {/* Mobile Apply CTA */}
               <div className="pt-2">
-                <Link href="/basic-information" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button className="w-full bg-gradient-to-r from-blue-600 to-blue-700">
-                    Apply Now
+                <Link href={analytics.nextStep?.href || "/basic-information"} onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button className={cn(
+                    "w-full bg-gradient-to-r from-blue-600 to-blue-700 relative",
+                    analytics.nextStep && "animate-pulse-gentle"
+                  )}>
+                    {analytics.nextStep ? `Continue: ${analytics.nextStep.name}` : "Apply Now"}
+                    {analytics.nextStep && (
+                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-bounce" />
+                    )}
                   </Button>
                 </Link>
               </div>
