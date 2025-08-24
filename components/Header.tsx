@@ -346,7 +346,7 @@ export default function Header() {
                         <Link
                           key={subItem.name}
                           href={subItem.href}
-                          className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded"
+                          className="block px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           {subItem.name}
@@ -367,7 +367,7 @@ export default function Header() {
               </div>
 
               {/* Mobile User Actions */}
-              <div className="pt-4 pb-3 border-t border-gray-200">
+              <div className="pt-4 pb-3 border-t border-gray-200 dark:border-gray-700">
                 {/* AUTHENTICATION DISABLED - Comment out to re-enable */}
                 {/* {status === "loading" ? (
                   <div className="px-3 py-2">
@@ -378,13 +378,13 @@ export default function Header() {
                 {true ? (
                   <div className="space-y-1">
                     <div className="px-3 py-2">
-                      <div className="text-base font-medium text-gray-800">
+                      <div className="text-base font-medium text-gray-800 dark:text-gray-200">
                         Welcome,{" "}
                         {session.user.name?.split(" ")[0] ||
                           session.user.email?.split("@")[0]}
                         !
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-gray-600 dark:text-gray-300">
                         {session.user.email}
                       </div>
                     </div>
@@ -392,7 +392,7 @@ export default function Header() {
                       <Link
                         key={item.name}
                         href={item.href}
-                        className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+                        className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {item.name}
@@ -401,14 +401,14 @@ export default function Header() {
 
                     {/* Application Steps Section */}
                     <div className="px-3 py-2">
-                      <div className="text-sm font-medium text-gray-900 mb-2">
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                         Application Steps
                       </div>
                       {applicationSteps.map((step) => (
                         <Link
                           key={step.name}
                           href={step.href}
-                          className="block px-3 py-2 ml-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded"
+                          className="block px-3 py-2 ml-2 text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           {step.name}
@@ -418,7 +418,7 @@ export default function Header() {
 
                     <button
                       onClick={handleSignOut}
-                      className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+                      className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800"
                     >
                       Sign out
                     </button>
