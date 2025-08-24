@@ -324,6 +324,15 @@ export default async function handler(
 
     let submission;
 
+    const hostCity =
+      (linkingData as any)?.hostCity ||
+      (linkingData as any)?.basicInfo?.hostCity ||
+      null;
+    const hostCountry =
+      (linkingData as any)?.hostCountry ||
+      (linkingData as any)?.basicInfo?.hostCountry ||
+      null;
+
     if (existingSubmission) {
       // Update existing submission
       submission = await prisma.formSubmission.update({
@@ -333,6 +342,8 @@ export default async function handler(
           data: linkingData,
           status: submissionStatus,
           updatedAt: new Date(),
+          hostCity,
+          hostCountry,
         },
       });
       console.log(`Updated existing submission: ${existingSubmission.id}`);
@@ -345,6 +356,8 @@ export default async function handler(
           title,
           data: linkingData,
           status: submissionStatus,
+          hostCity,
+          hostCountry,
         },
       });
       console.log(`Created new submission: ${submission.id}`);

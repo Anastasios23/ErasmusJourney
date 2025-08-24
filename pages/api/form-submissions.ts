@@ -69,6 +69,13 @@ export default async function handler(
         whereClause.type = type;
       }
 
+      if (city && typeof city === "string") {
+        whereClause.hostCity = {
+          equals: city,
+          mode: "insensitive",
+        };
+      }
+
       let submissions = await prisma.formSubmission.findMany({
         where: whereClause,
         orderBy: { createdAt: "desc" },
@@ -77,6 +84,9 @@ export default async function handler(
       // Filter by city if specified (since this is JSON field, do it after fetch)
       if (city && typeof city === "string") {
         submissions = submissions.filter((submission) => {
+          if (submission.hostCity) {
+            return submission.hostCity.toLowerCase() === city.toLowerCase();
+          }
           const data = submission.data as any;
           return data.hostCity?.toLowerCase() === city.toLowerCase();
         });
@@ -90,6 +100,8 @@ export default async function handler(
         title: sub.title,
         data: sub.data,
         status: sub.status,
+        hostCity: sub.hostCity,
+        hostCountry: sub.hostCountry,
         createdAt: sub.createdAt.toISOString(),
         updatedAt: sub.updatedAt.toISOString(),
       }));

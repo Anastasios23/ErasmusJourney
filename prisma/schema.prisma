@@ -308,12 +308,15 @@ model FormSubmission {
   qualityScore     Float?
   tags             String?
   location         String?
+  hostCity         String?
+  hostCountry      String?
   submissionSource String                  @default("form")
   createdAt        DateTime                @default(now())
   updatedAt        DateTime                @updatedAt
   destinationLinks DestinationSubmission[]
   user             User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+@@index([hostCity, hostCountry])
   @@index([location, status])
   @@index([type, status])
   @@map("form_submissions")

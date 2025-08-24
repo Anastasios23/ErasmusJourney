@@ -214,9 +214,9 @@ export default function AdminFormReview() {
         const data = await response.json();
         console.log(
           "Form submissions fetched successfully:",
-          data?.length || 0,
+          data?.submissions?.length || data?.length || 0,
         );
-        setSubmissions(data || []);
+        setSubmissions(data.submissions || data || []);
       } else {
         console.error(
           "Failed to fetch form submissions, status:",

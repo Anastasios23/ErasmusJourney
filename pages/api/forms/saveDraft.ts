@@ -50,6 +50,9 @@ export default async function handler(
   try {
     const { type, title, data } = req.body;
 
+    const hostCity = data.hostCity || data.basicInfo?.hostCity || null;
+    const hostCountry = data.hostCountry || data.basicInfo?.hostCountry || null;
+
     if (!type || !title || !data) {
       return res.status(400).json({
         error: "Validation failed",
@@ -138,6 +141,8 @@ export default async function handler(
           title,
           data,
           updatedAt: new Date(),
+          hostCity,
+          hostCountry,
         },
         include: {
           user: {
@@ -158,6 +163,8 @@ export default async function handler(
           title,
           data,
           status: "DRAFT",
+          hostCity,
+          hostCountry,
         },
         include: {
           user: {

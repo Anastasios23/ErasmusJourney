@@ -16,15 +16,19 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
-      const { status } = req.query;
+      const { status, limit } = req.query;
 
-      let whereClause: any = {};
+      const whereClause: Record<string, any> = {};
       if (status && typeof status === "string") {
         whereClause.status = status;
       }
 
       const submissions = await prisma.formSubmission.findMany({
-        where: whereClause,
+        where: {
+          ...whereClause,
+          hostCity: { not: null },
+          hostCountry: { not: null },
+        },
         include: {
           user: {
             select: {
@@ -38,15 +42,11 @@ export default async function handler(
         orderBy: {
           createdAt: "desc",
         },
+        take:
+          limit && typeof limit === "string" ? parseInt(limit, 10) : undefined,
       });
 
-      // Filter submissions that contain destination data (hostCity and hostCountry)
-      const destinationSubmissions = submissions.filter((submission) => {
-        const data = submission.data as any;
-        return data.hostCity && data.hostCountry;
-      });
-
-      return res.status(200).json(destinationSubmissions);
+      return res.status(200).json({ submissions });
     } catch (error) {
       console.error("Error fetching submissions:", error);
       return res.status(500).json({ error: "Failed to fetch submissions" });

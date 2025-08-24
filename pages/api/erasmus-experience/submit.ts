@@ -71,6 +71,10 @@ export default async function handler(
       totalSteps: 4,
     };
 
+    const hostCity = (existingExperience.basicInfo as any)?.hostCity || null;
+    const hostCountry =
+      (existingExperience.basicInfo as any)?.hostCountry || null;
+
     await prisma.formSubmission.create({
       data: {
         userId,
@@ -78,6 +82,8 @@ export default async function handler(
         title: "Complete Erasmus Experience",
         data: consolidatedData,
         status: "SUBMITTED",
+        hostCity,
+        hostCountry,
       },
     });
 
