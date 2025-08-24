@@ -39,7 +39,7 @@ export default async function handler(
     }
 
     // Check if user already has an engagement record for this story
-    const existingEngagement = await prisma.storyEngagement.findFirst({
+    const existingEngagement = await prisma.engagement.findFirst({
       where: {
         storyId,
         userId,
@@ -48,7 +48,7 @@ export default async function handler(
 
     if (existingEngagement) {
       // Increment view count and update last viewed
-      const updatedEngagement = await prisma.storyEngagement.update({
+      const updatedEngagement = await prisma.engagement.update({
         where: { id: existingEngagement.id },
         data: {
           views: { increment: 1 },
@@ -63,7 +63,7 @@ export default async function handler(
       });
     } else {
       // Create new engagement record with first view
-      const newEngagement = await prisma.storyEngagement.create({
+      const newEngagement = await prisma.engagement.create({
         data: {
           storyId,
           userId,
