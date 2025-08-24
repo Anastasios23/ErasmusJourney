@@ -1081,26 +1081,31 @@ export default function StudentAccommodations() {
                     </section>
                   )}
 
-                {/* CTA Section */}
-                <section className="mt-12">
-                  <Card className="bg-blue-50 border-blue-200">
-                    <CardContent className="pt-8 pb-8 text-center">
-                      <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                        Help Future Students Find Great Housing
-                      </h2>
-                      <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                        Share details about your accommodation to help other
-                        students find great places to live during their Erasmus
-                        experience.
-                      </p>
-                      <Link href="/accommodation">
-                        <Button size="lg">
-                          <Home className="h-5 w-5 mr-2" />
-                          Share Your Accommodation
-                        </Button>
-                      </Link>
-                    </CardContent>
-                  </Card>
+                {/* Enhanced CTA Section */}
+                <section className={designSystem.layouts.section}>
+                  <div className="space-y-8">
+                    <ApplicationCTA className="mb-8" />
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                      <Card className={designSystem.componentVariants.card.featured}>
+                        <CardContent className="pt-8 pb-8 text-center">
+                          <div className="p-3 bg-blue-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                            <Home className="h-8 w-8 text-blue-600" />
+                          </div>
+                          <h3 className={designSystem.typography.h3 + " mb-4"}>Share Your Housing Experience</h3>
+                          <p className={designSystem.typography.muted + " mb-6"}>Help future students by sharing your accommodation details, costs, and tips.</p>
+                          <Link href="/accommodation">
+                            <Button className="bg-blue-600 hover:bg-blue-700">
+                              <Home className="h-4 w-4 mr-2" />
+                              Share Experience
+                            </Button>
+                          </Link>
+                        </CardContent>
+                      </Card>
+
+                      <CommunityJoinCTA />
+                    </div>
+                  </div>
                 </section>
               </>
             )}
