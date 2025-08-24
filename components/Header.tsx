@@ -35,6 +35,7 @@ import {
 import NotificationDropdown from "@/components/NotificationDropdown";
 import { ErasmusIcon } from "@/components/icons/CustomIcons";
 import { DarkModeToggle } from "@/components/ui/dark-mode-toggle";
+import { EnhancedLogo } from "@/components/ui/enhanced-logo";
 import {
   MOCK_SESSION_USER,
   MOCK_STATUS_AUTHENTICATED,
@@ -122,31 +123,7 @@ export default function Header() {
           {/* Logo and Back Button */}
           <div className="flex items-center space-x-4">
             <BackButton className="hidden md:block" />
-            <Link
-              href="/"
-              className="flex items-center space-x-3 group transition-all duration-300 hover:scale-105"
-            >
-              <div className="relative">
-                <ErasmusIcon
-                  size={36}
-                  className="transition-all duration-300 group-hover:rotate-12"
-                />
-                <div className="absolute -inset-2 bg-blue-500/20 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300" />
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-baseline">
-                  <span className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                    Erasmus
-                  </span>
-                  <span className="text-xl font-light text-blue-600 ml-1 group-hover:text-blue-700 transition-colors">
-                    Journey
-                  </span>
-                </div>
-                <span className="text-xs text-gray-500 -mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  Cyprus Edition
-                </span>
-              </div>
-            </Link>
+            <EnhancedLogo />
           </div>
 
           {/* Desktop Navigation */}
