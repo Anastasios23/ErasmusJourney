@@ -36,7 +36,7 @@ export default async function handler(
     }
 
     // Check if user already has an engagement record for this story
-    const existingEngagement = await prisma.storyEngagement.findFirst({
+    const existingEngagement = await prisma.engagement.findFirst({
       where: {
         storyId,
         userId,
@@ -45,7 +45,7 @@ export default async function handler(
 
     if (existingEngagement) {
       // Toggle bookmark status
-      const updatedEngagement = await prisma.storyEngagement.update({
+      const updatedEngagement = await prisma.engagement.update({
         where: { id: existingEngagement.id },
         data: {
           bookmarked: !existingEngagement.bookmarked,
@@ -59,7 +59,7 @@ export default async function handler(
       });
     } else {
       // Create new engagement record with bookmark
-      const newEngagement = await prisma.storyEngagement.create({
+      const newEngagement = await prisma.engagement.create({
         data: {
           storyId,
           userId,
