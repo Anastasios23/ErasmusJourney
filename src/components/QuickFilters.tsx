@@ -11,6 +11,7 @@ import {
   Heart,
   Clock,
   X,
+  Filter,
 } from "lucide-react";
 
 interface QuickFiltersProps {
