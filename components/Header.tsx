@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import NotificationDropdown from "@/components/NotificationDropdown";
 import { ErasmusIcon } from "@/components/icons/CustomIcons";
+import { DarkModeToggle } from "@/components/ui/dark-mode-toggle";
 import {
   MOCK_SESSION_USER,
   MOCK_STATUS_AUTHENTICATED,
@@ -115,7 +116,7 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-gray-200 z-50">
+    <header className="fixed top-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 z-50">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo and Back Button */}
@@ -204,6 +205,7 @@ export default function Header() {
 
           {/* User Actions */}
           <div className="hidden md:flex items-center space-x-4">
+            <DarkModeToggle />
             {/* AUTHENTICATION DISABLED - Comment out to re-enable */}
             {/* {status === "loading" ? (
               // Loading skeleton
@@ -322,7 +324,8 @@ export default function Header() {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center space-x-2">
+            <DarkModeToggle />
             <Button
               variant="ghost"
               size="sm"
