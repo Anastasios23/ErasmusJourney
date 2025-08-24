@@ -38,6 +38,7 @@ import { DarkModeToggle } from "@/components/ui/dark-mode-toggle";
 import { EnhancedLogo } from "@/components/ui/enhanced-logo";
 import { ApplicationProgress, createApplicationSteps } from "@/components/ui/application-progress";
 import { useFormSubmissions } from "@/hooks/useFormSubmissions";
+import { useSmartNavigation } from "@/hooks/useSmartNavigation";
 import {
   MOCK_SESSION_USER,
   MOCK_STATUS_AUTHENTICATED,
