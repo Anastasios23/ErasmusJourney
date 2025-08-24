@@ -8,6 +8,7 @@ import { ApplicationCTA, StoryCTA, CommunityJoinCTA } from "../src/components/ui
 import { QuickStartGuide, SmartBanner } from "../src/components/ui/user-guidance";
 import { SkipLink } from "../src/components/ui/accessibility";
 import { designSystem } from "../src/utils/designSystem";
+import Footer from "../src/components/Footer";
 import TeaserGallery from "../components/TeaserGallery";
 import { Button } from "../src/components/ui/button";
 import { Badge } from "../src/components/ui/badge";

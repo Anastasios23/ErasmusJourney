@@ -55,6 +55,9 @@ export default function Header() {
   // Get form submissions for progress tracking
   const { submissions } = useFormSubmissions();
 
+  // Smart navigation for highlighting next steps
+  const { shouldHighlightStep, analytics } = useSmartNavigation();
+
   // Session state tracking for reactivity
 
   // Reactive session handling for live updates
@@ -255,6 +258,9 @@ export default function Header() {
                             aria-hidden="true"
                           />
                           <span>Application Steps</span>
+                          {analytics.nextStep && (
+                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse ml-1" />
+                          )}
                           <ChevronDown className="h-3 w-3 ml-auto" />
                         </DropdownMenuSubTrigger>
                         <DropdownMenuSubContent className="w-80">
