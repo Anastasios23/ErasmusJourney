@@ -88,21 +88,20 @@ export default async function handler(
     });
 
     // Calculate helpfulness rate (stories with engagement)
-    const storiesWithEngagement = await prisma.formSubmission.count({
+    // Get unique story IDs that have engagement
+    const engagedStoryIds = await prisma.engagement.findMany({
       where: {
-        type: { in: ["EXPERIENCE", "STORY"] },
-        status: { in: ["SUBMITTED", "PUBLISHED"] },
-        engagements: {
-          some: {
-            OR: [
-              { liked: true },
-              { bookmarked: true },
-              { views: { gt: 0 } }
-            ]
-          }
-        }
+        OR: [
+          { liked: true },
+          { bookmarked: true },
+          { views: { gt: 0 } }
+        ]
       },
+      select: { storyId: true },
+      distinct: ['storyId'],
     });
+
+    const storiesWithEngagement = engagedStoryIds.length;
 
     const helpfulnessRate =
       totalStories > 0 ? (storiesWithEngagement / totalStories) * 100 : 0;
