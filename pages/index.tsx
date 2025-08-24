@@ -460,58 +460,7 @@ export default function HomePage({
         </section>
 
         {/* Footer */}
-        <footer className="bg-white border-t">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="grid md:grid-cols-2 gap-8 border-t border-gray-200 pt-16 mt-16">
-              <div>
-                <div className="flex items-center mb-4">
-                  <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-2">
-                    <Heart className="h-5 w-5 text-white" />
-                  </div>
-                  <span className="text-xl font-semibold text-gray-900">
-                    Erasmus Journey
-                  </span>
-                </div>
-                <p className="text-gray-600">
-                  Empowering students to make the most of their Erasmus
-                  experience.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-4">Support</h3>
-                <ul className="space-y-2 text-gray-600">
-                  <li>
-                    <a
-                      href="mailto:support@erasmusjourney.com?subject=Help Request"
-                      className="hover:text-gray-900 transition-colors"
-                    >
-                      Email Support
-                    </a>
-                  </li>
-                  <li className="mt-2">
-                    <Link
-                      href="/community"
-                      className="hover:text-gray-900 transition-colors"
-                    >
-                      Community Help
-                    </Link>
-                  </li>
-                  <li className="mt-2">
-                    <Link
-                      href="/student-stories"
-                      className="hover:text-gray-900 transition-colors"
-                    >
-                      Student Stories
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="border-t border-gray-200 mt-8 pt-8 text-center text-gray-600">
-              © 2024 Erasmus Journey. All rights reserved.
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </>
   );
