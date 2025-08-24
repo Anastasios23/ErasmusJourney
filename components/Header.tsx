@@ -53,11 +53,17 @@ export default function Header() {
 
   const navigation = [
     { name: "Home", href: "/" },
-    { name: "Destinations", href: "/destinations" },
-    { name: "Exchanges", href: "/university-exchanges" },
+    {
+      name: "Explore",
+      href: "/destinations",
+      subItems: [
+        { name: "Destinations", href: "/destinations", description: "Browse cities & countries" },
+        { name: "Universities", href: "/university-exchanges", description: "Partner institutions" }
+      ]
+    },
     { name: "Stories", href: "/student-stories" },
+    { name: "Housing", href: "/student-accommodations" },
     { name: "Community", href: "/community" },
-    { name: "Accommodations", href: "/student-accommodations" },
   ];
 
   const userNavigation = session
@@ -146,18 +152,53 @@ export default function Header() {
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
               {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isCurrentPath(item.href)
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-700 hover:text-blue-600 hover:bg-gray-100"
-                  }`}
-                >
-                  {item.name}
-                </Link>
+                <div key={item.name} className="relative group">
+                  {item.subItems ? (
+                    <div className="relative">
+                      <button
+                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
+                          isCurrentPath(item.href) || item.subItems.some(sub => isCurrentPath(sub.href))
+                            ? "bg-blue-100 text-blue-700"
+                            : "text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+                        }`}
+                      >
+                        {item.name}
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
+                      {/* Dropdown Menu */}
+                      <div className="absolute left-0 top-full mt-1 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        {item.subItems.map((subItem) => (
+                          <Link
+                            key={subItem.name}
+                            href={subItem.href}
+                            className="block px-4 py-3 hover:bg-gray-50 transition-colors"
+                          >
+                            <div className="font-medium text-gray-900">{subItem.name}</div>
+                            <div className="text-sm text-gray-600">{subItem.description}</div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                        isCurrentPath(item.href)
+                          ? "bg-blue-100 text-blue-700"
+                          : "text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  )}
+                </div>
               ))}
+              {/* Primary CTA */}
+              <Link href="/basic-information">
+                <Button size="sm" className="ml-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-sm">
+                  Apply Now
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -306,19 +347,44 @@ export default function Header() {
                 <BackButton className="w-full justify-center" />
               </div>
               {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
-                    isCurrentPath(item.href)
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-700 hover:text-blue-600 hover:bg-gray-100"
-                  }`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
+                <div key={item.name}>
+                  <Link
+                    href={item.href}
+                    className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                      isCurrentPath(item.href) || (item.subItems && item.subItems.some(sub => isCurrentPath(sub.href)))
+                        ? "bg-blue-100 text-blue-700"
+                        : "text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                  {/* Mobile Sub-navigation */}
+                  {item.subItems && (
+                    <div className="ml-4 mt-1 space-y-1">
+                      {item.subItems.map((subItem) => (
+                        <Link
+                          key={subItem.name}
+                          href={subItem.href}
+                          className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          {subItem.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ))}
+
+              {/* Mobile Apply CTA */}
+              <div className="pt-2">
+                <Link href="/basic-information" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button className="w-full bg-gradient-to-r from-blue-600 to-blue-700">
+                    Apply Now
+                  </Button>
+                </Link>
+              </div>
 
               {/* Mobile User Actions */}
               <div className="pt-4 pb-3 border-t border-gray-200">
