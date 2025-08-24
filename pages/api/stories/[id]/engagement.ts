@@ -19,55 +19,60 @@ export default async function handler(
   try {
     switch (req.method) {
       case "GET":
-        // Get engagement data for a story
-        const engagement = await prisma.engagement.findFirst({
+        // Check if the story (form submission) exists
+        const story = await prisma.formSubmission.findUnique({
+          where: { id: storyId },
+        });
+
+        if (!story) {
+          return res.status(404).json({ error: "Story not found" });
+        }
+
+        // Get user's engagement with this story
+        const userEngagement = await prisma.engagement.findFirst({
           where: {
             storyId: storyId,
             userId: userId || undefined,
           },
         });
 
-        // Get aggregate engagement data
-        const aggregateData = await prisma.engagement.aggregate({
+        // Get aggregate engagement stats for this story
+        const aggregateStats = await prisma.engagement.aggregate({
           where: { storyId },
           _count: {
-            likes: true,
-            views: true,
-            comments: true,
+            id: true,
           },
-          _avg: {
-            rating: true,
-          },
-        });
-
-        // Get total counts
-        const totalStats = await prisma.engagement.groupBy({
-          by: ["storyId"],
-          where: { storyId },
           _sum: {
-            likes: true,
             views: true,
-            comments: true,
           },
+        });
+
+        // Get total likes and bookmarks for this story
+        const likeCount = await prisma.engagement.count({
+          where: { storyId, liked: true },
+        });
+
+        const bookmarkCount = await prisma.engagement.count({
+          where: { storyId, bookmarked: true },
+        });
+
+        // Get average rating
+        const ratingStats = await prisma.engagement.aggregate({
+          where: { storyId, rating: { gt: 0 } },
           _avg: {
             rating: true,
           },
         });
-
-        const stats = totalStats[0] || {
-          _sum: { likes: 0, views: 0, comments: 0 },
-          _avg: { rating: 0 },
-        };
 
         const responseData = {
           storyId,
-          likes: stats._sum.likes || 0,
-          views: stats._sum.views || 0,
-          comments: stats._sum.comments || 0,
-          rating: stats._avg.rating || 0,
-          isLiked: engagement?.liked || false,
-          isBookmarked: engagement?.bookmarked || false,
-          lastViewed: engagement?.lastViewed,
+          likes: likeCount,
+          views: aggregateStats._sum.views || 0,
+          comments: 0, // Comments not implemented yet
+          rating: ratingStats._avg.rating || 0,
+          isLiked: userEngagement?.liked || false,
+          isBookmarked: userEngagement?.bookmarked || false,
+          lastViewed: userEngagement?.lastViewed,
         };
 
         return res.status(200).json(responseData);
