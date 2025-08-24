@@ -29,7 +29,7 @@ export function useStoryEngagement(storyId: string) {
     const fetchEngagement = async () => {
       try {
         const response = await fetch(
-          `/api/stories/engagement/${storyId}/engagement`,
+          `/api/stories/${storyId}/engagement`,
         );
         if (response.ok) {
           const data = await response.json();
@@ -51,7 +51,7 @@ export function useStoryEngagement(storyId: string) {
     if (!engagement) return;
 
     try {
-      const response = await fetch(`/api/stories/engagement/${storyId}/like`, {
+      const response = await fetch(`/api/stories/${storyId}/like`, {
         method: "POST",
       });
 
@@ -76,7 +76,7 @@ export function useStoryEngagement(storyId: string) {
 
     try {
       const response = await fetch(
-        `/api/stories/engagement/${storyId}/bookmark`,
+        `/api/stories/${storyId}/bookmark`,
         {
           method: "POST",
         },
@@ -99,7 +99,7 @@ export function useStoryEngagement(storyId: string) {
 
   const incrementView = async () => {
     try {
-      const response = await fetch(`/api/stories/engagement/${storyId}/view`, {
+      const response = await fetch(`/api/stories/${storyId}/view`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
