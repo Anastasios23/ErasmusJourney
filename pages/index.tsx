@@ -4,6 +4,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "../lib/prisma";
 import Header from "../components/Header";
+import {
+  ApplicationCTA,
+  StoryCTA,
+  CommunityJoinCTA,
+} from "../src/components/ui/enhanced-cta";
+import {
+  QuickStartGuide,
+  SmartBanner,
+} from "../src/components/ui/user-guidance";
+import { SkipLink } from "../src/components/ui/accessibility";
+import { designSystem } from "../src/utils/designSystem";
+import Footer from "../src/components/Footer";
 import TeaserGallery from "../components/TeaserGallery";
 import { Button } from "../src/components/ui/button";
 import { Badge } from "../src/components/ui/badge";
@@ -441,129 +453,22 @@ export default function HomePage({
         {/* Teaser Gallery */}
         <TeaserGallery />
 
-        {/* Become a Mentor Section */}
-        <section className="py-16 bg-gradient-to-br from-slate-50 to-blue-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
-                Give Back as a Mentor
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Share your Erasmus experience and help the next generation of
-                students navigate their study abroad journey. Join our alumni
-                mentorship program.
-              </p>
-            </div>
+        {/* Enhanced CTA Sections */}
+        <section className={designSystem.layouts.section}>
+          <div className="space-y-16">
+            {/* Primary Application CTA */}
+            <ApplicationCTA />
 
-            <div className="grid md:grid-cols-3 gap-8 mb-12">
-              <div className="bg-white rounded-xl p-8 shadow-lg">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Users className="h-6 w-6 text-blue-600" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
-                  Share Your Experience
-                </h3>
-                <p className="text-gray-600 text-center">
-                  Help students with application tips, cultural insights, and
-                  practical advice
-                </p>
-              </div>
-
-              <div className="bg-white rounded-xl p-8 shadow-lg">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Heart className="h-6 w-6 text-green-600" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
-                  Make an Impact
-                </h3>
-                <p className="text-gray-600 text-center">
-                  Guide students through their journey and watch them succeed
-                  abroad
-                </p>
-              </div>
-
-              <div className="bg-white rounded-xl p-8 shadow-lg">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Globe className="h-6 w-6 text-purple-600" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
-                  Build Networks
-                </h3>
-                <p className="text-gray-600 text-center">
-                  Connect with fellow alumni and expand your professional
-                  network
-                </p>
-              </div>
-            </div>
-
-            <div className="text-center">
-              <Link href="/help-future-students">
-                <Button className="bg-blue-600 hover:bg-blue-700 px-8 py-4 text-lg">
-                  Become a Mentor
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <p className="text-sm text-gray-500 mt-4">
-                Open to all Erasmus alumni • Flexible commitment • Make a
-                difference
-              </p>
+            {/* Secondary CTAs */}
+            <div className={designSystem.layouts.grid2}>
+              <StoryCTA />
+              <CommunityJoinCTA />
             </div>
           </div>
         </section>
 
         {/* Footer */}
-        <footer className="bg-white border-t">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="grid md:grid-cols-2 gap-8 border-t border-gray-200 pt-16 mt-16">
-              <div>
-                <div className="flex items-center mb-4">
-                  <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-2">
-                    <Heart className="h-5 w-5 text-white" />
-                  </div>
-                  <span className="text-xl font-semibold text-gray-900">
-                    Erasmus Journey
-                  </span>
-                </div>
-                <p className="text-gray-600">
-                  Empowering students to make the most of their Erasmus
-                  experience.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-4">Support</h3>
-                <ul className="space-y-2 text-gray-600">
-                  <li>
-                    <a
-                      href="mailto:support@erasmusjourney.com?subject=Help Request"
-                      className="hover:text-gray-900 transition-colors"
-                    >
-                      Email Support
-                    </a>
-                  </li>
-                  <li className="mt-2">
-                    <Link
-                      href="/community"
-                      className="hover:text-gray-900 transition-colors"
-                    >
-                      Community Help
-                    </Link>
-                  </li>
-                  <li className="mt-2">
-                    <Link
-                      href="/student-stories"
-                      className="hover:text-gray-900 transition-colors"
-                    >
-                      Student Stories
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="border-t border-gray-200 mt-8 pt-8 text-center text-gray-600">
-              © 2024 Erasmus Journey. All rights reserved.
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </>
   );

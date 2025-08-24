@@ -11,6 +11,7 @@ import {
   Heart,
   Clock,
   X,
+  Filter,
 } from "lucide-react";
 
 interface QuickFiltersProps {
@@ -151,38 +152,48 @@ export function QuickFilters({
     if (active) {
       switch (variant) {
         case "personal":
-          return "bg-blue-600 text-white border-blue-600";
+          return "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg";
         case "sort":
-          return "bg-green-600 text-white border-green-600";
+          return "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg";
         case "category":
-          return "bg-purple-600 text-white border-purple-600";
+          return "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg";
         default:
-          return "bg-gray-600 text-white border-gray-600";
+          return "bg-gradient-to-r from-gray-600 to-gray-700 text-white shadow-lg";
       }
     }
 
     switch (variant) {
       case "personal":
-        return "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100";
+        return "bg-white border-2 border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 shadow-sm";
       case "sort":
-        return "bg-green-50 text-green-700 border-green-200 hover:bg-green-100";
+        return "bg-white border-2 border-green-200 text-green-700 hover:bg-green-50 hover:border-green-300 shadow-sm";
       case "category":
-        return "bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100";
+        return "bg-white border-2 border-purple-200 text-purple-700 hover:bg-purple-50 hover:border-purple-300 shadow-sm";
       default:
-        return "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100";
+        return "bg-white border-2 border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 shadow-sm";
     }
   };
 
   return (
-    <div className="space-y-4">
+    <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md border border-gray-200 p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-gray-900">Quick Filters</h3>
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg">
+            <TrendingUp className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-gray-900">Quick Filters</h3>
+            <p className="text-sm text-gray-600">
+              Find exactly what you're looking for
+            </p>
+          </div>
+        </div>
         {hasActiveFilters && (
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={onClearFilters}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-600 hover:text-red-600 border-red-200 hover:border-red-400 hover:bg-red-50 transition-all"
           >
             <X className="h-4 w-4 mr-1" />
             Clear All
@@ -190,28 +201,36 @@ export function QuickFilters({
         )}
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-6">
         {/* Personal Filters */}
         {userProfile && (
           <div>
-            <p className="text-xs text-gray-500 mb-2 font-medium">For You</p>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="p-1 bg-blue-100 rounded">
+                <Users className="h-3 w-3 text-blue-600" />
+              </div>
+              <p className="text-sm font-semibold text-gray-700">
+                Personalized for You
+              </p>
+              <div className="h-px bg-gray-200 flex-1"></div>
+            </div>
+            <div className="flex flex-wrap gap-3">
               {quickFilterOptions
                 .filter((option) => option.variant === "personal")
                 .map((option, index) => (
-                  <Button
+                  <button
                     key={`personal-${index}`}
-                    variant="outline"
-                    size="sm"
                     onClick={option.action}
-                    className={`${getVariantStyle(option.variant, option.active)} transition-colors`}
+                    className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-300 ${getVariantStyle(option.variant, option.active)}`}
                   >
-                    {option.icon}
-                    <span className="ml-1 text-xs">{option.label}</span>
-                    {option.active && (
-                      <Star className="h-3 w-3 ml-1 fill-current" />
-                    )}
-                  </Button>
+                    <div className="flex items-center gap-2">
+                      {option.icon}
+                      <span>{option.label}</span>
+                      {option.active && (
+                        <Star className="h-3 w-3 fill-current" />
+                      )}
+                    </div>
+                  </button>
                 ))}
             </div>
           </div>
@@ -219,83 +238,96 @@ export function QuickFilters({
 
         {/* Sort Filters */}
         <div>
-          <p className="text-xs text-gray-500 mb-2 font-medium">Sort By</p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="p-1 bg-green-100 rounded">
+              <TrendingUp className="h-3 w-3 text-green-600" />
+            </div>
+            <p className="text-sm font-semibold text-gray-700">Sort Options</p>
+            <div className="h-px bg-gray-200 flex-1"></div>
+          </div>
+          <div className="flex flex-wrap gap-3">
             {quickFilterOptions
               .filter((option) => option.variant === "sort")
               .map((option, index) => (
-                <Button
+                <button
                   key={`sort-${index}`}
-                  variant="outline"
-                  size="sm"
                   onClick={option.action}
-                  className={`${getVariantStyle(option.variant, option.active)} transition-colors`}
+                  className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-300 ${getVariantStyle(option.variant, option.active)}`}
                 >
-                  {option.icon}
-                  <span className="ml-1 text-xs">{option.label}</span>
-                  {option.active && (
-                    <Star className="h-3 w-3 ml-1 fill-current" />
-                  )}
-                </Button>
+                  <div className="flex items-center gap-2">
+                    {option.icon}
+                    <span>{option.label}</span>
+                    {option.active && <Star className="h-3 w-3 fill-current" />}
+                  </div>
+                </button>
               ))}
           </div>
         </div>
 
         {/* Category Filters */}
         <div>
-          <p className="text-xs text-gray-500 mb-2 font-medium">Categories</p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="p-1 bg-purple-100 rounded">
+              <Filter className="h-3 w-3 text-purple-600" />
+            </div>
+            <p className="text-sm font-semibold text-gray-700">
+              Story Categories
+            </p>
+            <div className="h-px bg-gray-200 flex-1"></div>
+          </div>
+          <div className="flex flex-wrap gap-3">
             {quickFilterOptions
               .filter((option) => option.variant === "category")
               .map((option, index) => (
-                <Button
+                <button
                   key={`category-${index}`}
-                  variant="outline"
-                  size="sm"
                   onClick={option.action}
-                  className={`${getVariantStyle(option.variant, option.active)} transition-colors`}
+                  className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-300 ${getVariantStyle(option.variant, option.active)}`}
                 >
-                  {option.icon}
-                  <span className="ml-1 text-xs">{option.label}</span>
-                  {option.active && (
-                    <Star className="h-3 w-3 ml-1 fill-current" />
-                  )}
-                </Button>
+                  <div className="flex items-center gap-2">
+                    {option.icon}
+                    <span>{option.label}</span>
+                    {option.active && <Star className="h-3 w-3 fill-current" />}
+                  </div>
+                </button>
               ))}
           </div>
         </div>
       </div>
 
       {hasActiveFilters && (
-        <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-          <div className="flex items-center gap-2 mb-2">
-            <Badge
-              variant="outline"
-              className="bg-blue-100 text-blue-800 border-blue-300"
-            >
-              <Star className="h-3 w-3 mr-1 fill-current" />
-              Active Filters
-            </Badge>
+        <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 shadow-inner">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-1.5 bg-blue-600 rounded-lg">
+              <Star className="h-3 w-3 text-white fill-current" />
+            </div>
+            <h4 className="font-semibold text-blue-900">Active Filters</h4>
+            <div className="h-px bg-blue-200 flex-1"></div>
           </div>
-          <div className="flex flex-wrap gap-1 text-xs text-blue-700">
+          <div className="flex flex-wrap gap-2">
             {activeFilters.country !== "all" && (
-              <span className="bg-blue-100 px-2 py-1 rounded">
-                Country: {activeFilters.country}
+              <span className="inline-flex items-center gap-1 bg-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-medium">
+                <MapPin className="h-3 w-3" />
+                {activeFilters.country}
               </span>
             )}
             {activeFilters.university !== "all" && (
-              <span className="bg-blue-100 px-2 py-1 rounded">
-                University: {activeFilters.university.slice(0, 20)}...
+              <span className="inline-flex items-center gap-1 bg-purple-600 text-white px-3 py-1.5 rounded-full text-xs font-medium">
+                <GraduationCap className="h-3 w-3" />
+                {activeFilters.university.slice(0, 20)}
+                {activeFilters.university.length > 20 ? "..." : ""}
               </span>
             )}
             {activeFilters.category !== "all" && (
-              <span className="bg-blue-100 px-2 py-1 rounded">
-                Category: {activeFilters.category}
+              <span className="inline-flex items-center gap-1 bg-green-600 text-white px-3 py-1.5 rounded-full text-xs font-medium">
+                <Filter className="h-3 w-3" />
+                {activeFilters.category}
               </span>
             )}
             {activeFilters.sortBy !== "newest" && (
-              <span className="bg-blue-100 px-2 py-1 rounded">
-                Sort: {activeFilters.sortBy}
+              <span className="inline-flex items-center gap-1 bg-orange-600 text-white px-3 py-1.5 rounded-full text-xs font-medium">
+                <TrendingUp className="h-3 w-3" />
+                {activeFilters.sortBy}
               </span>
             )}
           </div>

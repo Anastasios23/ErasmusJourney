@@ -34,6 +34,15 @@ import {
 } from "lucide-react";
 import NotificationDropdown from "@/components/NotificationDropdown";
 import { ErasmusIcon } from "@/components/icons/CustomIcons";
+import { DarkModeToggle } from "@/components/ui/dark-mode-toggle";
+import { EnhancedLogo } from "@/components/ui/enhanced-logo";
+import {
+  ApplicationProgress,
+  createApplicationSteps,
+} from "@/components/ui/application-progress";
+import { useFormSubmissions } from "@/hooks/useFormSubmissions";
+import { useSmartNavigation } from "@/hooks/useSmartNavigation";
+import { cn } from "@/lib/utils";
 import {
   MOCK_SESSION_USER,
   MOCK_STATUS_AUTHENTICATED,
@@ -47,17 +56,37 @@ export default function Header() {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Get form submissions for progress tracking
+  const { submissions } = useFormSubmissions();
+
+  // Smart navigation for highlighting next steps
+  const { shouldHighlightStep, analytics } = useSmartNavigation();
+
   // Session state tracking for reactivity
 
   // Reactive session handling for live updates
 
   const navigation = [
     { name: "Home", href: "/" },
-    { name: "Destinations", href: "/destinations" },
-    { name: "Exchanges", href: "/university-exchanges" },
+    {
+      name: "Explore",
+      href: "/destinations",
+      subItems: [
+        {
+          name: "Destinations",
+          href: "/destinations",
+          description: "Browse cities & countries",
+        },
+        {
+          name: "Partner Universities",
+          href: "/university-exchanges",
+          description: "Exchange programs & institutions",
+        },
+      ],
+    },
     { name: "Stories", href: "/student-stories" },
+    { name: "Housing", href: "/student-accommodations" },
     { name: "Community", href: "/community" },
-    { name: "Accommodations", href: "/student-accommodations" },
   ];
 
   const userNavigation = session
@@ -109,60 +138,88 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-gray-200 z-50">
+    <header className="fixed top-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 z-50">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo and Back Button */}
           <div className="flex items-center space-x-4">
             <BackButton className="hidden md:block" />
-            <Link
-              href="/"
-              className="flex items-center space-x-3 group transition-all duration-300 hover:scale-105"
-            >
-              <div className="relative">
-                <ErasmusIcon
-                  size={36}
-                  className="transition-all duration-300 group-hover:rotate-12"
-                />
-                <div className="absolute -inset-2 bg-blue-500/20 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300" />
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-baseline">
-                  <span className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                    Erasmus
-                  </span>
-                  <span className="text-xl font-light text-blue-600 ml-1 group-hover:text-blue-700 transition-colors">
-                    Journey
-                  </span>
-                </div>
-                <span className="text-xs text-gray-500 -mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  Cyprus Edition
-                </span>
-              </div>
-            </Link>
+            <EnhancedLogo />
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
               {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isCurrentPath(item.href)
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-700 hover:text-blue-600 hover:bg-gray-100"
-                  }`}
-                >
-                  {item.name}
-                </Link>
+                <div key={item.name} className="relative group">
+                  {item.subItems ? (
+                    <div className="relative">
+                      <button
+                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
+                          isCurrentPath(item.href) ||
+                          item.subItems.some((sub) => isCurrentPath(sub.href))
+                            ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                            : "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                        }`}
+                      >
+                        {item.name}
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
+                      {/* Dropdown Menu */}
+                      <div className="absolute left-0 top-full mt-1 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        {item.subItems.map((subItem) => (
+                          <Link
+                            key={subItem.name}
+                            href={subItem.href}
+                            className="block px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                          >
+                            <div className="font-medium text-gray-900 dark:text-gray-100">
+                              {subItem.name}
+                            </div>
+                            <div className="text-sm text-gray-600 dark:text-gray-300">
+                              {subItem.description}
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                        isCurrentPath(item.href)
+                          ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                          : "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  )}
+                </div>
               ))}
+              {/* Primary CTA */}
+              <Link href={analytics.nextStep?.href || "/basic-information"}>
+                <Button
+                  size="sm"
+                  className={cn(
+                    "ml-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-sm relative",
+                    analytics.nextStep && "animate-pulse-gentle",
+                  )}
+                >
+                  {analytics.nextStep
+                    ? `Continue: ${analytics.nextStep.name}`
+                    : "Apply Now"}
+                  {analytics.nextStep && (
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-bounce" />
+                  )}
+                </Button>
+              </Link>
             </div>
           </div>
 
           {/* User Actions */}
           <div className="hidden md:flex items-center space-x-4">
+            <DarkModeToggle />
             {/* AUTHENTICATION DISABLED - Comment out to re-enable */}
             {/* {status === "loading" ? (
               // Loading skeleton
@@ -229,30 +286,18 @@ export default function Header() {
                             aria-hidden="true"
                           />
                           <span>Application Steps</span>
+                          {analytics.nextStep && (
+                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse ml-1" />
+                          )}
                           <ChevronDown className="h-3 w-3 ml-auto" />
                         </DropdownMenuSubTrigger>
-                        <DropdownMenuSubContent>
-                          {applicationSteps.map((step) => (
-                            <DropdownMenuItem key={step.name} asChild>
-                              <Link
-                                href={step.href}
-                                className="flex items-start gap-3 w-full p-3"
-                              >
-                                <step.icon
-                                  className="h-4 w-4 mt-0.5"
-                                  aria-hidden="true"
-                                />
-                                <div className="flex flex-col">
-                                  <span className="font-medium">
-                                    {step.name}
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    {step.description}
-                                  </span>
-                                </div>
-                              </Link>
-                            </DropdownMenuItem>
-                          ))}
+                        <DropdownMenuSubContent className="w-80">
+                          <div className="p-3">
+                            <ApplicationProgress
+                              steps={createApplicationSteps(submissions || [])}
+                              className="max-h-96 overflow-y-auto"
+                            />
+                          </div>
                         </DropdownMenuSubContent>
                       </DropdownMenuSub>
                       <DropdownMenuSeparator />
@@ -281,7 +326,8 @@ export default function Header() {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center space-x-2">
+            <DarkModeToggle />
             <Button
               variant="ghost"
               size="sm"
@@ -300,28 +346,68 @@ export default function Header() {
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200 dark:border-gray-700">
               {/* Mobile Back Button */}
               <div className="px-3 py-2">
                 <BackButton className="w-full justify-center" />
               </div>
               {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
-                    isCurrentPath(item.href)
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-700 hover:text-blue-600 hover:bg-gray-100"
-                  }`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
+                <div key={item.name}>
+                  <Link
+                    href={item.href}
+                    className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                      isCurrentPath(item.href) ||
+                      (item.subItems &&
+                        item.subItems.some((sub) => isCurrentPath(sub.href)))
+                        ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                        : "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                  {/* Mobile Sub-navigation */}
+                  {item.subItems && (
+                    <div className="ml-4 mt-1 space-y-1">
+                      {item.subItems.map((subItem) => (
+                        <Link
+                          key={subItem.name}
+                          href={subItem.href}
+                          className="block px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          {subItem.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ))}
 
+              {/* Mobile Apply CTA */}
+              <div className="pt-2">
+                <Link
+                  href={analytics.nextStep?.href || "/basic-information"}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Button
+                    className={cn(
+                      "w-full bg-gradient-to-r from-blue-600 to-blue-700 relative",
+                      analytics.nextStep && "animate-pulse-gentle",
+                    )}
+                  >
+                    {analytics.nextStep
+                      ? `Continue: ${analytics.nextStep.name}`
+                      : "Apply Now"}
+                    {analytics.nextStep && (
+                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-bounce" />
+                    )}
+                  </Button>
+                </Link>
+              </div>
+
               {/* Mobile User Actions */}
-              <div className="pt-4 pb-3 border-t border-gray-200">
+              <div className="pt-4 pb-3 border-t border-gray-200 dark:border-gray-700">
                 {/* AUTHENTICATION DISABLED - Comment out to re-enable */}
                 {/* {status === "loading" ? (
                   <div className="px-3 py-2">
@@ -332,13 +418,13 @@ export default function Header() {
                 {true ? (
                   <div className="space-y-1">
                     <div className="px-3 py-2">
-                      <div className="text-base font-medium text-gray-800">
+                      <div className="text-base font-medium text-gray-800 dark:text-gray-200">
                         Welcome,{" "}
                         {session.user.name?.split(" ")[0] ||
                           session.user.email?.split("@")[0]}
                         !
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-gray-600 dark:text-gray-300">
                         {session.user.email}
                       </div>
                     </div>
@@ -346,7 +432,7 @@ export default function Header() {
                       <Link
                         key={item.name}
                         href={item.href}
-                        className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+                        className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {item.name}
@@ -354,25 +440,16 @@ export default function Header() {
                     ))}
 
                     {/* Application Steps Section */}
-                    <div className="px-3 py-2">
-                      <div className="text-sm font-medium text-gray-900 mb-2">
-                        Application Steps
-                      </div>
-                      {applicationSteps.map((step) => (
-                        <Link
-                          key={step.name}
-                          href={step.href}
-                          className="block px-3 py-2 ml-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          {step.name}
-                        </Link>
-                      ))}
+                    <div className="px-3 py-2 border-t border-gray-200 dark:border-gray-700 mt-2">
+                      <ApplicationProgress
+                        steps={createApplicationSteps(submissions || [])}
+                        className="mb-2"
+                      />
                     </div>
 
                     <button
                       onClick={handleSignOut}
-                      className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+                      className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800"
                     >
                       Sign out
                     </button>

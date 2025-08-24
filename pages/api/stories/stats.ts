@@ -11,47 +11,72 @@ export default async function handler(
   }
 
   try {
-    // Get total stories count
-    const totalStories = await prisma.story.count({
-      where: { isPublic: true },
+    // Get total stories count from form submissions
+    const totalStories = await prisma.formSubmission.count({
+      where: {
+        type: { in: ["EXPERIENCE", "STORY"] },
+        status: { in: ["SUBMITTED", "PUBLISHED"] },
+      },
     });
 
-    // Get total likes and views from stories
-    const aggregateStats = await prisma.story.aggregate({
-      where: { isPublic: true },
+    // Get total engagement stats
+    const engagementStats = await prisma.engagement.aggregate({
       _sum: {
-        likes: true,
         views: true,
       },
-      _avg: {
-        likes: true,
+      _count: {
+        id: true,
       },
     });
 
-    // Get story categories with counts
-    const categoryCounts = await prisma.story.groupBy({
-      by: ["category"],
-      where: { isPublic: true },
+    // Get total likes count
+    const totalLikes = await prisma.engagement.count({
+      where: { liked: true },
+    });
+
+    // Get total bookmarks count
+    const totalBookmarks = await prisma.engagement.count({
+      where: { bookmarked: true },
+    });
+
+    // Get average rating from engagements
+    const ratingStats = await prisma.engagement.aggregate({
+      where: { rating: { gt: 0 } },
+      _avg: {
+        rating: true,
+      },
+    });
+
+    // Get story submissions by type/category for top categories
+    const storyTypes = await prisma.formSubmission.groupBy({
+      by: ["type"],
+      where: {
+        type: { in: ["EXPERIENCE", "STORY"] },
+        status: { in: ["SUBMITTED", "PUBLISHED"] },
+      },
       _count: {
-        category: true,
+        type: true,
       },
       orderBy: {
         _count: {
-          category: "desc",
+          type: "desc",
         },
       },
       take: 5,
     });
 
     // Get recent activity (last 10 published stories)
-    const recentStories = await prisma.story.findMany({
-      where: { isPublic: true },
+    const recentStories = await prisma.formSubmission.findMany({
+      where: {
+        type: { in: ["EXPERIENCE", "STORY"] },
+        status: { in: ["SUBMITTED", "PUBLISHED"] },
+      },
       select: {
         id: true,
         title: true,
+        type: true,
         createdAt: true,
-        category: true,
-        author: {
+        user: {
           select: {
             firstName: true,
             lastName: true,
@@ -62,34 +87,40 @@ export default async function handler(
       take: 10,
     });
 
-    // Calculate helpfulness rate (stories with likes > 0)
-    const storiesWithLikes = await prisma.story.count({
+    // Calculate helpfulness rate (stories with engagement)
+    // Get unique story IDs that have engagement
+    const engagedStoryIds = await prisma.engagement.findMany({
       where: {
-        isPublic: true,
-        likes: { gt: 0 },
+        OR: [{ liked: true }, { bookmarked: true }, { views: { gt: 0 } }],
       },
+      select: { storyId: true },
+      distinct: ["storyId"],
     });
 
+    const storiesWithEngagement = engagedStoryIds.length;
+
     const helpfulnessRate =
-      totalStories > 0 ? (storiesWithLikes / totalStories) * 100 : 0;
+      totalStories > 0 ? (storiesWithEngagement / totalStories) * 100 : 0;
 
     // Format response
     const stats = {
       totalStories,
-      totalLikes: aggregateStats._sum.likes || 0,
-      totalViews: aggregateStats._sum.views || 0,
-      avgRating: aggregateStats._avg.likes || 0,
+      totalLikes,
+      totalViews: engagementStats._sum.views || 0,
+      avgRating: ratingStats._avg.rating || 0,
       helpfulnessRate: Math.round(helpfulnessRate),
-      topCategories: categoryCounts.map((cat) => ({
-        name: cat.category,
-        count: cat._count.category,
+      topCategories: storyTypes.map((type) => ({
+        name: type.type,
+        count: type._count.type,
       })),
       recentActivity: recentStories.map((story) => ({
         type: "story_published",
         storyId: story.id,
         title: story.title,
-        category: story.category,
-        author: `${story.author.firstName} ${story.author.lastName}`,
+        category: story.type,
+        author:
+          `${story.user.firstName || ""} ${story.user.lastName || ""}`.trim() ||
+          "Anonymous",
         timestamp: story.createdAt,
       })),
     };
