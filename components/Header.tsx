@@ -51,6 +51,9 @@ export default function Header() {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Get form submissions for progress tracking
+  const { submissions } = useFormSubmissions();
+
   // Session state tracking for reactivity
 
   // Reactive session handling for live updates
@@ -253,28 +256,13 @@ export default function Header() {
                           <span>Application Steps</span>
                           <ChevronDown className="h-3 w-3 ml-auto" />
                         </DropdownMenuSubTrigger>
-                        <DropdownMenuSubContent>
-                          {applicationSteps.map((step) => (
-                            <DropdownMenuItem key={step.name} asChild>
-                              <Link
-                                href={step.href}
-                                className="flex items-start gap-3 w-full p-3"
-                              >
-                                <step.icon
-                                  className="h-4 w-4 mt-0.5"
-                                  aria-hidden="true"
-                                />
-                                <div className="flex flex-col">
-                                  <span className="font-medium">
-                                    {step.name}
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    {step.description}
-                                  </span>
-                                </div>
-                              </Link>
-                            </DropdownMenuItem>
-                          ))}
+                        <DropdownMenuSubContent className="w-80">
+                          <div className="p-3">
+                            <ApplicationProgress
+                              steps={createApplicationSteps(submissions || [])}
+                              className="max-h-96 overflow-y-auto"
+                            />
+                          </div>
                         </DropdownMenuSubContent>
                       </DropdownMenuSub>
                       <DropdownMenuSeparator />
@@ -402,20 +390,11 @@ export default function Header() {
                     ))}
 
                     {/* Application Steps Section */}
-                    <div className="px-3 py-2">
-                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
-                        Application Steps
-                      </div>
-                      {applicationSteps.map((step) => (
-                        <Link
-                          key={step.name}
-                          href={step.href}
-                          className="block px-3 py-2 ml-2 text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          {step.name}
-                        </Link>
-                      ))}
+                    <div className="px-3 py-2 border-t border-gray-200 dark:border-gray-700 mt-2">
+                      <ApplicationProgress
+                        steps={createApplicationSteps(submissions || [])}
+                        className="mb-2"
+                      />
                     </div>
 
                     <button
