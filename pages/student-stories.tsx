@@ -401,30 +401,57 @@ export default function StudentStoriesPage() {
 
             {/* Enhanced Search and Filter */}
             <section aria-label="Search and filter stories">
-              <Card className="mb-8 shadow-sm border-2 border-gray-100">
-                <CardContent className="pt-6">
-                  {/* Search Bar */}
-                  <div className="mb-4">
+              <div className="mb-8 bg-gradient-to-r from-white to-blue-50 rounded-2xl shadow-lg border border-blue-100 overflow-hidden">
+                {/* Modern Header Section */}
+                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-white/20 rounded-lg">
+                        <Search className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-white font-semibold text-lg">Find Your Perfect Story</h3>
+                        <p className="text-blue-100 text-sm">Search through {stories.length} authentic experiences</p>
+                      </div>
+                    </div>
+                    {activeFiltersCount > 0 && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={clearFilters}
+                        className="bg-white/10 border-white/30 text-white hover:bg-white/20 transition-all"
+                      >
+                        <X className="h-4 w-4 mr-2" />
+                        Clear All ({activeFiltersCount})
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  {/* Enhanced Search Bar */}
+                  <div className="mb-6">
                     <Label htmlFor="search" className="sr-only">
                       Search stories
                     </Label>
-                    <div className="relative">
+                    <div className="relative group">
                       <Search
-                        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4"
+                        className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 group-focus-within:text-blue-500 transition-colors"
                         aria-hidden="true"
                       />
                       <Input
                         id="search"
-                        placeholder="Search by student name, city, university, or content..."
+                        placeholder="Search by student name, city, university, or story content..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10 h-12 text-base border-2 border-gray-200 focus:border-blue-500 transition-colors"
+                        className="pl-12 pr-12 h-14 text-base border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-xl shadow-sm transition-all"
                         aria-describedby="search-help"
                       />
                       {searchTerm && (
                         <button
                           onClick={() => setSearchTerm("")}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                          aria-label="Clear search"
                         >
                           <X className="h-4 w-4" />
                         </button>
@@ -435,22 +462,30 @@ export default function StudentStoriesPage() {
                     </div>
                   </div>
 
-                  {/* Filter Toggle and Categories */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-wrap gap-2">
+                  {/* Category Pills */}
+                  <div className="mb-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                        <div className="p-1 bg-blue-100 rounded">
+                          <Filter className="h-3 w-3 text-blue-600" />
+                        </div>
+                        Categories
+                      </span>
+                      <div className="h-px bg-gray-200 flex-1"></div>
+                    </div>
+                    <div className="flex flex-wrap gap-3">
                       {CATEGORY_OPTIONS.map((category) => (
-                        <Badge
+                        <button
                           key={category.value}
-                          variant={
-                            selectedCategory === category.value
-                              ? "default"
-                              : "outline"
-                          }
-                          className="cursor-pointer hover:bg-blue-50 transition-colors"
                           onClick={() => {
                             setSelectedCategory(category.value);
                             setCurrentPage(1);
                           }}
+                          className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 transform hover:scale-105 ${
+                            selectedCategory === category.value
+                              ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg"
+                              : "bg-white border-2 border-gray-200 text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 shadow-sm"
+                          }`}
                           role="button"
                           tabIndex={0}
                           onKeyDown={(e) => {
@@ -461,110 +496,129 @@ export default function StudentStoriesPage() {
                           }}
                         >
                           {category.label}
-                        </Badge>
+                          {selectedCategory === category.value && (
+                            <span className="ml-2">✓</span>
+                          )}
+                        </button>
                       ))}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {/* Advanced Filters Button */}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setShowFilters(!showFilters)}
-                        className="flex items-center gap-2"
-                      >
-                        <Filter className="h-4 w-4" />
-                        Filters
-                        {activeFiltersCount > 0 && (
-                          <Badge
-                            variant="secondary"
-                            className="ml-1 bg-blue-100 text-blue-800"
-                          >
-                            {activeFiltersCount}
-                          </Badge>
-                        )}
-                      </Button>
-
-                      {activeFiltersCount > 0 && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={clearFilters}
-                        >
-                          <X className="h-4 w-4 mr-2" />
-                          Clear all
-                        </Button>
-                      )}
                     </div>
                   </div>
 
-                  {/* Advanced Filters Panel */}
+                  {/* Advanced Filters Toggle */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowFilters(!showFilters)}
+                      className="flex items-center gap-2 border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all px-4 py-2"
+                    >
+                      <Filter className="h-4 w-4" />
+                      <span>Advanced Filters</span>
+                      <ChevronDown className={`h-4 w-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+                    </Button>
+
+                    {/* Active Filters Indicator */}
+                    {activeFiltersCount > 0 && (
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 text-sm">
+                          <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+                          <span className="font-medium text-blue-600">
+                            {activeFiltersCount} filter{activeFiltersCount !== 1 ? 's' : ''} active
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Enhanced Advanced Filters Panel */}
                   {showFilters && (
-                    <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <Label className="text-sm font-medium mb-2 flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-blue-600" />
-                          Country
-                        </Label>
-                        <select
-                          value={selectedCountry}
-                          onChange={(e) => setSelectedCountry(e.target.value)}
-                          className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        >
-                          <option value="all">All countries</option>
-                          {countries.map((country) => (
-                            <option key={country} value={country}>
-                              {country}
-                            </option>
-                          ))}
-                        </select>
+                    <div className="mt-6 p-6 bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl border-2 border-blue-100 shadow-inner">
+                      <div className="flex items-center gap-3 mb-6">
+                        <div className="p-2 bg-blue-600 rounded-lg">
+                          <Filter className="h-4 w-4 text-white" />
+                        </div>
+                        <h4 className="font-bold text-gray-900 text-lg">Advanced Filters</h4>
+                        <div className="h-px bg-gradient-to-r from-blue-200 to-transparent flex-1"></div>
                       </div>
 
-                      <div>
-                        <Label className="text-sm font-medium mb-2 flex items-center gap-2">
-                          <GraduationCap className="h-4 w-4 text-purple-600" />
-                          University
-                        </Label>
-                        <select
-                          value={selectedUniversity}
-                          onChange={(e) =>
-                            setSelectedUniversity(e.target.value)
-                          }
-                          className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        >
-                          <option value="all">All universities</option>
-                          {universities.map((university) => (
-                            <option key={university} value={university}>
-                              {university.length > 30
-                                ? university.substring(0, 30) + "..."
-                                : university}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="space-y-3">
+                          <Label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                            <div className="p-1.5 bg-blue-100 rounded-lg">
+                              <MapPin className="h-4 w-4 text-blue-600" />
+                            </div>
+                            Country
+                          </Label>
+                          <div className="relative">
+                            <select
+                              value={selectedCountry}
+                              onChange={(e) => setSelectedCountry(e.target.value)}
+                              className="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white transition-all appearance-none cursor-pointer hover:border-gray-300 shadow-sm"
+                            >
+                              <option value="all">🌍 All countries</option>
+                              {countries.map((country) => (
+                                <option key={country} value={country}>
+                                  📍 {country}
+                                </option>
+                              ))}
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+                          </div>
+                        </div>
 
-                      <div>
-                        <Label className="text-sm font-medium mb-2 flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-green-600" />
-                          Period
-                        </Label>
-                        <select
-                          value={selectedPeriod}
-                          onChange={(e) => setSelectedPeriod(e.target.value)}
-                          className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        >
-                          <option value="all">All periods</option>
-                          {periods.map((period) => (
-                            <option key={period} value={period}>
-                              {period}
-                            </option>
-                          ))}
-                        </select>
+                        <div className="space-y-3">
+                          <Label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                            <div className="p-1.5 bg-purple-100 rounded-lg">
+                              <GraduationCap className="h-4 w-4 text-purple-600" />
+                            </div>
+                            University
+                          </Label>
+                          <div className="relative">
+                            <select
+                              value={selectedUniversity}
+                              onChange={(e) => setSelectedUniversity(e.target.value)}
+                              className="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-300 focus:border-purple-400 bg-white transition-all appearance-none cursor-pointer hover:border-gray-300 shadow-sm"
+                            >
+                              <option value="all">🎓 All universities</option>
+                              {universities.map((university) => (
+                                <option key={university} value={university}>
+                                  🏛️ {university.length > 35
+                                    ? university.substring(0, 35) + "..."
+                                    : university}
+                                </option>
+                              ))}
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <Label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                            <div className="p-1.5 bg-green-100 rounded-lg">
+                              <Calendar className="h-4 w-4 text-green-600" />
+                            </div>
+                            Period
+                          </Label>
+                          <div className="relative">
+                            <select
+                              value={selectedPeriod}
+                              onChange={(e) => setSelectedPeriod(e.target.value)}
+                              className="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-300 focus:border-green-400 bg-white transition-all appearance-none cursor-pointer hover:border-gray-300 shadow-sm"
+                            >
+                              <option value="all">📅 All periods</option>
+                              {periods.map((period) => (
+                                <option key={period} value={period}>
+                                  🗓️ {period}
+                                </option>
+                              ))}
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </section>
 
             {/* Enhanced Results Summary with Sorting */}
