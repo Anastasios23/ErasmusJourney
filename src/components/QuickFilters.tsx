@@ -183,7 +183,9 @@ export function QuickFilters({
           </div>
           <div>
             <h3 className="text-lg font-bold text-gray-900">Quick Filters</h3>
-            <p className="text-sm text-gray-600">Find exactly what you're looking for</p>
+            <p className="text-sm text-gray-600">
+              Find exactly what you're looking for
+            </p>
           </div>
         </div>
         {hasActiveFilters && (
@@ -207,7 +209,9 @@ export function QuickFilters({
               <div className="p-1 bg-blue-100 rounded">
                 <Users className="h-3 w-3 text-blue-600" />
               </div>
-              <p className="text-sm font-semibold text-gray-700">Personalized for You</p>
+              <p className="text-sm font-semibold text-gray-700">
+                Personalized for You
+              </p>
               <div className="h-px bg-gray-200 flex-1"></div>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -253,9 +257,7 @@ export function QuickFilters({
                   <div className="flex items-center gap-2">
                     {option.icon}
                     <span>{option.label}</span>
-                    {option.active && (
-                      <Star className="h-3 w-3 fill-current" />
-                    )}
+                    {option.active && <Star className="h-3 w-3 fill-current" />}
                   </div>
                 </button>
               ))}
@@ -268,7 +270,9 @@ export function QuickFilters({
             <div className="p-1 bg-purple-100 rounded">
               <Filter className="h-3 w-3 text-purple-600" />
             </div>
-            <p className="text-sm font-semibold text-gray-700">Story Categories</p>
+            <p className="text-sm font-semibold text-gray-700">
+              Story Categories
+            </p>
             <div className="h-px bg-gray-200 flex-1"></div>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -283,9 +287,7 @@ export function QuickFilters({
                   <div className="flex items-center gap-2">
                     {option.icon}
                     <span>{option.label}</span>
-                    {option.active && (
-                      <Star className="h-3 w-3 fill-current" />
-                    )}
+                    {option.active && <Star className="h-3 w-3 fill-current" />}
                   </div>
                 </button>
               ))}
@@ -312,7 +314,8 @@ export function QuickFilters({
             {activeFilters.university !== "all" && (
               <span className="inline-flex items-center gap-1 bg-purple-600 text-white px-3 py-1.5 rounded-full text-xs font-medium">
                 <GraduationCap className="h-3 w-3" />
-                {activeFilters.university.slice(0, 20)}{activeFilters.university.length > 20 ? '...' : ''}
+                {activeFilters.university.slice(0, 20)}
+                {activeFilters.university.length > 20 ? "..." : ""}
               </span>
             )}
             {activeFilters.category !== "all" && (

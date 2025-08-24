@@ -53,9 +53,9 @@ export default async function handler(
         },
       });
 
-      return res.status(200).json({ 
-        success: true, 
-        liked: updatedEngagement.liked 
+      return res.status(200).json({
+        success: true,
+        liked: updatedEngagement.liked,
       });
     } else {
       // Create new engagement record with like
@@ -71,9 +71,9 @@ export default async function handler(
         },
       });
 
-      return res.status(200).json({ 
-        success: true, 
-        liked: newEngagement.liked 
+      return res.status(200).json({
+        success: true,
+        liked: newEngagement.liked,
       });
     }
   } catch (error) {

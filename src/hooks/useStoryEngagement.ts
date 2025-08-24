@@ -30,15 +30,15 @@ export function useStoryEngagement(storyId: string) {
     const fetchEngagement = async () => {
       try {
         setError(null);
-        const response = await fetch(
-          `/api/stories/${storyId}/engagement`,
-        );
+        const response = await fetch(`/api/stories/${storyId}/engagement`);
         if (response.ok) {
           const data = await response.json();
           setEngagement(data);
         } else {
           // If API fails, provide fallback data
-          console.warn(`Failed to fetch engagement for story ${storyId}, using fallback`);
+          console.warn(
+            `Failed to fetch engagement for story ${storyId}, using fallback`,
+          );
           setEngagement({
             storyId,
             likes: 0,
@@ -51,7 +51,9 @@ export function useStoryEngagement(storyId: string) {
         }
       } catch (error) {
         console.error("Error fetching story engagement:", error);
-        setError(error instanceof Error ? error.message : 'Failed to fetch engagement');
+        setError(
+          error instanceof Error ? error.message : "Failed to fetch engagement",
+        );
         // Provide fallback data on error
         setEngagement({
           storyId,
@@ -97,7 +99,7 @@ export function useStoryEngagement(storyId: string) {
       if (!response.ok) {
         // Revert optimistic update on failure
         setEngagement(previousEngagement);
-        console.warn('Failed to toggle like, reverting change');
+        console.warn("Failed to toggle like, reverting change");
       }
     } catch (error) {
       // Revert optimistic update on error
@@ -121,17 +123,14 @@ export function useStoryEngagement(storyId: string) {
     );
 
     try {
-      const response = await fetch(
-        `/api/stories/${storyId}/bookmark`,
-        {
-          method: "POST",
-        },
-      );
+      const response = await fetch(`/api/stories/${storyId}/bookmark`, {
+        method: "POST",
+      });
 
       if (!response.ok) {
         // Revert optimistic update on failure
         setEngagement(previousEngagement);
-        console.warn('Failed to toggle bookmark, reverting change');
+        console.warn("Failed to toggle bookmark, reverting change");
       }
     } catch (error) {
       // Revert optimistic update on error
@@ -238,13 +237,15 @@ export function useStoriesStats() {
           const data = await response.json();
           setStats(data);
         } else {
-          console.warn('Failed to fetch stories stats, using fallback');
+          console.warn("Failed to fetch stories stats, using fallback");
           setError(`HTTP ${response.status}: ${response.statusText}`);
           // Keep existing stats rather than clearing them
         }
       } catch (error) {
         console.error("Error fetching stories stats:", error);
-        setError(error instanceof Error ? error.message : 'Failed to fetch stats');
+        setError(
+          error instanceof Error ? error.message : "Failed to fetch stats",
+        );
         // Keep existing stats rather than clearing them
       } finally {
         setLoading(false);

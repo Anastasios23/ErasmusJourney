@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
-import { useRouter } from 'next/router';
-import { useFormSubmissions } from './useFormSubmissions';
+import { useMemo } from "react";
+import { useRouter } from "next/router";
+import { useFormSubmissions } from "./useFormSubmissions";
 
 export interface SmartNavigationStep {
   id: string;
@@ -10,7 +10,7 @@ export interface SmartNavigationStep {
   completed: boolean;
   current: boolean;
   nextRecommended: boolean;
-  urgency: 'low' | 'medium' | 'high';
+  urgency: "low" | "medium" | "high";
   estimatedTime: string;
 }
 
@@ -21,55 +21,58 @@ export function useSmartNavigation() {
   const smartSteps = useMemo(() => {
     const stepDefinitions = [
       {
-        id: 'basic-info',
-        name: 'Basic Information',
-        href: '/basic-information',
-        description: 'Personal & academic details',
-        estimatedTime: '10 min'
+        id: "basic-info",
+        name: "Basic Information",
+        href: "/basic-information",
+        description: "Personal & academic details",
+        estimatedTime: "10 min",
       },
       {
-        id: 'course-matching',
-        name: 'Course Matching',
-        href: '/course-matching',
-        description: 'Select courses and universities',
-        estimatedTime: '15 min'
+        id: "course-matching",
+        name: "Course Matching",
+        href: "/course-matching",
+        description: "Select courses and universities",
+        estimatedTime: "15 min",
       },
       {
-        id: 'accommodation',
-        name: 'Accommodation',
-        href: '/accommodation',
-        description: 'Housing preferences',
-        estimatedTime: '12 min'
+        id: "accommodation",
+        name: "Accommodation",
+        href: "/accommodation",
+        description: "Housing preferences",
+        estimatedTime: "12 min",
       },
       {
-        id: 'living-expenses',
-        name: 'Living Expenses',
-        href: '/living-expenses',
-        description: 'Budget and cost planning',
-        estimatedTime: '8 min'
-      }
+        id: "living-expenses",
+        name: "Living Expenses",
+        href: "/living-expenses",
+        description: "Budget and cost planning",
+        estimatedTime: "8 min",
+      },
     ];
 
     const steps: SmartNavigationStep[] = stepDefinitions.map((step, index) => {
-      const submission = submissions?.find(sub => sub.type === step.id);
-      const isCompleted = submission && submission.status !== 'DRAFT';
+      const submission = submissions?.find((sub) => sub.type === step.id);
+      const isCompleted = submission && submission.status !== "DRAFT";
       const isCurrent = router.pathname === step.href;
 
       // Determine if this is the next recommended step
-      const previousStepsCompleted = index === 0 || 
+      const previousStepsCompleted =
+        index === 0 ||
         stepDefinitions.slice(0, index).every((prevStep) => {
-          const prevSubmission = submissions?.find(sub => sub.type === prevStep.id);
-          return prevSubmission && prevSubmission.status !== 'DRAFT';
+          const prevSubmission = submissions?.find(
+            (sub) => sub.type === prevStep.id,
+          );
+          return prevSubmission && prevSubmission.status !== "DRAFT";
         });
 
       const nextRecommended = !isCompleted && previousStepsCompleted;
 
       // Calculate urgency based on completion status and position
-      let urgency: 'low' | 'medium' | 'high' = 'low';
+      let urgency: "low" | "medium" | "high" = "low";
       if (nextRecommended) {
-        urgency = index === 0 ? 'high' : 'medium'; // First step is high priority
+        urgency = index === 0 ? "high" : "medium"; // First step is high priority
       } else if (!isCompleted && index > 0) {
-        urgency = 'low'; // Future steps are low priority until unlocked
+        urgency = "low"; // Future steps are low priority until unlocked
       }
 
       return {
@@ -81,7 +84,7 @@ export function useSmartNavigation() {
         current: isCurrent,
         nextRecommended,
         urgency,
-        estimatedTime: step.estimatedTime
+        estimatedTime: step.estimatedTime,
       };
     });
 
@@ -90,15 +93,15 @@ export function useSmartNavigation() {
 
   // Analytics and recommendations
   const analytics = useMemo(() => {
-    const completed = smartSteps.filter(step => step.completed);
-    const nextStep = smartSteps.find(step => step.nextRecommended);
+    const completed = smartSteps.filter((step) => step.completed);
+    const nextStep = smartSteps.find((step) => step.nextRecommended);
     const totalSteps = smartSteps.length;
     const progressPercentage = (completed.length / totalSteps) * 100;
 
     // Calculate estimated time remaining
-    const remainingSteps = smartSteps.filter(step => !step.completed);
+    const remainingSteps = smartSteps.filter((step) => !step.completed);
     const estimatedTimeRemaining = remainingSteps.reduce((total, step) => {
-      const minutes = parseInt(step.estimatedTime.replace(' min', ''));
+      const minutes = parseInt(step.estimatedTime.replace(" min", ""));
       return total + minutes;
     }, 0);
 
@@ -109,8 +112,8 @@ export function useSmartNavigation() {
       nextStep,
       estimatedTimeRemaining,
       isComplete: completed.length === totalSteps,
-      urgentSteps: smartSteps.filter(step => step.urgency === 'high'),
-      recommendedActions: generateRecommendations(smartSteps, nextStep)
+      urgentSteps: smartSteps.filter((step) => step.urgency === "high"),
+      recommendedActions: generateRecommendations(smartSteps, nextStep),
     };
   }, [smartSteps]);
 
@@ -118,36 +121,45 @@ export function useSmartNavigation() {
     steps: smartSteps,
     analytics,
     // Helper functions
-    getStepByHref: (href: string) => smartSteps.find(step => step.href === href),
-    getNextStep: () => smartSteps.find(step => step.nextRecommended),
-    getCompletedSteps: () => smartSteps.filter(step => step.completed),
+    getStepByHref: (href: string) =>
+      smartSteps.find((step) => step.href === href),
+    getNextStep: () => smartSteps.find((step) => step.nextRecommended),
+    getCompletedSteps: () => smartSteps.filter((step) => step.completed),
     shouldHighlightStep: (stepId: string) => {
-      const step = smartSteps.find(s => s.id === stepId);
-      return step?.nextRecommended || step?.urgency === 'high';
-    }
+      const step = smartSteps.find((s) => s.id === stepId);
+      return step?.nextRecommended || step?.urgency === "high";
+    },
   };
 }
 
 function generateRecommendations(
   steps: SmartNavigationStep[],
-  nextStep?: SmartNavigationStep
+  nextStep?: SmartNavigationStep,
 ): string[] {
   const recommendations: string[] = [];
-  const completedCount = steps.filter(s => s.completed).length;
+  const completedCount = steps.filter((s) => s.completed).length;
 
   if (completedCount === 0) {
-    recommendations.push("Start with your Basic Information to begin your Erasmus journey");
+    recommendations.push(
+      "Start with your Basic Information to begin your Erasmus journey",
+    );
   } else if (nextStep) {
-    recommendations.push(`Continue with ${nextStep.name} (${nextStep.estimatedTime})`);
+    recommendations.push(
+      `Continue with ${nextStep.name} (${nextStep.estimatedTime})`,
+    );
   } else if (completedCount === steps.length) {
     recommendations.push("Great! You've completed all application steps");
   }
 
   // Add contextual tips based on current progress
   if (completedCount === 1) {
-    recommendations.push("Complete at least 2 steps to unlock accommodation recommendations");
+    recommendations.push(
+      "Complete at least 2 steps to unlock accommodation recommendations",
+    );
   } else if (completedCount === 2) {
-    recommendations.push("You're halfway there! Keep going to unlock all features");
+    recommendations.push(
+      "You're halfway there! Keep going to unlock all features",
+    );
   }
 
   return recommendations;

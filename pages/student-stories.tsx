@@ -410,8 +410,12 @@ export default function StudentStoriesPage() {
                         <Search className="h-5 w-5 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-white font-semibold text-lg">Find Your Perfect Story</h3>
-                        <p className="text-blue-100 text-sm">Search through {stories.length} authentic experiences</p>
+                        <h3 className="text-white font-semibold text-lg">
+                          Find Your Perfect Story
+                        </h3>
+                        <p className="text-blue-100 text-sm">
+                          Search through {stories.length} authentic experiences
+                        </p>
                       </div>
                     </div>
                     {activeFiltersCount > 0 && (
@@ -513,7 +517,9 @@ export default function StudentStoriesPage() {
                     >
                       <Filter className="h-4 w-4" />
                       <span>Advanced Filters</span>
-                      <ChevronDown className={`h-4 w-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+                      <ChevronDown
+                        className={`h-4 w-4 transition-transform ${showFilters ? "rotate-180" : ""}`}
+                      />
                     </Button>
 
                     {/* Active Filters Indicator */}
@@ -522,7 +528,8 @@ export default function StudentStoriesPage() {
                         <div className="flex items-center gap-2 text-sm">
                           <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
                           <span className="font-medium text-blue-600">
-                            {activeFiltersCount} filter{activeFiltersCount !== 1 ? 's' : ''} active
+                            {activeFiltersCount} filter
+                            {activeFiltersCount !== 1 ? "s" : ""} active
                           </span>
                         </div>
                       </div>
@@ -536,7 +543,9 @@ export default function StudentStoriesPage() {
                         <div className="p-2 bg-blue-600 rounded-lg">
                           <Filter className="h-4 w-4 text-white" />
                         </div>
-                        <h4 className="font-bold text-gray-900 text-lg">Advanced Filters</h4>
+                        <h4 className="font-bold text-gray-900 text-lg">
+                          Advanced Filters
+                        </h4>
                         <div className="h-px bg-gradient-to-r from-blue-200 to-transparent flex-1"></div>
                       </div>
 
@@ -551,7 +560,9 @@ export default function StudentStoriesPage() {
                           <div className="relative">
                             <select
                               value={selectedCountry}
-                              onChange={(e) => setSelectedCountry(e.target.value)}
+                              onChange={(e) =>
+                                setSelectedCountry(e.target.value)
+                              }
                               className="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white transition-all appearance-none cursor-pointer hover:border-gray-300 shadow-sm"
                             >
                               <option value="all">🌍 All countries</option>
@@ -575,13 +586,16 @@ export default function StudentStoriesPage() {
                           <div className="relative">
                             <select
                               value={selectedUniversity}
-                              onChange={(e) => setSelectedUniversity(e.target.value)}
+                              onChange={(e) =>
+                                setSelectedUniversity(e.target.value)
+                              }
                               className="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-300 focus:border-purple-400 bg-white transition-all appearance-none cursor-pointer hover:border-gray-300 shadow-sm"
                             >
                               <option value="all">🎓 All universities</option>
                               {universities.map((university) => (
                                 <option key={university} value={university}>
-                                  🏛️ {university.length > 35
+                                  🏛️{" "}
+                                  {university.length > 35
                                     ? university.substring(0, 35) + "..."
                                     : university}
                                 </option>
@@ -601,7 +615,9 @@ export default function StudentStoriesPage() {
                           <div className="relative">
                             <select
                               value={selectedPeriod}
-                              onChange={(e) => setSelectedPeriod(e.target.value)}
+                              onChange={(e) =>
+                                setSelectedPeriod(e.target.value)
+                              }
                               className="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-300 focus:border-green-400 bg-white transition-all appearance-none cursor-pointer hover:border-gray-300 shadow-sm"
                             >
                               <option value="all">📅 All periods</option>

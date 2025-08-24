@@ -121,7 +121,9 @@ export default function StoriesSorting({
               <Grid className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h3 className="text-white font-semibold text-lg">Stories Overview</h3>
+              <h3 className="text-white font-semibold text-lg">
+                Stories Overview
+              </h3>
               <div className="text-gray-300 text-sm">
                 <span className="font-medium text-white">
                   {filteredCount.toLocaleString()}
@@ -138,7 +140,9 @@ export default function StoriesSorting({
                 {currentPage > 1 && (
                   <span className="text-gray-400">
                     {" • Page "}
-                    <span className="font-medium text-white">{currentPage}</span>
+                    <span className="font-medium text-white">
+                      {currentPage}
+                    </span>
                     {" of "}
                     <span className="font-medium text-white">{totalPages}</span>
                   </span>
@@ -166,7 +170,6 @@ export default function StoriesSorting({
 
       {/* Controls Section */}
       <div className="p-6">
-
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           {/* Sort Options */}
           <div className="flex items-center gap-4">
@@ -197,7 +200,9 @@ export default function StoriesSorting({
                         {option.icon}
                       </div>
                       <div className="flex flex-col">
-                        <span className="font-medium text-gray-900">{option.label}</span>
+                        <span className="font-medium text-gray-900">
+                          {option.label}
+                        </span>
                         <span className="text-xs text-gray-600">
                           {option.description}
                         </span>
@@ -215,9 +220,7 @@ export default function StoriesSorting({
               <div className="p-2 bg-purple-100 rounded-lg">
                 <LayoutGrid className="h-4 w-4 text-purple-600" />
               </div>
-              <span className="text-sm font-semibold text-gray-700">
-                View:
-              </span>
+              <span className="text-sm font-semibold text-gray-700">View:</span>
             </div>
             <div className="flex items-center border-2 border-gray-200 rounded-xl p-1 bg-white shadow-sm">
               {VIEW_OPTIONS.map((option) => (

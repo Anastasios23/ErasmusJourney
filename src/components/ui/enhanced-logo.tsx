@@ -4,33 +4,33 @@ import Link from "next/link";
 interface EnhancedLogoProps {
   className?: string;
   showTagline?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
 }
 
-export function EnhancedLogo({ 
-  className = "", 
-  showTagline = true, 
-  size = 'md' 
+export function EnhancedLogo({
+  className = "",
+  showTagline = true,
+  size = "md",
 }: EnhancedLogoProps) {
   const sizeClasses = {
     sm: {
       icon: 28,
       title: "text-lg",
       tagline: "text-xs",
-      spacing: "space-x-2"
+      spacing: "space-x-2",
     },
     md: {
       icon: 36,
       title: "text-xl",
       tagline: "text-xs",
-      spacing: "space-x-3"
+      spacing: "space-x-3",
     },
     lg: {
       icon: 48,
       title: "text-2xl",
       tagline: "text-sm",
-      spacing: "space-x-4"
-    }
+      spacing: "space-x-4",
+    },
   };
 
   const config = sizeClasses[size];
@@ -49,20 +49,28 @@ export function EnhancedLogo({
       </div>
       <div className="flex flex-col">
         <div className="flex items-baseline">
-          <span className={`${config.title} font-display font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight`}>
+          <span
+            className={`${config.title} font-display font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight`}
+          >
             Erasmus
           </span>
-          <span className={`${config.title} font-display font-medium text-blue-600 dark:text-blue-400 ml-1 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors`}>
+          <span
+            className={`${config.title} font-display font-medium text-blue-600 dark:text-blue-400 ml-1 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors`}
+          >
             Journey
           </span>
         </div>
         {showTagline && (
           <div className="flex items-center space-x-1 -mt-0.5">
-            <span className={`${config.tagline} font-medium text-gray-700 dark:text-gray-300 transition-opacity ${showTagline ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+            <span
+              className={`${config.tagline} font-medium text-gray-700 dark:text-gray-300 transition-opacity ${showTagline ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+            >
               Cyprus Edition
             </span>
             <div className="w-1 h-1 rounded-full bg-blue-500 opacity-60"></div>
-            <span className={`${config.tagline} font-medium text-blue-600 dark:text-blue-400 opacity-80`}>
+            <span
+              className={`${config.tagline} font-medium text-blue-600 dark:text-blue-400 opacity-80`}
+            >
               EU Programme
             </span>
           </div>

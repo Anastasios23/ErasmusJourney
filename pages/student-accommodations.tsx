@@ -5,8 +5,16 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 import Header from "../components/Header";
-import { ApplicationCTA, CommunityJoinCTA } from "../src/components/ui/enhanced-cta";
-import { PageContext, ContextualTip, JourneyProgress, QuickStartGuide } from "../src/components/ui/user-guidance";
+import {
+  ApplicationCTA,
+  CommunityJoinCTA,
+} from "../src/components/ui/enhanced-cta";
+import {
+  PageContext,
+  ContextualTip,
+  JourneyProgress,
+  QuickStartGuide,
+} from "../src/components/ui/user-guidance";
 import { designSystem } from "../src/utils/designSystem";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
@@ -1090,13 +1098,22 @@ export default function StudentAccommodations() {
                     <ApplicationCTA className="mb-8" />
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                      <Card className={designSystem.componentVariants.card.featured}>
+                      <Card
+                        className={designSystem.componentVariants.card.featured}
+                      >
                         <CardContent className="pt-8 pb-8 text-center">
                           <div className="p-3 bg-blue-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                             <Home className="h-8 w-8 text-blue-600" />
                           </div>
-                          <h3 className={designSystem.typography.h3 + " mb-4"}>Share Your Housing Experience</h3>
-                          <p className={designSystem.typography.muted + " mb-6"}>Help future students by sharing your accommodation details, costs, and tips.</p>
+                          <h3 className={designSystem.typography.h3 + " mb-4"}>
+                            Share Your Housing Experience
+                          </h3>
+                          <p
+                            className={designSystem.typography.muted + " mb-6"}
+                          >
+                            Help future students by sharing your accommodation
+                            details, costs, and tips.
+                          </p>
                           <Link href="/accommodation">
                             <Button className="bg-blue-600 hover:bg-blue-700">
                               <Home className="h-4 w-4 mr-2" />

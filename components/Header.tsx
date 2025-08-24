@@ -36,7 +36,10 @@ import NotificationDropdown from "@/components/NotificationDropdown";
 import { ErasmusIcon } from "@/components/icons/CustomIcons";
 import { DarkModeToggle } from "@/components/ui/dark-mode-toggle";
 import { EnhancedLogo } from "@/components/ui/enhanced-logo";
-import { ApplicationProgress, createApplicationSteps } from "@/components/ui/application-progress";
+import {
+  ApplicationProgress,
+  createApplicationSteps,
+} from "@/components/ui/application-progress";
 import { useFormSubmissions } from "@/hooks/useFormSubmissions";
 import { useSmartNavigation } from "@/hooks/useSmartNavigation";
 import { cn } from "@/lib/utils";
@@ -69,9 +72,17 @@ export default function Header() {
       name: "Explore",
       href: "/destinations",
       subItems: [
-        { name: "Destinations", href: "/destinations", description: "Browse cities & countries" },
-        { name: "Partner Universities", href: "/university-exchanges", description: "Exchange programs & institutions" }
-      ]
+        {
+          name: "Destinations",
+          href: "/destinations",
+          description: "Browse cities & countries",
+        },
+        {
+          name: "Partner Universities",
+          href: "/university-exchanges",
+          description: "Exchange programs & institutions",
+        },
+      ],
     },
     { name: "Stories", href: "/student-stories" },
     { name: "Housing", href: "/student-accommodations" },
@@ -145,7 +156,8 @@ export default function Header() {
                     <div className="relative">
                       <button
                         className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
-                          isCurrentPath(item.href) || item.subItems.some(sub => isCurrentPath(sub.href))
+                          isCurrentPath(item.href) ||
+                          item.subItems.some((sub) => isCurrentPath(sub.href))
                             ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                             : "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800"
                         }`}
@@ -161,8 +173,12 @@ export default function Header() {
                             href={subItem.href}
                             className="block px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                           >
-                            <div className="font-medium text-gray-900 dark:text-gray-100">{subItem.name}</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-300">{subItem.description}</div>
+                            <div className="font-medium text-gray-900 dark:text-gray-100">
+                              {subItem.name}
+                            </div>
+                            <div className="text-sm text-gray-600 dark:text-gray-300">
+                              {subItem.description}
+                            </div>
                           </Link>
                         ))}
                       </div>
@@ -183,11 +199,16 @@ export default function Header() {
               ))}
               {/* Primary CTA */}
               <Link href={analytics.nextStep?.href || "/basic-information"}>
-                <Button size="sm" className={cn(
-                  "ml-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-sm relative",
-                  analytics.nextStep && "animate-pulse-gentle"
-                )}>
-                  {analytics.nextStep ? `Continue: ${analytics.nextStep.name}` : "Apply Now"}
+                <Button
+                  size="sm"
+                  className={cn(
+                    "ml-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-sm relative",
+                    analytics.nextStep && "animate-pulse-gentle",
+                  )}
+                >
+                  {analytics.nextStep
+                    ? `Continue: ${analytics.nextStep.name}`
+                    : "Apply Now"}
                   {analytics.nextStep && (
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-bounce" />
                   )}
@@ -335,7 +356,9 @@ export default function Header() {
                   <Link
                     href={item.href}
                     className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
-                      isCurrentPath(item.href) || (item.subItems && item.subItems.some(sub => isCurrentPath(sub.href)))
+                      isCurrentPath(item.href) ||
+                      (item.subItems &&
+                        item.subItems.some((sub) => isCurrentPath(sub.href)))
                         ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                         : "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800"
                     }`}
@@ -363,12 +386,19 @@ export default function Header() {
 
               {/* Mobile Apply CTA */}
               <div className="pt-2">
-                <Link href={analytics.nextStep?.href || "/basic-information"} onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button className={cn(
-                    "w-full bg-gradient-to-r from-blue-600 to-blue-700 relative",
-                    analytics.nextStep && "animate-pulse-gentle"
-                  )}>
-                    {analytics.nextStep ? `Continue: ${analytics.nextStep.name}` : "Apply Now"}
+                <Link
+                  href={analytics.nextStep?.href || "/basic-information"}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Button
+                    className={cn(
+                      "w-full bg-gradient-to-r from-blue-600 to-blue-700 relative",
+                      analytics.nextStep && "animate-pulse-gentle",
+                    )}
+                  >
+                    {analytics.nextStep
+                      ? `Continue: ${analytics.nextStep.name}`
+                      : "Apply Now"}
                     {analytics.nextStep && (
                       <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-bounce" />
                     )}

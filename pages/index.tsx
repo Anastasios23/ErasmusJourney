@@ -4,8 +4,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "../lib/prisma";
 import Header from "../components/Header";
-import { ApplicationCTA, StoryCTA, CommunityJoinCTA } from "../src/components/ui/enhanced-cta";
-import { QuickStartGuide, SmartBanner } from "../src/components/ui/user-guidance";
+import {
+  ApplicationCTA,
+  StoryCTA,
+  CommunityJoinCTA,
+} from "../src/components/ui/enhanced-cta";
+import {
+  QuickStartGuide,
+  SmartBanner,
+} from "../src/components/ui/user-guidance";
 import { SkipLink } from "../src/components/ui/accessibility";
 import { designSystem } from "../src/utils/designSystem";
 import Footer from "../src/components/Footer";

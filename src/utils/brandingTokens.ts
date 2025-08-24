@@ -12,7 +12,7 @@ export const brandingTokens = {
       secondary: "#FFD700", // EU Gold
       accent: "#20B2AA", // Mediterranean Teal
       bronze: "#CD7F32", // Heritage Bronze
-    }
+    },
   },
 
   // Typography Hierarchy
@@ -20,35 +20,35 @@ export const brandingTokens = {
     display: "font-display", // Outfit for headings and brand
     body: "font-sans", // Inter for body text
     sizes: {
-      xs: "text-xs",    // 12px
-      sm: "text-sm",    // 14px
+      xs: "text-xs", // 12px
+      sm: "text-sm", // 14px
       base: "text-base", // 16px
-      lg: "text-lg",    // 18px
-      xl: "text-xl",    // 20px
+      lg: "text-lg", // 18px
+      xl: "text-xl", // 20px
       "2xl": "text-2xl", // 24px
     },
     weights: {
-      light: "font-light",    // 300
-      normal: "font-normal",  // 400
-      medium: "font-medium",  // 500
+      light: "font-light", // 300
+      normal: "font-normal", // 400
+      medium: "font-medium", // 500
       semibold: "font-semibold", // 600
-      bold: "font-bold",      // 700
+      bold: "font-bold", // 700
       extrabold: "font-extrabold", // 800
-    }
+    },
   },
 
   // WCAG AA Compliant Colors
   colors: {
     // High contrast text for accessibility
     text: {
-      primary: "text-gray-900 dark:text-gray-100",      // 4.5:1 contrast
-      secondary: "text-gray-700 dark:text-gray-200",    // 4.5:1 contrast
-      tertiary: "text-gray-600 dark:text-gray-300",     // 4.5:1 contrast
-      muted: "text-gray-500 dark:text-gray-400",        // 3:1 contrast (large text only)
-      accent: "text-blue-600 dark:text-blue-400",       // 4.5:1 contrast
+      primary: "text-gray-900 dark:text-gray-100", // 4.5:1 contrast
+      secondary: "text-gray-700 dark:text-gray-200", // 4.5:1 contrast
+      tertiary: "text-gray-600 dark:text-gray-300", // 4.5:1 contrast
+      muted: "text-gray-500 dark:text-gray-400", // 3:1 contrast (large text only)
+      accent: "text-blue-600 dark:text-blue-400", // 4.5:1 contrast
       link: "text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300",
     },
-    
+
     // Background variants
     background: {
       primary: "bg-white dark:bg-gray-900",
@@ -60,8 +60,10 @@ export const brandingTokens = {
     // Interactive states
     interactive: {
       hover: "hover:bg-gray-100 dark:hover:bg-gray-800",
-      active: "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300",
-      focus: "focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
+      active:
+        "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300",
+      focus:
+        "focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
     },
 
     // Borders
@@ -69,7 +71,7 @@ export const brandingTokens = {
       default: "border-gray-200 dark:border-gray-700",
       accent: "border-blue-200 dark:border-blue-800",
       muted: "border-gray-100 dark:border-gray-600",
-    }
+    },
   },
 
   // Spacing and Layout
@@ -98,28 +100,38 @@ export const brandingTokens = {
       radius: "rounded-lg",
     },
     button: {
-      primary: "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white",
-      secondary: "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-600",
-    }
+      primary:
+        "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white",
+      secondary:
+        "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-600",
+    },
   },
 
   // Accessibility helpers
   accessibility: {
     screenReaderOnly: "sr-only",
-    focusVisible: "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
-    skipLink: "absolute -top-full left-4 z-50 bg-blue-600 text-white px-4 py-2 rounded-md focus:top-4 transition-all",
-  }
+    focusVisible:
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+    skipLink:
+      "absolute -top-full left-4 z-50 bg-blue-600 text-white px-4 py-2 rounded-md focus:top-4 transition-all",
+  },
 };
 
 // Helper functions for consistent class application
-export const getTextColor = (variant: keyof typeof brandingTokens.colors.text) => {
+export const getTextColor = (
+  variant: keyof typeof brandingTokens.colors.text,
+) => {
   return brandingTokens.colors.text[variant];
 };
 
-export const getBackgroundColor = (variant: keyof typeof brandingTokens.colors.background) => {
+export const getBackgroundColor = (
+  variant: keyof typeof brandingTokens.colors.background,
+) => {
   return brandingTokens.colors.background[variant];
 };
 
-export const getInteractiveState = (variant: keyof typeof brandingTokens.colors.interactive) => {
+export const getInteractiveState = (
+  variant: keyof typeof brandingTokens.colors.interactive,
+) => {
   return brandingTokens.colors.interactive[variant];
 };

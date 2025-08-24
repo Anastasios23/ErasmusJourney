@@ -15,7 +15,7 @@ export default async function handler(
     const totalStories = await prisma.formSubmission.count({
       where: {
         type: { in: ["EXPERIENCE", "STORY"] },
-        status: { in: ["SUBMITTED", "PUBLISHED"] }
+        status: { in: ["SUBMITTED", "PUBLISHED"] },
       },
     });
 
@@ -52,7 +52,7 @@ export default async function handler(
       by: ["type"],
       where: {
         type: { in: ["EXPERIENCE", "STORY"] },
-        status: { in: ["SUBMITTED", "PUBLISHED"] }
+        status: { in: ["SUBMITTED", "PUBLISHED"] },
       },
       _count: {
         type: true,
@@ -69,7 +69,7 @@ export default async function handler(
     const recentStories = await prisma.formSubmission.findMany({
       where: {
         type: { in: ["EXPERIENCE", "STORY"] },
-        status: { in: ["SUBMITTED", "PUBLISHED"] }
+        status: { in: ["SUBMITTED", "PUBLISHED"] },
       },
       select: {
         id: true,
@@ -91,14 +91,10 @@ export default async function handler(
     // Get unique story IDs that have engagement
     const engagedStoryIds = await prisma.engagement.findMany({
       where: {
-        OR: [
-          { liked: true },
-          { bookmarked: true },
-          { views: { gt: 0 } }
-        ]
+        OR: [{ liked: true }, { bookmarked: true }, { views: { gt: 0 } }],
       },
       select: { storyId: true },
-      distinct: ['storyId'],
+      distinct: ["storyId"],
     });
 
     const storiesWithEngagement = engagedStoryIds.length;
@@ -122,7 +118,9 @@ export default async function handler(
         storyId: story.id,
         title: story.title,
         category: story.type,
-        author: `${story.user.firstName || ''} ${story.user.lastName || ''}`.trim() || 'Anonymous',
+        author:
+          `${story.user.firstName || ""} ${story.user.lastName || ""}`.trim() ||
+          "Anonymous",
         timestamp: story.createdAt,
       })),
     };

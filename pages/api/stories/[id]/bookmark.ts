@@ -53,9 +53,9 @@ export default async function handler(
         },
       });
 
-      return res.status(200).json({ 
-        success: true, 
-        bookmarked: updatedEngagement.bookmarked 
+      return res.status(200).json({
+        success: true,
+        bookmarked: updatedEngagement.bookmarked,
       });
     } else {
       // Create new engagement record with bookmark
@@ -71,9 +71,9 @@ export default async function handler(
         },
       });
 
-      return res.status(200).json({ 
-        success: true, 
-        bookmarked: newEngagement.bookmarked 
+      return res.status(200).json({
+        success: true,
+        bookmarked: newEngagement.bookmarked,
       });
     }
   } catch (error) {

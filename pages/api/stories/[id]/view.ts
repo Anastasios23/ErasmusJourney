@@ -57,9 +57,9 @@ export default async function handler(
         },
       });
 
-      return res.status(200).json({ 
-        success: true, 
-        views: updatedEngagement.views 
+      return res.status(200).json({
+        success: true,
+        views: updatedEngagement.views,
       });
     } else {
       // Create new engagement record with first view
@@ -75,9 +75,9 @@ export default async function handler(
         },
       });
 
-      return res.status(200).json({ 
-        success: true, 
-        views: newEngagement.views 
+      return res.status(200).json({
+        success: true,
+        views: newEngagement.views,
       });
     }
   } catch (error) {
