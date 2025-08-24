@@ -86,7 +86,6 @@ import {
   GraduationCap,
   Lightbulb,
   Heart,
-  Calculator,
 } from "lucide-react";
 
 const ITEMS_PER_PAGE = 6;
