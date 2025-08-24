@@ -60,7 +60,7 @@ export default function Header() {
       href: "/destinations",
       subItems: [
         { name: "Destinations", href: "/destinations", description: "Browse cities & countries" },
-        { name: "Universities", href: "/university-exchanges", description: "Partner institutions" }
+        { name: "Partner Universities", href: "/university-exchanges", description: "Exchange programs & institutions" }
       ]
     },
     { name: "Stories", href: "/student-stories" },
