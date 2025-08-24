@@ -30,6 +30,62 @@ interface PublicDestination {
   userReviews?: any[];
 }
 
+// Fallback destinations returned when database queries fail
+const FALLBACK_DESTINATIONS: PublicDestination[] = [
+  {
+    id: "berlin-germany",
+    name: "Berlin",
+    city: "Berlin",
+    country: "Germany",
+    description:
+      "Vibrant capital with rich history, excellent universities, and affordable living costs.",
+    imageUrl: "/images/destinations/berlin.svg",
+    climate: "Continental",
+    highlights: ["Rich History", "Vibrant Culture", "Affordable Living"],
+    featured: true,
+    studentCount: 25,
+    university: "Humboldt University of Berlin",
+    universityShort: "HUB",
+    partnerUniversities: ["Humboldt University", "Technical University Berlin"],
+    language: "German",
+    costOfLiving: "medium",
+    averageRent: 550,
+    avgCostPerMonth: 550,
+    popularUniversities: ["Humboldt University", "TU Berlin"],
+    popularWith: ["Engineering", "Arts", "Business"],
+    userStories: [],
+    userAccommodationTips: [],
+    userCourseMatches: [],
+    userReviews: [],
+  },
+  {
+    id: "barcelona-spain",
+    name: "Barcelona",
+    city: "Barcelona",
+    country: "Spain",
+    description:
+      "Mediterranean coastal city known for architecture, culture, and excellent student life.",
+    imageUrl: "/images/destinations/barcelona.svg",
+    climate: "Mediterranean",
+    highlights: ["Beautiful Architecture", "Beach City", "Great Food"],
+    featured: true,
+    studentCount: 18,
+    university: "University of Barcelona",
+    universityShort: "UB",
+    partnerUniversities: ["University of Barcelona", "Pompeu Fabra University"],
+    language: "Spanish",
+    costOfLiving: "medium",
+    averageRent: 480,
+    avgCostPerMonth: 480,
+    popularUniversities: ["University of Barcelona", "UPF"],
+    popularWith: ["Business", "Arts", "Engineering"],
+    userStories: [],
+    userAccommodationTips: [],
+    userCourseMatches: [],
+    userReviews: [],
+  },
+];
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -232,76 +288,12 @@ export default async function handler(
 
     // Add some default destinations if none exist
     if (allDestinations.length === 0) {
-      const defaultDestinations: PublicDestination[] = [
-        {
-          id: "berlin-germany",
-          name: "Berlin",
-          city: "Berlin",
-          country: "Germany",
-          description:
-            "Vibrant capital with rich history, excellent universities, and affordable living costs.",
-          imageUrl: "/images/destinations/berlin.svg",
-          climate: "Continental",
-          highlights: ["Rich History", "Vibrant Culture", "Affordable Living"],
-          featured: true,
-          studentCount: 25,
-          university: "Humboldt University of Berlin",
-          universityShort: "HUB",
-          partnerUniversities: [
-            "Humboldt University",
-            "Technical University Berlin",
-          ],
-          language: "German",
-          costOfLiving: "medium",
-          averageRent: 550,
-          avgCostPerMonth: 550,
-          popularUniversities: ["Humboldt University", "TU Berlin"],
-          popularWith: ["Engineering", "Arts", "Business"],
-          userStories: [],
-          userAccommodationTips: [],
-          userCourseMatches: [],
-          userReviews: [],
-        },
-        {
-          id: "barcelona-spain",
-          name: "Barcelona",
-          city: "Barcelona",
-          country: "Spain",
-          description:
-            "Mediterranean coastal city known for architecture, culture, and excellent student life.",
-          imageUrl: "/images/destinations/barcelona.svg",
-          climate: "Mediterranean",
-          highlights: ["Beautiful Architecture", "Beach City", "Great Food"],
-          featured: true,
-          studentCount: 18,
-          university: "University of Barcelona",
-          universityShort: "UB",
-          partnerUniversities: [
-            "University of Barcelona",
-            "Pompeu Fabra University",
-          ],
-          language: "Spanish",
-          costOfLiving: "medium",
-          averageRent: 480,
-          avgCostPerMonth: 480,
-          popularUniversities: ["University of Barcelona", "UPF"],
-          popularWith: ["Business", "Arts", "Engineering"],
-          userStories: [],
-          userAccommodationTips: [],
-          userCourseMatches: [],
-          userReviews: [],
-        },
-      ];
-
-      return res.status(200).json(defaultDestinations);
+      return res.status(200).json(FALLBACK_DESTINATIONS);
     }
 
     return res.status(200).json(allDestinations);
   } catch (error) {
     console.error("Error fetching public destinations:", error);
-    return res.status(500).json({
-      error: "Failed to fetch destinations",
-      message: "Internal server error",
-    });
+    return res.status(200).json(FALLBACK_DESTINATIONS);
   }
 }
