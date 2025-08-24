@@ -5,6 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 import Header from "../components/Header";
+import { ApplicationCTA, CommunityJoinCTA } from "../src/components/ui/enhanced-cta";
+import { PageContext, ContextualTip, JourneyProgress, QuickStartGuide } from "../src/components/ui/user-guidance";
+import { designSystem } from "../src/utils/designSystem";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
 import { Badge } from "../src/components/ui/badge";
@@ -83,6 +86,7 @@ import {
   GraduationCap,
   Lightbulb,
   Heart,
+  Calculator,
 } from "lucide-react";
 
 const ITEMS_PER_PAGE = 6;
