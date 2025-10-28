@@ -1,62 +1,259 @@
-# Dependencies
-/node_modules
+# ===========================
+# Node.js Dependencies
+# ===========================
+node_modules/
+jspm_packages/
+bower_components/
 /.pnp
 .pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
 
-# Testing
-/coverage
+# ===========================
+# Package Manager Lock Files (optional - uncomment if needed)
+# ===========================
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
 
-# Next.js build output
-/.next
-/out
-
-# Production
-/build
-
-# Vercel
+# ===========================
+# Next.js
+# ===========================
+/.next/
+/out/
+.next
+next-env.d.ts
+.next/cache/
+.next/trace
+.next/types/
 .vercel
+.turbo
 
-# Static exports
-/export
+# ===========================
+# Build Outputs
+# ===========================
+/build
+/dist
+/public/build
+*.tsbuildinfo
 
-# Local Environment Variables
+# ===========================
+# Testing
+# ===========================
+/coverage
+/.nyc_output
+.jest-cache/
+__snapshots__/
+*.test.js.snap
+
+# ===========================
+# Environment Variables
+# ===========================
+.env
+.env*.local
 .env.local
 .env.development.local
-.env.production.local
 .env.test.local
+.env.production.local
+.env.backup
+*.env
 
-# Prisma
+# ===========================
+# Databases
+# ===========================
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
 /prisma/dev.db
 /prisma/dev.db-journal
+/prisma/migrations/*/migration.sql~
+/server/*.db
+/server/*.sqlite
+/server/*.sqlite3
 
+# ===========================
 # Logs
+# ===========================
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+.npm
+.eslintcache
 
-# Editor directories and files
-.vscode
-.idea
+# ===========================
+# OS Files
+# ===========================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ===========================
+# IDEs and Editors
+# ===========================
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea_modules/
+out/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Visual Studio
 *.suo
+*.user
+*.userosscache
+*.sln.docstates
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
-# Next.js build output
-.next
+# Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+*~
+tags
+.netrwhist
 
-# Next.js cache
-.next/cache/
+# ===========================
+# Temporary Files
+# ===========================
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+*.cache
+.cache/
+tmp/
+temp/
 
-# Specific files to ignore
-.next/trace
-.next/cache/.rscinfo
-.next/cache/webpack/client-development/0.pack.gz
-.next/cache/webpack/client-development/index.pack.gz
-.next/static/chunks/polyfills.js
+# ===========================
+# TypeScript
+# ===========================
+*.tsbuildinfo
+.tscache/
 
-# Ignore all files in .next/cache
-.next/cache/**/*
+# ===========================
+# Miscellaneous
+# ===========================
+*.pid
+*.seed
+*.pid.lock
+.grunt
+.lock-wscript
+.wafpickle-*
+.node_repl_history
+*.gz
+.eslintcache
+.stylelintcache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.parcel-cache
+.docusaurus
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.yarn-integrity
+
+# ===========================
+# Debug & Profiling
+# ===========================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+chrome-profiler-events*.json
+*.cpuprofile
+
+# ===========================
+# Storybook
+# ===========================
+storybook-static/
+.storybook-out/
+
+# ===========================
+# Cypress
+# ===========================
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+
+# ===========================
+# Static Site Generators
+# ===========================
+.docusaurus/
+.cache/
+
+# ===========================
+# Cloud & Deployment
+# ===========================
+.vercel
+.netlify
+.firebase/
+.amplify/
+.aws-sam/
+
+# ===========================
+# Local Development
+# ===========================
+.local
+local-data/
+scratch/
+notes.txt
+TODO.md
+.notes/
