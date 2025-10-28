@@ -1,6 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../../lib/prisma";
 
+/**
+ * University Departments API
+ *
+ * GET /api/universities/[id]/departments
+ *
+ * Fetches all departments for a university.
+ * The [id] parameter can be either the university ID, name, or code.
+ */
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -10,16 +19,18 @@ export default async function handler(
   }
 
   try {
-    const { name } = req.query;
+    const { id } = req.query;
 
-    if (!name || typeof name !== "string") {
-      return res.status(400).json({ error: "University name is required" });
+    if (!id || typeof id !== "string") {
+      return res
+        .status(400)
+        .json({ error: "University ID, name, or code is required" });
     }
 
-    // Find the university by name or code
-    const university = await prisma.university.findFirst({
+    // Find the university by ID, name, or code
+    const university = await prisma.universities.findFirst({
       where: {
-        OR: [{ name: name }, { code: name }],
+        OR: [{ id: id }, { name: id }, { code: id }],
       },
       include: {
         faculties: {
@@ -44,6 +55,12 @@ export default async function handler(
 
     // Remove duplicates and sort
     const uniqueDepartments = [...new Set(departments)].sort();
+
+    // Cache for 1 hour (departments don't change frequently)
+    res.setHeader(
+      "Cache-Control",
+      "public, s-maxage=3600, stale-while-revalidate=7200",
+    );
 
     res.status(200).json({
       university: {
