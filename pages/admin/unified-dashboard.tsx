@@ -576,9 +576,11 @@ export default function UnifiedAdminDashboard() {
                             {formatDate(exp.lastSavedAt)}
                           </TableCell>
                           <TableCell>
-                            <Button variant="ghost" size="sm">
-                              <Eye className="h-4 w-4" />
-                            </Button>
+                            <Link href={`/admin/review/${exp.id}`}>
+                              <Button variant="ghost" size="sm">
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            </Link>
                           </TableCell>
                         </TableRow>
                       ))
@@ -641,10 +643,38 @@ export default function UnifiedAdminDashboard() {
                           </TableCell>
                           <TableCell>
                             <div className="flex gap-1">
-                              <Button variant="ghost" size="sm">
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="sm">
+                              <Link href={`/admin/review/${sub.id}`}>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  title="Review"
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                              </Link>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                title="Quick Approve"
+                                onClick={async () => {
+                                  if (
+                                    confirm("Quick approve this submission?")
+                                  ) {
+                                    try {
+                                      const res = await fetch(
+                                        `/api/admin/submissions/${sub.id}/approve`,
+                                        { method: "POST" },
+                                      );
+                                      if (res.ok) {
+                                        alert("✅ Approved!");
+                                        fetchAllData();
+                                      }
+                                    } catch (err) {
+                                      alert("Error approving");
+                                    }
+                                  }
+                                }}
+                              >
                                 <Check className="h-4 w-4" />
                               </Button>
                             </div>

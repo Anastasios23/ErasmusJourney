@@ -345,8 +345,6 @@ model partnership_tracking {
   updatedAt             DateTime
 
   @@unique([homeUniversityName, partnerUniversityName, partnerCity])
-  @@index([partnerCountry, partnerCity])
-  @@index([needsAttention, isActive])
 }
 
 model programs {
@@ -387,8 +385,6 @@ model stories {
   story_engagements story_engagements[]
 
   @@index([city, country])
-  @@index([isPublic, isPinned])
-  @@index([createdAt, isPublic])
 }
 
 model story_engagements {
@@ -450,191 +446,25 @@ model university_exchanges {
 }
 
 model users {
-  id                     String                 @id
-  firstName              String?
-  lastName               String?
-  email                  String                 @unique
-  emailVerified          DateTime?
-  image                  String?
-  password               String?
-  role                   String                 @default("USER")
-  createdAt              DateTime               @default(now())
-  updatedAt              DateTime
-  studentId              String?
-  nationality            String?
-  homeCity               String?
-  homeCountry            String?
-  Account                Account[]
-  Session                Session[]
-  applications           applications[]
-  erasmus_experiences    erasmus_experiences?
-  form_submissions       form_submissions[]
-  stories                stories[]
-  story_engagements      story_engagements[]
-  
-  // NEW: Unified submission system
-  submissions            student_submissions[]  @relation("SubmissionAuthor")
-  reviewedSubmissions    student_submissions[]  @relation("SubmissionReviewer")
-}
-
-// ============================================
-// NEW: UNIFIED SUBMISSION MODEL
-// ============================================
-
-enum SubmissionStatus {
-  DRAFT
-  PENDING
-  APPROVED
-  REJECTED
-  REVISION_NEEDED
-  ARCHIVED
-}
-
-enum SubmissionType {
-  FULL_EXPERIENCE
-  ACCOMMODATION
-  COURSE_EXCHANGE
-  QUICK_TIP
-  DESTINATION_INFO
-}
-
-model student_submissions {
-  id                   String           @id @default(cuid())
-  userId               String
-  
-  // Submission Classification
-  submissionType       SubmissionType
-  formStep             String?
-  
-  // All form data stored as JSON (single source of truth)
-  data                 Json
-  
-  // Denormalized fields for easy querying
-  title                String?
-  hostCity             String?
-  hostCountry          String?
-  hostUniversity       String?
-  semester             String?
-  academicYear         String?
-  
-  // Status Pipeline
-  status               SubmissionStatus @default(DRAFT)
-  
-  // Admin Review Tracking
-  reviewedBy           String?
-  reviewedAt           DateTime?
-  adminNotes           String?
-  rejectionReason      String?
-  revisionNotes        String?
-  
-  // Quality & Processing
-  qualityScore         Float?
-  processed            Boolean          @default(false)
-  publishedAt          DateTime?
-  
-  // Version Control
-  version              Int              @default(1)
-  previousVersionId    String?
-  
-  // Metadata
-  tags                 String[]
-  isPublic             Boolean          @default(false)
-  isFeatured           Boolean          @default(false)
-  viewCount            Int              @default(0)
-  
-  // Timestamps
-  createdAt            DateTime         @default(now())
-  updatedAt            DateTime         @updatedAt
-  submittedAt          DateTime?
-  
-  // Relations
-  author               users            @relation("SubmissionAuthor", fields: [userId], references: [id], onDelete: Cascade)
-  reviewer             users?           @relation("SubmissionReviewer", fields: [reviewedBy], references: [id])
-  previousVersion      student_submissions? @relation("SubmissionVersions", fields: [previousVersionId], references: [id])
-  versions             student_submissions[] @relation("SubmissionVersions")
-  
-  // Denormalized views
-  accommodationViews   accommodation_views[]
-  courseViews          course_exchange_views[]
-  
-  @@index([userId, status])
-  @@index([status, submittedAt])
-  @@index([hostCity, hostCountry, status])
-  @@index([submissionType, status])
-  @@index([reviewedBy, status])
-  @@index([createdAt])
-  @@index([qualityScore, status])
-  @@index([isFeatured, status, isPublic])
-}
-
-// ============================================
-// DENORMALIZED VIEWS (Generated from student_submissions)
-// ============================================
-
-model accommodation_views {
-  id                   String              @id @default(cuid())
-  sourceSubmissionId   String
-  
-  // Extracted data
-  type                 String
-  name                 String
-  city                 String
-  country              String
-  pricePerMonth        Int?
-  currency             String              @default("EUR")
-  neighborhood         String?
-  description          String?
-  pros                 String[]
-  cons                 String[]
-  
-  // Mirrors source submission status
-  status               SubmissionStatus
-  isPublic             Boolean             @default(false)
-  isFeatured           Boolean             @default(false)
-  
-  // Student info
-  studentName          String?
-  submittedAt          DateTime?
-  
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
-  
-  sourceSubmission     student_submissions @relation(fields: [sourceSubmissionId], references: [id], onDelete: Cascade)
-  
-  @@index([city, country, status])
-  @@index([status, isFeatured])
-}
-
-model course_exchange_views {
-  id                   String              @id @default(cuid())
-  sourceSubmissionId   String
-  
-  // Extracted data
-  homeCourse           String
-  hostCourse           String
-  hostUniversity       String
-  city                 String
-  country              String
-  ects                 Int?
-  semester             String?
-  studyLevel           String?
-  fieldOfStudy         String?
-  courseQuality        Int?
-  description          String?
-  
-  // Mirrors source submission status
-  status               SubmissionStatus
-  isPublic             Boolean             @default(false)
-  
-  // Student info
-  studentName          String?
-  submittedAt          DateTime?
-  
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
-  
-  sourceSubmission     student_submissions @relation(fields: [sourceSubmissionId], references: [id], onDelete: Cascade)
-  
-  @@index([hostUniversity, status])
-  @@index([city, country, status])
+  id                  String               @id
+  firstName           String?
+  lastName            String?
+  email               String               @unique
+  emailVerified       DateTime?
+  image               String?
+  password            String?
+  role                String               @default("USER")
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime
+  studentId           String?
+  nationality         String?
+  homeCity            String?
+  homeCountry         String?
+  Account             Account[]
+  Session             Session[]
+  applications        applications[]
+  erasmus_experiences erasmus_experiences?
+  form_submissions    form_submissions[]
+  stories             stories[]
+  story_engagements   story_engagements[]
 }

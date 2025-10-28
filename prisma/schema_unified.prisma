@@ -1,0 +1,451 @@
+// This is the NEW unified schema - Review before applying!
+// To apply: Replace the content of prisma/schema.prisma with this file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" 
+  url = env("DATABASE_URL")
+}
+
+// ============================================
+// AUTHENTICATION MODELS (NextAuth)
+// ============================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================
+// USER MODEL
+// ============================================
+
+model User {
+  id                     String              @id @default(cuid())
+  firstName              String?
+  lastName               String?
+  email                  String              @unique
+  emailVerified          DateTime?
+  image                  String?
+  password               String?
+  role                   String              @default("USER")
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+  studentId              String?
+  nationality            String?
+  homeCity               String?
+  homeCountry            String?
+  
+  // Relations
+  accounts               Account[]
+  sessions               Session[]
+  applications           Application[]
+  stories                Story[]
+  storyEngagements       Engagement[]
+  
+  // NEW: Unified submission system
+  submissions            StudentSubmission[] @relation("SubmissionAuthor")
+  reviewedSubmissions    StudentSubmission[] @relation("SubmissionReviewer")
+
+  @@map("users")
+}
+
+// ============================================
+// UNIFIED SUBMISSION MODEL - SINGLE SOURCE OF TRUTH
+// ============================================
+
+enum SubmissionStatus {
+  DRAFT            // User is editing
+  PENDING          // Submitted, awaiting review
+  APPROVED         // Admin approved
+  REJECTED         // Admin rejected
+  REVISION_NEEDED  // Admin requested changes
+  ARCHIVED         // Old/invalid
+}
+
+enum SubmissionType {
+  FULL_EXPERIENCE    // Complete multi-step Erasmus experience
+  ACCOMMODATION      // Accommodation info only
+  COURSE_EXCHANGE    // Course exchange info only
+  QUICK_TIP          // Quick tip/advice
+  DESTINATION_INFO   // Destination information
+}
+
+model StudentSubmission {
+  id                 String           @id @default(cuid())
+  userId             String
+  
+  // Submission Classification
+  submissionType     SubmissionType
+  formStep           String?          // For multi-step: 'basic'|'courses'|'accommodation'|'expenses'|'experience'
+  
+  // All form data stored as JSON (single source of truth)
+  data               Json
+  
+  // Denormalized fields for easy querying
+  title              String?          // Auto-generated or user-provided
+  hostCity           String?
+  hostCountry        String?
+  hostUniversity     String?
+  semester           String?
+  academicYear       String?
+  
+  // Status Pipeline
+  status             SubmissionStatus @default(DRAFT)
+  
+  // Admin Review Tracking
+  reviewedBy         String?
+  reviewedAt         DateTime?
+  adminNotes         String?
+  rejectionReason    String?
+  revisionNotes      String?
+  
+  // Quality & Processing
+  qualityScore       Float?           // 0-100 automated quality score
+  processed          Boolean          @default(false)
+  publishedAt        DateTime?
+  
+  // Version Control
+  version            Int              @default(1)
+  previousVersionId  String?          // Link to previous version
+  
+  // Metadata
+  tags               String[]
+  isPublic           Boolean          @default(false)
+  isFeatured         Boolean          @default(false)
+  viewCount          Int              @default(0)
+  
+  // Timestamps
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  submittedAt        DateTime?        // When user clicked "submit"
+  
+  // Relations
+  user               User             @relation("SubmissionAuthor", fields: [userId], references: [id], onDelete: Cascade)
+  reviewer           User?            @relation("SubmissionReviewer", fields: [reviewedBy], references: [id])
+  previousVersion    StudentSubmission? @relation("SubmissionVersions", fields: [previousVersionId], references: [id])
+  versions           StudentSubmission[] @relation("SubmissionVersions")
+  
+  // Denormalized views (generated from this submission)
+  accommodationViews AccommodationView[]
+  courseViews        CourseExchangeView[]
+  
+  // Indexes for performance
+  @@index([userId, status])
+  @@index([status, submittedAt])
+  @@index([hostCity, hostCountry, status])
+  @@index([submissionType, status])
+  @@index([reviewedBy, status])
+  
+  @@map("student_submissions")
+}
+
+// ============================================
+// DENORMALIZED VIEWS (Read-Only, Generated from StudentSubmission)
+// ============================================
+
+model AccommodationView {
+  id                   String            @id @default(cuid())
+  sourceSubmissionId   String
+  
+  // Extracted data (for easy querying)
+  type                 String
+  name                 String
+  city                 String
+  country              String
+  pricePerMonth        Int?
+  currency             String            @default("EUR")
+  neighborhood         String?
+  description          String?
+  pros                 String[]
+  cons                 String[]
+  
+  // Mirrors source submission status
+  status               SubmissionStatus
+  isPublic             Boolean           @default(false)
+  isFeatured           Boolean           @default(false)
+  
+  // Student info (denormalized)
+  studentName          String?
+  submittedAt          DateTime?
+  
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  
+  sourceSubmission     StudentSubmission @relation(fields: [sourceSubmissionId], references: [id], onDelete: Cascade)
+  
+  @@index([city, country, status])
+  @@index([status, isFeatured])
+  @@map("accommodation_views")
+}
+
+model CourseExchangeView {
+  id                   String            @id @default(cuid())
+  sourceSubmissionId   String
+  
+  // Extracted data
+  homeCourse           String
+  hostCourse           String
+  hostUniversity       String
+  city                 String
+  country              String
+  ects                 Int?
+  semester             String?
+  studyLevel           String?
+  fieldOfStudy         String?
+  courseQuality        Int?             // 1-5 rating
+  description          String?
+  
+  // Mirrors source submission status
+  status               SubmissionStatus
+  isPublic             Boolean           @default(false)
+  
+  // Student info (denormalized)
+  studentName          String?
+  submittedAt          DateTime?
+  
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  
+  sourceSubmission     StudentSubmission @relation(fields: [sourceSubmissionId], references: [id], onDelete: Cascade)
+  
+  @@index([hostUniversity, status])
+  @@index([city, country, status])
+  @@map("course_exchange_views")
+}
+
+// ============================================
+// REFERENCE DATA MODELS (Universities, Agreements, etc.)
+// ============================================
+
+model University {
+  id                String        @id @default(cuid())
+  code              String        @unique
+  name              String
+  shortName         String
+  type              String
+  country           String
+  city              String
+  website           String?
+  description       String?
+  imageUrl          String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  homeAgreements    Agreement[]   @relation("HomeUniversity")
+  partnerAgreements Agreement[]   @relation("PartnerUniversity")
+  applications      Application[]
+  faculties         Faculty[]
+  stories           Story[]
+
+  @@map("universities")
+}
+
+model Faculty {
+  id           String       @id @default(cuid())
+  name         String
+  description  String?
+  universityId String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  departments  Department[]
+  university   University   @relation(fields: [universityId], references: [id], onDelete: Cascade)
+
+  @@map("faculties")
+}
+
+model Department {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  facultyId   String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  agreements  Agreement[]
+  faculty     Faculty     @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  programs    Program[]
+
+  @@map("departments")
+}
+
+model Program {
+  id           String        @id @default(cuid())
+  name         String
+  level        String
+  duration     String
+  type         String?
+  ects         Int?
+  description  String?
+  departmentId String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  applications Application[]
+  department   Department    @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@map("programs")
+}
+
+model Agreement {
+  id                  String        @id @default(cuid())
+  homeUniversityId    String
+  homeDepartmentId    String
+  partnerUniversityId String
+  partnerCity         String
+  partnerCountry      String
+  agreementType       String        @default("BOTH")
+  notes               String?
+  isActive            Boolean       @default(true)
+  startDate           DateTime?
+  endDate             DateTime?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  homeUniversity      University    @relation("HomeUniversity", fields: [homeUniversityId], references: [id])
+  homeDepartment      Department    @relation(fields: [homeDepartmentId], references: [id])
+  partnerUniversity   University    @relation("PartnerUniversity", fields: [partnerUniversityId], references: [id])
+  applications        Application[]
+
+  @@map("agreements")
+}
+
+model Application {
+  id               String     @id @default(cuid())
+  userId           String
+  homeUniversityId String
+  programId        String
+  agreementId      String
+  status           String     @default("DRAFT")
+  semester         String?
+  academicYear     String?
+  duration         String?
+  motivation       String?
+  languageSkills   Json?
+  grades           Json?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  user             User       @relation(fields: [userId], references: [id])
+  homeUniversity   University @relation(fields: [homeUniversityId], references: [id])
+  program          Program    @relation(fields: [programId], references: [id])
+  agreement        Agreement  @relation(fields: [agreementId], references: [id])
+
+  @@map("applications")
+}
+
+// ============================================
+// STORIES & ENGAGEMENT
+// ============================================
+
+model Story {
+  id           String       @id @default(cuid())
+  title        String
+  content      String
+  excerpt      String?
+  imageUrl     String?
+  isPublic     Boolean      @default(true)
+  isPinned     Boolean      @default(false)
+  authorId     String
+  universityId String?
+  country      String?
+  city         String?
+  category     String       @default("EXPERIENCE")
+  tags         String?
+  likes        Int          @default(0)
+  views        Int          @default(0)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  author       User         @relation(fields: [authorId], references: [id])
+  university   University?  @relation(fields: [universityId], references: [id])
+  engagements  Engagement[]
+
+  @@index([city, country])
+  @@map("stories")
+}
+
+model Engagement {
+  id         String    @id @default(cuid())
+  storyId    String
+  userId     String
+  liked      Boolean   @default(false)
+  bookmarked Boolean   @default(false)
+  rating     Int       @default(0)
+  views      Int       @default(0)
+  likes      Int       @default(0)
+  comments   Int       @default(0)
+  lastViewed DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  story      Story     @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, userId])
+  @@map("story_engagements")
+}
+
+// ============================================
+// LEGACY MODELS (Keep for backward compatibility during migration)
+// TODO: Remove after data migration is complete
+// ============================================
+
+model FormSubmission {
+  id               String   @id @default(cuid())
+  userId           String
+  type             String
+  title            String
+  data             Json
+  status           String   @default("SUBMITTED")
+  hostCity         String?
+  hostCountry      String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([hostCity, hostCountry])
+  @@map("form_submissions_legacy")
+}
+
+model ErasmusExperience {
+  id             String    @id @default(cuid())
+  userId         String    @unique
+  currentStep    Int       @default(1)
+  completedSteps String    @default("[]")
+  isComplete     Boolean   @default(false)
+  basicInfo      Json?
+  courses        Json?
+  accommodation  Json?
+  livingExpenses Json?
+  experience     Json?
+  status         String    @default("DRAFT")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@map("erasmus_experiences_legacy")
+}

@@ -66,6 +66,7 @@ export default function Header() {
 
   // Reactive session handling for live updates
 
+  // MVP-focused navigation
   const navigation = [
     { name: "Home", href: "/" },
     {
@@ -84,19 +85,29 @@ export default function Header() {
         },
       ],
     },
-    { name: "Stories", href: "/student-stories" },
-    { name: "Housing", href: "/student-accommodations" },
-    { name: "Community", href: "/community" },
+    {
+      name: "Submit Experience",
+      href: "/submissions",
+      highlight: true, // Primary CTA
+    },
   ];
 
   const userNavigation = session
     ? [
         { name: "Dashboard", href: "/dashboard", icon: User },
-        { name: "My Profile", href: "/profile", icon: User },
-        { name: "Settings", href: "/settings", icon: Settings },
-        // Add admin link for admin users
+        { name: "My Submissions", href: "/my-submissions", icon: FileText },
+        { name: "Profile", href: "/profile", icon: User },
+        // Admin links (only for ADMIN role)
         ...((session.user as any)?.role === "ADMIN"
-          ? [{ name: "Admin Panel", href: "/admin", icon: Settings }]
+          ? [
+              { name: "─────────", href: "#", icon: User, disabled: true }, // Divider
+              { name: "Admin Dashboard", href: "/admin", icon: Settings },
+              {
+                name: "Review Queue",
+                href: "/admin/review",
+                icon: ClipboardList,
+              },
+            ]
           : []),
       ]
     : [];
