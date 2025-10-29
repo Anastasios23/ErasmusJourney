@@ -35,7 +35,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
 
   if (id) {
     // Get specific experience
-    const experience = await prisma.erasmusExperience.findUnique({
+    const experience = await prisma.erasmus_experiences.findUnique({
       where: { id: id as string },
     });
 
@@ -46,7 +46,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     return res.status(200).json(experience);
   } else {
     // Get all experiences (for admin or debugging)
-    const experiences = await prisma.erasmusExperience.findMany({
+    const experiences = await prisma.erasmus_experiences.findMany({
       orderBy: { updatedAt: "desc" },
     });
 
@@ -59,12 +59,12 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
   if (action === "create") {
     // First, ensure we have a test user or create one
-    let testUser = await prisma.user.findFirst({
+    let testUser = await prisma.users.findFirst({
       where: { email: "test@erasmus.local" },
     });
 
     if (!testUser) {
-      testUser = await prisma.user.create({
+      testUser = await prisma.users.create({
         data: {
           email: "test@erasmus.local",
           firstName: "Test",
@@ -75,13 +75,13 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Check if this user already has an experience
-    let existingExperience = await prisma.erasmusExperience.findUnique({
+    let existingExperience = await prisma.erasmus_experiences.findUnique({
       where: { userId: testUser.id },
     });
 
     if (existingExperience) {
       // Reset the existing experience to draft state for testing
-      existingExperience = await prisma.erasmusExperience.update({
+      existingExperience = await prisma.erasmus_experiences.update({
         where: { id: existingExperience.id },
         data: {
           status: "DRAFT",
@@ -99,7 +99,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Create a new draft experience
-    const newExperience = await prisma.erasmusExperience.create({
+    const newExperience = await prisma.erasmus_experiences.create({
       data: {
         userId: testUser.id,
         status: "DRAFT",
@@ -126,7 +126,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
   }
 
   // Find the existing experience
-  const existingExperience = await prisma.erasmusExperience.findUnique({
+  const existingExperience = await prisma.erasmus_experiences.findUnique({
     where: { id },
   });
 
@@ -198,7 +198,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       submissionData.basicInfo = basicInfo;
     }
 
-    const updatedExperience = await prisma.erasmusExperience.update({
+    const updatedExperience = await prisma.erasmus_experiences.update({
       where: { id },
       data: submissionData,
     });
@@ -228,7 +228,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       };
     }
 
-    const updatedExperience = await prisma.erasmusExperience.update({
+    const updatedExperience = await prisma.erasmus_experiences.update({
       where: { id },
       data: updateFields,
     });

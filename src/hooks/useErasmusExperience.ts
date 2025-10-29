@@ -117,24 +117,21 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
           hasSubmitted: false,
         });
       } else {
-        throw new Error("Failed to create experience");
+        const errorText = await createResponse.text();
+        console.error("Failed to create experience:", errorText);
+        throw new Error(
+          `Failed to create experience: ${createResponse.status}`,
+        );
       }
     } catch (err) {
       console.error("Error fetching Erasmus experience:", err);
-      setError(err instanceof Error ? err.message : "Failed to load data");
-      // Initialize with empty data as fallback
-      setData({
-        currentStep: 1,
-        completedSteps: [],
-        basicInfo: {},
-        courses: [],
-        accommodation: {},
-        livingExpenses: {},
-        experience: {},
-        status: "DRAFT",
-        isComplete: false,
-        hasSubmitted: false,
-      });
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load data";
+      setError(errorMessage);
+
+      // Don't set data at all if we couldn't create/load it
+      // This will cause data?.id checks to properly fail
+      setData(null);
     } finally {
       setLoading(false);
     }
@@ -143,7 +140,10 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
   const saveProgress = useCallback(
     async (stepData: Partial<ErasmusExperienceData>): Promise<boolean> => {
       if (!data?.id) {
-        setError("No experience found. Please refresh the page.");
+        const errorMsg =
+          "No experience found. Please refresh the page and try again.";
+        setError(errorMsg);
+        console.error("saveProgress failed: no data.id", { data });
         return false;
       }
 
@@ -196,8 +196,10 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
       console.log("🔥 SUBMIT FUNCTION CALLED");
 
       if (!data?.id) {
-        console.log("❌ No data.id");
-        setError("No experience data found. Please start over.");
+        console.log("❌ No data.id", { data });
+        const errorMsg =
+          "No experience data found. Please refresh the page and fill out the form again.";
+        setError(errorMsg);
         return false;
       }
 
@@ -241,14 +243,15 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
         } else {
           console.log("💥 API ERROR");
           const errorData = await response.json();
-          setError(errorData.error || "Failed to submit experience");
+          const errorMsg = errorData.error || "Failed to submit experience";
+          setError(errorMsg);
           return false;
         }
       } catch (err) {
         console.log("🚨 CATCH ERROR:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to submit experience",
-        );
+        const errorMsg =
+          err instanceof Error ? err.message : "Failed to submit experience";
+        setError(errorMsg);
         return false;
       }
     },

@@ -381,6 +381,51 @@ export default function UnifiedAdminDashboard() {
           </Card>
         </div>
 
+        {/* Quick Navigation Links */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <Link href="/admin/stories">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-blue-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <FileText className="h-5 w-5 text-blue-600" />
+                  Student Stories
+                </CardTitle>
+                <CardDescription>
+                  View and manage student experience stories
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+
+          <Link href="/admin/student-accommodations">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-green-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <MapPin className="h-5 w-5 text-green-600" />
+                  Student Accommodations
+                </CardTitle>
+                <CardDescription>
+                  Browse accommodation submissions and data
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+
+          <Link href="/admin/destinations">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-purple-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <TrendingUp className="h-5 w-5 text-purple-600" />
+                  Destinations
+                </CardTitle>
+                <CardDescription>
+                  Manage admin-created destination pages
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+        </div>
+
         {/* Filters */}
         <Card className="mb-6">
           <CardContent className="pt-6">

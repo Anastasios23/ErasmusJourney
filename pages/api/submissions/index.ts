@@ -29,7 +29,20 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const session = await getServerSession(req, res, authOptions);
+  // AUTHENTICATION DISABLED - Mock session for development
+  // Uncomment the next line to re-enable authentication
+  // const session = await getServerSession(req, res, authOptions);
+
+  // Mock session for development (no auth required)
+  const mockSession = {
+    user: {
+      email: "admin@example.com",
+      name: "Admin User",
+      role: "ADMIN",
+    },
+  };
+
+  const session = mockSession;
 
   if (!session?.user?.email) {
     return res.status(401).json({ error: "Unauthorized" });
@@ -62,13 +75,22 @@ async function handleGet(
 ) {
   const { status, type, limit = "50", offset = "0" } = req.query;
 
-  // Get user
+  // Get user - if not found in development mode, return empty list
   const user = await prisma.users.findUnique({
     where: { email: userEmail },
   });
 
   if (!user) {
-    return res.status(404).json({ error: "User not found" });
+    // In development mode, return empty submissions instead of error
+    return res.status(200).json({
+      submissions: [],
+      pagination: {
+        total: 0,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
+        hasMore: false,
+      },
+    });
   }
 
   // Build where clause
