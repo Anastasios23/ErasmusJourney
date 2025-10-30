@@ -196,6 +196,23 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
           : updateData.basicInfo || {};
 
       submissionData.basicInfo = basicInfo;
+
+      // Extract top-level fields for querying
+      if (basicInfo.semester) {
+        submissionData.semester = basicInfo.semester;
+      }
+      if (basicInfo.homeUniversityId) {
+        submissionData.homeUniversityId = basicInfo.homeUniversityId;
+      }
+      if (basicInfo.hostUniversityId) {
+        submissionData.hostUniversityId = basicInfo.hostUniversityId;
+      }
+      if (basicInfo.hostCity) {
+        submissionData.hostCity = basicInfo.hostCity;
+      }
+      if (basicInfo.hostCountry) {
+        submissionData.hostCountry = basicInfo.hostCountry;
+      }
     }
 
     const updatedExperience = await prisma.erasmus_experiences.update({
@@ -210,6 +227,28 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       lastSavedAt: new Date(),
       ...updateData,
     };
+
+    // Extract top-level fields from basicInfo if present
+    if (updateData.basicInfo) {
+      const basicInfo = updateData.basicInfo;
+
+      // Extract semester, homeUniversityId, hostUniversityId, hostCity, hostCountry to top level
+      if (basicInfo.semester) {
+        updateFields.semester = basicInfo.semester;
+      }
+      if (basicInfo.homeUniversityId) {
+        updateFields.homeUniversityId = basicInfo.homeUniversityId;
+      }
+      if (basicInfo.hostUniversityId) {
+        updateFields.hostUniversityId = basicInfo.hostUniversityId;
+      }
+      if (basicInfo.hostCity) {
+        updateFields.hostCity = basicInfo.hostCity;
+      }
+      if (basicInfo.hostCountry) {
+        updateFields.hostCountry = basicInfo.hostCountry;
+      }
+    }
 
     // Merge nested experience.helpForStudents correctly
     if ((updateData as any).experience?.helpForStudents) {

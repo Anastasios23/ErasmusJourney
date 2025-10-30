@@ -27,19 +27,43 @@ export default async function handler(
 
 async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { status = "COMPLETED" } = req.query;
+    const { status } = req.query;
 
-    // Fetch submitted experiences that are ready for admin review
-    const experiences = await prisma.erasmusExperience.findMany({
-      where: {
-        status: status as string,
-        isComplete: true,
-      },
+    // Build where clause
+    const where: any = {
+      isComplete: true,
+    };
+
+    // Filter by status if provided
+    if (status && typeof status === "string") {
+      where.status = status;
+    }
+
+    // Fetch experiences
+    const experiences = await prisma.erasmus_experiences.findMany({
+      where,
       include: {
         user: {
           select: {
             id: true,
+            name: true,
             email: true,
+          },
+        },
+        hostUniversity: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            country: true,
+          },
+        },
+        homeUniversity: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            country: true,
           },
         },
       },
@@ -48,74 +72,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    // Transform data for admin interface compatibility
-    const transformedExperiences = experiences.map((experience) => {
-      const basicInfo = experience.basicInfo as any;
-      const courses = experience.courses as any;
-      const accommodation = experience.accommodation as any;
-      const livingExpenses = experience.livingExpenses as any;
-
-      return {
-        id: experience.id,
-        userId: experience.userId,
-        type: "consolidated",
-        status: experience.status,
-        createdAt: experience.createdAt,
-        updatedAt: experience.updatedAt,
-        submittedAt: experience.submittedAt,
-        user: experience.user,
-        adminApproved: experience.adminApproved,
-        isPublic: experience.isPublic,
-        data: {
-          // Basic Information
-          firstName: basicInfo?.firstName,
-          lastName: basicInfo?.lastName,
-          email: basicInfo?.email,
-          university: basicInfo?.universityInCyprus,
-          hostUniversity: basicInfo?.hostUniversity,
-          hostCity: basicInfo?.hostCity,
-          hostCountry: basicInfo?.hostCountry,
-          hostDepartment: basicInfo?.hostDepartment,
-          levelOfStudy: basicInfo?.levelOfStudy,
-          exchangePeriod: basicInfo?.exchangePeriod,
-          exchangeStartDate: basicInfo?.exchangeStartDate,
-          exchangeEndDate: basicInfo?.exchangeEndDate,
-
-          // Course Information
-          courses: courses?.hostCourses || [],
-          equivalentCourses: courses?.equivalentCourses || [],
-
-          // Accommodation
-          accommodationAddress: accommodation?.accommodationAddress,
-          accommodationType: accommodation?.accommodationType,
-          monthlyRent: accommodation?.monthlyRent,
-          billsIncluded: accommodation?.billsIncluded,
-          accommodationRating: accommodation?.accommodationRating,
-          wouldRecommend: accommodation?.wouldRecommend,
-
-          // Living Expenses
-          expenses: livingExpenses?.expenses || {},
-
-          // Complete data objects for detailed view
-          basicInfoData: basicInfo,
-          coursesData: courses,
-          accommodationData: accommodation,
-          livingExpensesData: livingExpenses,
-
-          // Metadata
-          submissionMeta: {
-            completedSteps: JSON.parse(experience.completedSteps || "[]")
-              .length,
-            isComplete: experience.isComplete,
-            currentStep: experience.currentStep,
-            submittedAt: experience.submittedAt,
-            lastSavedAt: experience.lastSavedAt,
-          },
-        },
-      };
-    });
-
-    return res.json(transformedExperiences);
+    return res.json(experiences);
   } catch (error) {
     console.error("Error fetching erasmus experiences:", error);
     return res.status(500).json({ error: "Internal server error" });

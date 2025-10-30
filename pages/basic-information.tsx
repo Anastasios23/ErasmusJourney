@@ -59,6 +59,7 @@ import { Alert, AlertDescription } from "../src/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { StepIndicator } from "../src/components/StepIndicator";
 import { useFormProgress } from "../src/context/FormProgressContext";
+import { UniversitySearch } from "../src/components/UniversitySearch";
 
 export default function BasicInformation() {
   // 1. ALL HOOKS FIRST - NEVER CONDITIONAL
@@ -795,8 +796,8 @@ export default function BasicInformation() {
 
         {/* Exchange Information */}
         <FormSection
-          title="Exchange Information"
-          subtitle="Your preferred exchange details and destination"
+          title="Exchange Preferences"
+          subtitle="Your preferred exchange period and additional details"
         >
           <FormGrid columns={2}>
             <FormField

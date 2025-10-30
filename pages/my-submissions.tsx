@@ -67,6 +67,8 @@ interface Submission {
   isPublic: boolean;
   isFeatured: boolean;
   qualityScore: number | null;
+  revisionCount: number;
+  isComplete: boolean;
 }
 
 interface SubmissionStats {
@@ -103,52 +105,69 @@ export default function MySubmissions() {
     if (authStatus === "authenticated") {
       fetchSubmissions();
     }
-  }, [
-    authStatus,
-    statusFilter,
-    typeFilter,
-    searchQuery,
-    sortBy,
-    sortOrder,
-    page,
-  ]);
+  }, [authStatus]);
 
   const fetchSubmissions = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: "20",
-        sortBy,
-        order: sortOrder,
-        includeStats: page === 1 ? "true" : "false", // Only fetch stats on first page
-      });
-
-      if (statusFilter && statusFilter !== "ALL") {
-        params.append("status", statusFilter);
-      }
-      if (typeFilter && typeFilter !== "ALL") {
-        params.append("type", typeFilter);
-      }
-      if (searchQuery) {
-        params.append("search", searchQuery);
-      }
-
-      const response = await fetch(`/api/user/submissions?${params}`);
+      // Fetch from erasmus_experiences API
+      const response = await fetch(`/api/erasmus-experiences`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch submissions");
       }
 
       const data = await response.json();
-      setSubmissions(data.submissions);
-      setTotal(data.pagination.total);
-      setTotalPages(data.pagination.totalPages);
 
-      if (data.stats) {
-        setStats(data.stats);
+      // Transform to match the Submission interface
+      const transformedSubmissions = data.map((exp: any) => ({
+        id: exp.id,
+        submissionType: "FULL_EXPERIENCE",
+        status: exp.status || "DRAFT",
+        title:
+          exp.basicInfo?.firstName && exp.basicInfo?.lastName
+            ? `${exp.basicInfo.firstName} ${exp.basicInfo.lastName}'s Experience`
+            : null,
+        hostCity: exp.hostCity,
+        hostCountry: exp.hostCountry,
+        hostUniversity: exp.basicInfo?.hostUniversity,
+        semester: exp.semester,
+        academicYear: exp.semester?.split("-")[0],
+        reviewFeedback: exp.reviewFeedback,
+        reviewedBy: exp.reviewedBy
+          ? { id: exp.reviewedBy, name: "Admin" }
+          : null,
+        reviewedAt: exp.reviewedAt,
+        submittedAt: exp.submittedAt,
+        createdAt: exp.createdAt,
+        updatedAt: exp.updatedAt || exp.lastSavedAt,
+        isPublic: exp.status === "APPROVED",
+        isFeatured: false,
+        qualityScore: null,
+        revisionCount: exp.revisionCount || 0,
+        isComplete: exp.isComplete,
+      }));
+
+      setSubmissions(transformedSubmissions);
+      setTotal(transformedSubmissions.length);
+      setTotalPages(1); // Single page for now
+
+      // Calculate stats
+      if (transformedSubmissions.length > 0) {
+        const byStatus = transformedSubmissions.reduce((acc: any, sub: any) => {
+          acc[sub.status] = (acc[sub.status] || 0) + 1;
+          return acc;
+        }, {});
+
+        setStats({
+          total: transformedSubmissions.length,
+          byStatus,
+          byType: { FULL_EXPERIENCE: transformedSubmissions.length },
+          recentCount: transformedSubmissions.length,
+          avgResponseTime: null,
+        });
       }
     } catch (err) {
       console.error("Error fetching submissions:", err);
@@ -171,14 +190,24 @@ export default function MySubmissions() {
         className: "bg-gray-100 text-gray-700",
         icon: Edit,
       },
+      IN_PROGRESS: {
+        label: "In Progress",
+        className: "bg-blue-100 text-blue-700",
+        icon: Edit,
+      },
+      SUBMITTED: {
+        label: "Under Review",
+        className: "bg-yellow-100 text-yellow-700",
+        icon: Clock,
+      },
       PENDING: {
         label: "Under Review",
-        className: "bg-blue-100 text-blue-700",
+        className: "bg-yellow-100 text-yellow-700",
         icon: Clock,
       },
       REVISION_NEEDED: {
-        label: "Needs Revision",
-        className: "bg-yellow-100 text-yellow-700",
+        label: "Revision Needed",
+        className: "bg-orange-100 text-orange-700",
         icon: AlertCircle,
       },
       APPROVED: {
@@ -355,7 +384,8 @@ export default function MySubmissions() {
                       <div>
                         <p className="text-sm text-gray-600">Under Review</p>
                         <p className="text-2xl font-bold text-blue-600">
-                          {stats.byStatus.PENDING || 0}
+                          {(stats.byStatus.SUBMITTED || 0) +
+                            (stats.byStatus.PENDING || 0)}
                         </p>
                       </div>
                       <div className="p-3 bg-blue-100 rounded-full">
@@ -421,15 +451,13 @@ export default function MySubmissions() {
                     <SelectContent>
                       <SelectItem value="ALL">All Statuses</SelectItem>
                       <SelectItem value="DRAFT">Draft</SelectItem>
-                      <SelectItem value="PENDING">Under Review</SelectItem>
+                      <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
+                      <SelectItem value="SUBMITTED">Under Review</SelectItem>
                       <SelectItem value="REVISION_NEEDED">
-                        Needs Revision
+                        Revision Needed
                       </SelectItem>
                       <SelectItem value="APPROVED">Approved</SelectItem>
                       <SelectItem value="REJECTED">Rejected</SelectItem>
-                      <SelectItem value="ACTIVE">
-                        Active (Draft/Pending/Revision)
-                      </SelectItem>
                     </SelectContent>
                   </Select>
 
@@ -593,11 +621,40 @@ export default function MySubmissions() {
 
                               {/* Review Feedback */}
                               {submission.reviewFeedback && (
-                                <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                  <p className="text-sm text-yellow-800">
+                                <div
+                                  className={`mt-3 p-3 border rounded-lg ${
+                                    submission.status === "REVISION_NEEDED"
+                                      ? "bg-orange-50 border-orange-200"
+                                      : submission.status === "REJECTED"
+                                        ? "bg-red-50 border-red-200"
+                                        : "bg-yellow-50 border-yellow-200"
+                                  }`}
+                                >
+                                  <p
+                                    className={`text-sm ${
+                                      submission.status === "REVISION_NEEDED"
+                                        ? "text-orange-800"
+                                        : submission.status === "REJECTED"
+                                          ? "text-red-800"
+                                          : "text-yellow-800"
+                                    }`}
+                                  >
                                     <strong>Admin Feedback:</strong>{" "}
                                     {submission.reviewFeedback}
                                   </p>
+                                  {submission.status === "REVISION_NEEDED" && (
+                                    <div className="mt-2 text-xs text-orange-700">
+                                      💡 Click "Make Revisions" to edit your
+                                      submission and resubmit.
+                                      {submission.revisionCount >= 1 && (
+                                        <span className="block mt-1 font-semibold">
+                                          ⚠️ This is your final revision - next
+                                          submission will be approved or
+                                          rejected.
+                                        </span>
+                                      )}
+                                    </div>
+                                  )}
                                 </div>
                               )}
                             </div>
@@ -605,26 +662,33 @@ export default function MySubmissions() {
 
                           {/* Actions */}
                           <div className="flex items-center gap-2 ml-4">
-                            <Link
-                              href={`/api/user/submission-status?id=${submission.id}`}
-                            >
-                              <Button variant="outline" size="sm">
-                                <Eye className="h-4 w-4 mr-2" />
-                                View
-                              </Button>
-                            </Link>
-                            {submission.status === "DRAFT" && (
-                              <Link
-                                href={`/basic-information?id=${submission.id}`}
-                              >
+                            {(submission.status === "DRAFT" ||
+                              submission.status === "IN_PROGRESS" ||
+                              submission.status === "REVISION_NEEDED") && (
+                              <Link href="/basic-information">
                                 <Button
                                   size="sm"
                                   className="bg-blue-600 hover:bg-blue-700"
                                 >
                                   <Edit className="h-4 w-4 mr-2" />
-                                  Edit
+                                  {submission.status === "REVISION_NEEDED"
+                                    ? "Make Revisions"
+                                    : "Continue Editing"}
                                 </Button>
                               </Link>
+                            )}
+                            {submission.status === "APPROVED" && (
+                              <Link href={`/stories/${submission.id}`}>
+                                <Button variant="outline" size="sm">
+                                  <Eye className="h-4 w-4 mr-2" />
+                                  View Published
+                                </Button>
+                              </Link>
+                            )}
+                            {submission.revisionCount > 0 && (
+                              <Badge className="bg-orange-100 text-orange-700">
+                                Revision {submission.revisionCount}/1
+                              </Badge>
                             )}
                           </div>
                         </div>

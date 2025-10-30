@@ -382,7 +382,26 @@ export default function UnifiedAdminDashboard() {
         </div>
 
         {/* Quick Navigation Links */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <Link href="/admin/review-submissions">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-orange-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Clock className="h-5 w-5 text-orange-600" />
+                  Review Submissions
+                  {stats.pendingReview > 0 && (
+                    <Badge className="ml-auto bg-orange-600">
+                      {stats.pendingReview}
+                    </Badge>
+                  )}
+                </CardTitle>
+                <CardDescription>
+                  Review and approve pending student submissions
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+
           <Link href="/admin/stories">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-blue-500">
               <CardHeader>

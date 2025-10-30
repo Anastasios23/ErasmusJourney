@@ -186,26 +186,103 @@ model destinations {
 }
 
 model erasmus_experiences {
-  id             String    @id
-  userId         String    @unique
-  currentStep    Int       @default(1)
-  completedSteps String    @default("[]")
-  isComplete     Boolean   @default(false)
+  id             String  @id
+  userId         String  @unique
+  currentStep    Int     @default(1)
+  completedSteps String  @default("[]")
+  isComplete     Boolean @default(false)
+
+  // Core data (JSON for flexibility)
   basicInfo      Json?
   courses        Json?
   accommodation  Json?
   livingExpenses Json?
   experience     Json?
-  status         String    @default("DRAFT")
-  isPublic       Boolean   @default(false)
-  lastSavedAt    DateTime  @default(now())
-  submittedAt    DateTime?
-  publishedAt    DateTime?
+
+  // Submission workflow
+  status      String    @default("DRAFT") // DRAFT | SUBMITTED | APPROVED | REJECTED | REVISION_NEEDED
+  isPublic    Boolean   @default(false)
+  lastSavedAt DateTime  @default(now())
+  submittedAt DateTime?
+  publishedAt DateTime?
+
+  // NEW: Submission context
+  semester         String? // "2024-FALL" | "2024-SPRING" | "2024-SUMMER" | "2024-FULL"
+  hostCity         String?
+  hostCountry      String?
+  hostUniversityId String?
+  homeUniversityId String?
+
+  // NEW: Admin review
   adminNotes     String?
   adminApproved  Boolean   @default(false)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime
-  users          users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviewedAt     DateTime?
+  reviewedBy     String?
+  reviewFeedback String?
+  revisionCount  Int       @default(0)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  // Relations
+  users          users          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hostUniversity universities?  @relation("hostExperiences", fields: [hostUniversityId], references: [id])
+  homeUniversity universities?  @relation("homeExperiences", fields: [homeUniversityId], references: [id])
+  reviewActions  ReviewAction[]
+
+  @@unique([userId, semester])
+  @@index([status, hostCity, hostCountry])
+  @@index([semester])
+  @@index([hostUniversityId, homeUniversityId])
+}
+
+// NEW: Admin review audit log
+model ReviewAction {
+  id           String              @id @default(cuid())
+  experienceId String
+  experience   erasmus_experiences @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  adminId      String
+  admin        users               @relation("ReviewActions", fields: [adminId], references: [id])
+  action       String // "APPROVED" | "REJECTED" | "REVISION_REQUESTED"
+  feedback     String?
+  createdAt    DateTime            @default(now())
+
+  @@index([experienceId])
+  @@index([adminId])
+  @@map("review_actions")
+}
+
+// NEW: Pre-calculated city statistics
+model CityStatistics {
+  id       String @id @default(cuid())
+  city     String
+  country  String
+  semester String // "2024-FALL" or "ALL" for all-time
+
+  // Accommodation stats (EUR cents)
+  avgMonthlyRentCents Int?
+  medianRentCents     Int?
+  minRentCents        Int?
+  maxRentCents        Int?
+  rentSampleSize      Int  @default(0)
+
+  // Living expenses stats (EUR cents)
+  avgGroceriesCents     Int?
+  avgTransportCents     Int?
+  avgEatingOutCents     Int?
+  avgSocialLifeCents    Int?
+  avgTotalExpensesCents Int?
+  expenseSampleSize     Int  @default(0)
+
+  // Metadata
+  lastCalculated DateTime @default(now())
+  createdAt      DateTime @default(now())
+
+  @@unique([city, country, semester])
+  @@index([city, country])
+  @@index([semester])
+  @@map("city_statistics")
 }
 
 model faculties {
@@ -428,6 +505,10 @@ model universities {
   applications                                            applications[]
   faculties                                               faculties[]
   stories                                                 stories[]
+
+  // NEW: Erasmus experience relations
+  hostExperiences erasmus_experiences[] @relation("hostExperiences")
+  homeExperiences erasmus_experiences[] @relation("homeExperiences")
 }
 
 model university_exchanges {
@@ -450,191 +531,28 @@ model university_exchanges {
 }
 
 model users {
-  id                     String                 @id
-  firstName              String?
-  lastName               String?
-  email                  String                 @unique
-  emailVerified          DateTime?
-  image                  String?
-  password               String?
-  role                   String                 @default("USER")
-  createdAt              DateTime               @default(now())
-  updatedAt              DateTime
-  studentId              String?
-  nationality            String?
-  homeCity               String?
-  homeCountry            String?
-  Account                Account[]
-  Session                Session[]
-  applications           applications[]
-  erasmus_experiences    erasmus_experiences?
-  form_submissions       form_submissions[]
-  stories                stories[]
-  story_engagements      story_engagements[]
-  
-  // NEW: Unified submission system
-  submissions            student_submissions[]  @relation("SubmissionAuthor")
-  reviewedSubmissions    student_submissions[]  @relation("SubmissionReviewer")
-}
+  id                  String               @id
+  firstName           String?
+  lastName            String?
+  email               String               @unique
+  emailVerified       DateTime?
+  image               String?
+  password            String?
+  role                String               @default("USER")
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime
+  studentId           String?
+  nationality         String?
+  homeCity            String?
+  homeCountry         String?
+  Account             Account[]
+  Session             Session[]
+  applications        applications[]
+  erasmus_experiences erasmus_experiences?
+  form_submissions    form_submissions[]
+  stories             stories[]
+  story_engagements   story_engagements[]
 
-// ============================================
-// NEW: UNIFIED SUBMISSION MODEL
-// ============================================
-
-enum SubmissionStatus {
-  DRAFT
-  PENDING
-  APPROVED
-  REJECTED
-  REVISION_NEEDED
-  ARCHIVED
-}
-
-enum SubmissionType {
-  FULL_EXPERIENCE
-  ACCOMMODATION
-  COURSE_EXCHANGE
-  QUICK_TIP
-  DESTINATION_INFO
-}
-
-model student_submissions {
-  id                   String           @id @default(cuid())
-  userId               String
-  
-  // Submission Classification
-  submissionType       SubmissionType
-  formStep             String?
-  
-  // All form data stored as JSON (single source of truth)
-  data                 Json
-  
-  // Denormalized fields for easy querying
-  title                String?
-  hostCity             String?
-  hostCountry          String?
-  hostUniversity       String?
-  semester             String?
-  academicYear         String?
-  
-  // Status Pipeline
-  status               SubmissionStatus @default(DRAFT)
-  
-  // Admin Review Tracking
-  reviewedBy           String?
-  reviewedAt           DateTime?
-  adminNotes           String?
-  rejectionReason      String?
-  revisionNotes        String?
-  
-  // Quality & Processing
-  qualityScore         Float?
-  processed            Boolean          @default(false)
-  publishedAt          DateTime?
-  
-  // Version Control
-  version              Int              @default(1)
-  previousVersionId    String?
-  
-  // Metadata
-  tags                 String[]
-  isPublic             Boolean          @default(false)
-  isFeatured           Boolean          @default(false)
-  viewCount            Int              @default(0)
-  
-  // Timestamps
-  createdAt            DateTime         @default(now())
-  updatedAt            DateTime         @updatedAt
-  submittedAt          DateTime?
-  
-  // Relations
-  author               users            @relation("SubmissionAuthor", fields: [userId], references: [id], onDelete: Cascade)
-  reviewer             users?           @relation("SubmissionReviewer", fields: [reviewedBy], references: [id])
-  previousVersion      student_submissions? @relation("SubmissionVersions", fields: [previousVersionId], references: [id])
-  versions             student_submissions[] @relation("SubmissionVersions")
-  
-  // Denormalized views
-  accommodationViews   accommodation_views[]
-  courseViews          course_exchange_views[]
-  
-  @@index([userId, status])
-  @@index([status, submittedAt])
-  @@index([hostCity, hostCountry, status])
-  @@index([submissionType, status])
-  @@index([reviewedBy, status])
-  @@index([createdAt])
-  @@index([qualityScore, status])
-  @@index([isFeatured, status, isPublic])
-}
-
-// ============================================
-// DENORMALIZED VIEWS (Generated from student_submissions)
-// ============================================
-
-model accommodation_views {
-  id                   String              @id @default(cuid())
-  sourceSubmissionId   String
-  
-  // Extracted data
-  type                 String
-  name                 String
-  city                 String
-  country              String
-  pricePerMonth        Int?
-  currency             String              @default("EUR")
-  neighborhood         String?
-  description          String?
-  pros                 String[]
-  cons                 String[]
-  
-  // Mirrors source submission status
-  status               SubmissionStatus
-  isPublic             Boolean             @default(false)
-  isFeatured           Boolean             @default(false)
-  
-  // Student info
-  studentName          String?
-  submittedAt          DateTime?
-  
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
-  
-  sourceSubmission     student_submissions @relation(fields: [sourceSubmissionId], references: [id], onDelete: Cascade)
-  
-  @@index([city, country, status])
-  @@index([status, isFeatured])
-}
-
-model course_exchange_views {
-  id                   String              @id @default(cuid())
-  sourceSubmissionId   String
-  
-  // Extracted data
-  homeCourse           String
-  hostCourse           String
-  hostUniversity       String
-  city                 String
-  country              String
-  ects                 Int?
-  semester             String?
-  studyLevel           String?
-  fieldOfStudy         String?
-  courseQuality        Int?
-  description          String?
-  
-  // Mirrors source submission status
-  status               SubmissionStatus
-  isPublic             Boolean             @default(false)
-  
-  // Student info
-  studentName          String?
-  submittedAt          DateTime?
-  
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
-  
-  sourceSubmission     student_submissions @relation(fields: [sourceSubmissionId], references: [id], onDelete: Cascade)
-  
-  @@index([hostUniversity, status])
-  @@index([city, country, status])
+  // NEW: Admin review actions
+  reviewActions ReviewAction[] @relation("ReviewActions")
 }

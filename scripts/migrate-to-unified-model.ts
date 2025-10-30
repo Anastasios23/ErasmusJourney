@@ -1,32 +1,52 @@
 /**
  * Migration Script: Legacy Data → Unified StudentSubmission Model
  *
+ * NOTE: This script is DEPRECATED and does not match the current schema.
+ * The current system uses erasmus_experiences table, not student_submissions.
+ *
  * This script migrates data from:
- * - ErasmusExperience
+ * - ErasmusExperience (DEPRECATED - doesn't match current schema)
  * - FormSubmission
  *
- * To the new unified StudentSubmission model
+ * To the new unified StudentSubmission model (DOES NOT EXIST)
  *
  * Run: npx tsx scripts/migrate-to-unified-model.ts
+ *
+ * ⚠️ WARNING: This script will not work with the current database schema.
+ * It was designed for a different data model that is not currently implemented.
  */
 
-import { PrismaClient, SubmissionStatus, SubmissionType } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
+
+// NOTE: These types don't exist in the current schema
+type SubmissionStatus =
+  | "DRAFT"
+  | "PENDING"
+  | "APPROVED"
+  | "REJECTED"
+  | "ARCHIVED";
+type SubmissionType =
+  | "FULL_EXPERIENCE"
+  | "ACCOMMODATION"
+  | "COURSE_EXCHANGE"
+  | "DESTINATION_INFO"
+  | "QUICK_TIP";
 
 // Status mapping from old to new
 function mapStatus(oldStatus: string): SubmissionStatus {
   const mapping: Record<string, SubmissionStatus> = {
-    DRAFT: SubmissionStatus.DRAFT,
-    IN_PROGRESS: SubmissionStatus.DRAFT,
-    SUBMITTED: SubmissionStatus.PENDING,
-    PUBLISHED: SubmissionStatus.APPROVED,
-    APPROVED: SubmissionStatus.APPROVED,
-    REJECTED: SubmissionStatus.REJECTED,
-    ARCHIVED: SubmissionStatus.ARCHIVED,
+    DRAFT: "DRAFT",
+    IN_PROGRESS: "DRAFT",
+    SUBMITTED: "PENDING",
+    PUBLISHED: "APPROVED",
+    APPROVED: "APPROVED",
+    REJECTED: "REJECTED",
+    ARCHIVED: "ARCHIVED",
   };
 
-  return mapping[oldStatus] || SubmissionStatus.PENDING;
+  return (mapping[oldStatus] as SubmissionStatus) || "PENDING";
 }
 
 // Generate a title from submission data
@@ -53,8 +73,31 @@ function generateTitle(data: any, type: SubmissionType): string {
   return "Student Submission";
 }
 
+// ⚠️ WARNING: The functions below reference tables that don't exist in the current schema:
+// - student_submissions (doesn't exist - current system uses erasmus_experiences)
+// - accommodation_views (doesn't exist)
+// - course_exchange_views (doesn't exist)
+
 // Migrate ErasmusExperience records
 async function migrateErasmusExperiences() {
+  console.log(
+    "\n❌ ERROR: This migration is incompatible with the current schema.",
+  );
+  console.log("The student_submissions table does not exist.");
+  console.log("The current system uses erasmus_experiences table.");
+  return;
+
+  /* DISABLED - Table doesn't exist
+  console.log("\n📦 Migrating ErasmusExperience records...");
+
+  const experiences = await prisma.erasmus_experiences.findMany({
+    include: {
+      users: true,
+    },
+  });
+  */
+
+  /* DISABLED - Table doesn't exist
   console.log("\n📦 Migrating ErasmusExperience records...");
 
   const experiences = await prisma.erasmus_experiences.findMany({
@@ -135,10 +178,18 @@ async function migrateErasmusExperiences() {
   console.log(`   Migrated: ${migrated}`);
   console.log(`   Skipped: ${skipped}`);
   console.log(`   Errors: ${errors}`);
+  */
 }
 
 // Migrate FormSubmission records
 async function migrateFormSubmissions() {
+  console.log(
+    "\n❌ ERROR: This migration is incompatible with the current schema.",
+  );
+  console.log("The student_submissions table does not exist.");
+  return;
+
+  /* DISABLED - Table doesn't exist
   console.log("\n📦 Migrating FormSubmission records...");
 
   const submissions = await prisma.form_submissions.findMany({
@@ -216,10 +267,20 @@ async function migrateFormSubmissions() {
   console.log(`   Migrated: ${migrated}`);
   console.log(`   Skipped: ${skipped}`);
   console.log(`   Errors: ${errors}`);
+  */
 }
 
 // Generate denormalized views for approved submissions
 async function generateDenormalizedViews() {
+  console.log(
+    "\n❌ ERROR: This migration is incompatible with the current schema.",
+  );
+  console.log(
+    "The accommodation_views and course_exchange_views tables do not exist.",
+  );
+  return;
+
+  /* DISABLED - Tables don't exist
   console.log("\n🔄 Generating denormalized views for approved submissions...");
 
   const approved = await prisma.student_submissions.findMany({
@@ -320,10 +381,25 @@ async function generateDenormalizedViews() {
   console.log(`\n✨ Denormalized Views Created:`);
   console.log(`   Accommodation Views: ${accommodationCount}`);
   console.log(`   Course Exchange Views: ${courseCount}`);
+  */
 }
 
 // Main migration function
 async function main() {
+  console.log("❌ MIGRATION SCRIPT DISABLED\n");
+  console.log("This script is incompatible with the current database schema.");
+  console.log("The current system uses:");
+  console.log("  - erasmus_experiences (not student_submissions)");
+  console.log("  - String status fields (not enums)");
+  console.log("  - Direct review workflow (not denormalized views)\n");
+  console.log(
+    "This script was designed for a different data model that is not implemented.\n",
+  );
+
+  await prisma.$disconnect();
+  process.exit(0);
+
+  /* DISABLED - Entire migration incompatible with current schema
   console.log("🚀 Starting Unified Data Model Migration...\n");
   console.log("This will migrate data from legacy tables to StudentSubmission");
   console.log(
@@ -347,6 +423,7 @@ async function main() {
   } finally {
     await prisma.$disconnect();
   }
+  */
 }
 
 // Run migration
