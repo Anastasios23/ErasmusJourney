@@ -3,6 +3,34 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+// Retry helper for database operations
+async function retryDatabaseOperation<T>(
+  operation: () => Promise<T>,
+  maxRetries = 3,
+  delayMs = 1000,
+): Promise<T> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error: any) {
+      const isConnectionError =
+        error?.code === "P1001" ||
+        error?.message?.includes("Can't reach database") ||
+        error?.name === "PrismaClientInitializationError";
+
+      if (isConnectionError && attempt < maxRetries) {
+        console.log(
+          `Database connection failed, retrying (${attempt}/${maxRetries})...`,
+        );
+        await new Promise((resolve) => setTimeout(resolve, delayMs * attempt));
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw new Error("Max retries exceeded");
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -34,10 +62,12 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
 
   if (id) {
-    // Get specific experience
-    const experience = await prisma.erasmus_experiences.findUnique({
-      where: { id: id as string },
-    });
+    // Get specific experience with retry logic
+    const experience = await retryDatabaseOperation(() =>
+      prisma.erasmus_experiences.findUnique({
+        where: { id: id as string },
+      }),
+    );
 
     if (!experience) {
       return res.status(404).json({ error: "Experience not found" });
@@ -45,10 +75,12 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
 
     return res.status(200).json(experience);
   } else {
-    // Get all experiences (for admin or debugging)
-    const experiences = await prisma.erasmus_experiences.findMany({
-      orderBy: { updatedAt: "desc" },
-    });
+    // Get all experiences (for admin or debugging) with retry logic
+    const experiences = await retryDatabaseOperation(() =>
+      prisma.erasmus_experiences.findMany({
+        orderBy: { updatedAt: "desc" },
+      }),
+    );
 
     return res.status(200).json(experiences);
   }
@@ -125,10 +157,12 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     return res.status(400).json({ error: "Experience ID is required" });
   }
 
-  // Find the existing experience
-  const existingExperience = await prisma.erasmus_experiences.findUnique({
-    where: { id },
-  });
+  // Find the existing experience with retry logic
+  const existingExperience: any = await retryDatabaseOperation(() =>
+    prisma.erasmus_experiences.findUnique({
+      where: { id },
+    }),
+  );
 
   if (!existingExperience) {
     return res.status(404).json({ error: "Experience not found" });
@@ -197,16 +231,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
       submissionData.basicInfo = basicInfo;
 
-      // Extract top-level fields for querying
-      if (basicInfo.semester) {
-        submissionData.semester = basicInfo.semester;
-      }
-      if (basicInfo.homeUniversityId) {
-        submissionData.homeUniversityId = basicInfo.homeUniversityId;
-      }
-      if (basicInfo.hostUniversityId) {
-        submissionData.hostUniversityId = basicInfo.hostUniversityId;
-      }
+      // Extract top-level fields for querying (only fields that exist in form)
       if (basicInfo.hostCity) {
         submissionData.hostCity = basicInfo.hostCity;
       }
@@ -215,10 +240,12 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       }
     }
 
-    const updatedExperience = await prisma.erasmus_experiences.update({
-      where: { id },
-      data: submissionData,
-    });
+    const updatedExperience = await retryDatabaseOperation(() =>
+      prisma.erasmus_experiences.update({
+        where: { id },
+        data: submissionData,
+      }),
+    );
 
     return res.status(200).json(updatedExperience);
   } else {
@@ -232,16 +259,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     if (updateData.basicInfo) {
       const basicInfo = updateData.basicInfo;
 
-      // Extract semester, homeUniversityId, hostUniversityId, hostCity, hostCountry to top level
-      if (basicInfo.semester) {
-        updateFields.semester = basicInfo.semester;
-      }
-      if (basicInfo.homeUniversityId) {
-        updateFields.homeUniversityId = basicInfo.homeUniversityId;
-      }
-      if (basicInfo.hostUniversityId) {
-        updateFields.hostUniversityId = basicInfo.hostUniversityId;
-      }
+      // Extract hostCity and hostCountry to top level for querying
       if (basicInfo.hostCity) {
         updateFields.hostCity = basicInfo.hostCity;
       }
@@ -267,10 +285,12 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       };
     }
 
-    const updatedExperience = await prisma.erasmus_experiences.update({
-      where: { id },
-      data: updateFields,
-    });
+    const updatedExperience = await retryDatabaseOperation(() =>
+      prisma.erasmus_experiences.update({
+        where: { id },
+        data: updateFields,
+      }),
+    );
 
     return res.status(200).json(updatedExperience);
   }

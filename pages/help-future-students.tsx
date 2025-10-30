@@ -25,6 +25,7 @@ import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
 import { Checkbox } from "../src/components/ui/checkbox";
 import { Avatar, AvatarFallback } from "../src/components/ui/avatar";
 import Header from "../components/Header";
+import { SubmissionGuard } from "../components/SubmissionGuard";
 import {
   ArrowLeft,
   Heart,
@@ -385,7 +386,7 @@ export default function HelpFutureStudents() {
   ];
 
   return (
-    <>
+    <SubmissionGuard>
       <Head>
         <title>Help Future Students - Erasmus Journey Platform</title>
         <meta
@@ -1050,6 +1051,6 @@ export default function HelpFutureStudents() {
           </div>
         </section>
       </div>
-    </>
+    </SubmissionGuard>
   );
 }

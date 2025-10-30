@@ -478,6 +478,17 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
   context,
 ) => {
   try {
+    // Check if prisma is available
+    if (!prisma) {
+      console.error("Prisma client is not initialized");
+      return {
+        props: {
+          totalUniversities: 0,
+          latestStories: [],
+        },
+      };
+    }
+
     const totalUniversities = await prisma.university.count();
 
     // Use direct database query instead of HTTP fetch to avoid SSL issues

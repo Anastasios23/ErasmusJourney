@@ -34,6 +34,7 @@ import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
 import { Separator } from "../src/components/ui/separator";
 import Header from "../components/Header";
+import { SubmissionGuard } from "../components/SubmissionGuard";
 import {
   ArrowRight,
   ArrowLeft,
@@ -304,7 +305,7 @@ export default function LivingExpenses() {
   ];
 
   return (
-    <>
+    <SubmissionGuard>
       <Head>
         <title>Living Expenses - Erasmus Journey Platform</title>
         <meta
@@ -679,6 +680,6 @@ export default function LivingExpenses() {
           </form>
         </div>
       </div>
-    </>
+    </SubmissionGuard>
   );
 }

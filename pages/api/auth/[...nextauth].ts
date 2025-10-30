@@ -174,7 +174,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   // Add configuration to handle edge cases
-  trustHost: true,
+  useSecureCookies: process.env.NODE_ENV === "production",
 };
 
 export default NextAuth(authOptions);

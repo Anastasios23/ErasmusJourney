@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { useSession, signOut, getCsrfToken } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
@@ -95,7 +95,6 @@ export default function Header() {
   const userNavigation = session
     ? [
         { name: "Dashboard", href: "/dashboard", icon: User },
-        { name: "My Submissions", href: "/my-submissions", icon: FileText },
         { name: "Profile", href: "/profile", icon: User },
         // Admin links (only for ADMIN role)
         ...((session.user as any)?.role === "ADMIN"
@@ -138,10 +137,35 @@ export default function Header() {
       icon: Euro,
       description: "Budget and cost planning",
     },
+    {
+      name: "Your Experience",
+      href: "/help-future-students",
+      icon: FileText,
+      description: "Share tips for future students",
+    },
   ];
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/" });
+    try {
+      // Sign out and wait for it to complete
+      await signOut({
+        callbackUrl: "/",
+        redirect: false,
+      });
+
+      // Clear any local storage
+      if (typeof window !== "undefined") {
+        localStorage.clear();
+        sessionStorage.clear();
+      }
+
+      // Force a hard reload to clear all state
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Error signing out:", error);
+      // Even if there's an error, try to reload
+      window.location.href = "/";
+    }
   };
 
   const isCurrentPath = (path: string) => {

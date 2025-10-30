@@ -42,6 +42,7 @@ import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
 import { Badge } from "../src/components/ui/badge";
 import { Textarea } from "../src/components/ui/textarea";
 import { ArrowRight, ArrowLeft } from "lucide-react";
+import { SubmissionGuard } from "../components/SubmissionGuard";
 import {
   CYPRUS_UNIVERSITIES,
   ALL_UNIVERSITY_AGREEMENTS,
@@ -1025,7 +1026,7 @@ export default function BasicInformation() {
   }
 
   return (
-    <>
+    <SubmissionGuard>
       <Head>
         <title>Basic Information - Erasmus Journey Platform</title>
         <meta
@@ -1107,6 +1108,6 @@ export default function BasicInformation() {
           </div>
         </div>
       </div>
-    </>
+    </SubmissionGuard>
   );
 }

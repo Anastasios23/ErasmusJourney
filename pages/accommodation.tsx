@@ -43,6 +43,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
 import { Checkbox } from "../src/components/ui/checkbox";
 import Header from "../components/Header";
+import { SubmissionGuard } from "../components/SubmissionGuard";
 import {
   ArrowRight,
   ArrowLeft,
@@ -266,7 +267,7 @@ export default function Accommodation() {
   };
 
   return (
-    <>
+    <SubmissionGuard>
       <Head>
         <title>Accommodation Details - Erasmus Journey Platform</title>
         <meta
@@ -847,6 +848,6 @@ export default function Accommodation() {
           </form>
         </div>
       </div>
-    </>
+    </SubmissionGuard>
   );
 }

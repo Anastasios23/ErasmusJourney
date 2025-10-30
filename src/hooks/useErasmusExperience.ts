@@ -46,7 +46,7 @@ interface UseErasmusExperienceReturn {
   loading: boolean;
   error: string | null;
   saveProgress: (stepData: Partial<ErasmusExperienceData>) => Promise<boolean>;
-  submitExperience: (finalReflection?: any) => Promise<boolean>;
+  submitExperience: (submissionData?: any) => Promise<boolean>;
   deleteExperience: () => Promise<boolean>;
   refreshData: () => Promise<void>;
 }
@@ -162,8 +162,20 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
         });
 
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to save progress");
+          const errorData = await response
+            .json()
+            .catch(() => ({ error: "Network error" }));
+          const errorMessage =
+            errorData.error || errorData.details || "Failed to save progress";
+
+          // More user-friendly error messages
+          if (response.status === 500 && errorMessage.includes("database")) {
+            throw new Error(
+              "Unable to connect to database. Your changes will be saved when connection is restored.",
+            );
+          }
+
+          throw new Error(errorMessage);
         }
 
         const updatedExperience = await response.json();
@@ -192,8 +204,8 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
   );
 
   const submitExperience = useCallback(
-    async (finalReflection?: any): Promise<boolean> => {
-      console.log("🔥 SUBMIT FUNCTION CALLED");
+    async (submissionData?: any): Promise<boolean> => {
+      console.log("🔥 SUBMIT FUNCTION CALLED", { submissionData });
 
       if (!data?.id) {
         console.log("❌ No data.id", { data });
@@ -206,14 +218,37 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
       console.log("✅ Data exists, making API call");
 
       try {
+        // Prepare the submission payload
+        const payload: any = {
+          id: data.id,
+          action: "submit",
+        };
+
+        // If submissionData is provided, include all the form data
+        if (submissionData) {
+          // Include all step data
+          if (submissionData.basicInfo)
+            payload.basicInfo = submissionData.basicInfo;
+          if (submissionData.courses) payload.courses = submissionData.courses;
+          if (submissionData.accommodation)
+            payload.accommodation = submissionData.accommodation;
+          if (submissionData.livingExpenses)
+            payload.livingExpenses = submissionData.livingExpenses;
+          if (submissionData.experience)
+            payload.experience = submissionData.experience;
+
+          // Handle overallReflection for backward compatibility
+          if (submissionData.overallReflection) {
+            payload.overallReflection = submissionData.overallReflection;
+          }
+        }
+
+        console.log("📤 Sending submission payload:", payload);
+
         const response = await fetch("/api/erasmus-experiences", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id: data.id,
-            action: "submit",
-            overallReflection: finalReflection || {},
-          }),
+          body: JSON.stringify(payload),
         });
 
         console.log("📡 API response:", response.status, response.ok);

@@ -47,6 +47,7 @@ import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
 import { Checkbox } from "../src/components/ui/checkbox";
 import Header from "../components/Header";
 import { ArrowRight, ArrowLeft, Upload, BookOpen, X } from "lucide-react";
+import { SubmissionGuard } from "../components/SubmissionGuard";
 import {
   CYPRUS_UNIVERSITIES,
   ALL_UNIVERSITY_AGREEMENTS,
@@ -475,7 +476,7 @@ export default function CourseMatching() {
   };
 
   return (
-    <>
+    <SubmissionGuard>
       <Head>
         <title>Course Matching - Erasmus Journey Platform</title>
         <meta
@@ -1190,6 +1191,6 @@ export default function CourseMatching() {
           </form>
         </div>
       </div>
-    </>
+    </SubmissionGuard>
   );
 }

@@ -6,6 +6,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Header from "../components/Header";
+import { formatDisplayDate } from "../lib/dateUtils";
 import { Button } from "../src/components/ui/button";
 import { Progress } from "../src/components/ui/progress";
 import {
@@ -33,7 +34,7 @@ import {
 import ActivityTimeline from "../src/components/ActivityTimeline";
 import DashboardWidgets from "../src/components/DashboardWidgets";
 import WelcomeTour from "../src/components/WelcomeTour";
-import { useFormSubmissions } from "../src/hooks/useFormSubmissions";
+import { useErasmusProgress } from "../src/hooks/useErasmusProgress";
 interface ApplicationStep {
   id: string;
   name: string;
@@ -73,100 +74,64 @@ export default function Dashboard() {
   };
   const status = "authenticated";
   const router = useRouter();
-  const { getFormData, loading: formsLoading } = useFormSubmissions();
-  const [completionStatus, setCompletionStatus] = useState<
-    Record<string, boolean>
-  >({});
 
-  // Check completion status for all forms
-  useEffect(() => {
-    const checkFormCompletions = async () => {
-      if (!session?.user?.id) return;
+  // Use new Erasmus progress hook
+  const {
+    completedSteps,
+    completedCount,
+    progressPercentage,
+    currentStep,
+    loading: progressLoading,
+    error: progressError,
+  } = useErasmusProgress();
 
-      try {
-        const formTypes = [
-          "basic-info",
-          "course-matching",
-          "accommodation",
-          "living-expenses",
-        ];
-        const statusChecks = await Promise.allSettled(
-          formTypes.map(async (type) => {
-            const data = await getFormData(type as any);
-            return { type, completed: data && Object.keys(data).length > 0 };
-          }),
-        );
-
-        const newStatus: Record<string, boolean> = {};
-        statusChecks.forEach((result, index) => {
-          if (result.status === "fulfilled") {
-            newStatus[formTypes[index]] = result.value.completed;
-          }
-        });
-
-        setCompletionStatus(newStatus);
-      } catch (error) {
-        console.error("Error checking form completions:", error);
-      }
-    };
-
-    if (session && !formsLoading) {
-      checkFormCompletions();
-    }
-  }, [session, getFormData, formsLoading]);
-
-  // AUTHENTICATION DISABLED - Comment out to re-enable
-  // Redirect to login if not authenticated
-  // useEffect(() => {
-  //   if (status === "unauthenticated") {
-  //     router.push("/login?callbackUrl=/dashboard");
-  //   }
-  // }, [status, router]);
-
-  // Application steps with dynamic completion status
+  // Application steps with dynamic completion status from erasmus_experiences
   const applicationSteps: ApplicationStep[] = [
     {
       id: "basic-info",
-      name: "Personal Information",
+      name: "Basic Information",
       href: "/basic-information",
       icon: User,
-      completed: completionStatus["basic-info"] || false,
-      description: "Complete your personal and academic information",
+      completed: completedSteps.basicInfo,
+      description: "Personal & academic details",
     },
     {
       id: "course-matching",
       name: "Course Matching",
       href: "/course-matching",
       icon: BookOpen,
-      completed: completionStatus["course-matching"] || false,
-      description: "Select and match courses with your home university",
+      completed: completedSteps.courses,
+      description: "Select courses and universities",
     },
     {
       id: "accommodation",
-      name: "Accommodation Details",
+      name: "Accommodation",
       href: "/accommodation",
       icon: Home,
-      completed: completionStatus["accommodation"] || false,
-      description: "Provide information about your accommodation preferences",
+      completed: completedSteps.accommodation,
+      description: "Housing preferences",
     },
     {
       id: "living-expenses",
       name: "Living Expenses",
       href: "/living-expenses",
       icon: Euro,
-      completed: completionStatus["living-expenses"] || false,
-      description: "Estimate and plan your living expenses abroad",
+      completed: completedSteps.livingExpenses,
+      description: "Budget and cost planning",
+    },
+    {
+      id: "experience",
+      name: "Your Experience",
+      href: "/help-future-students",
+      icon: FileText,
+      completed: completedSteps.experience,
+      description: "Share tips for future students",
     },
   ];
 
-  const completedSteps = applicationSteps.filter(
-    (step) => step.completed,
-  ).length;
-  const progressPercentage = (completedSteps / applicationSteps.length) * 100;
-
   // Find next incomplete step
   const nextStep = applicationSteps.find((step) => !step.completed);
-  const allStepsCompleted = completedSteps === applicationSteps.length;
+  const allStepsCompleted = completedCount === applicationSteps.length;
 
   // Show loading state while checking authentication
   if (status === "loading") {
@@ -367,7 +332,7 @@ export default function Dashboard() {
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium">
-                          {completedSteps} of {applicationSteps.length} steps
+                          {completedCount} of {applicationSteps.length} steps
                           completed
                         </span>
                         <span className="text-sm text-gray-600">
@@ -606,7 +571,7 @@ export default function Dashboard() {
                           Last Updated:
                         </span>
                         <span className="text-sm">
-                          {new Date().toLocaleDateString()}
+                          {formatDisplayDate(new Date())}
                         </span>
                       </div>
                     </div>
