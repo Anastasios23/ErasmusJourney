@@ -13,7 +13,7 @@ export default async function handler(
     console.log("🔍 Testing database access...");
 
     // Get basic info submissions
-    const basicInfoSubmissions = await prisma.formSubmission.findMany({
+    const basicInfoSubmissions = await prisma.form_submissions.findMany({
       where: {
         type: "BASIC_INFO",
       },

@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/prisma";
+import { getEnhancedCityData } from "../../../src/services/cityAggregationService";
 
-// Interface for destination with aggregated data
+// Interface for destination with aggregated data (matching frontend expectations)
 interface DestinationWithDetails {
   id: string;
   name: string;
@@ -58,229 +59,123 @@ export default async function handler(
   }
 
   try {
-    // First, try to find the destination by slug in the database
-    let destination = await prisma.destination.findUnique({
+    // 1. Resolve City and Country from Slug
+    let city = "";
+    let country = "";
+    let destination = await prisma.destinations.findUnique({
       where: { slug },
-      include: {
-        accommodations: true,
-        courseExchanges: true,
-      },
     });
 
-    // If not found in database, try to match against our default destinations
-    if (!destination) {
-      const defaultDestinations = [
-        {
-          id: "berlin-germany",
-          name: "Berlin",
-          city: "Berlin",
-          country: "Germany",
-          description:
-            "Vibrant capital with rich history, excellent universities, and affordable living costs.",
-          slug: "berlin-germany",
-        },
-        {
-          id: "barcelona-spain",
-          name: "Barcelona",
-          city: "Barcelona",
-          country: "Spain",
-          description:
-            "Mediterranean coastal city known for architecture, culture, and excellent student life.",
-          slug: "barcelona-spain",
-        },
-      ];
-
-      const defaultDest = defaultDestinations.find((d) => d.slug === slug);
-      if (!defaultDest) {
-        return res.status(404).json({ error: "Destination not found" });
+    if (destination) {
+      city = destination.city;
+      country = destination.country;
+    } else {
+      // Try to parse slug "city-country"
+      const parts = slug.split("-");
+      if (parts.length >= 2) {
+        country = parts.pop()!; // Last part is country
+        city = parts.join(" "); // Rest is city
+        // Capitalize for display
+        city = city.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+        country = country.charAt(0).toUpperCase() + country.slice(1);
+      } else {
+        // Fallback for hardcoded demos if not in DB
+        if (slug === "berlin-germany") { city = "Berlin"; country = "Germany"; }
+        else if (slug === "barcelona-spain") { city = "Barcelona"; country = "Spain"; }
+        else {
+           return res.status(404).json({ error: "Destination not found" });
+        }
       }
-
-      // Return default destination with empty related data
-      const result: DestinationWithDetails = {
-        ...defaultDest,
-        imageUrl: `/images/destinations/${defaultDest.city.toLowerCase()}.svg`,
-        climate:
-          defaultDest.city === "Berlin" ? "Continental" : "Mediterranean",
-        highlights:
-          defaultDest.city === "Berlin"
-            ? ["Rich History", "Vibrant Culture", "Affordable Living"]
-            : ["Beautiful Architecture", "Beach City", "Great Food"],
-        featured: true,
-        totalSubmissions: 0,
-        accommodations: [],
-        courseExchanges: [],
-        universities: [],
-        adminTitle: defaultDest.name,
-        adminDescription: defaultDest.description,
-        adminImageUrl: `/images/destinations/${defaultDest.city.toLowerCase()}.svg`,
-      };
-
-      return res.status(200).json(result);
     }
 
-    // Get related form submissions for this destination
-    const formSubmissions = await prisma.formSubmission.findMany({
-      where: {
-        status: "SUBMITTED",
-        OR: [
-          {
-            data: {
-              path: ["hostCity"],
-              string_contains: destination.city,
-            },
-          },
-          {
-            data: {
-              path: ["city"],
-              string_contains: destination.city,
-            },
-          },
-        ],
-      },
-      include: {
-        user: {
-          select: {
-            firstName: true,
-            lastName: true,
-          },
-        },
-      },
-    });
+    // 2. Get Aggregated Data
+    const cityData = await getEnhancedCityData(city, country);
 
-    // Calculate living expenses from submissions
-    const livingExpensesData = formSubmissions
-      .filter((sub) => sub.type === "LIVING_EXPENSES")
-      .map((sub) => sub.data as any);
-
-    let avgLivingExpenses: any = {};
-    if (livingExpensesData.length > 0) {
-      const expenses = [
-        "rent",
-        "groceries",
-        "transportation",
-        "eatingOut",
-        "bills",
-        "entertainment",
-        "other",
-      ];
-      expenses.forEach((expense) => {
-        const values = livingExpensesData
-          .map((data) => parseFloat(data[expense] || "0"))
-          .filter((val) => !isNaN(val) && val > 0);
-
-        avgLivingExpenses[expense] =
-          values.length > 0
-            ? Math.round(
-                values.reduce((sum, val) => sum + val, 0) / values.length,
-              )
-            : 0;
-      });
-
-      avgLivingExpenses.total = Object.values(avgLivingExpenses).reduce(
-        (sum: number, val: any) => sum + (val || 0),
-        0,
-      );
-    }
-
-    // Extract universities from submissions
-    const universities = new Set<string>();
-    formSubmissions.forEach((sub) => {
-      const data = sub.data as any;
-      if (data.hostUniversity) universities.add(data.hostUniversity);
-      if (data.university) universities.add(data.university);
-    });
-
-    // Generate mock accommodations and course exchanges from submissions
-    const accommodations = formSubmissions
-      .filter((sub) => sub.type === "ACCOMMODATION")
-      .slice(0, 5) // Limit to 5 for now
-      .map((sub, index) => ({
-        id: `acc-${sub.id}`,
-        studentName: sub.user?.firstName || "Anonymous",
-        accommodationType:
-          (sub.data as any).accommodationType || "Student Dorm",
-        neighborhood:
-          (sub.data as any).neighborhood || `${destination.city} Center`,
-        monthlyRent: (sub.data as any).monthlyRent || 400 + index * 50,
+    // 3. Map to Response Structure
+    const accommodations = cityData.studentProfiles
+      .filter(p => p.accommodationType !== "Unknown")
+      .map((p, index) => ({
+        id: `acc-${index}`,
+        studentName: "Student", // Anonymized
+        accommodationType: p.accommodationType,
+        neighborhood: `${city} Area`, // Placeholder if not available
+        monthlyRent: p.rawData.accommodation?.rent || 0,
         currency: "EUR",
-        title: `${(sub.data as any).accommodationType || "Student Housing"} in ${destination.city}`,
-        description:
-          (sub.data as any).description ||
-          `Great accommodation experience in ${destination.city}`,
-        pros: (sub.data as any).pros || [
-          "Close to university",
-          "Good value for money",
-        ],
-        cons: (sub.data as any).cons || ["Can be noisy"],
-        tips: (sub.data as any).tips || ["Book early for better prices"],
+        title: `${p.accommodationType} in ${city}`,
+        description: p.rawData.accommodation?.review || `Accommodation experience in ${city}`,
+        pros: [], // Extract if available
+        cons: [],
+        tips: [p.topTip].filter(Boolean),
         featured: index === 0,
         visible: true,
+        rating: p.rawData.accommodation?.rating || 0
       }));
 
-    const courseExchanges = formSubmissions
-      .filter((sub) => sub.type === "COURSE_MATCHING")
-      .slice(0, 5) // Limit to 5 for now
-      .map((sub, index) => ({
-        id: `course-${sub.id}`,
-        studentName: sub.user?.firstName || "Anonymous",
-        hostUniversity:
-          (sub.data as any).hostUniversity ||
-          `University of ${destination.city}`,
-        fieldOfStudy: (sub.data as any).fieldOfStudy || "Computer Science",
-        studyLevel: (sub.data as any).studyLevel || "Bachelor",
-        semester: (sub.data as any).semester || "Fall 2024",
-        title: `${(sub.data as any).fieldOfStudy || "Academic"} Experience at ${destination.city}`,
-        description:
-          (sub.data as any).description ||
-          `Excellent academic experience in ${destination.city}`,
-        courseQuality: (sub.data as any).courseQuality || 4,
-        professorQuality: (sub.data as any).professorQuality || 4,
-        facilityQuality: (sub.data as any).facilityQuality || 4,
-        coursesEnrolled: (sub.data as any).courses || [],
-        creditsEarned: (sub.data as any).creditsEarned || 30,
-        language: (sub.data as any).language || "English",
+    const courseExchanges = cityData.studentProfiles
+      .filter(p => p.university !== "Unknown")
+      .map((p, index) => ({
+        id: `course-${index}`,
+        studentName: "Student",
+        hostUniversity: p.university,
+        fieldOfStudy: p.fieldOfStudy,
+        studyLevel: "Bachelor", // Placeholder
+        semester: p.studyPeriod,
+        title: `${p.fieldOfStudy} at ${p.university}`,
+        description: p.rawData.experience?.academicComment || `Academic experience at ${p.university}`,
+        courseQuality: p.rawData.experience?.academicRating || 0,
+        professorQuality: 0,
+        facilityQuality: 0,
+        coursesEnrolled: [],
+        creditsEarned: 30,
+        language: "English",
         featured: index === 0,
-        visible: true,
+        visible: true
       }));
 
-    // Build the response
     const result: DestinationWithDetails = {
-      id: destination.id,
-      name: destination.name,
-      city: destination.city || "",
-      country: destination.country,
-      description: destination.description || destination.summary || "",
-      imageUrl:
-        destination.imageUrl ||
-        `/images/destinations/${destination.city?.toLowerCase()}.svg`,
-      climate: destination.climate || "Temperate",
-      highlights: destination.highlights
-        ? (destination.highlights as string[])
-        : [],
-      featured: destination.featured,
-      slug: destination.slug,
-      totalSubmissions: formSubmissions.length,
+      id: destination?.id || slug,
+      name: destination?.name || city,
+      city: city,
+      country: country,
+      description: destination?.description || `Discover ${city}, ${country} through student experiences.`,
+      imageUrl: destination?.imageUrl || `/images/destinations/${city.toLowerCase().replace(/ /g, '-')}.jpg`,
+      climate: destination?.climate || "Temperate",
+      highlights: [], // Populate if available
+      featured: destination?.featured || false,
+      slug: slug,
+
+      totalSubmissions: cityData.totalSubmissions,
+      averageRating: cityData.ratings.avgOverallRating,
+      avgCostPerMonth: cityData.livingCosts.avgTotalMonthly,
+      avgMonthlyRent: cityData.livingCosts.avgMonthlyRent,
+
       accommodations,
       courseExchanges,
-      universities: Array.from(universities).map((name) => ({
-        name,
-        studentCount: 1,
-      })),
-      livingExpenses:
-        Object.keys(avgLivingExpenses).length > 0
-          ? avgLivingExpenses
-          : undefined,
-      adminTitle: destination.name,
-      adminDescription: destination.description || destination.summary,
-      adminImageUrl: destination.imageUrl,
+      universities: cityData.universities,
+
+      livingExpenses: {
+        rent: cityData.livingCosts.avgMonthlyRent,
+        groceries: cityData.livingCosts.avgMonthlyFood,
+        transportation: cityData.livingCosts.avgMonthlyTransport,
+        eatingOut: cityData.livingCosts.avgMonthlyEntertainment, // Mapping entertainment to eatingOut/social
+        bills: cityData.livingCosts.avgMonthlyUtilities,
+        entertainment: cityData.livingCosts.avgMonthlyEntertainment,
+        other: cityData.livingCosts.avgMonthlyOther,
+        total: cityData.livingCosts.avgTotalMonthly
+      },
+
+      adminTitle: destination?.name || city,
+      adminDescription: destination?.description,
+      adminImageUrl: destination?.imageUrl
     };
 
     return res.status(200).json(result);
+
   } catch (error) {
     console.error("Error fetching destination details:", error);
     return res.status(500).json({
       error: "Failed to fetch destination details",
-      message: "Internal server error",
+      message: error instanceof Error ? error.message : "Internal server error",
     });
   }
 }

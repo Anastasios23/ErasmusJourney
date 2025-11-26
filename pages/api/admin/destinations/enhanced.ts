@@ -54,7 +54,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     });
 
     // Get unprocessed submissions that could create new destinations
-    const unprocessedSubmissions = await prisma.formSubmission.findMany({
+    const unprocessedSubmissions = await prisma.form_submissions.findMany({
       where: {
         status: "PUBLISHED",
         processed: false,

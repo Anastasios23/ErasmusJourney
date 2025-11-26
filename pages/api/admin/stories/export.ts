@@ -12,7 +12,7 @@ export default async function handler(
   try {
     // In a real app, you'd verify admin authentication here
 
-    const stories = await prisma.formSubmission.findMany({
+    const stories = await prisma.form_submissions.findMany({
       where: {
         type: "EXPERIENCE",
       },
@@ -33,7 +33,7 @@ export default async function handler(
     // Transform data for CSV export
     const csvData = await Promise.all(
       stories.map(async (submission) => {
-        const basicInfo = await prisma.formSubmission.findFirst({
+        const basicInfo = await prisma.form_submissions.findFirst({
           where: {
             userId: submission.userId,
             type: "BASIC_INFO",

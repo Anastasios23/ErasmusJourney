@@ -124,7 +124,7 @@ export default async function handler(
     }
 
     // Check if draft already exists
-    const existingDraft = await prisma.formSubmission.findFirst({
+    const existingDraft = await prisma.form_submissions.findFirst({
       where: {
         userId: session.user.id,
         type: formType,
@@ -135,7 +135,7 @@ export default async function handler(
     let submission;
     if (existingDraft) {
       // Update existing draft
-      submission = await prisma.formSubmission.update({
+      submission = await prisma.form_submissions.update({
         where: { id: existingDraft.id },
         data: {
           title,
@@ -156,7 +156,7 @@ export default async function handler(
       });
     } else {
       // Create new draft
-      submission = await prisma.formSubmission.create({
+      submission = await prisma.form_submissions.create({
         data: {
           userId: session.user.id,
           type: formType,

@@ -30,7 +30,7 @@ export default async function handler(
     });
 
     // Create destination submission (Basic Information)
-    const destinationSubmission = await prisma.formSubmission.create({
+    const destinationSubmission = await prisma.form_submissions.create({
       data: {
         userId: testUser.id,
         type: "basic-information",
@@ -65,7 +65,7 @@ export default async function handler(
     });
 
     // Create university exchange submission (Course Matching)
-    const universitySubmission = await prisma.formSubmission.create({
+    const universitySubmission = await prisma.form_submissions.create({
       data: {
         userId: testUser.id,
         type: "course-matching",
@@ -106,7 +106,7 @@ export default async function handler(
     });
 
     // Create accommodation submission
-    const accommodationSubmission = await prisma.formSubmission.create({
+    const accommodationSubmission = await prisma.form_submissions.create({
       data: {
         userId: testUser.id,
         type: "accommodation",

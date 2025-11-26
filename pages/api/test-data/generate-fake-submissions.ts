@@ -172,7 +172,7 @@ export default async function handler(
         }
 
         // 1. Basic Information Submission
-        const basicInfoSubmission = await prisma.formSubmission.create({
+        const basicInfoSubmission = await prisma.form_submissions.create({
           data: {
             userId: user.id,
             type: "BASIC_INFO",
@@ -200,7 +200,7 @@ export default async function handler(
 
         // 2. Accommodation Submission
         const rentVariation = destination.avgRent + (Math.random() - 0.5) * 200;
-        await prisma.formSubmission.create({
+        await prisma.form_submissions.create({
           data: {
             userId: user.id,
             type: "ACCOMMODATION",
@@ -227,7 +227,7 @@ export default async function handler(
         // 3. Living Expenses Submission
         const expenseVariation =
           destination.avgExpenses + (Math.random() - 0.5) * 300;
-        await prisma.formSubmission.create({
+        await prisma.form_submissions.create({
           data: {
             userId: user.id,
             type: "LIVING_EXPENSES",

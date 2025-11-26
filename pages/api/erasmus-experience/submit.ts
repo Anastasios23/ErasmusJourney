@@ -75,7 +75,7 @@ export default async function handler(
     const hostCountry =
       (existingExperience.basicInfo as any)?.hostCountry || null;
 
-    await prisma.formSubmission.create({
+    await prisma.form_submissions.create({
       data: {
         userId,
         type: "consolidated",

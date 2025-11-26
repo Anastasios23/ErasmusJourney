@@ -20,7 +20,7 @@ export default async function handler(
     switch (req.method) {
       case "GET":
         // Check if the story (form submission) exists
-        const story = await prisma.formSubmission.findUnique({
+        const story = await prisma.form_submissions.findUnique({
           where: { id: storyId },
         });
 

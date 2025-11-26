@@ -59,7 +59,7 @@ export default async function handler(
     }
 
     // Fetch the experience
-    const experience = await prisma.erasmus_experiences.findUnique({
+    const experience = await prisma.erasmusExperience.findUnique({
       where: { id },
       include: {
         user: {
@@ -128,7 +128,7 @@ export default async function handler(
     // Update experience in a transaction
     const [updatedExperience, reviewAction] = await prisma.$transaction([
       // Update experience
-      prisma.erasmus_experiences.update({
+      prisma.erasmusExperience.update({
         where: { id },
         data: updateData,
       }),
@@ -190,7 +190,7 @@ async function calculateCityStats(
 ) {
   try {
     // Get all APPROVED experiences for this city/country/semester
-    const experiences = await prisma.erasmus_experiences.findMany({
+    const experiences = await prisma.erasmusExperience.findMany({
       where: {
         hostCity: city,
         hostCountry: country,

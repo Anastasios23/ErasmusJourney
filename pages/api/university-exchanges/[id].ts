@@ -17,6 +17,7 @@ interface DepartmentData {
     commonExamTypes: Set<string>;
     studentsWhoFoundDifficult: number;
     courseMatchingChallenges: string[];
+    difficultyPercentage: number;
   };
 }
 
@@ -50,455 +51,233 @@ export default async function handler(
       return res.status(400).json({ message: "University ID is required" });
     }
 
-    // Fetch all BASIC_INFO submissions
-    const submissions = await prisma.formSubmission.findMany({
-      where: {
-        type: "basic-info",
-      },
-    });
-
-    // Fetch course matching submissions for detailed course information
-    const courseMatchingSubmissions = await prisma.formSubmission.findMany({
-      where: {
-        type: "course-matching",
-      },
-    });
-
-    // Create a map of course matching data by basic info ID
-    const courseMatchingMap = new Map();
-    courseMatchingSubmissions.forEach((submission) => {
-      try {
-        const data =
-          typeof submission.data === "string"
-            ? JSON.parse(submission.data)
-            : (submission.data as any);
-
-        if (data.basicInfoId) {
-          courseMatchingMap.set(data.basicInfoId, data);
+    // Fetch university with all related data
+    const university = await prisma.universities.findUnique({
+      where: { id },
+      include: {
+        faculties: {
+          include: {
+            departments: true
+          }
+        },
+        hostExperiences: {
+          where: {
+            status: { in: ["SUBMITTED", "COMPLETED", "APPROVED"] }
+          },
+          include: {
+            courseMappings: true,
+            accommodationReviews: true
+          }
         }
-      } catch (error) {
-        console.error(
-          "Error processing course matching submission:",
-          submission.id,
-          error,
-        );
       }
     });
 
-    if (submissions.length === 0) {
-      return res.status(404).json({ message: "No university data found" });
-    }
-
-    // Process submissions to find the specific university
-    const universitiesMap = new Map<string, UniversityData>();
-
-    submissions.forEach((submission) => {
-      try {
-        const data =
-          typeof submission.data === "string"
-            ? JSON.parse(submission.data)
-            : (submission.data as any);
-        const hostUni = data.hostUniversity;
-        const cyprusUni = data.cyprusUniversity;
-        const department =
-          data.hostDepartment || data.departmentInCyprus || "General";
-        const country = data.hostCountry;
-        const location = data.hostCity || data.hostCountry;
-
-        if (!hostUni) return;
-
-        // Create university key for grouping (using same logic as main API)
-        const uniKey = hostUni.toLowerCase().replace(/[^a-z0-9]/g, "-");
-
-        if (!universitiesMap.has(uniKey)) {
-          universitiesMap.set(uniKey, {
-            id: uniKey,
-            universityName: hostUni,
-            location: location,
-            country: country,
-            studentsCount: 0,
-            departments: new Map<string, DepartmentData>(),
-            studyLevels: new Set<string>(),
-            cyprusUniversities: new Set<string>(),
-            courseMatches: 0,
-            ratings: [],
-            semesters: new Set<string>(),
-            years: new Set<string>(),
-          });
-        }
-
-        const university = universitiesMap.get(uniKey);
-        university.studentsCount++;
-
-        // Add Cyprus university
-        if (cyprusUni) {
-          university.cyprusUniversities.add(cyprusUni);
-        }
-
-        // Process department
-        if (!university.departments.has(department)) {
-          university.departments.set(department, {
-            name: department,
-            studentsCount: 0,
-            students: [],
-            ratings: [],
-            studyLevels: new Set<string>(),
-            courses: new Set<string>(),
-            courseMatchingStats: {
-              totalStudentsWithCourseData: 0,
-              averageDifficulty: 0,
-              averageECTS: 0,
-              commonExamTypes: new Set<string>(),
-              studentsWhoFoundDifficult: 0,
-              courseMatchingChallenges: [],
-            },
-          });
-        }
-
-        const dept = university.departments.get(department);
-        dept.studentsCount++;
-
-        // Get course matching data for this student
-        const courseMatchingData = courseMatchingMap.get(submission.id);
-
-        // Extract detailed course information
-        const detailedCourses = [];
-        const courseStats = {
-          averageDifficulty: 0,
-          averageECTS: 0,
-          commonExamTypes: new Set<string>(),
-          courseMatchingDifficult: null,
-          totalCourses: 0,
-        };
-
-        if (courseMatchingData) {
-          // Process host courses from course matching
-          if (
-            courseMatchingData.courses &&
-            Array.isArray(courseMatchingData.courses)
-          ) {
-            const hostCourses = courseMatchingData.courses.filter(
-              (c: any) => c.type === "host",
-            );
-            hostCourses.forEach((course: any) => {
-              // Find corresponding home course for mapping
-              const homeCourse = courseMatchingData.courses?.find(
-                (c: any) => c.type === "home" && c.hostCourseId === course.id,
-              );
-
-              detailedCourses.push({
-                name: course.name || course.hostCourseName,
-                code: course.code || course.hostCourseCode,
-                ects: course.ects || course.hostCourseCredits || course.credits,
-                difficulty: course.difficulty,
-                examTypes: course.examTypes || [],
-                grade: course.grade,
-                workload: course.workload,
-                recommendation: course.recommendation,
-                // Home university course mapping
-                homeCourseName: homeCourse?.name || homeCourse?.homeCourseName,
-                homeCourseCode: homeCourse?.code || homeCourse?.homeCourseCode,
-                homeCourseCredits:
-                  homeCourse?.ects ||
-                  homeCourse?.homeCourseCredits ||
-                  homeCourse?.credits,
-                // Exam type details
-                finalExam: course.finalExam || courseMatchingData.finalExam,
-                oralExam: course.oralExam || courseMatchingData.oralExam,
-                writtenExam:
-                  course.writtenExam || courseMatchingData.writtenExam,
-                projectExam:
-                  course.projectExam || courseMatchingData.projectExam,
-                continuousAssessment:
-                  course.continuousAssessment ||
-                  courseMatchingData.continuousAssessment,
-              });
-
-              // Update statistics
-              if (course.difficulty) {
-                const difficultyMap = {
-                  "1": 1,
-                  "2": 2,
-                  "3": 3,
-                  "4": 4,
-                  "5": 5,
-                  easy: 2,
-                  medium: 3,
-                  hard: 4,
-                };
-                const difficultyValue =
-                  difficultyMap[course.difficulty.toLowerCase()] || 3;
-                courseStats.averageDifficulty += difficultyValue;
-              }
-
-              if (course.ects || course.hostCourseCredits || course.credits) {
-                const ects = parseInt(
-                  course.ects || course.hostCourseCredits || course.credits,
-                );
-                if (!isNaN(ects)) {
-                  courseStats.averageECTS += ects;
-                }
-              }
-
-              if (course.examTypes && Array.isArray(course.examTypes)) {
-                course.examTypes.forEach((type: string) =>
-                  courseStats.commonExamTypes.add(type),
-                );
-              }
-
-              courseStats.totalCourses++;
-            });
-          }
-
-          // Calculate averages
-          if (courseStats.totalCourses > 0) {
-            courseStats.averageDifficulty =
-              courseStats.averageDifficulty / courseStats.totalCourses;
-            courseStats.averageECTS =
-              courseStats.averageECTS / courseStats.totalCourses;
-          }
-
-          courseStats.courseMatchingDifficult =
-            courseMatchingData.courseMatchingDifficult;
-        }
-
-        // Add student experience with enhanced course data
-        const studentExperience = {
-          studentName: data.studentName || `Student ${submission.id.slice(-4)}`,
-          department: department,
-          studyLevel: data.studyLevel || "undergraduate",
-          submissionId: submission.id,
-          semester: data.semester || "Fall",
-          year: data.academicYear || "2023-24",
-          rating: data.overallRating ? parseFloat(data.overallRating) : null,
-          courses: data.courses
-            ? data.courses.split(",").map((c: string) => c.trim())
-            : [],
-          detailedCourses: detailedCourses,
-          courseStats: courseStats,
-          testimonial: data.testimonial || data.experience || data.feedback,
-          courseMatchingDifficult: courseStats.courseMatchingDifficult,
-          hostCourseCount: courseMatchingData?.hostCourseCount,
-          homeCourseCount: courseMatchingData?.homeCourseCount,
-          courseMatchingChallenges:
-            courseMatchingData?.courseMatchingChallenges,
-          recommendCourses: courseMatchingData?.recommendCourses,
-          recommendationReason: courseMatchingData?.recommendationReason,
-        };
-
-        dept.students.push(studentExperience);
-
-        // Update department course matching statistics
-        if (courseStats.totalCourses > 0) {
-          dept.courseMatchingStats.totalStudentsWithCourseData++;
-          dept.courseMatchingStats.averageDifficulty +=
-            courseStats.averageDifficulty;
-          dept.courseMatchingStats.averageECTS += courseStats.averageECTS;
-
-          courseStats.commonExamTypes.forEach((type) =>
-            dept.courseMatchingStats.commonExamTypes.add(type),
-          );
-
-          if (courseStats.courseMatchingDifficult === "yes") {
-            dept.courseMatchingStats.studentsWhoFoundDifficult++;
-          }
-
-          if (courseMatchingData?.courseMatchingChallenges) {
-            dept.courseMatchingStats.courseMatchingChallenges.push(
-              courseMatchingData.courseMatchingChallenges,
-            );
-          }
-        }
-
-        // Add to university level data
-        if (studentExperience.rating) {
-          university.ratings.push(studentExperience.rating);
-          dept.ratings.push(studentExperience.rating);
-        }
-
-        university.studyLevels.add(studentExperience.studyLevel);
-        dept.studyLevels.add(studentExperience.studyLevel);
-
-        // Add courses
-        if (studentExperience.courses.length > 0) {
-          university.courseMatches++;
-          studentExperience.courses.forEach((course) => {
-            if (course.length > 2) {
-              // Filter out very short course names
-              dept.courses.add(course);
-            }
-          });
-        }
-
-        // Add detailed courses to department course list
-        if (detailedCourses.length > 0) {
-          detailedCourses.forEach((course) => {
-            if (course.name && course.name.length > 2) {
-              dept.courses.add(course.name);
-            }
-          });
-        }
-
-        university.semesters.add(studentExperience.semester);
-        university.years.add(studentExperience.year);
-      } catch (error) {
-        console.error("Error processing submission:", submission.id, error);
-      }
-    });
-
-    // Find the specific university
-    const universityData = universitiesMap.get(id);
-
-    if (!universityData) {
+    if (!university) {
       return res.status(404).json({ message: "University not found" });
     }
 
-    // Process departments data
-    const departments = Array.from(universityData.departments.values())
-      .map((dept: DepartmentData) => {
-        const averageRating =
-          dept.ratings.length > 0
-            ? dept.ratings.reduce((a, b) => a + b, 0) / dept.ratings.length
-            : 0;
+    // Group data by department
+    const departmentsMap = new Map<string, DepartmentData>();
 
-        // Calculate department course matching statistics
-        const courseMatchingStats = {
-          totalStudentsWithCourseData:
-            dept.courseMatchingStats.totalStudentsWithCourseData,
-          averageDifficulty:
-            dept.courseMatchingStats.totalStudentsWithCourseData > 0
-              ? Math.round(
-                  (dept.courseMatchingStats.averageDifficulty /
-                    dept.courseMatchingStats.totalStudentsWithCourseData) *
-                    10,
-                ) / 10
-              : 0,
-          averageECTS:
-            dept.courseMatchingStats.totalStudentsWithCourseData > 0
-              ? Math.round(
-                  (dept.courseMatchingStats.averageECTS /
-                    dept.courseMatchingStats.totalStudentsWithCourseData) *
-                    10,
-                ) / 10
-              : 0,
-          commonExamTypes: Array.from(dept.courseMatchingStats.commonExamTypes),
-          studentsWhoFoundDifficult:
-            dept.courseMatchingStats.studentsWhoFoundDifficult,
-          courseMatchingChallenges:
-            dept.courseMatchingStats.courseMatchingChallenges.slice(0, 3), // Top 3 challenges
-          difficultyPercentage:
-            dept.courseMatchingStats.totalStudentsWithCourseData > 0
-              ? Math.round(
-                  (dept.courseMatchingStats.studentsWhoFoundDifficult /
-                    dept.courseMatchingStats.totalStudentsWithCourseData) *
-                    100,
-                )
-              : 0,
-        };
-
-        // Get most common courses
-        const courseFrequency = new Map<string, number>();
-        dept.courses.forEach((course) => {
-          courseFrequency.set(course, (courseFrequency.get(course) || 0) + 1);
-        });
-
-        const commonCourses = Array.from(courseFrequency.entries())
-          .sort(([, a], [, b]) => b - a)
-          .slice(0, 10)
-          .map(([course]) => course);
-
-        return {
+    // Initialize departments from DB
+    university.faculties.forEach(faculty => {
+      faculty.departments.forEach(dept => {
+        departmentsMap.set(dept.name, {
           name: dept.name,
-          studentsCount: dept.studentsCount,
-          students: dept.students.sort(
-            (a, b) =>
-              (b.rating || 0) - (a.rating || 0) ||
-              new Date(b.year).getTime() - new Date(a.year).getTime(),
-          ),
-          averageRating: Math.round(averageRating * 10) / 10,
-          studyLevels: Array.from(dept.studyLevels),
-          commonCourses: commonCourses,
-          courseMatchingStats: courseMatchingStats,
-        };
-      })
-      .sort((a, b) => b.studentsCount - a.studentsCount);
+          studentsCount: 0,
+          students: [],
+          ratings: [],
+          studyLevels: new Set(),
+          courses: new Set(),
+          courseMatchingStats: {
+            totalStudentsWithCourseData: 0,
+            averageDifficulty: 0,
+            averageECTS: 0,
+            commonExamTypes: new Set(),
+            studentsWhoFoundDifficult: 0,
+            courseMatchingChallenges: [],
+            difficultyPercentage: 0
+          }
+        });
+      });
+    });
 
-    // Calculate university averages
-    const averageRating =
-      universityData.ratings.length > 0
-        ? universityData.ratings.reduce((a, b) => a + b, 0) /
-          universityData.ratings.length
-        : 0;
+    const studyLevels = new Set<string>();
+    const cyprusUniversities = new Set<string>();
+    const semesters = new Set<string>();
+    const years = new Set<string>();
+    let totalRating = 0;
+    let ratingCount = 0;
+    let courseMatchesCount = 0;
 
-    // Generate university details
+    // Process experiences
+    university.hostExperiences.forEach(exp => {
+      const basicInfo = exp.basicInfo as any || {};
+      const experienceData = exp.experience as any || {};
+      const coursesData = exp.courses as any || {};
+      
+      const deptName = basicInfo.hostDepartment || "General";
+      
+      if (!departmentsMap.has(deptName)) {
+        departmentsMap.set(deptName, {
+          name: deptName,
+          studentsCount: 0,
+          students: [],
+          ratings: [],
+          studyLevels: new Set(),
+          courses: new Set(),
+          courseMatchingStats: {
+            totalStudentsWithCourseData: 0,
+            averageDifficulty: 0,
+            averageECTS: 0,
+            commonExamTypes: new Set(),
+            studentsWhoFoundDifficult: 0,
+            courseMatchingChallenges: [],
+            difficultyPercentage: 0
+          }
+        });
+      }
+
+      const dept = departmentsMap.get(deptName)!;
+      dept.studentsCount++;
+      
+      // Collect stats
+      if (basicInfo.levelOfStudy) {
+        dept.studyLevels.add(basicInfo.levelOfStudy);
+        studyLevels.add(basicInfo.levelOfStudy);
+      }
+      if (basicInfo.homeUniversity) cyprusUniversities.add(basicInfo.homeUniversity);
+      if (basicInfo.exchangePeriod) semesters.add(basicInfo.exchangePeriod);
+      if (basicInfo.academicYear) years.add(basicInfo.academicYear);
+
+      let rating = 0;
+      if (experienceData.overallRating) {
+        rating = parseInt(experienceData.overallRating);
+        if (!isNaN(rating)) {
+          dept.ratings.push(rating);
+          totalRating += rating;
+          ratingCount++;
+        }
+      }
+
+      // Course Mappings
+      const mappings = exp.courseMappings;
+      let studentHasCourseData = false;
+      let studentDifficulty = 0;
+      let studentEcts = 0;
+      let studentCoursesCount = 0;
+
+      const detailedCourses: any[] = [];
+
+      mappings.forEach(mapping => {
+        studentHasCourseData = true;
+        courseMatchesCount++;
+        
+        if (mapping.hostCourseName) {
+          dept.courses.add(mapping.hostCourseName);
+          detailedCourses.push({
+            name: mapping.hostCourseName,
+            code: mapping.hostCourseCode,
+            ects: mapping.hostCredits,
+            homeCourseName: mapping.homeCourseName,
+            homeCourseCode: mapping.homeCourseCode,
+            homeCourseCredits: mapping.homeCredits
+          });
+        }
+
+        if (mapping.hostCredits) {
+          studentEcts += mapping.hostCredits;
+          studentCoursesCount++;
+        }
+      });
+
+      // Update Department Course Stats
+      if (studentHasCourseData) {
+        dept.courseMatchingStats.totalStudentsWithCourseData++;
+        
+        // Extract difficulty/challenges from JSON if available (not in CourseMapping table yet)
+        if (coursesData.difficulty) {
+           const diffMap: any = { "1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "easy": 2, "medium": 3, "hard": 4 };
+           const val = diffMap[coursesData.difficulty.toString().toLowerCase()] || 3;
+           dept.courseMatchingStats.averageDifficulty += val;
+           if (val >= 4) dept.courseMatchingStats.studentsWhoFoundDifficult++;
+        }
+        
+        if (studentCoursesCount > 0) {
+          dept.courseMatchingStats.averageECTS += (studentEcts / studentCoursesCount);
+        }
+      }
+
+      // Add Student Experience
+      dept.students.push({
+        studentName: basicInfo.studentName || "Anonymous Student", // Privacy?
+        department: deptName,
+        studyLevel: basicInfo.levelOfStudy || "Undergraduate",
+        submissionId: exp.id,
+        semester: basicInfo.exchangePeriod || "Fall",
+        year: basicInfo.academicYear || "2024",
+        rating: rating > 0 ? rating : undefined,
+        courses: detailedCourses.map(c => c.name),
+        detailedCourses: detailedCourses,
+        testimonial: experienceData.bestExperience || experienceData.generalTips,
+        // ... other fields
+      });
+    });
+
+    // Finalize Department Data
+    const departments = Array.from(departmentsMap.values()).map(dept => {
+       const avgRating = dept.ratings.length > 0 ? dept.ratings.reduce((a, b) => a + b, 0) / dept.ratings.length : 0;
+       
+       // Finalize course stats
+       const stats = dept.courseMatchingStats;
+       if (stats.totalStudentsWithCourseData > 0) {
+         stats.averageDifficulty = Math.round((stats.averageDifficulty / stats.totalStudentsWithCourseData) * 10) / 10;
+         stats.averageECTS = Math.round((stats.averageECTS / stats.totalStudentsWithCourseData) * 10) / 10;
+         stats.difficultyPercentage = Math.round((stats.studentsWhoFoundDifficult / stats.totalStudentsWithCourseData) * 100);
+       }
+
+       // Common courses
+       const courseCounts = new Map<string, number>();
+       dept.students.forEach(s => s.courses?.forEach(c => courseCounts.set(c, (courseCounts.get(c) || 0) + 1)));
+       const commonCourses = Array.from(courseCounts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 10).map(e => e[0]);
+
+       return {
+         ...dept,
+         averageRating: Math.round(avgRating * 10) / 10,
+         studyLevels: Array.from(dept.studyLevels),
+         commonCourses,
+         courseMatchingStats: {
+           ...stats,
+           commonExamTypes: Array.from(stats.commonExamTypes)
+         }
+       };
+    }).sort((a, b) => b.studentsCount - a.studentsCount);
+
+    const averageRating = ratingCount > 0 ? Math.round((totalRating / ratingCount) * 10) / 10 : 0;
+
     const universityDetail = {
-      id: universityData.id,
-      universityName: universityData.universityName,
-      location: universityData.location,
-      country: universityData.country,
-      studentsCount: universityData.studentsCount,
+      id: university.id,
+      universityName: university.name,
+      location: university.city,
+      country: university.country,
+      studentsCount: university.hostExperiences.length,
       departments: departments,
-      studyLevels: Array.from(universityData.studyLevels),
-      cyprusUniversities: Array.from(universityData.cyprusUniversities),
-      courseMatches: universityData.courseMatches,
-      averageRating: Math.round(averageRating * 10) / 10,
-
-      // Enhanced details with defaults
-      image: "/placeholder.svg",
-      description: `${universityData.universityName} is a distinguished institution in ${universityData.location}, ${universityData.country}, hosting ${universityData.studentsCount} Cyprus students across ${departments.length} departments. Our students have shared valuable experiences across various academic programs.`,
-
-      highlights: [
-        `${universityData.studentsCount} Cyprus students have studied here`,
-        `${departments.length} departments with student experiences`,
-        `${universityData.courseMatches} course data submissions available`,
-        `Average student rating: ${Math.round(averageRating * 10) / 10}/5`,
-      ].filter((h) => !h.includes("0 ") && !h.includes("NaN")),
-
-      academicStrength:
-        departments.length > 0
-          ? departments[0].name // Most popular department
-          : "Multidisciplinary",
-
-      researchFocus: departments.slice(0, 5).map((d) => d.name),
-
-      languageOfInstruction:
-        universityData.country === "Germany"
-          ? ["German", "English"]
-          : universityData.country === "France"
-            ? ["French", "English"]
-            : universityData.country === "Spain"
-              ? ["Spanish", "English"]
-              : universityData.country === "Italy"
-                ? ["Italian", "English"]
-                : universityData.country === "Netherlands"
-                  ? ["Dutch", "English"]
-                  : ["English"],
-
-      semesterOptions: Array.from(universityData.semesters),
-
-      applicationDeadline:
-        universityData.country === "Germany"
-          ? "July 15"
-          : universityData.country === "France"
-            ? "June 30"
-            : universityData.country === "Spain"
-              ? "May 31"
-              : universityData.country === "Netherlands"
-                ? "April 1"
-                : "Varies by program",
-
-      establishedYear: 1950 + Math.floor(Math.random() * 50), // Placeholder
-
-      worldRanking:
-        universityData.studentsCount > 10
-          ? 200 + Math.floor(Math.random() * 300)
-          : undefined,
-
-      erasmusCode: `${universityData.country.slice(0, 2).toUpperCase()}${universityData.universityName.slice(0, 6).toUpperCase().replace(/\s/g, "")}01`,
-
-      contactEmail: `international@${universityData.universityName.toLowerCase().replace(/\s+/g, "")}.edu`,
-
-      website: `https://www.${universityData.universityName.toLowerCase().replace(/\s+/g, "")}.edu`,
+      studyLevels: Array.from(studyLevels),
+      cyprusUniversities: Array.from(cyprusUniversities),
+      courseMatches: courseMatchesCount,
+      averageRating,
+      image: university.imageUrl || "/placeholder.svg",
+      description: university.description || `Experience at ${university.name}`,
+      highlights: [], // Generate dynamically if needed
+      academicStrength: departments.length > 0 ? departments[0].name : "General",
+      researchFocus: [],
+      languageOfInstruction: ["English"], // Placeholder or fetch from DB
+      semesterOptions: Array.from(semesters),
+      applicationDeadline: "Varies",
+      establishedYear: 1900, // Placeholder
+      erasmusCode: university.code,
+      contactEmail: "contact@university.edu", // Placeholder
+      website: university.website || ""
     };
 
     res.status(200).json(universityDetail);

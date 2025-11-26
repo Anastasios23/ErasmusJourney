@@ -61,26 +61,36 @@ export default function Login() {
     setIsLoading(true);
     setError(null);
 
+    console.log("Attempting login...");
+
     const result = await signIn("credentials", {
       redirect: false,
       email,
       password,
-      callbackUrl: (router.query.callbackUrl as string) || "/dashboard",
+      callbackUrl: (router.query.callbackUrl as string) || "/",
     });
 
-    if (result?.error) {
-      setError(result.error);
-    } else if (result?.url) {
-      router.push(result.url);
-    }
+    console.log("Login result:", result);
 
-    setIsLoading(false);
+    if (result?.error) {
+      console.error("Login error:", result.error);
+      setError(result.error);
+      setIsLoading(false);
+    } else if (result?.ok) {
+      console.log("Login successful, redirecting...");
+      // Force redirect to home page
+      window.location.href = (router.query.callbackUrl as string) || "/";
+    } else {
+      console.error("Unexpected login result:", result);
+      setError("Login failed. Please try again.");
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    // Use the callbackUrl from the query parameters, or default to /dashboard
-    const callbackUrl = (router.query.callbackUrl as string) || "/dashboard";
+    // Use the callbackUrl from the query parameters, or default to home page
+    const callbackUrl = (router.query.callbackUrl as string) || "/";
     await signIn("google", { callbackUrl });
   };
 

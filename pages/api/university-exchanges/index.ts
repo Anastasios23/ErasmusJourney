@@ -40,140 +40,121 @@ export default async function handler(
   }
 
   try {
-    // Get all basic info submissions for university data
-    const basicInfoSubmissions = await prisma.formSubmission.findMany({
-      where: { type: "basic-info" },
-      select: {
-        id: true,
-        data: true,
-      },
-    });
-
-    // Get all course matching submissions
-    const courseMatchingSubmissions = await prisma.formSubmission.findMany({
-      where: { type: "course-matching" },
-      select: {
-        id: true,
-        data: true,
-      },
-    });
-
-    // Create a map to group course matching by basic info
-    const courseMatchingByBasicInfo = new Map();
-    courseMatchingSubmissions.forEach((submission) => {
-      const submissionData = submission.data as any;
-      if (submissionData.basicInfoId) {
-        courseMatchingByBasicInfo.set(
-          submissionData.basicInfoId,
-          submission.data,
-        );
-      }
-    });
-
-    // Group submissions by university
-    const universityMap = new Map();
-
-    basicInfoSubmissions.forEach((submission) => {
-      const data = submission.data as any;
-      const universityName = data.hostUniversity || "Unknown University";
-      const location =
-        data.hostUniversityLocation ||
-        data.destinationCity ||
-        "Unknown Location";
-
-      if (!universityMap.has(universityName)) {
-        universityMap.set(universityName, {
-          universityName,
-          location,
-          students: [],
-          departments: new Set(),
-          studyLevels: new Set(),
-          cyprusUniversities: new Set(),
-          courseMatches: 0,
-          totalHostCourses: "",
-          totalHomeCourses: "",
-          submissions: [],
-        });
-      }
-
-      const university = universityMap.get(universityName);
-      university.students.push(submission.id);
-
-      // Add departments
-      if (data.hostDepartment) {
-        university.departments.add(data.hostDepartment);
-      }
-
-      // Add study levels
-      if (data.levelOfStudy) {
-        university.studyLevels.add(data.levelOfStudy);
-      }
-
-      // Add Cyprus universities
-      if (data.homeUniversity) {
-        university.cyprusUniversities.add(data.homeUniversity);
-      }
-
-      // Check for course matching data
-      const courseData = courseMatchingByBasicInfo.get(submission.id);
-      if (courseData) {
-        university.courseMatches++;
-        if (courseData.hostCourseCount) {
-          university.totalHostCourses = courseData.hostCourseCount;
+    // Fetch universities that have at least one Erasmus experience
+    // We also include the count of experiences and course mappings
+    const universities = await prisma.universities.findMany({
+      where: {
+        hostExperiences: {
+          some: {
+            status: { in: ["SUBMITTED", "COMPLETED", "APPROVED"] }
+          }
         }
-        if (courseData.homeCourseCount) {
-          university.totalHomeCourses = courseData.homeCourseCount;
+      },
+      include: {
+        hostExperiences: {
+          where: {
+            status: { in: ["SUBMITTED", "COMPLETED", "APPROVED"] }
+          },
+          select: {
+            id: true,
+            experience: true, // For ratings
+            basicInfo: true, // For study levels etc (fallback)
+            _count: {
+              select: {
+                courseMappings: true
+              }
+            }
+          }
+        },
+        _count: {
+          select: {
+            hostExperiences: true,
+            courseMappings: true
+          }
+        },
+        faculties: {
+          include: {
+            departments: true
+          }
         }
       }
+    });
 
-      university.submissions.push({
-        basicInfo: data,
-        courseMatching: courseData,
+    // Map to UniversityExchange interface
+    const exchanges: UniversityExchange[] = universities.map((uni) => {
+      const experiences = uni.hostExperiences;
+      
+      // Aggregate data from experiences
+      const studyLevels = new Set<string>();
+      const departments = new Set<string>();
+      const cyprusUniversities = new Set<string>();
+      let totalRating = 0;
+      let ratingCount = 0;
+
+      experiences.forEach(exp => {
+        const basicInfo = exp.basicInfo as any || {};
+        const experienceData = exp.experience as any || {};
+        
+        if (basicInfo.levelOfStudy) studyLevels.add(basicInfo.levelOfStudy);
+        if (basicInfo.hostDepartment) departments.add(basicInfo.hostDepartment);
+        if (basicInfo.homeUniversity) cyprusUniversities.add(basicInfo.homeUniversity); // This might be ID or name depending on storage
+        
+        // Rating
+        if (experienceData.overallRating) {
+          const rating = parseInt(experienceData.overallRating);
+          if (!isNaN(rating)) {
+            totalRating += rating;
+            ratingCount++;
+          }
+        }
       });
-    });
 
-    // Convert to array and create university exchange objects
-    const exchanges: UniversityExchange[] = Array.from(
-      universityMap.values(),
-    ).map((university: any) => {
-      const country = getCountryFromLocation(university.location);
-      const exchangeId = university.universityName
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, "-");
+      // Add departments from DB if available
+      uni.faculties.forEach(f => {
+        f.departments.forEach(d => departments.add(d.name));
+      });
+
+      const averageRating = ratingCount > 0 ? Math.round((totalRating / ratingCount) * 10) / 10 : 0;
 
       return {
-        id: exchangeId,
-        universityName: university.universityName,
-        location: university.location,
-        country,
-        studentsCount: university.students.length,
-        departments: Array.from(university.departments),
-        studyLevels: Array.from(university.studyLevels),
-        cyprusUniversities: Array.from(university.cyprusUniversities),
-        courseMatches: university.courseMatches,
-        totalHostCourses: university.totalHostCourses,
-        totalHomeCourses: university.totalHomeCourses,
-        image: getUniversityImage(university.universityName, country),
-        description: generateUniversityDescription(university),
-        highlights: generateUniversityHighlights(university),
-        averageRating: calculateAverageRating(university.submissions),
-        academicStrength: getAcademicStrength(university.departments),
-        researchFocus: getResearchFocus(university.departments),
-        languageOfInstruction: getLanguageOfInstruction(country),
-        semesterOptions: [
-          "Fall Semester",
-          "Spring Semester",
-          "Full Academic Year",
-        ],
-        applicationDeadline: getApplicationDeadline(country),
-        establishedYear: getEstimatedEstablishedYear(university.universityName),
-        worldRanking: getEstimatedRanking(
-          university.universityName,
-          university.students.length,
-        ),
-        erasmusCode: generateErasmusCode(country, university.universityName),
-        contactEmail: generateContactEmail(university.universityName),
-        website: generateWebsite(university.universityName),
+        id: uni.id, // Use UUID
+        universityName: uni.name,
+        location: uni.city,
+        country: uni.country,
+        studentsCount: uni._count.hostExperiences,
+        departments: Array.from(departments),
+        studyLevels: Array.from(studyLevels),
+        cyprusUniversities: Array.from(cyprusUniversities),
+        courseMatches: uni._count.courseMappings,
+        totalHostCourses: uni._count.courseMappings.toString(), // Approximation
+        totalHomeCourses: uni._count.courseMappings.toString(), // Approximation
+        image: uni.imageUrl || getUniversityImage(uni.name, uni.country),
+        description: uni.description || generateUniversityDescription({ 
+          universityName: uni.name, 
+          location: uni.city, 
+          students: experiences, 
+          departments, 
+          courseMatches: uni._count.courseMappings 
+        }),
+        highlights: generateUniversityHighlights({
+          students: experiences,
+          departments,
+          courseMatches: uni._count.courseMappings,
+          studyLevels,
+          cyprusUniversities,
+          location: uni.city
+        }),
+        averageRating,
+        academicStrength: getAcademicStrength(departments),
+        researchFocus: getResearchFocus(departments),
+        languageOfInstruction: getLanguageOfInstruction(uni.country),
+        semesterOptions: ["Fall Semester", "Spring Semester", "Full Academic Year"],
+        applicationDeadline: getApplicationDeadline(uni.country),
+        establishedYear: getEstimatedEstablishedYear(uni.name),
+        worldRanking: getEstimatedRanking(uni.name, uni._count.hostExperiences),
+        erasmusCode: uni.code || generateErasmusCode(uni.country, uni.name),
+        contactEmail: generateContactEmail(uni.name),
+        website: uni.website || generateWebsite(uni.name),
       };
     });
 

@@ -6,6 +6,9 @@ import { AlertCircle } from "lucide-react";
 import { ValidationError } from "../src/utils/apiErrorHandler";
 import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
 import { useFormProgress } from "../src/context/FormProgressContext";
+import { FormProgressBar } from "../components/forms/FormProgressBar";
+import { StepNavigation } from "../components/forms/StepNavigation";
+import { StepGuard } from "../components/forms/StepGuard";
 
 import Head from "next/head";
 import Link from "next/link";
@@ -78,7 +81,12 @@ export default function CourseMatching() {
   // const { data: session } = useSession();
   const session = { user: { id: "anonymous", email: "anonymous@example.com" } };
   const router = useRouter();
-  const { setCurrentStep } = useFormProgress();
+  const {
+    setCurrentStep,
+    markStepCompleted,
+    currentStepNumber,
+    completedStepNumbers,
+  } = useFormProgress();
 
   // Experience hook for new single-submission system
   const {
@@ -421,8 +429,8 @@ export default function CourseMatching() {
     Record<string, string>
   >({});
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (isSubmitting) return;
 
     setIsSubmitting(true);
@@ -451,6 +459,9 @@ export default function CourseMatching() {
       await saveProgress({
         courses: courseData,
       });
+
+      // Mark step 2 as completed
+      markStepCompleted("course-matching");
 
       // Navigate to next step
       router.push("/accommodation");
@@ -489,29 +500,18 @@ export default function CourseMatching() {
         <Header />
 
         {/* Progress Header */}
-        <div className="bg-white border-b">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <Badge
-                  variant="outline"
-                  className="text-blue-600 border-blue-200"
-                >
-                  Step 2 of 5
-                </Badge>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Course Matching Information
-                </h1>
-              </div>
-              <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                <div className="w-2 h-2 bg-gray-200 rounded-full"></div>
-                <div className="w-2 h-2 bg-gray-200 rounded-full"></div>
-                <div className="w-2 h-2 bg-gray-200 rounded-full"></div>
-              </div>
-            </div>
-          </div>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <FormProgressBar
+            steps={[
+              { number: 1, name: "Basic Info", href: "/basic-information" },
+              { number: 2, name: "Courses", href: "/course-matching" },
+              { number: 3, name: "Accommodation", href: "/accommodation" },
+              { number: 4, name: "Living Expenses", href: "/living-expenses" },
+              { number: 5, name: "Experience", href: "/help-future-students" },
+            ]}
+            currentStep={currentStepNumber}
+            completedSteps={completedStepNumbers}
+          />
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -1118,66 +1118,17 @@ export default function CourseMatching() {
             </Card>
 
             {/* Navigation */}
-            <div className="flex justify-between items-center pt-8">
-              <Link href="/basic-information">
-                <Button variant="outline" className="flex items-center gap-2">
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Basic Information
-                </Button>
-              </Link>
-
-              <div className="flex gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    try {
-                      saveProgress({
-                        courses: {
-                          ...formData,
-                          hostCourses: courses,
-                          equivalentCourses: equivalentCourses,
-                        },
-                      });
-                      toast({
-                        title: "Draft saved",
-                        description:
-                          "Your course matching information has been saved as a draft.",
-                      });
-                    } catch (error) {
-                      console.error("Error saving draft:", error);
-                      toast({
-                        title: "Error saving draft",
-                        description:
-                          "There was a problem saving your draft. Please try again.",
-                        variant: "destructive",
-                      });
-                    }
-                  }}
-                  disabled={isSubmitting || isAutoSaving}
-                  className="flex items-center gap-2"
-                >
-                  {isAutoSaving ? "Auto-saving..." : "Save Draft"}
-                </Button>
-
-                <Button
-                  type="submit"
-                  disabled={isSubmitting || isAutoSaving}
-                  className="bg-black hover:bg-gray-800 text-white flex items-center gap-2"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="animate-spin mr-2">⏳</div>
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      Continue to Accommodation
-                      <ArrowRight className="h-4 w-4" />
-                    </>
-                  )}
-                </Button>
-              </div>
+            <div className="pt-8">
+              <StepNavigation
+                currentStep={currentStepNumber}
+                totalSteps={5}
+                onPrevious={() => router.push("/basic-information")}
+                onNext={handleSubmit}
+                canProceed={!isSubmitting}
+                isLastStep={false}
+                isSubmitting={isSubmitting}
+                showPrevious={true}
+              />
             </div>
 
             {/* Auto-save indicator */}

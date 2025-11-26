@@ -14,105 +14,120 @@ export default async function handler(
     const { city, country, universityId, accommodationType } = req.query;
 
     // Build where clause for filtering
-    const whereClause: any = {
-      type: "ACCOMMODATION",
-      status: "PUBLISHED", // Only show published submissions
-    };
+    const whereClause: any = {};
 
-    // Query all accommodation submissions
-    const submissions = await prisma.formSubmission.findMany({
+    if (city) {
+      whereClause.experience = {
+        hostCity: {
+          contains: city as string,
+          mode: 'insensitive'
+        }
+      };
+    }
+
+    if (country) {
+      whereClause.experience = {
+        ...whereClause.experience,
+        hostCountry: {
+          contains: country as string,
+          mode: 'insensitive'
+        }
+      };
+    }
+
+    if (universityId) {
+      whereClause.universityId = universityId as string;
+    }
+
+    if (accommodationType) {
+      whereClause.type = {
+        contains: accommodationType as string,
+        mode: 'insensitive'
+      };
+    }
+
+    // Query accommodation reviews with relations
+    const reviews = await prisma.accommodationReview.findMany({
       where: whereClause,
       include: {
-        user: {
+        experience: {
+          include: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+              },
+            },
+            hostUniversity: {
+              select: {
+                name: true,
+              },
+            },
+            homeUniversity: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        university: {
           select: {
-            firstName: true,
-            lastName: true,
-            email: false, // Don't expose email
+            name: true,
           },
         },
       },
       orderBy: { createdAt: "desc" },
     });
 
-    // Filter by query params if provided (since Prisma doesn't support JSON filtering easily)
-    let filteredSubmissions = submissions;
-
-    if (city) {
-      filteredSubmissions = filteredSubmissions.filter(
-        (sub) =>
-          sub.data &&
-          (sub.data as any).city
-            ?.toLowerCase()
-            .includes((city as string).toLowerCase()),
-      );
-    }
-
-    if (country) {
-      filteredSubmissions = filteredSubmissions.filter(
-        (sub) =>
-          sub.data &&
-          (sub.data as any).country
-            ?.toLowerCase()
-            .includes((country as string).toLowerCase()),
-      );
-    }
-
-    if (accommodationType) {
-      filteredSubmissions = filteredSubmissions.filter(
-        (sub) =>
-          sub.data &&
-          (sub.data as any).accommodationType
-            ?.toLowerCase()
-            .includes((accommodationType as string).toLowerCase()),
-      );
-    }
-
     // Format and send only public fields
-    const accommodationExperiences = filteredSubmissions.map((sub) => {
-      const data = sub.data as any;
+    const accommodationExperiences = reviews.map((review) => {
+      const experience = review.experience;
+      const expData = experience.experience as any || {};
+      const accomData = experience.accommodation as any || {};
+
       return {
-        id: sub.id,
+        id: review.id,
         // Student info (anonymized)
-        studentName: sub.user?.firstName
-          ? `${sub.user.firstName} ${sub.user.lastName?.charAt(0)}.`
+        studentName: experience.user?.firstName
+          ? `${experience.user.firstName} ${experience.user.lastName?.charAt(0)}.`
           : "Anonymous Student",
 
         // Accommodation details
-        accommodationType: data.accommodationType || "Not specified",
-        address: data.accommodationAddress || data.address,
-        neighborhood: data.neighborhood,
-        city: data.city,
-        country: data.country,
+        accommodationType: review.type || "Not specified",
+        address: review.address || accomData.address,
+        neighborhood: review.neighborhood || accomData.neighborhood,
+        city: experience.hostCity || "Unknown City",
+        country: experience.hostCountry || "Unknown Country",
 
         // Financial details
-        monthlyRent: data.monthlyRent || data.monthlyRate,
-        billsIncluded: data.billsIncluded,
-        utilityCosts: data.utilityCosts || data.monthlyUtilities,
-        depositAmount: data.depositAmount,
+        monthlyRent: review.pricePerMonth || 0,
+        billsIncluded: accomData.billsIncluded, // Still from JSON if not in model
+        utilityCosts: accomData.utilityCosts || accomData.monthlyUtilities,
+        depositAmount: accomData.depositAmount,
 
         // Rating and evaluation
-        rating: data.accommodationRating || data.overallRating,
-        wouldRecommend: data.wouldRecommend,
+        rating: review.rating || 0,
+        wouldRecommend: accomData.wouldRecommend, // Still from JSON
 
-        // Experience details
-        pros: data.accommodationPros || data.pros,
-        cons: data.accommodationCons || data.cons,
-        tips: data.accommodationTips || data.tips,
-        additionalNotes: data.additionalNotes || data.notes,
+        // Experience details - mapped from general experience if specific fields missing
+        pros: accomData.pros ? [accomData.pros] : (expData.bestExperience ? [expData.bestExperience] : []),
+        cons: accomData.cons ? [accomData.cons] : (expData.worstExperience ? [expData.worstExperience] : []),
+        tips: expData.generalTips || accomData.tips,
+        additionalNotes: review.comment || expData.generalTips,
 
         // Practical info
-        facilities: data.facilities || [],
-        transportLinks: data.transportLinks || data.transport,
-        nearbyAmenities: data.nearbyAmenities || data.amenities,
-        findingDifficulty: data.findingDifficulty,
+        facilities: accomData.facilities || {},
+        transportLinks: accomData.transportLinks || accomData.transport,
+        nearbyAmenities: accomData.nearbyAmenities || accomData.amenities || [],
+        findingDifficulty: accomData.findingDifficulty,
 
         // Academic context
-        university: data.hostUniversity || data.university,
-        universityInCyprus: data.universityInCyprus,
+        university: review.university?.name || experience.hostUniversity?.name || "Unknown University",
+        universityInCyprus: experience.homeUniversity?.name || "Unknown University",
 
         // Metadata
-        createdAt: sub.createdAt,
-        verified: data.verified || false,
+        createdAt: review.createdAt,
+        verified: true, // Assumed verified if it's in the review table
       };
     });
 

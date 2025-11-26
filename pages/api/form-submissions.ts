@@ -76,7 +76,7 @@ export default async function handler(
         };
       }
 
-      let submissions = await prisma.formSubmission.findMany({
+      let submissions = await prisma.form_submissions.findMany({
         where: whereClause,
         orderBy: { createdAt: "desc" },
       });

@@ -340,7 +340,7 @@ export default async function handler(
       });
 
       // Create Basic Info submission
-      const basicInfoSubmission = await prisma.formSubmission.create({
+      const basicInfoSubmission = await prisma.form_submissions.create({
         data: {
           userId: user.id,
           type: "BASIC_INFO",
@@ -351,7 +351,7 @@ export default async function handler(
       });
 
       // Create Living Expenses submission
-      await prisma.formSubmission.create({
+      await prisma.form_submissions.create({
         data: {
           userId: user.id,
           type: "LIVING_EXPENSES",
@@ -366,7 +366,7 @@ export default async function handler(
       });
 
       // Create Accommodation submission
-      await prisma.formSubmission.create({
+      await prisma.form_submissions.create({
         data: {
           userId: user.id,
           type: "ACCOMMODATION",
@@ -381,7 +381,7 @@ export default async function handler(
       });
 
       // Create Course Matching submission
-      await prisma.formSubmission.create({
+      await prisma.form_submissions.create({
         data: {
           userId: user.id,
           type: "COURSE_MATCHING",
@@ -396,7 +396,7 @@ export default async function handler(
       });
 
       // Create Experience/Story submission
-      await prisma.formSubmission.create({
+      await prisma.form_submissions.create({
         data: {
           userId: user.id,
           type: "EXPERIENCE",

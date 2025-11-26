@@ -12,7 +12,7 @@ export default async function handler(
 
   try {
     // Get all living expenses submissions
-    const submissions = await prisma.formSubmission.findMany({
+    const submissions = await prisma.form_submissions.findMany({
       where: {
         type: "LIVING_EXPENSES",
       },

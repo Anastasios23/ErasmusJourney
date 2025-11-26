@@ -149,6 +149,7 @@ export default function Destinations() {
             id: dest.id,
             city: dest.city,
             country: dest.country,
+            slug: dest.slug,
             image:
               dest.imageUrl ||
               `/images/destinations/${dest.city?.toLowerCase()}.svg`, // API returns imageUrl
@@ -181,6 +182,7 @@ export default function Destinations() {
             id: "fallback-prague",
             city: "Prague",
             country: "Czech Republic",
+            slug: "prague-czech-republic",
             image: "/images/destinations/prague.svg",
             description:
               "Historic city with affordable living and great universities",
@@ -586,10 +588,10 @@ export default function Destinations() {
                 {filteredDestinations.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredDestinations.map((destination, index) => (
-                      <Card
-                        key={destination.id}
-                        className="overflow-hidden hover:shadow-xl transition-all duration-300 group border-0 shadow-md hover:shadow-2xl hover:-translate-y-1"
-                      >
+                      <Link key={destination.id} href={`/destinations/${destination.slug}`}>
+                        <Card
+                          className="overflow-hidden hover:shadow-xl transition-all duration-300 group border-0 shadow-md hover:shadow-2xl hover:-translate-y-1 h-full cursor-pointer"
+                        >
                         <div className="relative h-48 overflow-hidden">
                           <OptimizedImage
                             src={destination.image}
@@ -906,17 +908,15 @@ export default function Destinations() {
                             </div>
                           )}
 
-                          <Link
-                            href={`/destinations/${destination.id}`}
-                            className="block"
-                          >
-                            <Button className="w-full" variant="outline">
+                          <div className="block">
+                            <div className="w-full inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
                               See More
                               <ArrowRight className="h-4 w-4 ml-2" />
-                            </Button>
-                          </Link>
+                            </div>
+                          </div>
                         </CardContent>
                       </Card>
+                      </Link>
                     ))}
                   </div>
                 ) : (

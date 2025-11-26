@@ -13,6 +13,7 @@ interface PublicDestination {
   highlights?: string[];
   featured: boolean;
   studentCount: number;
+  slug: string;
   averageRating?: number;
   avgCostPerMonth?: number;
   popularUniversities?: string[];
@@ -44,6 +45,7 @@ const FALLBACK_DESTINATIONS: PublicDestination[] = [
     highlights: ["Rich History", "Vibrant Culture", "Affordable Living"],
     featured: true,
     studentCount: 25,
+    slug: "berlin-germany",
     university: "Humboldt University of Berlin",
     universityShort: "HUB",
     partnerUniversities: ["Humboldt University", "Technical University Berlin"],
@@ -70,6 +72,7 @@ const FALLBACK_DESTINATIONS: PublicDestination[] = [
     highlights: ["Beautiful Architecture", "Beach City", "Great Food"],
     featured: true,
     studentCount: 18,
+    slug: "barcelona-spain",
     university: "University of Barcelona",
     universityShort: "UB",
     partnerUniversities: ["University of Barcelona", "Pompeu Fabra University"],
@@ -96,7 +99,7 @@ export default async function handler(
 
   try {
     // Get both admin destinations and form-generated destinations
-    const [adminDestinations, formGeneratedDestinations] = await Promise.all([
+    const [adminDestinations, formGeneratedDestinations, cityStats] = await Promise.all([
       prisma.adminDestination.findMany({
         where: { active: true },
         orderBy: [{ featured: "desc" }, { name: "asc" }],
@@ -108,10 +111,13 @@ export default async function handler(
         },
         orderBy: [{ featured: "desc" }, { name: "asc" }],
       }),
+      prisma.cityStatistics.findMany({
+        where: { semester: "ALL" }
+      })
     ]);
 
-    // Get form submissions for calculating stats
-    const formSubmissions = await prisma.formSubmission.findMany({
+    // Get form submissions for other data (like universities)
+    const formSubmissions = await prisma.form_submissions.findMany({
       where: { status: "PUBLISHED" }, // Only approved submissions
       select: {
         data: true,
@@ -145,7 +151,23 @@ export default async function handler(
       let costOfLiving: "low" | "medium" | "high" = "medium";
       let averageRent = 0;
 
-      if (dest.studentDataCache) {
+      // Try to find pre-calculated stats
+      const stats = cityStats.find(
+        s => s.city.toLowerCase() === dest.city.toLowerCase() && 
+             s.country.toLowerCase() === dest.country.toLowerCase()
+      );
+
+      if (stats && stats.avgTotalExpensesCents) {
+        const avgCost = Math.round(stats.avgTotalExpensesCents / 100);
+        
+        if (avgCost < 600) costOfLiving = "low";
+        else if (avgCost > 1200) costOfLiving = "high";
+        
+        if (stats.avgMonthlyRentCents) {
+          averageRent = Math.round(stats.avgMonthlyRentCents / 100);
+        }
+      } else if (dest.studentDataCache) {
+        // Fallback to cache
         const studentData = dest.studentDataCache as any;
         const avgRent = studentData.livingCosts?.avgMonthlyRent || 0;
 
@@ -168,6 +190,7 @@ export default async function handler(
         highlights: (dest.highlights as string[]) || [],
         featured: dest.featured,
         studentCount: citySubmissions.length,
+        slug: dest.slug || `${dest.city.toLowerCase().replace(/\s+/g, "-")}-${dest.country.toLowerCase().replace(/\s+/g, "-")}`,
         avgCostPerMonth: averageRent || undefined,
         popularUniversities: Array.from(universities).slice(0, 3),
 
@@ -212,14 +235,28 @@ export default async function handler(
         );
       });
 
-      // Calculate living expenses from submissions
-      const livingExpensesSubmissions = citySubmissions.filter(
-        (sub) => sub.type === "LIVING_EXPENSES",
-      );
+      // Calculate living expenses from stats
       let avgCostPerMonth = 0;
       let costOfLiving: "low" | "medium" | "high" = "medium";
 
-      if (livingExpensesSubmissions.length > 0) {
+      // Try to find pre-calculated stats
+      const stats = cityStats.find(
+        s => s.city.toLowerCase() === dest.city?.toLowerCase() && 
+             s.country.toLowerCase() === dest.country.toLowerCase()
+      );
+
+      // Calculate living expenses from submissions (needed for fallback)
+      const livingExpensesSubmissions = citySubmissions.filter(
+        (sub) => sub.type === "LIVING_EXPENSES",
+      );
+
+      if (stats && stats.avgTotalExpensesCents) {
+        avgCostPerMonth = Math.round(stats.avgTotalExpensesCents / 100);
+        
+        if (avgCostPerMonth < 600) costOfLiving = "low";
+        else if (avgCostPerMonth > 1200) costOfLiving = "high";
+      } else if (livingExpensesSubmissions.length > 0) {
+        // Fallback to old calculation
         const totalExpenses = livingExpensesSubmissions.map((sub) => {
           const data = sub.data as any;
           return (
@@ -268,6 +305,7 @@ export default async function handler(
         ],
         featured: dest.featured,
         studentCount: citySubmissions.length,
+        slug: dest.slug || `${dest.city?.toLowerCase().replace(/\s+/g, "-")}-${dest.country.toLowerCase().replace(/\s+/g, "-")}`,
         avgCostPerMonth: avgCostPerMonth || undefined,
         popularUniversities: Array.from(universities).slice(0, 3),
 

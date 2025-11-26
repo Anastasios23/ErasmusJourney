@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useFormContext } from "../FormProvider";
+import { EnhancedInput } from "@/components/ui/enhanced-input";
+import {
+  EnhancedSelect,
+  EnhancedSelectContent,
+  EnhancedSelectItem,
+  EnhancedSelectTrigger,
+  EnhancedSelectValue,
+} from "@/components/ui/enhanced-select";
+import { UniversitySearch } from "@/components/UniversitySearch";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { EnhancedTextarea } from "@/components/ui/enhanced-textarea";
 
 interface BasicInformationData {
   firstName: string;
@@ -9,11 +21,13 @@ interface BasicInformationData {
   nationality: string;
   phoneNumber: string;
   homeUniversity: string;
+  homeUniversityId?: string;
   homeDepartment: string;
   levelOfStudy: string;
   currentYear: string;
   studentId: string;
   hostUniversity: string;
+  hostUniversityId?: string;
   hostCountry: string;
   hostCity: string;
   hostDepartment: string;
@@ -46,11 +60,13 @@ export default function BasicInformationStep({
     nationality: "",
     phoneNumber: "",
     homeUniversity: "",
+    homeUniversityId: "",
     homeDepartment: "",
     levelOfStudy: "",
     currentYear: "",
     studentId: "",
     hostUniversity: "",
+    hostUniversityId: "",
     hostCountry: "",
     hostCity: "",
     hostDepartment: "",
@@ -85,8 +101,29 @@ export default function BasicInformationStep({
     }
 
     // Auto-save on change
-    const updateData = { basicInfo: newData };
     updateFormData("basicInfo", newData);
+  };
+
+  const handleUniversitySelect = (
+    type: "home" | "host",
+    id: string,
+    name: string,
+  ) => {
+    const fieldName = type === "home" ? "homeUniversity" : "hostUniversity";
+    const idFieldName =
+      type === "home" ? "homeUniversityId" : "hostUniversityId";
+
+    const newData = {
+      ...formData,
+      [fieldName]: name,
+      [idFieldName]: id,
+    };
+    setFormData(newData);
+    updateFormData("basicInfo", newData);
+
+    if (errors[fieldName]) {
+      setErrors((prev) => ({ ...prev, [fieldName]: "" }));
+    }
   };
 
   const validateForm = (): boolean => {
@@ -131,6 +168,10 @@ export default function BasicInformationStep({
   const handleContinue = () => {
     if (validateForm()) {
       onComplete({ basicInfo: formData });
+    } else {
+      // Scroll to top error
+      const firstError = document.querySelector(".text-red-500");
+      firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   };
 
@@ -139,327 +180,269 @@ export default function BasicInformationStep({
   };
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
-          Personal Information
-        </h3>
+    <div className="space-y-8 animate-in fade-in duration-500">
+      {/* Personal Information Section */}
+      <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="h-8 w-1 bg-blue-600 rounded-full"></div>
+          <h3 className="text-xl font-semibold text-gray-900">
+            Personal Information
+          </h3>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              First Name *
-            </label>
-            <input
-              type="text"
+          <div className="space-y-2">
+            <Label htmlFor="firstName">First Name</Label>
+            <EnhancedInput
+              id="firstName"
+              placeholder="e.g. John"
               value={formData.firstName}
               onChange={(e) => handleInputChange("firstName", e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.firstName ? "border-red-500" : "border-gray-300"
-              }`}
+              error={errors.firstName}
+              required
             />
-            {errors.firstName && (
-              <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
-            )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Last Name *
-            </label>
-            <input
-              type="text"
+          <div className="space-y-2">
+            <Label htmlFor="lastName">Last Name</Label>
+            <EnhancedInput
+              id="lastName"
+              placeholder="e.g. Doe"
               value={formData.lastName}
               onChange={(e) => handleInputChange("lastName", e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.lastName ? "border-red-500" : "border-gray-300"
-              }`}
+              error={errors.lastName}
+              required
             />
-            {errors.lastName && (
-              <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
-            )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email *
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <EnhancedInput
+              id="email"
               type="email"
+              placeholder="john.doe@university.edu"
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.email ? "border-red-500" : "border-gray-300"
-              }`}
+              error={errors.email}
+              required
+              helperText="We'll use this to contact you about your submission."
             />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nationality
-            </label>
-            <input
-              type="text"
+          <div className="space-y-2">
+            <Label htmlFor="nationality">Nationality</Label>
+            <EnhancedInput
+              id="nationality"
+              placeholder="e.g. Cypriot"
               value={formData.nationality}
               onChange={(e) => handleInputChange("nationality", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
       </div>
 
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
-          Home University
-        </h3>
+      {/* Home University Section */}
+      <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="h-8 w-1 bg-indigo-600 rounded-full"></div>
+          <h3 className="text-xl font-semibold text-gray-900">
+            Home University
+          </h3>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              University Name
-            </label>
-            <input
-              type="text"
+          <div className="col-span-1 md:col-span-2">
+            <UniversitySearch
+              label="University Name"
               value={formData.homeUniversity}
-              onChange={(e) =>
-                handleInputChange("homeUniversity", e.target.value)
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onSelect={(id, name) => handleUniversitySelect("home", id, name)}
+              placeholder="Search for your home university..."
+              type="cyprus" // Assuming users are from Cyprus as per prompt
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Department/Faculty
-            </label>
-            <input
-              type="text"
+          <div className="space-y-2">
+            <Label htmlFor="homeDepartment">Department/Faculty</Label>
+            <EnhancedInput
+              id="homeDepartment"
+              placeholder="e.g. Computer Science"
               value={formData.homeDepartment}
-              onChange={(e) =>
-                handleInputChange("homeDepartment", e.target.value)
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => handleInputChange("homeDepartment", e.target.value)}
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Level of Study
-            </label>
-            <select
+          <div className="space-y-2">
+            <Label>Level of Study</Label>
+            <EnhancedSelect
               value={formData.levelOfStudy}
-              onChange={(e) =>
-                handleInputChange("levelOfStudy", e.target.value)
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onValueChange={(value) => handleInputChange("levelOfStudy", value)}
             >
-              <option value="">Select level</option>
-              <option value="Bachelor">Bachelor</option>
-              <option value="Master">Master</option>
-              <option value="PhD">PhD</option>
-            </select>
+              <EnhancedSelectTrigger>
+                <EnhancedSelectValue placeholder="Select level" />
+              </EnhancedSelectTrigger>
+              <EnhancedSelectContent>
+                <EnhancedSelectItem value="Bachelor">Bachelor</EnhancedSelectItem>
+                <EnhancedSelectItem value="Master">Master</EnhancedSelectItem>
+                <EnhancedSelectItem value="PhD">PhD</EnhancedSelectItem>
+              </EnhancedSelectContent>
+            </EnhancedSelect>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Student ID
-            </label>
-            <input
-              type="text"
+          <div className="space-y-2">
+            <Label htmlFor="studentId">Student ID</Label>
+            <EnhancedInput
+              id="studentId"
+              placeholder="Optional"
               value={formData.studentId}
               onChange={(e) => handleInputChange("studentId", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
       </div>
 
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
-          Exchange Details
-        </h3>
+      {/* Exchange Details Section */}
+      <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="h-8 w-1 bg-teal-600 rounded-full"></div>
+          <h3 className="text-xl font-semibold text-gray-900">
+            Exchange Details
+          </h3>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Host University *
-            </label>
-            <input
-              type="text"
+          <div className="col-span-1 md:col-span-2">
+            <UniversitySearch
+              label="Host University"
               value={formData.hostUniversity}
-              onChange={(e) =>
-                handleInputChange("hostUniversity", e.target.value)
-              }
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.hostUniversity ? "border-red-500" : "border-gray-300"
-              }`}
+              onSelect={(id, name) => handleUniversitySelect("host", id, name)}
+              placeholder="Search for your host university..."
+              required
+              error={errors.hostUniversity}
+              type="international"
             />
-            {errors.hostUniversity && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.hostUniversity}
-              </p>
-            )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Host Country *
-            </label>
-            <input
-              type="text"
+          <div className="space-y-2">
+            <Label htmlFor="hostCountry">Host Country</Label>
+            <EnhancedInput
+              id="hostCountry"
               value={formData.hostCountry}
               onChange={(e) => handleInputChange("hostCountry", e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.hostCountry ? "border-red-500" : "border-gray-300"
-              }`}
+              error={errors.hostCountry}
+              required
             />
-            {errors.hostCountry && (
-              <p className="text-red-500 text-sm mt-1">{errors.hostCountry}</p>
-            )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Host City *
-            </label>
-            <input
-              type="text"
+          <div className="space-y-2">
+            <Label htmlFor="hostCity">Host City</Label>
+            <EnhancedInput
+              id="hostCity"
               value={formData.hostCity}
               onChange={(e) => handleInputChange("hostCity", e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.hostCity ? "border-red-500" : "border-gray-300"
-              }`}
+              error={errors.hostCity}
+              required
             />
-            {errors.hostCity && (
-              <p className="text-red-500 text-sm mt-1">{errors.hostCity}</p>
-            )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Exchange Period *
-            </label>
-            <select
+          <div className="space-y-2">
+            <Label>Exchange Period *</Label>
+            <EnhancedSelect
               value={formData.exchangePeriod}
-              onChange={(e) =>
-                handleInputChange("exchangePeriod", e.target.value)
-              }
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.exchangePeriod ? "border-red-500" : "border-gray-300"
-              }`}
+              onValueChange={(value) => handleInputChange("exchangePeriod", value)}
             >
-              <option value="">Select period</option>
-              <option value="Fall Semester">Fall Semester</option>
-              <option value="Spring Semester">Spring Semester</option>
-              <option value="Full Academic Year">Full Academic Year</option>
-              <option value="Summer Program">Summer Program</option>
-            </select>
+              <EnhancedSelectTrigger error={errors.exchangePeriod}>
+                <EnhancedSelectValue placeholder="Select period" />
+              </EnhancedSelectTrigger>
+              <EnhancedSelectContent>
+                <EnhancedSelectItem value="Fall Semester">Fall Semester</EnhancedSelectItem>
+                <EnhancedSelectItem value="Spring Semester">Spring Semester</EnhancedSelectItem>
+                <EnhancedSelectItem value="Full Academic Year">Full Academic Year</EnhancedSelectItem>
+                <EnhancedSelectItem value="Summer Program">Summer Program</EnhancedSelectItem>
+              </EnhancedSelectContent>
+            </EnhancedSelect>
             {errors.exchangePeriod && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.exchangePeriod}
-              </p>
+              <p className="text-sm text-red-500 mt-1">{errors.exchangePeriod}</p>
             )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Start Date
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="exchangeStartDate">Start Date</Label>
+            <EnhancedInput
+              id="exchangeStartDate"
               type="date"
               value={formData.exchangeStartDate}
-              onChange={(e) =>
-                handleInputChange("exchangeStartDate", e.target.value)
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => handleInputChange("exchangeStartDate", e.target.value)}
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              End Date
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="exchangeEndDate">End Date</Label>
+            <EnhancedInput
+              id="exchangeEndDate"
               type="date"
               value={formData.exchangeEndDate}
-              onChange={(e) =>
-                handleInputChange("exchangeEndDate", e.target.value)
-              }
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.exchangeEndDate ? "border-red-500" : "border-gray-300"
-              }`}
+              onChange={(e) => handleInputChange("exchangeEndDate", e.target.value)}
+              error={errors.exchangeEndDate}
             />
-            {errors.exchangeEndDate && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.exchangeEndDate}
-              </p>
-            )}
           </div>
         </div>
       </div>
 
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
-          Additional Information
-        </h3>
+      {/* Additional Information Section */}
+      <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="h-8 w-1 bg-purple-600 rounded-full"></div>
+          <h3 className="text-xl font-semibold text-gray-900">
+            Additional Information
+          </h3>
+        </div>
+
         <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Language of Instruction
-            </label>
-            <input
-              type="text"
-              value={formData.languageOfInstruction}
-              onChange={(e) =>
-                handleInputChange("languageOfInstruction", e.target.value)
-              }
+          <div className="space-y-2">
+            <Label htmlFor="languageOfInstruction">Language of Instruction</Label>
+            <EnhancedInput
+              id="languageOfInstruction"
               placeholder="e.g., English, Spanish, French"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.languageOfInstruction}
+              onChange={(e) => handleInputChange("languageOfInstruction", e.target.value)}
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Motivation for Exchange
-            </label>
-            <textarea
+          <div className="space-y-2">
+            <Label htmlFor="motivationForExchange">Motivation for Exchange</Label>
+            <EnhancedTextarea
+              id="motivationForExchange"
+              placeholder="Why did you choose this destination? What were your expectations?"
               value={formData.motivationForExchange || ""}
-              onChange={(e) =>
-                handleInputChange("motivationForExchange", e.target.value)
-              }
-              rows={3}
-              placeholder="Why did you choose this destination?"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => handleInputChange("motivationForExchange", e.target.value)}
+              rows={4}
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Academic Goals
-            </label>
-            <textarea
-              value={formData.academicGoals || ""}
-              onChange={(e) =>
-                handleInputChange("academicGoals", e.target.value)
-              }
-              rows={3}
+          <div className="space-y-2">
+            <Label htmlFor="academicGoals">Academic Goals</Label>
+            <EnhancedTextarea
+              id="academicGoals"
               placeholder="What did you hope to achieve academically?"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.academicGoals || ""}
+              onChange={(e) => handleInputChange("academicGoals", e.target.value)}
+              rows={4}
             />
           </div>
         </div>
       </div>
 
-      <div className="flex justify-between pt-6">
+      {/* Action Buttons */}
+      <div className="flex justify-between items-center pt-6 border-t border-gray-100">
         <button
           onClick={handleSave}
-          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+          className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
         >
           Save Draft
         </button>
         <button
           onClick={handleContinue}
-          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          className="px-8 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
           Continue to Courses
         </button>

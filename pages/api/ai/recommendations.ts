@@ -39,7 +39,7 @@ export default async function handler(
       req.body;
 
     // Fetch all published stories
-    const stories = await prisma.formSubmission.findMany({
+    const stories = await prisma.form_submissions.findMany({
       where: {
         type: "EXPERIENCE",
         status: { in: ["PUBLISHED", "SUBMITTED"] },
@@ -58,7 +58,7 @@ export default async function handler(
     });
 
     // Get basic info for all users
-    const basicInfoData = await prisma.formSubmission.findMany({
+    const basicInfoData = await prisma.form_submissions.findMany({
       where: {
         type: "BASIC_INFO",
         status: "SUBMITTED",
@@ -73,7 +73,7 @@ export default async function handler(
     // Get user preferences if userId provided
     let userPreferences = preferences;
     if (userId && !userPreferences) {
-      const userBasicInfo = await prisma.formSubmission.findFirst({
+      const userBasicInfo = await prisma.form_submissions.findFirst({
         where: {
           userId: userId,
           type: "BASIC_INFO",

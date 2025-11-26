@@ -18,7 +18,7 @@ export default async function handler(
       const { status } = req.query;
 
       // Fetch form submissions that have accommodation data
-      const submissions = await prisma.formSubmission.findMany({
+      const submissions = await prisma.form_submissions.findMany({
         where: {
           ...(status && { status: status as string }),
           type: "accommodation",

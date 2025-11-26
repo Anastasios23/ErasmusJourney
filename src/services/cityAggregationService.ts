@@ -91,6 +91,7 @@ export interface EnhancedCityAggregatedData extends CityAggregatedData {
     overallRating: number;
     accommodationType: string;
     topTip: string;
+    rawData: any;
   }>;
 
   // Statistical insights for multiple students
@@ -185,65 +186,34 @@ export async function getEnhancedCityData(
  * Generate individual student profiles (anonymized)
  */
 async function generateStudentProfiles(city: string, country: string) {
-  const profiles = await prisma.formSubmission.findMany({
+  const profiles = await prisma.erasmusExperience.findMany({
     where: {
-      status: "PUBLISHED",
-      type: "BASIC_INFO",
-      OR: [
-        {
-          data: {
-            path: "hostCity",
-            equals: city,
-          },
-        },
-        {
-          data: {
-            path: "destinationCity",
-            equals: city,
-          },
-        },
-      ],
+      hostCity: { equals: city, mode: "insensitive" },
+      hostCountry: { equals: country, mode: "insensitive" },
+      isComplete: true,
     },
     include: {
-      user: {
-        include: {
-          formSubmissions: {
-            where: { status: "PUBLISHED" },
-          },
-        },
-      },
+      hostUniversity: true,
     },
   });
 
   return profiles
     .map((profile, index) => {
-      const basicInfo = profile.data as any;
-      const userSubmissions = profile.user.formSubmissions;
-
-      // Get linked submissions for this student
-      const livingExpenses = userSubmissions.find(
-        (s) => s.type === "LIVING_EXPENSES",
-      );
-      const accommodation = userSubmissions.find(
-        (s) => s.type === "ACCOMMODATION",
-      );
-      const experience = userSubmissions.find((s) => s.type === "EXPERIENCE");
-
-      const livingData = livingExpenses?.data as any;
-      const accommodationData = accommodation?.data as any;
-      const experienceData = experience?.data as any;
+      const basicInfo = profile.basicInfo as any || {};
+      const livingData = profile.livingExpenses as any || {};
+      const accommodationData = profile.accommodation as any || {};
+      const experienceData = profile.experience as any || {};
 
       return {
         id: `student_${index + 1}`, // Anonymous ID
         university:
-          basicInfo.hostUniversity || basicInfo.university || "Unknown",
-        studyPeriod: basicInfo.studyPeriod || basicInfo.duration || "Unknown",
-        fieldOfStudy: basicInfo.fieldOfStudy || basicInfo.major || "Unknown",
-        totalMonthlyCost: livingData?.totalMonthlyBudget || 0,
-        overallRating: experienceData?.overallRating || 0,
+          profile.hostUniversity?.name || basicInfo.hostUniversity || "Unknown",
+        studyPeriod: profile.semester || basicInfo.exchangePeriod || "Unknown",
+        fieldOfStudy: basicInfo.fieldOfStudy || "Unknown",
+        totalMonthlyCost: parseFloat(livingData.total || livingData.totalMonthlyBudget || "0"),
+        overallRating: parseInt(experienceData.overallRating || "0"),
         accommodationType:
-          accommodationData?.accommodationType ||
-          accommodationData?.type ||
+          accommodationData.type ||
           "Unknown",
         topTip: extractBestTip(experienceData),
         rawData: {
@@ -274,6 +244,7 @@ function extractBestTip(experienceData: any): string {
     "recommendations",
     "advice",
     "generalTips",
+    "bestExperience"
   ];
 
   for (const field of tipFields) {
@@ -549,89 +520,158 @@ export async function aggregateCityData(
   console.log(`Aggregating data for ${city}, ${country}`);
 
   try {
-    // Get all basic info submissions for this city
-    const basicInfoSubmissions = await prisma.formSubmission.findMany({
+    // 1. Fetch CityStatistics (Fastest source for costs)
+    const cityStats = await prisma.cityStatistics.findUnique({
       where: {
-        status: "PUBLISHED",
-        type: "BASIC_INFO",
-        OR: [
-          {
-            data: {
-              path: "hostCity",
-              equals: city,
-            },
-          },
-          {
-            data: {
-              path: "destinationCity",
-              equals: city,
-            },
-          },
-        ],
-      },
-      include: {
-        user: {
-          select: { id: true },
+        city_country_semester: {
+          city,
+          country,
+          semester: "ALL",
         },
       },
     });
 
-    console.log(
-      `Found ${basicInfoSubmissions.length} basic info submissions for ${city}`,
-    );
-
-    // Get user IDs for linked submissions
-    const userIds = basicInfoSubmissions.map((sub) => sub.userId);
-
-    // Get all linked submissions for these users
-    const [
-      livingExpensesSubmissions,
-      accommodationSubmissions,
-      experienceSubmissions,
-      courseMatchingSubmissions,
-    ] = await Promise.all([
-      // Living expenses
-      prisma.formSubmission.findMany({
-        where: {
-          status: "PUBLISHED",
-          type: "LIVING_EXPENSES",
-          userId: { in: userIds },
+    // 2. Fetch Accommodation Reviews (Fastest source for accommodation stats)
+    const accommodationReviews = await prisma.accommodationReview.findMany({
+      where: {
+        experience: {
+          hostCity: { equals: city, mode: "insensitive" },
+          hostCountry: { equals: country, mode: "insensitive" },
         },
-      }),
+      },
+      select: {
+        type: true,
+        pricePerMonth: true,
+        rating: true,
+      },
+    });
 
-      // Accommodation
-      prisma.formSubmission.findMany({
-        where: {
-          status: "PUBLISHED",
-          type: "ACCOMMODATION",
-          userId: { in: userIds },
-        },
-      }),
-
-      // Experience/Story submissions
-      prisma.formSubmission.findMany({
-        where: {
-          status: "PUBLISHED",
-          type: { in: ["EXPERIENCE", "STORY"] },
-          userId: { in: userIds },
-        },
-      }),
-
-      // Course Matching submissions
-      prisma.formSubmission.findMany({
-        where: {
-          status: "PUBLISHED",
-          type: "COURSE_MATCHING",
-          userId: { in: userIds },
-        },
-      }),
-    ]);
+    // 3. Fetch Erasmus Experiences (Source for qualitative data and other stats)
+    const experiences = await prisma.erasmusExperience.findMany({
+      where: {
+        hostCity: { equals: city, mode: "insensitive" },
+        hostCountry: { equals: country, mode: "insensitive" },
+        isComplete: true,
+      },
+      include: {
+        hostUniversity: true,
+      },
+    });
 
     // Initialize aggregated data structure
     const aggregated: CityAggregatedData = {
       city,
       country,
-      totalSubmissions: basicInfoSubmissions.length,
+      totalSubmissions: experiences.length,
+      livingCosts: {
+        avgMonthlyRent: cityStats?.avgMonthlyRentCents ? cityStats.avgMonthlyRentCents / 100 : 0,
+        avgMonthlyFood: cityStats?.avgGroceriesCents ? cityStats.avgGroceriesCents / 100 : 0,
+        avgMonthlyTransport: cityStats?.avgTransportCents ? cityStats.avgTransportCents / 100 : 0,
+        avgMonthlyEntertainment: cityStats?.avgSocialLifeCents ? cityStats.avgSocialLifeCents / 100 : 0,
+        avgMonthlyUtilities: 0, // Not in CityStatistics explicitly, maybe fallback
+        avgMonthlyOther: 0,
+        avgTotalMonthly: cityStats?.avgTotalExpensesCents ? cityStats.avgTotalExpensesCents / 100 : 0,
+        costSubmissions: cityStats?.expenseSampleSize || 0,
+      },
+      ratings: {
+        avgOverallRating: 0,
+        avgAcademicRating: 0,
+        avgSocialLifeRating: 0,
+        avgCulturalImmersionRating: 0,
+        avgCostOfLivingRating: 0,
+        avgAccommodationRating: 0,
+        ratingSubmissions: 0,
+      },
+      accommodation: {
+        types: [],
+        totalAccommodationSubmissions: accommodationReviews.length,
+      },
+      courseMatching: {
+        avgDifficulty: 0,
+        difficultyBreakdown: {},
+        avgCoursesMatched: 0,
+        avgCreditsTransferred: 0,
+        successRate: 0,
+        recommendationRate: 0,
+        totalCourseMatchingSubmissions: 0,
+        commonChallenges: [],
+        topAdvice: [],
+        departmentInsights: [],
+      },
+      recommendations: {
+        wouldRecommendCount: 0,
+        totalRecommendationResponses: 0,
+        recommendationPercentage: 0,
+      },
+      topTips: [],
+      universities: [],
+    };
+
+    // Calculate Ratings from Experiences
+    let totalOverall = 0;
+    let countOverall = 0;
+    
+    experiences.forEach(exp => {
+      const expData = exp.experience as any;
+      if (expData?.overallRating) {
+        totalOverall += parseInt(expData.overallRating);
+        countOverall++;
+      }
+    });
+
+    aggregated.ratings.avgOverallRating = countOverall > 0 ? totalOverall / countOverall : 0;
+    aggregated.ratings.ratingSubmissions = countOverall;
+
+    // Calculate Accommodation Types Breakdown
+    const typeCounts: Record<string, { count: number; totalRent: number }> = {};
+    accommodationReviews.forEach(review => {
+      if (!typeCounts[review.type]) {
+        typeCounts[review.type] = { count: 0, totalRent: 0 };
+      }
+      typeCounts[review.type].count++;
+      typeCounts[review.type].totalRent += review.pricePerMonth;
+    });
+
+    aggregated.accommodation.types = Object.entries(typeCounts).map(([type, data]) => ({
+      type,
+      count: data.count,
+      avgRent: data.count > 0 ? data.totalRent / data.count : 0,
+      percentage: accommodationReviews.length > 0 ? Math.round((data.count / accommodationReviews.length) * 100) : 0,
+    }));
+
+    // Extract Universities
+    const uniCounts: Record<string, number> = {};
+    experiences.forEach(exp => {
+      const uniName = exp.hostUniversity?.name || (exp.basicInfo as any)?.hostUniversity || "Unknown";
+      uniCounts[uniName] = (uniCounts[uniName] || 0) + 1;
+    });
+
+    aggregated.universities = Object.entries(uniCounts)
+      .map(([name, count]) => ({ name, studentCount: count }))
+      .sort((a, b) => b.studentCount - a.studentCount);
+
+    // Extract Top Tips (Simple extraction)
+    const tips: string[] = [];
+    experiences.forEach(exp => {
+      const tip = extractBestTip(exp.experience);
+      if (tip) tips.push(tip);
+    });
+
+    aggregated.topTips = tips.slice(0, 5).map(tip => ({
+      category: "General",
+      tip,
+      frequency: 1
+    }));
+
+    return aggregated;
+
+  } catch (error) {
+    console.error("Error aggregating city data:", error);
+    // Return empty structure on error
+    return {
+      city,
+      country,
+      totalSubmissions: 0,
       livingCosts: {
         avgMonthlyRent: 0,
         avgMonthlyFood: 0,
@@ -675,548 +715,24 @@ export async function aggregateCityData(
       topTips: [],
       universities: [],
     };
-
-    // Aggregate living costs
-    if (livingExpensesSubmissions.length > 0) {
-      const costs = {
-        monthlyRent: [],
-        monthlyFood: [],
-        monthlyTransport: [],
-        monthlyEntertainment: [],
-        monthlyUtilities: [],
-        monthlyOther: [],
-        totalMonthlyBudget: [],
-      };
-
-      livingExpensesSubmissions.forEach((submission) => {
-        const data = submission.data as any;
-
-        // Handle both direct fields and nested expenses object
-        const rent = data.monthlyRent || data.expenses?.rent;
-        const food = data.monthlyFood || data.expenses?.food;
-        const transport = data.monthlyTransport || data.expenses?.transport;
-        const entertainment =
-          data.monthlyEntertainment || data.expenses?.entertainment;
-        const utilities = data.monthlyUtilities || data.expenses?.utilities;
-        const other = data.monthlyOther || data.expenses?.other;
-        const total = data.totalMonthlyBudget || data.expenses?.total;
-
-        if (rent && !isNaN(parseFloat(rent)))
-          costs.monthlyRent.push(parseFloat(rent));
-        if (food && !isNaN(parseFloat(food)))
-          costs.monthlyFood.push(parseFloat(food));
-        if (transport && !isNaN(parseFloat(transport)))
-          costs.monthlyTransport.push(parseFloat(transport));
-        if (entertainment && !isNaN(parseFloat(entertainment)))
-          costs.monthlyEntertainment.push(parseFloat(entertainment));
-        if (utilities && !isNaN(parseFloat(utilities)))
-          costs.monthlyUtilities.push(parseFloat(utilities));
-        if (other && !isNaN(parseFloat(other)))
-          costs.monthlyOther.push(parseFloat(other));
-        if (total && !isNaN(parseFloat(total)))
-          costs.totalMonthlyBudget.push(parseFloat(total));
-      });
-
-      // Calculate averages
-      aggregated.livingCosts = {
-        avgMonthlyRent:
-          costs.monthlyRent.length > 0
-            ? costs.monthlyRent.reduce((a, b) => a + b, 0) /
-              costs.monthlyRent.length
-            : 0,
-        avgMonthlyFood:
-          costs.monthlyFood.length > 0
-            ? costs.monthlyFood.reduce((a, b) => a + b, 0) /
-              costs.monthlyFood.length
-            : 0,
-        avgMonthlyTransport:
-          costs.monthlyTransport.length > 0
-            ? costs.monthlyTransport.reduce((a, b) => a + b, 0) /
-              costs.monthlyTransport.length
-            : 0,
-        avgMonthlyEntertainment:
-          costs.monthlyEntertainment.length > 0
-            ? costs.monthlyEntertainment.reduce((a, b) => a + b, 0) /
-              costs.monthlyEntertainment.length
-            : 0,
-        avgMonthlyUtilities:
-          costs.monthlyUtilities.length > 0
-            ? costs.monthlyUtilities.reduce((a, b) => a + b, 0) /
-              costs.monthlyUtilities.length
-            : 0,
-        avgMonthlyOther:
-          costs.monthlyOther.length > 0
-            ? costs.monthlyOther.reduce((a, b) => a + b, 0) /
-              costs.monthlyOther.length
-            : 0,
-        avgTotalMonthly:
-          costs.totalMonthlyBudget.length > 0
-            ? costs.totalMonthlyBudget.reduce((a, b) => a + b, 0) /
-              costs.totalMonthlyBudget.length
-            : 0,
-        costSubmissions: livingExpensesSubmissions.length,
-      };
-    }
-
-    // Aggregate ratings from experience submissions
-    if (experienceSubmissions.length > 0) {
-      const ratings = {
-        overall: [],
-        academic: [],
-        socialLife: [],
-        culturalImmersion: [],
-        costOfLiving: [],
-        accommodation: [],
-      };
-
-      experienceSubmissions.forEach((submission) => {
-        const data = submission.data as any;
-
-        // Handle ratings (ensure they're numbers and within valid range 1-5)
-        if (data.overallRating && !isNaN(parseFloat(data.overallRating))) {
-          const rating = parseFloat(data.overallRating);
-          if (rating >= 1 && rating <= 5) {
-            ratings.overall.push(rating);
-          }
-        }
-        if (data.academicRating && !isNaN(parseFloat(data.academicRating))) {
-          const rating = parseFloat(data.academicRating);
-          if (rating >= 1 && rating <= 5) {
-            ratings.academic.push(rating);
-          }
-        }
-        if (data.socialLifeRating && !isNaN(parseFloat(data.socialLifeRating))) {
-          const rating = parseFloat(data.socialLifeRating);
-          if (rating >= 1 && rating <= 5) {
-            ratings.socialLife.push(rating);
-          }
-        }
-        if (data.culturalImmersionRating && !isNaN(parseFloat(data.culturalImmersionRating))) {
-          const rating = parseFloat(data.culturalImmersionRating);
-          if (rating >= 1 && rating <= 5) {
-            ratings.culturalImmersion.push(rating);
-          }
-        }
-        if (data.costOfLivingRating && !isNaN(parseFloat(data.costOfLivingRating))) {
-          const rating = parseFloat(data.costOfLivingRating);
-          if (rating >= 1 && rating <= 5) {
-            ratings.costOfLiving.push(rating);
-          }
-        }
-        if (data.accommodationRating && !isNaN(parseFloat(data.accommodationRating))) {
-          const rating = parseFloat(data.accommodationRating);
-          if (rating >= 1 && rating <= 5) {
-            ratings.accommodation.push(rating);
-          }
-        }
-      });
-
-      aggregated.ratings = {
-        avgOverallRating:
-          ratings.overall.length > 0
-            ? ratings.overall.reduce((a, b) => a + b, 0) /
-              ratings.overall.length
-            : 0,
-        avgAcademicRating:
-          ratings.academic.length > 0
-            ? ratings.academic.reduce((a, b) => a + b, 0) /
-              ratings.academic.length
-            : 0,
-        avgSocialLifeRating:
-          ratings.socialLife.length > 0
-            ? ratings.socialLife.reduce((a, b) => a + b, 0) /
-              ratings.socialLife.length
-            : 0,
-        avgCulturalImmersionRating:
-          ratings.culturalImmersion.length > 0
-            ? ratings.culturalImmersion.reduce((a, b) => a + b, 0) /
-              ratings.culturalImmersion.length
-            : 0,
-        avgCostOfLivingRating:
-          ratings.costOfLiving.length > 0
-            ? ratings.costOfLiving.reduce((a, b) => a + b, 0) /
-              ratings.costOfLiving.length
-            : 0,
-        avgAccommodationRating:
-          ratings.accommodation.length > 0
-            ? ratings.accommodation.reduce((a, b) => a + b, 0) /
-              ratings.accommodation.length
-            : 0,
-        ratingSubmissions: experienceSubmissions.length,
-      };
-    }
-
-    // Aggregate accommodation types
-    if (accommodationSubmissions.length > 0) {
-      const accommodationTypes = new Map<
-        string,
-        { count: number; totalRent: number; rents: number[] }
-      >();
-
-      accommodationSubmissions.forEach((submission) => {
-        const data = submission.data as any;
-        const type = data.accommodationType || data.type || "Unknown";
-        const rent = data.monthlyRent;
-
-        if (!accommodationTypes.has(type)) {
-          accommodationTypes.set(type, { count: 0, totalRent: 0, rents: [] });
-        }
-
-        const typeData = accommodationTypes.get(type)!;
-        typeData.count++;
-
-        if (rent && !isNaN(parseFloat(rent))) {
-          const rentValue = parseFloat(rent);
-          typeData.rents.push(rentValue);
-          typeData.totalRent += rentValue;
-        }
-      });
-
-      const totalAccommodation = accommodationSubmissions.length;
-      aggregated.accommodation = {
-        types: Array.from(accommodationTypes.entries()).map(([type, data]) => ({
-          type,
-          count: data.count,
-          avgRent:
-            data.rents.length > 0 ? data.totalRent / data.rents.length : 0,
-          percentage: Math.round((data.count / totalAccommodation) * 100),
-        })),
-        totalAccommodationSubmissions: totalAccommodation,
-      };
-    }
-
-    // Aggregate course matching data
-    if (courseMatchingSubmissions.length > 0) {
-      const difficultyMap: Record<string, number> = {
-        "Very Easy": 1,
-        "Easy": 2,
-        "Moderate": 3,
-        "Difficult": 4,
-        "Very Difficult": 5,
-      };
-
-      let totalDifficulty = 0;
-      let totalCoursesMatched = 0;
-      let totalCreditsTransferred = 0;
-      let creditsTransferredCount = 0;
-      let courseRecommendationCount = 0;
-      const challenges: string[] = [];
-      const advice: string[] = [];
-      const difficultyBreakdown: Record<string, number> = {};
-      const departmentData = new Map<string, {
-        count: number;
-        totalDifficulty: number;
-        totalSuccess: number;
-        successCount: number;
-      }>();
-
-      courseMatchingSubmissions.forEach((submission) => {
-        const data = submission.data as any;
-
-        // Difficulty aggregation
-        const difficulty = difficultyMap[data.courseMatchingDifficult] || 3;
-        totalDifficulty += difficulty;
-
-        // Track difficulty breakdown
-        const difficultyLabel = data.courseMatchingDifficult || "Moderate";
-        difficultyBreakdown[difficultyLabel] = (difficultyBreakdown[difficultyLabel] || 0) + 1;
-
-        // Courses matched
-        if (data.homeCourseCount) {
-          totalCoursesMatched += data.homeCourseCount;
-        }
-
-        // Credits transferred
-        if (data.creditsTransferredSuccessfully && data.totalCreditsAttempted) {
-          const successRate = (data.creditsTransferredSuccessfully / data.totalCreditsAttempted) * 100;
-          totalCreditsTransferred += successRate;
-          creditsTransferredCount++;
-        }
-
-        // Course recommendations
-        if (data.recommendCourses === "Yes") {
-          courseRecommendationCount++;
-        }
-
-        // Collect challenges and advice
-        if (data.courseMatchingChallenges) {
-          challenges.push(data.courseMatchingChallenges);
-        }
-        if (data.biggestCourseChallenge) {
-          challenges.push(data.biggestCourseChallenge);
-        }
-        if (data.academicAdviceForFuture) {
-          advice.push(data.academicAdviceForFuture);
-        }
-        if (data.courseSelectionTips) {
-          advice.push(data.courseSelectionTips);
-        }
-
-        // Department insights
-        const dept = data.hostDepartment;
-        if (dept) {
-          if (!departmentData.has(dept)) {
-            departmentData.set(dept, {
-              count: 0,
-              totalDifficulty: 0,
-              totalSuccess: 0,
-              successCount: 0,
-            });
-          }
-          const deptData = departmentData.get(dept)!;
-          deptData.count++;
-          deptData.totalDifficulty += difficulty;
-
-          if (data.creditsTransferredSuccessfully && data.totalCreditsAttempted) {
-            deptData.totalSuccess += (data.creditsTransferredSuccessfully / data.totalCreditsAttempted) * 100;
-            deptData.successCount++;
-          }
-        }
-      });
-
-      // Process common challenges and advice (extract most frequent/useful ones)
-      const commonChallenges = challenges
-        .filter(challenge => challenge.length > 20)
-        .slice(0, 3);
-
-      const topAdvice = advice
-        .filter(tip => tip.length > 20)
-        .slice(0, 3);
-
-      // Calculate department insights
-      const departmentInsights = Array.from(departmentData.entries())
-        .map(([department, data]) => ({
-          department,
-          studentCount: data.count,
-          avgDifficulty: Math.round((data.totalDifficulty / data.count) * 10) / 10,
-          avgSuccess: data.successCount > 0
-            ? Math.round((data.totalSuccess / data.successCount) * 10) / 10
-            : 0,
-        }))
-        .sort((a, b) => b.studentCount - a.studentCount)
-        .slice(0, 5);
-
-      aggregated.courseMatching = {
-        avgDifficulty: Math.round((totalDifficulty / courseMatchingSubmissions.length) * 10) / 10,
-        difficultyBreakdown,
-        avgCoursesMatched: Math.round((totalCoursesMatched / courseMatchingSubmissions.length) * 10) / 10,
-        avgCreditsTransferred: creditsTransferredCount > 0
-          ? Math.round((totalCreditsTransferred / creditsTransferredCount) * 10) / 10
-          : 0,
-        successRate: creditsTransferredCount > 0
-          ? Math.round((totalCreditsTransferred / creditsTransferredCount) * 10) / 10
-          : 0,
-        recommendationRate: Math.round((courseRecommendationCount / courseMatchingSubmissions.length) * 100),
-        totalCourseMatchingSubmissions: courseMatchingSubmissions.length,
-        commonChallenges,
-        topAdvice,
-        departmentInsights,
-      };
-    }
-
-    // Calculate recommendation percentage from multiple sources
-    let recommendCount = 0;
-    let totalRecommendationResponses = 0;
-
-    // Check experience submissions for recommendations
-    experienceSubmissions.forEach((submission) => {
-      const data = submission.data as any;
-
-      // Check new experience form field
-      if (data.recommendExchange !== undefined) {
-        totalRecommendationResponses++;
-        if (data.recommendExchange === "yes") {
-          recommendCount++;
-        }
-      }
-      // Check legacy fields
-      else if (data.wouldRecommend !== undefined) {
-        totalRecommendationResponses++;
-        if (
-          data.wouldRecommend === "yes" ||
-          data.wouldRecommend === true ||
-          data.wouldRecommend === "true"
-        ) {
-          recommendCount++;
-        }
-      }
-    });
-
-    // Check accommodation submissions for recommendations
-    accommodationSubmissions.forEach((submission) => {
-      const data = submission.data as any;
-      if (data.wouldRecommend !== undefined) {
-        totalRecommendationResponses++;
-        if (
-          data.wouldRecommend === "yes" ||
-          data.wouldRecommend === "Definitely" ||
-          data.wouldRecommend === "Probably" ||
-          data.wouldRecommend === true ||
-          data.wouldRecommend === "true"
-        ) {
-          recommendCount++;
-        }
-      }
-    });
-
-    aggregated.recommendations = {
-      wouldRecommendCount: recommendCount,
-      totalRecommendationResponses,
-      recommendationPercentage:
-        totalRecommendationResponses > 0
-          ? Math.round((recommendCount / totalRecommendationResponses) * 100)
-          : 0,
-    };
-
-    // Extract universities from basic info
-    const universityMap = new Map<string, number>();
-    basicInfoSubmissions.forEach((submission) => {
-      const data = submission.data as any;
-      const university = data.hostUniversity || data.university;
-      if (university) {
-        universityMap.set(university, (universityMap.get(university) || 0) + 1);
-      }
-    });
-
-    aggregated.universities = Array.from(universityMap.entries())
-      .map(([name, count]) => ({ name, studentCount: count }))
-      .sort((a, b) => b.studentCount - a.studentCount);
-
-    // Extract top tips from experience submissions
-    const tipsMap = new Map<string, number>();
-    experienceSubmissions.forEach((submission) => {
-      const data = submission.data as any;
-
-      // Look for various tip fields including new experience form fields
-      const tipFields = [
-        // New experience form fields
-        "socialTips",
-        "culturalTips",
-        "travelTips",
-        "academicTips", // Now includes course matching advice
-        "practicalTips",
-        "adviceForFutureStudents",
-        // Course matching specific fields from linked submissions
-        "academicAdviceForFuture",
-        "courseSelectionTips",
-        "academicPreparationAdvice",
-        "bestCoursesRecommendation",
-        // Legacy and other fields
-        "budgetTips",
-        "transportationTips",
-        "socialLifeTips",
-        "tips",
-        "recommendations",
-        "advice",
-        "generalTips",
-      ];
-
-      tipFields.forEach((field) => {
-        if (data[field] && typeof data[field] === "string" && data[field].length > 10) {
-          // Split tips by common delimiters and clean them
-          const tips = data[field]
-            .split(/[.!?;]/)
-            .map((tip: string) => tip.trim())
-            .filter((tip: string) => tip.length > 15 && tip.length < 200); // Not too long
-
-          tips.forEach((tip: string) => {
-            // Clean and normalize tip
-            const cleanTip = tip.replace(/^[-*•]\s*/, '').trim(); // Remove bullet points
-            if (cleanTip.length > 15) {
-              const normalizedTip = cleanTip.toLowerCase();
-              tipsMap.set(cleanTip, (tipsMap.get(normalizedTip) || 0) + 1);
-            }
-          });
-        }
-      });
-    });
-
-    // Get top 10 most common tips
-    aggregated.topTips = Array.from(tipsMap.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 10)
-      .map(([tip, frequency]) => ({
-        category: "General",
-        tip,
-        frequency,
-      }));
-
-    console.log(`Aggregated data for ${city}:`, {
-      totalSubmissions: aggregated.totalSubmissions,
-      costSubmissions: aggregated.livingCosts.costSubmissions,
-      ratingSubmissions: aggregated.ratings.ratingSubmissions,
-      accommodationSubmissions:
-        aggregated.accommodation.totalAccommodationSubmissions,
-    });
-
-    return aggregated;
-  } catch (error) {
-    console.error(`Error aggregating data for ${city}, ${country}:`, error);
-    throw error;
   }
 }
 
-/**
- * Gets aggregated data for all cities with submissions
- */
-export async function getAllCitiesAggregatedData(): Promise<
-  CityAggregatedData[]
-> {
-  try {
-    // Get all unique city/country combinations from basic info submissions
-    const submissions = await prisma.formSubmission.findMany({
-      where: {
-        status: "PUBLISHED",
-        type: "BASIC_INFO",
-      },
-      select: {
-        data: true,
-      },
+export async function getAllCitiesAggregatedData(): Promise<CityAggregatedData[]> {
+    // This is a heavy operation, ideally we should cache this or use a materialized view.
+    // For now, we can query distinct cities from ErasmusExperience and aggregate them.
+    
+    const distinctCities = await prisma.erasmusExperience.findMany({
+        where: { isComplete: true },
+        select: { hostCity: true, hostCountry: true },
+        distinct: ['hostCity', 'hostCountry']
     });
 
-    console.log(
-      `Found ${submissions.length} basic info submissions for aggregation`,
-    );
-
-    const cityCountryCombinations = new Set<string>();
-    submissions.forEach((submission) => {
-      const data = submission.data as any;
-      const city = data.hostCity || data.destinationCity;
-      const country = data.hostCountry || data.destinationCountry;
-
-      if (city && country) {
-        cityCountryCombinations.add(`${city}|${country}`);
-      }
-    });
-
-    console.log(
-      `Found ${cityCountryCombinations.size} unique city/country combinations`,
-    );
-
-    // Aggregate data for each city
     const results = await Promise.all(
-      Array.from(cityCountryCombinations).map(async (cityCountry) => {
-        try {
-          const [city, country] = cityCountry.split("|");
-          return await aggregateCityData(city, country);
-        } catch (error) {
-          console.error(`Error aggregating data for ${cityCountry}:`, error);
-          return null;
-        }
-      }),
+        distinctCities
+            .filter(c => c.hostCity && c.hostCountry)
+            .map(c => aggregateCityData(c.hostCity!, c.hostCountry!))
     );
 
-    // Filter out null results and cities with no submissions
-    const validResults = results
-      .filter((result): result is CityAggregatedData => result !== null)
-      .filter((result) => result.totalSubmissions > 0);
-
-    console.log(
-      `Successfully aggregated data for ${validResults.length} cities`,
-    );
-    return validResults;
-  } catch (error) {
-    console.error("Error in getAllCitiesAggregatedData:", error);
-    return [];
-  }
+    return results;
 }

@@ -49,7 +49,7 @@ export default async function handler(
       };
     }
 
-    const submissions = await prisma.formSubmission.findMany({
+    const submissions = await prisma.form_submissions.findMany({
       where: whereClause,
       include: {
         user: {

@@ -11,7 +11,7 @@ export default async function handler(
 
   try {
     // Fetch all story submissions from database
-    const stories = await prisma.formSubmission.findMany({
+    const stories = await prisma.form_submissions.findMany({
       where: {
         type: "STORY",
         // We are removing the status filter for now to show all stories

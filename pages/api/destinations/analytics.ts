@@ -59,7 +59,7 @@ async function handleOverview(
   ] = await Promise.all([
     prisma.destination.count(),
     prisma.destination.count({ where: { featured: true } }),
-    prisma.formSubmission.count(),
+    prisma.form_submissions.count(),
     prisma.destination.findMany({
       take: 5,
       orderBy: { createdAt: "desc" },
@@ -115,7 +115,7 @@ async function handleDestinationAnalytics(
   }
 
   // Get related form submissions (simplified for SQLite compatibility)
-  const relatedSubmissions = await prisma.formSubmission.count({
+  const relatedSubmissions = await prisma.form_submissions.count({
     where: {
       OR: [
         { data: { string_contains: destination.country } },

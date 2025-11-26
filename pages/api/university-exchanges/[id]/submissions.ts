@@ -39,7 +39,7 @@ export default async function handler(
     console.log(`Fetching submissions for university: ${id}`);
 
     // First try to fetch submissions by universityId in the data field
-    let submissions = await prisma.formSubmission.findMany({
+    let submissions = await prisma.form_submissions.findMany({
       orderBy: { createdAt: "desc" },
     });
 

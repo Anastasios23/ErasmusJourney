@@ -4,24 +4,11 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import { prisma } from "../../../lib/prisma";
+import { randomUUID } from "crypto";
 
 export const authOptions: NextAuthOptions = {
-  adapter: {
-    ...PrismaAdapter(prisma),
-    createUser: (data) => {
-      const [firstName, ...lastNameParts] = data.name?.split(" ") || ["", ""];
-      const lastName = lastNameParts.join(" ");
-      return prisma.user.create({
-        data: {
-          email: data.email,
-          firstName: firstName || null,
-          lastName: lastName || null,
-          image: data.image,
-          emailVerified: data.emailVerified,
-        },
-      });
-    },
-  },
+  // Note: Prisma adapter removed because we're using JWT strategy
+  // For Google OAuth, users will be created in the authorize callback
   providers: [
     // Only include Google provider if credentials are available
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
@@ -42,18 +29,18 @@ export const authOptions: NextAuthOptions = {
         try {
           if (!credentials?.email || !credentials?.password) {
             console.error("Missing credentials");
-            throw new Error("CredentialsSignin");
+            return null;
           }
 
           console.log("Attempting login for:", credentials.email);
 
-          const user = await prisma.user.findUnique({
+          const user = await prisma.users.findUnique({
             where: { email: credentials.email },
           });
 
           if (!user || !user.password) {
             console.error("User not found:", credentials.email);
-            throw new Error("CredentialsSignin");
+            return null;
           }
 
           console.log("User found, verifying password");
@@ -65,20 +52,25 @@ export const authOptions: NextAuthOptions = {
 
           if (!isValid) {
             console.error("Invalid password for:", credentials.email);
-            throw new Error("CredentialsSignin");
+            return null;
           }
 
           console.log("Login successful for:", credentials.email);
-
-          return {
+          console.log("Returning user object:", {
             id: user.id,
             email: user.email,
             role: user.role,
-            name: `${user.firstName} ${user.lastName}`,
+          });
+
+          return {
+            id: user.id,
+            email: user.email!,
+            role: user.role,
+            name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.email!,
           };
         } catch (error) {
           console.error("Auth error:", error);
-          throw error;
+          return null;
         }
       },
     }),
@@ -116,40 +108,7 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
     error: "/auth/error",
   },
-  // Improved cookie configuration for better stability
-  cookies: {
-    sessionToken: {
-      name: `__Secure-next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-        domain:
-          process.env.NODE_ENV === "production"
-            ? process.env.NEXTAUTH_URL?.replace(/https?:\/\//, "")
-            : undefined,
-      },
-    },
-    callbackUrl: {
-      name: `__Secure-next-auth.callback-url`,
-      options: {
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      },
-    },
-    csrfToken: {
-      name: `__Host-next-auth.csrf-token`,
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      },
-    },
-  },
-  // Disable debug in production but keep minimal logging
+  // Debug mode for development
   debug: process.env.NODE_ENV === "development",
   // Enhanced error logging with better filtering
   logger: {

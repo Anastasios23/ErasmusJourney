@@ -14,7 +14,7 @@ export default async function handler(
 
     // Test basic database queries one by one
     console.log("1. Testing basic info submissions...");
-    const basicInfoSubmissions = await prisma.formSubmission.findMany({
+    const basicInfoSubmissions = await prisma.form_submissions.findMany({
       where: {
         status: "SUBMITTED",
         type: "BASIC_INFO",

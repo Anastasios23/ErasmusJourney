@@ -185,7 +185,7 @@ model destinations {
   @@unique([city, country])
 }
 
-model erasmus_experiences {
+model ErasmusExperience {
   id             String  @id
   userId         String  @unique
   currentStep    Int     @default(1)
@@ -230,18 +230,23 @@ model erasmus_experiences {
   hostUniversity universities?  @relation("hostExperiences", fields: [hostUniversityId], references: [id])
   homeUniversity universities?  @relation("homeExperiences", fields: [homeUniversityId], references: [id])
   reviewActions  ReviewAction[]
+  
+  // NEW: Aggregation Relations
+  courseMappings      CourseMapping[]
+  accommodationReviews AccommodationReview[]
 
   @@unique([userId, semester])
   @@index([status, hostCity, hostCountry])
   @@index([semester])
   @@index([hostUniversityId, homeUniversityId])
+  @@map("erasmus_experiences")
 }
 
 // NEW: Admin review audit log
 model ReviewAction {
   id           String              @id @default(cuid())
   experienceId String
-  experience   erasmus_experiences @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  experience   ErasmusExperience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
   adminId      String
   admin        users               @relation("ReviewActions", fields: [adminId], references: [id])
   action       String // "APPROVED" | "REJECTED" | "REVISION_REQUESTED"
@@ -507,8 +512,11 @@ model universities {
   stories                                                 stories[]
 
   // NEW: Erasmus experience relations
-  hostExperiences erasmus_experiences[] @relation("hostExperiences")
-  homeExperiences erasmus_experiences[] @relation("homeExperiences")
+  hostExperiences ErasmusExperience[] @relation("hostExperiences")
+  homeExperiences ErasmusExperience[] @relation("homeExperiences")
+  
+  // NEW: Aggregation Relations
+  courseMappings  CourseMapping[]
 }
 
 model university_exchanges {
@@ -548,11 +556,69 @@ model users {
   Account             Account[]
   Session             Session[]
   applications        applications[]
-  erasmus_experiences erasmus_experiences?
+  erasmus_experiences ErasmusExperience?
   form_submissions    form_submissions[]
   stories             stories[]
   story_engagements   story_engagements[]
 
   // NEW: Admin review actions
   reviewActions ReviewAction[] @relation("ReviewActions")
+}
+
+// NEW: Aggregation Models
+
+model CourseMapping {
+  id             String       @id @default(cuid())
+  experienceId   String
+  universityId   String       // Host University ID
+  
+  homeCourseCode String?
+  homeCourseName String
+  homeCredits    Float?
+  
+  hostCourseCode String?
+  hostCourseName String
+  hostCredits    Float?
+  
+  grade          String?
+  status         String       @default("APPROVED") // APPROVED | REJECTED | PENDING
+  
+  createdAt      DateTime     @default(now())
+  
+  experience     ErasmusExperience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  university     universities        @relation(fields: [universityId], references: [id])
+
+  @@index([universityId])
+  @@index([homeCourseName])
+  @@index([hostCourseName])
+}
+
+model AccommodationReview {
+  id              String       @id @default(cuid())
+  experienceId    String
+  accommodationId String?      // Optional link to a known accommodation entity
+  
+  name            String       // Name of the place/dorm
+  type            String       // DORM | APARTMENT | SHARED_FLAT | STUDIO
+  address         String?
+  neighborhood    String?
+  
+  pricePerMonth   Float
+  currency        String       @default("EUR")
+  
+  rating          Int          // 1-5
+  cleanliness     Int?         // 1-5
+  location        Int?         // 1-5
+  socialVibe      Int?         // 1-5
+  
+  comment         String?      @db.Text
+  
+  createdAt       DateTime     @default(now())
+  
+  experience      ErasmusExperience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  // accommodation   accommodations?     @relation(fields: [accommodationId], references: [id]) // Uncomment if linking to strict accommodation table
+
+  @@index([experienceId])
+  @@index([pricePerMonth])
+  @@index([type])
 }

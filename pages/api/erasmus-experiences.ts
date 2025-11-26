@@ -1,5 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "./auth/[...nextauth]";
+import { randomUUID } from "crypto";
+
+import { updateCityStatistics } from "../../src/services/statisticsService";
 
 const prisma = new PrismaClient();
 
@@ -61,10 +66,19 @@ export default async function handler(
 async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
 
+  // Get authenticated user from session
+  const session = await getServerSession(req, res, authOptions);
+  
+  if (!session?.user?.id) {
+    return res.status(401).json({ error: "Authentication required" });
+  }
+
+  const userId = session.user.id;
+
   if (id) {
     // Get specific experience with retry logic
     const experience = await retryDatabaseOperation(() =>
-      prisma.erasmus_experiences.findUnique({
+      prisma.erasmusExperience.findUnique({
         where: { id: id as string },
       }),
     );
@@ -73,11 +87,17 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
       return res.status(404).json({ error: "Experience not found" });
     }
 
+    // Ensure user can only access their own experience
+    if ((experience as any).userId !== userId) {
+      return res.status(403).json({ error: "Access denied" });
+    }
+
     return res.status(200).json(experience);
   } else {
-    // Get all experiences (for admin or debugging) with retry logic
+    // Get all experiences for this user with retry logic
     const experiences = await retryDatabaseOperation(() =>
-      prisma.erasmus_experiences.findMany({
+      prisma.erasmusExperience.findMany({
+        where: { userId },
         orderBy: { updatedAt: "desc" },
       }),
     );
@@ -90,30 +110,23 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   const { action } = req.body;
 
   if (action === "create") {
-    // First, ensure we have a test user or create one
-    let testUser = await prisma.users.findFirst({
-      where: { email: "test@erasmus.local" },
-    });
-
-    if (!testUser) {
-      testUser = await prisma.users.create({
-        data: {
-          email: "test@erasmus.local",
-          firstName: "Test",
-          lastName: "User",
-          role: "USER",
-        },
-      });
+    // Get authenticated user from session
+    const session = await getServerSession(req, res, authOptions);
+    
+    if (!session?.user?.id) {
+      return res.status(401).json({ error: "Authentication required" });
     }
 
+    const userId = session.user.id;
+
     // Check if this user already has an experience
-    let existingExperience = await prisma.erasmus_experiences.findUnique({
-      where: { userId: testUser.id },
+    let existingExperience = await prisma.erasmusExperience.findUnique({
+      where: { userId },
     });
 
     if (existingExperience) {
-      // Reset the existing experience to draft state for testing
-      existingExperience = await prisma.erasmus_experiences.update({
+      // Reset the existing experience to draft state
+      existingExperience = await prisma.erasmusExperience.update({
         where: { id: existingExperience.id },
         data: {
           status: "DRAFT",
@@ -131,10 +144,12 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Create a new draft experience
-    const newExperience = await prisma.erasmus_experiences.create({
+    const newExperience = await prisma.erasmusExperience.create({
       data: {
-        userId: testUser.id,
+        id: randomUUID(),
+        userId,
         status: "DRAFT",
+        updatedAt: new Date(),
         // Initialize empty data structures
         basicInfo: {},
         courses: [],
@@ -157,9 +172,14 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     return res.status(400).json({ error: "Experience ID is required" });
   }
 
+  // Ensure completedSteps is stringified if it's an array
+  if (updateData.completedSteps && Array.isArray(updateData.completedSteps)) {
+    updateData.completedSteps = JSON.stringify(updateData.completedSteps);
+  }
+
   // Find the existing experience with retry logic
   const existingExperience: any = await retryDatabaseOperation(() =>
-    prisma.erasmus_experiences.findUnique({
+    prisma.erasmusExperience.findUnique({
       where: { id },
     }),
   );
@@ -240,12 +260,128 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       }
     }
 
+    // --- VALIDATION START ---
+    const errors: string[] = [];
+
+    // 1. Basic Info
+    const basicInfoVal = submissionData.basicInfo || {};
+    if (
+      !basicInfoVal.homeUniversity ||
+      !basicInfoVal.hostUniversity ||
+      !basicInfoVal.semester ||
+      !basicInfoVal.year
+    ) {
+      errors.push(
+        "Basic Information is incomplete (University, Semester, Year required).",
+      );
+    }
+
+    // 2. Courses
+    const coursesVal = submissionData.courses || {};
+    const mappingsVal = coursesVal.mappings || [];
+    if (!Array.isArray(mappingsVal) || mappingsVal.length === 0) {
+      errors.push("At least one course mapping is required.");
+    }
+
+    // 3. Accommodation
+    const accommodationVal = submissionData.accommodation || {};
+    if (
+      !accommodationVal.type ||
+      !accommodationVal.rent ||
+      !accommodationVal.rating
+    ) {
+      errors.push(
+        "Accommodation details are incomplete (Type, Rent, Rating required).",
+      );
+    }
+
+    // 4. Living Expenses
+    const livingExpensesVal = submissionData.livingExpenses || {};
+    if (!livingExpensesVal.expenses) {
+      errors.push("Living Expenses are incomplete.");
+    }
+
+    if (errors.length > 0) {
+      return res.status(400).json({
+        error: "Validation Failed",
+        details: errors.join(" "),
+      });
+    }
+    // --- VALIDATION END ---
+
     const updatedExperience = await retryDatabaseOperation(() =>
-      prisma.erasmus_experiences.update({
-        where: { id },
-        data: submissionData,
-      }),
+      prisma.$transaction(async (tx) => {
+        // 1. Update the main experience record
+        const experience = await tx.erasmusExperience.update({
+          where: { id },
+          data: submissionData,
+        });
+
+        // 2. Perform data aggregation
+        // A. Aggregate Course Mappings
+        if (experience.courses && experience.hostUniversityId) {
+          const coursesData = experience.courses as any;
+          const mappings = coursesData.mappings || [];
+
+          // Delete existing mappings for this experience to avoid duplicates/stale data
+          await tx.courseMapping.deleteMany({
+            where: { experienceId: experience.id },
+          });
+
+          // Create new mappings
+          if (mappings.length > 0) {
+            await tx.courseMapping.createMany({
+              data: mappings.map((m: any) => ({
+                experienceId: experience.id,
+                universityId: experience.hostUniversityId!, // Host University
+                homeCourseCode: m.homeCode || null,
+                homeCourseName: m.homeName,
+                homeCredits: parseFloat(m.homeEcts) || 0,
+                hostCourseCode: m.hostCode || null,
+                hostCourseName: m.hostName,
+                hostCredits: parseFloat(m.hostEcts) || 0,
+                status: "APPROVED", // Auto-approve for now
+              })),
+            });
+          }
+        }
+
+        // B. Aggregate Accommodation Review
+        if (experience.accommodation) {
+          const accomData = experience.accommodation as any;
+          
+          // Delete existing review for this experience
+          await tx.accommodationReview.deleteMany({
+            where: { experienceId: experience.id },
+          });
+
+          // Create new review
+          if (accomData.type && accomData.rent) {
+             await tx.accommodationReview.create({
+              data: {
+                experienceId: experience.id,
+                name: accomData.address || `${accomData.type} in ${experience.hostCity || 'City'}`,
+                type: accomData.type,
+                address: accomData.address || null,
+                pricePerMonth: parseFloat(accomData.rent) || 0,
+                currency: accomData.currency || "EUR",
+                rating: parseInt(accomData.rating) || 0,
+                comment: accomData.review || null,
+              },
+            });
+          }
+        }
+
+        return experience;
+      })
     );
+
+    // 3. Update City Statistics (Fire and forget)
+    if (updatedExperience.hostCity && updatedExperience.hostCountry) {
+      updateCityStatistics(updatedExperience.hostCity, updatedExperience.hostCountry).catch(err => 
+        console.error("Failed to update city stats:", err)
+      );
+    }
 
     return res.status(200).json(updatedExperience);
   } else {
@@ -286,7 +422,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const updatedExperience = await retryDatabaseOperation(() =>
-      prisma.erasmus_experiences.update({
+      prisma.erasmusExperience.update({
         where: { id },
         data: updateFields,
       }),

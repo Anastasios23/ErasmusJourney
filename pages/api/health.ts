@@ -21,7 +21,7 @@ export default async function handler(
     console.log("Database test - user count:", userCount);
 
     // Test form submission count
-    const submissionCount = await prisma.formSubmission.count();
+    const submissionCount = await prisma.form_submissions.count();
     console.log("Database test - submission count:", submissionCount);
 
     res.status(200).json({

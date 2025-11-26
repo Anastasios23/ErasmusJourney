@@ -17,7 +17,7 @@ export default async function handler(
 
   try {
     // Fetch specific story from database
-    const story = await prisma.formSubmission.findFirst({
+    const story = await prisma.form_submissions.findFirst({
       where: {
         id: id,
         type: "STORY",

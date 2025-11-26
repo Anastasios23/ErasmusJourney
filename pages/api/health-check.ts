@@ -18,7 +18,7 @@ export default async function handler(
     console.log(`Found ${userCount} users in database`);
 
     // Test form submissions
-    const submissionCount = await prisma.formSubmission.count();
+    const submissionCount = await prisma.form_submissions.count();
     console.log(`Found ${submissionCount} form submissions in database`);
 
     // Test destinations

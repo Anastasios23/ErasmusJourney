@@ -30,7 +30,7 @@ export default async function handler(
     // 1. Similar student recommendations
     if (userUniversity && hostCity) {
       try {
-        const similarStudents = await prisma.formSubmission.findMany({
+        const similarStudents = await prisma.form_submissions.findMany({
           where: {
             type: "ACCOMMODATION",
             status: "PUBLISHED",
@@ -70,7 +70,7 @@ export default async function handler(
       };
 
       try {
-        const budgetAccommodations = await prisma.formSubmission.findMany({
+        const budgetAccommodations = await prisma.form_submissions.findMany({
           where: {
             type: "ACCOMMODATION",
             status: "PUBLISHED",

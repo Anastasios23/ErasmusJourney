@@ -23,7 +23,7 @@ export default async function handler(
         whereClause.status = status;
       }
 
-      const submissions = await prisma.formSubmission.findMany({
+      const submissions = await prisma.form_submissions.findMany({
         where: {
           ...whereClause,
           hostCity: { not: null },

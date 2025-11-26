@@ -144,7 +144,7 @@ export default function StudentAccommodations() {
       const data = await response.json();
 
       // Apply client-side filtering if needed
-      let filtered = data.experiences || [];
+      let filtered = data.accommodations || [];
 
       if (filters.search) {
         const search = filters.search.toLowerCase();

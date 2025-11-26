@@ -32,7 +32,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     });
 
     // Get aggregated data from form submissions
-    const submissionData = await prisma.formSubmission.findMany({
+    const submissionData = await prisma.form_submissions.findMany({
       where: {
         status: "PUBLISHED",
         type: {
@@ -185,7 +185,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     // If this destination was created from a submission, we could link them
     if (submissionId) {
       // Update the submission to mark it as processed
-      await prisma.formSubmission.update({
+      await prisma.form_submissions.update({
         where: { id: submissionId },
         data: {
           status: "PUBLISHED",

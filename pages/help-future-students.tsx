@@ -47,6 +47,7 @@ import { useFormValidation } from "../src/hooks/useFormValidation";
 import { FormErrorSummary } from "../src/components/FormErrorSummary";
 import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
 import { useFormProgress } from "../src/context/FormProgressContext";
+import { StepGuard } from "../components/forms/StepGuard";
 
 export default function HelpFutureStudents() {
   const router = useRouter();
@@ -386,7 +387,8 @@ export default function HelpFutureStudents() {
   ];
 
   return (
-    <SubmissionGuard>
+    <StepGuard requiredStep={5}>
+      <SubmissionGuard>
       <Head>
         <title>Help Future Students - Erasmus Journey Platform</title>
         <meta
@@ -1052,5 +1054,6 @@ export default function HelpFutureStudents() {
         </section>
       </div>
     </SubmissionGuard>
+    </StepGuard>
   );
 }

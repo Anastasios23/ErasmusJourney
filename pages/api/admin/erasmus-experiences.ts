@@ -40,7 +40,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Fetch experiences
-    const experiences = await prisma.erasmus_experiences.findMany({
+    const experiences = await prisma.erasmusExperience.findMany({
       where,
       include: {
         user: {

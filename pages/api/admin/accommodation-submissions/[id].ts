@@ -17,7 +17,7 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
-      const submission = await prisma.formSubmission.findUnique({
+      const submission = await prisma.form_submissions.findUnique({
         where: { id: id as string },
         include: {
           user: true,
@@ -42,7 +42,7 @@ export default async function handler(
       // If approving and creating accommodation listing
       if (status === "approved" && createAccommodationListing && adminContent) {
         // Get the original submission
-        const submission = await prisma.formSubmission.findUnique({
+        const submission = await prisma.form_submissions.findUnique({
           where: { id: id as string },
         });
 
@@ -78,7 +78,7 @@ export default async function handler(
       }
 
       // Update submission status
-      const updatedSubmission = await prisma.formSubmission.update({
+      const updatedSubmission = await prisma.form_submissions.update({
         where: { id: id as string },
         data: {
           status,

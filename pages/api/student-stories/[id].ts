@@ -17,7 +17,7 @@ export default async function handler(
 
   try {
     // Get the mentorship submission by ID
-    const submission = await prisma.formSubmission.findFirst({
+    const submission = await prisma.form_submissions.findFirst({
       where: {
         id: id,
         type: "EXPERIENCE",
@@ -39,7 +39,7 @@ export default async function handler(
     }
 
     // Get related basic info
-    const basicInfo = await prisma.formSubmission.findFirst({
+    const basicInfo = await prisma.form_submissions.findFirst({
       where: {
         userId: submission.userId,
         type: "BASIC_INFO",
@@ -47,7 +47,7 @@ export default async function handler(
       },
     });
 
-    const accommodationInfo = await prisma.formSubmission.findFirst({
+    const accommodationInfo = await prisma.form_submissions.findFirst({
       where: {
         userId: submission.userId,
         type: "ACCOMMODATION",
@@ -55,7 +55,7 @@ export default async function handler(
       },
     });
 
-    const expensesInfo = await prisma.formSubmission.findFirst({
+    const expensesInfo = await prisma.form_submissions.findFirst({
       where: {
         userId: submission.userId,
         type: "LIVING_EXPENSES",

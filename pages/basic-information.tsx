@@ -61,12 +61,19 @@ import { AlertCircle } from "lucide-react";
 import { StepIndicator } from "../src/components/StepIndicator";
 import { useFormProgress } from "../src/context/FormProgressContext";
 import { UniversitySearch } from "../src/components/UniversitySearch";
+import { FormProgressBar } from "../components/forms/FormProgressBar";
+import { StepNavigation } from "../components/forms/StepNavigation";
 
 export default function BasicInformation() {
   // 1. ALL HOOKS FIRST - NEVER CONDITIONAL
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
-  const { setCurrentStep } = useFormProgress();
+  const {
+    setCurrentStep,
+    markStepCompleted,
+    currentStepNumber,
+    completedStepNumbers,
+  } = useFormProgress();
   const {
     data: experienceData,
     loading: experienceLoading,
@@ -487,6 +494,9 @@ export default function BasicInformation() {
       await saveProgress({
         basicInfo: formData,
       });
+
+      // Mark step 1 as completed
+      markStepCompleted("basic-info");
 
       // Navigate to next step
       router.push("/course-matching");
@@ -988,39 +998,15 @@ export default function BasicInformation() {
         </div>
 
         {/* Navigation */}
-        <div className="flex justify-between items-center pt-6">
-          <Link href="/">
-            <Button variant="outline">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
-            </Button>
-          </Link>
-          <div className="flex gap-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleSaveDraft}
-              disabled={experienceLoading || isSubmitting || isAutoSaving}
-            >
-              {experienceLoading
-                ? "Loading..."
-                : isAutoSaving
-                  ? "Saving..."
-                  : "Save Draft"}
-            </Button>
-            <Button
-              type="submit"
-              disabled={experienceLoading || isSubmitting || isAutoSaving}
-            >
-              {experienceLoading
-                ? "Loading..."
-                : isSubmitting
-                  ? "Saving & Continuing..."
-                  : "Continue to Course Matching"}
-              <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
-          </div>
-        </div>
+        <StepNavigation
+          currentStep={currentStepNumber}
+          totalSteps={5}
+          onNext={handleSubmit}
+          canProceed={!experienceLoading && !isSubmitting && !isAutoSaving}
+          isLastStep={false}
+          isSubmitting={isSubmitting}
+          showPrevious={false}
+        />
       </form>
     );
   }
@@ -1037,15 +1023,31 @@ export default function BasicInformation() {
 
       <div className="min-h-screen bg-gray-50">
         <Header />
-        <StepIndicator
-          currentStep={1}
-          totalSteps={5}
-          title="Basic Information"
-        />
 
         <div className="pt-20 pb-16 px-4">
           <div className="max-w-4xl mx-auto">
             <Breadcrumb />
+
+            {/* Progress Bar */}
+            <FormProgressBar
+              steps={[
+                { number: 1, name: "Basic Info", href: "/basic-information" },
+                { number: 2, name: "Courses", href: "/course-matching" },
+                { number: 3, name: "Accommodation", href: "/accommodation" },
+                {
+                  number: 4,
+                  name: "Living Expenses",
+                  href: "/living-expenses",
+                },
+                {
+                  number: 5,
+                  name: "Experience",
+                  href: "/help-future-students",
+                },
+              ]}
+              currentStep={currentStepNumber}
+              completedSteps={completedStepNumbers}
+            />
 
             {/* Header */}
             <div className="mb-8">

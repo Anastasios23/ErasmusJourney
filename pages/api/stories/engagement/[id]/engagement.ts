@@ -23,7 +23,7 @@ export default async function handler(
 
   try {
     // Check if this is a FormSubmission ID, not a Story ID
-    const formSubmission = await prisma.formSubmission.findUnique({
+    const formSubmission = await prisma.form_submissions.findUnique({
       where: { id: storyId },
     });
 

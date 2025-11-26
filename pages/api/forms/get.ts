@@ -47,10 +47,10 @@ export default async function handler(
     }
 
     // Fetch submissions from database
-    const submissions = await prisma.formSubmission.findMany({
+    const submissions = await prisma.form_submissions.findMany({
       where: whereClause,
       include: {
-        user: {
+        users: {
           select: {
             id: true,
             firstName: true,
@@ -67,14 +67,14 @@ export default async function handler(
     // Transform to match expected format
     const transformedSubmissions = submissions.map((submission) => ({
       id: submission.id,
-      userId: submission.user.email,
+      userId: submission.users.email,
       type: submission.type.toLowerCase().replace("_", "-"),
       title: submission.title,
       data: submission.data,
       status: submission.status.toLowerCase(),
       createdAt: submission.createdAt.toISOString(),
       updatedAt: submission.updatedAt.toISOString(),
-      user: submission.user,
+      user: submission.users,
     }));
 
     res.status(200).json({ submissions: transformedSubmissions });

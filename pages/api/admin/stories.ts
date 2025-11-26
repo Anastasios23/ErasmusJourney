@@ -17,7 +17,7 @@ async function handleGetStories(req: NextApiRequest, res: NextApiResponse) {
     // In a real app, you'd verify admin authentication here
     // For now, we'll just fetch all stories with admin fields
 
-    const stories = await prisma.formSubmission.findMany({
+    const stories = await prisma.form_submissions.findMany({
       where: {
         OR: [{ type: "EXPERIENCE" }, { type: "STORY" }],
       },
@@ -40,7 +40,7 @@ async function handleGetStories(req: NextApiRequest, res: NextApiResponse) {
     const adminStories = await Promise.all(
       stories.map(async (submission) => {
         // Get basic info for location data
-        const basicInfo = await prisma.formSubmission.findFirst({
+        const basicInfo = await prisma.form_submissions.findFirst({
           where: {
             userId: submission.userId,
             type: "BASIC_INFO",

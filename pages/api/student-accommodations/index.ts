@@ -44,7 +44,7 @@ export default async function handler(
 
   try {
     // Get accommodation submissions
-    const accommodations = await prisma.formSubmission.findMany({
+    const accommodations = await prisma.form_submissions.findMany({
       where: {
         type: "ACCOMMODATION",
         status: "SUBMITTED",
@@ -59,7 +59,7 @@ export default async function handler(
     // Get related basic info for location context
     const accommodationData = await Promise.all(
       accommodations.map(async (accommodation) => {
-        const basicInfo = await prisma.formSubmission.findFirst({
+        const basicInfo = await prisma.form_submissions.findFirst({
           where: {
             userId: accommodation.userId,
             type: "BASIC_INFO",

@@ -48,7 +48,7 @@ async function handleUpdateStory(
     }
 
     // Find the submission
-    const submission = await prisma.formSubmission.findFirst({
+    const submission = await prisma.form_submissions.findFirst({
       where: {
         id: storyId,
         type: "EXPERIENCE",
@@ -65,7 +65,7 @@ async function handleUpdateStory(
       updatedData.moderatorNotes = moderatorNotes;
     }
 
-    const updatedSubmission = await prisma.formSubmission.update({
+    const updatedSubmission = await prisma.form_submissions.update({
       where: {
         id: storyId,
       },
@@ -103,7 +103,7 @@ async function handleDeleteStory(
     // In a real app, you'd verify admin authentication here
 
     // Find the submission
-    const submission = await prisma.formSubmission.findFirst({
+    const submission = await prisma.form_submissions.findFirst({
       where: {
         id: storyId,
         type: "EXPERIENCE",
@@ -115,7 +115,7 @@ async function handleDeleteStory(
     }
 
     // Soft delete by updating status instead of actually deleting
-    await prisma.formSubmission.update({
+    await prisma.form_submissions.update({
       where: {
         id: storyId,
       },

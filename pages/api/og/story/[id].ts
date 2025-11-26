@@ -17,7 +17,7 @@ export default async function handler(
 
   try {
     // Fetch the story
-    const submission = await prisma.formSubmission.findFirst({
+    const submission = await prisma.form_submissions.findFirst({
       where: {
         id: id,
         type: "EXPERIENCE",
@@ -35,7 +35,7 @@ export default async function handler(
     }
 
     // Get basic info for location
-    const basicInfo = await prisma.formSubmission.findFirst({
+    const basicInfo = await prisma.form_submissions.findFirst({
       where: {
         userId: submission.userId,
         type: "BASIC_INFO",

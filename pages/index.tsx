@@ -1,22 +1,10 @@
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "../lib/prisma";
 import Header from "../components/Header";
-import {
-  ApplicationCTA,
-  StoryCTA,
-  CommunityJoinCTA,
-} from "../src/components/ui/enhanced-cta";
-import {
-  QuickStartGuide,
-  SmartBanner,
-} from "../src/components/ui/user-guidance";
-import { SkipLink } from "../src/components/ui/accessibility";
-import { designSystem } from "../src/utils/designSystem";
 import Footer from "../src/components/Footer";
-import TeaserGallery from "../components/TeaserGallery";
 import { Button } from "../src/components/ui/button";
 import { Badge } from "../src/components/ui/badge";
 import {
@@ -28,12 +16,14 @@ import {
 } from "../src/components/ui/card";
 import {
   ArrowRight,
-  Users,
   BookOpen,
   Home,
-  Heart,
   Globe,
   Star,
+  CheckCircle,
+  MapPin,
+  Users,
+  Plane,
 } from "lucide-react";
 
 interface Story {
@@ -50,10 +40,6 @@ interface Story {
   author?: {
     name: string;
   };
-  location?: {
-    city: string;
-    country: string;
-  };
   likes?: number;
 }
 
@@ -66,448 +52,269 @@ export default function HomePage({
   totalUniversities,
   latestStories,
 }: HomePageProps) {
-  const steps = [
-    {
-      step: 1,
-      title: "Personal Information",
-      description: "Share your academic background and mobility details",
-      image:
-        "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&h=240&fit=crop",
-      href: "/basic-information",
-      color: "bg-blue-500",
-    },
-    {
-      step: 2,
-      title: "Course Matching",
-      description: "Details about courses and academic equivalents",
-      image:
-        "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=240&fit=crop",
-      href: "/course-matching",
-      color: "bg-green-500",
-    },
-    {
-      step: 3,
-      title: "Accommodation Details",
-      description: "Housing information and recommendations",
-      image:
-        "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&h=240&fit=crop",
-      href: "/accommodation",
-      color: "bg-orange-500",
-    },
-    {
-      step: 4,
-      title: "Living Expenses",
-      description: "Budget planning and lifestyle information",
-      image:
-        "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=240&fit=crop",
-      href: "/living-expenses",
-      color: "bg-purple-500",
-    },
-  ];
-
   return (
     <>
       <Head>
-        <title>Erasmus Journey Platform - Complete Guide to Study Abroad</title>
+        <title>Erasmus Journey - Share & Discover Student Experiences</title>
         <meta
           name="description"
-          content="Your complete Erasmus journey guide. Connect with students, find accommodation, and get insider tips for study abroad adventure."
+          content="The easiest way to share your Erasmus experience and help future students. Find accommodation reviews, course matching, and city guides."
         />
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-white">
         <Header />
 
         {/* Hero Section */}
-        <section className="relative bg-white overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <Badge className="mb-6 bg-blue-100 text-blue-800">
-                  ✨ Your Journey Starts Here
-                </Badge>
-                <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-                  Your Complete{" "}
-                  <span className="text-blue-600">Erasmus Journey</span>{" "}
-                  Platform
-                </h1>
-                <p className="text-xl text-gray-600 mb-6 leading-relaxed">
-                  The ultimate guide for Cyprus students planning their Erasmus
-                  exchange. From university partnerships to accommodation, we
-                  simplify your study abroad experience.
-                </p>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
-                  <p className="text-blue-800 font-medium">
-                    🎯 <strong>For Cyprus Students:</strong> Access verified
-                    partnerships between your university and 500+ European
-                    destinations. Get step-by-step guidance from application to
-                    arrival.
+        <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-50 to-white -z-10"></div>
+          
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <Badge className="mb-6 bg-blue-100 text-blue-700 hover:bg-blue-200 px-4 py-1.5 text-sm font-medium rounded-full transition-colors">
+              ✨ The Official Platform for Erasmus Students
+            </Badge>
+            
+            <h1 className="text-5xl lg:text-7xl font-extrabold text-gray-900 tracking-tight mb-8">
+              Share Your <span className="text-blue-600">Erasmus Story</span>
+              <br />
+              Inspire Future Students
+            </h1>
+            
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
+              Join thousands of students helping each other. Share your experience about courses, accommodation, and city life in just 5 minutes.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Link href="/basic-information">
+                <Button 
+                  size="lg" 
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-10 py-7 h-auto rounded-full shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 font-semibold"
+                >
+                  Start Your Journey
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link href="/destinations">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-gray-200 text-gray-700 hover:bg-gray-50 text-lg px-10 py-7 h-auto rounded-full font-medium"
+                >
+                  Explore Destinations
+                </Button>
+              </Link>
+            </div>
+
+            {/* Social Proof */}
+            <div className="mt-12 flex items-center justify-center gap-8 text-sm text-gray-500">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-green-500" />
+                <span>500+ Universities</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-green-500" />
+                <span>Verified Reviews</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-green-500" />
+                <span>Free for Everyone</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Grid */}
+        <section className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Feature 1 */}
+              <Link href="/submissions" className="group">
+                <div className="p-8 rounded-3xl bg-gray-50 border border-gray-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all duration-300 h-full">
+                  <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mb-6 text-blue-600 group-hover:scale-110 transition-transform">
+                    <Plane className="h-7 w-7" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">Share Experience</h3>
+                  <p className="text-gray-600 leading-relaxed mb-4">
+                    Help others by rating your university, housing, and cost of living. Your insights matter.
                   </p>
+                  <span className="text-blue-600 font-medium flex items-center group-hover:translate-x-1 transition-transform">
+                    Start Sharing <ArrowRight className="ml-1 h-4 w-4" />
+                  </span>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Link href="/destinations">
-                    <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-                      Explore Destinations
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                  </Link>
-                  <Link href="/student-stories">
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="border-gray-300 hover:bg-gray-50"
-                    >
-                      Read Stories
-                      <BookOpen className="ml-2 h-5 w-5" />
-                    </Button>
-                  </Link>
-                </div>
-              </div>
+              </Link>
 
-              <div className="relative aspect-[3/2] rounded-2xl shadow-2xl overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=400&fit=crop"
-                  alt="Students studying abroad"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  priority
-                />
-                <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg border">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                      <Users className="h-5 w-5 text-green-600" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">10,000+</p>
-                      <p className="text-sm text-gray-600">Students helped</p>
-                    </div>
+              {/* Feature 2 */}
+              <Link href="/student-accommodations" className="group">
+                <div className="p-8 rounded-3xl bg-gray-50 border border-gray-100 hover:border-green-200 hover:bg-green-50/50 transition-all duration-300 h-full">
+                  <div className="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-6 text-green-600 group-hover:scale-110 transition-transform">
+                    <Home className="h-7 w-7" />
                   </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">Find Housing</h3>
+                  <p className="text-gray-600 leading-relaxed mb-4">
+                    Discover verified student accommodations and read honest reviews from previous tenants.
+                  </p>
+                  <span className="text-green-600 font-medium flex items-center group-hover:translate-x-1 transition-transform">
+                    Browse Housing <ArrowRight className="ml-1 h-4 w-4" />
+                  </span>
                 </div>
-              </div>
+              </Link>
+
+              {/* Feature 3 */}
+              <Link href="/university-exchanges" className="group">
+                <div className="p-8 rounded-3xl bg-gray-50 border border-gray-100 hover:border-purple-200 hover:bg-purple-50/50 transition-all duration-300 h-full">
+                  <div className="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center mb-6 text-purple-600 group-hover:scale-110 transition-transform">
+                    <BookOpen className="h-7 w-7" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">Match Courses</h3>
+                  <p className="text-gray-600 leading-relaxed mb-4">
+                    See which courses are approved for credit transfer at your host university.
+                  </p>
+                  <span className="text-purple-600 font-medium flex items-center group-hover:translate-x-1 transition-transform">
+                    Check Courses <ArrowRight className="ml-1 h-4 w-4" />
+                  </span>
+                </div>
+              </Link>
             </div>
           </div>
         </section>
 
-        {/* Getting Started Section */}
-        <section className="py-16 bg-blue-50">
+        {/* How it Works - Simplified */}
+        <section className="py-20 bg-gray-900 text-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
-                🚀 Getting Started
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-                New to Erasmus? Start here to understand the platform and
-                discover what's possible for your study abroad journey.
-              </p>
-              <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-                <Link href="/destinations">
-                  <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
-                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
-                      <Globe className="h-6 w-6 text-blue-600" />
-                    </div>
-                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                      Explore Destinations
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      Browse 500+ partner universities and discover where you
-                      can study abroad
-                    </p>
-                    <div className="flex items-center justify-center mt-4 text-blue-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                      Learn more
-                      <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </div>
-                  </div>
-                </Link>
-                <Link href="/student-accommodations">
-                  <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
-                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition-colors">
-                      <Home className="h-6 w-6 text-green-600" />
-                    </div>
-                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">
-                      Accommodation
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      Find student housing, dormitories, and accommodation
-                      options at your destination
-                    </p>
-                    <div className="flex items-center justify-center mt-4 text-green-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                      Learn more
-                      <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </div>
-                  </div>
-                </Link>
-                <Link href="/university-exchanges">
-                  <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
-                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-200 transition-colors">
-                      <BookOpen className="h-6 w-6 text-orange-600" />
-                    </div>
-                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
-                      Exchanges
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      Discover university exchange programs and academic
-                      opportunities worldwide
-                    </p>
-                    <div className="flex items-center justify-center mt-4 text-orange-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                      Learn more
-                      <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </div>
-                  </div>
-                </Link>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-4xl font-bold mb-4">How It Works</h2>
+              <p className="text-gray-400 text-lg">Three simple steps to start your journey</p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-12 relative">
+              {/* Connecting Line */}
+              <div className="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-gray-800 -z-10"></div>
+
+              {/* Step 1 */}
+              <div className="text-center relative">
+                <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-gray-900 z-10">
+                  <span className="text-3xl font-bold text-blue-400">1</span>
+                </div>
+                <h3 className="text-xl font-bold mb-2">Create Profile</h3>
+                <p className="text-gray-400">Sign up in seconds to save your progress and access all features.</p>
               </div>
+
+              {/* Step 2 */}
+              <div className="text-center relative">
+                <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-gray-900 z-10">
+                  <span className="text-3xl font-bold text-blue-400">2</span>
+                </div>
+                <h3 className="text-xl font-bold mb-2">Fill Details</h3>
+                <p className="text-gray-400">Complete the 5-step form about your university, housing, and costs.</p>
+              </div>
+
+              {/* Step 3 */}
+              <div className="text-center relative">
+                <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-gray-900 z-10">
+                  <span className="text-3xl font-bold text-blue-400">3</span>
+                </div>
+                <h3 className="text-xl font-bold mb-2">Help Others</h3>
+                <p className="text-gray-400">Submit your experience to help thousands of future Erasmus students.</p>
+              </div>
+            </div>
+
+            <div className="text-center mt-16">
+              <Link href="/register">
+                <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100 rounded-full px-8 font-semibold">
+                  Create Free Account
+                </Button>
+              </Link>
             </div>
           </div>
         </section>
 
-        {/* Latest Stories Section */}
-        <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
-                Latest Student Stories
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Read real experiences from students who have been there.
-              </p>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {latestStories && latestStories.length > 0 ? (
-                latestStories.map((story) => (
+        {/* Latest Stories (Preserved) */}
+        {latestStories && latestStories.length > 0 && (
+          <section className="py-20 bg-gray-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-end mb-12">
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Student Stories</h2>
+                  <p className="text-gray-600">Real experiences from real students</p>
+                </div>
+                <Link href="/student-stories" className="text-blue-600 font-medium hover:underline hidden sm:block">
+                  View all stories →
+                </Link>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-8">
+                {latestStories.map((story) => (
                   <Link key={story.id} href={`/stories/${story.id}`}>
-                    <Card className="overflow-hidden h-full flex flex-col group hover:shadow-xl transition-shadow duration-300">
-                      <CardHeader className="p-0">
-                        <div className="aspect-video relative">
-                          <Image
-                            src={
-                              story.imageUrl ||
-                              "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=240&fit=crop"
-                            }
-                            alt={
-                              story.title ||
-                              story.studentName ||
-                              "Student story"
-                            }
-                            fill
-                            className="object-cover"
-                          />
+                    <Card className="h-full hover:shadow-lg transition-shadow duration-300 border-none shadow-sm">
+                      <div className="aspect-video relative overflow-hidden rounded-t-xl">
+                        <Image
+                          src={story.imageUrl || "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=240&fit=crop"}
+                          alt={story.title || "Student story"}
+                          fill
+                          className="object-cover hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
+                      <CardContent className="p-6">
+                        <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
+                          <MapPin className="h-3 w-3" />
+                          {story.city}, {story.country}
                         </div>
-                      </CardHeader>
-                      <CardContent className="p-6 flex-grow">
-                        <CardTitle className="text-lg font-semibold mb-2 group-hover:text-blue-600 transition-colors">
-                          {story.title ||
-                            `${story.studentName}'s Experience in ${story.city}`}
-                        </CardTitle>
-                        <p className="text-sm text-gray-600 line-clamp-3">
-                          {story.excerpt ||
-                            story.story?.substring(0, 150) + "..." ||
-                            "Read about this student's experience abroad"}
+                        <h3 className="font-bold text-lg mb-2 line-clamp-2 group-hover:text-blue-600">
+                          {story.title || `${story.studentName}'s Experience`}
+                        </h3>
+                        <p className="text-gray-600 text-sm line-clamp-3">
+                          {story.excerpt || story.story || "Read about this experience..."}
                         </p>
                       </CardContent>
-                      <CardFooter className="p-6 bg-gray-50 flex justify-between items-center text-sm text-gray-500">
-                        <div>
-                          By{" "}
-                          <span className="font-medium text-gray-800">
-                            {story.author?.name || story.studentName}
-                          </span>
+                      <CardFooter className="px-6 pb-6 pt-0 flex justify-between items-center text-sm text-gray-500">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-xs font-bold text-gray-600">
+                            {story.studentName?.[0] || "S"}
+                          </div>
+                          {story.studentName}
                         </div>
-                        <div className="flex items-center">
-                          <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
-                          <span>{story.likes}</span>
+                        <div className="flex items-center gap-1">
+                          <Star className="h-3 w-3 text-yellow-400 fill-current" />
+                          {story.likes || 0}
                         </div>
                       </CardFooter>
                     </Card>
                   </Link>
-                ))
-              ) : (
-                <div className="col-span-full text-center py-12">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <BookOpen className="h-8 w-8 text-gray-400" />
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    No stories yet
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    Be the first to share your Erasmus experience!
-                  </p>
-                  <Link href="/student-stories">
-                    <Button variant="outline">
-                      Share Your Story
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </div>
-              )}
-            </div>
-            <div className="text-center mt-12">
-              <Link href="/student-stories">
-                <Button variant="outline">
-                  Read More Stories <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Essential Steps Section */}
-        <section className="py-16 lg:py-24 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
-                Your Application Journey
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Follow our comprehensive guide to make your Erasmus journey
-                smooth and memorable. Each step builds on the previous one.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {steps.map((step) => (
-                <div
-                  key={step.step}
-                  className="bg-white rounded-xl shadow-sm overflow-hidden"
-                >
-                  <div className="aspect-video relative">
-                    <Image
-                      src={step.image}
-                      alt={`${step.title} - Step ${step.step}`}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                    />
-                    <div className="absolute top-4 left-4">
-                      <div
-                        className={`${step.color} text-white px-3 py-1 rounded-full text-sm font-medium`}
-                      >
-                        Step {step.step}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {step.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm">{step.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Start Application Button */}
-            <div className="text-center mt-12">
-              {/* Login Requirement Notice */}
-              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg max-w-md mx-auto">
-                <div className="flex items-center justify-center mb-2">
-                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-2">
-                    <span className="text-blue-600 text-sm">🔒</span>
-                  </div>
-                  <span className="text-blue-800 font-medium text-sm">
-                    Account Required
-                  </span>
-                </div>
-                <p className="text-blue-700 text-sm">
-                  You'll need an account to save and submit your application
-                  details. Don't worry - it's quick and free!
-                </p>
+                ))}
               </div>
-
-              <Link href="/basic-information">
-                <Button
-                  size="lg"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-medium transition-all duration-200 hover:scale-105"
-                >
-                  Start Your Application Journey
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <p className="text-gray-600 text-sm mt-3">
-                Begin with Step 1: Personal Information
-              </p>
-
-              {/* Value Without Login Notice */}
-              <div className="mt-6 text-center">
-                <p className="text-gray-500 text-sm mb-2">
-                  Want to explore first? You can browse destinations and read
-                  stories without an account.
-                </p>
-                <div className="flex justify-center space-x-4">
-                  <Link
-                    href="/destinations"
-                    className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                  >
-                    Browse Destinations →
-                  </Link>
-                  <Link
-                    href="/student-stories"
-                    className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                  >
-                    Read Stories →
-                  </Link>
-                </div>
+              
+              <div className="mt-8 text-center sm:hidden">
+                <Link href="/student-stories">
+                  <Button variant="outline" className="w-full">View all stories</Button>
+                </Link>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
-        {/* Teaser Gallery */}
-        <TeaserGallery />
-
-        {/* Enhanced CTA Sections */}
-        <section className={designSystem.layouts.section}>
-          <div className="space-y-16">
-            {/* Primary Application CTA */}
-            <ApplicationCTA />
-
-            {/* Secondary CTAs */}
-            <div className={designSystem.layouts.grid2}>
-              <StoryCTA />
-              <CommunityJoinCTA />
-            </div>
-          </div>
-        </section>
-
-        {/* Footer */}
         <Footer />
       </div>
     </>
   );
 }
 
-export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
-  context,
-) => {
+export const getServerSideProps: GetServerSideProps<HomePageProps> = async () => {
   try {
-    // Check if prisma is available
     if (!prisma) {
-      console.error("Prisma client is not initialized");
-      return {
-        props: {
-          totalUniversities: 0,
-          latestStories: [],
-        },
-      };
+      return { props: { totalUniversities: 0, latestStories: [] } };
     }
 
-    const totalUniversities = await prisma.university.count();
+    const totalUniversities = await prisma.universities.count();
 
-    // Use direct database query instead of HTTP fetch to avoid SSL issues
-    const storySubmissions = await prisma.formSubmission.findMany({
+    // Fetch stories from form_submissions for now (legacy compatibility)
+    const storySubmissions = await prisma.form_submissions.findMany({
       where: {
         OR: [
-          {
-            type: "EXPERIENCE",
-            status: { in: ["SUBMITTED", "PUBLISHED"] },
-          },
-          {
-            type: "STORY",
-            status: { in: ["SUBMITTED", "PUBLISHED"] },
-          },
+          { type: "EXPERIENCE", status: { in: ["SUBMITTED", "PUBLISHED"] } },
+          { type: "STORY", status: { in: ["SUBMITTED", "PUBLISHED"] } },
         ],
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
       take: 3,
     });
 
@@ -515,35 +322,24 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
       storySubmissions.map(async (submission) => {
         const userData = await prisma.user.findUnique({
           where: { id: submission.userId },
-          select: { firstName: true, email: true },
+          select: { firstName: true },
         });
 
         const basicInfo = await prisma.formSubmission.findFirst({
-          where: {
-            userId: submission.userId,
-            type: "BASIC_INFO",
-            status: "SUBMITTED",
-          },
+          where: { userId: submission.userId, type: "BASIC_INFO", status: "SUBMITTED" },
         });
 
         return {
           id: submission.id,
-          studentName:
-            (submission.data as any).nickname ||
-            userData?.firstName ||
-            "Anonymous Student",
-          university:
-            (basicInfo?.data as any)?.hostUniversity || "Unknown University",
-          city: (basicInfo?.data as any)?.hostCity || "Unknown City",
-          country: (basicInfo?.data as any)?.hostCountry || "Unknown Country",
-          story:
-            (submission.data as any).personalExperience ||
-            (submission.data as any).adviceForFutureStudents ||
-            "No story provided",
+          studentName: (submission.data as any).nickname || userData?.firstName || "Student",
+          university: (basicInfo?.data as any)?.hostUniversity || "University",
+          city: (basicInfo?.data as any)?.hostCity || "City",
+          country: (basicInfo?.data as any)?.hostCountry || "Country",
+          story: (submission.data as any).personalExperience || (submission.data as any).adviceForFutureStudents || "",
           createdAt: submission.createdAt.toISOString(),
-          isPublic: (submission.data as any).publicProfile === "yes",
+          likes: 0,
         };
-      }),
+      })
     );
 
     return {
@@ -554,10 +350,9 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     };
   } catch (error) {
     console.error("Error fetching home page data:", error);
-    // Fallback data if database or API is not available
     return {
       props: {
-        totalUniversities: 50,
+        totalUniversities: 0,
         latestStories: [],
       },
     };

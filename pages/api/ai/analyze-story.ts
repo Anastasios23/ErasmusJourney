@@ -43,7 +43,7 @@ export default async function handler(
 
   try {
     // Fetch the story from database
-    const submission = await prisma.formSubmission.findFirst({
+    const submission = await prisma.form_submissions.findFirst({
       where: {
         id: storyId,
         OR: [{ type: "EXPERIENCE" }, { type: "STORY" }],
@@ -62,7 +62,7 @@ export default async function handler(
     }
 
     // Get basic info for context
-    const basicInfo = await prisma.formSubmission.findFirst({
+    const basicInfo = await prisma.form_submissions.findFirst({
       where: {
         userId: submission.userId,
         type: "BASIC_INFO",

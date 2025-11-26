@@ -278,7 +278,7 @@ export default async function handler(
 
       try {
         // Verify the basic info submission exists and belongs to the user
-        const basicInfoSubmission = await prisma.formSubmission.findFirst({
+        const basicInfoSubmission = await prisma.form_submissions.findFirst({
           where: {
             id: basicInfoId,
             userId: session.user.id,
@@ -315,7 +315,7 @@ export default async function handler(
     });
 
     // Check if submission already exists for this user and form type
-    const existingSubmission = await prisma.formSubmission.findFirst({
+    const existingSubmission = await prisma.form_submissions.findFirst({
       where: {
         userId: session.user.id,
         type: formType,
@@ -335,7 +335,7 @@ export default async function handler(
 
     if (existingSubmission) {
       // Update existing submission
-      submission = await prisma.formSubmission.update({
+      submission = await prisma.form_submissions.update({
         where: { id: existingSubmission.id },
         data: {
           title,
@@ -349,7 +349,7 @@ export default async function handler(
       console.log(`Updated existing submission: ${existingSubmission.id}`);
     } else {
       // Create new submission
-      submission = await prisma.formSubmission.create({
+      submission = await prisma.form_submissions.create({
         data: {
           userId: session.user.id,
           type: formType,

@@ -22,7 +22,7 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
-      const submission = await prisma.formSubmission.findUnique({
+      const submission = await prisma.form_submissions.findUnique({
         where: { id },
         include: {
           user: {
@@ -51,7 +51,7 @@ export default async function handler(
     try {
       const { status, adminNotes } = req.body;
 
-      const submission = await prisma.formSubmission.update({
+      const submission = await prisma.form_submissions.update({
         where: { id },
         data: {
           status,

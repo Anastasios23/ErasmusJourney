@@ -3,6 +3,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcryptjs";
 import { prisma } from "../../../lib/prisma";
+import { randomUUID } from "crypto";
 
 export default async function handler(
   req: NextApiRequest,
@@ -19,7 +20,7 @@ export default async function handler(
   }
 
   try {
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await prisma.users.findUnique({ where: { email } });
     if (existingUser) {
       return res
         .status(409)
@@ -28,12 +29,14 @@ export default async function handler(
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const user = await prisma.user.create({
+    const user = await prisma.users.create({
       data: {
+        id: randomUUID(),
         firstName,
         lastName,
         email,
         password: hashedPassword,
+        updatedAt: new Date(),
       },
     });
 

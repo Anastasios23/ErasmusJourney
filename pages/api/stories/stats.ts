@@ -12,7 +12,7 @@ export default async function handler(
 
   try {
     // Get total stories count from form submissions
-    const totalStories = await prisma.formSubmission.count({
+    const totalStories = await prisma.form_submissions.count({
       where: {
         type: { in: ["EXPERIENCE", "STORY"] },
         status: { in: ["SUBMITTED", "PUBLISHED"] },
@@ -48,7 +48,7 @@ export default async function handler(
     });
 
     // Get story submissions by type/category for top categories
-    const storyTypes = await prisma.formSubmission.groupBy({
+    const storyTypes = await prisma.form_submissions.groupBy({
       by: ["type"],
       where: {
         type: { in: ["EXPERIENCE", "STORY"] },
@@ -66,7 +66,7 @@ export default async function handler(
     });
 
     // Get recent activity (last 10 published stories)
-    const recentStories = await prisma.formSubmission.findMany({
+    const recentStories = await prisma.form_submissions.findMany({
       where: {
         type: { in: ["EXPERIENCE", "STORY"] },
         status: { in: ["SUBMITTED", "PUBLISHED"] },

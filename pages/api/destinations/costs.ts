@@ -18,7 +18,7 @@ export default async function handler(
 
   try {
     // Get living expenses submissions for this destination
-    const submissions = await prisma.formSubmission.findMany({
+    const submissions = await prisma.form_submissions.findMany({
       where: {
         type: "LIVING_EXPENSES",
         data: {

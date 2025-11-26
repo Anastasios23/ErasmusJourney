@@ -16,7 +16,7 @@ export default async function handler(
     // Get all basic info submissions
     let basicInfoSubmissions = [];
     try {
-      basicInfoSubmissions = await prisma.formSubmission.findMany({
+      basicInfoSubmissions = await prisma.form_submissions.findMany({
         where: {
           status: "APPROVED", // Only show approved submissions on public destinations
           type: "basic-info",
@@ -38,7 +38,7 @@ export default async function handler(
     // Get accommodation data for cost information
     let accommodationSubmissions = [];
     try {
-      accommodationSubmissions = await prisma.formSubmission.findMany({
+      accommodationSubmissions = await prisma.form_submissions.findMany({
         where: {
           status: "APPROVED", // Only show approved submissions
           type: "accommodation",
@@ -58,7 +58,7 @@ export default async function handler(
     // Get living expenses data
     let expenseSubmissions = [];
     try {
-      expenseSubmissions = await prisma.formSubmission.findMany({
+      expenseSubmissions = await prisma.form_submissions.findMany({
         where: {
           status: "APPROVED", // Only show approved submissions
           type: "living-expenses",

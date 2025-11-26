@@ -11,7 +11,7 @@ export default async function handler(
 
   try {
     // Fetch all mentorship submissions from database
-    const submissions = await prisma.formSubmission.findMany({
+    const submissions = await prisma.form_submissions.findMany({
       where: {
         type: "MENTORSHIP",
         status: "PUBLISHED", // Only show public mentors
