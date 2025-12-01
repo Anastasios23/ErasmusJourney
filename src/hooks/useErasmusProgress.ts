@@ -37,7 +37,9 @@ export function useErasmusProgress(): ErasmusProgress {
       const response = await fetch("/api/erasmus-experiences");
 
       if (!response.ok) {
-        throw new Error("Failed to fetch experience data");
+        const errorText = await response.text();
+        console.error("API Error Response:", errorText);
+        throw new Error(`Failed to fetch experience data: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();

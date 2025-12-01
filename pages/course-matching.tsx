@@ -171,7 +171,7 @@ export default function CourseMatching() {
         // Set the selected home university ID for department filtering
         if (basicInfo.universityInCyprus) {
           const university = cyprusUniversities.find(
-            (u) => u.name === basicInfo.universityInCyprus,
+            (u) => u.code === basicInfo.universityInCyprus,
           );
           console.log("Found university:", university);
           if (university) {
@@ -449,16 +449,34 @@ export default function CourseMatching() {
         return;
       }
 
+      // Create mappings array for backend validation
+      const mappings = courses.map((course, index) => {
+        const equivalent = equivalentCourses[index];
+        return {
+          homeCode: equivalent?.code || "",
+          homeName: equivalent?.name || "",
+          homeEcts: equivalent?.ects || "0",
+          hostCode: course.code || "",
+          hostName: course.name || "",
+          hostEcts: course.ects || "0",
+        };
+      });
+
       // Save progress with course data
       const courseData = {
         ...formData,
         hostCourses: courses,
         equivalentCourses: equivalentCourses,
+        mappings: mappings, // Include mappings for validation
       };
 
-      await saveProgress({
+      const saved = await saveProgress({
         courses: courseData,
       });
+
+      if (!saved) {
+        throw new Error("Failed to save progress. Please try again.");
+      }
 
       // Mark step 2 as completed
       markStepCompleted("course-matching");

@@ -1,276 +1,305 @@
-import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import Header from "../../components/Header";
-import DestinationOverview from "../../src/components/DestinationOverview";
-import GeneratedAccommodationCard from "../../src/components/GeneratedAccommodationCard";
-import GeneratedCourseExchangeCard from "../../src/components/GeneratedCourseExchangeCard";
-import { useGeneratedDestination } from "../../src/hooks/useGeneratedDestinations";
-import { Button } from "../../src/components/ui/button";
+import { GetServerSideProps } from 'next';
+import { useState } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
+import Header from '../../components/Header';
+import { Card, CardContent, CardHeader, CardTitle } from '../../src/components/ui/card';
+import { Badge } from '../../src/components/ui/badge';
+import { Button } from '../../src/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../src/components/ui/card";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../../src/components/ui/tabs";
-import { Skeleton } from "../../src/components/ui/skeleton";
-import { ArrowLeft, Home, GraduationCap, Globe } from "lucide-react";
+  ArrowLeft,
+  MapPin,
+  Users,
+  Euro,
+  Home,
+  Utensils,
+  Bus,
+  Star,
+  TrendingUp,
+  Calendar,
+  MessageSquare,
+} from 'lucide-react';
+import { aggregateCityData } from '../../src/services/cityAggregationService';
+import { CityAggregatedData } from '../../src/types/cityData';
+import { StatBar } from '../../src/components/ui/stat-bar';
+import { InsightBadge } from '../../src/components/ui/insight-badge';
 
-export default function DestinationDetailPage() {
-  const router = useRouter();
-  const { slug } = router.query;
+interface DestinationDetailProps {
+  cityData: CityAggregatedData;
+  city: string;
+  country: string;
+}
 
-  const {
-    data: destination,
-    isLoading,
-    error,
-  } = useGeneratedDestination(slug as string);
-
-  if (isLoading) {
-    return (
-      <>
-        <Header />
-        <div className="min-h-screen bg-gray-50 pt-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="space-y-6">
-              <Skeleton className="h-8 w-48" />
-              <Skeleton className="h-96 w-full" />
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                <Skeleton className="h-64 w-full" />
-                <div className="lg:col-span-3 space-y-4">
-                  <Skeleton className="h-8 w-full" />
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  if (error || !destination) {
-    return (
-      <>
-        <Header />
-        <div className="min-h-screen bg-gray-50 pt-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="text-center">
-              <h1 className="text-2xl font-bold text-gray-900 mb-4">
-                Destination Not Found
-              </h1>
-              <p className="text-gray-600 mb-6">
-                The destination you're looking for doesn't exist or has been
-                moved.
-              </p>
-              <Link href="/destinations">
-                <Button>
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Destinations
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  const pageTitle =
-    destination.adminTitle || `${destination.city}, ${destination.country}`;
-  const pageDescription =
-    destination.adminDescription ||
-    `Discover ${destination.city} through ${destination.totalSubmissions} real student experiences. Find accommodation, courses, and practical tips for your Erasmus exchange.`;
+export default function DestinationDetail({ cityData, city, country }: DestinationDetailProps) {
+  const [selectedTab, setSelectedTab] = useState<'overview' | 'experiences'>('overview');
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-50">
       <Head>
-        <title>{pageTitle} - Erasmus Journey</title>
-        <meta name="description" content={pageDescription} />
-        <meta property="og:title" content={`${pageTitle} - Erasmus Journey`} />
-        <meta property="og:description" content={pageDescription} />
-        {destination.adminImageUrl && (
-          <meta property="og:image" content={destination.adminImageUrl} />
-        )}
+        <title>{city}, {country} - Destination Details | Erasmus Journey</title>
+        <meta name="description" content={`Detailed information about studying in ${city}, ${country}. Real student experiences, costs, and ratings.`} />
       </Head>
 
       <Header />
 
-      <div className="min-h-screen bg-gray-50 pt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Back Navigation */}
-          <div className="mb-6">
-            <Link href="/destinations">
-              <Button variant="ghost" className="mb-4">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Destinations
-              </Button>
-            </Link>
+      <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        {/* Back Button */}
+        <Link href="/destinations">
+          <Button variant="ghost" className="mb-6 hover:bg-blue-50 text-blue-600">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to All Destinations
+          </Button>
+        </Link>
+
+        {/* Hero Section */}
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 md:p-12 mb-8 text-white">
+          <div className="flex items-start justify-between">
+            <div>
+              <Badge className="bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-sm mb-4">
+                {country}
+              </Badge>
+              <h1 className="text-4xl md:text-5xl font-extrabold mb-4">{city}</h1>
+              <p className="text-xl text-blue-100 mb-6">
+                Based on {cityData.totalSubmissions} student {cityData.totalSubmissions === 1 ? 'experience' : 'experiences'}
+              </p>
+            </div>
+            <div className="flex items-center bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl">
+              <Star className="w-8 h-8 text-yellow-300 mr-2 fill-yellow-300" />
+              <div>
+                <div className="text-3xl font-bold">{cityData.ratings.avgOverallRating.toFixed(1)}</div>
+                <div className="text-xs text-blue-100">Overall Rating</div>
+              </div>
+            </div>
           </div>
 
-          {/* Destination Overview */}
-          <DestinationOverview destination={destination} />
-
-          {/* Main Content Tabs */}
-          <div className="mt-8">
-            <Tabs defaultValue="overview" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger
-                  value="overview"
-                  className="flex items-center gap-2"
-                >
-                  <Globe className="h-4 w-4" />
-                  Overview
-                </TabsTrigger>
-                <TabsTrigger
-                  value="accommodations"
-                  className="flex items-center gap-2"
-                >
-                  <Home className="h-4 w-4" />
-                  Accommodations ({destination.accommodations.length})
-                </TabsTrigger>
-                <TabsTrigger
-                  value="academics"
-                  className="flex items-center gap-2"
-                >
-                  <GraduationCap className="h-4 w-4" />
-                  Academic Experiences ({destination.courseExchanges.length})
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="overview" className="space-y-6">
-                {/* Quick Stats */}
-                <div className="grid md:grid-cols-2 gap-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Latest Student Experiences</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {destination.accommodations
-                          .slice(0, 2)
-                          .map((accommodation) => (
-                            <GeneratedAccommodationCard
-                              key={accommodation.id}
-                              accommodation={accommodation}
-                              isCompact={true}
-                            />
-                          ))}
-                        {destination.accommodations.length > 2 && (
-                          <Button
-                            variant="outline"
-                            className="w-full"
-                            onClick={() => {}}
-                          >
-                            View All {destination.accommodations.length}{" "}
-                            Accommodation Experiences
-                          </Button>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Recent Academic Experiences</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {destination.courseExchanges
-                          .slice(0, 2)
-                          .map((courseExchange) => (
-                            <GeneratedCourseExchangeCard
-                              key={courseExchange.id}
-                              courseExchange={courseExchange}
-                              isCompact={true}
-                            />
-                          ))}
-                        {destination.courseExchanges.length > 2 && (
-                          <Button
-                            variant="outline"
-                            className="w-full"
-                            onClick={() => {}}
-                          >
-                            View All {destination.courseExchanges.length}{" "}
-                            Academic Experiences
-                          </Button>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="accommodations" className="space-y-6">
-                <div className="grid gap-6">
-                  {destination.accommodations.length > 0 ? (
-                    destination.accommodations.map((accommodation) => (
-                      <GeneratedAccommodationCard
-                        key={accommodation.id}
-                        accommodation={accommodation}
-                        isCompact={false}
-                      />
-                    ))
-                  ) : (
-                    <Card>
-                      <CardContent className="text-center py-12">
-                        <Home className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">
-                          No accommodation experiences yet
-                        </h3>
-                        <p className="text-gray-600 mb-4">
-                          Be the first to share your accommodation experience in{" "}
-                          {destination.city}!
-                        </p>
-                        <Link href="/erasmus-experience-form">
-                          <Button>Share Your Experience</Button>
-                        </Link>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              </TabsContent>
-
-              <TabsContent value="academics" className="space-y-6">
-                <div className="grid gap-6">
-                  {destination.courseExchanges.length > 0 ? (
-                    destination.courseExchanges.map((courseExchange) => (
-                      <GeneratedCourseExchangeCard
-                        key={courseExchange.id}
-                        courseExchange={courseExchange}
-                        isCompact={false}
-                      />
-                    ))
-                  ) : (
-                    <Card>
-                      <CardContent className="text-center py-12">
-                        <GraduationCap className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">
-                          No academic experiences yet
-                        </h3>
-                        <p className="text-gray-600 mb-4">
-                          Be the first to share your academic experience in{" "}
-                          {destination.city}!
-                        </p>
-                        <Link href="/erasmus-experience-form">
-                          <Button>Share Your Experience</Button>
-                        </Link>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              </TabsContent>
-            </Tabs>
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4">
+              <Euro className="w-6 h-6 mb-2 text-blue-200" />
+              <div className="text-2xl font-bold">€{Math.round(cityData.livingCosts.avgTotalMonthly)}</div>
+              <div className="text-sm text-blue-100">Avg Monthly Cost</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4">
+              <Home className="w-6 h-6 mb-2 text-blue-200" />
+              <div className="text-2xl font-bold">€{Math.round(cityData.livingCosts.avgMonthlyRent)}</div>
+              <div className="text-sm text-blue-100">Avg Rent</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4">
+              <Users className="w-6 h-6 mb-2 text-blue-200" />
+              <div className="text-2xl font-bold">{cityData.totalSubmissions}</div>
+              <div className="text-sm text-blue-100">Students</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4">
+              <TrendingUp className="w-6 h-6 mb-2 text-blue-200" />
+              <div className="text-2xl font-bold">{cityData.recommendations.recommendationPercentage.toFixed(0)}%</div>
+              <div className="text-sm text-blue-100">Would Recommend</div>
+            </div>
           </div>
         </div>
-      </div>
-    </>
+
+        {/* Tabs */}
+        <div className="flex gap-4 mb-8 border-b border-gray-200">
+          <button
+            onClick={() => setSelectedTab('overview')}
+            className={`pb-4 px-2 font-semibold transition-colors ${
+              selectedTab === 'overview'
+                ? 'text-blue-600 border-b-2 border-blue-600'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Overview & Stats
+          </button>
+          <button
+            onClick={() => setSelectedTab('experiences')}
+            className={`pb-4 px-2 font-semibold transition-colors ${
+              selectedTab === 'experiences'
+                ? 'text-blue-600 border-b-2 border-blue-600'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Student Experiences ({cityData.totalSubmissions})
+          </button>
+        </div>
+
+        {/* Content */}
+        {selectedTab === 'overview' ? (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Main Stats */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Cost Breakdown */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Euro className="w-5 h-5 mr-2 text-blue-600" />
+                    Monthly Cost Breakdown
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <InsightBadge icon={Home} label="Rent" value={`€${Math.round(cityData.livingCosts.avgMonthlyRent)}`} color="blue" />
+                    <InsightBadge icon={Utensils} label="Food" value={`€${Math.round(cityData.livingCosts.avgMonthlyFood)}`} color="green" />
+                    <InsightBadge icon={Bus} label="Transport" value={`€${Math.round(cityData.livingCosts.avgMonthlyTransport)}`} color="orange" />
+                  </div>
+                  <div className="pt-4 border-t">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium text-gray-700">Total Monthly Budget</span>
+                      <span className="text-2xl font-bold text-gray-900">€{Math.round(cityData.livingCosts.avgTotalMonthly)}</span>
+                    </div>
+                    <p className="text-xs text-gray-500">Based on {cityData.livingCosts.costSubmissions} student budgets</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Ratings */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Star className="w-5 h-5 mr-2 text-yellow-500" />
+                    Student Ratings
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <StatBar label="Overall Experience" value={cityData.ratings.avgOverallRating} color="bg-blue-500" />
+                  <StatBar label="Social Life" value={cityData.ratings.avgSocialLifeRating} color="bg-pink-500" />
+                  <StatBar label="Academic Quality" value={cityData.ratings.avgAcademicRating} color="bg-purple-500" />
+                  <StatBar label="Cultural Immersion" value={cityData.ratings.avgCulturalImmersionRating} color="bg-indigo-500" />
+                  <StatBar label="Cost of Living" value={cityData.ratings.avgCostOfLivingRating} color="bg-green-500" />
+                  <StatBar label="Accommodation" value={cityData.ratings.avgAccommodationRating} color="bg-orange-500" />
+                  <p className="text-xs text-gray-500 pt-2">Based on {cityData.ratings.ratingSubmissions} ratings</p>
+                </CardContent>
+              </Card>
+
+              {/* Accommodation Types */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Home className="w-5 h-5 mr-2 text-blue-600" />
+                    Accommodation Options
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {cityData.accommodationTypes.map((accom, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                          <span className="font-medium text-gray-900">{accom.type}</span>
+                          <span className="text-sm text-gray-500 ml-2">({accom.count} students)</span>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold text-gray-900">€{Math.round(accom.avgRent)}/mo</div>
+                          <div className="text-xs text-gray-500">{accom.percentage.toFixed(0)}% of students</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Column - Quick Info */}
+            <div className="space-y-6">
+              {/* Universities */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Universities</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {cityData.universities.slice(0, 5).map((uni, idx) => (
+                      <div key={idx} className="text-sm text-gray-700 flex items-start">
+                        <MapPin className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0 mt-0.5" />
+                        <span>{uni}</span>
+                      </div>
+                    ))}
+                    {cityData.universities.length > 5 && (
+                      <p className="text-xs text-gray-500 mt-2">+{cityData.universities.length - 5} more universities</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Recommendation */}
+              <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <div className="text-5xl font-bold text-green-600 mb-2">
+                      {cityData.recommendations.recommendationPercentage.toFixed(0)}%
+                    </div>
+                    <p className="text-sm text-green-800 font-medium mb-1">Would Recommend</p>
+                    <p className="text-xs text-green-700">
+                      {cityData.recommendations.wouldRecommendCount} out of {cityData.recommendations.totalRecommendationResponses} students
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Data Freshness */}
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center text-sm text-gray-600">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    <span>Last updated: {new Date().toLocaleDateString()}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        ) : (
+          /* Student Experiences Tab */
+          <div className="space-y-6">
+            <p className="text-gray-600 text-center py-8">
+              Individual student experiences will be displayed here. This feature is coming soon!
+            </p>
+            <div className="text-center">
+              <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Student Stories Coming Soon</h3>
+              <p className="text-gray-600 max-w-md mx-auto">
+                We're working on displaying detailed individual experiences from students who studied in {city}.
+              </p>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { slug } = context.params as { slug: string };
+  
+  // Parse slug (e.g., "barcelona-spain" -> city: "Barcelona", country: "Spain")
+  const parts = slug.split('-');
+  if (parts.length < 2) {
+    return { notFound: true };
+  }
+  
+  // Last part is country, rest is city
+  const country = parts[parts.length - 1];
+  const city = parts.slice(0, -1).join(' ');
+  
+  // Capitalize first letter of each word
+  const capitalizeWords = (str: string) =>
+    str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  
+  const formattedCity = capitalizeWords(city);
+  const formattedCountry = capitalizeWords(country);
+
+  try {
+    const cityData = await aggregateCityData(formattedCity, formattedCountry);
+    
+    if (cityData.totalSubmissions === 0) {
+      return { notFound: true };
+    }
+
+    return {
+      props: {
+        cityData,
+        city: formattedCity,
+        country: formattedCountry,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching city data:', error);
+    return { notFound: true };
+  }
+};

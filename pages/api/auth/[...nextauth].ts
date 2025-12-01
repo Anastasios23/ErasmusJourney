@@ -82,10 +82,57 @@ export const authOptions: NextAuthOptions = {
     updateAge: 24 * 60 * 60, // 24 hours
   },
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = (user as any).role;
+    async signIn({ user, account, profile }) {
+      if (account?.provider === "google") {
+        try {
+          if (!user.email) return false;
+
+          // Check if user exists
+          const existingUser = await prisma.users.findUnique({
+            where: { email: user.email },
+          });
+
+          if (!existingUser) {
+            console.log("Creating new user from Google sign-in:", user.email);
+            // Create new user
+            await prisma.users.create({
+              data: {
+                id: randomUUID(),
+                email: user.email,
+                firstName: (profile as any)?.given_name || user.name?.split(" ")[0] || "",
+                lastName: (profile as any)?.family_name || user.name?.split(" ").slice(1).join(" ") || "",
+                image: user.image,
+                updatedAt: new Date(),
+                role: "USER",
+              },
+            });
+          }
+          return true;
+        } catch (error) {
+          console.error("Error in signIn callback:", error);
+          return false;
+        }
+      }
+      return true;
+    },
+    async jwt({ token, user, account }) {
+      // Initial sign in
+      if (account && user) {
+        // If it's a Google login, we need to get the user ID from the database
+        // because the one in 'user' object might be the Google ID (sub)
+        if (account.provider === "google") {
+          const dbUser = await prisma.users.findUnique({
+            where: { email: user.email! },
+          });
+          if (dbUser) {
+            token.id = dbUser.id;
+            token.role = dbUser.role;
+          }
+        } else {
+          // For credentials login, the user object returned from authorize() already has the correct ID
+          token.id = user.id;
+          token.role = (user as any).role;
+        }
       }
       return token;
     },

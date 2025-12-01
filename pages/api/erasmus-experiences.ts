@@ -110,65 +110,108 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   const { action } = req.body;
 
   if (action === "create") {
-    // Get authenticated user from session
-    const session = await getServerSession(req, res, authOptions);
-    
-    if (!session?.user?.id) {
-      return res.status(401).json({ error: "Authentication required" });
-    }
+    try {
+      // Get authenticated user from session
+      const session = await getServerSession(req, res, authOptions);
+      
+      if (!session?.user?.id) {
+        console.error("No session or user ID found");
+        return res.status(401).json({ error: "Authentication required" });
+      }
 
-    const userId = session.user.id;
+      const userId = session.user.id;
+      console.log(`Creating/fetching experience for user: ${userId}`);
 
-    // Check if this user already has an experience
-    let existingExperience = await prisma.erasmusExperience.findUnique({
-      where: { userId },
-    });
+      // CRITICAL: Verify the user actually exists in the database
+      const userExists = await retryDatabaseOperation(() =>
+        prisma.users.findUnique({
+          where: { id: userId },
+          select: { id: true },
+        })
+      );
 
-    if (existingExperience) {
-      // Reset the existing experience to draft state
-      existingExperience = await prisma.erasmusExperience.update({
-        where: { id: existingExperience.id },
-        data: {
-          status: "DRAFT",
-          isComplete: false,
-          submittedAt: null,
-          basicInfo: {},
-          courses: [],
-          accommodation: {},
-          livingExpenses: {},
-          experience: {},
-          lastSavedAt: new Date(),
-        },
+      if (!userExists) {
+        console.error(`User ${userId} from session does not exist in database`);
+        return res.status(404).json({ 
+          error: "User not found",
+          details: "The user from your session does not exist in the database. Please log out and log in again.",
+        });
+      }
+
+      // Check if this user already has an experience (with retry)
+      let existingExperience = await retryDatabaseOperation(() =>
+        prisma.erasmusExperience.findUnique({
+          where: { userId },
+        })
+      );
+
+      if (existingExperience) {
+        console.log(`Found existing experience: ${existingExperience!.id}, resetting to DRAFT`);
+        // Reset the existing experience to draft state
+        const updatedExperience = await retryDatabaseOperation(() =>
+          prisma.erasmusExperience.update({
+            where: { id: existingExperience!.id },
+            data: {
+              status: "DRAFT",
+              isComplete: false,
+              submittedAt: null,
+              basicInfo: {},
+              courses: [],
+              accommodation: {},
+              livingExpenses: {},
+              experience: {},
+              lastSavedAt: new Date(),
+              updatedAt: new Date(),
+            },
+          })
+        );
+        return res.status(200).json(updatedExperience);
+      }
+
+      console.log("No existing experience found, creating new one");
+      // Create a new draft experience (with retry)
+      const newExperience = await retryDatabaseOperation(() =>
+        prisma.erasmusExperience.create({
+          data: {
+            id: randomUUID(),
+            userId,
+            status: "DRAFT",
+            semester: null, // Explicitly set to null
+            updatedAt: new Date(),
+            // Initialize empty data structures
+            basicInfo: {},
+            courses: [],
+            accommodation: {},
+            livingExpenses: {},
+            experience: {},
+          },
+        })
+      );
+
+      console.log(`Successfully created experience: ${newExperience.id}`);
+      return res.status(201).json(newExperience);
+    } catch (error) {
+      console.error("Error in handlePost (create):", error);
+      console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");
+      return res.status(500).json({
+        error: "Failed to create experience",
+        details: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined,
       });
-      return res.status(200).json(existingExperience);
     }
-
-    // Create a new draft experience
-    const newExperience = await prisma.erasmusExperience.create({
-      data: {
-        id: randomUUID(),
-        userId,
-        status: "DRAFT",
-        updatedAt: new Date(),
-        // Initialize empty data structures
-        basicInfo: {},
-        courses: [],
-        accommodation: {},
-        livingExpenses: {},
-        experience: {},
-      },
-    });
-
-    return res.status(201).json(newExperience);
   }
 
+  console.log(`[API] Invalid action received: "${action}". Falling through to 400.`);
   return res.status(400).json({ error: "Invalid action" });
 }
 
 async function handlePut(req: NextApiRequest, res: NextApiResponse) {
   const { id, action, ...updateData } = req.body;
 
+  console.log(`[API] handlePut called. ID: ${id}, Action: ${action}`);
+
   if (!id) {
+    console.error("[API] Error: Experience ID is required");
     return res.status(400).json({ error: "Experience ID is required" });
   }
 
@@ -265,12 +308,15 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
     // 1. Basic Info
     const basicInfoVal = submissionData.basicInfo || {};
+    console.log("[API] Validating Basic Info:", JSON.stringify(basicInfoVal, null, 2));
+
     if (
       !basicInfoVal.homeUniversity ||
       !basicInfoVal.hostUniversity ||
       !basicInfoVal.semester ||
       !basicInfoVal.year
     ) {
+      console.log("[API] Basic Info Validation Failed. Missing fields.");
       errors.push(
         "Basic Information is incomplete (University, Semester, Year required).",
       );
@@ -279,17 +325,23 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     // 2. Courses
     const coursesVal = submissionData.courses || {};
     const mappingsVal = coursesVal.mappings || [];
+    console.log("[API] Validating Courses. Mappings count:", mappingsVal.length);
+
     if (!Array.isArray(mappingsVal) || mappingsVal.length === 0) {
+      console.log("[API] Course Validation Failed. No mappings.");
       errors.push("At least one course mapping is required.");
     }
 
     // 3. Accommodation
     const accommodationVal = submissionData.accommodation || {};
+    console.log("[API] Validating Accommodation:", JSON.stringify(accommodationVal, null, 2));
+
     if (
       !accommodationVal.type ||
       !accommodationVal.rent ||
       !accommodationVal.rating
     ) {
+      console.log("[API] Accommodation Validation Failed. Missing fields.");
       errors.push(
         "Accommodation details are incomplete (Type, Rent, Rating required).",
       );

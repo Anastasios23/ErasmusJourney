@@ -222,10 +222,22 @@ export default function Accommodation() {
         university: basicInfo?.hostUniversity || "",
       };
 
+      // Map fields to match backend requirements
+      const mappedData = {
+        ...enrichedFormData,
+        type: enrichedFormData.accommodationType,
+        rent: enrichedFormData.monthlyRent,
+        rating: enrichedFormData.accommodationRating,
+      };
+
       // Save progress with accommodation data
-      await saveProgress({
-        accommodation: enrichedFormData,
+      const saved = await saveProgress({
+        accommodation: mappedData,
       });
+
+      if (!saved) {
+        throw new Error("Failed to save progress. Please try again.");
+      }
 
       // Mark step 3 as completed
       markStepCompleted("accommodation");

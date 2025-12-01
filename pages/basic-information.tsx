@@ -490,10 +490,22 @@ export default function BasicInformation() {
       // Validate form data
       basicInformationRequiredSchema.parse(formData);
 
+      // Map fields to match backend requirements
+      const mappedData = {
+        ...formData,
+        homeUniversity: formData.universityInCyprus,
+        semester: formData.exchangePeriod,
+        year: formData.currentYear,
+      };
+
       // Save progress to the experience with the current form data
-      await saveProgress({
-        basicInfo: formData,
+      const saved = await saveProgress({
+        basicInfo: mappedData,
       });
+
+      if (!saved) {
+        throw new Error("Failed to save progress. Please try again.");
+      }
 
       // Mark step 1 as completed
       markStepCompleted("basic-info");
@@ -837,6 +849,21 @@ export default function BasicInformation() {
                   </EnhancedSelectItem>
                 </EnhancedSelectContent>
               </EnhancedSelect>
+            </FormField>
+
+            <FormField
+              label="Academic Year"
+              required
+              error={fieldErrors.currentYear}
+            >
+              <EnhancedInput
+                id="currentYear"
+                value={formData.currentYear}
+                onChange={(e) => handleInputChange("currentYear", e.target.value)}
+                placeholder="e.g., 2024-2025"
+                required
+                error={fieldErrors.currentYear}
+              />
             </FormField>
 
             <FormField

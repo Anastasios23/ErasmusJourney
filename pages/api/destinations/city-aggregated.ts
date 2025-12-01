@@ -90,10 +90,13 @@ export default async function handler(
     }
   } catch (error) {
     console.error("Error aggregating city data:", error);
+    console.error("Error stack:", error instanceof Error ? error.stack : "No stack");
+    console.error("Error message:", error instanceof Error ? error.message : String(error));
     res.status(500).json({
       error: "Internal server error",
       message: "Failed to aggregate city data",
       details: error instanceof Error ? error.message : "Unknown error",
+      stack: process.env.NODE_ENV === "development" && error instanceof Error ? error.stack : undefined,
     });
   }
 }

@@ -36,7 +36,6 @@ import {
 } from "lucide-react";
 import NotificationDropdown from "@/components/NotificationDropdown";
 import { ErasmusIcon } from "@/components/icons/CustomIcons";
-import { DarkModeToggle } from "@/components/ui/dark-mode-toggle";
 import { EnhancedLogo } from "@/components/ui/enhanced-logo";
 import {
   ApplicationProgress,
@@ -213,7 +212,6 @@ export default function Header() {
 
           {/* User Actions */}
           <div className="hidden md:flex items-center space-x-3">
-            <DarkModeToggle />
             {status === "loading" ? (
               <div className="h-9 w-9 rounded-full bg-gray-100 animate-pulse"></div>
             ) : status === "authenticated" && session ? (
@@ -283,7 +281,6 @@ export default function Header() {
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">
-            <DarkModeToggle />
             <Button
               variant="ghost"
               size="icon"

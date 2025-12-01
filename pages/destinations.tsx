@@ -1,9 +1,7 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import Fuse from "fuse.js";
+import Header from "../components/Header";
+import { Card, CardContent } from "../src/components/ui/card";
 import { Badge } from "../src/components/ui/badge";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
@@ -15,1012 +13,209 @@ import {
   SelectValue,
 } from "../src/components/ui/select";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../src/components/ui/card";
-import Header from "../components/Header";
-import CityDataCard from "../components/CityDataCard";
-import safeFetch from "../src/utils/safeFetch";
-import {
   MapPin,
-  Star,
   Euro,
+  Star,
   Users,
   Search,
   ArrowRight,
-  FilterX,
   TrendingUp,
-  ThumbsUp,
+  Home,
+  Utensils,
+  Bus,
 } from "lucide-react";
-import { DestinationSkeleton } from "../src/components/ui/destination-skeleton";
-import { OptimizedImage } from "../src/components/ui/OptimizedImage";
-import {
-  ErasmusIcon,
-  DestinationIcon,
-} from "../src/components/icons/CustomIcons";
-
-// City aggregation data interface
-interface CityAggregatedData {
-  city: string;
-  country: string;
-  totalSubmissions: number;
-  livingCosts: {
-    avgMonthlyRent: number;
-    avgMonthlyFood: number;
-    avgMonthlyTransport: number;
-    avgMonthlyEntertainment: number;
-    avgMonthlyUtilities: number;
-    avgMonthlyOther: number;
-    avgTotalMonthly: number;
-    costSubmissions: number;
-  };
-  ratings: {
-    avgOverallRating: number;
-    avgAcademicRating: number;
-    avgSocialLifeRating: number;
-    avgCulturalImmersionRating: number;
-    avgCostOfLivingRating: number;
-    avgAccommodationRating: number;
-    ratingSubmissions: number;
-  };
-  accommodation: {
-    types: Array<{
-      type: string;
-      count: number;
-      avgRent: number;
-      percentage: number;
-    }>;
-    totalAccommodationSubmissions: number;
-  };
-  recommendations: {
-    wouldRecommendCount: number;
-    totalRecommendationResponses: number;
-    recommendationPercentage: number;
-  };
-  topTips: Array<{
-    category: string;
-    tip: string;
-    frequency: number;
-  }>;
-  universities: Array<{
-    name: string;
-    studentCount: number;
-  }>;
-}
+import { cityAggregationClient } from "../src/services/cityAggregationClient";
+import { CityAggregatedData } from "../src/types/cityData";
+import { StatBar } from "../src/components/ui/stat-bar";
+import Link from "next/link";
 
 export default function Destinations() {
-  const router = useRouter();
+  const [cities, setCities] = useState<CityAggregatedData[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCostLevel, setSelectedCostLevel] = useState("");
-  const [selectedDataFilter, setSelectedDataFilter] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [destinations, setDestinations] = useState([]); // Make this dynamic
-  const [error, setError] = useState<string | null>(null);
-  const [cityAggregatedData, setCityAggregatedData] = useState<
-    Record<string, CityAggregatedData>
-  >({});
-  const [loadingCityData, setLoadingCityData] = useState(false);
+  const [sortBy, setSortBy] = useState("popularity");
 
-  // Load dynamic destination data
   useEffect(() => {
-    const fetchDestinations = async () => {
+    async function fetchData() {
       try {
-        setIsLoading(true);
-        console.log("Fetching destinations from /api/destinations");
-        const response = await safeFetch("/api/destinations");
-
-        console.log("Response status:", response.status);
-
-        // Read the response body only once
-        let data;
-        try {
-          data = await response.json();
-          console.log("Destinations data received:", data);
-        } catch (parseError) {
-          console.error("Failed to parse response as JSON:", parseError);
-          throw new Error(
-            `Failed to parse destinations response: ${response.status}`,
-          );
-        }
-
-        if (!response.ok) {
-          console.error("API Error Response:", data);
-          throw new Error(
-            `Failed to fetch destinations: ${response.status} - ${data?.message || data?.error || "Unknown error"}`,
-          );
-        }
-
-        // Validate that we have valid data
-        if (!data) {
-          throw new Error("No data received from destinations API");
-        }
-
-        // Ensure data is an array
-        const destinationsArray = Array.isArray(data) ? data : [];
-
-        console.log(`Processing ${destinationsArray.length} destinations`);
-
-        // Transform API data to match component expectations
-        const transformedDestinations = destinationsArray
-          .filter((dest: any) => dest && dest.id && dest.city && dest.country) // Filter out invalid entries
-          .map((dest: any) => ({
-            id: dest.id,
-            city: dest.city,
-            country: dest.country,
-            slug: dest.slug,
-            image:
-              dest.imageUrl ||
-              `/images/destinations/${dest.city?.toLowerCase()}.svg`, // API returns imageUrl
-            description:
-              dest.description || `Explore ${dest.city}, ${dest.country}`,
-            costLevel: dest.costOfLiving || "medium", // API returns costOfLiving
-            rating: dest.averageRating || 4.0, // API returns averageRating
-            studentCount: dest.studentCount || 0,
-            popularUniversities: dest.popularUniversities || [],
-            highlights: dest.highlights || [], // API returns highlights directly
-            avgCostPerMonth: dest.avgCostPerMonth || dest.averageRent || 0,
-            region: getRegionFromCountry(dest.country),
-          }));
-
-        console.log(
-          `Successfully transformed ${transformedDestinations.length} destinations`,
-        );
-        setDestinations(transformedDestinations);
+        const data = await cityAggregationClient.getAllCityStats();
+        setCities(data);
       } catch (error) {
-        console.error("Error fetching destinations:", error);
-        setError(
-          error instanceof Error
-            ? error.message
-            : "Failed to load destinations",
-        );
-
-        // Set fallback destinations so the page doesn't break completely
-        setDestinations([
-          {
-            id: "fallback-prague",
-            city: "Prague",
-            country: "Czech Republic",
-            slug: "prague-czech-republic",
-            image: "/images/destinations/prague.svg",
-            description:
-              "Historic city with affordable living and great universities",
-            costLevel: "low",
-            rating: 4.2,
-            studentCount: 0,
-            popularUniversities: ["Charles University"],
-            highlights: [
-              "Affordable Living",
-              "Beautiful Architecture",
-              "Central Europe",
-            ],
-            avgCostPerMonth: 800,
-            region: "Central Europe",
-          },
-        ]);
+        console.error("Failed to fetch city data:", error);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
-    };
-
-    fetchDestinations();
+    }
+    fetchData();
   }, []);
 
-  // Load city aggregated data
-  useEffect(() => {
-    const fetchCityAggregatedData = async () => {
-      try {
-        setLoadingCityData(true);
-        const response = await safeFetch(
-          "/api/destinations/city-aggregated?all=true",
-        );
-
-        if (response.ok) {
-          const result = await response.json();
-          console.log("City aggregated API response:", result);
-
-          // Check if we have cities data
-          const citiesData = result.cities || result.data || [];
-
-          if (Array.isArray(citiesData)) {
-            // Convert array to object keyed by city-country
-            const dataMap = citiesData.reduce(
-              (
-                acc: Record<string, CityAggregatedData>,
-                cityData: CityAggregatedData,
-              ) => {
-                const key = `${cityData.city.toLowerCase()}-${cityData.country.toLowerCase()}`;
-                acc[key] = cityData;
-                return acc;
-              },
-              {},
-            );
-            setCityAggregatedData(dataMap);
-            console.log(
-              `Loaded city data for ${Object.keys(dataMap).length} cities`,
-            );
-          } else {
-            console.warn("No cities data found in API response");
-          }
-        } else {
-          console.error(
-            "Failed to fetch city data:",
-            response.status,
-            response.statusText,
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching city aggregated data:", error);
-      } finally {
-        setLoadingCityData(false);
-      }
-    };
-
-    fetchCityAggregatedData();
-  }, []);
-
-  const getRegionFromCountry = (country: string) => {
-    const regions: Record<string, string> = {
-      Germany: "Central Europe",
-      "Czech Republic": "Central Europe",
-      Spain: "Southern Europe",
-      Italy: "Southern Europe",
-      France: "Western Europe",
-      Netherlands: "Western Europe",
-    };
-    return regions[country] || "Europe";
-  };
-
-  // Configure Fuse.js for fuzzy search
-  const fuseOptions = {
-    keys: [
-      { name: "city", weight: 0.3 },
-      { name: "country", weight: 0.3 },
-      { name: "description", weight: 0.2 },
-      { name: "popularUniversities", weight: 0.1 },
-      { name: "highlights", weight: 0.1 },
-    ],
-    threshold: 0.3,
-    includeScore: true,
-  };
-
-  const fuse = useMemo(
-    () => new Fuse(destinations, fuseOptions),
-    [destinations],
-  );
-
-  // Get unique values for filters
-  const costLevels = ["low", "medium", "high"];
-
-  // Filter destinations using Fuse.js and other filters
-  const filteredDestinations = useMemo(() => {
-    let results = destinations;
-
-    // Apply fuzzy search if search term exists
-    if (searchTerm.trim()) {
-      const fuseResults = fuse.search(searchTerm.trim());
-      results = fuseResults.map((result) => result.item);
-    }
-
-    // Apply cost filter (only if a specific cost level is selected)
-    if (
-      selectedCostLevel &&
-      selectedCostLevel !== "all-costs" &&
-      selectedCostLevel !== ""
-    ) {
-      results = results.filter((dest) => dest.costLevel === selectedCostLevel);
-    }
-
-    // Apply data availability filter
-    if (
-      selectedDataFilter &&
-      selectedDataFilter !== "all-data" &&
-      selectedDataFilter !== ""
-    ) {
-      switch (selectedDataFilter) {
-        case "with-cost-data":
-          results = results.filter(
-            (dest) =>
-              dest.dataInsights?.hasAccommodationData ||
-              dest.dataInsights?.hasExpenseData,
-          );
-          break;
-        case "popular-destinations":
-          results = results.filter((dest) => dest.studentCount >= 10);
-          break;
-        case "complete-info":
-          results = results.filter(
-            (dest) =>
-              dest.cityInfo &&
-              dest.cityInfo.topAttractions &&
-              dest.cityInfo.topAttractions.length > 0,
-          );
-          break;
-        case "admin-verified":
-          results = results.filter((dest) => dest.isAdminDestination);
-          break;
-      }
-    }
-
-    return results;
-  }, [searchTerm, selectedCostLevel, selectedDataFilter, destinations, fuse]);
-
-  const getCostBadgeColor = (cost: string) => {
-    switch (cost) {
-      case "low":
-        return "bg-green-500 text-white";
-      case "medium":
-        return "bg-yellow-500 text-white";
-      case "high":
-        return "bg-red-500 text-white";
-      default:
-        return "bg-gray-500 text-white";
-    }
-  };
-
-  const clearFilters = () => {
-    setSearchTerm("");
-    setSelectedCostLevel("");
-    setSelectedDataFilter("");
-  };
+  const filteredCities = cities
+    .filter(
+      (city) =>
+        city.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        city.country.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortBy === "popularity") return b.totalSubmissions - a.totalSubmissions;
+      if (sortBy === "cost-low") return a.livingCosts.avgTotalMonthly - b.livingCosts.avgTotalMonthly;
+      if (sortBy === "cost-high") return b.livingCosts.avgTotalMonthly - a.livingCosts.avgTotalMonthly;
+      if (sortBy === "rating") return b.ratings.avgOverallRating - a.ratings.avgOverallRating;
+      return 0;
+    });
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-50">
       <Head>
-        <title>Destinations - Erasmus Journey Platform</title>
-        <meta
-          name="description"
-          content="Explore amazing destinations for your Erasmus exchange program"
-        />
+        <title>Erasmus Destinations - Explore Cities & Costs</title>
+        <meta name="description" content="Discover Erasmus destinations with real student data on costs, ratings, and experiences." />
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
-        <Header />
+      <Header />
 
-        <div className="pt-20 pb-16 px-4">
-          <div className="max-w-7xl mx-auto">
-            {/* Header Section */}
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                Explore Destinations
-              </h1>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Discover amazing cities and universities across Europe for your
-                Erasmus exchange experience.
-              </p>
-            </div>
+      <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        {/* Hero Section */}
+        <div className="text-center mb-12">
+          <Link href="/dashboard">
+            <Button variant="ghost" className="mb-6 hover:bg-blue-50 text-blue-600">
+              <ArrowRight className="w-4 h-4 mr-2 rotate-180" />
+              Back to Dashboard
+            </Button>
+          </Link>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+            Explore Erasmus <span className="text-blue-600">Destinations</span>
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Real insights from students who have been there. Compare living costs, ratings, and experiences to find your perfect match.
+          </p>
+        </div>
 
-            {/* Search and Filters */}
-            <div className="mb-8">
-              <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input
-                    placeholder="Search cities, countries, universities, or highlights..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
+        {/* Search & Filter */}
+        <div className="flex flex-col md:flex-row gap-4 mb-10 max-w-4xl mx-auto">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Input
+              placeholder="Search by city or country..."
+              className="pl-10 h-12 text-lg shadow-sm border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-full md:w-48 h-12 text-base shadow-sm border-gray-200">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="popularity">Most Popular</SelectItem>
+              <SelectItem value="rating">Highest Rated</SelectItem>
+              <SelectItem value="cost-low">Lowest Cost</SelectItem>
+              <SelectItem value="cost-high">Highest Cost</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-                <div className="flex gap-4">
-                  <Select
-                    value={selectedCostLevel || "all-costs"}
-                    onValueChange={(value) =>
-                      setSelectedCostLevel(value === "all-costs" ? "" : value)
-                    }
-                  >
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder="All Cost Levels" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all-costs">All Cost Levels</SelectItem>
-                      {costLevels.map((level) => (
-                        <SelectItem key={level} value={level}>
-                          {level.charAt(0).toUpperCase() + level.slice(1)} Cost
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select
-                    value={selectedDataFilter || "all-data"}
-                    onValueChange={(value) =>
-                      setSelectedDataFilter(value === "all-data" ? "" : value)
-                    }
-                  >
-                    <SelectTrigger className="w-56">
-                      <SelectValue placeholder="All Destinations" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all-data">All Destinations</SelectItem>
-                      <SelectItem value="admin-verified">
-                        ✓ Admin Verified
-                      </SelectItem>
-                      <SelectItem value="with-cost-data">
-                        With Real Cost Data
-                      </SelectItem>
-                      <SelectItem value="popular-destinations">
-                        Popular (10+ Students)
-                      </SelectItem>
-                      <SelectItem value="complete-info">
-                        Complete City Info
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  {/* Clear Filters Button */}
-                  {(searchTerm || selectedCostLevel || selectedDataFilter) && (
-                    <Button variant="outline" onClick={clearFilters}>
-                      Clear Filters
-                    </Button>
-                  )}
-                </div>
-              </div>
-
-              {/* Results count and active filters */}
-              <div className="text-left mt-4">
-                <div className="flex items-center gap-3 flex-wrap">
-                  <p className="text-sm text-gray-600">
-                    Showing {filteredDestinations.length} of{" "}
-                    {destinations.length} European destinations
-                  </p>
-
-                  {/* Active Filters */}
-                  {(searchTerm || selectedCostLevel || selectedDataFilter) && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500">•</span>
-                      {searchTerm && (
-                        <Badge variant="outline" className="text-xs">
-                          Search: "{searchTerm}"
+        {/* Content */}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-96 bg-gray-200 rounded-2xl animate-pulse" />
+            ))}
+          </div>
+        ) : filteredCities.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredCities.map((city) => {
+              const slug = `${city.city.toLowerCase().replace(/\s+/g, '-')}-${city.country.toLowerCase().replace(/\s+/g, '-')}`;
+              
+              return (
+                <Link key={city.city} href={`/destinations/${slug}`}>
+                  <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 border-gray-100 group cursor-pointer">
+                    <div className="h-32 bg-gradient-to-br from-blue-500 to-indigo-600 relative p-6 flex flex-col justify-between group-hover:scale-105 transition-transform duration-500">
+                      <div className="flex justify-between items-start">
+                        <Badge className="bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-sm">
+                          {city.country}
                         </Badge>
-                      )}
-                      {selectedCostLevel && (
-                        <Badge variant="outline" className="text-xs">
-                          {selectedCostLevel.charAt(0).toUpperCase() +
-                            selectedCostLevel.slice(1)}{" "}
-                          cost
-                        </Badge>
-                      )}
-                      {selectedDataFilter && (
-                        <Badge variant="outline" className="text-xs">
-                          {selectedDataFilter === "with-cost-data"
-                            ? "Real cost data"
-                            : selectedDataFilter === "popular-destinations"
-                              ? "Popular (10+ students)"
-                              : selectedDataFilter === "complete-info"
-                                ? "Complete city info"
-                                : selectedDataFilter === "admin-verified"
-                                  ? "✓ Admin verified"
-                                  : selectedDataFilter}
-                        </Badge>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Quick Filter Buttons */}
-              {!searchTerm && !selectedCostLevel && !selectedDataFilter && (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="text-sm text-gray-600 self-center">
-                    Quick filters:
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSelectedDataFilter("with-cost-data")}
-                    className="text-xs"
-                  >
-                    Real Cost Data
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      setSelectedDataFilter("popular-destinations")
-                    }
-                    className="text-xs"
-                  >
-                    Popular Destinations
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSelectedCostLevel("low")}
-                    className="text-xs"
-                  >
-                    Low Cost
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSelectedDataFilter("complete-info")}
-                    className="text-xs"
-                  >
-                    Complete Info
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            {/* Destinations Grid */}
-            {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Array.from({ length: 6 }).map((_, index) => (
-                  <DestinationSkeleton key={index} />
-                ))}
-              </div>
-            ) : destinations.length === 0 ? (
-              /* No data at all - show empty state with call to action */
-              <div className="text-center py-16">
-                <div className="mx-auto max-w-md">
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-                    <MapPin className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <h3 className="mt-4 text-lg font-semibold text-gray-900">
-                    No destinations available yet
-                  </h3>
-                  <p className="mt-2 text-sm text-gray-600">
-                    Destinations are generated based on student form
-                    submissions. Be the first to share your experience!
-                  </p>
-                  <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-                    <Button
-                      onClick={() => router.push("/basic-information")}
-                      className="bg-blue-600 hover:bg-blue-700"
-                    >
-                      Share Your Experience
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => router.push("/dev-tools")}
-                      className="text-gray-600"
-                    >
-                      Generate Sample Data
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <>
-                {filteredDestinations.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredDestinations.map((destination, index) => (
-                      <Link key={destination.id} href={`/destinations/${destination.slug}`}>
-                        <Card
-                          className="overflow-hidden hover:shadow-xl transition-all duration-300 group border-0 shadow-md hover:shadow-2xl hover:-translate-y-1 h-full cursor-pointer"
-                        >
-                        <div className="relative h-48 overflow-hidden">
-                          <OptimizedImage
-                            src={destination.image}
-                            fallbacks={[
-                              `/images/destinations/${destination.city.toLowerCase().replace(/\s+/g, "-")}-custom.svg`,
-                              `/images/destinations/${destination.city.toLowerCase().replace(/\s+/g, "-")}.svg`,
-                              `/images/destinations/placeholder.svg`,
-                            ]}
-                            alt={`${destination.city}, ${destination.country} - Study abroad destination with Erasmus program`}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-110"
-                            priority={index < 6}
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          />
-
-                          {/* Custom gradient overlay with Erasmus branding */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-                          {/* EU/Erasmus indicator */}
-                          <div className="absolute top-4 right-4 transform transition-transform group-hover:scale-110">
-                            <div className="bg-blue-600/90 backdrop-blur-sm p-2 rounded-full shadow-lg">
-                              <ErasmusIcon
-                                size={18}
-                                className="text-yellow-300"
-                              />
-                            </div>
-                          </div>
-
-                          {/* Destination indicator */}
-                          <div className="absolute top-4 left-4">
-                            <div className="flex items-center space-x-2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-lg">
-                              <DestinationIcon
-                                size={16}
-                                className="text-blue-600"
-                              />
-                              <span className="text-sm font-medium text-gray-800">
-                                {destination.country}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* City name overlay */}
-                          <div className="absolute bottom-4 left-4 right-4">
-                            <h3 className="text-2xl font-bold text-white mb-1 drop-shadow-lg">
-                              {destination.city}
-                            </h3>
-                            <div className="flex items-center space-x-2">
-                              <span className="text-blue-200 text-sm font-medium">
-                                {destination.studentCount} Cypriot students
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <CardHeader>
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <CardTitle className="text-xl">
-                                {destination.city}
-                              </CardTitle>
-                              <p className="text-gray-600 flex items-center gap-1">
-                                <MapPin className="h-4 w-4" />
-                                {destination.country}
-                              </p>
-                            </div>
-                            <div className="flex flex-col gap-2">
-                              <Badge
-                                className={getCostBadgeColor(
-                                  destination.costLevel,
-                                )}
-                              >
-                                {destination.costLevel} cost
-                              </Badge>
-                              {destination.isAdminDestination && (
-                                <Badge
-                                  variant="outline"
-                                  className="bg-blue-50 text-blue-700 border-blue-200"
-                                >
-                                  ✓ Verified
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-gray-600 mb-4 line-clamp-3">
-                            {destination.description}
-                          </p>
-
-                          {/* City Aggregated Data */}
-                          <CityDataCard
-                            cityData={
-                              cityAggregatedData[
-                                `${destination.city.toLowerCase()}-${destination.country.toLowerCase()}`
-                              ]
-                            }
-                            loading={loadingCityData}
-                          />
-
-                          {/* Stats */}
-                          <div className="flex justify-between items-center mb-4">
-                            <div className="flex items-center gap-1">
-                              <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                              <span className="text-sm font-medium">
-                                {destination.rating}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Users className="h-4 w-4 text-blue-500" />
-                              <span className="text-sm">
-                                {destination.studentCount} students
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Euro className="h-4 w-4 text-green-500" />
-                              <span className="text-sm">
-                                €{destination.avgCostPerMonth}/mo
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Data Quality Indicators */}
-                          {destination.dataInsights && (
-                            <div className="mb-4 flex gap-2">
-                              {destination.dataInsights
-                                .hasAccommodationData && (
-                                <Badge
-                                  variant="outline"
-                                  className="text-xs bg-green-50 text-green-700 border-green-200"
-                                >
-                                  ✓ Real rent data
-                                </Badge>
-                              )}
-                              {destination.dataInsights.hasExpenseData && (
-                                <Badge
-                                  variant="outline"
-                                  className="text-xs bg-blue-50 text-blue-700 border-blue-200"
-                                >
-                                  ✓ Living costs
-                                </Badge>
-                              )}
-                              {destination.studentCount >= 10 && (
-                                <Badge
-                                  variant="outline"
-                                  className="text-xs bg-purple-50 text-purple-700 border-purple-200"
-                                >
-                                  Popular choice
-                                </Badge>
-                              )}
-                            </div>
-                          )}
-
-                          {/* Universities */}
-                          <div className="mb-4">
-                            <h4 className="text-sm font-medium text-gray-900 mb-2">
-                              Popular Universities:
-                            </h4>
-                            <div className="space-y-1">
-                              {destination.popularUniversities
-                                .slice(0, 2)
-                                .map((uni, index) => (
-                                  <p
-                                    key={index}
-                                    className="text-xs text-gray-600"
-                                  >
-                                    • {uni}
-                                  </p>
-                                ))}
-                              {destination.popularUniversities.length > 2 && (
-                                <p className="text-xs text-blue-600">
-                                  +{destination.popularUniversities.length - 2}{" "}
-                                  more
-                                </p>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Cost Breakdown */}
-                          {destination.dataInsights &&
-                            (destination.dataInsights.hasAccommodationData ||
-                              destination.dataInsights.hasExpenseData) && (
-                              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                                <h4 className="text-sm font-medium text-gray-900 mb-2">
-                                  💰 Real Student Costs:
-                                </h4>
-                                <div className="space-y-1 text-xs">
-                                  {destination.dataInsights.avgRent > 0 && (
-                                    <div className="flex justify-between">
-                                      <span className="text-gray-600">
-                                        Average Rent:
-                                      </span>
-                                      <span className="font-medium">
-                                        ���{destination.dataInsights.avgRent}/mo
-                                      </span>
-                                    </div>
-                                  )}
-                                  {destination.dataInsights.avgLivingExpenses >
-                                    0 && (
-                                    <div className="flex justify-between">
-                                      <span className="text-gray-600">
-                                        Living Expenses:
-                                      </span>
-                                      <span className="font-medium">
-                                        €
-                                        {
-                                          destination.dataInsights
-                                            .avgLivingExpenses
-                                        }
-                                        /mo
-                                      </span>
-                                    </div>
-                                  )}
-                                  {destination.dataInsights
-                                    .mostCommonBiggestExpense && (
-                                    <div className="mt-2 pt-2 border-t border-gray-200">
-                                      <span className="text-gray-600">
-                                        Biggest expense:{" "}
-                                      </span>
-                                      <span className="font-medium text-orange-600">
-                                        {
-                                          destination.dataInsights
-                                            .mostCommonBiggestExpense
-                                        }
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            )}
-
-                          {/* Highlights */}
-                          <div className="flex flex-wrap gap-1 mb-4">
-                            {destination.highlights
-                              .slice(0, 3)
-                              .map((highlight, index) => (
-                                <Badge
-                                  key={index}
-                                  variant="secondary"
-                                  className="text-xs"
-                                >
-                                  {highlight}
-                                </Badge>
-                              ))}
-                          </div>
-
-                          {/* City Information */}
-                          {destination.cityInfo && (
-                            <div className="mb-4 p-3 bg-blue-50 rounded-lg">
-                              <h4 className="text-sm font-medium text-blue-900 mb-2">
-                                🏛️ City Info:
-                              </h4>
-                              <div className="grid grid-cols-2 gap-2 text-xs">
-                                {destination.cityInfo.population && (
-                                  <div>
-                                    <span className="text-gray-600">
-                                      Population:
-                                    </span>
-                                    <span className="font-medium ml-1">
-                                      {destination.cityInfo.population}
-                                    </span>
-                                  </div>
-                                )}
-                                {destination.cityInfo.language && (
-                                  <div>
-                                    <span className="text-gray-600">
-                                      Language:
-                                    </span>
-                                    <span className="font-medium ml-1">
-                                      {destination.cityInfo.language}
-                                    </span>
-                                  </div>
-                                )}
-                                {destination.cityInfo.climate && (
-                                  <div>
-                                    <span className="text-gray-600">
-                                      Climate:
-                                    </span>
-                                    <span className="font-medium ml-1">
-                                      {destination.cityInfo.climate}
-                                    </span>
-                                  </div>
-                                )}
-                                {destination.cityInfo.practicalInfo
-                                  ?.englishFriendly && (
-                                  <div>
-                                    <span className="text-gray-600">
-                                      English:
-                                    </span>
-                                    <span className="font-medium ml-1">
-                                      {
-                                        destination.cityInfo.practicalInfo
-                                          .englishFriendly
-                                      }
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-
-                              {destination.cityInfo.topAttractions &&
-                                destination.cityInfo.topAttractions.length >
-                                  0 && (
-                                  <div className="mt-2 pt-2 border-t border-blue-200">
-                                    <span className="text-gray-600 text-xs">
-                                      Top attractions:{" "}
-                                    </span>
-                                    <span className="text-blue-700 text-xs font-medium">
-                                      {destination.cityInfo.topAttractions
-                                        .slice(0, 3)
-                                        .join(", ")}
-                                      {destination.cityInfo.topAttractions
-                                        .length > 3 && "..."}
-                                    </span>
-                                  </div>
-                                )}
-                            </div>
-                          )}
-
-                          <div className="block">
-                            <div className="w-full inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
-                              See More
-                              <ArrowRight className="h-4 w-4 ml-2" />
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                      </Link>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12 col-span-full">
-                    <div className="bg-white p-8 rounded-lg shadow-md">
-                      <FilterX className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                        No Destinations Found
-                      </h3>
-                      <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                        We couldn't find any destinations matching your search
-                        for "{searchTerm}". Try adjusting your filters or search
-                        terms.
-                      </p>
-                      <Button onClick={clearFilters} size="lg">
-                        Clear All Filters
-                      </Button>
-                      <div className="mt-6 text-sm text-gray-500">
-                        <p>Popular searches:</p>
-                        <div className="flex gap-2 justify-center mt-2">
-                          <Button
-                            variant="link"
-                            className="text-blue-600"
-                            onClick={() => setSearchTerm("Spain")}
-                          >
-                            Spain
-                          </Button>
-                          <Button
-                            variant="link"
-                            className="text-blue-600"
-                            onClick={() => setSearchTerm("Germany")}
-                          >
-                            Germany
-                          </Button>
-                          <Button
-                            variant="link"
-                            className="text-blue-600"
-                            onClick={() => setSearchTerm("low cost")}
-                          >
-                            Low Cost
-                          </Button>
+                        <div className="flex items-center text-white/90 bg-black/10 px-2 py-1 rounded-full backdrop-blur-sm">
+                          <Star className="w-4 h-4 text-yellow-300 mr-1 fill-yellow-300" />
+                          <span className="font-bold text-sm">{city.ratings.avgOverallRating.toFixed(1)}</span>
                         </div>
                       </div>
+                      <h2 className="text-3xl font-bold text-white tracking-tight">{city.city}</h2>
                     </div>
-                  </div>
-                )}
-              </>
-            )}
 
-            {/* Show error message if API fails */}
-            {error && !isLoading && (
-              <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-yellow-800">
-                  {error}. Showing available destinations from our database.
-                </p>
-              </div>
-            )}
+                    <CardContent className="p-6">
+                      {/* Key Stats */}
+                      <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div className="flex items-center text-gray-700">
+                          <div className="p-2 bg-blue-50 rounded-lg mr-3 text-blue-600">
+                            <Euro className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500 font-medium uppercase">Monthly</p>
+                            <p className="font-bold text-lg">€{Math.round(city.livingCosts.avgTotalMonthly)}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center text-gray-700">
+                          <div className="p-2 bg-purple-50 rounded-lg mr-3 text-purple-600">
+                            <Users className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500 font-medium uppercase">Students</p>
+                            <p className="font-bold text-lg">{city.totalSubmissions}</p>
+                          </div>
+                        </div>
+                      </div>
 
-            {/* Show data source info */}
-            {!isLoading && destinations.length > 0 && (
-              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-blue-800 text-sm">
-                  📊 This data is generated from{" "}
-                  <strong>
-                    {destinations.reduce(
-                      (sum, dest) => sum + dest.studentCount,
-                      0,
-                    )}{" "}
-                    real student experiences
-                  </strong>
-                  {destinations.some((dest) => dest.studentCount > 0) &&
-                    ". Click on any destination to see detailed experiences from students who studied there."}
-                </p>
-              </div>
-            )}
+                      {/* Cost Breakdown */}
+                      <div className="space-y-3 mb-6">
+                        <h3 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                          <TrendingUp className="w-4 h-4 mr-2 text-gray-400" />
+                          Cost Breakdown
+                        </h3>
+                        <div className="grid grid-cols-3 gap-2 text-center text-xs text-gray-600">
+                          <div className="bg-gray-50 p-2 rounded-lg">
+                            <Home className="w-4 h-4 mx-auto mb-1 text-blue-500" />
+                            <span className="block font-semibold text-gray-900">€{Math.round(city.livingCosts.avgMonthlyRent)}</span>
+                            Rent
+                          </div>
+                          <div className="bg-gray-50 p-2 rounded-lg">
+                            <Utensils className="w-4 h-4 mx-auto mb-1 text-green-500" />
+                            <span className="block font-semibold text-gray-900">€{Math.round(city.livingCosts.avgMonthlyFood)}</span>
+                            Food
+                          </div>
+                          <div className="bg-gray-50 p-2 rounded-lg">
+                            <Bus className="w-4 h-4 mx-auto mb-1 text-orange-500" />
+                            <span className="block font-semibold text-gray-900">€{Math.round(city.livingCosts.avgMonthlyTransport)}</span>
+                            Transport
+                          </div>
+                        </div>
+                      </div>
 
-            {/* CTA Section */}
-            <section className="mt-16">
-              <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-                <CardContent className="pt-8 pb-8 text-center">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                    Ready to Start Your Adventure?
-                  </h3>
-                  <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                    Explore detailed information about each destination, connect
-                    with other students, and start planning your Erasmus
-                    journey.
-                  </p>
-                  <div className="flex gap-4 justify-center">
-                    <Link href="/basic-information">
-                      <Button size="lg">Start Your Application</Button>
-                    </Link>
-                    <Link href="/student-stories">
-                      <Button variant="outline" size="lg">
-                        Read Student Stories
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-            </section>
+                      {/* Ratings */}
+                      <div className="space-y-3">
+                        <StatBar label="Social Life" value={city.ratings.avgSocialLifeRating} color="bg-pink-500" />
+                        <StatBar label="Safety & Culture" value={city.ratings.avgCulturalImmersionRating} color="bg-indigo-500" />
+                      </div>
+                      
+                      {/* Click indicator */}
+                      <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-center text-sm text-blue-600 font-medium group-hover:text-blue-700">
+                        <span>View Details</span>
+                        <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
-        </div>
-      </div>
-    </>
+        ) : (
+          <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-gray-100">
+            <MapPin className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-900 mb-2">No destinations found</h3>
+            <p className="text-gray-500 max-w-md mx-auto">
+              We couldn't find any cities matching "{searchTerm}". Try adjusting your search or check back later for new submissions.
+            </p>
+          </div>
+        )}
+      </main>
+    </div>
   );
 }

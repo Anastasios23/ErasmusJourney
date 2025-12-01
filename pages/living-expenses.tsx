@@ -254,9 +254,13 @@ export default function LivingExpenses() {
       };
 
       // Save the current step data
-      await saveProgress({
+      const saved = await saveProgress({
         livingExpenses: livingExpensesData,
       });
+
+      if (!saved) {
+        throw new Error("Failed to save progress. Please try again.");
+      }
 
       // Mark step 4 as completed (wait for it to finish)
       await markStepCompleted("living-expenses");

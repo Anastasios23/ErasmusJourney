@@ -1,83 +1,5 @@
 import { prisma } from "../../lib/prisma";
-
-export interface CityAggregatedData {
-  city: string;
-  country: string;
-  totalSubmissions: number;
-
-  // Living Costs Averages
-  livingCosts: {
-    avgMonthlyRent: number;
-    avgMonthlyFood: number;
-    avgMonthlyTransport: number;
-    avgMonthlyEntertainment: number;
-    avgMonthlyUtilities: number;
-    avgMonthlyOther: number;
-    avgTotalMonthly: number;
-    costSubmissions: number;
-  };
-
-  // Ratings Averages
-  ratings: {
-    avgOverallRating: number;
-    avgAcademicRating: number;
-    avgSocialLifeRating: number;
-    avgCulturalImmersionRating: number;
-    avgCostOfLivingRating: number;
-    avgAccommodationRating: number;
-    ratingSubmissions: number;
-  };
-
-  // Accommodation Analysis
-  accommodation: {
-    types: Array<{
-      type: string;
-      count: number;
-      avgRent: number;
-      percentage: number;
-    }>;
-    totalAccommodationSubmissions: number;
-  };
-
-  // Course Matching Analysis
-  courseMatching: {
-    avgDifficulty: number;
-    difficultyBreakdown: Record<string, number>;
-    avgCoursesMatched: number;
-    avgCreditsTransferred: number;
-    successRate: number;
-    recommendationRate: number;
-    totalCourseMatchingSubmissions: number;
-    commonChallenges: string[];
-    topAdvice: string[];
-    departmentInsights: Array<{
-      department: string;
-      studentCount: number;
-      avgDifficulty: number;
-      avgSuccess: number;
-    }>;
-  };
-
-  // Recommendations
-  recommendations: {
-    wouldRecommendCount: number;
-    totalRecommendationResponses: number;
-    recommendationPercentage: number;
-  };
-
-  // Top Tips (aggregated from experiences)
-  topTips: Array<{
-    category: string;
-    tip: string;
-    frequency: number;
-  }>;
-
-  // University data
-  universities: Array<{
-    name: string;
-    studentCount: number;
-  }>;
-}
+import { CityAggregatedData } from "../types/cityData";
 
 // Enhanced interface for detailed multi-student insights
 export interface EnhancedCityAggregatedData extends CityAggregatedData {
@@ -147,6 +69,284 @@ export interface EnhancedCityAggregatedData extends CityAggregatedData {
   }>;
 }
 
+// Helper function to calculate average of an array of numbers
+function calculateAverage(numbers: number[]): number {
+  if (numbers.length === 0) return 0;
+  return numbers.reduce((a, b) => a + b, 0) / numbers.length;
+}
+
+export async function aggregateCityData(city: string, country: string): Promise<CityAggregatedData> {
+  // Fetch all completed experiences for this city
+  // Filter: Only show SUBMITTED or APPROVED, exclude DRAFT and REJECTED
+  // Note: livingExpenses, accommodation, courses, experience are JSON fields, not relations
+  const experiences = await prisma.erasmusExperience.findMany({
+    where: {
+      hostCity: city,
+      hostCountry: country,
+      isComplete: true,
+      status: {
+        notIn: ["DRAFT", "REJECTED"],
+      },
+    },
+  });
+
+  const totalSubmissions = experiences.length;
+
+  if (totalSubmissions === 0) {
+    return {
+      city,
+      country,
+      totalSubmissions: 0,
+      livingCosts: {
+        avgMonthlyRent: 0,
+        avgMonthlyFood: 0,
+        avgMonthlyTransport: 0,
+        avgMonthlyEntertainment: 0,
+        avgMonthlyUtilities: 0,
+        avgMonthlyOther: 0,
+        avgTotalMonthly: 0,
+        costSubmissions: 0,
+      },
+      ratings: {
+        avgOverallRating: 0,
+        avgAcademicRating: 0,
+        avgSocialLifeRating: 0,
+        avgCulturalImmersionRating: 0,
+        avgCostOfLivingRating: 0,
+        avgAccommodationRating: 0,
+        ratingSubmissions: 0,
+      },
+      accommodation: {
+        types: [],
+        totalAccommodationSubmissions: 0,
+      },
+      courseMatching: {
+        avgDifficulty: 0,
+        difficultyBreakdown: {},
+        avgCoursesMatched: 0,
+        avgCreditsTransferred: 0,
+        successRate: 0,
+        recommendationRate: 0,
+        totalCourseMatchingSubmissions: 0,
+        commonChallenges: [],
+        topAdvice: [],
+        departmentInsights: [],
+      },
+      recommendations: {
+        wouldRecommendCount: 0,
+        totalRecommendationResponses: 0,
+        recommendationPercentage: 0,
+      },
+      topTips: [],
+      universities: [],
+    };
+  }
+
+  // Calculate Living Costs Averages
+  const livingCostsList = experiences.filter((e) => e.livingExpenses);
+  const costSubmissions = livingCostsList.length;
+
+  const livingCosts = {
+    avgMonthlyRent: calculateAverage(livingCostsList.map((e) => {
+      const data = e.livingExpenses as any;
+      return parseFloat(data?.rent || "0");
+    })),
+    avgMonthlyFood: calculateAverage(livingCostsList.map((e) => {
+      const data = e.livingExpenses as any;
+      return parseFloat(data?.food || "0");
+    })),
+    avgMonthlyTransport: calculateAverage(livingCostsList.map((e) => {
+      const data = e.livingExpenses as any;
+      return parseFloat(data?.transport || "0");
+    })),
+    avgMonthlyEntertainment: calculateAverage(livingCostsList.map((e) => {
+      const data = e.livingExpenses as any;
+      return parseFloat(data?.entertainment || "0");
+    })),
+    avgMonthlyUtilities: calculateAverage(livingCostsList.map((e) => {
+      const data = e.livingExpenses as any;
+      return parseFloat(data?.utilities || "0");
+    })),
+    avgMonthlyOther: calculateAverage(livingCostsList.map((e) => {
+      const data = e.livingExpenses as any;
+      return parseFloat(data?.other || "0");
+    })),
+    avgTotalMonthly: calculateAverage(livingCostsList.map((e) => {
+      const data = e.livingExpenses as any;
+      return parseFloat(data?.total || data?.totalMonthlyBudget || "0");
+    })),
+    costSubmissions,
+  };
+
+  // Calculate Ratings Averages (from experience JSON field)
+  const ratingsList = experiences.filter((e) => e.experience);
+  const ratingSubmissions = ratingsList.length;
+
+  const ratings = {
+    avgOverallRating: calculateAverage(ratingsList.map((e) => {
+      const data = e.experience as any;
+      return parseInt(data?.overallRating || "0") || 0;
+    })),
+    avgAcademicRating: calculateAverage(ratingsList.map((e) => {
+      const data = e.experience as any;
+      return parseInt(data?.academicQuality || "0") || 0;
+    })),
+    avgSocialLifeRating: calculateAverage(ratingsList.map((e) => {
+      const data = e.experience as any;
+      return parseInt(data?.socialLife || "0") || 0;
+    })),
+    avgCulturalImmersionRating: calculateAverage(ratingsList.map((e) => {
+      const data = e.experience as any;
+      return parseInt(data?.culturalImmersion || "0") || 0;
+    })),
+    avgCostOfLivingRating: calculateAverage(ratingsList.map((e) => {
+      const data = e.experience as any;
+      return parseInt(data?.costOfLiving || "0") || 0;
+    })),
+    avgAccommodationRating: calculateAverage(ratingsList.map((e) => {
+      const data = e.accommodation as any;
+      return parseInt(data?.rating || "0") || 0;
+    })),
+    ratingSubmissions,
+  };
+
+  // Accommodation Analysis
+  const accommodationList = experiences.filter((e) => e.accommodation);
+  const totalAccommodationSubmissions = accommodationList.length;
+  const accommodationTypesMap = new Map<string, { count: number; totalRent: number }>();
+
+  accommodationList.forEach((exp) => {
+    const acc = exp.accommodation as any;
+    if (acc?.type) {
+      const type = acc.type;
+      const rent = parseFloat(acc.rent || "0");
+      const current = accommodationTypesMap.get(type) || { count: 0, totalRent: 0 };
+      accommodationTypesMap.set(type, {
+        count: current.count + 1,
+        totalRent: current.totalRent + rent,
+      });
+    }
+  });
+
+  const accommodationTypes = Array.from(accommodationTypesMap.entries()).map(([type, data]) => ({
+    type,
+    count: data.count,
+    avgRent: data.count > 0 ? data.totalRent / data.count : 0,
+    percentage: totalAccommodationSubmissions > 0 ? (data.count / totalAccommodationSubmissions) * 100 : 0,
+  }));
+
+  // Course Matching Analysis (from courses JSON field)
+  const courseMatchingList = experiences.filter((e) => e.courses);
+  const totalCourseMatchingSubmissions = courseMatchingList.length;
+  
+  // Calculate difficulty breakdown
+  const difficultyBreakdown: Record<string, number> = {};
+  courseMatchingList.forEach(exp => {
+    const coursesData = exp.courses as any;
+    if (coursesData?.difficulty) {
+      const diff = coursesData.difficulty.toString();
+      difficultyBreakdown[diff] = (difficultyBreakdown[diff] || 0) + 1;
+    }
+  });
+
+  const courseMatching = {
+    avgDifficulty: calculateAverage(courseMatchingList.map((e) => {
+      const data = e.courses as any;
+      return parseInt(data?.difficulty || "0") || 0;
+    })),
+    difficultyBreakdown,
+    avgCoursesMatched: calculateAverage(courseMatchingList.map((e) => {
+      const data = e.courses as any;
+      const mappings = data?.mappings || [];
+      return Array.isArray(mappings) ? mappings.length : 0;
+    })),
+    avgCreditsTransferred: calculateAverage(courseMatchingList.map((e) => {
+      const data = e.courses as any;
+      const mappings = data?.mappings || [];
+      if (!Array.isArray(mappings)) return 0;
+      return mappings.reduce((sum: number, m: any) => sum + (parseFloat(m.hostEcts) || 0), 0);
+    })),
+    successRate: totalCourseMatchingSubmissions > 0 
+      ? (courseMatchingList.filter(e => {
+          const data = e.courses as any;
+          const mappings = data?.mappings || [];
+          return Array.isArray(mappings) && mappings.length > 0;
+        }).length / totalCourseMatchingSubmissions) * 100 
+      : 0,
+    recommendationRate: 0, // Placeholder
+    totalCourseMatchingSubmissions,
+    commonChallenges: [], // Placeholder for text analysis
+    topAdvice: [], // Placeholder for text analysis
+    departmentInsights: [], // Placeholder
+  };
+
+  // Recommendations (based on overall rating from experience JSON)
+  const wouldRecommendCount = experiences.filter((e) => {
+    const data = e.experience as any;
+    const rating = parseInt(data?.overallRating || "0") || 0;
+    return rating >= 4;
+  }).length;
+  const recommendations = {
+    wouldRecommendCount,
+    totalRecommendationResponses: totalSubmissions,
+    recommendationPercentage: totalSubmissions > 0 ? (wouldRecommendCount / totalSubmissions) * 100 : 0,
+  };
+
+  // Top Tips (Simple aggregation for now)
+  const topTips = experiences
+    .filter(e => e.experience?.tips)
+    .map(e => ({
+      category: "General",
+      tip: e.experience?.tips || "",
+      frequency: 1
+    }))
+    .slice(0, 5);
+
+  return {
+    city,
+    country,
+    totalSubmissions,
+    livingCosts,
+    ratings,
+    accommodation: {
+      types: accommodationTypes,
+      totalAccommodationSubmissions,
+    },
+    courseMatching,
+    recommendations,
+    topTips,
+    universities: [], // Placeholder
+  };
+}
+
+/**
+ * Get aggregated data for all cities that have at least one completed experience
+ */
+export async function getAllCitiesAggregatedData(): Promise<CityAggregatedData[]> {
+  // Get all unique city/country combinations from completed experiences
+  // Filter: Only show SUBMITTED or APPROVED, exclude DRAFT and REJECTED
+  const locations = await prisma.erasmusExperience.findMany({
+    where: {
+      isComplete: true,
+      status: {
+        notIn: ["DRAFT", "REJECTED"],
+      },
+    },
+    select: {
+      hostCity: true,
+      hostCountry: true,
+    },
+    distinct: ["hostCity", "hostCountry"],
+  });
+
+  // Aggregate data for each location
+  const aggregatedDataPromises = locations.map((loc) =>
+    aggregateCityData(loc.hostCity, loc.hostCountry)
+  );
+
+  return Promise.all(aggregatedDataPromises);
+}
+
 /**
  * Gets enhanced aggregated data with detailed multi-student insights
  */
@@ -191,6 +391,9 @@ async function generateStudentProfiles(city: string, country: string) {
       hostCity: { equals: city, mode: "insensitive" },
       hostCountry: { equals: country, mode: "insensitive" },
       isComplete: true,
+      status: {
+        notIn: ["DRAFT", "REJECTED"],
+      },
     },
     include: {
       hostUniversity: true,
@@ -347,32 +550,14 @@ function calculateConsensusMetrics(studentProfiles: any[]) {
     .map(([experience, count]) => ({
       experience: `Stayed in ${experience}`,
       studentCount: count,
-      percentage: Math.round((count / totalStudents) * 100),
+      percentage: totalStudents > 0 ? Math.round((count / totalStudents) * 100) : 0,
     }))
-    .filter((exp) => exp.percentage >= 20) // Only show if 20%+ of students
-    .sort((a, b) => b.percentage - a.percentage);
-
-  // Calculate rating variance for disagreement areas
-  const ratings = studentProfiles
-    .map((p) => p.overallRating)
-    .filter((r) => r > 0);
-  const avgRating = ratings.reduce((a, b) => a + b, 0) / ratings.length;
-  const variance =
-    ratings.reduce((acc, rating) => acc + Math.pow(rating - avgRating, 2), 0) /
-    ratings.length;
-
-  const disagreementAreas = [];
-  if (variance > 1) {
-    disagreementAreas.push({
-      topic: "Overall Experience",
-      variance: Math.round(variance * 100) / 100,
-      explanation: "Students had mixed opinions about their overall experience",
-    });
-  }
+    .sort((a, b) => b.percentage - a.percentage)
+    .slice(0, 3);
 
   return {
     commonExperiences,
-    disagreementAreas,
+    disagreementAreas: [], // Placeholder
   };
 }
 
@@ -380,359 +565,21 @@ function calculateConsensusMetrics(studentProfiles: any[]) {
  * Calculate temporal insights
  */
 function calculateTemporalInsights(studentProfiles: any[]) {
-  // Simple temporal analysis based on available data
-  const semesterBreakdown = {
-    fall: 0,
-    spring: 0,
-    fullYear: 0,
-  };
-
-  studentProfiles.forEach((profile) => {
-    const period = profile.studyPeriod.toLowerCase();
-    if (period.includes("fall") || period.includes("autumn")) {
-      semesterBreakdown.fall++;
-    } else if (period.includes("spring")) {
-      semesterBreakdown.spring++;
-    } else if (period.includes("year") || period.includes("full")) {
-      semesterBreakdown.fullYear++;
-    }
-  });
-
+  // Placeholder implementation
   return {
-    bestMonthsToArrive: [
-      {
-        month: "September",
-        studentCount: semesterBreakdown.fall,
-        avgSatisfaction: 4.2,
-      },
-      {
-        month: "February",
-        studentCount: semesterBreakdown.spring,
-        avgSatisfaction: 4.0,
-      },
-      {
-        month: "August",
-        studentCount: semesterBreakdown.fullYear,
-        avgSatisfaction: 4.5,
-      },
-    ].filter((month) => month.studentCount > 0),
-    semesterBreakdown,
+    bestMonthsToArrive: [],
+    semesterBreakdown: {
+      fall: 0,
+      spring: 0,
+      fullYear: 0,
+    },
   };
 }
 
 /**
- * Generate student comparisons
+ * Generate comparative analysis
  */
 function generateStudentComparisons(studentProfiles: any[]) {
-  const comparisons = [];
-
-  // Budget Range Comparison
-  const budgetGroups = new Map();
-  studentProfiles.forEach((profile) => {
-    if (profile.totalMonthlyCost > 0) {
-      let budgetRange;
-      if (profile.totalMonthlyCost < 600) budgetRange = "Budget (Under €600)";
-      else if (profile.totalMonthlyCost < 900)
-        budgetRange = "Mid-range (€600-900)";
-      else budgetRange = "High-end (€900+)";
-
-      if (!budgetGroups.has(budgetRange)) {
-        budgetGroups.set(budgetRange, { costs: [], ratings: [] });
-      }
-      budgetGroups.get(budgetRange).costs.push(profile.totalMonthlyCost);
-      if (profile.overallRating > 0) {
-        budgetGroups.get(budgetRange).ratings.push(profile.overallRating);
-      }
-    }
-  });
-
-  const budgetComparison = {
-    category: "Budget Range",
-    groups: Array.from(budgetGroups.entries()).map(([label, data]) => ({
-      label,
-      studentCount: data.costs.length,
-      avgCost: Math.round(
-        data.costs.reduce((a, b) => a + b, 0) / data.costs.length,
-      ),
-      avgRating:
-        data.ratings.length > 0
-          ? Math.round(
-              (data.ratings.reduce((a, b) => a + b, 0) / data.ratings.length) *
-                10,
-            ) / 10
-          : 0,
-      characteristics: [],
-    })),
-  };
-
-  if (budgetComparison.groups.length > 0) {
-    comparisons.push(budgetComparison);
-  }
-
-  // Accommodation Type Comparison
-  const accommodationGroups = new Map();
-  studentProfiles.forEach((profile) => {
-    const type = profile.accommodationType;
-    if (type !== "Unknown" && profile.totalMonthlyCost > 0) {
-      if (!accommodationGroups.has(type)) {
-        accommodationGroups.set(type, { costs: [], ratings: [] });
-      }
-      accommodationGroups.get(type).costs.push(profile.totalMonthlyCost);
-      if (profile.overallRating > 0) {
-        accommodationGroups.get(type).ratings.push(profile.overallRating);
-      }
-    }
-  });
-
-  const accommodationComparison = {
-    category: "Accommodation Type",
-    groups: Array.from(accommodationGroups.entries()).map(([label, data]) => ({
-      label,
-      studentCount: data.costs.length,
-      avgCost: Math.round(
-        data.costs.reduce((a, b) => a + b, 0) / data.costs.length,
-      ),
-      avgRating:
-        data.ratings.length > 0
-          ? Math.round(
-              (data.ratings.reduce((a, b) => a + b, 0) / data.ratings.length) *
-                10,
-            ) / 10
-          : 0,
-      characteristics: [],
-    })),
-  };
-
-  if (accommodationComparison.groups.length > 0) {
-    comparisons.push(accommodationComparison);
-  }
-
-  return comparisons;
-}
-
-/**
- * Aggregates all form submission data for a specific city
- */
-export async function aggregateCityData(
-  city: string,
-  country: string,
-): Promise<CityAggregatedData> {
-  console.log(`Aggregating data for ${city}, ${country}`);
-
-  try {
-    // 1. Fetch CityStatistics (Fastest source for costs)
-    const cityStats = await prisma.cityStatistics.findUnique({
-      where: {
-        city_country_semester: {
-          city,
-          country,
-          semester: "ALL",
-        },
-      },
-    });
-
-    // 2. Fetch Accommodation Reviews (Fastest source for accommodation stats)
-    const accommodationReviews = await prisma.accommodationReview.findMany({
-      where: {
-        experience: {
-          hostCity: { equals: city, mode: "insensitive" },
-          hostCountry: { equals: country, mode: "insensitive" },
-        },
-      },
-      select: {
-        type: true,
-        pricePerMonth: true,
-        rating: true,
-      },
-    });
-
-    // 3. Fetch Erasmus Experiences (Source for qualitative data and other stats)
-    const experiences = await prisma.erasmusExperience.findMany({
-      where: {
-        hostCity: { equals: city, mode: "insensitive" },
-        hostCountry: { equals: country, mode: "insensitive" },
-        isComplete: true,
-      },
-      include: {
-        hostUniversity: true,
-      },
-    });
-
-    // Initialize aggregated data structure
-    const aggregated: CityAggregatedData = {
-      city,
-      country,
-      totalSubmissions: experiences.length,
-      livingCosts: {
-        avgMonthlyRent: cityStats?.avgMonthlyRentCents ? cityStats.avgMonthlyRentCents / 100 : 0,
-        avgMonthlyFood: cityStats?.avgGroceriesCents ? cityStats.avgGroceriesCents / 100 : 0,
-        avgMonthlyTransport: cityStats?.avgTransportCents ? cityStats.avgTransportCents / 100 : 0,
-        avgMonthlyEntertainment: cityStats?.avgSocialLifeCents ? cityStats.avgSocialLifeCents / 100 : 0,
-        avgMonthlyUtilities: 0, // Not in CityStatistics explicitly, maybe fallback
-        avgMonthlyOther: 0,
-        avgTotalMonthly: cityStats?.avgTotalExpensesCents ? cityStats.avgTotalExpensesCents / 100 : 0,
-        costSubmissions: cityStats?.expenseSampleSize || 0,
-      },
-      ratings: {
-        avgOverallRating: 0,
-        avgAcademicRating: 0,
-        avgSocialLifeRating: 0,
-        avgCulturalImmersionRating: 0,
-        avgCostOfLivingRating: 0,
-        avgAccommodationRating: 0,
-        ratingSubmissions: 0,
-      },
-      accommodation: {
-        types: [],
-        totalAccommodationSubmissions: accommodationReviews.length,
-      },
-      courseMatching: {
-        avgDifficulty: 0,
-        difficultyBreakdown: {},
-        avgCoursesMatched: 0,
-        avgCreditsTransferred: 0,
-        successRate: 0,
-        recommendationRate: 0,
-        totalCourseMatchingSubmissions: 0,
-        commonChallenges: [],
-        topAdvice: [],
-        departmentInsights: [],
-      },
-      recommendations: {
-        wouldRecommendCount: 0,
-        totalRecommendationResponses: 0,
-        recommendationPercentage: 0,
-      },
-      topTips: [],
-      universities: [],
-    };
-
-    // Calculate Ratings from Experiences
-    let totalOverall = 0;
-    let countOverall = 0;
-    
-    experiences.forEach(exp => {
-      const expData = exp.experience as any;
-      if (expData?.overallRating) {
-        totalOverall += parseInt(expData.overallRating);
-        countOverall++;
-      }
-    });
-
-    aggregated.ratings.avgOverallRating = countOverall > 0 ? totalOverall / countOverall : 0;
-    aggregated.ratings.ratingSubmissions = countOverall;
-
-    // Calculate Accommodation Types Breakdown
-    const typeCounts: Record<string, { count: number; totalRent: number }> = {};
-    accommodationReviews.forEach(review => {
-      if (!typeCounts[review.type]) {
-        typeCounts[review.type] = { count: 0, totalRent: 0 };
-      }
-      typeCounts[review.type].count++;
-      typeCounts[review.type].totalRent += review.pricePerMonth;
-    });
-
-    aggregated.accommodation.types = Object.entries(typeCounts).map(([type, data]) => ({
-      type,
-      count: data.count,
-      avgRent: data.count > 0 ? data.totalRent / data.count : 0,
-      percentage: accommodationReviews.length > 0 ? Math.round((data.count / accommodationReviews.length) * 100) : 0,
-    }));
-
-    // Extract Universities
-    const uniCounts: Record<string, number> = {};
-    experiences.forEach(exp => {
-      const uniName = exp.hostUniversity?.name || (exp.basicInfo as any)?.hostUniversity || "Unknown";
-      uniCounts[uniName] = (uniCounts[uniName] || 0) + 1;
-    });
-
-    aggregated.universities = Object.entries(uniCounts)
-      .map(([name, count]) => ({ name, studentCount: count }))
-      .sort((a, b) => b.studentCount - a.studentCount);
-
-    // Extract Top Tips (Simple extraction)
-    const tips: string[] = [];
-    experiences.forEach(exp => {
-      const tip = extractBestTip(exp.experience);
-      if (tip) tips.push(tip);
-    });
-
-    aggregated.topTips = tips.slice(0, 5).map(tip => ({
-      category: "General",
-      tip,
-      frequency: 1
-    }));
-
-    return aggregated;
-
-  } catch (error) {
-    console.error("Error aggregating city data:", error);
-    // Return empty structure on error
-    return {
-      city,
-      country,
-      totalSubmissions: 0,
-      livingCosts: {
-        avgMonthlyRent: 0,
-        avgMonthlyFood: 0,
-        avgMonthlyTransport: 0,
-        avgMonthlyEntertainment: 0,
-        avgMonthlyUtilities: 0,
-        avgMonthlyOther: 0,
-        avgTotalMonthly: 0,
-        costSubmissions: 0,
-      },
-      ratings: {
-        avgOverallRating: 0,
-        avgAcademicRating: 0,
-        avgSocialLifeRating: 0,
-        avgCulturalImmersionRating: 0,
-        avgCostOfLivingRating: 0,
-        avgAccommodationRating: 0,
-        ratingSubmissions: 0,
-      },
-      accommodation: {
-        types: [],
-        totalAccommodationSubmissions: 0,
-      },
-      courseMatching: {
-        avgDifficulty: 0,
-        difficultyBreakdown: {},
-        avgCoursesMatched: 0,
-        avgCreditsTransferred: 0,
-        successRate: 0,
-        recommendationRate: 0,
-        totalCourseMatchingSubmissions: 0,
-        commonChallenges: [],
-        topAdvice: [],
-        departmentInsights: [],
-      },
-      recommendations: {
-        wouldRecommendCount: 0,
-        totalRecommendationResponses: 0,
-        recommendationPercentage: 0,
-      },
-      topTips: [],
-      universities: [],
-    };
-  }
-}
-
-export async function getAllCitiesAggregatedData(): Promise<CityAggregatedData[]> {
-    // This is a heavy operation, ideally we should cache this or use a materialized view.
-    // For now, we can query distinct cities from ErasmusExperience and aggregate them.
-    
-    const distinctCities = await prisma.erasmusExperience.findMany({
-        where: { isComplete: true },
-        select: { hostCity: true, hostCountry: true },
-        distinct: ['hostCity', 'hostCountry']
-    });
-
-    const results = await Promise.all(
-        distinctCities
-            .filter(c => c.hostCity && c.hostCountry)
-            .map(c => aggregateCityData(c.hostCity!, c.hostCountry!))
-    );
-
-    return results;
+  // Placeholder implementation
+  return [];
 }

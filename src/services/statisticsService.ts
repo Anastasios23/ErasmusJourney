@@ -3,11 +3,15 @@ import { prisma } from "../../lib/prisma";
 export async function updateCityStatistics(city: string, country: string) {
   try {
     // 1. Fetch all completed experiences for this city
+    // Filter: Only show SUBMITTED or APPROVED, exclude DRAFT and REJECTED
     const experiences = await prisma.erasmusExperience.findMany({
       where: {
         hostCity: { equals: city, mode: "insensitive" },
         hostCountry: { equals: country, mode: "insensitive" },
         isComplete: true,
+        status: {
+          notIn: ["DRAFT", "REJECTED"],
+        },
       },
       select: {
         livingExpenses: true,

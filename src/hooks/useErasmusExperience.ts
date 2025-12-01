@@ -65,6 +65,13 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
       setLoading(true);
       setError(null);
 
+      // Check if user is authenticated first
+      if (!session?.user?.id) {
+        console.log("No session found, skipping data fetch");
+        setLoading(false);
+        return;
+      }
+
       // Try to get existing experience from the new API
       const response = await fetch("/api/erasmus-experiences");
 
@@ -135,7 +142,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [session]);
 
   const saveProgress = useCallback(
     async (stepData: Partial<ErasmusExperienceData>): Promise<boolean> => {
@@ -271,16 +278,21 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
 
           // Navigate to confirmation page
           router.push(
-            `/submission-confirmation?submitted=true&timestamp=${encodeURIComponent(result.submittedAt)}`,
+            `/submission-confirmation?submitted=true&timestamp=${encodeURIComponent(
+              result.submittedAt,
+            )}`,
           );
 
           return true;
         } else {
           console.log("💥 API ERROR");
-          const errorData = await response.json();
-          const errorMsg = errorData.error || "Failed to submit experience";
-          setError(errorMsg);
-          return false;
+          const errorData = await response.json().catch(() => ({}));
+          console.error("❌ API Error Response:", errorData);
+          const errorMessage =
+            errorData.details ||
+            errorData.error ||
+            `Failed to submit experience: ${response.status}`;
+          throw new Error(errorMessage);
         }
       } catch (err) {
         console.log("🚨 CATCH ERROR:", err);
@@ -288,6 +300,8 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
           err instanceof Error ? err.message : "Failed to submit experience";
         setError(errorMsg);
         return false;
+      } finally {
+        setLoading(false);
       }
     },
     [data?.id, router],
