@@ -89,6 +89,7 @@ interface CourseMatchingInsight {
 interface CourseMatchingInsightsProps {
   city: string;
   country: string;
+  university?: string;
   className?: string;
 }
 
@@ -110,6 +111,7 @@ const getDifficultyLabel = (difficulty: number) => {
 export default function CourseMatchingInsights({
   city,
   country,
+  university,
   className = "",
 }: CourseMatchingInsightsProps) {
   const [insights, setInsights] = useState<CourseMatchingInsight | null>(null);
@@ -118,16 +120,17 @@ export default function CourseMatchingInsights({
 
   useEffect(() => {
     fetchCourseMatchingInsights();
-  }, [city, country]);
+  }, [city, country, university]);
 
   const fetchCourseMatchingInsights = async () => {
     try {
       setLoading(true);
-      // Create destination ID from city and country (e.g., "paris-france")
-      const destinationId = `${city.toLowerCase()}-${country.toLowerCase()}`;
-      const response = await fetch(
-        `/api/destinations/${encodeURIComponent(destinationId)}/course-matching?country=${encodeURIComponent(country)}`
-      );
+      let url = `/api/course-matching/insights?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`;
+      if (university) {
+        url += `&university=${encodeURIComponent(university)}`;
+      }
+      
+      const response = await fetch(url);
       if (!response.ok) {
         if (response.status === 404) {
           setInsights(null);

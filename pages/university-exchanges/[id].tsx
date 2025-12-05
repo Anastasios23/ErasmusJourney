@@ -155,7 +155,7 @@ export default function UniversityDetailPage() {
   };
 
   const filteredDepartments =
-    university?.departments.filter((dept) =>
+    university?.departments?.filter((dept) =>
       dept.name.toLowerCase().includes(searchDepartment.toLowerCase()),
     ) || [];
 
@@ -275,7 +275,7 @@ export default function UniversityDetailPage() {
                 <CardContent className="p-6 text-center">
                   <Building className="h-8 w-8 text-blue-600 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-gray-900">
-                    {university.departments.length}
+                    {university.departments?.length || 0}
                   </p>
                   <p className="text-sm text-gray-600">Departments</p>
                 </CardContent>
@@ -314,6 +314,7 @@ export default function UniversityDetailPage() {
               <CourseMatchingInsights
                 city={university.location}
                 country={university.country}
+                university={university.universityName}
                 className="mb-8"
               />
             </div>
@@ -579,7 +580,7 @@ export default function UniversityDetailPage() {
                         Highlights
                       </h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {university.highlights.map((highlight, index) => (
+                        {university.highlights?.map((highlight, index) => (
                           <div key={index} className="flex items-center">
                             <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
                             <span className="text-gray-700">{highlight}</span>
@@ -593,7 +594,7 @@ export default function UniversityDetailPage() {
                         Research Focus Areas
                       </h4>
                       <div className="flex flex-wrap gap-2">
-                        {university.researchFocus.map((focus, index) => (
+                        {university.researchFocus?.map((focus, index) => (
                           <Badge key={index} variant="outline">
                             {focus}
                           </Badge>
@@ -617,7 +618,7 @@ export default function UniversityDetailPage() {
                           Study Levels
                         </h4>
                         <p className="text-gray-700">
-                          {university.studyLevels.join(", ")}
+                          {university.studyLevels?.join(", ")}
                         </p>
                       </div>
                       <div>
@@ -625,7 +626,7 @@ export default function UniversityDetailPage() {
                           Language of Instruction
                         </h4>
                         <p className="text-gray-700">
-                          {university.languageOfInstruction.join(", ")}
+                          {university.languageOfInstruction?.join(", ")}
                         </p>
                       </div>
                       <div>
@@ -633,7 +634,7 @@ export default function UniversityDetailPage() {
                           Semester Options
                         </h4>
                         <p className="text-gray-700">
-                          {university.semesterOptions.join(", ")}
+                          {university.semesterOptions?.join(", ")}
                         </p>
                       </div>
                       <div>
@@ -732,7 +733,7 @@ export default function UniversityDetailPage() {
                           Partner Universities in Cyprus
                         </h4>
                         <div className="space-y-1">
-                          {university.cyprusUniversities.map((uni, index) => (
+                          {university.cyprusUniversities?.map((uni, index) => (
                             <p key={index} className="text-gray-700">
                               {uni}
                             </p>

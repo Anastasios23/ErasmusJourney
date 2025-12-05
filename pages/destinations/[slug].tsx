@@ -179,7 +179,7 @@ export default function DestinationDetail({ cityData, city, country }: Destinati
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {cityData.accommodationTypes.map((accom, idx) => (
+                    {cityData.accommodation?.types?.map((accom, idx) => (
                       <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                         <div>
                           <span className="font-medium text-gray-900">{accom.type}</span>
@@ -191,6 +191,9 @@ export default function DestinationDetail({ cityData, city, country }: Destinati
                         </div>
                       </div>
                     ))}
+                    {(!cityData.accommodation?.types || cityData.accommodation.types.length === 0) && (
+                      <p className="text-sm text-gray-500 italic">No accommodation data available yet.</p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -208,7 +211,7 @@ export default function DestinationDetail({ cityData, city, country }: Destinati
                     {cityData.universities.slice(0, 5).map((uni, idx) => (
                       <div key={idx} className="text-sm text-gray-700 flex items-start">
                         <MapPin className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0 mt-0.5" />
-                        <span>{uni}</span>
+                        <span>{typeof uni === 'string' ? uni : uni.name}</span>
                       </div>
                     ))}
                     {cityData.universities.length > 5 && (
