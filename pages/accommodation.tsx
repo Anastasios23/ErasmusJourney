@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { accommodationFormSchema } from "../src/lib/formSchemas";
@@ -204,12 +204,68 @@ export default function Accommodation() {
     }
   }, [basicInfoData]);
 
+  // State for draft success/error messages
+  const [draftSuccess, setDraftSuccess] = useState<string | null>(null);
+  const [draftError, setDraftError] = useState<string | null>(null);
+
+  // Save to localStorage helper function
+  const saveToLocalStorage = useCallback(() => {
+    const draftKey = `erasmus_form_accommodation`;
+    const draftData = {
+      type: "accommodation",
+      title: "Accommodation Draft",
+      data: formData,
+      timestamp: new Date().toISOString(),
+    };
+    localStorage.setItem(draftKey, JSON.stringify(draftData));
+  }, [formData]);
+
+  // Save draft to database (triggered by Save Draft button)
+  const handleSaveDraftToDatabase = useCallback(async () => {
+    try {
+      // Get basic info for city/country enrichment
+      const basicInfo = experienceData?.basicInfo;
+
+      const enrichedFormData = {
+        ...formData,
+        city: basicInfo?.hostCity || "",
+        country: basicInfo?.hostCountry || "",
+        university: basicInfo?.hostUniversity || "",
+      };
+
+      // Map fields to match backend requirements
+      const mappedData = {
+        ...enrichedFormData,
+        type: enrichedFormData.accommodationType,
+        rent: enrichedFormData.monthlyRent,
+        rating: enrichedFormData.accommodationRating,
+      };
+
+      await saveProgress({
+        accommodation: mappedData,
+      });
+
+      setDraftSuccess("Draft saved successfully!");
+      toast("Draft saved successfully!");
+      setTimeout(() => setDraftSuccess(null), 3000);
+    } catch (error) {
+      console.error("Draft save error:", error);
+      setDraftError("Failed to save draft. Please try again.");
+      toast("Failed to save draft. Please try again.");
+      setTimeout(() => setDraftError(null), 5000);
+      throw error;
+    }
+  }, [formData, experienceData, saveProgress]);
+
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (isSubmitting) return;
 
     setIsSubmitting(true);
     setSubmitError(null);
+
+    // Always save to localStorage first when navigating
+    saveToLocalStorage();
 
     try {
       // Get basic info for city/country enrichment
@@ -275,19 +331,6 @@ export default function Accommodation() {
     "Pharmacy",
     "Parks/Recreation",
   ];
-
-  // Auto-save function
-  const handleSaveDraft = async () => {
-    try {
-      await saveProgress({
-        accommodation: formData,
-      });
-      toast("Draft saved successfully!");
-    } catch (error) {
-      console.error("Error saving draft:", error);
-      toast("Failed to save draft. Please try again.");
-    }
-  };
 
   return (
     <SubmissionGuard>
@@ -825,10 +868,12 @@ export default function Accommodation() {
                 totalSteps={5}
                 onPrevious={() => router.push("/course-matching")}
                 onNext={handleSubmit}
+                onSaveDraft={handleSaveDraftToDatabase}
                 canProceed={!isSubmitting}
                 isLastStep={false}
                 isSubmitting={isSubmitting}
                 showPrevious={true}
+                showSaveDraft={true}
               />
             </div>
           </form>

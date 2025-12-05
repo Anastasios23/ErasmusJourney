@@ -137,6 +137,18 @@ export default function HelpFutureStudents() {
     setCurrentStep("help-future-students");
   }, [setCurrentStep]);
 
+  // State for draft success/error messages
+  const [draftSuccess, setDraftSuccess] = useState<string | null>(null);
+  const [draftError, setDraftError] = useState<string | null>(null);
+
+  // Save to localStorage helper function
+  const saveToLocalStorage = useCallback(() => {
+    localStorage.setItem(
+      "erasmus_form_help-future-students",
+      JSON.stringify(formData),
+    );
+  }, [formData]);
+
   // Save-as-draft using unified API (nested experience.helpForStudents)
   const saveUnifiedDraft = useCallback(async () => {
     const payload = {
@@ -156,7 +168,24 @@ export default function HelpFutureStudents() {
     await saveProgress(payload);
   }, [formData, saveProgress]);
 
-  // Auto-save when form data changes (debounced)
+  // Save draft to database with success message (triggered by Save Draft button)
+  const handleSaveDraftToDatabase = useCallback(async () => {
+    try {
+      await saveUnifiedDraft();
+
+      setDraftSuccess("Draft saved successfully!");
+      toast.success("Draft saved successfully!");
+      setTimeout(() => setDraftSuccess(null), 3000);
+    } catch (error) {
+      console.error("Draft save error:", error);
+      setDraftError("Failed to save draft. Please try again.");
+      toast.error("Failed to save draft. Please try again.");
+      setTimeout(() => setDraftError(null), 5000);
+      throw error;
+    }
+  }, [saveUnifiedDraft]);
+
+  // Auto-save to localStorage only (not API) when form data changes
   useEffect(() => {
     const timer = setTimeout(() => {
       const hasContent = Object.values(formData).some((value) =>
@@ -167,12 +196,12 @@ export default function HelpFutureStudents() {
             : false,
       );
       if (hasContent) {
-        saveUnifiedDraft();
+        saveToLocalStorage();
       }
-    }, 1000);
+    }, 2000); // 2 second debounce
 
     return () => clearTimeout(timer);
-  }, [formData, saveUnifiedDraft]);
+  }, [formData, saveToLocalStorage]);
 
   // Save before navigation
   useEffect(() => {
@@ -244,6 +273,9 @@ export default function HelpFutureStudents() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearErrors();
+
+    // Always save to localStorage first when submitting
+    saveToLocalStorage();
 
     const errors: Record<string, string> = {};
     if (!formData.wantToHelp) {
@@ -389,671 +421,687 @@ export default function HelpFutureStudents() {
   return (
     <StepGuard requiredStep={5}>
       <SubmissionGuard>
-      <Head>
-        <title>Help Future Students - Erasmus Journey Platform</title>
-        <meta
-          name="description"
-          content="Join our mentor community and help future Erasmus students"
-        />
-      </Head>
+        <Head>
+          <title>Help Future Students - Erasmus Journey Platform</title>
+          <meta
+            name="description"
+            content="Join our mentor community and help future Erasmus students"
+          />
+        </Head>
 
-      <div className="min-h-screen bg-gray-50">
-        <Header />
+        <div className="min-h-screen bg-gray-50">
+          <Header />
 
-        {/* Progress Header */}
-        <div className="bg-white border-b">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <Badge
-                  variant="outline"
-                  className="text-blue-600 border-blue-200"
-                >
-                  Step 5 of 5
-                </Badge>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Helping Future Erasmus Students
-                </h1>
-              </div>
-              <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+          {/* Progress Header */}
+          <div className="bg-white border-b">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <Badge
+                    variant="outline"
+                    className="text-blue-600 border-blue-200"
+                  >
+                    Step 5 of 5
+                  </Badge>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    Helping Future Erasmus Students
+                  </h1>
+                </div>
+                <div className="flex space-x-2">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                  <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                  <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                  <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                  <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {heroSection}
+          {heroSection}
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <form onSubmit={handleSubmit} className="space-y-8" noValidate>
-            <FormErrorSummary formError={formError} fieldErrors={fieldErrors} />
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <form onSubmit={handleSubmit} className="space-y-8" noValidate>
+              <FormErrorSummary
+                formError={formError}
+                fieldErrors={fieldErrors}
+              />
 
-            {/* Main Decision */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-                  <Heart className="h-5 w-5 mr-2 text-red-500" />
-                  Join Our Mentor Community
-                </CardTitle>
-                <p className="text-gray-600">
-                  Help future Erasmus students by sharing your experience and
-                  providing guidance
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div>
-                    <Label className="text-base font-medium">
-                      Do you want to be a point of contact and help other future
-                      Erasmus Students?
-                    </Label>
-                    <RadioGroup
-                      id="wantToHelp"
-                      name="wantToHelp"
-                      value={formData.wantToHelp}
-                      onValueChange={(value) =>
-                        handleInputChange("wantToHelp", value)
-                      }
-                      aria-describedby={
-                        fieldErrors.wantToHelp ? "wantToHelp-error" : undefined
-                      }
-                      aria-invalid={Boolean(fieldErrors.wantToHelp)}
-                      className="mt-2"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="yes" id="help-yes" />
-                        <Label htmlFor="help-yes">
-                          Yes, I want to help future students! 🌟
-                        </Label>
+              {/* Main Decision */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
+                    <Heart className="h-5 w-5 mr-2 text-red-500" />
+                    Join Our Mentor Community
+                  </CardTitle>
+                  <p className="text-gray-600">
+                    Help future Erasmus students by sharing your experience and
+                    providing guidance
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="text-base font-medium">
+                        Do you want to be a point of contact and help other
+                        future Erasmus Students?
+                      </Label>
+                      <RadioGroup
+                        id="wantToHelp"
+                        name="wantToHelp"
+                        value={formData.wantToHelp}
+                        onValueChange={(value) =>
+                          handleInputChange("wantToHelp", value)
+                        }
+                        aria-describedby={
+                          fieldErrors.wantToHelp
+                            ? "wantToHelp-error"
+                            : undefined
+                        }
+                        aria-invalid={Boolean(fieldErrors.wantToHelp)}
+                        className="mt-2"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="yes" id="help-yes" />
+                          <Label htmlFor="help-yes">
+                            Yes, I want to help future students! 🌟
+                          </Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="no" id="help-no" />
+                          <Label htmlFor="help-no">No, not at this time</Label>
+                        </div>
+                      </RadioGroup>
+                      {fieldErrors.wantToHelp && (
+                        <p className="text-red-500 text-sm mt-1" role="alert">
+                          {fieldErrors.wantToHelp}
+                        </p>
+                      )}
+                    </div>
+
+                    {formData.wantToHelp === "no" && (
+                      <div className="p-4 bg-blue-50 rounded-lg">
+                        <p className="text-sm text-gray-700">
+                          No problem! You can always change your mind later.
+                          Your experience story will still help future students
+                          even without direct mentoring.
+                        </p>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="no" id="help-no" />
-                        <Label htmlFor="help-no">No, not at this time</Label>
-                      </div>
-                    </RadioGroup>
-                    {fieldErrors.wantToHelp && (
-                      <p className="text-red-500 text-sm mt-1" role="alert">
-                        {fieldErrors.wantToHelp}
-                      </p>
                     )}
                   </div>
+                </CardContent>
+              </Card>
 
-                  {formData.wantToHelp === "no" && (
-                    <div className="p-4 bg-blue-50 rounded-lg">
-                      <p className="text-sm text-gray-700">
-                        No problem! You can always change your mind later. Your
-                        experience story will still help future students even
-                        without direct mentoring.
+              {formData.wantToHelp === "yes" && (
+                <>
+                  {/* Contact Information */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
+                        <MessageSquare className="h-5 w-5 mr-2" />
+                        Contact Information
+                      </CardTitle>
+                      <p className="text-gray-600">
+                        How would you like future students to contact you?
                       </p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {formData.wantToHelp === "yes" && (
-              <>
-                {/* Contact Information */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-                      <MessageSquare className="h-5 w-5 mr-2" />
-                      Contact Information
-                    </CardTitle>
-                    <p className="text-gray-600">
-                      How would you like future students to contact you?
-                    </p>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="contactMethod">
-                        Preferred Contact Method
-                      </Label>
-                      <Select
-                        onValueChange={(value) =>
-                          handleInputChange("contactMethod", value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your preferred method" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="email">Email</SelectItem>
-                          <SelectItem value="instagram">Instagram</SelectItem>
-                          <SelectItem value="facebook">Facebook</SelectItem>
-                          <SelectItem value="linkedin">LinkedIn</SelectItem>
-                          <SelectItem value="multiple">
-                            Multiple Methods
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-6">
+                    </CardHeader>
+                    <CardContent className="space-y-6">
                       <div className="space-y-2">
-                        <Label htmlFor="email" className="flex items-center">
-                          <Mail className="h-4 w-4 mr-2" />
-                          Email Address
-                        </Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="your.email@example.com"
-                          aria-labelledby="email-label"
-                          aria-describedby={
-                            fieldErrors.email ? "email-error" : undefined
-                          }
-                          aria-invalid={Boolean(fieldErrors.email)}
-                          value={formData.email}
-                          onChange={(e) =>
-                            handleInputChange("email", e.target.value)
-                          }
-                        />
-                        {fieldErrors.email && (
-                          <p className="text-red-500 text-sm mt-1" role="alert">
-                            {fieldErrors.email}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="instagramUsername"
-                          className="flex items-center"
-                        >
-                          <Instagram className="h-4 w-4 mr-2" />
-                          Instagram Username
-                        </Label>
-                        <Input
-                          id="instagramUsername"
-                          placeholder="@yourusername"
-                          value={formData.instagramUsername}
-                          onChange={(e) =>
-                            handleInputChange(
-                              "instagramUsername",
-                              e.target.value,
-                            )
-                          }
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="facebookLink"
-                          className="flex items-center"
-                        >
-                          <Facebook className="h-4 w-4 mr-2" />
-                          Facebook Profile Link
-                        </Label>
-                        <Input
-                          id="facebookLink"
-                          placeholder="https://facebook.com/yourprofile"
-                          value={formData.facebookLink}
-                          onChange={(e) =>
-                            handleInputChange("facebookLink", e.target.value)
-                          }
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="linkedinProfile"
-                          className="flex items-center"
-                        >
-                          <Linkedin className="h-4 w-4 mr-2" />
-                          LinkedIn Profile
-                        </Label>
-                        <Input
-                          id="linkedinProfile"
-                          placeholder="https://linkedin.com/in/yourprofile"
-                          value={formData.linkedinProfile}
-                          onChange={(e) =>
-                            handleInputChange("linkedinProfile", e.target.value)
-                          }
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="personalWebsite"
-                        className="flex items-center"
-                      >
-                        <Globe className="h-4 w-4 mr-2" />
-                        Personal Website (Optional)
-                      </Label>
-                      <Input
-                        id="personalWebsite"
-                        placeholder="https://yourwebsite.com"
-                        value={formData.personalWebsite}
-                        onChange={(e) =>
-                          handleInputChange("personalWebsite", e.target.value)
-                        }
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Mentor Profile */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-                      <Users className="h-5 w-5 mr-2" />
-                      Mentor Profile
-                    </CardTitle>
-                    <p className="text-gray-600">
-                      Help students understand how you can help them
-                    </p>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="nickname">
-                          Preferred Name/Nickname
-                        </Label>
-                        <Input
-                          id="nickname"
-                          placeholder="What should students call you?"
-                          value={formData.nickname}
-                          onChange={(e) =>
-                            handleInputChange("nickname", e.target.value)
-                          }
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="responseTime">
-                          Expected Response Time
+                        <Label htmlFor="contactMethod">
+                          Preferred Contact Method
                         </Label>
                         <Select
                           onValueChange={(value) =>
-                            handleInputChange("responseTime", value)
+                            handleInputChange("contactMethod", value)
                           }
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="How quickly do you respond?" />
+                            <SelectValue placeholder="Select your preferred method" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="same-day">Same Day</SelectItem>
-                            <SelectItem value="1-2-days">1-2 Days</SelectItem>
-                            <SelectItem value="3-5-days">3-5 Days</SelectItem>
-                            <SelectItem value="weekly">Weekly</SelectItem>
+                            <SelectItem value="email">Email</SelectItem>
+                            <SelectItem value="instagram">Instagram</SelectItem>
+                            <SelectItem value="facebook">Facebook</SelectItem>
+                            <SelectItem value="linkedin">LinkedIn</SelectItem>
+                            <SelectItem value="multiple">
+                              Multiple Methods
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
-                    </div>
 
-                    <div className="space-y-2">
-                      <Label>Languages You Speak</Label>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {languages.map((language) => (
-                          <div
-                            key={language}
-                            className="flex items-center space-x-2"
-                          >
-                            <Checkbox
-                              id={language}
-                              checked={formData.languagesSpoken.includes(
-                                language,
-                              )}
-                              onCheckedChange={(checked) =>
-                                handleArrayChange(
-                                  "languagesSpoken",
-                                  language,
-                                  checked as boolean,
-                                )
-                              }
-                            />
-                            <Label htmlFor={language} className="text-sm">
-                              {language}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Areas You Can Help With</Label>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {helpTopics.map((topic) => (
-                          <div
-                            key={topic}
-                            className="flex items-center space-x-2"
-                          >
-                            <Checkbox
-                              id={topic}
-                              checked={formData.helpTopics.includes(topic)}
-                              onCheckedChange={(checked) =>
-                                handleArrayChange(
-                                  "helpTopics",
-                                  topic,
-                                  checked as boolean,
-                                )
-                              }
-                            />
-                            <Label htmlFor={topic} className="text-sm">
-                              {topic}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Academic Specializations</Label>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {specializations.map((spec) => (
-                          <div
-                            key={spec}
-                            className="flex items-center space-x-2"
-                          >
-                            <Checkbox
-                              id={spec}
-                              checked={formData.specializations.includes(spec)}
-                              onCheckedChange={(checked) =>
-                                handleArrayChange(
-                                  "specializations",
-                                  spec,
-                                  checked as boolean,
-                                )
-                              }
-                            />
-                            <Label htmlFor={spec} className="text-sm">
-                              {spec}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                      {formData.specializations.includes("Other") && (
-                        <div className="space-y-2 mt-4">
-                          <Label htmlFor="otherSpecialization">
-                            Please specify your specialization
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="email" className="flex items-center">
+                            <Mail className="h-4 w-4 mr-2" />
+                            Email Address
                           </Label>
                           <Input
-                            id="otherSpecialization"
-                            placeholder="Enter your academic specialization..."
-                            value={formData.otherSpecialization}
+                            id="email"
+                            type="email"
+                            placeholder="your.email@example.com"
+                            aria-labelledby="email-label"
+                            aria-describedby={
+                              fieldErrors.email ? "email-error" : undefined
+                            }
+                            aria-invalid={Boolean(fieldErrors.email)}
+                            value={formData.email}
+                            onChange={(e) =>
+                              handleInputChange("email", e.target.value)
+                            }
+                          />
+                          {fieldErrors.email && (
+                            <p
+                              className="text-red-500 text-sm mt-1"
+                              role="alert"
+                            >
+                              {fieldErrors.email}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="instagramUsername"
+                            className="flex items-center"
+                          >
+                            <Instagram className="h-4 w-4 mr-2" />
+                            Instagram Username
+                          </Label>
+                          <Input
+                            id="instagramUsername"
+                            placeholder="@yourusername"
+                            value={formData.instagramUsername}
                             onChange={(e) =>
                               handleInputChange(
-                                "otherSpecialization",
+                                "instagramUsername",
                                 e.target.value,
                               )
                             }
                           />
                         </div>
-                      )}
-                    </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="availabilityLevel">
-                        Availability Level
-                      </Label>
-                      <RadioGroup
-                        value={formData.availabilityLevel}
-                        onValueChange={(value) =>
-                          handleInputChange("availabilityLevel", value)
-                        }
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="high" id="availability-high" />
-                          <Label htmlFor="availability-high">
-                            High - I love helping and have lots of time
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="facebookLink"
+                            className="flex items-center"
+                          >
+                            <Facebook className="h-4 w-4 mr-2" />
+                            Facebook Profile Link
                           </Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem
-                            value="medium"
-                            id="availability-medium"
+                          <Input
+                            id="facebookLink"
+                            placeholder="https://facebook.com/yourprofile"
+                            value={formData.facebookLink}
+                            onChange={(e) =>
+                              handleInputChange("facebookLink", e.target.value)
+                            }
                           />
-                          <Label htmlFor="availability-medium">
-                            Medium - I can help occasionally
-                          </Label>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="low" id="availability-low" />
-                          <Label htmlFor="availability-low">
-                            Low - Only for important questions
-                          </Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
-                  </CardContent>
-                </Card>
 
-                {/* Privacy Settings */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-xl font-semibold text-gray-900">
-                      Privacy & Profile Settings
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="space-y-4">
-                      <div>
-                        <Label className="text-base font-medium">
-                          Create a public mentor profile?
-                        </Label>
-                        <p className="text-sm text-gray-600 mb-2">
-                          This will allow students to find you in our mentor
-                          directory
-                        </p>
-                        <RadioGroup
-                          value={formData.publicProfile}
-                          onValueChange={(value) =>
-                            handleInputChange("publicProfile", value)
-                          }
-                        >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="yes" id="public-yes" />
-                            <Label htmlFor="public-yes">
-                              Yes, make my profile public
-                            </Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="no" id="public-no" />
-                            <Label htmlFor="public-no">
-                              No, only contact through forms
-                            </Label>
-                          </div>
-                        </RadioGroup>
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="linkedinProfile"
+                            className="flex items-center"
+                          >
+                            <Linkedin className="h-4 w-4 mr-2" />
+                            LinkedIn Profile
+                          </Label>
+                          <Input
+                            id="linkedinProfile"
+                            placeholder="https://linkedin.com/in/yourprofile"
+                            value={formData.linkedinProfile}
+                            onChange={(e) =>
+                              handleInputChange(
+                                "linkedinProfile",
+                                e.target.value,
+                              )
+                            }
+                          />
+                        </div>
                       </div>
 
-                      <div>
-                        <Label className="text-base font-medium">
-                          Allow students to contact you directly?
-                        </Label>
-                        <p className="text-sm text-gray-600 mb-2">
-                          Students can reach out to you without going through
-                          our platform
-                        </p>
-                        <RadioGroup
-                          value={formData.allowPublicContact}
-                          onValueChange={(value) =>
-                            handleInputChange("allowPublicContact", value)
-                          }
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="personalWebsite"
+                          className="flex items-center"
                         >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="yes" id="contact-yes" />
-                            <Label htmlFor="contact-yes">
-                              Yes, I'm open to direct contact
-                            </Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="no" id="contact-no" />
-                            <Label htmlFor="contact-no">
-                              No, prefer platform messaging only
-                            </Label>
-                          </div>
-                        </RadioGroup>
+                          <Globe className="h-4 w-4 mr-2" />
+                          Personal Website (Optional)
+                        </Label>
+                        <Input
+                          id="personalWebsite"
+                          placeholder="https://yourwebsite.com"
+                          value={formData.personalWebsite}
+                          onChange={(e) =>
+                            handleInputChange("personalWebsite", e.target.value)
+                          }
+                        />
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </>
-            )}
+                    </CardContent>
+                  </Card>
 
-            {/* Current Mentors Preview */}
-            {formData.wantToHelp === "yes" && (
-              <Card className="bg-gradient-to-r from-blue-50 to-green-50 border-blue-200">
-                <CardHeader>
-                  <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-                    <Trophy className="h-5 w-5 mr-2 text-yellow-500" />
-                    Join These Amazing Mentors
-                  </CardTitle>
-                  <p className="text-gray-600">
-                    You'll be joining a community of experienced students who
-                    are making a difference
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-3 gap-4">
-                    {testimonials.map((testimonial) => (
-                      <div
-                        key={testimonial.id}
-                        className="bg-white p-4 rounded-lg border"
-                      >
-                        <div className="flex items-center space-x-3 mb-3">
-                          <Avatar className="h-10 w-10">
-                            <AvatarFallback>
-                              {testimonial.studentName
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <h4 className="font-medium text-gray-900">
-                              {testimonial.studentName}
-                            </h4>
-                            <p className="text-xs text-gray-600">
-                              {testimonial.city}
-                            </p>
-                          </div>
+                  {/* Mentor Profile */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
+                        <Users className="h-5 w-5 mr-2" />
+                        Mentor Profile
+                      </CardTitle>
+                      <p className="text-gray-600">
+                        Help students understand how you can help them
+                      </p>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="nickname">
+                            Preferred Name/Nickname
+                          </Label>
+                          <Input
+                            id="nickname"
+                            placeholder="What should students call you?"
+                            value={formData.nickname}
+                            onChange={(e) =>
+                              handleInputChange("nickname", e.target.value)
+                            }
+                          />
                         </div>
-                        <div className="flex items-center space-x-1 mb-2">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`h-3 w-3 ${
-                                i < testimonial.rating
-                                  ? "text-yellow-400 fill-current"
-                                  : "text-gray-300"
-                              }`}
-                            />
+
+                        <div className="space-y-2">
+                          <Label htmlFor="responseTime">
+                            Expected Response Time
+                          </Label>
+                          <Select
+                            onValueChange={(value) =>
+                              handleInputChange("responseTime", value)
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="How quickly do you respond?" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="same-day">Same Day</SelectItem>
+                              <SelectItem value="1-2-days">1-2 Days</SelectItem>
+                              <SelectItem value="3-5-days">3-5 Days</SelectItem>
+                              <SelectItem value="weekly">Weekly</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Languages You Speak</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                          {languages.map((language) => (
+                            <div
+                              key={language}
+                              className="flex items-center space-x-2"
+                            >
+                              <Checkbox
+                                id={language}
+                                checked={formData.languagesSpoken.includes(
+                                  language,
+                                )}
+                                onCheckedChange={(checked) =>
+                                  handleArrayChange(
+                                    "languagesSpoken",
+                                    language,
+                                    checked as boolean,
+                                  )
+                                }
+                              />
+                              <Label htmlFor={language} className="text-sm">
+                                {language}
+                              </Label>
+                            </div>
                           ))}
                         </div>
-                        <p className="text-xs text-gray-600 line-clamp-3">
-                          "Ready to help future students with accommodation and
-                          city life in {testimonial.city}!"
-                        </p>
                       </div>
-                    ))}
-                  </div>
+
+                      <div className="space-y-2">
+                        <Label>Areas You Can Help With</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                          {helpTopics.map((topic) => (
+                            <div
+                              key={topic}
+                              className="flex items-center space-x-2"
+                            >
+                              <Checkbox
+                                id={topic}
+                                checked={formData.helpTopics.includes(topic)}
+                                onCheckedChange={(checked) =>
+                                  handleArrayChange(
+                                    "helpTopics",
+                                    topic,
+                                    checked as boolean,
+                                  )
+                                }
+                              />
+                              <Label htmlFor={topic} className="text-sm">
+                                {topic}
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Academic Specializations</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                          {specializations.map((spec) => (
+                            <div
+                              key={spec}
+                              className="flex items-center space-x-2"
+                            >
+                              <Checkbox
+                                id={spec}
+                                checked={formData.specializations.includes(
+                                  spec,
+                                )}
+                                onCheckedChange={(checked) =>
+                                  handleArrayChange(
+                                    "specializations",
+                                    spec,
+                                    checked as boolean,
+                                  )
+                                }
+                              />
+                              <Label htmlFor={spec} className="text-sm">
+                                {spec}
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
+                        {formData.specializations.includes("Other") && (
+                          <div className="space-y-2 mt-4">
+                            <Label htmlFor="otherSpecialization">
+                              Please specify your specialization
+                            </Label>
+                            <Input
+                              id="otherSpecialization"
+                              placeholder="Enter your academic specialization..."
+                              value={formData.otherSpecialization}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  "otherSpecialization",
+                                  e.target.value,
+                                )
+                              }
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="availabilityLevel">
+                          Availability Level
+                        </Label>
+                        <RadioGroup
+                          value={formData.availabilityLevel}
+                          onValueChange={(value) =>
+                            handleInputChange("availabilityLevel", value)
+                          }
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem
+                              value="high"
+                              id="availability-high"
+                            />
+                            <Label htmlFor="availability-high">
+                              High - I love helping and have lots of time
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem
+                              value="medium"
+                              id="availability-medium"
+                            />
+                            <Label htmlFor="availability-medium">
+                              Medium - I can help occasionally
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="low" id="availability-low" />
+                            <Label htmlFor="availability-low">
+                              Low - Only for important questions
+                            </Label>
+                          </div>
+                        </RadioGroup>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Privacy Settings */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-xl font-semibold text-gray-900">
+                        Privacy & Profile Settings
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-base font-medium">
+                            Create a public mentor profile?
+                          </Label>
+                          <p className="text-sm text-gray-600 mb-2">
+                            This will allow students to find you in our mentor
+                            directory
+                          </p>
+                          <RadioGroup
+                            value={formData.publicProfile}
+                            onValueChange={(value) =>
+                              handleInputChange("publicProfile", value)
+                            }
+                          >
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="yes" id="public-yes" />
+                              <Label htmlFor="public-yes">
+                                Yes, make my profile public
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="no" id="public-no" />
+                              <Label htmlFor="public-no">
+                                No, only contact through forms
+                              </Label>
+                            </div>
+                          </RadioGroup>
+                        </div>
+
+                        <div>
+                          <Label className="text-base font-medium">
+                            Allow students to contact you directly?
+                          </Label>
+                          <p className="text-sm text-gray-600 mb-2">
+                            Students can reach out to you without going through
+                            our platform
+                          </p>
+                          <RadioGroup
+                            value={formData.allowPublicContact}
+                            onValueChange={(value) =>
+                              handleInputChange("allowPublicContact", value)
+                            }
+                          >
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="yes" id="contact-yes" />
+                              <Label htmlFor="contact-yes">
+                                Yes, I'm open to direct contact
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="no" id="contact-no" />
+                              <Label htmlFor="contact-no">
+                                No, prefer platform messaging only
+                              </Label>
+                            </div>
+                          </RadioGroup>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </>
+              )}
+
+              {/* Current Mentors Preview */}
+              {formData.wantToHelp === "yes" && (
+                <Card className="bg-gradient-to-r from-blue-50 to-green-50 border-blue-200">
+                  <CardHeader>
+                    <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
+                      <Trophy className="h-5 w-5 mr-2 text-yellow-500" />
+                      Join These Amazing Mentors
+                    </CardTitle>
+                    <p className="text-gray-600">
+                      You'll be joining a community of experienced students who
+                      are making a difference
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid md:grid-cols-3 gap-4">
+                      {testimonials.map((testimonial) => (
+                        <div
+                          key={testimonial.id}
+                          className="bg-white p-4 rounded-lg border"
+                        >
+                          <div className="flex items-center space-x-3 mb-3">
+                            <Avatar className="h-10 w-10">
+                              <AvatarFallback>
+                                {testimonial.studentName
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <h4 className="font-medium text-gray-900">
+                                {testimonial.studentName}
+                              </h4>
+                              <p className="text-xs text-gray-600">
+                                {testimonial.city}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-1 mb-2">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-3 w-3 ${
+                                  i < testimonial.rating
+                                    ? "text-yellow-400 fill-current"
+                                    : "text-gray-300"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                          <p className="text-xs text-gray-600 line-clamp-3">
+                            "Ready to help future students with accommodation
+                            and city life in {testimonial.city}!"
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Final Call to Action */}
+              <Card className="bg-gradient-to-r from-green-800 to-blue-800 text-white">
+                <CardContent className="text-center py-8">
+                  <CheckCircle className="h-12 w-12 text-white mx-auto mb-4" />
+                  <h3 className="text-2xl font-bold mb-4 text-white">
+                    {formData.wantToHelp === "yes"
+                      ? "You're Almost Ready to Start Helping!"
+                      : "Complete Your Erasmus Journey"}
+                  </h3>
+                  <p className="text-white mb-6 max-w-2xl mx-auto">
+                    {formData.wantToHelp === "yes"
+                      ? "Thank you for choosing to help future students! Your experience and guidance will be invaluable to students planning their Erasmus journey."
+                      : "Thank you for sharing your complete Erasmus experience! Your story will help countless future students make informed decisions."}
+                  </p>
                 </CardContent>
               </Card>
-            )}
 
-            {/* Final Call to Action */}
-            <Card className="bg-gradient-to-r from-green-800 to-blue-800 text-white">
-              <CardContent className="text-center py-8">
-                <CheckCircle className="h-12 w-12 text-white mx-auto mb-4" />
-                <h3 className="text-2xl font-bold mb-4 text-white">
-                  {formData.wantToHelp === "yes"
-                    ? "You're Almost Ready to Start Helping!"
-                    : "Complete Your Erasmus Journey"}
-                </h3>
-                <p className="text-white mb-6 max-w-2xl mx-auto">
-                  {formData.wantToHelp === "yes"
-                    ? "Thank you for choosing to help future students! Your experience and guidance will be invaluable to students planning their Erasmus journey."
-                    : "Thank you for sharing your complete Erasmus experience! Your story will help countless future students make informed decisions."}
-                </p>
-              </CardContent>
-            </Card>
+              {/* Navigation */}
+              <div className="flex justify-between items-center pt-8">
+                <Link href="/living-expenses">
+                  <Button
+                    variant="outline"
+                    className="flex items-center gap-2"
+                    disabled={isSubmitting}
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Living Expenses
+                  </Button>
+                </Link>
 
-            {/* Navigation */}
-            <div className="flex justify-between items-center pt-8">
-              <Link href="/living-expenses">
-                <Button
-                  variant="outline"
-                  className="flex items-center gap-2"
-                  disabled={isSubmitting}
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Living Expenses
-                </Button>
-              </Link>
+                <div className="flex items-center gap-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleSaveDraftToDatabase}
+                    className="flex items-center gap-2"
+                    disabled={isSubmitting}
+                  >
+                    <Save className="h-4 w-4" />
+                    Save Draft
+                  </Button>
 
-              <div className="flex items-center gap-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={saveUnifiedDraft}
-                  className="flex items-center gap-2"
-                  disabled={isSubmitting}
-                >
-                  <Save className="h-4 w-4" />
-                  Save as Draft
-                </Button>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2 px-8"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="animate-spin mr-2">⏳</div>
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="h-4 w-4" />
+                        Complete Application
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </form>
+          </div>
 
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2 px-8"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="animate-spin mr-2">⏳</div>
-                      Submitting...
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle className="h-4 w-4" />
-                      Complete Application
-                    </>
-                  )}
-                </Button>
+          {/* Thank You Section */}
+          <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+            <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+              <h2 className="text-3xl lg:text-4xl font-bold mb-6">
+                Thank You for Your Journey
+              </h2>
+              <p className="text-xl text-blue-100 mb-8">
+                Whether you choose to mentor or not, sharing your experience
+                helps build a stronger Erasmus community for everyone.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/community">
+                  <Button
+                    size="lg"
+                    className="bg-white text-blue-600 hover:bg-gray-100"
+                  >
+                    Explore Community
+                  </Button>
+                </Link>
+                <Link href="/experiences">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="border-white text-white hover:bg-white hover:text-blue-600"
+                  >
+                    Read Other Stories
+                  </Button>
+                </Link>
               </div>
             </div>
-          </form>
+          </section>
         </div>
-
-        {/* Thank You Section */}
-        <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-          <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-6">
-              Thank You for Your Journey
-            </h2>
-            <p className="text-xl text-blue-100 mb-8">
-              Whether you choose to mentor or not, sharing your experience helps
-              build a stronger Erasmus community for everyone.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/community">
-                <Button
-                  size="lg"
-                  className="bg-white text-blue-600 hover:bg-gray-100"
-                >
-                  Explore Community
-                </Button>
-              </Link>
-              <Link href="/experiences">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-white text-white hover:bg-white hover:text-blue-600"
-                >
-                  Read Other Stories
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-      </div>
-    </SubmissionGuard>
+      </SubmissionGuard>
     </StepGuard>
   );
 }

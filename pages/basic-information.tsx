@@ -227,54 +227,22 @@ export default function BasicInformation() {
     console.log("- levelOfStudy:", formData.levelOfStudy);
   }, [formData]);
 
-  // Auto-save function with debouncing
-  const autoSaveForm = useCallback(
-    async (formData: any, silent: boolean = true) => {
-      // Don't auto-save if form is empty or we're navigating away
-      if (!formData.firstName && !formData.lastName && !formData.email) {
-        return;
-      }
+  // Save to localStorage helper function - defined early for use in useEffect
+  const saveToLocalStorage = useCallback((data: any) => {
+    const draftKey = `erasmus_form_basic-info`;
+    const draftData = {
+      type: "basic-info",
+      title: "Basic Information Draft",
+      data: data,
+      timestamp: new Date().toISOString(),
+    };
+    localStorage.setItem(draftKey, JSON.stringify(draftData));
+  }, []);
 
-      if (isNavigating.current) {
-        return;
-      }
-
-      try {
-        setIsAutoSaving(true);
-
-        // Use new experience API for saving progress
-        await saveProgress({
-          basicInfo: formData,
-        });
-
-        setLastSaved(new Date());
-
-        if (silent) {
-          // Show subtle floating indicator for auto-save
-          setShowSavedIndicator(true);
-          setTimeout(() => setShowSavedIndicator(false), 2000); // Shorter duration
-        } else {
-          // Show the alert for manual save
-          setDraftSuccess("Draft saved successfully!");
-          setTimeout(() => setDraftSuccess(null), 3000);
-        }
-      } catch (error) {
-        console.error("Auto-save error:", error);
-        if (!silent) {
-          setDraftError("Failed to auto-save. Please save manually.");
-          setTimeout(() => setDraftError(null), 5000);
-        }
-      } finally {
-        setIsAutoSaving(false);
-      }
-    },
-    [saveProgress],
-  );
-
-  // Auto-save when form data changes (debounced) - less aggressive
+  // Auto-save to localStorage only (not API) when form data changes
   useEffect(() => {
     if (draftLoaded.current && !isSubmitting && !isNavigating.current) {
-      // Only auto-save if we have substantial data (more than just basic fields)
+      // Only auto-save if we have substantial data
       const hasSubstantialData =
         (formData.firstName?.trim() &&
           formData.lastName?.trim() &&
@@ -289,10 +257,13 @@ export default function BasicInformation() {
           clearTimeout(autoSaveTimeout.current);
         }
 
-        // Set new timeout for auto-save (15 seconds after user stops typing)
+        // Set new timeout for auto-save to localStorage (2 seconds after user stops typing)
         autoSaveTimeout.current = setTimeout(() => {
-          autoSaveForm(formData, true);
-        }, 15000); // Much longer delay - 15 seconds
+          saveToLocalStorage(formData);
+          setLastSaved(new Date());
+          setShowSavedIndicator(true);
+          setTimeout(() => setShowSavedIndicator(false), 2000);
+        }, 2000);
       }
     }
 
@@ -301,7 +272,7 @@ export default function BasicInformation() {
         clearTimeout(autoSaveTimeout.current);
       }
     };
-  }, [formData, autoSaveForm, isSubmitting]);
+  }, [formData, isSubmitting, saveToLocalStorage]);
 
   // Save before navigation/page unload
   useEffect(() => {
@@ -311,22 +282,15 @@ export default function BasicInformation() {
         isNavigating.current = true;
 
         // For page unload, we need to use synchronous localStorage
-        const draftKey = `erasmus_draft_basic-info`;
-        const draftData = {
-          type: "basic-info",
-          title: "Basic Information Draft",
-          data: formData,
-          timestamp: new Date().toISOString(),
-        };
-        localStorage.setItem(draftKey, JSON.stringify(draftData));
+        saveToLocalStorage(formData);
 
         e.preventDefault();
         e.returnValue = "";
       }
     };
 
-    const handleRouteChangeStart = async (url: string) => {
-      // Don't auto-save when navigating to course-matching (form submission handles this)
+    const handleRouteChangeStart = (url: string) => {
+      // Don't save when navigating to course-matching (form submission handles this)
       if (url.includes("course-matching")) {
         return;
       }
@@ -336,11 +300,8 @@ export default function BasicInformation() {
         !isSubmitting
       ) {
         isNavigating.current = true;
-        try {
-          await autoSaveForm(formData, false);
-        } catch (error) {
-          console.error("Error saving before navigation:", error);
-        }
+        // Save to localStorage before navigating
+        saveToLocalStorage(formData);
       }
     };
 
@@ -351,7 +312,7 @@ export default function BasicInformation() {
       window.removeEventListener("beforeunload", handleBeforeUnload);
       router.events.off("routeChangeStart", handleRouteChangeStart);
     };
-  }, [formData, autoSaveForm, isSubmitting, router.events]);
+  }, [formData, saveToLocalStorage, isSubmitting, router.events]);
 
   // Update available host universities when Cyprus university, department, or level changes
   useEffect(() => {
@@ -478,13 +439,43 @@ export default function BasicInformation() {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Save draft to database (triggered by Save Draft button)
+  const handleSaveDraftToDatabase = useCallback(async () => {
+    try {
+      // Map fields to match backend requirements
+      const mappedData = {
+        ...formData,
+        homeUniversity: formData.universityInCyprus,
+        semester: formData.exchangePeriod,
+        year: formData.currentYear,
+      };
+
+      // Save progress to the experience with the current form data
+      await saveProgress({
+        basicInfo: mappedData,
+      });
+
+      setDraftSuccess("Draft saved successfully!");
+      setTimeout(() => setDraftSuccess(null), 3000);
+    } catch (error) {
+      console.error("Draft save error:", error);
+      const errorInfo = handleApiError(error);
+      setDraftError(`Failed to save draft: ${errorInfo.message}`);
+      setTimeout(() => setDraftError(null), 5000);
+      throw error;
+    }
+  }, [formData, saveProgress]);
+
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (isSubmitting) return;
 
     setIsSubmitting(true);
     setFieldErrors({});
     setSubmitError(null);
+
+    // Always save to localStorage first when navigating
+    saveToLocalStorage(formData);
 
     try {
       // Validate form data
@@ -542,7 +533,7 @@ export default function BasicInformation() {
       setDraftError(null);
       setDraftSuccess(null);
 
-      await autoSaveForm(formData, false);
+      await handleSaveDraftToDatabase();
     } catch (error: any) {
       console.error("Draft save error:", error);
       const errorInfo = handleApiError(error);
@@ -859,7 +850,9 @@ export default function BasicInformation() {
               <EnhancedInput
                 id="currentYear"
                 value={formData.currentYear}
-                onChange={(e) => handleInputChange("currentYear", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("currentYear", e.target.value)
+                }
                 placeholder="e.g., 2024-2025"
                 required
                 error={fieldErrors.currentYear}
@@ -1029,10 +1022,12 @@ export default function BasicInformation() {
           currentStep={currentStepNumber}
           totalSteps={5}
           onNext={handleSubmit}
+          onSaveDraft={handleSaveDraftToDatabase}
           canProceed={!experienceLoading && !isSubmitting && !isAutoSaving}
           isLastStep={false}
           isSubmitting={isSubmitting}
           showPrevious={false}
+          showSaveDraft={true}
         />
       </form>
     );

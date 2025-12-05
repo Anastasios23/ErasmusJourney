@@ -162,29 +162,22 @@ export default function LivingExpenses() {
     setCurrentStep("living-expenses");
   }, [setCurrentStep]);
 
-  const saveFormData = useCallback(async () => {
-    try {
-      setIsAutoSaving(true);
-      const dataToSave = {
+  // Save to localStorage helper function - defined early for use in useEffect
+  const saveToLocalStorage = useCallback(() => {
+    const draftKey = `erasmus_form_living-expenses`;
+    const draftData = {
+      type: "living-expenses",
+      title: "Living Expenses Draft",
+      data: {
         ...formData,
         expenses: expenses,
-      };
-      await saveProgress({
-        livingExpenses: dataToSave,
-      });
-      setIsAutoSaving(false);
-    } catch (error) {
-      if (error instanceof ValidationError) {
-        console.error("Validation error:", error.message);
-        toast.error(`Validation error: ${error.message}`);
-      } else {
-        console.error("Error saving draft:", error);
-        toast.error("Failed to save draft. Please try again.");
-      }
-    }
-  }, [formData, expenses, saveProgress]);
+      },
+      timestamp: new Date().toISOString(),
+    };
+    localStorage.setItem(draftKey, JSON.stringify(draftData));
+  }, [formData, expenses]);
 
-  // Auto-save when form data changes (debounced)
+  // Auto-save to localStorage only (not API) when form data changes
   useEffect(() => {
     const timer = setTimeout(() => {
       if (
@@ -195,14 +188,14 @@ export default function LivingExpenses() {
           typeof value === "string" ? value.trim() !== "" : !!value,
         )
       ) {
-        saveFormData();
+        saveToLocalStorage();
       }
-    }, 1000); // 1 second debounce
+    }, 2000); // 2 second debounce
 
     return () => clearTimeout(timer);
-  }, [formData, expenses, saveFormData]);
+  }, [formData, expenses, saveToLocalStorage]);
 
-  // Save before navigation
+  // Save to localStorage before navigation/page unload
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (
@@ -213,13 +206,41 @@ export default function LivingExpenses() {
           typeof value === "string" ? value.trim() !== "" : !!value,
         )
       ) {
-        saveFormData();
+        saveToLocalStorage();
       }
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [formData, expenses, saveFormData]);
+  }, [formData, expenses, saveToLocalStorage]);
+
+  // State for draft success/error messages
+  const [draftSuccess, setDraftSuccess] = useState<string | null>(null);
+  const [draftError, setDraftError] = useState<string | null>(null);
+
+  // Save draft to database (triggered by Save Draft button)
+  const handleSaveDraftToDatabase = useCallback(async () => {
+    try {
+      const livingExpensesData = {
+        ...formData,
+        expenses: expenses,
+      };
+
+      await saveProgress({
+        livingExpenses: livingExpensesData,
+      });
+
+      setDraftSuccess("Draft saved successfully!");
+      toast.success("Draft saved successfully!");
+      setTimeout(() => setDraftSuccess(null), 3000);
+    } catch (error) {
+      console.error("Draft save error:", error);
+      setDraftError("Failed to save draft. Please try again.");
+      toast.error("Failed to save draft. Please try again.");
+      setTimeout(() => setDraftError(null), 5000);
+      throw error;
+    }
+  }, [formData, expenses, saveProgress]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -246,6 +267,9 @@ export default function LivingExpenses() {
 
     setIsSubmitting(true);
     setSubmitError(null);
+
+    // Always save to localStorage first when navigating
+    saveToLocalStorage();
 
     try {
       const livingExpensesData = {
@@ -641,10 +665,12 @@ export default function LivingExpenses() {
                 totalSteps={5}
                 onPrevious={() => router.push("/accommodation")}
                 onNext={handleSubmit}
+                onSaveDraft={handleSaveDraftToDatabase}
                 canProceed={!isSubmitting}
                 isLastStep={false}
                 isSubmitting={isSubmitting}
                 showPrevious={true}
+                showSaveDraft={true}
               />
             </div>
 
