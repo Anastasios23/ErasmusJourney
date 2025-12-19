@@ -57,11 +57,18 @@ export async function updateCityStatistics(city: string, country: string) {
 
       // Other Expenses
       if (expenses) {
-        const groceries = parseFloat(expenses.groceries || expenses.food || "0");
+        const groceries = parseFloat(expenses.food || expenses.groceries || "0");
         const transport = parseFloat(expenses.transport || expenses.transportation || "0");
         const eatingOut = parseFloat(expenses.eatingOut || "0");
         const social = parseFloat(expenses.social || expenses.entertainment || "0");
-        const total = parseFloat(expenses.total || expenses.totalMonthlyBudget || "0");
+        
+        // Dynamic total if not provided
+        let total = parseFloat(expenses.total || expenses.totalMonthlyBudget || "0");
+        if (total === 0) {
+          total = rent + groceries + transport + eatingOut + social + 
+                  parseFloat(expenses.travel || "0") + 
+                  parseFloat(expenses.other || "0");
+        }
 
         if (total > 0) {
           totalGroceries += groceries;

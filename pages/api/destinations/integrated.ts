@@ -1,97 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-
-// Simple fallback destinations data to get the app working
-const mockDestinations = [
-  {
-    id: "1",
-    name: "Berlin, Germany",
-    city: "Berlin",
-    country: "Germany",
-    description:
-      "Vibrant cultural capital with excellent universities and student life",
-    imageUrl:
-      "https://images.unsplash.com/photo-1560930950-5cc20e80d392?w=400&h=250&fit=crop",
-    featured: true,
-    submissionCount: 45,
-    averageRating: 4.5,
-    averageCost: 850,
-    lastUpdated: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    name: "Barcelona, Spain",
-    city: "Barcelona",
-    country: "Spain",
-    description:
-      "Mediterranean paradise with world-class architecture and beaches",
-    imageUrl:
-      "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&h=250&fit=crop",
-    featured: true,
-    submissionCount: 38,
-    averageRating: 4.7,
-    averageCost: 750,
-    lastUpdated: new Date().toISOString(),
-  },
-  {
-    id: "3",
-    name: "Amsterdam, Netherlands",
-    city: "Amsterdam",
-    country: "Netherlands",
-    description:
-      "Historic canals, world-renowned universities, and vibrant student culture",
-    imageUrl:
-      "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=400&h=250&fit=crop",
-    featured: true,
-    submissionCount: 32,
-    averageRating: 4.4,
-    averageCost: 950,
-    lastUpdated: new Date().toISOString(),
-  },
-  {
-    id: "4",
-    name: "Prague, Czech Republic",
-    city: "Prague",
-    country: "Czech Republic",
-    description: "Stunning medieval architecture and affordable student living",
-    imageUrl:
-      "https://images.unsplash.com/photo-1541849546-216549ae216d?w=400&h=250&fit=crop",
-    featured: false,
-    submissionCount: 28,
-    averageRating: 4.3,
-    averageCost: 600,
-    lastUpdated: new Date().toISOString(),
-  },
-  {
-    id: "5",
-    name: "Vienna, Austria",
-    city: "Vienna",
-    country: "Austria",
-    description:
-      "Imperial grandeur meets modern student life in this cultural hub",
-    imageUrl:
-      "https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=400&h=250&fit=crop",
-    featured: false,
-    submissionCount: 25,
-    averageRating: 4.2,
-    averageCost: 800,
-    lastUpdated: new Date().toISOString(),
-  },
-  {
-    id: "6",
-    name: "Copenhagen, Denmark",
-    city: "Copenhagen",
-    country: "Denmark",
-    description:
-      "Scandinavian design, innovative education, and high quality of life",
-    imageUrl:
-      "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?w=400&h=250&fit=crop",
-    featured: false,
-    submissionCount: 22,
-    averageRating: 4.6,
-    averageCost: 1100,
-    lastUpdated: new Date().toISOString(),
-  },
-];
+import { prisma } from "../../../lib/prisma";
 
 export default async function handler(
   req: NextApiRequest,
@@ -110,31 +18,103 @@ export default async function handler(
       limit = 100,
     } = req.query;
 
-    console.log("Fetching destinations with options:", {
-      featured,
-      country,
-      orderBy,
-      order,
-      limit,
+    // 1. Fetch Aggregated Statistics from ErasmusExperience (Real-time SQL)
+    // We use queryRaw because we need to aggregate data stored in JSON fields
+    const stats: any[] = await prisma.$queryRaw`
+      SELECT 
+        "hostCity" as city, 
+        "hostCountry" as country,
+        COUNT(*)::int as "submissionCount",
+        AVG(CAST(COALESCE("experience"->>'overallRating', '0') AS NUMERIC)) as "averageRating",
+        AVG(
+          CAST(
+            COALESCE(
+              "livingExpenses"->>'total', 
+              "livingExpenses"->>'totalMonthlyBudget', 
+              '0'
+            ) AS NUMERIC
+          )
+        ) as "averageCost"
+      FROM erasmus_experiences
+      WHERE (status = 'SUBMITTED' OR status = 'APPROVED')
+        AND "isComplete" = true
+        AND "hostCity" IS NOT NULL
+        AND "hostCountry" IS NOT NULL
+      GROUP BY "hostCity", "hostCountry"
+    `;
+
+    // 2. Fetch Destination Metadata (images, descriptions)
+    const dbDestinations = await prisma.destinations.findMany({
+      where: {
+        status: "published"
+      }
     });
 
-    let filteredDestinations = [...mockDestinations];
-
-    // Apply filters
-    if (featured === "true") {
-      filteredDestinations = filteredDestinations.filter(
-        (dest) => dest.featured,
+    // 3. Merge Aggregated Stats with Metadata
+    let integratedDestinations = stats.map(stat => {
+      // Find matching destination in DB (case-insensitive)
+      const metadata = dbDestinations.find(d => 
+        d.city.toLowerCase() === stat.city.toLowerCase() && 
+        d.country.toLowerCase() === stat.country.toLowerCase()
       );
+
+      const name = metadata?.name || `${stat.city}, ${stat.country}`;
+      const slug = metadata?.slug || `${stat.city.toLowerCase().replace(/ /g, '-')}-${stat.country.toLowerCase().replace(/ /g, '-')}`;
+
+      return {
+        id: metadata?.id || `virtual-${stat.city}-${stat.country}`,
+        name: name,
+        city: stat.city,
+        country: stat.country,
+        description: metadata?.description || `Discover ${stat.city} through ${stat.submissionCount} student stories.`,
+        imageUrl: metadata?.imageUrl || `/images/destinations/${stat.city.toLowerCase().replace(/ /g, '-')}.jpg`,
+        featured: metadata?.featured || false,
+        slug: slug,
+        submissionCount: stat.submissionCount,
+        averageRating: parseFloat(parseFloat(stat.averageRating || 0).toFixed(1)),
+        averageCost: Math.round(parseFloat(stat.averageCost || 0)),
+        lastUpdated: metadata?.updatedAt || new Date().toISOString(),
+      };
+    });
+
+    // 4. Add "Empty" Meta-only Destinations (optional, if we want to show destinations with 0 submissions)
+    dbDestinations.forEach(dest => {
+      const exists = integratedDestinations.some(d => 
+        d.city.toLowerCase() === dest.city.toLowerCase() && 
+        d.country.toLowerCase() === dest.country.toLowerCase()
+      );
+      
+      if (!exists) {
+        integratedDestinations.push({
+          id: dest.id,
+          name: dest.name,
+          city: dest.city,
+          country: dest.country,
+          description: dest.description || "",
+          imageUrl: dest.imageUrl || `/images/destinations/${dest.city.toLowerCase().replace(/ /g, '-')}.jpg`,
+          featured: dest.featured,
+          slug: dest.slug,
+          submissionCount: 0,
+          averageRating: 0.0,
+          averageCost: 0,
+          lastUpdated: dest.updatedAt.toISOString(),
+        });
+      }
+    });
+
+    // 5. Apply Filters
+    if (featured === "true") {
+      integratedDestinations = integratedDestinations.filter(d => d.featured);
     }
 
     if (country && country !== "all") {
-      filteredDestinations = filteredDestinations.filter(
-        (dest) => dest.country === country,
+      integratedDestinations = integratedDestinations.filter(d => 
+        d.country.toLowerCase() === (country as string).toLowerCase()
       );
     }
 
-    // Apply sorting
-    filteredDestinations.sort((a, b) => {
+    // 6. Apply Sorting
+    integratedDestinations.sort((a, b) => {
       let aValue: any;
       let bValue: any;
 
@@ -151,9 +131,13 @@ export default async function handler(
           aValue = a.averageRating;
           bValue = b.averageRating;
           break;
+        case "cost":
+          aValue = a.averageCost;
+          bValue = b.averageCost;
+          break;
         case "updated":
-          aValue = new Date(a.lastUpdated);
-          bValue = new Date(b.lastUpdated);
+          aValue = new Date(a.lastUpdated).getTime();
+          bValue = new Date(b.lastUpdated).getTime();
           break;
         default:
           aValue = a.submissionCount;
@@ -167,17 +151,17 @@ export default async function handler(
       }
     });
 
-    // Apply limit
+    // 7. Apply Limit
     const limitNum = parseInt(limit as string) || 100;
-    filteredDestinations = filteredDestinations.slice(0, limitNum);
+    const result = integratedDestinations.slice(0, limitNum);
 
-    console.log(`Returning ${filteredDestinations.length} destinations`);
-    res.status(200).json(filteredDestinations);
+    res.status(200).json(result);
   } catch (error) {
-    console.error("Error fetching destinations:", error);
+    console.error("Error fetching integrated destinations:", error);
     res.status(500).json({
       message: "Failed to fetch destinations",
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }
+

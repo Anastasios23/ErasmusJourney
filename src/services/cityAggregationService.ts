@@ -81,8 +81,8 @@ export async function aggregateCityData(city: string, country: string): Promise<
   // Note: livingExpenses, accommodation, courses, experience are JSON fields, not relations
   const experiences = await prisma.erasmusExperience.findMany({
     where: {
-      hostCity: city,
-      hostCountry: country,
+      hostCity: { equals: city, mode: "insensitive" },
+      hostCountry: { equals: country, mode: "insensitive" },
       isComplete: true,
       status: {
         notIn: ["DRAFT", "REJECTED"],
@@ -161,11 +161,12 @@ export async function aggregateCityData(city: string, country: string): Promise<
     })),
     avgMonthlyEntertainment: calculateAverage(livingCostsList.map((e) => {
       const data = e.livingExpenses as any;
-      return parseFloat(data?.entertainment || "0");
+      return parseFloat(data?.social || data?.entertainment || "0");
     })),
     avgMonthlyUtilities: calculateAverage(livingCostsList.map((e) => {
       const data = e.livingExpenses as any;
-      return parseFloat(data?.utilities || "0");
+      const accData = e.accommodation as any;
+      return parseFloat(data?.utilities || accData?.utilities || "0");
     })),
     avgMonthlyOther: calculateAverage(livingCostsList.map((e) => {
       const data = e.livingExpenses as any;
@@ -413,7 +414,14 @@ async function generateStudentProfiles(city: string, country: string) {
           profile.hostUniversity?.name || basicInfo.hostUniversity || "Unknown",
         studyPeriod: profile.semester || basicInfo.exchangePeriod || "Unknown",
         fieldOfStudy: basicInfo.fieldOfStudy || "Unknown",
-        totalMonthlyCost: parseFloat(livingData.total || livingData.totalMonthlyBudget || "0"),
+        totalMonthlyCost: parseFloat(livingData.total || livingData.totalMonthlyBudget || "0") || (
+          (parseFloat(livingData.rent || accommodationData.rent || "0")) +
+          (parseFloat(livingData.food || "0")) +
+          (parseFloat(livingData.transport || "0")) +
+          (parseFloat(livingData.social || "0")) +
+          (parseFloat(livingData.travel || "0")) +
+          (parseFloat(livingData.other || "0"))
+        ),
         overallRating: parseInt(experienceData.overallRating || "0"),
         accommodationType:
           accommodationData.type ||
