@@ -108,6 +108,17 @@ export default function Accommodation() {
     internetIncluded: "",
     laundryAccess: "",
     parkingAvailable: "",
+    easyToFind: "",
+    accommodationRating: "",
+    accommodationAddress: "",
+    accommodationType: "",
+    monthlyRent: "",
+    billsIncluded: "",
+    avgUtilityCost: "",
+    landlordName: "",
+    landlordEmail: "",
+    landlordPhone: "",
+    bookingLink: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -170,7 +181,7 @@ export default function Accommodation() {
           {} as Record<string, any>,
         );
 
-        setFormData(safeAccommodationData);
+        setFormData(safeAccommodationData as any);
       }
     }
   }, [experienceLoading, experienceData]); // Remove dependencies to prevent re-runs
@@ -263,6 +274,20 @@ export default function Accommodation() {
 
     setIsSubmitting(true);
     setSubmitError(null);
+    setFieldErrors({});
+
+    // Validation
+    const newErrors: Record<string, string> = {};
+    if (!formData.accommodationType) newErrors.accommodationType = "Required";
+    if (!formData.monthlyRent) newErrors.monthlyRent = "Required";
+    if (!formData.accommodationRating) newErrors.accommodationRating = "Required";
+    
+    if (Object.keys(newErrors).length > 0) {
+      setFieldErrors(newErrors);
+      setIsSubmitting(false);
+      toast.error("Please fill in all required fields.");
+      return;
+    }
 
     // Always save to localStorage first when navigating
     saveToLocalStorage();

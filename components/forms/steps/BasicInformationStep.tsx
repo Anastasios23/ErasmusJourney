@@ -134,10 +134,12 @@ export default function BasicInformationStep({
       "firstName",
       "lastName",
       "email",
+      "homeUniversity",
       "hostUniversity",
       "hostCountry",
       "hostCity",
       "exchangePeriod",
+      "currentYear",
     ];
 
     requiredFields.forEach((field) => {
@@ -286,6 +288,18 @@ export default function BasicInformationStep({
                 <EnhancedSelectItem value="PhD">PhD</EnhancedSelectItem>
               </EnhancedSelectContent>
             </EnhancedSelect>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="currentYear">Academic Year *</Label>
+            <EnhancedInput
+              id="currentYear"
+              placeholder="e.g. 2024-2025"
+              value={formData.currentYear}
+              onChange={(e) => handleInputChange("currentYear", e.target.value)}
+              error={errors.currentYear}
+              required
+            />
           </div>
 
           <div className="space-y-2">

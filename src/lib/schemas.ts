@@ -12,6 +12,7 @@ export const basicInformationRequiredSchema = z.object({
   levelOfStudy: z.enum(["bachelor", "master", "phd"], {
     errorMap: () => ({ message: "Please select a level of study" }),
   }),
+  currentYear: z.string().min(1, "Academic year is required"),
 
   hostUniversity: z.string().min(1, "Host university is required"),
   hostCountry: z.string().min(1, "Host country is required"),

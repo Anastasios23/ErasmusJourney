@@ -176,6 +176,16 @@ export default function ErasmusExperienceForm() {
   };
 
   const handleStepComplete = async (stepData: any) => {
+    // If it's basicInfo, map keys for backend compatibility
+    if (stepData.basicInfo) {
+      stepData.basicInfo = {
+        ...stepData.basicInfo,
+        homeUniversity: stepData.basicInfo.homeUniversity,
+        semester: stepData.basicInfo.exchangePeriod,
+        year: stepData.basicInfo.currentYear,
+      };
+    }
+    
     await saveFormData(stepData, currentStep);
 
     if (currentStep < FORM_STEPS.length) {

@@ -93,20 +93,21 @@ export default function CourseMatchingStep({
     }
 
     mappings.forEach((m) => {
+      // If a mapping exists, these fields are mandatory
       if (!m.homeCourseName.trim()) {
         newErrors[`${m.id}-homeCourseName`] = "Required";
         isValid = false;
       }
-      if (!m.homeCredits.trim()) {
-        newErrors[`${m.id}-homeCredits`] = "Required";
+      if (!m.homeCredits.trim() || isNaN(parseFloat(m.homeCredits))) {
+        newErrors[`${m.id}-homeCredits`] = "Required (number)";
         isValid = false;
       }
       if (!m.hostCourseName.trim()) {
         newErrors[`${m.id}-hostCourseName`] = "Required";
         isValid = false;
       }
-      if (!m.hostCredits.trim()) {
-        newErrors[`${m.id}-hostCredits`] = "Required";
+      if (!m.hostCredits.trim() || isNaN(parseFloat(m.hostCredits))) {
+        newErrors[`${m.id}-hostCredits`] = "Required (number)";
         isValid = false;
       }
     });

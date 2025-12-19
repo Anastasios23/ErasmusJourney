@@ -1,6 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+
+// Module-level deduplication tracker
+const globalPendingExperienceRequests = new Map<string, Promise<any>>();
+const globalExperienceCache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_DURATION = 10 * 1000; // 10 seconds cache for full experience data
 
 interface ErasmusExperienceData {
   id?: string;
@@ -59,90 +64,120 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    // For now, we'll just initialize with empty data since forms handle their own data loading
-    // This maintains compatibility while we transition to the unified system
-    try {
-      setLoading(true);
-      setError(null);
+    // Check if user is authenticated first
+    if (!session?.user?.id) {
+      console.log("No session found, skipping data fetch");
+      setLoading(false);
+      return;
+    }
 
-      // Check if user is authenticated first
-      if (!session?.user?.id) {
-        console.log("No session found, skipping data fetch");
+    const cacheKey = `experience_${session.user.id}`;
+    const now = Date.now();
+    
+    // Check cache
+    const cached = globalExperienceCache.get(cacheKey);
+    if (cached && now - cached.timestamp < CACHE_DURATION) {
+      setData(cached.data);
+      setLoading(false);
+      return;
+    }
+
+    // Check if a request is already in flight
+    if (globalPendingExperienceRequests.has(cacheKey)) {
+      try {
+        const data = await globalPendingExperienceRequests.get(cacheKey);
+        setData(data);
         setLoading(false);
-        return;
+      } catch (err) {
+        // Error already handled by the primary requester
       }
+      return;
+    }
 
-      // Try to get existing experience from the new API
-      const response = await fetch("/api/erasmus-experiences");
+    const requestPromise = (async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-      if (response.ok) {
-        const experiences = await response.json();
-        // Get the first experience (since we only allow one per user now)
-        if (experiences.length > 0) {
-          const experience = experiences[0];
-          setData({
-            id: experience.id,
-            currentStep: experience.currentStep || 1,
-            completedSteps: experience.completedSteps
-              ? JSON.parse(experience.completedSteps)
-              : [],
-            basicInfo: experience.basicInfo || {},
-            courses: experience.courses || [],
-            accommodation: experience.accommodation || {},
-            livingExpenses: experience.livingExpenses || {},
-            experience: experience.experience || {},
-            status: experience.status as any,
-            isComplete: experience.isComplete || false,
-            hasSubmitted: experience.status === "SUBMITTED",
-            lastSavedAt: experience.lastSavedAt,
-            submittedAt: experience.submittedAt,
-          });
-          return;
+        // Try to get existing experience from the new API
+        const response = await fetch("/api/erasmus-experiences");
+
+        if (response.ok) {
+          const experiences = await response.json();
+          // Get the first experience (since we only allow one per user now)
+          if (experiences.length > 0) {
+            const experience = experiences[0];
+            const mappedData: ErasmusExperienceData = {
+              id: experience.id,
+              currentStep: experience.currentStep || 1,
+              completedSteps: experience.completedSteps
+                ? JSON.parse(experience.completedSteps)
+                : [],
+              basicInfo: experience.basicInfo || {},
+              courses: experience.courses || [],
+              accommodation: experience.accommodation || {},
+              livingExpenses: experience.livingExpenses || {},
+              experience: experience.experience || {},
+              status: experience.status as any,
+              isComplete: experience.isComplete || false,
+              hasSubmitted: experience.status === "SUBMITTED",
+              lastSavedAt: experience.lastSavedAt,
+              submittedAt: experience.submittedAt,
+            };
+            
+            globalExperienceCache.set(cacheKey, { data: mappedData, timestamp: Date.now() });
+            return mappedData;
+          }
         }
-      }
 
-      // If no experience exists, create one
-      const createResponse = await fetch("/api/erasmus-experiences", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "create" }),
-      });
-
-      if (createResponse.ok) {
-        const newExperience = await createResponse.json();
-        setData({
-          id: newExperience.id,
-          currentStep: 1,
-          completedSteps: [],
-          basicInfo: {},
-          courses: [],
-          accommodation: {},
-          livingExpenses: {},
-          experience: {},
-          status: "DRAFT",
-          isComplete: false,
-          hasSubmitted: false,
+        // If no experience exists, create one
+        const createResponse = await fetch("/api/erasmus-experiences", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "create" }),
         });
-      } else {
-        const errorText = await createResponse.text();
-        console.error("Failed to create experience:", errorText);
-        throw new Error(
-          `Failed to create experience: ${createResponse.status}`,
-        );
-      }
-    } catch (err) {
-      console.error("Error fetching Erasmus experience:", err);
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to load data";
-      setError(errorMessage);
 
-      // Don't set data at all if we couldn't create/load it
-      // This will cause data?.id checks to properly fail
+        if (createResponse.ok) {
+          const newExperience = await createResponse.json();
+          const newData: ErasmusExperienceData = {
+            id: newExperience.id,
+            currentStep: 1,
+            completedSteps: [],
+            basicInfo: {},
+            courses: [],
+            accommodation: {},
+            livingExpenses: {},
+            experience: {},
+            status: "DRAFT",
+            isComplete: false,
+            hasSubmitted: false,
+          };
+          globalExperienceCache.set(cacheKey, { data: newData, timestamp: Date.now() });
+          return newData;
+        } else {
+          const errorText = await createResponse.text();
+          throw new Error(`Failed to create experience: ${createResponse.status}`);
+        }
+      } catch (err) {
+        console.error("Error fetching Erasmus experience:", err);
+        throw err;
+      }
+    })();
+
+    globalPendingExperienceRequests.set(cacheKey, requestPromise);
+
+    try {
+      const result = await requestPromise;
+      setData(result);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to load data";
+      setError(errorMessage);
       setData(null);
     } finally {
+      globalPendingExperienceRequests.delete(cacheKey);
       setLoading(false);
     }
-  }, [session]);
+  }, [session?.user?.id]);
 
   const saveProgress = useCallback(
     async (stepData: Partial<ErasmusExperienceData>): Promise<boolean> => {
@@ -362,9 +397,16 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
   }, [fetchData]);
 
   // Load data on mount and when session changes
+  const lastSessionId = useRef<string | null>(null);
+
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    const sessionId = session?.user?.id || "anonymous";
+
+    if (sessionId !== lastSessionId.current) {
+      fetchData();
+      lastSessionId.current = sessionId;
+    }
+  }, [session?.user?.id, fetchData]);
 
   return {
     data,

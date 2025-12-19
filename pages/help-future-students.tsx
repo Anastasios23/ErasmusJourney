@@ -290,6 +290,35 @@ export default function HelpFutureStudents() {
       return;
     }
 
+    // --- GLOBAL VALIDATION START ---
+    const basicInfoVal = experienceData?.basicInfo || {};
+    const coursesVal = experienceData?.courses || {};
+    const mappingsVal = coursesVal.mappings || [];
+    const accommodationVal = experienceData?.accommodation || {};
+    const livingExpensesVal = experienceData?.livingExpenses || {};
+
+    const globalErrors: string[] = [];
+    if (!basicInfoVal.homeUniversity || !basicInfoVal.hostUniversity || !basicInfoVal.semester) {
+      globalErrors.push("Basic Information is missing required fields.");
+    }
+    if (!Array.isArray(mappingsVal) || mappingsVal.length === 0) {
+      globalErrors.push("At least one course mapping is required.");
+    }
+    if (!accommodationVal.type || !accommodationVal.rent || !accommodationVal.rating) {
+      globalErrors.push("Accommodation details are incomplete.");
+    }
+    if (!livingExpensesVal.expenses) {
+      globalErrors.push("Living Expenses are missing.");
+    }
+
+    if (globalErrors.length > 0) {
+      setFormError(`Please complete all previous steps: ${globalErrors.join(" ")}`);
+      toast.error("Incomplete form data. please check previous steps.");
+      setIsSubmitting(false);
+      return;
+    }
+    // --- GLOBAL VALIDATION END ---
+
     setIsSubmitting(true);
 
     try {

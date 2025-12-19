@@ -96,35 +96,31 @@ export function FormProgressProvider({
   );
 
   // Sync with unified experience data
+  const lastExperienceDataId = useRef<string | null>(null);
+  const lastCompletedStepsStr = useRef<string>("");
+
   useEffect(() => {
     if (experienceData) {
-      // Sync completed steps
+      // 1. Sync completed steps with deep comparison
       if (experienceData.completedSteps && Array.isArray(experienceData.completedSteps)) {
         const steps = experienceData.completedSteps
           .map((num) => getStepName(num))
           .filter(Boolean) as FormStep[];
         
-        // Only update if different to avoid loops
-        setCompletedSteps((prev) => {
-          const prevSorted = [...prev].sort();
-          const newSorted = [...steps].sort();
-          if (JSON.stringify(prevSorted) !== JSON.stringify(newSorted)) {
-            return steps;
-          }
-          return prev;
-        });
-      }
-      
-      // Sync current step (optional, might want to keep local control)
-      if (experienceData.currentStep) {
-        const stepName = getStepName(experienceData.currentStep);
-        if (stepName) {
-           // We don't force current step here to allow navigation, 
-           // but we could if we wanted to resume where left off
-           // setCurrentStep(stepName);
+        const currentStepsStr = JSON.stringify([...steps].sort());
+        if (currentStepsStr !== lastCompletedStepsStr.current) {
+          setCompletedSteps(steps);
+          lastCompletedStepsStr.current = currentStepsStr;
         }
       }
-      setIsSynced(true);
+      
+      // 2. Mark as synced once we have data
+      if (experienceData.id && experienceData.id !== lastExperienceDataId.current) {
+        lastExperienceDataId.current = experienceData.id;
+        setIsSynced(true);
+      } else if (experienceData.id) {
+        setIsSynced(true);
+      }
     } else if (!experienceLoading) {
       // If not loading and no data, we are synced (empty state)
       setIsSynced(true);

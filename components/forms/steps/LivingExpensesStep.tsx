@@ -38,6 +38,8 @@ export default function LivingExpensesStep({
     ...data?.livingExpenses,
   });
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   useEffect(() => {
     if (data?.livingExpenses) {
       setFormData((prev) => ({ ...prev, ...data.livingExpenses }));
@@ -53,6 +55,18 @@ export default function LivingExpensesStep({
     updateFormData("livingExpenses", newData);
   };
 
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!formData.food) newErrors.food = "Required";
+    if (!formData.transport) newErrors.transport = "Required";
+    if (!formData.social) newErrors.social = "Required";
+    if (!formData.travel) newErrors.travel = "Required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const calculateTotal = () => {
     const { rent, food, transport, social, travel, other } = formData;
     return (
@@ -66,7 +80,12 @@ export default function LivingExpensesStep({
   };
 
   const handleContinue = () => {
-    onComplete({ livingExpenses: formData });
+    if (validate()) {
+      onComplete({ livingExpenses: formData });
+    } else {
+      const firstError = document.querySelector(".text-red-500");
+      firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   };
 
   return (
@@ -140,6 +159,7 @@ export default function LivingExpensesStep({
                 type="number"
                 value={formData.food}
                 onChange={(e) => handleInputChange("food", e.target.value)}
+                error={errors.food}
                 className="w-24"
                 placeholder="0"
               />
@@ -170,6 +190,7 @@ export default function LivingExpensesStep({
                 type="number"
                 value={formData.transport}
                 onChange={(e) => handleInputChange("transport", e.target.value)}
+                error={errors.transport}
                 className="w-24"
                 placeholder="0"
               />
@@ -200,6 +221,7 @@ export default function LivingExpensesStep({
                 type="number"
                 value={formData.social}
                 onChange={(e) => handleInputChange("social", e.target.value)}
+                error={errors.social}
                 className="w-24"
                 placeholder="0"
               />
@@ -230,6 +252,7 @@ export default function LivingExpensesStep({
                 type="number"
                 value={formData.travel}
                 onChange={(e) => handleInputChange("travel", e.target.value)}
+                error={errors.travel}
                 className="w-24"
                 placeholder="0"
               />

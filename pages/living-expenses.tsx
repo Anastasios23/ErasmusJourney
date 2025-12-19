@@ -133,7 +133,7 @@ export default function LivingExpenses() {
           // Ensure all expense values are strings, not undefined
           const safeExpenses = Object.entries(livingData.expenses).reduce(
             (acc, [key, value]) => {
-              acc[key as keyof ExpenseCategory] = value ?? "";
+              acc[key as keyof ExpenseCategory] = (value as string) ?? "";
               return acc;
             },
             {} as ExpenseCategory,
@@ -153,7 +153,7 @@ export default function LivingExpenses() {
           {} as Record<string, any>,
         );
 
-        setFormData(safeFormData);
+        setFormData(safeFormData as any);
       }
     }
   }, [experienceLoading, experienceData]);
@@ -267,6 +267,16 @@ export default function LivingExpenses() {
 
     setIsSubmitting(true);
     setSubmitError(null);
+
+    // Validation
+    const incomplete = !expenses.groceries || !expenses.transportation || !expenses.socialLife || !expenses.travel;
+    if (incomplete) {
+       const msg = "Please provide estimates for all core monthly expense categories.";
+       setSubmitError(msg);
+       toast.error(msg);
+       setIsSubmitting(false);
+       return;
+    }
 
     // Always save to localStorage first when navigating
     saveToLocalStorage();

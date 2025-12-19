@@ -198,7 +198,7 @@ export default function CourseMatching() {
           {} as Record<string, any>,
         );
 
-        setFormData((prev) => ({ ...prev, ...safeCourseData }));
+        setFormData((prev) => ({ ...prev, ...safeCourseData as any }));
 
         if (courseData.hostCourses) {
           setCourses(courseData.hostCourses);
@@ -462,14 +462,16 @@ export default function CourseMatching() {
 
     try {
       // Basic validation
-      if (!formData.hostCourseCount || !formData.homeCourseCount) {
-        setValidationErrors({
-          courseCount:
-            "Please specify the number of courses for both host and home university",
-        });
-        setSubmitError("Please fill in all required fields");
-        setIsSubmitting(false);
-        return;
+      // Course content validation
+      if (courses.some(c => !c.name || !c.ects) || equivalentCourses.some(e => !e.name || !e.ects)) {
+         setSubmitError("Please provide names and ECTS for all courses.");
+         toast({
+           variant: "destructive",
+           title: "Incomplete Courses",
+           description: "Please provide names and ECTS for all courses.",
+         });
+         setIsSubmitting(false);
+         return;
       }
 
       // Create mappings array for backend validation

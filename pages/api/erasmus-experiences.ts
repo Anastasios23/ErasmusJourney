@@ -146,11 +146,11 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
       );
 
       if (existingExperience) {
-        console.log(`Found existing experience: ${existingExperience!.id}, resetting to DRAFT`);
+        console.log(`Found existing experience: ${(existingExperience as any).id}, resetting to DRAFT`);
         // Reset the existing experience to draft state
         const updatedExperience = await retryDatabaseOperation(() =>
           prisma.erasmusExperience.update({
-            where: { id: existingExperience!.id },
+            where: { id: (existingExperience as any).id },
             data: {
               status: "DRAFT",
               isComplete: false,
@@ -188,7 +188,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
         })
       );
 
-      console.log(`Successfully created experience: ${newExperience.id}`);
+      console.log(`Successfully created experience: ${(newExperience as any).id}`);
       return res.status(201).json(newExperience);
     } catch (error) {
       console.error("Error in handlePost (create):", error);
@@ -295,11 +295,11 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       submissionData.basicInfo = basicInfo;
 
       // Extract top-level fields for querying (only fields that exist in form)
-      if (basicInfo.hostCity) {
-        submissionData.hostCity = basicInfo.hostCity;
+      if ((basicInfo as any).hostCity) {
+        (submissionData as any).hostCity = (basicInfo as any).hostCity;
       }
-      if (basicInfo.hostCountry) {
-        submissionData.hostCountry = basicInfo.hostCountry;
+      if ((basicInfo as any).hostCountry) {
+        (submissionData as any).hostCountry = (basicInfo as any).hostCountry;
       }
     }
 
@@ -330,6 +330,14 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     if (!Array.isArray(mappingsVal) || mappingsVal.length === 0) {
       console.log("[API] Course Validation Failed. No mappings.");
       errors.push("At least one course mapping is required.");
+    } else {
+      // Check if mappings are valid
+      const incompleteMappings = mappingsVal.some(
+        (m: any) => !m.homeName?.trim() || !m.hostName?.trim()
+      );
+      if (incompleteMappings) {
+        errors.push("All course mappings must have both home and host course names.");
+      }
     }
 
     // 3. Accommodation
@@ -349,8 +357,15 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
     // 4. Living Expenses
     const livingExpensesVal = submissionData.livingExpenses || {};
+    const expenses = livingExpensesVal.expenses || {};
+    
     if (!livingExpensesVal.expenses) {
       errors.push("Living Expenses are incomplete.");
+    } else {
+       // Check for core expenses (should be present and ideally numbers)
+       if (expenses.groceries === undefined || expenses.transportation === undefined) {
+         errors.push("Monthly expense estimates are required.");
+       }
     }
 
     if (errors.length > 0) {
@@ -429,8 +444,8 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     );
 
     // 3. Update City Statistics (Fire and forget)
-    if (updatedExperience.hostCity && updatedExperience.hostCountry) {
-      updateCityStatistics(updatedExperience.hostCity, updatedExperience.hostCountry).catch(err => 
+    if ((updatedExperience as any).hostCity && (updatedExperience as any).hostCountry) {
+      updateCityStatistics((updatedExperience as any).hostCity, (updatedExperience as any).hostCountry).catch(err => 
         console.error("Failed to update city stats:", err)
       );
     }
@@ -448,11 +463,11 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       const basicInfo = updateData.basicInfo;
 
       // Extract hostCity and hostCountry to top level for querying
-      if (basicInfo.hostCity) {
-        updateFields.hostCity = basicInfo.hostCity;
+      if ((basicInfo as any).hostCity) {
+        updateFields.hostCity = (basicInfo as any).hostCity;
       }
-      if (basicInfo.hostCountry) {
-        updateFields.hostCountry = basicInfo.hostCountry;
+      if ((basicInfo as any).hostCountry) {
+        updateFields.hostCountry = (basicInfo as any).hostCountry;
       }
     }
 

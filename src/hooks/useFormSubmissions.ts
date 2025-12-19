@@ -10,6 +10,11 @@ import { apiService } from "../services/api";
 import { FormType, FormStatus } from "../types/forms";
 import { livingExpensesSchema } from "../lib/schemas";
 
+// Module-level cache to track in-flight requests across all hook instances
+const globalPendingRequests = new Map<string, Promise<any>>();
+const globalCache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_DURATION = 30 * 1000; // 30 seconds
+
 interface FormSubmission {
   id: string;
   userId: string;
@@ -76,36 +81,42 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
 
   const fetchWithCache = useCallback(async (url: string) => {
     const now = Date.now();
-    const cached = apiCache.current.get(url);
+    const cached = globalCache.get(url);
 
     // Return cached data if still valid
     if (cached && now - cached.timestamp < CACHE_DURATION) {
       return cached.data;
     }
 
-    // Return pending request if one exists
-    if (pendingRequests.current.has(url)) {
-      return pendingRequests.current.get(url);
+    // Return pending request if one exists (deduplication)
+    if (globalPendingRequests.has(url)) {
+      return globalPendingRequests.get(url);
     }
 
     // Make new request
     const requestPromise = fetch(url)
-      .then((res) => res.json())
+      .then(async (res) => {
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`API Error: ${res.status} - ${errorText}`);
+        }
+        return res.json();
+      })
       .then((data) => {
         // Cache the result
-        apiCache.current.set(url, { data, timestamp: now });
+        globalCache.set(url, { data, timestamp: now });
         // Remove from pending requests
-        pendingRequests.current.delete(url);
+        globalPendingRequests.delete(url);
         return data;
       })
       .catch((error) => {
         // Remove from pending requests on error
-        pendingRequests.current.delete(url);
+        globalPendingRequests.delete(url);
         throw error;
       });
 
     // Store pending request
-    pendingRequests.current.set(url, requestPromise);
+    globalPendingRequests.set(url, requestPromise);
 
     return requestPromise;
   }, []);
@@ -409,12 +420,18 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     await fetchSubmissions();
   };
 
+  // Only fetch submissions once we know the authentication status
+  // and only if the session ID has actually changed
+  const lastSessionId = useRef<string | null>(null);
+
   useEffect(() => {
-    // Only fetch submissions once we know the authentication status
-    if (status !== "loading") {
+    const sessionId = session?.user?.email || "anonymous";
+
+    if (status !== "loading" && sessionId !== lastSessionId.current) {
       fetchSubmissions();
+      lastSessionId.current = sessionId;
     }
-  }, [session, status]);
+  }, [session?.user?.email, status]);
 
   const getBasicInfoId = () => {
     return apiService.sessionManager
