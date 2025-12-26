@@ -148,7 +148,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
         if (!userByEmail) {
           // Create the user since they authenticated via OAuth but don't exist in DB
           console.log(`Creating user from session: ${userEmail}`);
-          const newUser = await retryDatabaseOperation(() =>
+          const newUser = (await retryDatabaseOperation(() =>
             prisma.users.create({
               data: {
                 id: userId,
@@ -161,13 +161,14 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
                 role: "USER",
               },
             }),
-          );
+          )) as { id: string };
           console.log(`Created user: ${newUser.id}`);
           userExists = { id: newUser.id };
         } else {
           // User exists by email but with different ID - update session won't help here
+          const existingUser = userByEmail as { id: string };
           console.error(
-            `User exists with different ID. Session ID: ${userId}, DB ID: ${userByEmail.id}`,
+            `User exists with different ID. Session ID: ${userId}, DB ID: ${existingUser.id}`,
           );
           return res.status(409).json({
             error: "Session mismatch",
