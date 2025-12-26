@@ -9,7 +9,6 @@ import {
 } from "react";
 import { useSession } from "next-auth/react";
 import { useErasmusExperience } from "../hooks/useErasmusExperience";
-import { MOCK_SESSION_USER } from "../utils/mockSession";
 
 type FormStep =
   | "basic-info"
@@ -62,13 +61,15 @@ export function FormProgressProvider({
 }: {
   children: React.ReactNode;
 }) {
-  // AUTHENTICATION DISABLED - Comment out to re-enable
-  // const { data: session } = useSession();
-  const session = MOCK_SESSION_USER;
-  
+  const { data: session } = useSession();
+
   // Use the unified experience hook
-  const { data: experienceData, saveProgress, loading: experienceLoading } = useErasmusExperience();
-  
+  const {
+    data: experienceData,
+    saveProgress,
+    loading: experienceLoading,
+  } = useErasmusExperience();
+
   const [completedSteps, setCompletedSteps] = useState<FormStep[]>([]);
   const [currentStep, setCurrentStep] = useState<FormStep>("basic-info");
   // Add cache for form data
@@ -102,20 +103,26 @@ export function FormProgressProvider({
   useEffect(() => {
     if (experienceData) {
       // 1. Sync completed steps with deep comparison
-      if (experienceData.completedSteps && Array.isArray(experienceData.completedSteps)) {
+      if (
+        experienceData.completedSteps &&
+        Array.isArray(experienceData.completedSteps)
+      ) {
         const steps = experienceData.completedSteps
           .map((num) => getStepName(num))
           .filter(Boolean) as FormStep[];
-        
+
         const currentStepsStr = JSON.stringify([...steps].sort());
         if (currentStepsStr !== lastCompletedStepsStr.current) {
           setCompletedSteps(steps);
           lastCompletedStepsStr.current = currentStepsStr;
         }
       }
-      
+
       // 2. Mark as synced once we have data
-      if (experienceData.id && experienceData.id !== lastExperienceDataId.current) {
+      if (
+        experienceData.id &&
+        experienceData.id !== lastExperienceDataId.current
+      ) {
         lastExperienceDataId.current = experienceData.id;
         setIsSynced(true);
       } else if (experienceData.id) {
@@ -151,48 +158,59 @@ export function FormProgressProvider({
     };
   }, []);
 
-  const isStepCompleted = useCallback((step: FormStep) => completedSteps.includes(step), [completedSteps]);
+  const isStepCompleted = useCallback(
+    (step: FormStep) => completedSteps.includes(step),
+    [completedSteps],
+  );
 
-  const canAccessStep = useCallback((step: FormStep) => {
-    const stepIndex = stepOrder.indexOf(step);
-    const previousStep = stepOrder[stepIndex - 1];
+  const canAccessStep = useCallback(
+    (step: FormStep) => {
+      const stepIndex = stepOrder.indexOf(step);
+      const previousStep = stepOrder[stepIndex - 1];
 
-    // First step is always accessible
-    if (stepIndex === 0) return true;
+      // First step is always accessible
+      if (stepIndex === 0) return true;
 
-    // Other steps require previous step completion
-    return !previousStep || isStepCompleted(previousStep);
-  }, [isStepCompleted]);
+      // Other steps require previous step completion
+      return !previousStep || isStepCompleted(previousStep);
+    },
+    [isStepCompleted],
+  );
 
-  const markStepCompleted = useCallback(async (step: FormStep) => {
-    // Update local state
-    let newCompletedSteps: FormStep[] = [];
-    setCompletedSteps((prev) => {
-      if (prev.includes(step)) {
-        newCompletedSteps = prev;
-        return prev;
-      }
-      newCompletedSteps = [...prev, step];
-      return newCompletedSteps;
-    });
-    
-    // Save to backend
-    if (saveProgress && experienceData?.id) {
-      const stepNumber = getStepNumber(step);
-      const nextStepNumber = stepNumber + 1;
-      
-      // Calculate new completed steps numbers
-      const currentCompletedNumbers = completedSteps.map(s => getStepNumber(s));
-      if (!currentCompletedNumbers.includes(stepNumber)) {
-        currentCompletedNumbers.push(stepNumber);
-      }
-      
-      await saveProgress({
-        completedSteps: currentCompletedNumbers,
-        currentStep: nextStepNumber <= 5 ? nextStepNumber : 5
+  const markStepCompleted = useCallback(
+    async (step: FormStep) => {
+      // Update local state
+      let newCompletedSteps: FormStep[] = [];
+      setCompletedSteps((prev) => {
+        if (prev.includes(step)) {
+          newCompletedSteps = prev;
+          return prev;
+        }
+        newCompletedSteps = [...prev, step];
+        return newCompletedSteps;
       });
-    }
-  }, [saveProgress, experienceData?.id, completedSteps]);
+
+      // Save to backend
+      if (saveProgress && experienceData?.id) {
+        const stepNumber = getStepNumber(step);
+        const nextStepNumber = stepNumber + 1;
+
+        // Calculate new completed steps numbers
+        const currentCompletedNumbers = completedSteps.map((s) =>
+          getStepNumber(s),
+        );
+        if (!currentCompletedNumbers.includes(stepNumber)) {
+          currentCompletedNumbers.push(stepNumber);
+        }
+
+        await saveProgress({
+          completedSteps: currentCompletedNumbers,
+          currentStep: nextStepNumber <= 5 ? nextStepNumber : 5,
+        });
+      }
+    },
+    [saveProgress, experienceData?.id, completedSteps],
+  );
 
   const currentStepNumber = getStepNumber(currentStep);
   const completedStepNumbers = completedSteps.map((step) =>

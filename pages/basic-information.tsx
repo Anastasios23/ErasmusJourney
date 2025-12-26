@@ -181,8 +181,6 @@ export default function BasicInformation() {
       experienceData
     ) {
       // Load from experience data (single source of truth)
-      console.log("Loading experience data:", experienceData);
-
       isLoadingDraft.current = true;
 
       // Ensure all values are strings, not undefined
@@ -209,23 +207,6 @@ export default function BasicInformation() {
       draftLoaded.current = true;
     }
   }, [sessionStatus, experienceLoading, experienceData]);
-
-  // Debug session state
-  useEffect(() => {
-    console.log("SESSION STATUS:", sessionStatus);
-  }, [sessionStatus]);
-
-  // Debug form data changes
-  useEffect(() => {
-    console.log("FORM DATA CHANGED:", formData);
-    console.log("Key fields:");
-    console.log("- firstName:", formData.firstName);
-    console.log("- lastName:", formData.lastName);
-    console.log("- email:", formData.email);
-    console.log("- universityInCyprus:", formData.universityInCyprus);
-    console.log("- departmentInCyprus:", formData.departmentInCyprus);
-    console.log("- levelOfStudy:", formData.levelOfStudy);
-  }, [formData]);
 
   // Save to localStorage helper function - defined early for use in useEffect
   const saveToLocalStorage = useCallback((data: any) => {
@@ -383,27 +364,6 @@ export default function BasicInformation() {
             ?.departments || []
         : [];
 
-  // Debug available departments
-  useEffect(() => {
-    if (formData.universityInCyprus) {
-      console.log(
-        "AVAILABLE DEPARTMENTS for",
-        formData.universityInCyprus,
-        ":",
-        availableDepartments,
-      );
-      console.log("LOADED DEPARTMENT:", formData.departmentInCyprus);
-      console.log(
-        "DEPARTMENT IS AVAILABLE:",
-        availableDepartments.includes(formData.departmentInCyprus),
-      );
-    }
-  }, [
-    formData.universityInCyprus,
-    formData.departmentInCyprus,
-    availableDepartments,
-  ]);
-
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => {
       const newData = { ...prev, [field]: value };
@@ -550,37 +510,31 @@ export default function BasicInformation() {
     }
   };
 
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (sessionStatus === "unauthenticated") {
+      router.replace(`/login?callbackUrl=${encodeURIComponent(router.asPath)}`);
+    }
+  }, [sessionStatus, router]);
+
   // Determine what to render based on session and loading status
   let content;
 
-  // AUTHENTICATION DISABLED - Comment out to re-enable
-  // if (sessionStatus === "loading" || experienceLoading) {
-  //   content = (
-  //     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-  //       <div className="text-center">
-  //         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-  //         <p>
-  //           {sessionStatus === "loading"
-  //             ? "Checking authentication..."
-  //             : "Loading draft data..."}
-  //         </p>
-  //       </div>
-  //     </div>
-  //   );
-  // } else if (sessionStatus !== "authenticated") {
-
-  if (experienceLoading) {
+  if (sessionStatus === "loading" || experienceLoading) {
     content = (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p>Loading draft data...</p>
+          <p>
+            {sessionStatus === "loading"
+              ? "Checking authentication..."
+              : "Loading draft data..."}
+          </p>
         </div>
       </div>
     );
-  } else if (false) {
-    // Changed condition to disable auth check
-    // This case should ideally trigger a redirect via useEffect, but provides a fallback UI
+  } else if (sessionStatus !== "authenticated") {
+    // Show login prompt while redirect happens
     content = (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Header />

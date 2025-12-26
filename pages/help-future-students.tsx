@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -50,8 +51,17 @@ import { useFormProgress } from "../src/context/FormProgressContext";
 import { StepGuard } from "../components/forms/StepGuard";
 
 export default function HelpFutureStudents() {
+  const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
   const { stats, loading } = useCommunityStats();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (sessionStatus === "unauthenticated") {
+      router.replace(`/login?callbackUrl=${encodeURIComponent(router.asPath)}`);
+    }
+  }, [sessionStatus, router]);
+
   const {
     data: experienceData,
     saveProgress,
@@ -298,13 +308,21 @@ export default function HelpFutureStudents() {
     const livingExpensesVal = experienceData?.livingExpenses || {};
 
     const globalErrors: string[] = [];
-    if (!basicInfoVal.homeUniversity || !basicInfoVal.hostUniversity || !basicInfoVal.semester) {
+    if (
+      !basicInfoVal.homeUniversity ||
+      !basicInfoVal.hostUniversity ||
+      !basicInfoVal.semester
+    ) {
       globalErrors.push("Basic Information is missing required fields.");
     }
     if (!Array.isArray(mappingsVal) || mappingsVal.length === 0) {
       globalErrors.push("At least one course mapping is required.");
     }
-    if (!accommodationVal.type || !accommodationVal.rent || !accommodationVal.rating) {
+    if (
+      !accommodationVal.type ||
+      !accommodationVal.rent ||
+      !accommodationVal.rating
+    ) {
       globalErrors.push("Accommodation details are incomplete.");
     }
     if (!livingExpensesVal.expenses) {
@@ -312,7 +330,9 @@ export default function HelpFutureStudents() {
     }
 
     if (globalErrors.length > 0) {
-      setFormError(`Please complete all previous steps: ${globalErrors.join(" ")}`);
+      setFormError(
+        `Please complete all previous steps: ${globalErrors.join(" ")}`,
+      );
       toast.error("Incomplete form data. please check previous steps.");
       setIsSubmitting(false);
       return;

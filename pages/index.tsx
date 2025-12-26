@@ -803,51 +803,40 @@ export const getServerSideProps: GetServerSideProps<
 
     const totalUniversities = await prisma.universities.count();
 
-    // Fetch stories from form_submissions for now (legacy compatibility)
-    const storySubmissions = await prisma.form_submissions.findMany({
+    // Fetch stories from ErasmusExperience (new unified model)
+    const storySubmissions = await prisma.erasmusExperience.findMany({
       where: {
-        OR: [
-          { type: "EXPERIENCE", status: { in: ["SUBMITTED", "PUBLISHED"] } },
-          { type: "STORY", status: { in: ["SUBMITTED", "PUBLISHED"] } },
-        ],
+        status: { in: ["submitted", "approved", "published"] },
+        helpFutureStudents: { not: null },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { updatedAt: "desc" },
       take: 3,
+      include: {
+        user: {
+          select: { firstName: true },
+        },
+      },
     });
 
-    const latestStories = await Promise.all(
-      storySubmissions.map(async (submission) => {
-        const userData = await prisma.user.findUnique({
-          where: { id: submission.userId },
-          select: { firstName: true },
-        });
+    const latestStories = storySubmissions.map((submission) => {
+      const helpData = submission.helpFutureStudents as any;
+      const basicInfo = submission.basicInformation as any;
 
-        const basicInfo = await prisma.formSubmission.findFirst({
-          where: {
-            userId: submission.userId,
-            type: "BASIC_INFO",
-            status: "SUBMITTED",
-          },
-        });
-
-        return {
-          id: submission.id,
-          studentName:
-            (submission.data as any).nickname ||
-            userData?.firstName ||
-            "Student",
-          university: (basicInfo?.data as any)?.hostUniversity || "University",
-          city: (basicInfo?.data as any)?.hostCity || "City",
-          country: (basicInfo?.data as any)?.hostCountry || "Country",
-          story:
-            (submission.data as any).personalExperience ||
-            (submission.data as any).adviceForFutureStudents ||
-            "",
-          createdAt: submission.createdAt.toISOString(),
-          likes: 0,
-        };
-      }),
-    );
+      return {
+        id: submission.id,
+        studentName:
+          helpData?.nickname || submission.user?.firstName || "Student",
+        university: basicInfo?.hostUniversity || "University",
+        city: basicInfo?.hostCity || submission.hostCity || "City",
+        country: basicInfo?.hostCountry || submission.hostCountry || "Country",
+        story:
+          helpData?.personalExperience ||
+          helpData?.adviceForFutureStudents ||
+          "",
+        createdAt: submission.createdAt.toISOString(),
+        likes: 0,
+      };
+    });
 
     return {
       props: {

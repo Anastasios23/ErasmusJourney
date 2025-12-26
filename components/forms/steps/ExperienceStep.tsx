@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useFormContext } from "../FormProvider";
 import { EnhancedTextarea } from "@/components/ui/enhanced-textarea";
 import { Label } from "@/components/ui/label";
+import { PhotoUpload } from "@/components/ui/photo-upload";
 import { Star, ThumbsUp, ThumbsDown, Lightbulb, Camera } from "lucide-react";
 
 interface ExperienceData {
@@ -11,6 +12,7 @@ interface ExperienceData {
   academicAdvice: string;
   socialAdvice: string;
   generalTips: string;
+  photos: string[];
 }
 
 interface ExperienceStepProps {
@@ -32,6 +34,7 @@ export default function ExperienceStep({
     academicAdvice: "",
     socialAdvice: "",
     generalTips: "",
+    photos: [],
     ...data?.experience,
   });
 
@@ -55,8 +58,9 @@ export default function ExperienceStep({
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    
-    if (!formData.overallRating) newErrors.overallRating = "Please rate your overall experience";
+
+    if (!formData.overallRating)
+      newErrors.overallRating = "Please rate your overall experience";
     if (!formData.bestExperience) newErrors.bestExperience = "Required";
     if (!formData.generalTips) newErrors.generalTips = "Required";
 
@@ -110,7 +114,9 @@ export default function ExperienceStep({
               ))}
             </div>
             {errors.overallRating && (
-              <p className="text-sm text-red-500 mt-1">{errors.overallRating}</p>
+              <p className="text-sm text-red-500 mt-1">
+                {errors.overallRating}
+              </p>
             )}
           </div>
 
@@ -118,13 +124,17 @@ export default function ExperienceStep({
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-green-600 mb-1">
                 <ThumbsUp className="w-4 h-4" />
-                <Label htmlFor="best" className="text-green-700">Best Experience *</Label>
+                <Label htmlFor="best" className="text-green-700">
+                  Best Experience *
+                </Label>
               </div>
               <EnhancedTextarea
                 id="best"
                 placeholder="What was the highlight of your exchange?"
                 value={formData.bestExperience}
-                onChange={(e) => handleInputChange("bestExperience", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("bestExperience", e.target.value)
+                }
                 rows={4}
                 error={errors.bestExperience}
                 className="bg-green-50/30 border-green-100 focus:border-green-300 focus:ring-green-200"
@@ -134,13 +144,17 @@ export default function ExperienceStep({
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-red-600 mb-1">
                 <ThumbsDown className="w-4 h-4" />
-                <Label htmlFor="worst" className="text-red-700">Challenges Faced</Label>
+                <Label htmlFor="worst" className="text-red-700">
+                  Challenges Faced
+                </Label>
               </div>
               <EnhancedTextarea
                 id="worst"
                 placeholder="What difficulties did you encounter? How did you overcome them?"
                 value={formData.worstExperience}
-                onChange={(e) => handleInputChange("worstExperience", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("worstExperience", e.target.value)
+                }
                 rows={4}
                 className="bg-red-50/30 border-red-100 focus:border-red-300 focus:ring-red-200"
               />
@@ -185,7 +199,9 @@ export default function ExperienceStep({
                 id="academic"
                 placeholder="Tips on courses, exams, professors, or studying..."
                 value={formData.academicAdvice}
-                onChange={(e) => handleInputChange("academicAdvice", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("academicAdvice", e.target.value)
+                }
                 rows={3}
               />
             </div>
@@ -196,7 +212,9 @@ export default function ExperienceStep({
                 id="social"
                 placeholder="Tips on meeting people, nightlife, clubs, or events..."
                 value={formData.socialAdvice}
-                onChange={(e) => handleInputChange("socialAdvice", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("socialAdvice", e.target.value)
+                }
                 rows={3}
               />
             </div>
@@ -204,17 +222,26 @@ export default function ExperienceStep({
         </div>
       </div>
 
-      {/* Photo Upload Placeholder */}
-      <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm border-dashed">
-        <div className="flex flex-col items-center justify-center py-8 text-center">
-          <div className="p-4 bg-gray-50 rounded-full mb-4">
-            <Camera className="w-8 h-8 text-gray-400" />
+      {/* Photo Upload */}
+      <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="h-8 w-1 bg-pink-500 rounded-full"></div>
+          <div>
+            <h3 className="text-xl font-semibold text-gray-900">
+              Share Your Photos
+            </h3>
+            <p className="text-sm text-gray-500">
+              Upload photos from your Erasmus journey to inspire future
+              students.
+            </p>
           </div>
-          <h4 className="text-lg font-medium text-gray-900">Share Your Photos</h4>
-          <p className="text-sm text-gray-500 max-w-md mt-2">
-            Photo upload functionality is coming soon. You'll be able to share memories from your trip here.
-          </p>
         </div>
+
+        <PhotoUpload
+          photos={formData.photos || []}
+          onPhotosChange={(photos) => handleInputChange("photos", photos)}
+          maxPhotos={5}
+        />
       </div>
 
       <div className="flex justify-between items-center pt-6 border-t border-gray-100">

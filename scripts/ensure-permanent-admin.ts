@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { randomUUID } from "crypto";
 
 const prisma = new PrismaClient();
 
@@ -22,8 +23,8 @@ async function ensurePermanentAdmin() {
   console.log("🔐 Ensuring permanent admin user exists...");
 
   try {
-    // Check if admin user exists
-    let adminUser = await prisma.user.findUnique({
+    // Check if admin user exists (using 'users' model, not 'user')
+    let adminUser = await prisma.users.findUnique({
       where: { email: PERMANENT_ADMIN.email },
     });
 
@@ -33,7 +34,7 @@ async function ensurePermanentAdmin() {
       // Ensure the user has admin role (in case schema changed)
       if (adminUser.role !== "ADMIN") {
         console.log("🔄 Updating user role to ADMIN...");
-        adminUser = await prisma.user.update({
+        adminUser = await prisma.users.update({
           where: { id: adminUser.id },
           data: { role: "ADMIN" },
         });
@@ -45,11 +46,20 @@ async function ensurePermanentAdmin() {
 
       const hashedPassword = await bcrypt.hash(PERMANENT_ADMIN.password, 12);
 
-      adminUser = await prisma.user.create({
+      adminUser = await prisma.users.create({
         data: {
-          ...PERMANENT_ADMIN,
+          id: randomUUID(),
+          email: PERMANENT_ADMIN.email,
           password: hashedPassword,
+          firstName: PERMANENT_ADMIN.firstName,
+          lastName: PERMANENT_ADMIN.lastName,
+          role: PERMANENT_ADMIN.role,
+          homeCountry: PERMANENT_ADMIN.homeCountry,
+          homeCity: PERMANENT_ADMIN.homeCity,
+          nationality: PERMANENT_ADMIN.nationality,
           emailVerified: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
       });
 

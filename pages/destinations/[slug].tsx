@@ -37,6 +37,7 @@ import { CityAggregatedData } from "../../src/types/cityData";
 import { StatBar } from "../../src/components/ui/stat-bar";
 import { InsightBadge } from "../../src/components/ui/insight-badge";
 import { prisma } from "../../lib/prisma";
+import { CourseMatchingInsights } from "../../src/components/CourseMatchingInsights";
 
 interface StudentExperience {
   id: string;
@@ -326,6 +327,9 @@ export default function DestinationDetail({
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Course Matching Insights */}
+              <CourseMatchingInsights city={city} country={country} />
             </div>
 
             {/* Right Column - Quick Info */}
