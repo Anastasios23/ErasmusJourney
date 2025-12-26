@@ -807,31 +807,31 @@ export const getServerSideProps: GetServerSideProps<
     const storySubmissions = await prisma.erasmusExperience.findMany({
       where: {
         status: { in: ["submitted", "approved", "published"] },
-        helpFutureStudents: { not: null },
+        experience: { not: null },
       },
       orderBy: { updatedAt: "desc" },
       take: 3,
       include: {
-        user: {
+        users: {
           select: { firstName: true },
         },
       },
     });
 
     const latestStories = storySubmissions.map((submission) => {
-      const helpData = submission.helpFutureStudents as any;
-      const basicInfo = submission.basicInformation as any;
+      const experienceData = submission.experience as any;
+      const basicInfo = submission.basicInfo as any;
 
       return {
         id: submission.id,
         studentName:
-          helpData?.nickname || submission.user?.firstName || "Student",
+          experienceData?.nickname || submission.users?.firstName || "Student",
         university: basicInfo?.hostUniversity || "University",
         city: basicInfo?.hostCity || submission.hostCity || "City",
         country: basicInfo?.hostCountry || submission.hostCountry || "Country",
         story:
-          helpData?.personalExperience ||
-          helpData?.adviceForFutureStudents ||
+          experienceData?.personalExperience ||
+          experienceData?.adviceForFutureStudents ||
           "",
         createdAt: submission.createdAt.toISOString(),
         likes: 0,
