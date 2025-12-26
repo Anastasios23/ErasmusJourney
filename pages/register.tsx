@@ -27,13 +27,29 @@ import {
   MailCheck,
   CircleCheck,
   Loader2,
+  GraduationCap,
+  User,
+  Mail,
+  Lock,
+  ArrowLeft,
+  Sparkles,
 } from "lucide-react";
 import { registerUser } from "../src/services/api";
 import { z, ZodError } from "zod";
 import { handleApiError } from "../src/utils/apiErrorHandler";
 import PasswordStrength from "../src/components/PasswordStrength";
 import { cn } from "../src/lib/utils";
-import BackButton from "../components/BackButton";
+
+// Floating orbs component
+function FloatingOrbs() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-br from-emerald-500/30 to-teal-500/30 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-10 left-10 w-96 h-96 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-amber-500/10 to-orange-500/10 rounded-full blur-3xl" />
+    </div>
+  );
+}
 
 const passwordSchema = z
   .string()
@@ -86,7 +102,6 @@ export default function Register() {
   const [passwordStrength, setPasswordStrength] = useState(0);
 
   useEffect(() => {
-    // Redirect if already authenticated
     if (status === "authenticated" && session) {
       router.push("/dashboard");
     }
@@ -115,7 +130,7 @@ export default function Register() {
 
       if (result.success) {
         setSuccessMessage(result.message);
-        setEmailVerificationSent(true); // Show verification message
+        setEmailVerificationSent(true);
       } else {
         setError(result.message || "An unknown error occurred.");
       }
@@ -138,22 +153,22 @@ export default function Register() {
   };
 
   const handleGoogleSignUp = async () => {
-    // This will redirect the user to the Google sign-in page
-    // and then back to the dashboard upon successful authentication.
     await signIn("google", { callbackUrl: "/dashboard" });
   };
 
-  // Show loading state while checking session
   if (status === "loading") {
     return (
       <>
         <Head>
           <title>Register - Erasmus Journey Platform</title>
         </Head>
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Checking authentication...</p>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50">
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 animate-pulse" />
+              <Loader2 className="absolute inset-0 m-auto h-8 w-8 animate-spin text-white" />
+            </div>
+            <p className="text-gray-500 font-medium">Checking authentication...</p>
           </div>
         </div>
       </>
@@ -162,42 +177,54 @@ export default function Register() {
 
   if (emailVerificationSent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
-        <Card className="w-full max-w-md shadow-lg">
-          <CardHeader className="text-center">
-            <MailCheck className="mx-auto h-12 w-12 text-green-500" />
-            <CardTitle className="mt-4 text-2xl font-bold">
-              Verify Your Email
-            </CardTitle>
-            <CardDescription className="mt-2 text-gray-600">
-              We've sent a verification link to{" "}
-              <span className="font-semibold text-gray-800">
-                {formData.email}
-              </span>
-              . Please check your inbox and click the link to complete your
-              registration.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-center text-gray-500">
-              Didn't receive the email? Check your spam folder or{" "}
-              <button
-                // Add resend logic here if available
-                className="text-blue-600 hover:underline"
-              >
-                request a new link
-              </button>
-              .
-            </p>
-          </CardContent>
-          <CardFooter>
-            <Link href="/login" className="w-full">
-              <Button variant="outline" className="w-full">
-                Back to Login
-              </Button>
-            </Link>
-          </CardFooter>
-        </Card>
+      <>
+        <Head>
+          <title>Verify Email - Erasmus Journey Platform</title>
+        </Head>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-4 relative overflow-hidden">
+          <FloatingOrbs />
+          <div className="relative w-full max-w-md z-10">
+            <div className="backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border border-white/20 dark:border-gray-700/30 rounded-3xl shadow-2xl shadow-emerald-500/10 overflow-hidden">
+              <div className="relative bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 px-8 py-12 text-center overflow-hidden">
+                <div className="absolute inset-0 opacity-30">
+                  <div className="absolute top-0 left-0 w-40 h-40 bg-white/20 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
+                  <div className="absolute bottom-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl translate-x-1/2 translate-y-1/2" />
+                </div>
+                <div className="relative">
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl mb-4">
+                    <MailCheck className="w-10 h-10 text-white" />
+                  </div>
+                  <h1 className="text-2xl font-bold text-white mb-2">Verify Your Email</h1>
+                  <p className="text-white/80 text-sm">Almost there!</p>
+                </div>
+              </div>
+              <div className="p-8 text-center">
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                  We've sent a verification link to{" "}
+                  <span className="font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                    {formData.email}
+                  </span>
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                  Please check your inbox and click the link to complete your registration.
+                </p>
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200/50 dark:border-amber-700/30 rounded-2xl p-4 mb-6">
+                  <p className="text-sm text-amber-800 dark:text-amber-300">
+                    💡 Didn't receive the email? Check your spam folder or request a new link.
+                  </p>
+                </div>
+                <Link href="/login">
+                  <Button variant="outline" className="w-full rounded-xl border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30">
+                    Back to Login
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
       </div>
     );
   }
@@ -206,246 +233,264 @@ export default function Register() {
     <>
       <Head>
         <title>Register - Erasmus Journey Platform</title>
-        <meta
-          name="description"
-          content="Create your account to start your Erasmus journey."
-        />
+        <meta description="Create your account to start your Erasmus journey." />
       </Head>
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-        <Card className="w-full max-w-md shadow-lg">
-          <div className="flex justify-start p-4">
-            <BackButton fallbackUrl="/">← Back to Home</BackButton>
-          </div>
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">
-              Create Your Account
-            </CardTitle>
-            <CardDescription className="text-center text-gray-600">
-              Join the platform to connect with other students.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Registration Error</AlertTitle>
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-              {successMessage && !emailVerificationSent && (
-                <Alert className="bg-green-50 border-green-200 text-green-800">
-                  <CircleCheck className="h-4 w-4 text-green-600" />
-                  <AlertTitle>Success!</AlertTitle>
-                  <AlertDescription>{successMessage}</AlertDescription>
-                </Alert>
-              )}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input
-                    id="firstName"
-                    type="text"
-                    placeholder="John"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    required
-                    className={cn(fieldErrors.firstName && "border-red-500")}
-                  />
-                  {fieldErrors.firstName && (
-                    <p className="text-sm text-red-500">
-                      {fieldErrors.firstName}
-                    </p>
-                  )}
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-4 relative overflow-hidden">
+        <FloatingOrbs />
+        
+        <div className="relative w-full max-w-lg z-10">
+          {/* Back Button */}
+          <Link href="/" className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors mb-8 group">
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <span className="font-medium">Back to Home</span>
+          </Link>
+
+          {/* Glass Card */}
+          <div className="backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border border-white/20 dark:border-gray-700/30 rounded-3xl shadow-2xl shadow-emerald-500/10 overflow-hidden">
+            {/* Header with gradient */}
+            <div className="relative bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 px-8 py-8 text-center overflow-hidden">
+              <div className="absolute inset-0 opacity-30">
+                <div className="absolute top-0 left-0 w-40 h-40 bg-white/20 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
+                <div className="absolute bottom-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl translate-x-1/2 translate-y-1/2" />
+              </div>
+              
+              <div className="relative">
+                <div className="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl mb-3">
+                  <GraduationCap className="w-7 h-7 text-white" />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input
-                    id="lastName"
-                    type="text"
-                    placeholder="Doe"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    required
-                    className={cn(fieldErrors.lastName && "border-red-500")}
-                  />
-                  {fieldErrors.lastName && (
-                    <p className="text-sm text-red-500">
-                      {fieldErrors.lastName}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  className={cn(fieldErrors.email && "border-red-500")}
-                />
-                {fieldErrors.email && (
-                  <p className="text-sm text-red-500">{fieldErrors.email}</p>
-                )}
-              </div>
-              <div className="space-y-2 relative">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  required
-                  className={cn(
-                    "pr-10",
-                    fieldErrors.password && "border-red-500",
-                  )}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-9 text-gray-500"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
-                <PasswordStrength
-                  password={formData.password}
-                  onStrengthChange={setPasswordStrength}
-                />
-                {fieldErrors.password && (
-                  <p className="text-sm text-red-500">{fieldErrors.password}</p>
-                )}
-              </div>
-
-              <div className="space-y-2 relative">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  required
-                  className={cn(
-                    "pr-10",
-                    fieldErrors.confirmPassword && "border-red-500",
-                  )}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-9 text-gray-500"
-                  aria-label={
-                    showConfirmPassword
-                      ? "Hide confirm password"
-                      : "Show confirm password"
-                  }
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
-                {fieldErrors.confirmPassword && (
-                  <p className="text-sm text-red-500">
-                    {fieldErrors.confirmPassword}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="agreedToTerms"
-                  checked={agreedToTerms}
-                  onCheckedChange={(checked) =>
-                    setAgreedToTerms(checked as boolean)
-                  }
-                />
-                <Label htmlFor="agreedToTerms" className="text-sm">
-                  I agree to the{" "}
-                  <Link
-                    href="/terms-of-service"
-                    className="text-blue-600 hover:underline"
-                  >
-                    Terms and Conditions
-                  </Link>
-                </Label>
-              </div>
-              {fieldErrors.agreedToTerms && (
-                <p className="text-sm text-red-500">
-                  {fieldErrors.agreedToTerms}
-                </p>
-              )}
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isLoading || passwordStrength < 60 || !agreedToTerms}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating account...
-                  </>
-                ) : (
-                  "Create Account"
-                )}
-              </Button>
-            </form>
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-gray-500">
-                  Or continue with
-                </span>
+                <h1 className="text-2xl font-bold text-white mb-1">Create Your Account</h1>
+                <p className="text-white/80 text-sm">Join the Erasmus community today</p>
               </div>
             </div>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={handleGoogleSignUp}
-              disabled={isLoading}
-            >
-              <svg
-                className="mr-2 h-4 w-4"
-                aria-hidden="true"
-                focusable="false"
-                data-prefix="fab"
-                data-icon="google"
-                role="img"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 488 512"
+
+            {/* Content */}
+            <div className="p-8">
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {error && (
+                  <Alert variant="destructive" className="rounded-xl border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+                {successMessage && !emailVerificationSent && (
+                  <Alert className="rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300">
+                    <CircleCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    <AlertDescription>{successMessage}</AlertDescription>
+                  </Alert>
+                )}
+                
+                {/* Name Fields */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName" className="text-gray-700 dark:text-gray-300 font-medium">First Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <Input
+                        id="firstName"
+                        type="text"
+                        placeholder="John"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
+                        required
+                        className={cn(
+                          "pl-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-emerald-500 focus:ring-emerald-500",
+                          fieldErrors.firstName && "border-red-500"
+                        )}
+                      />
+                    </div>
+                    {fieldErrors.firstName && (
+                      <p className="text-sm text-red-500">{fieldErrors.firstName}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName" className="text-gray-700 dark:text-gray-300 font-medium">Last Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <Input
+                        id="lastName"
+                        type="text"
+                        placeholder="Doe"
+                        value={formData.lastName}
+                        onChange={handleInputChange}
+                        required
+                        className={cn(
+                          "pl-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-emerald-500 focus:ring-emerald-500",
+                          fieldErrors.lastName && "border-red-500"
+                        )}
+                      />
+                    </div>
+                    {fieldErrors.lastName && (
+                      <p className="text-sm text-red-500">{fieldErrors.lastName}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Email */}
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-gray-700 dark:text-gray-300 font-medium">Email Address</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="name@university.edu"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                      className={cn(
+                        "pl-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-emerald-500 focus:ring-emerald-500",
+                        fieldErrors.email && "border-red-500"
+                      )}
+                    />
+                  </div>
+                  {fieldErrors.email && (
+                    <p className="text-sm text-red-500">{fieldErrors.email}</p>
+                  )}
+                </div>
+
+                {/* Password */}
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-gray-700 dark:text-gray-300 font-medium">Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                      className={cn(
+                        "pl-12 pr-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-emerald-500 focus:ring-emerald-500",
+                        fieldErrors.password && "border-red-500"
+                      )}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                  <PasswordStrength
+                    password={formData.password}
+                    onStrengthChange={setPasswordStrength}
+                  />
+                  {fieldErrors.password && (
+                    <p className="text-sm text-red-500">{fieldErrors.password}</p>
+                  )}
+                </div>
+
+                {/* Confirm Password */}
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="text-gray-700 dark:text-gray-300 font-medium">Confirm Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange}
+                      required
+                      className={cn(
+                        "pl-12 pr-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-emerald-500 focus:ring-emerald-500",
+                        fieldErrors.confirmPassword && "border-red-500"
+                      )}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                      aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                  {fieldErrors.confirmPassword && (
+                    <p className="text-sm text-red-500">{fieldErrors.confirmPassword}</p>
+                  )}
+                </div>
+
+                {/* Terms Checkbox */}
+                <div className="flex items-start space-x-3 p-4 bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-800/50 dark:to-slate-800/50 rounded-xl">
+                  <Checkbox
+                    id="agreedToTerms"
+                    checked={agreedToTerms}
+                    onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
+                    className="mt-0.5 data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500"
+                  />
+                  <Label htmlFor="agreedToTerms" className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                    I agree to the{" "}
+                    <Link href="/terms-of-service" className="font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent hover:opacity-80">
+                      Terms and Conditions
+                    </Link>
+                  </Label>
+                </div>
+                {fieldErrors.agreedToTerms && (
+                  <p className="text-sm text-red-500">{fieldErrors.agreedToTerms}</p>
+                )}
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  className="w-full h-12 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:opacity-90 text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/25 transition-all"
+                  disabled={isLoading || passwordStrength < 60 || !agreedToTerms}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Creating account...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="mr-2 h-5 w-5" />
+                      Create Account
+                    </>
+                  )}
+                </Button>
+              </form>
+
+              {/* Divider */}
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-gray-200 dark:border-gray-700" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white/70 dark:bg-gray-900/70 px-4 text-gray-500 dark:text-gray-400 font-medium">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+
+              {/* Google Sign Up */}
+              <Button
+                variant="outline"
+                className="w-full h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all"
+                onClick={handleGoogleSignUp}
+                disabled={isLoading}
               >
-                <path
-                  fill="currentColor"
-                  d="M488 261.8C488 403.3 381.5 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 23.4 172.9 61.9l-65.7 64.9C313.5 99.8 283.3 80 248 80c-82.6 0-150.2 67.6-150.2 150.2s67.6 150.2 150.2 150.2c94.2 0 125.6-72.2 129.2-108.2H248v-85.3h236.1c2.3 12.7 3.9 26.1 3.9 40.2z"
-                ></path>
-              </svg>
-              Sign up with Google
-            </Button>
-          </CardContent>
-          <CardFooter className="justify-center">
-            <p className="text-sm text-gray-600">
-              Already have an account?{" "}
-              <Link
-                href="/login"
-                className="font-semibold text-blue-600 hover:underline"
-              >
-                Sign In
-              </Link>
-            </p>
-          </CardFooter>
-        </Card>
+                <svg className="mr-3 h-5 w-5" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                </svg>
+                Sign up with Google
+              </Button>
+            </div>
+
+            {/* Footer */}
+            <div className="px-8 pb-8 text-center">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Already have an account?{" "}
+                <Link href="/login" className="font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
+                  Sign In
+                </Link>
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );

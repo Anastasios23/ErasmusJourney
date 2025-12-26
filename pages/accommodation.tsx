@@ -108,17 +108,6 @@ export default function Accommodation() {
     internetIncluded: "",
     laundryAccess: "",
     parkingAvailable: "",
-    easyToFind: "",
-    accommodationRating: "",
-    accommodationAddress: "",
-    accommodationType: "",
-    monthlyRent: "",
-    billsIncluded: "",
-    avgUtilityCost: "",
-    landlordName: "",
-    landlordEmail: "",
-    landlordPhone: "",
-    bookingLink: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -280,8 +269,9 @@ export default function Accommodation() {
     const newErrors: Record<string, string> = {};
     if (!formData.accommodationType) newErrors.accommodationType = "Required";
     if (!formData.monthlyRent) newErrors.monthlyRent = "Required";
-    if (!formData.accommodationRating) newErrors.accommodationRating = "Required";
-    
+    if (!formData.accommodationRating)
+      newErrors.accommodationRating = "Required";
+
     if (Object.keys(newErrors).length > 0) {
       setFieldErrors(newErrors);
       setIsSubmitting(false);
