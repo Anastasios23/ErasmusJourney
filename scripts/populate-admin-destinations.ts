@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { randomUUID } from "crypto";
 
 const prisma = new PrismaClient();
 
@@ -319,15 +320,16 @@ async function populateAdminDestinations() {
   try {
     // First, let's clear any existing admin destinations
     console.log("Clearing existing admin destinations...");
-    await prisma.adminDestination.deleteMany({});
+    await prisma.admin_destinations.deleteMany({});
 
     console.log("Creating sample destinations...");
 
     for (const destination of sampleDestinations) {
       console.log(`Creating destination: ${destination.name}`);
 
-      await prisma.adminDestination.create({
+      await prisma.admin_destinations.create({
         data: {
+          id: randomUUID(),
           name: destination.name,
           city: destination.city,
           country: destination.country,
@@ -340,6 +342,7 @@ async function populateAdminDestinations() {
           featured: destination.featured,
           active: true,
           createdBy: destination.createdBy,
+          updatedAt: new Date(),
         },
       });
     }
@@ -349,11 +352,11 @@ async function populateAdminDestinations() {
     );
 
     // Verify the data was created
-    const count = await prisma.adminDestination.count();
+    const count = await prisma.admin_destinations.count();
     console.log(`📊 Total admin destinations in database: ${count}`);
 
     // List all created destinations
-    const destinations = await prisma.adminDestination.findMany({
+    const destinations = await prisma.admin_destinations.findMany({
       select: {
         id: true,
         name: true,

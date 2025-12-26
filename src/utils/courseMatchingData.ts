@@ -74,15 +74,15 @@ export async function getCourseMatchingExperiences(): Promise<{
 }> {
   try {
     // Get all published course matching submissions
-    const courseMatchingSubmissions = await prisma.formSubmission.findMany({
+    const courseMatchingSubmissions = await prisma.form_submissions.findMany({
       where: {
         type: "COURSE_MATCHING",
         status: "PUBLISHED",
       },
       include: {
-        user: {
+        users: {
           include: {
-            formSubmissions: {
+            form_submissions: {
               where: {
                 status: "PUBLISHED",
                 type: "BASIC_INFO",
@@ -102,40 +102,66 @@ export async function getCourseMatchingExperiences(): Promise<{
       const courseData = submission.data as any;
 
       // Get linked basic info for additional student details
-      const basicInfo = submission.user?.formSubmissions.find(
-        (s) => s.type === "BASIC_INFO"
+      const basicInfo = submission.users?.form_submissions.find(
+        (s) => s.type === "BASIC_INFO",
       );
       const basicData = basicInfo?.data as any;
 
       // Check if user has linked experience/story submissions
-      const hasLinkedStory = submission.user?.formSubmissions.some(
-        (s) => s.type === "EXPERIENCE" || s.type === "STORY"
-      ) || false;
+      const hasLinkedStory =
+        submission.users?.form_submissions.some(
+          (s) => s.type === "EXPERIENCE" || s.type === "STORY",
+        ) || false;
 
       // Create anonymized student name
       const studentName = generateAnonymousName(submission.userId);
 
-      // Ensure we have required fields
-      if (!courseData.hostUniversity || !courseData.homeUniversity) {
+      // Ensure we have required fields - check for various field names
+      const homeUni =
+        courseData.homeUniversity || courseData.universityInCyprus;
+      const hostUni = courseData.hostUniversity;
+
+      if (!hostUni || !homeUni) {
         continue;
       }
 
       const experience: CourseMatchingExperience = {
         id: submission.id,
         studentName,
-        homeUniversity: courseData.homeUniversity || basicData?.homeUniversity || "Unknown",
-        homeDepartment: courseData.homeDepartment || basicData?.homeDepartment || "Unknown",
-        hostUniversity: courseData.hostUniversity || basicData?.hostUniversity || "Unknown",
-        hostDepartment: courseData.hostDepartment || basicData?.hostDepartment || "Unknown",
-        hostCity: basicData?.hostCity || basicData?.destinationCity || "Unknown",
-        hostCountry: basicData?.hostCountry || basicData?.destinationCountry || "Unknown",
-        levelOfStudy: courseData.levelOfStudy || basicData?.levelOfStudy || "Bachelor",
-        hostCourseCount: courseData.hostCourseCount || 0,
-        homeCourseCount: courseData.homeCourseCount || 0,
-        courseMatchingDifficult: courseData.courseMatchingDifficult || "Moderate",
+        homeUniversity: homeUni || basicData?.homeUniversity || "Unknown",
+        homeDepartment:
+          courseData.homeDepartment ||
+          courseData.studyProgram ||
+          basicData?.homeDepartment ||
+          "Unknown",
+        hostUniversity: hostUni || basicData?.hostUniversity || "Unknown",
+        hostDepartment:
+          courseData.hostDepartment ||
+          courseData.studyProgram ||
+          basicData?.hostDepartment ||
+          "Unknown",
+        hostCity:
+          courseData.hostCity ||
+          basicData?.hostCity ||
+          basicData?.destinationCity ||
+          "Unknown",
+        hostCountry:
+          courseData.hostCountry ||
+          basicData?.hostCountry ||
+          basicData?.destinationCountry ||
+          "Unknown",
+        levelOfStudy:
+          courseData.levelOfStudy || basicData?.levelOfStudy || "Bachelor",
+        hostCourseCount:
+          courseData.hostCourseCount || courseData.courseMatches?.length || 0,
+        homeCourseCount:
+          courseData.homeCourseCount || courseData.courseMatches?.length || 0,
+        courseMatchingDifficult:
+          courseData.courseMatchingDifficult || "Moderate",
         courseMatchingChallenges: courseData.courseMatchingChallenges,
         timeSpentOnMatching: courseData.timeSpentOnMatching,
-        creditsTransferredSuccessfully: courseData.creditsTransferredSuccessfully,
+        creditsTransferredSuccessfully:
+          courseData.creditsTransferredSuccessfully,
         totalCreditsAttempted: courseData.totalCreditsAttempted,
         recommendCourses: courseData.recommendCourses || "Yes",
         recommendationReason: courseData.recommendationReason,
@@ -151,8 +177,32 @@ export async function getCourseMatchingExperiences(): Promise<{
         bestCoursesRecommendation: courseData.bestCoursesRecommendation,
         coursesToAvoid: courseData.coursesToAvoid,
         hasLinkedStory,
-        hostCourses: courseData.hostCourses || [],
-        equivalentCourses: courseData.equivalentCourses || [],
+        // Map courseMatches to hostCourses if needed
+        hostCourses:
+          courseData.hostCourses ||
+          (courseData.courseMatches
+            ? courseData.courseMatches.map((c: any) => ({
+                name: c.hostCourse,
+                code: c.hostCourseCode,
+                ects: c.hostCredits,
+                difficulty: c.difficulty,
+                workload: c.workload,
+                recommendation: c.recommendation,
+              }))
+            : []),
+        // Map courseMatches to equivalentCourses if needed
+        equivalentCourses:
+          courseData.equivalentCourses ||
+          (courseData.courseMatches
+            ? courseData.courseMatches.map((c: any) => ({
+                hostCourseName: c.hostCourse,
+                homeCourseName: c.homeCourse,
+                hostCourseCode: c.hostCourseCode,
+                homeCourseCode: c.homeCourseCode,
+                ects: c.hostCredits,
+                matchQuality: c.grade ? "Good" : "Unknown",
+              }))
+            : []),
       };
 
       experiences.push(experience);
@@ -174,20 +224,26 @@ export async function getCourseMatchingExperiences(): Promise<{
 export async function getCourseMatchingExperiencesByDestination(
   city: string,
   country?: string,
-  university?: string
+  university?: string,
 ): Promise<CourseMatchingExperience[]> {
   try {
     const { experiences } = await getCourseMatchingExperiences();
 
-    return experiences.filter(exp => {
+    return experiences.filter((exp) => {
       const matchesCity = exp.hostCity.toLowerCase() === city.toLowerCase();
-      const matchesCountry = !country || exp.hostCountry.toLowerCase() === country.toLowerCase();
-      const matchesUniversity = !university || exp.hostUniversity.toLowerCase().includes(university.toLowerCase());
+      const matchesCountry =
+        !country || exp.hostCountry.toLowerCase() === country.toLowerCase();
+      const matchesUniversity =
+        !university ||
+        exp.hostUniversity.toLowerCase().includes(university.toLowerCase());
 
       return matchesCity && matchesCountry && matchesUniversity;
     });
   } catch (error) {
-    console.error("Error fetching course matching experiences by destination:", error);
+    console.error(
+      "Error fetching course matching experiences by destination:",
+      error,
+    );
     return [];
   }
 }
@@ -197,15 +253,46 @@ export async function getCourseMatchingExperiencesByDestination(
  */
 function generateAnonymousName(userId: string): string {
   const firstNames = [
-    "Alex", "Jordan", "Sam", "Taylor", "Casey", "Morgan", "Jamie", "Riley",
-    "Avery", "Cameron", "Quinn", "Rowan", "Sage", "River", "Phoenix", "Eden"
+    "Alex",
+    "Jordan",
+    "Sam",
+    "Taylor",
+    "Casey",
+    "Morgan",
+    "Jamie",
+    "Riley",
+    "Avery",
+    "Cameron",
+    "Quinn",
+    "Rowan",
+    "Sage",
+    "River",
+    "Phoenix",
+    "Eden",
   ];
 
-  const lastInitials = ["A.", "B.", "C.", "D.", "E.", "F.", "G.", "H.", "I.", "J.", "K.", "L.", "M.", "N.", "O.", "P."];
+  const lastInitials = [
+    "A.",
+    "B.",
+    "C.",
+    "D.",
+    "E.",
+    "F.",
+    "G.",
+    "H.",
+    "I.",
+    "J.",
+    "K.",
+    "L.",
+    "M.",
+    "N.",
+    "O.",
+    "P.",
+  ];
 
   // Use user ID to generate consistent but anonymous names
-  const hash = userId.split('').reduce((a, b) => {
-    a = ((a << 5) - a) + b.charCodeAt(0);
+  const hash = userId.split("").reduce((a, b) => {
+    a = (a << 5) - a + b.charCodeAt(0);
     return a & a;
   }, 0);
 
@@ -218,7 +305,9 @@ function generateAnonymousName(userId: string): string {
 /**
  * Calculate comprehensive statistics for course matching experiences
  */
-function calculateCourseMatchingStats(experiences: CourseMatchingExperience[]): CourseMatchingStats {
+function calculateCourseMatchingStats(
+  experiences: CourseMatchingExperience[],
+): CourseMatchingStats {
   if (experiences.length === 0) {
     return getEmptyStats();
   }
@@ -226,38 +315,48 @@ function calculateCourseMatchingStats(experiences: CourseMatchingExperience[]): 
   // Difficulty mapping for numerical calculations
   const difficultyMap: Record<string, number> = {
     "Very Easy": 1,
-    "Easy": 2,
-    "Moderate": 3,
-    "Difficult": 4,
+    Easy: 2,
+    Moderate: 3,
+    Difficult: 4,
     "Very Difficult": 5,
   };
 
   // Calculate average difficulty
-  const avgDifficulty = experiences.reduce((sum, exp) => {
-    return sum + (difficultyMap[exp.courseMatchingDifficult] || 3);
-  }, 0) / experiences.length;
+  const avgDifficulty =
+    experiences.reduce((sum, exp) => {
+      return sum + (difficultyMap[exp.courseMatchingDifficult] || 3);
+    }, 0) / experiences.length;
 
   // Calculate success rate (based on credit transfer)
   const experiencesWithTransferData = experiences.filter(
-    exp => exp.creditsTransferredSuccessfully && exp.totalCreditsAttempted
+    (exp) => exp.creditsTransferredSuccessfully && exp.totalCreditsAttempted,
   );
 
-  const successRate = experiencesWithTransferData.length > 0
-    ? experiencesWithTransferData.reduce((sum, exp) => {
-        return sum + ((exp.creditsTransferredSuccessfully! / exp.totalCreditsAttempted!) * 100);
-      }, 0) / experiencesWithTransferData.length
-    : 0;
+  const successRate =
+    experiencesWithTransferData.length > 0
+      ? experiencesWithTransferData.reduce((sum, exp) => {
+          return (
+            sum +
+            (exp.creditsTransferredSuccessfully! / exp.totalCreditsAttempted!) *
+              100
+          );
+        }, 0) / experiencesWithTransferData.length
+      : 0;
 
   // Calculate average courses matched
-  const avgCoursesMatched = experiences.reduce((sum, exp) => {
-    return sum + exp.homeCourseCount;
-  }, 0) / experiences.length;
+  const avgCoursesMatched =
+    experiences.reduce((sum, exp) => {
+      return sum + exp.homeCourseCount;
+    }, 0) / experiences.length;
 
   // Top destinations
   const destinationCounts = new Map<string, number>();
-  experiences.forEach(exp => {
+  experiences.forEach((exp) => {
     const destination = `${exp.hostCity}, ${exp.hostCountry}`;
-    destinationCounts.set(destination, (destinationCounts.get(destination) || 0) + 1);
+    destinationCounts.set(
+      destination,
+      (destinationCounts.get(destination) || 0) + 1,
+    );
   });
 
   const topDestinations = Array.from(destinationCounts.entries())
@@ -267,8 +366,11 @@ function calculateCourseMatchingStats(experiences: CourseMatchingExperience[]): 
 
   // Top departments
   const departmentCounts = new Map<string, number>();
-  experiences.forEach(exp => {
-    departmentCounts.set(exp.hostDepartment, (departmentCounts.get(exp.hostDepartment) || 0) + 1);
+  experiences.forEach((exp) => {
+    departmentCounts.set(
+      exp.hostDepartment,
+      (departmentCounts.get(exp.hostDepartment) || 0) + 1,
+    );
   });
 
   const topDepartments = Array.from(departmentCounts.entries())
@@ -278,13 +380,17 @@ function calculateCourseMatchingStats(experiences: CourseMatchingExperience[]): 
 
   // Difficulty breakdown
   const difficultyBreakdown: Record<string, number> = {};
-  experiences.forEach(exp => {
+  experiences.forEach((exp) => {
     const difficulty = exp.courseMatchingDifficult;
-    difficultyBreakdown[difficulty] = (difficultyBreakdown[difficulty] || 0) + 1;
+    difficultyBreakdown[difficulty] =
+      (difficultyBreakdown[difficulty] || 0) + 1;
   });
 
   // Recommendation rate
-  const recommendationRate = (experiences.filter(exp => exp.recommendCourses === "Yes").length / experiences.length) * 100;
+  const recommendationRate =
+    (experiences.filter((exp) => exp.recommendCourses === "Yes").length /
+      experiences.length) *
+    100;
 
   return {
     totalExperiences: experiences.length,
@@ -319,7 +425,10 @@ function getEmptyStats(): CourseMatchingStats {
  */
 export async function getCourseMatchingInsights(city: string, country: string) {
   try {
-    const experiences = await getCourseMatchingExperiencesByDestination(city, country);
+    const experiences = await getCourseMatchingExperiencesByDestination(
+      city,
+      country,
+    );
 
     if (experiences.length === 0) {
       return null;
@@ -348,10 +457,12 @@ export async function getCourseMatchingInsights(city: string, country: string) {
 /**
  * Extract common challenges from experiences
  */
-function extractCommonChallenges(experiences: CourseMatchingExperience[]): string[] {
+function extractCommonChallenges(
+  experiences: CourseMatchingExperience[],
+): string[] {
   const challenges: string[] = [];
 
-  experiences.forEach(exp => {
+  experiences.forEach((exp) => {
     if (exp.courseMatchingChallenges) {
       challenges.push(exp.courseMatchingChallenges);
     }
@@ -370,7 +481,7 @@ function extractCommonChallenges(experiences: CourseMatchingExperience[]): strin
 function extractBestAdvice(experiences: CourseMatchingExperience[]): string[] {
   const advice: string[] = [];
 
-  experiences.forEach(exp => {
+  experiences.forEach((exp) => {
     if (exp.academicAdviceForFuture) {
       advice.push(exp.academicAdviceForFuture);
     }
@@ -389,22 +500,25 @@ function extractBestAdvice(experiences: CourseMatchingExperience[]): string[] {
  * Calculate insights by department
  */
 function calculateDepartmentInsights(experiences: CourseMatchingExperience[]) {
-  const departmentData = new Map<string, {
-    count: number;
-    avgDifficulty: number;
-    avgSuccess: number;
-    difficulties: string[];
-  }>();
+  const departmentData = new Map<
+    string,
+    {
+      count: number;
+      avgDifficulty: number;
+      avgSuccess: number;
+      difficulties: string[];
+    }
+  >();
 
   const difficultyMap: Record<string, number> = {
     "Very Easy": 1,
-    "Easy": 2,
-    "Moderate": 3,
-    "Difficult": 4,
+    Easy: 2,
+    Moderate: 3,
+    Difficult: 4,
     "Very Difficult": 5,
   };
 
-  experiences.forEach(exp => {
+  experiences.forEach((exp) => {
     const dept = exp.hostDepartment;
     if (!departmentData.has(dept)) {
       departmentData.set(dept, {
@@ -422,9 +536,10 @@ function calculateDepartmentInsights(experiences: CourseMatchingExperience[]) {
 
   // Calculate averages
   departmentData.forEach((data, dept) => {
-    data.avgDifficulty = data.difficulties.reduce((sum, diff) => {
-      return sum + (difficultyMap[diff] || 3);
-    }, 0) / data.difficulties.length;
+    data.avgDifficulty =
+      data.difficulties.reduce((sum, diff) => {
+        return sum + (difficultyMap[diff] || 3);
+      }, 0) / data.difficulties.length;
   });
 
   return Array.from(departmentData.entries()).map(([name, data]) => ({

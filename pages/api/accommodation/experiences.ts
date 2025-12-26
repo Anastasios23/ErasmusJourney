@@ -20,8 +20,8 @@ export default async function handler(
       whereClause.experience = {
         hostCity: {
           contains: city as string,
-          mode: 'insensitive'
-        }
+          mode: "insensitive",
+        },
       };
     }
 
@@ -30,8 +30,8 @@ export default async function handler(
         ...whereClause.experience,
         hostCountry: {
           contains: country as string,
-          mode: 'insensitive'
-        }
+          mode: "insensitive",
+        },
       };
     }
 
@@ -42,7 +42,7 @@ export default async function handler(
     if (accommodationType) {
       whereClause.type = {
         contains: accommodationType as string,
-        mode: 'insensitive'
+        mode: "insensitive",
       };
     }
 
@@ -52,7 +52,7 @@ export default async function handler(
       include: {
         experience: {
           include: {
-            user: {
+            users: {
               select: {
                 firstName: true,
                 lastName: true,
@@ -70,11 +70,6 @@ export default async function handler(
             },
           },
         },
-        university: {
-          select: {
-            name: true,
-          },
-        },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -82,14 +77,14 @@ export default async function handler(
     // Format and send only public fields
     const accommodationExperiences = reviews.map((review) => {
       const experience = review.experience;
-      const expData = experience.experience as any || {};
-      const accomData = experience.accommodation as any || {};
+      const expData = (experience.experience as any) || {};
+      const accomData = (experience.accommodation as any) || {};
 
       return {
         id: review.id,
         // Student info (anonymized)
-        studentName: experience.user?.firstName
-          ? `${experience.user.firstName} ${experience.user.lastName?.charAt(0)}.`
+        studentName: experience.users?.firstName
+          ? `${experience.users.firstName} ${experience.users.lastName?.charAt(0)}.`
           : "Anonymous Student",
 
         // Accommodation details
@@ -110,8 +105,16 @@ export default async function handler(
         wouldRecommend: accomData.wouldRecommend, // Still from JSON
 
         // Experience details - mapped from general experience if specific fields missing
-        pros: accomData.pros ? [accomData.pros] : (expData.bestExperience ? [expData.bestExperience] : []),
-        cons: accomData.cons ? [accomData.cons] : (expData.worstExperience ? [expData.worstExperience] : []),
+        pros: accomData.pros
+          ? [accomData.pros]
+          : expData.bestExperience
+            ? [expData.bestExperience]
+            : [],
+        cons: accomData.cons
+          ? [accomData.cons]
+          : expData.worstExperience
+            ? [expData.worstExperience]
+            : [],
         tips: expData.generalTips || accomData.tips,
         additionalNotes: review.comment || expData.generalTips,
 
@@ -122,8 +125,9 @@ export default async function handler(
         findingDifficulty: accomData.findingDifficulty,
 
         // Academic context
-        university: review.university?.name || experience.hostUniversity?.name || "Unknown University",
-        universityInCyprus: experience.homeUniversity?.name || "Unknown University",
+        university: experience.hostUniversity?.name || "Unknown University",
+        universityInCyprus:
+          experience.homeUniversity?.name || "Unknown University",
 
         // Metadata
         createdAt: review.createdAt,
