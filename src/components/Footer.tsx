@@ -27,7 +27,7 @@ export default function Footer() {
     { name: "Universities", href: "/university-exchanges", icon: Globe },
     { name: "Student Stories", href: "/student-stories", icon: Users },
     { name: "Housing Reviews", href: "/student-accommodations", icon: Heart },
-    { name: "Community", href: "/community", icon: MessageCircle },
+    { name: "FAQ", href: "/faq", icon: MessageCircle },
   ];
 
   const applicationLinks = [
@@ -43,7 +43,7 @@ export default function Footer() {
       href: "mailto:support@erasmusjourney.com",
       icon: Mail,
     },
-    { name: "Community Help", href: "/community", icon: MessageCircle },
+    { name: "Student Stories", href: "/student-stories", icon: MessageCircle },
     { name: "FAQ", href: "/faq", icon: FileText },
   ];
 
