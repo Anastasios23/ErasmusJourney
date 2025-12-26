@@ -47,12 +47,19 @@ export default function Login() {
     }
   }, [status, router]);
 
-  // Clear error when a callbackUrl error from NextAuth is present
+  // Handle errors from query parameters (e.g., from Google Auth redirects)
   useEffect(() => {
     if (router.query.error) {
-      setError("Sign-in failed. Please try again or use a different method.");
-      // Optional: clean the URL
-      router.replace("/login", undefined, { shallow: true });
+      const errorMsg = router.query.error as string;
+      if (errorMsg.includes("restricted") || errorMsg.includes("university")) {
+        setError("Access restricted to Cyprus university emails only (@ucy.ac.cy, @cut.ac.cy, etc.).");
+      } else {
+        setError("Sign-in failed. Please try again or use a different method.");
+      }
+      
+      // Clean the URL to avoid showing the error again on refresh
+      const { error: _, ...restQuery } = router.query;
+      router.replace({ pathname: router.pathname, query: restQuery }, undefined, { shallow: true });
     }
   }, [router.query.error, router]);
 

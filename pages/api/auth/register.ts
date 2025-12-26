@@ -1,9 +1,8 @@
-// pages/api/auth/register.ts
-
 import { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcryptjs";
 import { prisma } from "../../../lib/prisma";
 import { randomUUID } from "crypto";
+import { isCyprusUniversityEmail } from "../../../lib/authUtils";
 
 export default async function handler(
   req: NextApiRequest,
@@ -17,6 +16,13 @@ export default async function handler(
 
   if (!firstName || !lastName || !email || !password) {
     return res.status(400).json({ message: "All fields are required" });
+  }
+
+  // Domain Check
+  if (!isCyprusUniversityEmail(email)) {
+    return res.status(403).json({ 
+      message: "Registration is restricted to Cyprus university students only (@ucy.ac.cy, @cut.ac.cy, etc.)." 
+    });
   }
 
   try {

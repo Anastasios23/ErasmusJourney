@@ -6,6 +6,8 @@ import bcrypt from "bcryptjs";
 import { prisma } from "../../../lib/prisma";
 import { randomUUID } from "crypto";
 
+import { isCyprusUniversityEmail } from "../../../lib/authUtils";
+
 export const authOptions: NextAuthOptions = {
   // Note: Prisma adapter removed because we're using JWT strategy
   // For Google OAuth, users will be created in the authorize callback
@@ -14,8 +16,8 @@ export const authOptions: NextAuthOptions = {
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
       ? [
           GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
           }),
         ]
       : []),
@@ -28,8 +30,12 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         try {
           if (!credentials?.email || !credentials?.password) {
-            console.error("Missing credentials");
-            return null;
+            throw new Error("Missing credentials");
+          }
+
+          // Domain Check
+          if (!isCyprusUniversityEmail(credentials.email)) {
+            throw new Error("Access restricted to Cyprus university emails only (@ucy.ac.cy, @cut.ac.cy, etc.)");
           }
 
           console.log("Attempting login for:", credentials.email);
@@ -39,8 +45,7 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!user || !user.password) {
-            console.error("User not found:", credentials.email);
-            return null;
+            throw new Error("No user found with this email. Please register first.");
           }
 
           console.log("User found, verifying password");
@@ -51,16 +56,10 @@ export const authOptions: NextAuthOptions = {
           );
 
           if (!isValid) {
-            console.error("Invalid password for:", credentials.email);
-            return null;
+            throw new Error("Incorrect password");
           }
 
           console.log("Login successful for:", credentials.email);
-          console.log("Returning user object:", {
-            id: user.id,
-            email: user.email,
-            role: user.role,
-          });
 
           return {
             id: user.id,
@@ -70,7 +69,7 @@ export const authOptions: NextAuthOptions = {
           };
         } catch (error) {
           console.error("Auth error:", error);
-          return null;
+          throw error; // Throwing error instead of returning null for better error messages
         }
       },
     }),
@@ -83,10 +82,12 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account, profile }) {
+      if (!user.email || !isCyprusUniversityEmail(user.email)) {
+        return "/login?error=Access+restricted+to+Cyprus+university+emails+only";
+      }
+
       if (account?.provider === "google") {
         try {
-          if (!user.email) return false;
-
           // Check if user exists
           const existingUser = await prisma.users.findUnique({
             where: { email: user.email },
