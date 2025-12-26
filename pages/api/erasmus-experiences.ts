@@ -68,7 +68,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
 
   // Get authenticated user from session
   const session = await getServerSession(req, res, authOptions);
-  
+
   if (!session?.user?.id) {
     return res.status(401).json({ error: "Authentication required" });
   }
@@ -113,28 +113,74 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     try {
       // Get authenticated user from session
       const session = await getServerSession(req, res, authOptions);
-      
+
       if (!session?.user?.id) {
         console.error("No session or user ID found");
         return res.status(401).json({ error: "Authentication required" });
       }
 
       const userId = session.user.id;
+      const userEmail = session.user.email;
       console.log(`Creating/fetching experience for user: ${userId}`);
 
       // CRITICAL: Verify the user actually exists in the database
-      const userExists = await retryDatabaseOperation(() =>
+      let userExists = await retryDatabaseOperation(() =>
         prisma.users.findUnique({
           where: { id: userId },
           select: { id: true },
-        })
+        }),
       );
+
+      // If user doesn't exist by ID, try to find by email and create if needed
+      if (!userExists && userEmail) {
+        console.log(
+          `User ${userId} not found by ID, checking email: ${userEmail}`,
+        );
+
+        // Check if user exists by email
+        const userByEmail = await retryDatabaseOperation(() =>
+          prisma.users.findUnique({
+            where: { email: userEmail },
+            select: { id: true },
+          }),
+        );
+
+        if (!userByEmail) {
+          // Create the user since they authenticated via OAuth but don't exist in DB
+          console.log(`Creating user from session: ${userEmail}`);
+          const newUser = await retryDatabaseOperation(() =>
+            prisma.users.create({
+              data: {
+                id: userId,
+                email: userEmail,
+                firstName: session.user.name?.split(" ")[0] || "",
+                lastName:
+                  session.user.name?.split(" ").slice(1).join(" ") || "",
+                image: session.user.image || null,
+                updatedAt: new Date(),
+                role: "USER",
+              },
+            }),
+          );
+          console.log(`Created user: ${newUser.id}`);
+          userExists = { id: newUser.id };
+        } else {
+          // User exists by email but with different ID - update session won't help here
+          console.error(
+            `User exists with different ID. Session ID: ${userId}, DB ID: ${userByEmail.id}`,
+          );
+          return res.status(409).json({
+            error: "Session mismatch",
+            details: "Please log out and log in again to refresh your session.",
+          });
+        }
+      }
 
       if (!userExists) {
         console.error(`User ${userId} from session does not exist in database`);
-        return res.status(404).json({ 
+        return res.status(404).json({
           error: "User not found",
-          details: "The user from your session does not exist in the database. Please log out and log in again.",
+          details: "Please log out and log in again to create your account.",
         });
       }
 
@@ -142,11 +188,13 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
       let existingExperience = await retryDatabaseOperation(() =>
         prisma.erasmusExperience.findUnique({
           where: { userId },
-        })
+        }),
       );
 
       if (existingExperience) {
-        console.log(`Found existing experience: ${(existingExperience as any).id}, resetting to DRAFT`);
+        console.log(
+          `Found existing experience: ${(existingExperience as any).id}, resetting to DRAFT`,
+        );
         // Reset the existing experience to draft state
         const updatedExperience = await retryDatabaseOperation(() =>
           prisma.erasmusExperience.update({
@@ -163,7 +211,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
               lastSavedAt: new Date(),
               updatedAt: new Date(),
             },
-          })
+          }),
         );
         return res.status(200).json(updatedExperience);
       }
@@ -185,14 +233,19 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
             livingExpenses: {},
             experience: {},
           },
-        })
+        }),
       );
 
-      console.log(`Successfully created experience: ${(newExperience as any).id}`);
+      console.log(
+        `Successfully created experience: ${(newExperience as any).id}`,
+      );
       return res.status(201).json(newExperience);
     } catch (error) {
       console.error("Error in handlePost (create):", error);
-      console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");
+      console.error(
+        "Error stack:",
+        error instanceof Error ? error.stack : "No stack trace",
+      );
       return res.status(500).json({
         error: "Failed to create experience",
         details: error instanceof Error ? error.message : "Unknown error",
@@ -201,7 +254,9 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     }
   }
 
-  console.log(`[API] Invalid action received: "${action}". Falling through to 400.`);
+  console.log(
+    `[API] Invalid action received: "${action}". Falling through to 400.`,
+  );
   return res.status(400).json({ error: "Invalid action" });
 }
 
@@ -308,7 +363,10 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
     // 1. Basic Info
     const basicInfoVal = submissionData.basicInfo || {};
-    console.log("[API] Validating Basic Info:", JSON.stringify(basicInfoVal, null, 2));
+    console.log(
+      "[API] Validating Basic Info:",
+      JSON.stringify(basicInfoVal, null, 2),
+    );
 
     if (
       !basicInfoVal.homeUniversity ||
@@ -325,7 +383,10 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     // 2. Courses
     const coursesVal = submissionData.courses || {};
     const mappingsVal = coursesVal.mappings || [];
-    console.log("[API] Validating Courses. Mappings count:", mappingsVal.length);
+    console.log(
+      "[API] Validating Courses. Mappings count:",
+      mappingsVal.length,
+    );
 
     if (!Array.isArray(mappingsVal) || mappingsVal.length === 0) {
       console.log("[API] Course Validation Failed. No mappings.");
@@ -333,16 +394,21 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     } else {
       // Check if mappings are valid
       const incompleteMappings = mappingsVal.some(
-        (m: any) => !m.homeName?.trim() || !m.hostName?.trim()
+        (m: any) => !m.homeName?.trim() || !m.hostName?.trim(),
       );
       if (incompleteMappings) {
-        errors.push("All course mappings must have both home and host course names.");
+        errors.push(
+          "All course mappings must have both home and host course names.",
+        );
       }
     }
 
     // 3. Accommodation
     const accommodationVal = submissionData.accommodation || {};
-    console.log("[API] Validating Accommodation:", JSON.stringify(accommodationVal, null, 2));
+    console.log(
+      "[API] Validating Accommodation:",
+      JSON.stringify(accommodationVal, null, 2),
+    );
 
     if (
       !accommodationVal.type ||
@@ -358,14 +424,17 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     // 4. Living Expenses
     const livingExpensesVal = submissionData.livingExpenses || {};
     const expenses = livingExpensesVal.expenses || {};
-    
+
     if (!livingExpensesVal.expenses) {
       errors.push("Living Expenses are incomplete.");
     } else {
-       // Check for core expenses (should be present and ideally numbers)
-       if (expenses.groceries === undefined || expenses.transportation === undefined) {
-         errors.push("Monthly expense estimates are required.");
-       }
+      // Check for core expenses (should be present and ideally numbers)
+      if (
+        expenses.groceries === undefined ||
+        expenses.transportation === undefined
+      ) {
+        errors.push("Monthly expense estimates are required.");
+      }
     }
 
     if (errors.length > 0) {
@@ -416,7 +485,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
         // B. Aggregate Accommodation Review
         if (experience.accommodation) {
           const accomData = experience.accommodation as any;
-          
+
           // Delete existing review for this experience
           await tx.accommodationReview.deleteMany({
             where: { experienceId: experience.id },
@@ -424,10 +493,12 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
           // Create new review
           if (accomData.type && accomData.rent) {
-             await tx.accommodationReview.create({
+            await tx.accommodationReview.create({
               data: {
                 experienceId: experience.id,
-                name: accomData.address || `${accomData.type} in ${experience.hostCity || 'City'}`,
+                name:
+                  accomData.address ||
+                  `${accomData.type} in ${experience.hostCity || "City"}`,
                 type: accomData.type,
                 address: accomData.address || null,
                 pricePerMonth: parseFloat(accomData.rent) || 0,
@@ -440,14 +511,18 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
         }
 
         return experience;
-      })
+      }),
     );
 
     // 3. Update City Statistics (Fire and forget)
-    if ((updatedExperience as any).hostCity && (updatedExperience as any).hostCountry) {
-      updateCityStatistics((updatedExperience as any).hostCity, (updatedExperience as any).hostCountry).catch(err => 
-        console.error("Failed to update city stats:", err)
-      );
+    if (
+      (updatedExperience as any).hostCity &&
+      (updatedExperience as any).hostCountry
+    ) {
+      updateCityStatistics(
+        (updatedExperience as any).hostCity,
+        (updatedExperience as any).hostCountry,
+      ).catch((err) => console.error("Failed to update city stats:", err));
     }
 
     return res.status(200).json(updatedExperience);
