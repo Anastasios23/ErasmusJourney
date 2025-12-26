@@ -54,10 +54,18 @@ export default function Footer() {
   ];
 
   const socialLinks = [
-    { name: "Twitter", href: "#", icon: Twitter },
-    { name: "Instagram", href: "#", icon: Instagram },
-    { name: "LinkedIn", href: "#", icon: Linkedin },
-    { name: "GitHub", href: "#", icon: Github },
+    { name: "Twitter", href: "https://x.com/erasmusjourney", icon: Twitter },
+    {
+      name: "Instagram",
+      href: "https://instagram.com/erasmusjourney",
+      icon: Instagram,
+    },
+    {
+      name: "LinkedIn",
+      href: "https://linkedin.com/company/erasmusjourney",
+      icon: Linkedin,
+    },
+    { name: "GitHub", href: "https://github.com/erasmusjourney", icon: Github },
   ];
 
   return (

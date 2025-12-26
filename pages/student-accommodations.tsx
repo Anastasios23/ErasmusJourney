@@ -4,7 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import { Icon } from "@iconify/react";
 import Header from "../components/Header";
+import Footer from "../src/components/Footer";
 import {
   ApplicationCTA,
   CommunityJoinCTA,
@@ -356,22 +359,133 @@ export default function StudentAccommodations() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
         <Header />
 
-        <main className="pt-20 pb-16 px-4">
-          <div className="max-w-7xl mx-auto">
-            {/* Header Section */}
-            <header className="text-center mb-8">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                Student Accommodations
-              </h1>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Find accommodation recommendations from fellow Erasmus students
-                who've already lived in your destination city.
-              </p>
-            </header>
+        {/* Hero Section */}
+        <div className="relative bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 overflow-hidden">
+          {/* Background Effects */}
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:32px_32px]" />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+              className="absolute -bottom-24 -left-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"
+            />
+            {/* Vertical Container Lines */}
+            <div className="absolute inset-0 max-w-7xl mx-auto">
+              <div className="absolute left-4 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent" />
+              <div className="absolute right-4 md:right-8 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent" />
+            </div>
+          </div>
 
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="mb-4"
+            >
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-sm rounded-full text-white/90 text-sm font-medium border border-white/20">
+                <Icon icon="solar:home-2-linear" className="w-4 h-4" />
+                Housing Reviews
+              </span>
+            </motion.div>
+
+            {/* Title */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
+              className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4"
+            >
+              Student Accommodations
+            </motion.h1>
+
+            {/* Description */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut", delay: 0.15 }}
+              className="text-base md:text-lg text-white/70 max-w-3xl mb-8"
+            >
+              Find accommodation recommendations from fellow Erasmus students
+              who've already lived in your destination city.
+            </motion.p>
+
+            {/* Stats Grid */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.25 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            >
+              <motion.div
+                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 cursor-default"
+              >
+                <Icon
+                  icon="solar:home-2-linear"
+                  className="w-6 h-6 text-white/80 mb-2"
+                />
+                <div className="text-2xl md:text-3xl font-bold text-white">
+                  {accommodations?.length || 0}
+                </div>
+                <div className="text-sm text-white/70">Reviews</div>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 cursor-default"
+              >
+                <Icon
+                  icon="solar:map-point-linear"
+                  className="w-6 h-6 text-white/80 mb-2"
+                />
+                <div className="text-2xl md:text-3xl font-bold text-white">
+                  {cities?.length || 0}
+                </div>
+                <div className="text-sm text-white/70">Cities</div>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 cursor-default"
+              >
+                <Icon
+                  icon="solar:star-linear"
+                  className="w-6 h-6 text-white/80 mb-2"
+                />
+                <div className="text-2xl md:text-3xl font-bold text-white">
+                  4.2
+                </div>
+                <div className="text-sm text-white/70">Avg Rating</div>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 cursor-default"
+              >
+                <Icon
+                  icon="solar:heart-linear"
+                  className="w-6 h-6 text-white/80 mb-2"
+                />
+                <div className="text-2xl md:text-3xl font-bold text-white">
+                  {wishlist.size}
+                </div>
+                <div className="text-sm text-white/70">Wishlist</div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+
+        <main className="pb-16 px-4">
+          <div className="max-w-7xl mx-auto pt-8">
             {/* Section Navigation */}
             <nav className="mb-8">
               <div className="flex justify-center">
@@ -1215,6 +1329,8 @@ export default function StudentAccommodations() {
             )}
           </div>
         </main>
+
+        <Footer />
       </div>
     </>
   );

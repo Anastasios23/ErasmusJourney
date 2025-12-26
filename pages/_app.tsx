@@ -1,6 +1,8 @@
 import type { AppProps } from "next/app";
+import { useRouter } from "next/router";
 import { SessionProvider } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { motion, AnimatePresence } from "framer-motion";
 import { Toaster } from "../src/components/ui/toaster";
 import { Toaster as Sonner } from "../src/components/ui/sonner";
 import { TooltipProvider } from "../src/components/ui/tooltip";
@@ -34,6 +36,8 @@ export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) {
+  const router = useRouter();
+
   useEffect(() => {
     // Completely disable all fetch monitoring to prevent conflicts with analytics tools
     // This prevents interference from FullStory, HMR, and other monitoring tools
@@ -42,6 +46,13 @@ export default function App({
       // No cleanup needed since we're not setting up any monitoring
     };
   }, []);
+
+  // Page transition variants
+  const pageVariants = {
+    initial: { opacity: 0, y: 8 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -8 },
+  };
 
   return (
     <ErrorBoundary>
@@ -63,7 +74,18 @@ export default function App({
                         <EnhancedOfflineIndicator />
                         <Toaster />
                         <Sonner />
-                        <Component {...pageProps} />
+                        <AnimatePresence mode="wait">
+                          <motion.div
+                            key={router.asPath}
+                            initial="initial"
+                            animate="animate"
+                            exit="exit"
+                            variants={pageVariants}
+                            transition={{ duration: 0.2, ease: "easeInOut" }}
+                          >
+                            <Component {...pageProps} />
+                          </motion.div>
+                        </AnimatePresence>
                       </FormProgressProvider>
                     </TooltipProvider>
                   </NotificationProvider>

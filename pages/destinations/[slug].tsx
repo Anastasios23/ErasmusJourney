@@ -2,6 +2,8 @@ import { GetServerSideProps } from "next";
 import { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { Icon } from "@iconify/react";
 import Header from "../../components/Header";
 import Footer from "../../src/components/Footer";
 import {
@@ -37,7 +39,7 @@ import { CityAggregatedData } from "../../src/types/cityData";
 import { StatBar } from "../../src/components/ui/stat-bar";
 import { InsightBadge } from "../../src/components/ui/insight-badge";
 import { prisma } from "../../lib/prisma";
-import { CourseMatchingInsights } from "../../src/components/CourseMatchingInsights";
+import CourseMatchingInsights from "../../src/components/CourseMatchingInsights";
 
 interface StudentExperience {
   id: string;
@@ -97,71 +99,152 @@ export default function DestinationDetail({
       <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Back Button */}
         <Link href="/destinations">
-          <Button
-            variant="ghost"
-            className="mb-6 hover:bg-blue-50 text-blue-600"
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="mb-6 inline-flex items-center gap-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <Icon icon="solar:arrow-left-linear" className="w-4 h-4" />
             Back to All Destinations
-          </Button>
+          </motion.button>
         </Link>
 
         {/* Hero Section */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 md:p-12 mb-8 text-white">
-          <div className="flex items-start justify-between">
-            <div>
-              <Badge className="bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-sm mb-4">
-                {country}
-              </Badge>
-              <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
-                {city}
-              </h1>
-              <p className="text-xl text-blue-100 mb-6">
-                Based on {cityData.totalSubmissions} student{" "}
-                {cityData.totalSubmissions === 1 ? "experience" : "experiences"}
-              </p>
-            </div>
-            <div className="flex items-center bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl">
-              <Star className="w-8 h-8 text-yellow-300 mr-2 fill-yellow-300" />
-              <div>
-                <div className="text-3xl font-bold">
-                  {cityData.ratings.avgOverallRating.toFixed(1)}
-                </div>
-                <div className="text-xs text-blue-100">Overall Rating</div>
-              </div>
-            </div>
+        <div className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 rounded-3xl overflow-hidden mb-8">
+          {/* Background Effects */}
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:32px_32px]" />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+              className="absolute -bottom-24 -left-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"
+            />
+            {/* Vertical Container Lines */}
+            <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent" />
+            <div className="absolute right-8 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent" />
           </div>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4">
-              <Euro className="w-6 h-6 mb-2 text-blue-200" />
-              <div className="text-2xl font-bold">
-                €{Math.round(cityData.livingCosts.avgTotalMonthly)}
+          <div className="relative p-8 md:p-12">
+            <div className="flex items-start justify-between">
+              <div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-sm rounded-full text-white/90 text-sm font-medium border border-white/20 mb-4">
+                    <Icon icon="solar:flag-linear" className="w-4 h-4" />
+                    {country}
+                  </span>
+                </motion.div>
+                <motion.h1
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="text-4xl md:text-5xl font-extrabold text-white mb-4"
+                >
+                  {city}
+                </motion.h1>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.15 }}
+                  className="text-xl text-blue-100"
+                >
+                  Based on {cityData.totalSubmissions} student{" "}
+                  {cityData.totalSubmissions === 1
+                    ? "experience"
+                    : "experiences"}
+                </motion.p>
               </div>
-              <div className="text-sm text-blue-100">Avg Monthly Cost</div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+                className="hidden md:flex items-center bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/10 cursor-default"
+              >
+                <Icon
+                  icon="solar:star-bold"
+                  className="w-8 h-8 text-yellow-300 mr-2"
+                />
+                <div>
+                  <div className="text-3xl font-bold text-white">
+                    {cityData.ratings.avgOverallRating.toFixed(1)}
+                  </div>
+                  <div className="text-xs text-blue-100">Overall Rating</div>
+                </div>
+              </motion.div>
             </div>
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4">
-              <Home className="w-6 h-6 mb-2 text-blue-200" />
-              <div className="text-2xl font-bold">
-                €{Math.round(cityData.livingCosts.avgMonthlyRent)}
-              </div>
-              <div className="text-sm text-blue-100">Avg Rent</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4">
-              <Users className="w-6 h-6 mb-2 text-blue-200" />
-              <div className="text-2xl font-bold">
-                {cityData.totalSubmissions}
-              </div>
-              <div className="text-sm text-blue-100">Students</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4">
-              <TrendingUp className="w-6 h-6 mb-2 text-blue-200" />
-              <div className="text-2xl font-bold">
-                {cityData.recommendations.recommendationPercentage.toFixed(0)}%
-              </div>
-              <div className="text-sm text-blue-100">Would Recommend</div>
-            </div>
+
+            {/* Quick Stats */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8"
+            >
+              <motion.div
+                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+                className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 cursor-default"
+              >
+                <Icon
+                  icon="solar:wallet-linear"
+                  className="w-6 h-6 text-blue-200 mb-2"
+                />
+                <div className="text-2xl font-bold text-white">
+                  €{Math.round(cityData.livingCosts.avgTotalMonthly)}
+                </div>
+                <div className="text-sm text-blue-100">Avg Monthly Cost</div>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+                className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 cursor-default"
+              >
+                <Icon
+                  icon="solar:home-2-linear"
+                  className="w-6 h-6 text-blue-200 mb-2"
+                />
+                <div className="text-2xl font-bold text-white">
+                  €{Math.round(cityData.livingCosts.avgMonthlyRent)}
+                </div>
+                <div className="text-sm text-blue-100">Avg Rent</div>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+                className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 cursor-default"
+              >
+                <Icon
+                  icon="solar:users-group-rounded-linear"
+                  className="w-6 h-6 text-blue-200 mb-2"
+                />
+                <div className="text-2xl font-bold text-white">
+                  {cityData.totalSubmissions}
+                </div>
+                <div className="text-sm text-blue-100">Students</div>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+                className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 cursor-default"
+              >
+                <Icon
+                  icon="solar:graph-up-linear"
+                  className="w-6 h-6 text-blue-200 mb-2"
+                />
+                <div className="text-2xl font-bold text-white">
+                  {cityData.recommendations.recommendationPercentage.toFixed(0)}
+                  %
+                </div>
+                <div className="text-sm text-blue-100">Would Recommend</div>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
 

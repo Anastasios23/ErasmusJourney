@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { motion } from "framer-motion";
+import { Icon } from "@iconify/react";
 import Header from "../components/Header";
+import Footer from "../src/components/Footer";
 import CourseMatchingExperienceCard from "../src/components/CourseMatchingExperienceCard";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
@@ -233,7 +236,7 @@ export default function CourseMatchingExperiences() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
         <Header />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="space-y-6">
@@ -250,7 +253,7 @@ export default function CourseMatchingExperiences() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Head>
         <title>Course Matching Experiences - Erasmus Journey Platform</title>
         <meta
@@ -261,117 +264,176 @@ export default function CourseMatchingExperiences() {
 
       <Header />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header Section */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <Link href="/dashboard">
-              <Button variant="outline" className="flex items-center gap-2">
-                <ArrowLeft className="h-4 w-4" />
-                Back to Dashboard
-              </Button>
-            </Link>
-            <Link href="/course-matching">
-              <Button className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
-                Share Your Experience
-              </Button>
-            </Link>
-          </div>
-
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              Course Matching Experiences
-            </h1>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Discover how other students navigated course selection and credit
-              transfer during their Erasmus exchanges. Learn from their
-              challenges and successes.
-            </p>
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:32px_32px]" />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+            className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+            className="absolute -bottom-24 -left-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"
+          />
+          {/* Vertical Container Lines */}
+          <div className="absolute inset-0 max-w-7xl mx-auto">
+            <div className="absolute left-4 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent" />
+            <div className="absolute right-4 md:right-8 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent" />
           </div>
         </div>
 
-        {/* Stats Overview */}
-        {filterStats && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      Total Experiences
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {filterStats.totalExperiences}
-                    </p>
-                  </div>
-                  <Users className="h-8 w-8 text-blue-500" />
-                </div>
-              </CardContent>
-            </Card>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+          {/* Navigation */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="flex items-center justify-between mb-8"
+          >
+            <Link href="/dashboard">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm font-medium border border-white/20 hover:bg-white/20 transition-colors"
+              >
+                <Icon icon="solar:arrow-left-linear" className="w-4 h-4" />
+                Back to Dashboard
+              </motion.button>
+            </Link>
+            <Link href="/course-matching">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white text-purple-600 rounded-full text-sm font-medium hover:bg-white/90 transition-colors shadow-lg"
+              >
+                <Icon icon="solar:add-circle-linear" className="w-4 h-4" />
+                Share Your Experience
+              </motion.button>
+            </Link>
+          </motion.div>
 
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      Average Success Rate
-                    </p>
-                    <p className="text-2xl font-bold text-green-600">
-                      {Math.round(filterStats.successRate)}%
-                    </p>
-                  </div>
-                  <TrendingUp className="h-8 w-8 text-green-500" />
-                </div>
-              </CardContent>
-            </Card>
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="mb-4"
+          >
+            <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-sm rounded-full text-white/90 text-sm font-medium border border-white/20">
+              <Icon icon="solar:notebook-linear" className="w-4 h-4" />
+              Student Experiences
+            </span>
+          </motion.div>
 
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      Avg Courses Matched
-                    </p>
-                    <p className="text-2xl font-bold text-purple-600">
-                      {Math.round(filterStats.avgCoursesMatched)}
-                    </p>
-                  </div>
-                  <BookOpen className="h-8 w-8 text-purple-500" />
-                </div>
-              </CardContent>
-            </Card>
+          {/* Title */}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4"
+          >
+            Course Matching Experiences
+          </motion.h1>
 
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      Difficulty Rating
-                    </p>
-                    <p className="text-2xl font-bold text-orange-600">
-                      {filterStats.avgDifficulty.toFixed(1)}/5
-                    </p>
-                  </div>
-                  <Star className="h-8 w-8 text-orange-500" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+          {/* Description */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut", delay: 0.15 }}
+            className="text-base md:text-lg text-white/70 max-w-3xl mb-8"
+          >
+            Discover how other students navigated course selection and credit
+            transfer during their Erasmus exchanges. Learn from their challenges
+            and successes.
+          </motion.p>
 
+          {/* Stats Grid */}
+          {filterStats && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.25 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            >
+              <motion.div
+                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 cursor-default"
+              >
+                <Icon
+                  icon="solar:users-group-rounded-linear"
+                  className="w-6 h-6 text-white/80 mb-2"
+                />
+                <div className="text-2xl md:text-3xl font-bold text-white">
+                  {filterStats.totalExperiences}
+                </div>
+                <div className="text-sm text-white/70">Total Experiences</div>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 cursor-default"
+              >
+                <Icon
+                  icon="solar:graph-up-linear"
+                  className="w-6 h-6 text-white/80 mb-2"
+                />
+                <div className="text-2xl md:text-3xl font-bold text-white">
+                  {Math.round(filterStats.successRate)}%
+                </div>
+                <div className="text-sm text-white/70">Avg Success Rate</div>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 cursor-default"
+              >
+                <Icon
+                  icon="solar:book-2-linear"
+                  className="w-6 h-6 text-white/80 mb-2"
+                />
+                <div className="text-2xl md:text-3xl font-bold text-white">
+                  {Math.round(filterStats.avgCoursesMatched)}
+                </div>
+                <div className="text-sm text-white/70">Avg Courses Matched</div>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 cursor-default"
+              >
+                <Icon
+                  icon="solar:star-linear"
+                  className="w-6 h-6 text-white/80 mb-2"
+                />
+                <div className="text-2xl md:text-3xl font-bold text-white">
+                  {filterStats.avgDifficulty.toFixed(1)}
+                </div>
+                <div className="text-sm text-white/70">Difficulty Rating</div>
+              </motion.div>
+            </motion.div>
+          )}
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Filters */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Filter className="h-5 w-5" />
+              <Icon icon="solar:filter-linear" className="h-5 w-5" />
               Filter Experiences
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Icon
+                  icon="solar:magnifer-linear"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
+                />
                 <Input
                   placeholder="Search universities, cities, students..."
                   value={searchTerm}
@@ -489,6 +551,8 @@ export default function CourseMatchingExperiences() {
           </div>
         )}
       </div>
+
+      <Footer />
     </div>
   );
 }

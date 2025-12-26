@@ -202,7 +202,7 @@ export default function AIRecommendations({
               <div className="relative">
                 <div className="aspect-video overflow-hidden rounded-t-lg relative">
                   <Image
-                    src={`https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop&q=80&auto=format&cs=tinysrgb&crop=smart&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`}
+                    src={`https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&h=600&fit=crop&q=80&auto=format&cs=tinysrgb&crop=smart&ixlib=rb-4.0.3`}
                     alt={rec.title}
                     fill
                     className="object-cover"

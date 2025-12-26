@@ -3,6 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "../lib/prisma";
+import { getAllCitiesAggregatedData } from "../src/services/cityAggregationService";
 import Header from "../components/Header";
 import Footer from "../src/components/Footer";
 import { Button } from "../src/components/ui/button";
@@ -52,6 +53,84 @@ interface HomePageProps {
   latestStories: Story[];
   totalStudents: number;
   totalDestinations: number;
+  featuredDestinations: FeaturedDestination[];
+}
+
+interface FeaturedDestination {
+  city: string;
+  country: string;
+  image: string;
+  students: number;
+  rating: number;
+}
+
+// City images mapping for destinations without custom imageUrl
+const CITY_IMAGES: Record<string, string> = {
+  barcelona:
+    "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop",
+  amsterdam:
+    "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&h=600&fit=crop",
+  prague:
+    "https://images.unsplash.com/photo-1519677100203-a0e668c92439?w=800&h=600&fit=crop",
+  lisbon:
+    "https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=800&h=600&fit=crop",
+  berlin:
+    "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=800&h=600&fit=crop",
+  paris:
+    "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&h=600&fit=crop",
+  rome: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800&h=600&fit=crop",
+  vienna:
+    "https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=800&h=600&fit=crop",
+  madrid:
+    "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&h=600&fit=crop",
+  munich:
+    "https://images.unsplash.com/photo-1595867818082-083862f3d630?w=800&h=600&fit=crop",
+  milan:
+    "https://images.unsplash.com/photo-1520440229-6469a149ac59?w=800&h=600&fit=crop",
+  stockholm:
+    "https://images.unsplash.com/photo-1509356843151-3e7d96241e11?w=800&h=600&fit=crop",
+  copenhagen:
+    "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?w=800&h=600&fit=crop",
+  dublin:
+    "https://images.unsplash.com/photo-1549918864-48ac978761a4?w=800&h=600&fit=crop",
+  budapest:
+    "https://images.unsplash.com/photo-1541849546-216549ae216d?w=800&h=600&fit=crop",
+  warsaw:
+    "https://images.unsplash.com/photo-1519197924294-4ba991a11128?w=800&h=600&fit=crop",
+  athens:
+    "https://images.unsplash.com/photo-1555993539-1732b0258235?w=800&h=600&fit=crop",
+  krakow:
+    "https://images.unsplash.com/photo-1574069810860-61b199c51a44?w=800&h=600&fit=crop",
+  brussels:
+    "https://images.unsplash.com/photo-1559113202-c916b8e44373?w=800&h=600&fit=crop",
+  helsinki:
+    "https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?w=800&h=600&fit=crop",
+};
+
+const DEFAULT_DESTINATION_IMAGE =
+  "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&h=600&fit=crop";
+
+// ============================================================================
+// SERVER-SIDE CACHING
+// ============================================================================
+// Simple in-memory cache for homepage data to reduce database load
+// Cache expires after 5 minutes
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
+let homepageCache: CacheEntry<any> | null = null;
+
+function getCachedData<T>(cache: CacheEntry<T> | null): T | null {
+  if (!cache) return null;
+  if (Date.now() - cache.timestamp > CACHE_TTL) return null;
+  return cache.data;
+}
+
+function setCachedData<T>(data: T): CacheEntry<T> {
+  return { data, timestamp: Date.now() };
 }
 
 // ============================================================================
@@ -325,7 +404,12 @@ function MagneticButton({
       href={href}
       ref={buttonRef}
       className={`relative inline-flex items-center justify-center transition-transform duration-300 ease-out ${className}`}
-      style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
+      style={{
+        transform:
+          position.x === 0 && position.y === 0
+            ? undefined
+            : `translate(${position.x}px, ${position.y}px)`,
+      }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
@@ -423,7 +507,10 @@ function DestinationCard({
         <div
           ref={cardRef}
           className="relative group cursor-pointer"
-          style={{ transform, transition: "transform 0.2s ease-out" }}
+          style={{
+            transform: transform || undefined,
+            transition: "transform 0.2s ease-out",
+          }}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
         >
@@ -443,6 +530,7 @@ function DestinationCard({
                 src={image}
                 alt={city}
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -618,45 +706,10 @@ export default function HomePage({
   latestStories,
   totalStudents,
   totalDestinations,
+  featuredDestinations,
 }: HomePageProps) {
   const scrollProgress = useScrollProgress();
   const parallax = useMouseParallax(0.01);
-
-  // Featured destinations data
-  const featuredDestinations = [
-    {
-      city: "Barcelona",
-      country: "Spain",
-      image:
-        "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop",
-      students: 156,
-      rating: 4.8,
-    },
-    {
-      city: "Amsterdam",
-      country: "Netherlands",
-      image:
-        "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&h=600&fit=crop",
-      students: 142,
-      rating: 4.7,
-    },
-    {
-      city: "Prague",
-      country: "Czech Republic",
-      image:
-        "https://images.unsplash.com/photo-1519677100203-a0e668c92439?w=800&h=600&fit=crop",
-      students: 128,
-      rating: 4.6,
-    },
-    {
-      city: "Lisbon",
-      country: "Portugal",
-      image:
-        "https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=800&h=600&fit=crop",
-      students: 134,
-      rating: 4.7,
-    },
-  ];
 
   // Features data
   const features = [
@@ -1050,7 +1103,7 @@ export default function HomePage({
                   {/* Main image */}
                   <div className="relative rounded-3xl overflow-hidden shadow-2xl">
                     <Image
-                      src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop"
+                      src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&h=600&fit=crop"
                       alt="Students collaborating"
                       width={800}
                       height={600}
@@ -1226,17 +1279,117 @@ export default function HomePage({
 // ============================================================================
 // DATA FETCHING
 // ============================================================================
+
+// Fallback destinations used when database has no data
+const FALLBACK_DESTINATIONS: FeaturedDestination[] = [
+  {
+    city: "Barcelona",
+    country: "Spain",
+    image: CITY_IMAGES["barcelona"],
+    students: 156,
+    rating: 4.8,
+  },
+  {
+    city: "Amsterdam",
+    country: "Netherlands",
+    image: CITY_IMAGES["amsterdam"],
+    students: 142,
+    rating: 4.7,
+  },
+  {
+    city: "Prague",
+    country: "Czech Republic",
+    image: CITY_IMAGES["prague"],
+    students: 128,
+    rating: 4.6,
+  },
+  {
+    city: "Lisbon",
+    country: "Portugal",
+    image: CITY_IMAGES["lisbon"],
+    students: 134,
+    rating: 4.7,
+  },
+];
+
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    // Fetch statistics
-    const [universitiesCount, experiencesCount, destinationsCount] =
-      await Promise.all([
-        prisma.universities.count().catch(() => 0),
-        prisma.erasmusExperience
-          .count({ where: { status: "SUBMITTED" } })
-          .catch(() => 0),
-        prisma.destinations.count().catch(() => 0),
-      ]);
+    // Check for cached data first to reduce database load
+    const cachedData = getCachedData(homepageCache);
+    if (cachedData) {
+      console.log("[Homepage] Serving cached data");
+      return { props: cachedData };
+    }
+
+    console.log("[Homepage] Fetching fresh data from database...");
+
+    // Fetch statistics and city data in parallel
+    const [
+      universitiesCount,
+      experiencesCount,
+      destinationsCount,
+      cityAggregatedData,
+      featuredAdminDestinations,
+    ] = await Promise.all([
+      prisma.universities.count().catch(() => 0),
+      prisma.erasmusExperience
+        .count({ where: { status: "SUBMITTED" } })
+        .catch(() => 0),
+      prisma.destinations.count().catch(() => 0),
+      getAllCitiesAggregatedData().catch(() => []),
+      // Also check admin_destinations for featured cities with custom images
+      prisma.admin_destinations
+        .findMany({
+          where: { featured: true, active: true },
+          select: { city: true, country: true, imageUrl: true },
+        })
+        .catch(() => []),
+    ]);
+
+    // Create a map of admin destination images
+    const adminImageMap: Record<string, string> = {};
+    featuredAdminDestinations.forEach((dest: any) => {
+      if (dest.imageUrl) {
+        adminImageMap[dest.city.toLowerCase()] = dest.imageUrl;
+      }
+    });
+
+    // Transform aggregated city data into featured destinations
+    // Sort by total submissions (popularity) and take top 4
+    let featuredDestinations: FeaturedDestination[] = cityAggregatedData
+      .filter((city: any) => city.totalSubmissions > 0)
+      .sort((a: any, b: any) => b.totalSubmissions - a.totalSubmissions)
+      .slice(0, 4)
+      .map((city: any) => {
+        const cityKey = city.city.toLowerCase();
+        return {
+          city: city.city,
+          country: city.country,
+          image:
+            adminImageMap[cityKey] ||
+            CITY_IMAGES[cityKey] ||
+            DEFAULT_DESTINATION_IMAGE,
+          students: city.totalSubmissions,
+          rating: city.ratings?.avgOverallRating || 4.5,
+        };
+      });
+
+    // If no data from database, use fallback destinations
+    if (featuredDestinations.length === 0) {
+      featuredDestinations = FALLBACK_DESTINATIONS;
+    } else if (featuredDestinations.length < 4) {
+      // Fill remaining slots with fallback destinations that aren't already included
+      const existingCities = new Set(
+        featuredDestinations.map((d) => d.city.toLowerCase()),
+      );
+      const additionalDestinations = FALLBACK_DESTINATIONS.filter(
+        (d) => !existingCities.has(d.city.toLowerCase()),
+      ).slice(0, 4 - featuredDestinations.length);
+      featuredDestinations = [
+        ...featuredDestinations,
+        ...additionalDestinations,
+      ];
+    }
 
     // Fetch latest submitted experiences for stories
     const experiences = await prisma.erasmusExperience
@@ -1276,14 +1429,20 @@ export const getServerSideProps: GetServerSideProps = async () => {
       likes: Math.floor(Math.random() * 50) + 10,
     }));
 
-    return {
-      props: {
-        totalUniversities: universitiesCount,
-        latestStories,
-        totalStudents: experiencesCount || 500,
-        totalDestinations: destinationsCount || 150,
-      },
+    // Build the props object
+    const props = {
+      totalUniversities: universitiesCount,
+      latestStories,
+      totalStudents: experiencesCount || 500,
+      totalDestinations: destinationsCount || 150,
+      featuredDestinations,
     };
+
+    // Cache the data for subsequent requests
+    homepageCache = setCachedData(props);
+    console.log("[Homepage] Data cached successfully");
+
+    return { props };
   } catch (error) {
     console.error("Error fetching homepage data:", error);
     return {
@@ -1292,6 +1451,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
         latestStories: [],
         totalStudents: 500,
         totalDestinations: 150,
+        featuredDestinations: FALLBACK_DESTINATIONS,
       },
     };
   }

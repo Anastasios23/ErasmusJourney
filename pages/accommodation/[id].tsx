@@ -111,9 +111,14 @@ export default function AccommodationDetailPage() {
   // Get user's form submissions for personalization (like destinations page)
   const { content: userGeneratedContent } = useGeneratedContent();
 
+  // Ensure userGeneratedContent is an array before filtering
+  const userContentArray = Array.isArray(userGeneratedContent)
+    ? userGeneratedContent
+    : userGeneratedContent?.submissions || userGeneratedContent?.content || [];
+
   // Filter user content relevant to this accommodation location (similar to destinations page)
   const relevantUserContent =
-    userGeneratedContent?.filter(
+    userContentArray.filter(
       (content: any) =>
         // Match exact city/country
         content.data?.city?.toLowerCase() ===
@@ -142,7 +147,7 @@ export default function AccommodationDetailPage() {
   );
 
   // Extract user's academic info for better recommendations
-  const userAcademicInfo = userGeneratedContent?.find(
+  const userAcademicInfo = userContentArray.find(
     (content: any) =>
       content.data?.universityInCyprus || content.data?.departmentInCyprus,
   )?.data;
