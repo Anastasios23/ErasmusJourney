@@ -95,7 +95,7 @@ export default function Header() {
   const userNavigation = session
     ? [
         { name: "Dashboard", href: "/dashboard", icon: User },
-        { name: "Profile", href: "/profile", icon: User },
+        { name: "Settings", href: "/settings", icon: Settings },
         ...((session.user as any)?.role === "ADMIN"
           ? [
               { name: "─────────", href: "#", icon: User, disabled: true },

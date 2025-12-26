@@ -265,11 +265,11 @@ const DashboardWidgets: React.FC<DashboardWidgetProps> = ({ userProfile }) => {
         <CardContent>
           <div className="space-y-3">
             <p className="text-sm text-center text-muted-foreground py-4">
-              Community features coming soon!
+              Connect with other students coming soon!
             </p>
-            <Link href="/community">
+            <Link href="/destinations">
               <Button size="sm" variant="outline" className="w-full">
-                Browse Community
+                Browse Destinations
               </Button>
             </Link>
           </div>

@@ -1129,21 +1129,21 @@ export default function HelpFutureStudents() {
                 helps build a stronger Erasmus community for everyone.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/community">
+                <Link href="/destinations">
                   <Button
                     size="lg"
                     className="bg-white text-blue-600 hover:bg-gray-100"
                   >
-                    Explore Community
+                    Explore Destinations
                   </Button>
                 </Link>
-                <Link href="/experiences">
+                <Link href="/course-matching-experiences">
                   <Button
                     variant="outline"
                     size="lg"
                     className="border-white text-white hover:bg-white hover:text-blue-600"
                   >
-                    Read Other Stories
+                    Read Course Experiences
                   </Button>
                 </Link>
               </div>

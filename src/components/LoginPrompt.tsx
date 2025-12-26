@@ -114,13 +114,13 @@ const LoginPrompt: React.FC<LoginPromptProps> = ({
                     Destinations
                   </Button>
                 </Link>
-                <Link href="/student-stories">
+                <Link href="/course-matching-experiences">
                   <Button
                     variant="ghost"
                     className="w-full text-xs h-9 text-blue-600 hover:bg-blue-50"
                   >
                     <BookOpen className="h-3 w-3 mr-1" />
-                    Student Stories
+                    Course Experiences
                   </Button>
                 </Link>
               </div>

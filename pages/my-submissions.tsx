@@ -678,10 +678,12 @@ export default function MySubmissions() {
                               </Link>
                             )}
                             {submission.status === "APPROVED" && (
-                              <Link href={`/stories/${submission.id}`}>
+                              <Link
+                                href={`/destinations/${encodeURIComponent((submission as any).city?.toLowerCase().replace(/\s+/g, "-") || "explore")}`}
+                              >
                                 <Button variant="outline" size="sm">
                                   <Eye className="h-4 w-4 mr-2" />
-                                  View Published
+                                  View Destination
                                 </Button>
                               </Link>
                             )}

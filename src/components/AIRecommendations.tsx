@@ -284,9 +284,11 @@ export default function AIRecommendations({
                   )}
 
                   <div className="pt-2">
-                    <Link href={`/stories/${rec.id}`}>
+                    <Link
+                      href={`/destinations/${encodeURIComponent((rec as any).city?.toLowerCase().replace(/\s+/g, "-") || "explore")}`}
+                    >
                       <Button size="sm" className="w-full">
-                        Read Story
+                        Explore Destination
                       </Button>
                     </Link>
                   </div>
@@ -301,10 +303,10 @@ export default function AIRecommendations({
             <p className="text-xs text-gray-500 mb-3">
               Powered by AI • Updated in real-time based on your preferences
             </p>
-            <Link href="/student-stories">
+            <Link href="/course-matching-experiences">
               <Button variant="outline">
                 <BookOpen className="h-4 w-4 mr-2" />
-                View All Stories
+                View Course Experiences
               </Button>
             </Link>
           </div>

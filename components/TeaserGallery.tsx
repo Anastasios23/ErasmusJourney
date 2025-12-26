@@ -253,17 +253,17 @@ const TeaserGallery = () => {
 
           {/* Call to Action */}
           <div className="text-center mt-8">
-            <Link href="/student-stories">
+            <Link href="/course-matching-experiences">
               <Button
                 size="lg"
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
-                Read All Stories
+                View All Experiences
                 <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
               </Button>
             </Link>
             <p className="text-sm text-gray-500 mt-2">
-              Discover hundreds of authentic student experiences
+              Discover authentic student course experiences
             </p>
           </div>
         </div>

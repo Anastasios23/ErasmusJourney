@@ -661,10 +661,10 @@ export default function HomePage({
                   </h2>
                 </div>
                 <Link
-                  href="/student-stories"
+                  href="/course-matching-experiences"
                   className="group inline-flex items-center text-violet-600 dark:text-violet-400 font-semibold hover:text-violet-700 dark:hover:text-violet-300 transition-colors"
                 >
-                  View all stories
+                  View all experiences
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" />
                 </Link>
               </div>
@@ -673,7 +673,7 @@ export default function HomePage({
                 {latestStories.map((story, index) => (
                   <Link
                     key={story.id}
-                    href={`/stories/${story.id}`}
+                    href={`/destinations/${encodeURIComponent(story.city?.toLowerCase().replace(/\s+/g, "-") || "explore")}`}
                     className="group"
                   >
                     <GlassCard className="h-full overflow-hidden">
