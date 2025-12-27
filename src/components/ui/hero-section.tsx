@@ -23,16 +23,43 @@ interface HeroSectionProps {
     label: string;
   };
   children?: ReactNode;
-  gradient?: "blue" | "purple" | "emerald" | "amber";
+  gradient?: "blue" | "purple" | "emerald" | "orange" | "indigo" | "amber";
   size?: "sm" | "md" | "lg";
+  icon?: string;
+  theme?: "blue" | "purple" | "emerald" | "orange" | "indigo" | "amber";
+  animatedTitle?: boolean;
 }
 
 const gradientClasses = {
-  blue: "from-blue-600 via-indigo-600 to-violet-600",
-  purple: "from-violet-600 via-purple-600 to-fuchsia-600",
-  emerald: "from-emerald-600 via-teal-600 to-cyan-600",
-  amber: "from-amber-500 via-orange-500 to-red-500",
+  blue: "from-blue-600 via-indigo-600 to-blue-700",
+  purple: "from-indigo-600 via-purple-600 to-indigo-700",
+  emerald: "from-emerald-600 via-teal-600 to-emerald-700",
+  orange: "from-orange-500 via-amber-500 to-orange-600",
+  amber: "from-amber-500 via-orange-500 to-amber-600",
+  indigo: "from-indigo-600 via-blue-600 to-indigo-700",
 };
+
+// Animated word component for hero titles
+const AnimatedWord = ({
+  children,
+  delay,
+}: {
+  children: string;
+  delay: number;
+}) => (
+  <motion.span
+    initial={{ opacity: 0, y: 40, rotateX: -60 }}
+    animate={{ opacity: 1, y: 0, rotateX: 0 }}
+    transition={{
+      duration: 0.7,
+      delay,
+      ease: [0.215, 0.61, 0.355, 1],
+    }}
+    className="inline-block"
+  >
+    {children}
+  </motion.span>
+);
 
 export function HeroSection({
   badge,
@@ -43,36 +70,58 @@ export function HeroSection({
   stats,
   backLink,
   children,
-  gradient = "blue",
+  gradient,
+  theme,
   size = "md",
+  icon,
+  animatedTitle = false,
 }: HeroSectionProps) {
+  const activeGradient = theme || gradient || "blue";
   const paddingClasses = {
     sm: "py-8 md:py-12",
     md: "py-12 md:py-16",
     lg: "py-16 md:py-24",
   };
 
+  // Split title into words for animation
+  const titleWords = title.split(" ");
+
   return (
     <div
-      className={`relative bg-gradient-to-r ${gradientClasses[gradient]} overflow-hidden`}
+      className={`relative bg-gradient-to-r ${gradientClasses[activeGradient as keyof typeof gradientClasses]} overflow-hidden`}
     >
       {/* Background Effects */}
       <div className="absolute inset-0">
         {/* Grid Pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:32px_32px]" />
 
-        {/* Blur Orbs */}
+        {/* Animated Blur Orbs */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
+          animate={{
+            opacity: [0.1, 0.2, 0.1],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"
         />
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+          animate={{
+            opacity: [0.1, 0.15, 0.1],
+            scale: [1.2, 1, 1.2],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           className="absolute -bottom-24 -left-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"
+        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{
+            opacity: [0.05, 0.1, 0.05],
+            x: [-20, 20, -20],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl"
         />
 
         {/* Vertical Container Lines */}
@@ -108,27 +157,51 @@ export function HeroSection({
         {/* Badge */}
         {badge && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="mb-4"
           >
-            <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-sm rounded-full text-white/90 text-sm font-medium border border-white/20">
+            <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-sm rounded-full text-white/90 text-sm font-medium border border-white/20 shadow-lg">
               {badgeIcon && <Icon icon={badgeIcon} className="w-4 h-4" />}
               {badge}
             </span>
           </motion.div>
         )}
 
-        {/* Title */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
-          className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4"
-        >
-          {title}
-        </motion.h1>
+        {/* Icon */}
+        {icon && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="mb-6 inline-flex p-4 bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 text-white shadow-2xl"
+          >
+            <Icon icon={icon} className="w-10 h-10" />
+          </motion.div>
+        )}
+
+        {/* Title - Animated or Static */}
+        {animatedTitle ? (
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 overflow-hidden">
+            <span className="flex flex-wrap gap-x-3">
+              {titleWords.map((word, index) => (
+                <AnimatedWord key={index} delay={index * 0.1}>
+                  {word}
+                </AnimatedWord>
+              ))}
+            </span>
+          </h1>
+        ) : (
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4"
+          >
+            {title}
+          </motion.h1>
+        )}
 
         {/* Subtitle */}
         {subtitle && (

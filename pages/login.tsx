@@ -39,9 +39,9 @@ import { handleForgotPassword as forgotPasswordAPI } from "../src/utils/forgotPa
 function FloatingOrbs() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <div className="absolute top-10 left-10 w-72 h-72 bg-gradient-to-br from-violet-500/30 to-fuchsia-500/30 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-10 right-10 w-96 h-96 bg-gradient-to-br from-pink-500/20 to-rose-500/20 rounded-full blur-3xl" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-violet-500/10 to-fuchsia-500/10 rounded-full blur-3xl" />
+      <div className="absolute top-10 left-10 w-72 h-72 bg-gradient-to-br from-blue-500/30 to-indigo-500/30 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-10 right-10 w-96 h-96 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-full blur-3xl" />
     </div>
   );
 }
@@ -137,7 +137,7 @@ export default function Login() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50">
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 animate-pulse" />
+            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 animate-pulse" />
             <Loader2 className="absolute inset-0 m-auto h-8 w-8 animate-spin text-white" />
           </div>
         </div>
@@ -162,16 +162,16 @@ export default function Login() {
             {/* Back Button */}
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors mb-8 group"
+              className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors mb-8 group"
             >
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
               <span className="font-medium">Back to Home</span>
             </Link>
 
             {/* Glass Card */}
-            <div className="backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border border-white/20 dark:border-gray-700/30 rounded-3xl shadow-2xl shadow-violet-500/10 overflow-hidden">
+            <div className="backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border border-white/20 dark:border-gray-700/30 rounded-3xl shadow-2xl shadow-blue-500/10 overflow-hidden">
               {/* Header with gradient */}
-              <div className="relative bg-gradient-to-br from-violet-600 via-fuchsia-600 to-pink-600 px-8 py-10 text-center overflow-hidden">
+              <div className="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 px-8 py-10 text-center overflow-hidden">
                 <div className="absolute inset-0 opacity-30">
                   <div className="absolute top-0 left-0 w-40 h-40 bg-white/20 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
                   <div className="absolute bottom-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl translate-x-1/2 translate-y-1/2" />
@@ -224,7 +224,7 @@ export default function Login() {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                             disabled={isLoading}
-                            className="pl-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-violet-500 focus:ring-violet-500"
+                            className="pl-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-blue-500 focus:ring-blue-500"
                           />
                         </div>
                       </div>
@@ -245,7 +245,7 @@ export default function Login() {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             disabled={isLoading}
-                            className="pl-12 pr-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-violet-500 focus:ring-violet-500"
+                            className="pl-12 pr-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-blue-500 focus:ring-blue-500"
                           />
                           <button
                             type="button"
@@ -268,7 +268,7 @@ export default function Login() {
                         <button
                           type="button"
                           onClick={() => setShowForgotPassword(true)}
-                          className="text-sm text-violet-600 dark:text-violet-400 hover:text-fuchsia-600 dark:hover:text-fuchsia-400 transition-colors font-medium"
+                          className="text-sm text-blue-600 dark:text-blue-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
                           disabled={isLoading}
                         >
                           Forgot Password?
@@ -277,7 +277,7 @@ export default function Login() {
 
                       <Button
                         type="submit"
-                        className="w-full h-12 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 hover:opacity-90 text-white font-semibold rounded-xl shadow-lg shadow-violet-500/25 transition-all"
+                        className="w-full h-12 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:opacity-90 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/25 transition-all"
                         disabled={isLoading}
                       >
                         {isLoading ? (
@@ -304,7 +304,7 @@ export default function Login() {
 
                     <Button
                       variant="outline"
-                      className="w-full h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-violet-300 dark:hover:border-violet-700 transition-all"
+                      className="w-full h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-blue-300 dark:hover:border-blue-700 transition-all"
                       onClick={handleGoogleSignIn}
                       disabled={isLoading}
                     >
@@ -360,13 +360,13 @@ export default function Login() {
                               }
                               required
                               disabled={isLoading}
-                              className="pl-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-violet-500 focus:ring-violet-500"
+                              className="pl-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-blue-500 focus:ring-blue-500"
                             />
                           </div>
                         </div>
                         <Button
                           type="submit"
-                          className="w-full h-12 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 hover:opacity-90 text-white font-semibold rounded-xl shadow-lg shadow-violet-500/25"
+                          className="w-full h-12 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:opacity-90 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/25"
                           disabled={isLoading}
                         >
                           {isLoading ? (
@@ -382,7 +382,7 @@ export default function Login() {
                           type="button"
                           variant="ghost"
                           onClick={() => setShowForgotPassword(false)}
-                          className="w-full rounded-xl text-gray-600 dark:text-gray-400 hover:text-violet-600 dark:hover:text-violet-400"
+                          className="w-full rounded-xl text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
                         >
                           Back to Sign In
                         </Button>
@@ -421,7 +421,7 @@ export default function Login() {
                   Don't have an account?{" "}
                   <Link
                     href="/register"
-                    className="font-semibold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity"
+                    className="font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity"
                   >
                     Register here
                   </Link>

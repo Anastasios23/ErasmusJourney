@@ -3,7 +3,7 @@ import { getCourseMatchingExperiences } from "../../../src/utils/courseMatchingD
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   if (req.method !== "GET") {
     res.setHeader("Allow", ["GET"]);
@@ -12,17 +12,39 @@ export default async function handler(
 
   try {
     const { experiences, stats } = await getCourseMatchingExperiences();
-    
+
     res.status(200).json({
       success: true,
-      experiences,
-      stats,
+      experiences: experiences || [],
+      stats: stats || {
+        totalExperiences: 0,
+        avgDifficulty: 0,
+        successRate: 0,
+        avgCoursesMatched: 0,
+        topDestinations: [],
+        topDepartments: [],
+        difficultyBreakdown: {},
+        recommendationRate: 0,
+      },
     });
   } catch (error) {
     console.error("Error in course matching experiences API:", error);
-    res.status(500).json({
-      error: "Failed to fetch course matching experiences",
-      details: error instanceof Error ? error.message : "Unknown error",
+
+    // Return empty data with 200 status so the page can still render
+    res.status(200).json({
+      success: false,
+      experiences: [],
+      stats: {
+        totalExperiences: 0,
+        avgDifficulty: 0,
+        successRate: 0,
+        avgCoursesMatched: 0,
+        topDestinations: [],
+        topDepartments: [],
+        difficultyBreakdown: {},
+        recommendationRate: 0,
+      },
+      error: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }

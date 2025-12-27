@@ -15,24 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../src/components/ui/select";
-import {
-  Search,
-  MapPin,
-  Calendar,
-  Star,
-  Heart,
-  Quote,
-  ArrowRight,
-  Filter,
-  Sparkles,
-  GraduationCap,
-  Users,
-  Globe,
-  Building2,
-  BookOpen,
-  Home as HomeIcon,
-  ChevronRight,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
+import { motion } from "framer-motion";
 import Footer from "../src/components/Footer";
 import { cn } from "@/lib/utils";
 
@@ -128,16 +112,19 @@ export default function StudentStories({ stories, countries, stats }: Props) {
 
           <div className="max-w-7xl mx-auto text-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-100 to-rose-100 dark:from-pink-900/30 dark:to-rose-900/30 px-5 py-2.5 rounded-full mb-8">
-              <Heart className="w-4 h-4 text-pink-600" />
-              <span className="text-sm font-semibold text-pink-700 dark:text-pink-300">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-100 to-blue-100 dark:from-indigo-900/30 dark:to-blue-900/30 px-5 py-2.5 rounded-full mb-8">
+              <Icon
+                icon="solar:users-group-rounded-linear"
+                className="w-4 h-4 text-indigo-600"
+              />
+              <span className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
                 Community Stories
               </span>
             </div>
 
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
               Real Stories from
-              <span className="block bg-gradient-to-r from-pink-600 via-rose-600 to-red-600 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 Real Students
               </span>
             </h1>
@@ -154,22 +141,25 @@ export default function StudentStories({ stories, countries, stats }: Props) {
                 {
                   label: "Stories Shared",
                   value: stats.totalStories,
-                  icon: BookOpen,
+                  icon: "solar:notebook-linear",
                 },
                 {
                   label: "Countries",
                   value: stats.totalCountries,
-                  icon: Globe,
+                  icon: "solar:global-linear",
                 },
                 {
                   label: "Universities",
                   value: stats.totalUniversities,
-                  icon: GraduationCap,
+                  icon: "solar:buildings-2-linear",
                 },
               ].map((stat) => (
                 <div key={stat.label} className="flex items-center gap-3">
                   <div className="p-3 bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
-                    <stat.icon className="w-6 h-6 text-pink-600" />
+                    <Icon
+                      icon={stat.icon}
+                      className="w-6 h-6 text-indigo-600"
+                    />
                   </div>
                   <div className="text-left">
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -183,10 +173,16 @@ export default function StudentStories({ stories, countries, stats }: Props) {
 
             {/* CTA */}
             <Link href="/dashboard">
-              <Button className="rounded-2xl px-8 py-6 text-lg bg-gradient-to-r from-pink-600 via-rose-600 to-red-600 hover:from-pink-700 hover:via-rose-700 hover:to-red-700 text-white shadow-xl shadow-pink-500/30 hover:shadow-pink-500/40 transition-all">
-                <Sparkles className="w-5 h-5 mr-2" />
+              <Button className="rounded-2xl px-8 py-6 text-lg bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/40 transition-all">
+                <Icon
+                  icon="solar:pen-new-square-linear"
+                  className="w-5 h-5 mr-2"
+                />
                 Share Your Story
-                <ArrowRight className="w-5 h-5 ml-2" />
+                <Icon
+                  icon="solar:arrow-right-linear"
+                  className="w-5 h-5 ml-2"
+                />
               </Button>
             </Link>
           </div>
@@ -199,7 +195,10 @@ export default function StudentStories({ stories, countries, stats }: Props) {
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="flex-1 relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Icon
+                      icon="solar:magnifer-linear"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                    />
                     <Input
                       placeholder="Search by city, country, university, or student name..."
                       value={searchTerm}
@@ -212,7 +211,10 @@ export default function StudentStories({ stories, countries, stats }: Props) {
                     onValueChange={setCountryFilter}
                   >
                     <SelectTrigger className="w-full md:w-56 h-14 rounded-2xl">
-                      <Globe className="w-4 h-4 mr-2 text-gray-400" />
+                      <Icon
+                        icon="solar:global-linear"
+                        className="w-4 h-4 mr-2 text-gray-400"
+                      />
                       <SelectValue placeholder="Filter by country" />
                     </SelectTrigger>
                     <SelectContent>
@@ -236,8 +238,11 @@ export default function StudentStories({ stories, countries, stats }: Props) {
             {filteredStories.length === 0 ? (
               <Card className="border-0 shadow-lg">
                 <CardContent className="p-16 text-center">
-                  <div className="w-20 h-20 bg-pink-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Heart className="w-10 h-10 text-pink-600" />
+                  <div className="w-20 h-20 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Icon
+                      icon="solar:heart-linear"
+                      className="w-10 h-10 text-indigo-600"
+                    />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                     No stories found
@@ -248,8 +253,11 @@ export default function StudentStories({ stories, countries, stats }: Props) {
                       : "Be the first to share your Erasmus experience with the community!"}
                   </p>
                   <Link href="/dashboard">
-                    <Button className="rounded-2xl px-6 bg-gradient-to-r from-pink-600 to-rose-600 text-white">
-                      <Sparkles className="w-4 h-4 mr-2" />
+                    <Button className="rounded-2xl px-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+                      <Icon
+                        icon="solar:pen-new-square-linear"
+                        className="w-4 h-4 mr-2"
+                      />
                       Share Your Story
                     </Button>
                   </Link>
@@ -264,14 +272,17 @@ export default function StudentStories({ stories, countries, stats }: Props) {
                     style={{ animationDelay: `${idx * 50}ms` }}
                   >
                     {/* Gradient Header */}
-                    <div className="h-32 bg-gradient-to-br from-pink-500 via-rose-500 to-red-500 relative overflow-hidden">
+                    <div className="h-32 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 relative overflow-hidden">
                       <div className="absolute inset-0 bg-black/10" />
                       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:20px_20px]" />
 
                       {/* Location badge */}
                       <div className="absolute bottom-4 left-4 right-4">
                         <div className="flex items-center gap-2 text-white">
-                          <MapPin className="w-4 h-4" />
+                          <Icon
+                            icon="solar:map-point-linear"
+                            className="w-4 h-4"
+                          />
                           <span className="font-semibold">
                             {story.hostCity}, {story.hostCountry}
                           </span>
@@ -280,7 +291,10 @@ export default function StudentStories({ stories, countries, stats }: Props) {
 
                       {/* Rating */}
                       <div className="absolute top-4 right-4 flex items-center gap-1 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                        <Star className="w-4 h-4 text-yellow-300 fill-yellow-300" />
+                        <Icon
+                          icon="solar:star-bold"
+                          className="w-4 h-4 text-yellow-300"
+                        />
                         <span className="text-white font-semibold text-sm">
                           {getRating(story).toFixed(1)}
                         </span>
@@ -290,7 +304,7 @@ export default function StudentStories({ stories, countries, stats }: Props) {
                     <CardContent className="p-6">
                       {/* Author */}
                       <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center text-white font-bold">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold">
                           {story.author.firstName?.[0] || "A"}
                         </div>
                         <div>
@@ -306,7 +320,10 @@ export default function StudentStories({ stories, countries, stats }: Props) {
                       {/* University */}
                       {story.hostUniversity && (
                         <div className="flex items-center gap-2 mb-4 text-sm text-gray-600 dark:text-gray-400">
-                          <GraduationCap className="w-4 h-4" />
+                          <Icon
+                            icon="solar:square-academic-cap-linear"
+                            className="w-4 h-4"
+                          />
                           <span className="line-clamp-1">
                             {story.hostUniversity}
                           </span>
@@ -315,7 +332,10 @@ export default function StudentStories({ stories, countries, stats }: Props) {
 
                       {/* Quote/Excerpt */}
                       <div className="relative mb-4">
-                        <Quote className="absolute -top-2 -left-2 w-8 h-8 text-pink-200 dark:text-pink-800" />
+                        <Icon
+                          icon="solar:quote-opening-linear"
+                          className="absolute -top-2 -left-2 w-8 h-8 text-indigo-200 dark:text-indigo-800"
+                        />
                         <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-3 pl-4">
                           {getExcerpt(story)}
                         </p>
@@ -324,10 +344,13 @@ export default function StudentStories({ stories, countries, stats }: Props) {
                       {/* Read More */}
                       <Link
                         href={`/destinations/${story.hostCity?.toLowerCase().replace(/\s+/g, "-")}`}
-                        className="inline-flex items-center gap-2 text-pink-600 hover:text-pink-700 font-semibold text-sm group/link"
+                        className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-semibold text-sm group/link"
                       >
                         Read Full Story
-                        <ChevronRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                        <Icon
+                          icon="solar:arrow-right-linear"
+                          className="w-4 h-4 group-hover/link:translate-x-1 transition-transform"
+                        />
                       </Link>
                     </CardContent>
                   </Card>
@@ -347,10 +370,13 @@ export default function StudentStories({ stories, countries, stats }: Props) {
         {/* CTA Section */}
         <section className="px-4 sm:px-6 lg:px-8 py-20">
           <div className="max-w-4xl mx-auto text-center">
-            <Card className="border-0 shadow-2xl bg-gradient-to-br from-pink-600 via-rose-600 to-red-600 text-white overflow-hidden relative">
+            <Card className="border-0 shadow-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white overflow-hidden relative">
               <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:30px_30px]" />
               <CardContent className="relative p-12 md:p-16">
-                <Users className="w-16 h-16 mx-auto mb-6 opacity-90" />
+                <Icon
+                  icon="solar:users-group-rounded-linear"
+                  className="w-16 h-16 mx-auto mb-6 opacity-90"
+                />
                 <h2 className="text-3xl md:text-4xl font-bold mb-4">
                   Join Our Community
                 </h2>
@@ -361,8 +387,11 @@ export default function StudentStories({ stories, countries, stats }: Props) {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link href="/dashboard">
-                    <Button className="rounded-2xl px-8 py-6 text-lg bg-white text-pink-600 hover:bg-gray-100 shadow-xl">
-                      <Sparkles className="w-5 h-5 mr-2" />
+                    <Button className="rounded-2xl px-8 py-6 text-lg bg-white text-indigo-600 hover:bg-gray-100 shadow-xl">
+                      <Icon
+                        icon="solar:pen-new-square-linear"
+                        className="w-5 h-5 mr-2"
+                      />
                       Share Your Story
                     </Button>
                   </Link>
@@ -371,7 +400,10 @@ export default function StudentStories({ stories, countries, stats }: Props) {
                       variant="outline"
                       className="rounded-2xl px-8 py-6 text-lg border-2 border-white text-white hover:bg-white/10"
                     >
-                      <Globe className="w-5 h-5 mr-2" />
+                      <Icon
+                        icon="solar:global-linear"
+                        className="w-5 h-5 mr-2"
+                      />
                       Explore Destinations
                     </Button>
                   </Link>

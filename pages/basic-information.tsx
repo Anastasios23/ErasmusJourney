@@ -41,7 +41,9 @@ import {
 import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
 import { Badge } from "../src/components/ui/badge";
 import { Textarea } from "../src/components/ui/textarea";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { Icon } from "@iconify/react";
+import { motion } from "framer-motion";
+import { HeroSection } from "@/components/ui/hero-section";
 import { SubmissionGuard } from "../components/SubmissionGuard";
 import {
   CYPRUS_UNIVERSITIES,
@@ -160,14 +162,6 @@ export default function BasicInformation() {
   const [availableCities, setAvailableCities] = useState<string[]>([]);
 
   // 2. ALL useEffect HOOKS NEXT
-  // AUTHENTICATION DISABLED - Comment out to re-enable
-  // Authentication redirect in useEffect
-  // useEffect(() => {
-  //   if (sessionStatus === "unauthenticated") {
-  //     router.replace(`/login?callbackUrl=${encodeURIComponent(router.asPath)}`);
-  //   }
-  // }, [sessionStatus, router]);
-
   useEffect(() => {
     setCurrentStep("basic-info");
   }, [setCurrentStep]);
@@ -487,29 +481,6 @@ export default function BasicInformation() {
     }
   };
 
-  const handleSaveDraft = async () => {
-    try {
-      // Clear previous errors
-      setDraftError(null);
-      setDraftSuccess(null);
-
-      await handleSaveDraftToDatabase();
-    } catch (error: any) {
-      console.error("Draft save error:", error);
-      const errorInfo = handleApiError(error);
-      setDraftError(`Failed to save draft: ${errorInfo.message}`);
-
-      // Handle authentication error
-      if (errorInfo.action === "signin") {
-        setTimeout(() => {
-          router.push(
-            "/login?callbackUrl=" + encodeURIComponent(router.asPath),
-          );
-        }, 2000);
-      }
-    }
-  };
-
   // Redirect to login if not authenticated
   useEffect(() => {
     if (sessionStatus === "unauthenticated") {
@@ -522,10 +493,10 @@ export default function BasicInformation() {
 
   if (sessionStatus === "loading" || experienceLoading) {
     content = (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-[400px] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p>
+          <p className="text-slate-500 font-medium">
             {sessionStatus === "loading"
               ? "Checking authentication..."
               : "Loading draft data..."}
@@ -536,39 +507,30 @@ export default function BasicInformation() {
   } else if (sessionStatus !== "authenticated") {
     // Show login prompt while redirect happens
     content = (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <Header />
-        <main className="container mx-auto px-4 py-8">
-          <div className="max-w-3xl mx-auto">
-            <Breadcrumb
-              items={[
-                { label: "Home", href: "/" },
-                { label: "Basic Information", href: "/basic-information" },
-              ]}
-            />
-
-            <div className="mt-8">
-              <LoginPrompt
-                title="Start Your Erasmus Application"
-                description="Ready to begin your application? Sign in to save your progress and access all features."
-              />
-            </div>
-          </div>
-        </main>
+      <div className="mt-8">
+        <LoginPrompt
+          title="Start Your Erasmus Application"
+          description="Ready to begin your application? Sign in to save your progress and access all features."
+        />
       </div>
     );
   } else {
     // Render the form only when authenticated and data is loaded
     content = (
-      <form
+      <motion.form
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
         onSubmit={handleSubmit}
         className="space-y-8"
         key={draftApplied ? "draft-loaded" : "initial"}
       >
         {/* Personal Information */}
         <FormSection
+          variant="blue"
           title="Personal Information"
-          subtitle="Your basic personal details for the exchange program"
+          subtitle="Your basic contact and identification details"
+          icon="solar:user-id-linear"
         >
           <FormGrid columns={2}>
             <FormField
@@ -596,7 +558,9 @@ export default function BasicInformation() {
                 error={fieldErrors.lastName}
               />
             </FormField>
+          </FormGrid>
 
+          <FormGrid columns={2}>
             <FormField label="Email Address" required error={fieldErrors.email}>
               <EnhancedInput
                 id="email"
@@ -625,30 +589,30 @@ export default function BasicInformation() {
                 error={fieldErrors.dateOfBirth}
               />
             </FormField>
+          </FormGrid>
 
-            <FormField
-              label="Nationality"
+          <FormField
+            label="Nationality"
+            required
+            error={fieldErrors.nationality}
+          >
+            <EnhancedInput
+              id="nationality"
+              value={formData.nationality}
+              onChange={(e) => handleInputChange("nationality", e.target.value)}
+              placeholder="e.g., Cypriot, Greek, German"
               required
               error={fieldErrors.nationality}
-            >
-              <EnhancedInput
-                id="nationality"
-                value={formData.nationality}
-                onChange={(e) =>
-                  handleInputChange("nationality", e.target.value)
-                }
-                placeholder="e.g., Cypriot, Greek, German"
-                required
-                error={fieldErrors.nationality}
-              />
-            </FormField>
-          </FormGrid>
+            />
+          </FormField>
         </FormSection>
 
         {/* Academic Information */}
         <FormSection
+          variant="blue"
           title="Academic Information"
           subtitle="Your current academic status and university details"
+          icon="solar:diploma-linear"
         >
           <FormGrid columns={2}>
             <FormField
@@ -745,9 +709,16 @@ export default function BasicInformation() {
 
           {formData.departmentInCyprus &&
             availableHostUniversities.length > 0 && (
-              <div className="p-4 bg-green-50 rounded-lg border border-green-200 mb-4">
-                <p className="text-green-800 text-sm">
-                  <span className="font-semibold">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800/50 flex items-center gap-3"
+              >
+                <div className="p-2 bg-blue-100 dark:bg-blue-800 rounded-xl text-blue-600 dark:text-blue-300">
+                  <Icon icon="solar:globus-linear" className="w-5 h-5" />
+                </div>
+                <p className="text-blue-800 dark:text-blue-200 text-sm font-medium">
+                  <span className="font-bold">
                     {availableHostUniversities.length} partner universities
                   </span>{" "}
                   available for {formData.departmentInCyprus} at{" "}
@@ -758,14 +729,16 @@ export default function BasicInformation() {
                   }
                   {formData.levelOfStudy && ` (${formData.levelOfStudy} level)`}
                 </p>
-              </div>
+              </motion.div>
             )}
         </FormSection>
 
         {/* Exchange Information */}
         <FormSection
+          variant="blue"
           title="Exchange Preferences"
           subtitle="Your preferred exchange period and additional details"
+          icon="solar:map-point-wave-linear"
         >
           <FormGrid columns={2}>
             <FormField
@@ -812,7 +785,9 @@ export default function BasicInformation() {
                 error={fieldErrors.currentYear}
               />
             </FormField>
+          </FormGrid>
 
+          <FormGrid columns={2}>
             <FormField
               label="Preferred Host Country"
               required
@@ -903,71 +878,81 @@ export default function BasicInformation() {
                 <DisabledFieldHint message="Please select a country first" />
               )}
             </FormField>
+          </FormGrid>
 
-            <FormField
-              label="Preferred Host University"
-              required
-              error={fieldErrors.hostUniversity}
+          <FormField
+            label="Preferred Host University"
+            required
+            error={fieldErrors.hostUniversity}
+          >
+            <EnhancedSelect
+              value={formData.hostUniversity || ""}
+              onValueChange={(value) =>
+                handleInputChange("hostUniversity", value)
+              }
+              disabled={!formData.hostCountry}
             >
-              <EnhancedSelect
-                value={formData.hostUniversity || ""}
-                onValueChange={(value) =>
-                  handleInputChange("hostUniversity", value)
+              <EnhancedSelectTrigger
+                disabledMessage={
+                  !formData.hostCountry
+                    ? "Please select a country first"
+                    : undefined
                 }
-                disabled={!formData.hostCountry}
+                error={fieldErrors.hostUniversity}
               >
-                <EnhancedSelectTrigger
+                <EnhancedSelectValue
+                  placeholder="Select university"
                   disabledMessage={
                     !formData.hostCountry
                       ? "Please select a country first"
                       : undefined
                   }
-                  error={fieldErrors.hostUniversity}
-                >
-                  <EnhancedSelectValue
-                    placeholder="Select university"
-                    disabledMessage={
-                      !formData.hostCountry
-                        ? "Please select a country first"
-                        : undefined
-                    }
-                    disabled={!formData.hostCountry}
-                  />
-                </EnhancedSelectTrigger>
-                <EnhancedSelectContent>
-                  {availableHostUniversities
-                    .filter(
-                      (uni) =>
-                        uni.country === formData.hostCountry &&
-                        (!formData.hostCity || uni.city === formData.hostCity),
-                    )
-                    .map((uni, index) => (
-                      <EnhancedSelectItem key={index} value={uni.university}>
-                        {uni.university} - {uni.city}
-                      </EnhancedSelectItem>
-                    ))}
-                </EnhancedSelectContent>
-              </EnhancedSelect>
-              {!formData.hostCountry && (
-                <DisabledFieldHint message="Please select a country first" />
-              )}
-            </FormField>
-          </FormGrid>
+                  disabled={!formData.hostCountry}
+                />
+              </EnhancedSelectTrigger>
+              <EnhancedSelectContent>
+                {availableHostUniversities
+                  .filter(
+                    (uni) =>
+                      uni.country === formData.hostCountry &&
+                      (!formData.hostCity || uni.city === formData.hostCity),
+                  )
+                  .map((uni, index) => (
+                    <EnhancedSelectItem key={index} value={uni.university}>
+                      {uni.university} - {uni.city}
+                    </EnhancedSelectItem>
+                  ))}
+              </EnhancedSelectContent>
+            </EnhancedSelect>
+            {!formData.hostCountry && (
+              <DisabledFieldHint message="Please select a country first" />
+            )}
+          </FormField>
         </FormSection>
 
         {/* Navigation */}
         {/* Subtle auto-save status indicator */}
-        <div className="fixed top-20 right-4 z-40">
+        <div className="fixed top-24 right-6 z-50">
           {isAutoSaving && (
-            <div className="flex items-center bg-gray-800 bg-opacity-90 text-white px-2 py-1 rounded text-xs shadow-lg">
-              <div className="animate-spin rounded-full h-2 w-2 border border-white border-t-transparent mr-1.5"></div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center bg-slate-900/90 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-xs font-medium shadow-2xl border border-slate-700/50"
+            >
+              <div className="animate-spin rounded-full h-3 w-3 border-2 border-blue-400 border-t-transparent mr-2"></div>
               Auto-saving...
-            </div>
+            </motion.div>
           )}
           {showSavedIndicator && lastSaved && !isAutoSaving && (
-            <div className="bg-gray-800 bg-opacity-90 text-white px-2 py-1 rounded text-xs shadow-lg transition-all duration-300 ease-in-out">
-              ✓ Auto-saved
-            </div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="flex items-center bg-emerald-500/90 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-xs font-medium shadow-2xl border border-emerald-400/50"
+            >
+              <Icon icon="solar:check-circle-linear" className="w-4 h-4 mr-2" />
+              Changes saved
+            </motion.div>
           )}
         </div>
 
@@ -983,7 +968,7 @@ export default function BasicInformation() {
           showPrevious={false}
           showSaveDraft={true}
         />
-      </form>
+      </motion.form>
     );
   }
 
@@ -997,47 +982,41 @@ export default function BasicInformation() {
         />
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
         <Header />
 
-        <div className="pt-20 pb-16 px-4">
-          <div className="max-w-4xl mx-auto">
-            <Breadcrumb />
+        <HeroSection
+          badge="Step 1 of 5"
+          badgeIcon="solar:user-circle-linear"
+          title="Basic Information"
+          description="Complete your personal and academic information for your Erasmus application. All fields marked with * are required."
+          gradient="blue"
+          size="sm"
+        />
 
+        <div className="pb-16 px-4">
+          <div className="max-w-4xl mx-auto -mt-8 relative z-20">
             {/* Progress Bar */}
-            <FormProgressBar
-              steps={[
-                { number: 1, name: "Basic Info", href: "/basic-information" },
-                { number: 2, name: "Courses", href: "/course-matching" },
-                { number: 3, name: "Accommodation", href: "/accommodation" },
-                {
-                  number: 4,
-                  name: "Living Expenses",
-                  href: "/living-expenses",
-                },
-                {
-                  number: 5,
-                  name: "Experience",
-                  href: "/help-future-students",
-                },
-              ]}
-              currentStep={currentStepNumber}
-              completedSteps={completedStepNumbers}
-            />
-
-            {/* Header */}
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Basic Information
-              </h1>
-              <p className="text-gray-600 mb-2">
-                Complete your personal and academic information for your Erasmus
-                application. All fields marked with * are required.
-              </p>
-              <p className="text-sm text-gray-500">
-                💡 Your progress is automatically saved periodically and when
-                you continue to the next step.
-              </p>
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 mb-8">
+              <FormProgressBar
+                steps={[
+                  { number: 1, name: "Basic Info", href: "/basic-information" },
+                  { number: 2, name: "Courses", href: "/course-matching" },
+                  { number: 3, name: "Accommodation", href: "/accommodation" },
+                  {
+                    number: 4,
+                    name: "Living Expenses",
+                    href: "/living-expenses",
+                  },
+                  {
+                    number: 5,
+                    name: "Experience",
+                    href: "/help-future-students",
+                  },
+                ]}
+                currentStep={currentStepNumber}
+                completedSteps={completedStepNumbers}
+              />
             </div>
 
             {/* Error/Success Alerts */}

@@ -363,21 +363,36 @@ export default function StudentAccommodations() {
         <Header />
 
         {/* Hero Section */}
-        <div className="relative bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 overflow-hidden">
+        <div className="relative bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 overflow-hidden">
           {/* Background Effects */}
           <div className="absolute inset-0">
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:32px_32px]" />
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
+              animate={{
+                opacity: [0.1, 0.2, 0.1],
+                scale: [1, 1.2, 1],
+              }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
               className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+              animate={{
+                opacity: [0.1, 0.15, 0.1],
+                scale: [1.2, 1, 1.2],
+              }}
+              transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
               className="absolute -bottom-24 -left-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"
+            />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: [0.05, 0.1, 0.05],
+                x: [-20, 20, -20],
+              }}
+              transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl"
             />
             {/* Vertical Container Lines */}
             <div className="absolute inset-0 max-w-7xl mx-auto">
@@ -389,32 +404,43 @@ export default function StudentAccommodations() {
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
             {/* Badge */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
               className="mb-4"
             >
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-sm rounded-full text-white/90 text-sm font-medium border border-white/20">
-                <Icon icon="solar:home-2-linear" className="w-4 h-4" />
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-sm rounded-full text-white/90 text-sm font-medium border border-white/20 shadow-lg">
+                <Icon icon="solar:home-2-bold" className="w-4 h-4" />
                 Housing Reviews
               </span>
             </motion.div>
 
-            {/* Title */}
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4"
-            >
-              Student Accommodations
-            </motion.h1>
+            {/* Animated Title */}
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 overflow-hidden">
+              <span className="flex flex-wrap gap-x-3">
+                {["Student", "Accommodations"].map((word, index) => (
+                  <motion.span
+                    key={index}
+                    initial={{ opacity: 0, y: 40, rotateX: -60 }}
+                    animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                    transition={{
+                      duration: 0.7,
+                      delay: index * 0.1,
+                      ease: [0.215, 0.61, 0.355, 1],
+                    }}
+                    className="inline-block"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </span>
+            </h1>
 
             {/* Description */}
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: "easeOut", delay: 0.15 }}
+              transition={{ duration: 0.5, ease: "easeOut", delay: 0.3 }}
               className="text-base md:text-lg text-white/70 max-w-3xl mb-8"
             >
               Find accommodation recommendations from fellow Erasmus students
@@ -425,15 +451,19 @@ export default function StudentAccommodations() {
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut", delay: 0.25 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.4 }}
               className="grid grid-cols-2 md:grid-cols-4 gap-4"
             >
               <motion.div
-                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
-                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 cursor-default"
+                whileHover={{
+                  scale: 1.03,
+                  y: -4,
+                  transition: { duration: 0.2 },
+                }}
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 cursor-default hover:bg-white/15 transition-colors"
               >
                 <Icon
-                  icon="solar:home-2-linear"
+                  icon="solar:home-2-bold"
                   className="w-6 h-6 text-white/80 mb-2"
                 />
                 <div className="text-2xl md:text-3xl font-bold text-white">
@@ -442,11 +472,15 @@ export default function StudentAccommodations() {
                 <div className="text-sm text-white/70">Reviews</div>
               </motion.div>
               <motion.div
-                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
-                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 cursor-default"
+                whileHover={{
+                  scale: 1.03,
+                  y: -4,
+                  transition: { duration: 0.2 },
+                }}
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 cursor-default hover:bg-white/15 transition-colors"
               >
                 <Icon
-                  icon="solar:map-point-linear"
+                  icon="solar:map-point-bold"
                   className="w-6 h-6 text-white/80 mb-2"
                 />
                 <div className="text-2xl md:text-3xl font-bold text-white">
@@ -455,11 +489,15 @@ export default function StudentAccommodations() {
                 <div className="text-sm text-white/70">Cities</div>
               </motion.div>
               <motion.div
-                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
-                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 cursor-default"
+                whileHover={{
+                  scale: 1.03,
+                  y: -4,
+                  transition: { duration: 0.2 },
+                }}
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 cursor-default hover:bg-white/15 transition-colors"
               >
                 <Icon
-                  icon="solar:star-linear"
+                  icon="solar:star-bold"
                   className="w-6 h-6 text-white/80 mb-2"
                 />
                 <div className="text-2xl md:text-3xl font-bold text-white">
@@ -468,11 +506,15 @@ export default function StudentAccommodations() {
                 <div className="text-sm text-white/70">Avg Rating</div>
               </motion.div>
               <motion.div
-                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
-                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 cursor-default"
+                whileHover={{
+                  scale: 1.03,
+                  y: -4,
+                  transition: { duration: 0.2 },
+                }}
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 cursor-default hover:bg-white/15 transition-colors"
               >
                 <Icon
-                  icon="solar:heart-linear"
+                  icon="solar:heart-bold"
                   className="w-6 h-6 text-white/80 mb-2"
                 />
                 <div className="text-2xl md:text-3xl font-bold text-white">

@@ -1,8 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { toast } from "sonner";
-import { accommodationFormSchema } from "../src/lib/formSchemas";
-import { z } from "zod";
+import { toast } from "../src/hooks/use-toast";
+import { Alert, AlertDescription } from "../src/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import { ValidationError } from "../src/utils/apiErrorHandler";
+import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
+import { useFormProgress } from "../src/context/FormProgressContext";
+import { FormProgressBar } from "../components/forms/FormProgressBar";
+import { StepNavigation } from "../components/forms/StepNavigation";
+import { StepGuard } from "../components/forms/StepGuard";
 
 import Head from "next/head";
 import Link from "next/link";
@@ -20,19 +26,13 @@ import {
   SelectValue,
 } from "../src/components/ui/select";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../src/components/ui/card";
-import { EnhancedInput } from "../src/components/ui/enhanced-input";
-import {
   EnhancedSelect,
-  EnhancedSelectTrigger,
-  EnhancedSelectValue,
   EnhancedSelectContent,
   EnhancedSelectItem,
+  EnhancedSelectTrigger,
+  EnhancedSelectValue,
 } from "../src/components/ui/enhanced-select";
+import { EnhancedInput } from "../src/components/ui/enhanced-input";
 import { EnhancedTextarea } from "../src/components/ui/enhanced-textarea";
 import {
   FormField,
@@ -40,25 +40,20 @@ import {
   FormGrid,
   DisabledFieldHint,
 } from "../src/components/ui/form-components";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../src/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
 import { Checkbox } from "../src/components/ui/checkbox";
+import { Icon } from "@iconify/react";
+import { motion } from "framer-motion";
+import { HeroSection } from "@/components/ui/hero-section";
 import Header from "../components/Header";
 import { SubmissionGuard } from "../components/SubmissionGuard";
-import {
-  ArrowRight,
-  ArrowLeft,
-  Home,
-  Star,
-  Euro,
-  MapPin,
-  GraduationCap,
-} from "lucide-react";
-import { Toaster } from "../src/components/ui/toaster";
-import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
-import { useFormProgress } from "../src/context/FormProgressContext";
-import { FormProgressBar } from "../components/forms/FormProgressBar";
-import { StepNavigation } from "../components/forms/StepNavigation";
-import { StepGuard } from "../components/forms/StepGuard";
+import { cn } from "../src/lib/utils";
 
 export default function Accommodation() {
   const { data: session, status: sessionStatus } = useSession();
@@ -70,6 +65,7 @@ export default function Accommodation() {
       router.replace(`/login?callbackUrl=${encodeURIComponent(router.asPath)}`);
     }
   }, [sessionStatus, router]);
+
   const {
     setCurrentStep,
     markStepCompleted,
@@ -83,10 +79,7 @@ export default function Accommodation() {
     loading: experienceLoading,
     error: experienceError,
     saveProgress,
-    submitExperience,
   } = useErasmusExperience();
-
-  // Authentication temporarily disabled - all users can access
 
   const [formData, setFormData] = useState({
     accommodationAddress: "",
@@ -106,7 +99,7 @@ export default function Accommodation() {
     additionalNotes: "",
     neighborhood: "",
     transportLinks: "",
-    nearbyAmenities: [],
+    nearbyAmenities: [] as string[],
     roomSize: "",
     roomFurnished: "",
     kitchenAccess: "",
@@ -116,41 +109,13 @@ export default function Accommodation() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSavedIndicator, setShowSavedIndicator] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleAmenityChange = (amenity: string, checked: boolean) => {
-    setFormData((prev) => ({
-      ...prev,
-      nearbyAmenities: checked
-        ? [...(prev.nearbyAmenities || []), amenity]
-        : (prev.nearbyAmenities || []).filter((a) => a !== amenity),
-    }));
-  };
-
-  // Load basic info data to get city/country information
-  const [basicInfoData, setBasicInfoData] = useState<any>(null);
 
   // Load experience data when component mounts
   useEffect(() => {
     if (!experienceLoading && experienceData) {
-      // Load basic info data
-      if (experienceData.basicInfo) {
-        // Ensure all values are strings, not undefined
-        const safeBasicInfo = Object.entries(experienceData.basicInfo).reduce(
-          (acc, [key, value]) => {
-            acc[key] = value ?? "";
-            return acc;
-          },
-          {} as Record<string, any>,
-        );
-        setBasicInfoData(safeBasicInfo);
-      }
-
       // Load accommodation data if available
       if (experienceData.accommodation) {
         // Ensure all form data values are strings, not undefined
@@ -168,40 +133,27 @@ export default function Accommodation() {
           {} as Record<string, any>,
         );
 
-        setFormData(safeAccommodationData as any);
+        setFormData((prev) => ({ ...prev, ...(safeAccommodationData as any) }));
       }
     }
-  }, [experienceLoading, experienceData]); // Remove dependencies to prevent re-runs
+  }, [experienceLoading, experienceData]);
 
   useEffect(() => {
     setCurrentStep("accommodation");
   }, [setCurrentStep]);
 
-  // Load draft data when component mounts
-  useEffect(() => {
-    // If we have both draft data with city/country and basic info, make sure they match
-    if (basicInfoData?.hostCity && basicInfoData?.hostCountry) {
-      // If the draft data has different city/country than the basic info,
-      // update the form data to use the basic info city/country
-      if (
-        !formData.hasOwnProperty("city") ||
-        !formData.hasOwnProperty("country") ||
-        formData["city" as keyof typeof formData] !== basicInfoData.hostCity ||
-        formData["country" as keyof typeof formData] !==
-          basicInfoData.hostCountry
-      ) {
-        setFormData((prev) => ({
-          ...prev,
-          city: basicInfoData.hostCity || "",
-          country: basicInfoData.hostCountry || "",
-        }));
-      }
-    }
-  }, [basicInfoData]);
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
-  // State for draft success/error messages
-  const [draftSuccess, setDraftSuccess] = useState<string | null>(null);
-  const [draftError, setDraftError] = useState<string | null>(null);
+  const handleAmenityChange = (amenity: string, checked: boolean) => {
+    setFormData((prev) => ({
+      ...prev,
+      nearbyAmenities: checked
+        ? [...(prev.nearbyAmenities || []), amenity]
+        : (prev.nearbyAmenities || []).filter((a) => a !== amenity),
+    }));
+  };
 
   // Save to localStorage helper function
   const saveToLocalStorage = useCallback(() => {
@@ -215,40 +167,55 @@ export default function Accommodation() {
     localStorage.setItem(draftKey, JSON.stringify(draftData));
   }, [formData]);
 
-  // Save draft to database (triggered by Save Draft button)
+  // Auto-save to localStorage
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const hasFormData = Object.values(formData).some((value) => {
+        if (typeof value === "string") return value.trim() !== "";
+        if (Array.isArray(value)) return value.length > 0;
+        return value !== null && value !== undefined;
+      });
+
+      if (hasFormData) {
+        saveToLocalStorage();
+        setShowSavedIndicator(true);
+        setTimeout(() => setShowSavedIndicator(false), 2000);
+      }
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [formData, saveToLocalStorage]);
+
+  // Save draft to database
   const handleSaveDraftToDatabase = useCallback(async () => {
     try {
-      // Get basic info for city/country enrichment
       const basicInfo = experienceData?.basicInfo;
 
-      const enrichedFormData = {
+      const mappedData = {
         ...formData,
         city: basicInfo?.hostCity || "",
         country: basicInfo?.hostCountry || "",
         university: basicInfo?.hostUniversity || "",
-      };
-
-      // Map fields to match backend requirements
-      const mappedData = {
-        ...enrichedFormData,
-        type: enrichedFormData.accommodationType,
-        rent: enrichedFormData.monthlyRent,
-        rating: enrichedFormData.accommodationRating,
+        type: formData.accommodationType,
+        rent: formData.monthlyRent,
+        rating: formData.accommodationRating,
       };
 
       await saveProgress({
         accommodation: mappedData,
       });
 
-      setDraftSuccess("Draft saved successfully!");
-      toast("Draft saved successfully!");
-      setTimeout(() => setDraftSuccess(null), 3000);
+      toast({
+        title: "Draft Saved",
+        description: "Your accommodation details have been saved.",
+      });
     } catch (error) {
       console.error("Draft save error:", error);
-      setDraftError("Failed to save draft. Please try again.");
-      toast("Failed to save draft. Please try again.");
-      setTimeout(() => setDraftError(null), 5000);
-      throw error;
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to save draft. Please try again.",
+      });
     }
   }, [formData, experienceData, saveProgress]);
 
@@ -270,52 +237,40 @@ export default function Accommodation() {
     if (Object.keys(newErrors).length > 0) {
       setFieldErrors(newErrors);
       setIsSubmitting(false);
-      toast.error("Please fill in all required fields.");
+      toast({
+        variant: "destructive",
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+      });
       return;
     }
 
-    // Always save to localStorage first when navigating
     saveToLocalStorage();
 
     try {
-      // Get basic info for city/country enrichment
       const basicInfo = experienceData?.basicInfo;
 
-      const enrichedFormData = {
+      const mappedData = {
         ...formData,
         city: basicInfo?.hostCity || "",
         country: basicInfo?.hostCountry || "",
         university: basicInfo?.hostUniversity || "",
+        type: formData.accommodationType,
+        rent: formData.monthlyRent,
+        rating: formData.accommodationRating,
       };
 
-      // Map fields to match backend requirements
-      const mappedData = {
-        ...enrichedFormData,
-        type: enrichedFormData.accommodationType,
-        rent: enrichedFormData.monthlyRent,
-        rating: enrichedFormData.accommodationRating,
-      };
-
-      // Save progress with accommodation data
       const saved = await saveProgress({
         accommodation: mappedData,
       });
 
-      if (!saved) {
-        throw new Error("Failed to save progress. Please try again.");
-      }
+      if (!saved) throw new Error("Failed to save progress.");
 
-      // Mark step 3 as completed
       markStepCompleted("accommodation");
-
-      // Navigate to next step
       router.push("/living-expenses");
     } catch (error) {
       console.error("Error submitting accommodation form:", error);
       setSubmitError("Failed to submit form. Please try again.");
-      toast("Error", {
-        description: "There was a problem saving your information.",
-      });
       setIsSubmitting(false);
     }
   };
@@ -346,520 +301,498 @@ export default function Accommodation() {
     <StepGuard requiredStep={3}>
       <SubmissionGuard>
         <Head>
-          <title>Accommodation Details - Erasmus Journey Platform</title>
-          <meta
-            name="description"
-            content="Share details about your accommodation experience"
-          />
+          <title>Accommodation - Erasmus Journey Platform</title>
         </Head>
 
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
           <Header />
-          <Toaster />
 
-          {/* Progress Header */}
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <FormProgressBar
-              steps={[
-                { number: 1, name: "Basic Info", href: "/basic-information" },
-                { number: 2, name: "Courses", href: "/course-matching" },
-                { number: 3, name: "Accommodation", href: "/accommodation" },
-                {
-                  number: 4,
-                  name: "Living Expenses",
-                  href: "/living-expenses",
-                },
-                {
-                  number: 5,
-                  name: "Experience",
-                  href: "/help-future-students",
-                },
-              ]}
-              currentStep={currentStepNumber}
-              completedSteps={completedStepNumbers}
-            />
-          </div>
+          <HeroSection
+            badge="Step 3 of 5"
+            badgeIcon="solar:home-2-bold"
+            title="Accommodation Details"
+            description="Share your living experience abroad. Your insights help future students find the best places to stay and budget effectively."
+            gradient="emerald"
+            size="sm"
+            animatedTitle
+          />
 
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {/* Display basic info context */}
-            {basicInfoData && (
-              <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
-                <h3 className="text-sm font-medium text-blue-800 mb-2">
-                  Your accommodation will be associated with:
-                </h3>
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-blue-600" />
-                  <p className="text-sm text-blue-700">
-                    <strong>{basicInfoData.hostCity}</strong>,{" "}
-                    {basicInfoData.hostCountry}
-                  </p>
-                </div>
-                {basicInfoData.hostUniversity && (
-                  <div className="flex items-center gap-2 mt-1">
-                    <GraduationCap className="h-4 w-4 text-blue-600" />
-                    <p className="text-sm text-blue-700">
-                      <strong>{basicInfoData.hostUniversity}</strong>
+          <div className="pb-16 px-4">
+            <div className="max-w-4xl mx-auto -mt-8 relative z-20">
+              {/* Progress Bar */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 shadow-xl shadow-emerald-500/5 dark:shadow-none border border-slate-100 dark:border-slate-800 mb-8"
+              >
+                <FormProgressBar
+                  steps={[
+                    {
+                      number: 1,
+                      name: "Basic Info",
+                      href: "/basic-information",
+                    },
+                    { number: 2, name: "Courses", href: "/course-matching" },
+                    {
+                      number: 3,
+                      name: "Accommodation",
+                      href: "/accommodation",
+                    },
+                    {
+                      number: 4,
+                      name: "Living Expenses",
+                      href: "/living-expenses",
+                    },
+                    {
+                      number: 5,
+                      name: "Experience",
+                      href: "/help-future-students",
+                    },
+                  ]}
+                  currentStep={currentStepNumber}
+                  completedSteps={completedStepNumbers}
+                />
+              </motion.div>
+
+              {/* Context Info */}
+              {experienceData?.basicInfo?.hostCity && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="mb-8 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border border-emerald-100 dark:border-emerald-800/50 rounded-3xl p-6 flex items-center gap-4 shadow-lg shadow-emerald-500/5"
+                >
+                  <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl text-white shadow-lg shadow-emerald-500/25">
+                    <Icon
+                      icon="solar:map-point-wave-bold"
+                      className="w-6 h-6"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                      Location Context
+                    </p>
+                    <p className="text-slate-900 dark:text-white font-bold text-lg">
+                      {experienceData.basicInfo.hostCity},{" "}
+                      {experienceData.basicInfo.hostCountry}
                     </p>
                   </div>
-                )}
-              </div>
-            )}
-            <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Basic Accommodation Information */}
-              <FormSection
-                title="Basic Accommodation Information"
-                subtitle="Details about your accommodation location and type"
+                </motion.div>
+              )}
+
+              <motion.form
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                onSubmit={handleSubmit}
+                className="space-y-8"
               >
-                <FormField
-                  label="Address of Accommodation"
-                  required
-                  error={fieldErrors.accommodationAddress}
+                {/* Basic Info */}
+                <FormSection
+                  variant="emerald"
+                  title="Living Arrangements"
+                  subtitle="Where did you stay during your Erasmus?"
+                  icon="solar:home-smile-linear"
                 >
-                  <EnhancedTextarea
-                    id="accommodationAddress"
-                    placeholder="Enter the full address of your accommodation..."
-                    value={formData.accommodationAddress}
-                    onChange={(e) =>
-                      handleInputChange("accommodationAddress", e.target.value)
-                    }
-                    rows={3}
+                  <FormField
+                    label="Accommodation Address"
                     required
                     error={fieldErrors.accommodationAddress}
-                  />
-                </FormField>
-
-                <FormGrid columns={2}>
-                  <FormField
-                    label="Type of Accommodation"
-                    required
-                    error={fieldErrors.accommodationType}
+                    helperText="The full address of your residence"
                   >
-                    <EnhancedSelect
-                      value={formData.accommodationType || ""}
-                      onValueChange={(value) =>
-                        handleInputChange("accommodationType", value)
+                    <EnhancedTextarea
+                      placeholder="e.g. Calle de la Princesa 25, Madrid, Spain"
+                      value={formData.accommodationAddress}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "accommodationAddress",
+                          e.target.value,
+                        )
                       }
+                      className="min-h-[100px]"
+                    />
+                  </FormField>
+
+                  <FormGrid columns={2}>
+                    <FormField
+                      label="Type of Accommodation"
+                      required
+                      error={fieldErrors.accommodationType}
                     >
-                      <EnhancedSelectTrigger
-                        error={fieldErrors.accommodationType}
+                      <EnhancedSelect
+                        value={formData.accommodationType}
+                        onValueChange={(value) =>
+                          handleInputChange("accommodationType", value)
+                        }
                       >
-                        <EnhancedSelectValue placeholder="Select accommodation type" />
-                      </EnhancedSelectTrigger>
-                      <EnhancedSelectContent>
-                        {accommodationTypes.map((type) => (
-                          <EnhancedSelectItem key={type} value={type}>
-                            {type}
-                          </EnhancedSelectItem>
-                        ))}
-                      </EnhancedSelectContent>
-                    </EnhancedSelect>
-                  </FormField>
+                        <EnhancedSelectTrigger
+                          error={fieldErrors.accommodationType}
+                        >
+                          <EnhancedSelectValue placeholder="Select type" />
+                        </EnhancedSelectTrigger>
+                        <EnhancedSelectContent>
+                          {accommodationTypes.map((type) => (
+                            <EnhancedSelectItem key={type} value={type}>
+                              {type}
+                            </EnhancedSelectItem>
+                          ))}
+                        </EnhancedSelectContent>
+                      </EnhancedSelect>
+                    </FormField>
 
-                  <FormField
-                    label="Neighborhood/District"
-                    error={fieldErrors.neighborhood}
-                  >
-                    <EnhancedInput
-                      id="neighborhood"
-                      placeholder="e.g., Friedrichshain, Södermalm..."
-                      value={formData.neighborhood}
-                      onChange={(e) =>
-                        handleInputChange("neighborhood", e.target.value)
-                      }
-                      error={fieldErrors.neighborhood}
-                    />
-                  </FormField>
-                </FormGrid>
-              </FormSection>
-
-              {/* Contact Details */}
-              <FormSection
-                title="Landlord Contact Details"
-                subtitle="Contact information for your accommodation provider"
-              >
-                <FormGrid columns={2}>
-                  <FormField
-                    label="Landlord Name"
-                    error={fieldErrors.landlordName}
-                  >
-                    <EnhancedInput
-                      id="landlordName"
-                      placeholder="Enter landlord's name"
-                      value={formData.landlordName}
-                      onChange={(e) =>
-                        handleInputChange("landlordName", e.target.value)
-                      }
-                      error={fieldErrors.landlordName}
-                    />
-                  </FormField>
-
-                  <FormField
-                    label="Email Address"
-                    error={fieldErrors.landlordEmail}
-                  >
-                    <EnhancedInput
-                      id="landlordEmail"
-                      type="email"
-                      placeholder="landlord@example.com"
-                      value={formData.landlordEmail}
-                      onChange={(e) =>
-                        handleInputChange("landlordEmail", e.target.value)
-                      }
-                      error={fieldErrors.landlordEmail}
-                    />
-                  </FormField>
-
-                  <FormField
-                    label="Phone Number"
-                    error={fieldErrors.landlordPhone}
-                  >
-                    <EnhancedInput
-                      id="landlordPhone"
-                      placeholder="+49 123 456789"
-                      value={formData.landlordPhone}
-                      onChange={(e) =>
-                        handleInputChange("landlordPhone", e.target.value)
-                      }
-                      error={fieldErrors.landlordPhone}
-                    />
-                  </FormField>
-
-                  <FormField
-                    label="Booking Link (if applicable)"
-                    error={fieldErrors.bookingLink}
-                  >
-                    <EnhancedInput
-                      id="bookingLink"
-                      placeholder="https://..."
-                      value={formData.bookingLink}
-                      onChange={(e) =>
-                        handleInputChange("bookingLink", e.target.value)
-                      }
-                      error={fieldErrors.bookingLink}
-                    />
-                  </FormField>
-                </FormGrid>
-              </FormSection>
-
-              {/* Financial Details */}
-              <FormSection
-                title="Financial Details"
-                subtitle="Monthly rent and utility costs for your accommodation"
-                icon={Euro}
-              >
-                <FormGrid columns={2}>
-                  <FormField
-                    label="Monthly Rent (€)"
-                    required
-                    error={fieldErrors.monthlyRent}
-                  >
-                    <EnhancedInput
-                      id="monthlyRent"
-                      type="number"
-                      placeholder="e.g., 450"
-                      value={formData.monthlyRent}
-                      onChange={(e) =>
-                        handleInputChange("monthlyRent", e.target.value)
-                      }
-                      error={fieldErrors.monthlyRent}
-                    />
-                  </FormField>
-
-                  <FormField
-                    label="Were ALL the bills included?"
-                    required
-                    error={fieldErrors.billsIncluded}
-                  >
-                    <EnhancedSelect
-                      value={formData.billsIncluded || ""}
-                      onValueChange={(value) =>
-                        handleInputChange("billsIncluded", value)
-                      }
+                    <FormField
+                      label="Neighborhood"
+                      helperText="e.g. Kreuzberg, Trastevere"
                     >
-                      <EnhancedSelectTrigger error={fieldErrors.billsIncluded}>
-                        <EnhancedSelectValue placeholder="Select an option" />
-                      </EnhancedSelectTrigger>
-                      <EnhancedSelectContent>
-                        <EnhancedSelectItem value="yes">
-                          Yes, all bills included
-                        </EnhancedSelectItem>
-                        <EnhancedSelectItem value="no">
-                          No, additional utility costs
-                        </EnhancedSelectItem>
-                      </EnhancedSelectContent>
-                    </EnhancedSelect>
-                  </FormField>
-                </FormGrid>
+                      <EnhancedInput
+                        placeholder="District name"
+                        value={formData.neighborhood}
+                        onChange={(e) =>
+                          handleInputChange("neighborhood", e.target.value)
+                        }
+                      />
+                    </FormField>
+                  </FormGrid>
+                </FormSection>
 
-                {formData.billsIncluded === "no" && (
-                  <FormField
-                    label="Average Monthly Expense for Utility Bills Not Included (€)"
-                    required
-                    error={fieldErrors.avgUtilityCost}
-                  >
-                    <EnhancedInput
-                      id="avgUtilityCost"
-                      type="number"
-                      placeholder="e.g., 80"
-                      value={formData.avgUtilityCost}
-                      onChange={(e) =>
-                        handleInputChange("avgUtilityCost", e.target.value)
-                      }
-                      error={fieldErrors.avgUtilityCost}
-                    />
-                  </FormField>
-                )}
-              </FormSection>
+                {/* Financials */}
+                <FormSection
+                  variant="emerald"
+                  title="Financial Details"
+                  subtitle="Monthly costs and what's included"
+                  icon="solar:wallet-money-linear"
+                >
+                  <FormGrid columns={2}>
+                    <FormField
+                      label="Monthly Rent (€)"
+                      required
+                      error={fieldErrors.monthlyRent}
+                    >
+                      <EnhancedInput
+                        type="number"
+                        placeholder="e.g. 500"
+                        value={formData.monthlyRent}
+                        onChange={(e) =>
+                          handleInputChange("monthlyRent", e.target.value)
+                        }
+                        icon={
+                          <Icon icon="solar:euro-linear" className="w-4 h-4" />
+                        }
+                      />
+                    </FormField>
 
-              {/* Facilities and Amenities */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-xl font-semibold text-gray-900">
-                    Facilities and Amenities
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <div>
-                        <Label>Kitchen Access</Label>
+                    <FormField label="Bills Included?" required>
+                      <EnhancedSelect
+                        value={formData.billsIncluded}
+                        onValueChange={(value) =>
+                          handleInputChange("billsIncluded", value)
+                        }
+                      >
+                        <EnhancedSelectTrigger>
+                          <EnhancedSelectValue placeholder="Select option" />
+                        </EnhancedSelectTrigger>
+                        <EnhancedSelectContent>
+                          <EnhancedSelectItem value="yes">
+                            Yes, all included
+                          </EnhancedSelectItem>
+                          <EnhancedSelectItem value="no">
+                            No, paid separately
+                          </EnhancedSelectItem>
+                        </EnhancedSelectContent>
+                      </EnhancedSelect>
+                    </FormField>
+                  </FormGrid>
+
+                  {formData.billsIncluded === "no" && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                    >
+                      <FormField label="Avg. Monthly Utility Cost (€)" required>
+                        <EnhancedInput
+                          type="number"
+                          placeholder="e.g. 80"
+                          value={formData.avgUtilityCost}
+                          onChange={(e) =>
+                            handleInputChange("avgUtilityCost", e.target.value)
+                          }
+                        />
+                      </FormField>
+                    </motion.div>
+                  )}
+                </FormSection>
+
+                {/* Facilities */}
+                <FormSection
+                  variant="emerald"
+                  title="Facilities & Amenities"
+                  subtitle="What was available at your accommodation?"
+                  icon="solar:washing-machine-linear"
+                >
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="space-y-6">
+                      <FormField label="Kitchen Access">
                         <RadioGroup
                           value={formData.kitchenAccess}
-                          onValueChange={(value) =>
-                            handleInputChange("kitchenAccess", value)
+                          onValueChange={(v) =>
+                            handleInputChange("kitchenAccess", v)
                           }
+                          className="flex flex-col gap-2"
                         >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem
-                              value="private"
-                              id="kitchen-private"
-                            />
-                            <Label htmlFor="kitchen-private">Private</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem
-                              value="shared"
-                              id="kitchen-shared"
-                            />
-                            <Label htmlFor="kitchen-shared">Shared</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="none" id="kitchen-none" />
-                            <Label htmlFor="kitchen-none">None</Label>
-                          </div>
+                          {["private", "shared", "none"].map((opt) => (
+                            <div
+                              key={opt}
+                              className="flex items-center gap-2 p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900"
+                            >
+                              <RadioGroupItem value={opt} id={`k-${opt}`} />
+                              <Label
+                                htmlFor={`k-${opt}`}
+                                className="capitalize font-medium"
+                              >
+                                {opt}
+                              </Label>
+                            </div>
+                          ))}
                         </RadioGroup>
-                      </div>
+                      </FormField>
 
-                      <div>
-                        <Label>Internet Included</Label>
-                        <RadioGroup
-                          value={formData.internetIncluded}
-                          onValueChange={(value) =>
-                            handleInputChange("internetIncluded", value)
-                          }
-                        >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="yes" id="internet-yes" />
-                            <Label htmlFor="internet-yes">Yes</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="no" id="internet-no" />
-                            <Label htmlFor="internet-no">No</Label>
-                          </div>
-                        </RadioGroup>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div>
-                        <Label>Laundry Access</Label>
+                      <FormField label="Laundry Access">
                         <RadioGroup
                           value={formData.laundryAccess}
-                          onValueChange={(value) =>
-                            handleInputChange("laundryAccess", value)
+                          onValueChange={(v) =>
+                            handleInputChange("laundryAccess", v)
                           }
+                          className="flex flex-col gap-2"
                         >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="in-room" id="laundry-room" />
-                            <Label htmlFor="laundry-room">In Room</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem
-                              value="shared"
-                              id="laundry-shared"
-                            />
-                            <Label htmlFor="laundry-shared">
-                              Shared Facility
-                            </Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem
-                              value="nearby"
-                              id="laundry-nearby"
-                            />
-                            <Label htmlFor="laundry-nearby">
-                              Nearby Laundromat
-                            </Label>
-                          </div>
+                          {["in-room", "shared", "nearby"].map((opt) => (
+                            <div
+                              key={opt}
+                              className="flex items-center gap-2 p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900"
+                            >
+                              <RadioGroupItem value={opt} id={`l-${opt}`} />
+                              <Label
+                                htmlFor={`l-${opt}`}
+                                className="capitalize font-medium"
+                              >
+                                {opt.replace("-", " ")}
+                              </Label>
+                            </div>
+                          ))}
                         </RadioGroup>
-                      </div>
-
-                      <div>
-                        <Label>Parking Available</Label>
-                        <RadioGroup
-                          value={formData.parkingAvailable}
-                          onValueChange={(value) =>
-                            handleInputChange("parkingAvailable", value)
-                          }
-                        >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="yes" id="parking-yes" />
-                            <Label htmlFor="parking-yes">Yes</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="no" id="parking-no" />
-                            <Label htmlFor="parking-no">No</Label>
-                          </div>
-                        </RadioGroup>
-                      </div>
+                      </FormField>
                     </div>
-                  </div>
 
-                  <div className="space-y-2">
-                    <Label>Nearby Amenities</Label>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {amenities.map((amenity) => (
-                        <div
-                          key={amenity}
-                          className="flex items-center space-x-2"
-                        >
-                          <Checkbox
-                            id={amenity}
-                            checked={(formData.nearbyAmenities || []).includes(
-                              amenity,
-                            )}
-                            onCheckedChange={(checked) =>
-                              handleAmenityChange(amenity, checked as boolean)
-                            }
-                          />
-                          <Label htmlFor={amenity} className="text-sm">
-                            {amenity}
-                          </Label>
+                    <div className="space-y-6">
+                      <FormField label="Internet & Parking">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+                            <div className="flex items-center gap-3">
+                              <Icon
+                                icon="solar:wi-fi-linear"
+                                className="w-5 h-5 text-blue-500"
+                              />
+                              <span className="text-sm font-bold">
+                                Internet Included
+                              </span>
+                            </div>
+                            <Checkbox
+                              checked={formData.internetIncluded === "yes"}
+                              onCheckedChange={(c) =>
+                                handleInputChange(
+                                  "internetIncluded",
+                                  c ? "yes" : "no",
+                                )
+                              }
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+                            <div className="flex items-center gap-3">
+                              <Icon
+                                icon="solar:parking-linear"
+                                className="w-5 h-5 text-emerald-500"
+                              />
+                              <span className="text-sm font-bold">
+                                Parking Available
+                              </span>
+                            </div>
+                            <Checkbox
+                              checked={formData.parkingAvailable === "yes"}
+                              onCheckedChange={(c) =>
+                                handleInputChange(
+                                  "parkingAvailable",
+                                  c ? "yes" : "no",
+                                )
+                              }
+                            />
+                          </div>
                         </div>
-                      ))}
+                      </FormField>
+
+                      <FormField label="Nearby Amenities">
+                        <div className="grid grid-cols-1 gap-2">
+                          {amenities.slice(0, 6).map((amenity) => (
+                            <div
+                              key={amenity}
+                              className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                            >
+                              <Checkbox
+                                id={amenity}
+                                checked={formData.nearbyAmenities.includes(
+                                  amenity,
+                                )}
+                                onCheckedChange={(c) =>
+                                  handleAmenityChange(amenity, c as boolean)
+                                }
+                              />
+                              <Label
+                                htmlFor={amenity}
+                                className="text-xs font-medium cursor-pointer"
+                              >
+                                {amenity}
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
+                      </FormField>
                     </div>
                   </div>
+                </FormSection>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="transportLinks">Transport Links</Label>
-                    <Textarea
-                      id="transportLinks"
-                      placeholder="Describe nearby public transport (metro, bus, tram stations, etc.)..."
-                      value={formData.transportLinks}
-                      onChange={(e) =>
-                        handleInputChange("transportLinks", e.target.value)
-                      }
-                      rows={3}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Evaluation and Recommendation */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-                    <Star className="h-5 w-5 mr-2" />
-                    Evaluation and Recommendation
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="accommodationRating">
-                        Rating (1-5 stars)
-                      </Label>
-                      <Select
-                        onValueChange={(value) =>
-                          handleInputChange("accommodationRating", value)
+                {/* Evaluation */}
+                <FormSection
+                  variant="emerald"
+                  title="Evaluation"
+                  subtitle="Your overall rating and recommendation"
+                  icon="solar:star-linear"
+                >
+                  <FormGrid columns={2}>
+                    <FormField
+                      label="Overall Rating"
+                      required
+                      error={fieldErrors.accommodationRating}
+                    >
+                      <EnhancedSelect
+                        value={formData.accommodationRating}
+                        onValueChange={(v) =>
+                          handleInputChange("accommodationRating", v)
                         }
                       >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select rating" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1">1 - Poor</SelectItem>
-                          <SelectItem value="2">2 - Fair</SelectItem>
-                          <SelectItem value="3">3 - Good</SelectItem>
-                          <SelectItem value="4">4 - Very Good</SelectItem>
-                          <SelectItem value="5">5 - Excellent</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                        <EnhancedSelectTrigger
+                          error={fieldErrors.accommodationRating}
+                        >
+                          <EnhancedSelectValue placeholder="Select rating" />
+                        </EnhancedSelectTrigger>
+                        <EnhancedSelectContent>
+                          {[1, 2, 3, 4, 5].map((r) => (
+                            <EnhancedSelectItem key={r} value={r.toString()}>
+                              {r} -{" "}
+                              {
+                                [
+                                  "Poor",
+                                  "Fair",
+                                  "Good",
+                                  "Very Good",
+                                  "Excellent",
+                                ][r - 1]
+                              }
+                            </EnhancedSelectItem>
+                          ))}
+                        </EnhancedSelectContent>
+                      </EnhancedSelect>
+                    </FormField>
 
-                    <div className="space-y-2">
-                      <Label>Was it easy to find accommodation?</Label>
+                    <FormField label="Easy to find?" required>
                       <RadioGroup
                         value={formData.easyToFind}
-                        onValueChange={(value) =>
-                          handleInputChange("easyToFind", value)
+                        onValueChange={(v) =>
+                          handleInputChange("easyToFind", v)
                         }
+                        className="flex gap-4 mt-2"
                       >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="yes" id="easy-yes" />
-                          <Label htmlFor="easy-yes">Yes</Label>
+                        <div className="flex items-center gap-2">
+                          <RadioGroupItem value="yes" id="easy-y" />
+                          <Label htmlFor="easy-y">Yes</Label>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="no" id="easy-no" />
-                          <Label htmlFor="easy-no">No</Label>
+                        <div className="flex items-center gap-2">
+                          <RadioGroupItem value="no" id="easy-n" />
+                          <Label htmlFor="easy-n">No</Label>
                         </div>
                       </RadioGroup>
-                    </div>
-                  </div>
+                    </FormField>
+                  </FormGrid>
 
                   {formData.easyToFind === "no" && (
-                    <div className="space-y-2">
-                      <Label htmlFor="findingChallenges">
-                        What were the challenges?
-                      </Label>
-                      <Textarea
-                        id="findingChallenges"
-                        placeholder="Describe the challenges you faced when looking for accommodation..."
-                        value={formData.findingChallenges}
-                        onChange={(e) =>
-                          handleInputChange("findingChallenges", e.target.value)
-                        }
-                        rows={4}
-                      />
-                    </div>
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                    >
+                      <FormField label="What were the challenges?">
+                        <EnhancedTextarea
+                          placeholder="Describe the difficulties in finding a place..."
+                          value={formData.findingChallenges}
+                          onChange={(e) =>
+                            handleInputChange(
+                              "findingChallenges",
+                              e.target.value,
+                            )
+                          }
+                        />
+                      </FormField>
+                    </motion.div>
                   )}
 
-                  <div className="space-y-4">
-                    <div>
-                      <Label>Would you recommend this accommodation?</Label>
-                      <RadioGroup
-                        value={formData.wouldRecommend}
-                        onValueChange={(value) =>
-                          handleInputChange("wouldRecommend", value)
-                        }
+                  <FormField label="Would you recommend this place?" required>
+                    <RadioGroup
+                      value={formData.wouldRecommend}
+                      onValueChange={(v) =>
+                        handleInputChange("wouldRecommend", v)
+                      }
+                      className="flex flex-col gap-3 mt-2"
+                    >
+                      <div
+                        className={cn(
+                          "flex items-center gap-3 p-4 rounded-2xl border transition-all duration-200 cursor-pointer",
+                          formData.wouldRecommend === "yes"
+                            ? "bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800"
+                            : "bg-white border-slate-100 dark:bg-slate-900 dark:border-slate-800",
+                        )}
                       >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="yes" id="recommend-yes" />
-                          <Label htmlFor="recommend-yes">Yes</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="no" id="recommend-no" />
-                          <Label htmlFor="recommend-no">No</Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
+                        <RadioGroupItem value="yes" id="rec-y" />
+                        <Label
+                          htmlFor="rec-y"
+                          className="font-bold cursor-pointer"
+                        >
+                          Yes, I recommend it
+                        </Label>
+                      </div>
+                      <div
+                        className={cn(
+                          "flex items-center gap-3 p-4 rounded-2xl border transition-all duration-200 cursor-pointer",
+                          formData.wouldRecommend === "no"
+                            ? "bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800"
+                            : "bg-white border-slate-100 dark:bg-slate-900 dark:border-slate-800",
+                        )}
+                      >
+                        <RadioGroupItem value="no" id="rec-n" />
+                        <Label
+                          htmlFor="rec-n"
+                          className="font-bold cursor-pointer"
+                        >
+                          No, I wouldn't recommend it
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </FormField>
 
-                    {formData.wouldRecommend === "no" && (
-                      <div className="space-y-2">
-                        <Label htmlFor="recommendationReason">Why not?</Label>
-                        <Textarea
-                          id="recommendationReason"
-                          placeholder="Explain why you wouldn't recommend this accommodation..."
+                  {formData.wouldRecommend === "no" && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                    >
+                      <FormField label="Why not?">
+                        <EnhancedTextarea
+                          placeholder="Explain the reasons for your negative recommendation..."
                           value={formData.recommendationReason}
                           onChange={(e) =>
                             handleInputChange(
@@ -867,44 +800,47 @@ export default function Accommodation() {
                               e.target.value,
                             )
                           }
-                          rows={4}
                         />
-                      </div>
-                    )}
-                  </div>
+                      </FormField>
+                    </motion.div>
+                  )}
+                </FormSection>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="additionalNotes">
-                      Additional Notes (Optional)
-                    </Label>
-                    <Textarea
-                      id="additionalNotes"
-                      placeholder="Any additional tips, warnings, or information that would help future students..."
-                      value={formData.additionalNotes}
-                      onChange={(e) =>
-                        handleInputChange("additionalNotes", e.target.value)
-                      }
-                    />
-                  </div>
-                </CardContent>
-              </Card>
+                {/* Navigation */}
+                <div className="pt-8">
+                  <StepNavigation
+                    currentStep={currentStepNumber}
+                    totalSteps={5}
+                    onPrevious={() => router.push("/course-matching")}
+                    onNext={handleSubmit}
+                    onSaveDraft={handleSaveDraftToDatabase}
+                    canProceed={!isSubmitting}
+                    isLastStep={false}
+                    isSubmitting={isSubmitting}
+                    showPrevious={true}
+                    showSaveDraft={true}
+                  />
+                </div>
 
-              {/* Navigation */}
-              <div className="pt-8">
-                <StepNavigation
-                  currentStep={currentStepNumber}
-                  totalSteps={5}
-                  onPrevious={() => router.push("/course-matching")}
-                  onNext={handleSubmit}
-                  onSaveDraft={handleSaveDraftToDatabase}
-                  canProceed={!isSubmitting}
-                  isLastStep={false}
-                  isSubmitting={isSubmitting}
-                  showPrevious={true}
-                  showSaveDraft={true}
-                />
-              </div>
-            </form>
+                {/* Auto-save indicator */}
+                <div className="fixed top-24 right-6 z-50">
+                  {showSavedIndicator && (
+                    <motion.div
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      className="flex items-center bg-emerald-500/90 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-xs font-medium shadow-2xl border border-emerald-400/50"
+                    >
+                      <Icon
+                        icon="solar:check-circle-linear"
+                        className="w-4 h-4 mr-2"
+                      />
+                      Changes saved
+                    </motion.div>
+                  )}
+                </div>
+              </motion.form>
+            </div>
           </div>
         </div>
       </SubmissionGuard>

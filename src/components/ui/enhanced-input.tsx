@@ -6,21 +6,28 @@ interface EnhancedInputProps
   error?: string;
   helperText?: string;
   containerClassName?: string;
+  icon?: React.ReactNode;
 }
 
 const EnhancedInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
   (
-    { className, type, error, helperText, containerClassName, ...props },
+    { className, type, error, helperText, containerClassName, icon, ...props },
     ref,
   ) => {
     return (
       <div className={cn("relative", containerClassName)}>
+        {icon && (
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+            {icon}
+          </div>
+        )}
         <input
           type={type}
           className={cn(
-            "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+            "flex h-11 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200",
+            icon && "pl-10",
             // Enhanced disabled styling
-            "disabled:bg-gray-50 disabled:text-gray-400 disabled:border-gray-200",
+            "disabled:bg-slate-50 disabled:text-slate-400 disabled:border-slate-100",
             // Error styling
             error && "border-red-500 focus-visible:ring-red-500",
             className,

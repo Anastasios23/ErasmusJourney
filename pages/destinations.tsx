@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import Header from "../components/Header";
 import Footer from "../src/components/Footer";
-import { Card, CardContent } from "../src/components/ui/card";
 import { Badge } from "../src/components/ui/badge";
-import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
 import {
   Select,
@@ -13,38 +11,288 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../src/components/ui/select";
-import {
-  MapPin,
-  Euro,
-  Star,
-  Users,
-  Search,
-  ArrowRight,
-  TrendingUp,
-  Home,
-  Utensils,
-  Bus,
-  Sparkles,
-  Globe,
-  Filter,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cityAggregationClient } from "../src/services/cityAggregationClient";
 import { CityAggregatedData } from "../src/types/cityData";
-import { StatBar } from "../src/components/ui/stat-bar";
 import Link from "next/link";
 
 // Floating orbs component
 function FloatingOrbs() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute top-40 right-20 w-96 h-96 bg-gradient-to-br from-violet-500/15 to-fuchsia-500/15 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-gradient-to-br from-emerald-500/15 to-teal-500/15 rounded-full blur-3xl" />
+      <motion.div
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.2, 0.3, 0.2],
+        }}
+        transition={{ duration: 8, repeat: Infinity }}
+        className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-full blur-3xl"
+      />
+      <motion.div
+        animate={{
+          scale: [1.2, 1, 1.2],
+          opacity: [0.15, 0.25, 0.15],
+        }}
+        transition={{ duration: 10, repeat: Infinity }}
+        className="absolute top-40 right-20 w-96 h-96 bg-gradient-to-br from-purple-500/15 to-pink-500/15 rounded-full blur-3xl"
+      />
+      <motion.div
+        animate={{
+          scale: [1, 1.3, 1],
+          opacity: [0.15, 0.2, 0.15],
+        }}
+        transition={{ duration: 12, repeat: Infinity }}
+        className="absolute bottom-20 left-1/3 w-80 h-80 bg-gradient-to-br from-emerald-500/15 to-teal-500/15 rounded-full blur-3xl"
+      />
     </div>
   );
 }
 
-// Glass card component
+// Animated text component for hero
+const AnimatedWord = ({
+  children,
+  delay,
+}: {
+  children: string;
+  delay: number;
+}) => (
+  <motion.span
+    initial={{ opacity: 0, y: 50, rotateX: -90 }}
+    animate={{ opacity: 1, y: 0, rotateX: 0 }}
+    transition={{
+      duration: 0.8,
+      delay,
+      ease: [0.215, 0.61, 0.355, 1],
+    }}
+    className="inline-block"
+  >
+    {children}
+  </motion.span>
+);
+
+// Destination card images (placeholder URLs - these would be actual city images)
+const cityImages: Record<string, string> = {
+  default:
+    "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=600&h=400&fit=crop",
+  barcelona:
+    "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=600&h=400&fit=crop",
+  paris:
+    "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&h=400&fit=crop",
+  berlin:
+    "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=600&h=400&fit=crop",
+  amsterdam:
+    "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=600&h=400&fit=crop",
+  rome: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&h=400&fit=crop",
+  prague:
+    "https://images.unsplash.com/photo-1541849546-216549ae216d?w=600&h=400&fit=crop",
+  lisbon:
+    "https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=600&h=400&fit=crop",
+  vienna:
+    "https://images.unsplash.com/photo-1516550893885-985c836c68d6?w=600&h=400&fit=crop",
+  madrid:
+    "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=600&h=400&fit=crop",
+  milan:
+    "https://images.unsplash.com/photo-1520440229-6469325e5744?w=600&h=400&fit=crop",
+};
+
+// Modern destination card component
+function DestinationCard({
+  city,
+  index,
+}: {
+  city: CityAggregatedData;
+  index: number;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const slug = `${city.city.toLowerCase().replace(/\s+/g, "-")}-${city.country.toLowerCase().replace(/\s+/g, "-")}`;
+  const imageUrl = cityImages[city.city.toLowerCase()] || cityImages.default;
+
+  return (
+    <Link href={`/destinations/${slug}`}>
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: index * 0.1 }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className="group relative h-[420px] rounded-3xl overflow-hidden cursor-pointer"
+      >
+        {/* Background Image */}
+        <motion.div
+          className="absolute inset-0"
+          animate={{ scale: isHovered ? 1.1 : 1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${imageUrl})` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
+        </motion.div>
+
+        {/* Top badges */}
+        <div className="absolute top-5 left-5 right-5 flex justify-between items-start z-10">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1 + 0.3 }}
+          >
+            <Badge className="bg-white/20 backdrop-blur-md text-white border-white/30 px-3 py-1.5 text-sm font-medium">
+              <Icon
+                icon="solar:map-point-bold"
+                className="w-3.5 h-3.5 mr-1.5"
+              />
+              {city.country}
+            </Badge>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1 + 0.4 }}
+            className="flex items-center gap-1.5 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full"
+          >
+            <Icon icon="solar:star-bold" className="w-4 h-4 text-yellow-400" />
+            <span className="text-white font-bold text-sm">
+              {city.ratings.avgOverallRating.toFixed(1)}
+            </span>
+          </motion.div>
+        </div>
+
+        {/* Content */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+          {/* City name with animated underline */}
+          <div className="mb-4">
+            <motion.h2
+              className="text-3xl md:text-4xl font-bold text-white mb-1 tracking-tight"
+              animate={{ y: isHovered ? -4 : 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {city.city}
+            </motion.h2>
+            <motion.div
+              className="h-1 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full"
+              initial={{ width: "40%" }}
+              animate={{ width: isHovered ? "80%" : "40%" }}
+              transition={{ duration: 0.4 }}
+            />
+          </div>
+
+          {/* Stats row */}
+          <motion.div
+            className="flex items-center gap-6 mb-5"
+            animate={{ opacity: isHovered ? 1 : 0.9 }}
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 rounded-xl bg-emerald-500/20 backdrop-blur-sm flex items-center justify-center">
+                <Icon
+                  icon="solar:wallet-bold"
+                  className="w-4 h-4 text-emerald-400"
+                />
+              </div>
+              <div>
+                <p className="text-white/60 text-xs font-medium">Monthly</p>
+                <p className="text-white font-bold text-lg">
+                  €{Math.round(city.livingCosts.avgTotalMonthly)}
+                </p>
+              </div>
+            </div>
+
+            <div className="w-px h-10 bg-white/20" />
+
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 rounded-xl bg-blue-500/20 backdrop-blur-sm flex items-center justify-center">
+                <Icon
+                  icon="solar:users-group-rounded-bold"
+                  className="w-4 h-4 text-blue-400"
+                />
+              </div>
+              <div>
+                <p className="text-white/60 text-xs font-medium">Reviews</p>
+                <p className="text-white font-bold text-lg">
+                  {city.totalSubmissions}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Cost chips - visible on hover */}
+          <motion.div
+            className="flex flex-wrap gap-2 mb-5"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full">
+              <Icon
+                icon="solar:home-2-bold"
+                className="w-3.5 h-3.5 text-blue-400"
+              />
+              <span className="text-white/90 text-sm font-medium">
+                €{Math.round(city.livingCosts.avgMonthlyRent)} rent
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full">
+              <Icon
+                icon="solar:cup-hot-bold"
+                className="w-3.5 h-3.5 text-emerald-400"
+              />
+              <span className="text-white/90 text-sm font-medium">
+                €{Math.round(city.livingCosts.avgMonthlyFood)} food
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full">
+              <Icon
+                icon="solar:bus-bold"
+                className="w-3.5 h-3.5 text-orange-400"
+              />
+              <span className="text-white/90 text-sm font-medium">
+                €{Math.round(city.livingCosts.avgMonthlyTransport)} transport
+              </span>
+            </div>
+          </motion.div>
+
+          {/* Explore button */}
+          <motion.div
+            className="flex items-center justify-between"
+            animate={{ y: isHovered ? 0 : 10, opacity: isHovered ? 1 : 0.7 }}
+            transition={{ duration: 0.3 }}
+          >
+            <span className="text-white/80 text-sm font-medium">
+              {city.ratings.avgSocialLifeRating >= 4
+                ? "🔥 Popular destination"
+                : "✨ Hidden gem"}
+            </span>
+            <motion.div
+              className="flex items-center gap-2 text-white font-semibold"
+              animate={{ x: isHovered ? 0 : -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              <span>Explore</span>
+              <motion.div
+                animate={{ x: isHovered ? 4 : 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Icon icon="solar:arrow-right-bold" className="w-5 h-5" />
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </div>
+
+        {/* Hover glow effect */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-t from-blue-600/20 via-transparent to-transparent pointer-events-none"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isHovered ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+        />
+      </motion.div>
+    </Link>
+  );
+}
+
+// Glass card component for search
 function GlassCard({
   children,
   className = "",
@@ -53,17 +301,19 @@ function GlassCard({
   className?: string;
 }) {
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
       className={`
       relative backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 
       border border-white/20 dark:border-gray-700/30 
       rounded-3xl shadow-xl shadow-gray-900/5
-      hover:shadow-2xl hover:shadow-violet-500/10 hover:border-violet-200/50 hover:-translate-y-1 transition-all duration-500
       ${className}
     `}
     >
       {children}
-    </div>
+    </motion.div>
   );
 }
 
@@ -123,43 +373,110 @@ export default function Destinations() {
         {/* Hero Section */}
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
           <div className="text-center mb-12">
-            <Badge className="mb-6 bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 text-amber-700 dark:text-amber-300 px-4 py-2 rounded-full border border-amber-200/50 dark:border-amber-700/50 shadow-lg">
-              <Globe className="w-4 h-4 mr-2" />
-              {cities.length} Destinations Available
-            </Badge>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Badge className="mb-8 bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-700 dark:text-blue-300 px-5 py-2.5 rounded-full border border-blue-200/50 dark:border-blue-700/50 shadow-lg text-sm font-medium">
+                <Icon icon="solar:global-bold" className="w-4 h-4 mr-2" />
+                {cities.length}+ Cities to Discover
+              </Badge>
+            </motion.div>
 
-            <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-6">
-              <span className="text-gray-900 dark:text-white">
-                Explore Erasmus
-              </span>
-              <br />
-              <span className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
-                Destinations
-              </span>
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 overflow-hidden">
+              <div className="flex flex-wrap justify-center gap-x-4">
+                <AnimatedWord delay={0}>Find</AnimatedWord>
+                <AnimatedWord delay={0.1}>Your</AnimatedWord>
+              </div>
+              <div className="flex flex-wrap justify-center gap-x-4 mt-2">
+                <motion.span
+                  initial={{ opacity: 0, y: 50, rotateX: -90 }}
+                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                  transition={{
+                    duration: 0.8,
+                    delay: 0.2,
+                    ease: [0.215, 0.61, 0.355, 1],
+                  }}
+                  className="inline-block bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-clip-text text-transparent"
+                >
+                  Perfect
+                </motion.span>
+                <motion.span
+                  initial={{ opacity: 0, y: 50, rotateX: -90 }}
+                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                  transition={{
+                    duration: 0.8,
+                    delay: 0.3,
+                    ease: [0.215, 0.61, 0.355, 1],
+                  }}
+                  className="inline-block bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent"
+                >
+                  Destination
+                </motion.span>
+              </div>
             </h1>
 
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-              Real insights from students who have been there. Compare living
-              costs, ratings, and experiences to find your perfect match.
-            </p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed font-light"
+            >
+              Real insights from{" "}
+              <span className="font-semibold text-blue-600 dark:text-blue-400">
+                {cities.reduce((acc, c) => acc + c.totalSubmissions, 0)}+
+              </span>{" "}
+              students. Compare costs, ratings & find your dream city.
+            </motion.p>
+
+            {/* Animated scroll indicator */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+              className="mt-10"
+            >
+              <motion.div
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="inline-flex flex-col items-center text-gray-400"
+              >
+                <span className="text-sm font-medium mb-2">
+                  Scroll to explore
+                </span>
+                <Icon icon="solar:alt-arrow-down-linear" className="w-5 h-5" />
+              </motion.div>
+            </motion.div>
           </div>
 
           {/* Search & Filter */}
-          <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="max-w-4xl mx-auto"
+          >
             <GlassCard className="p-6">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Icon
+                    icon="solar:magnifer-linear"
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"
+                  />
                   <Input
                     placeholder="Search by city or country..."
-                    className="pl-12 h-14 text-lg bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-2xl focus:border-amber-500 focus:ring-amber-500"
+                    className="pl-12 h-14 text-lg bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-2xl focus:border-blue-500 focus:ring-blue-500"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
                 <Select value={sortBy} onValueChange={setSortBy}>
                   <SelectTrigger className="w-full md:w-56 h-14 text-base bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-2xl">
-                    <Filter className="w-4 h-4 mr-2 text-gray-400" />
+                    <Icon
+                      icon="solar:filter-linear"
+                      className="w-4 h-4 mr-2 text-gray-400"
+                    />
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
@@ -171,7 +488,7 @@ export default function Destinations() {
                 </Select>
               </div>
             </GlassCard>
-          </div>
+          </motion.div>
         </div>
 
         {/* Content */}
@@ -179,161 +496,53 @@ export default function Destinations() {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div
+                <motion.div
                   key={i}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: i * 0.1 }}
                   className="h-[420px] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-3xl animate-pulse"
                 />
               ))}
             </div>
           ) : filteredCities.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredCities.map((city, index) => {
-                const slug = `${city.city.toLowerCase().replace(/\s+/g, "-")}-${city.country.toLowerCase().replace(/\s+/g, "-")}`;
-                const gradients = [
-                  "from-violet-500 via-fuchsia-500 to-pink-500",
-                  "from-blue-500 via-cyan-500 to-teal-500",
-                  "from-amber-500 via-orange-500 to-red-500",
-                  "from-emerald-500 via-green-500 to-lime-500",
-                  "from-indigo-500 via-purple-500 to-pink-500",
-                  "from-rose-500 via-pink-500 to-fuchsia-500",
-                ];
-                const gradient = gradients[index % gradients.length];
-
-                return (
-                  <Link key={city.city} href={`/destinations/${slug}`}>
-                    <GlassCard className="overflow-hidden group cursor-pointer h-full">
-                      {/* Header with gradient */}
-                      <div
-                        className={`h-36 bg-gradient-to-br ${gradient} relative p-6 flex flex-col justify-between overflow-hidden`}
-                      >
-                        {/* Decorative circles */}
-                        <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full" />
-                        <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-white/10 rounded-full" />
-
-                        <div className="flex justify-between items-start relative z-10">
-                          <Badge className="bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-sm font-medium">
-                            {city.country}
-                          </Badge>
-                          <div className="flex items-center text-white bg-black/20 px-3 py-1.5 rounded-full backdrop-blur-sm">
-                            <Star className="w-4 h-4 text-yellow-300 mr-1 fill-yellow-300" />
-                            <span className="font-bold text-sm">
-                              {city.ratings.avgOverallRating.toFixed(1)}
-                            </span>
-                          </div>
-                        </div>
-                        <h2 className="text-3xl font-bold text-white tracking-tight relative z-10">
-                          {city.city}
-                        </h2>
-                      </div>
-
-                      <CardContent className="p-6">
-                        {/* Key Stats */}
-                        <div className="grid grid-cols-2 gap-4 mb-6">
-                          <div className="flex items-center">
-                            <div className="p-2.5 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-xl mr-3">
-                              <Euro className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                            </div>
-                            <div>
-                              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-                                Monthly
-                              </p>
-                              <p className="font-bold text-lg text-gray-900 dark:text-white">
-                                €{Math.round(city.livingCosts.avgTotalMonthly)}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center">
-                            <div className="p-2.5 bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900/30 dark:to-purple-900/30 rounded-xl mr-3">
-                              <Users className="w-5 h-5 text-violet-600 dark:text-violet-400" />
-                            </div>
-                            <div>
-                              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-                                Reviews
-                              </p>
-                              <p className="font-bold text-lg text-gray-900 dark:text-white">
-                                {city.totalSubmissions}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Cost Breakdown */}
-                        <div className="space-y-3 mb-6">
-                          <h3 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center">
-                            <TrendingUp className="w-4 h-4 mr-2 text-gray-400" />
-                            Cost Breakdown
-                          </h3>
-                          <div className="grid grid-cols-3 gap-2">
-                            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-3 rounded-xl text-center">
-                              <Home className="w-4 h-4 mx-auto mb-1.5 text-blue-500" />
-                              <span className="block font-bold text-gray-900 dark:text-white">
-                                €{Math.round(city.livingCosts.avgMonthlyRent)}
-                              </span>
-                              <span className="text-xs text-gray-500 dark:text-gray-400">
-                                Rent
-                              </span>
-                            </div>
-                            <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-3 rounded-xl text-center">
-                              <Utensils className="w-4 h-4 mx-auto mb-1.5 text-green-500" />
-                              <span className="block font-bold text-gray-900 dark:text-white">
-                                €{Math.round(city.livingCosts.avgMonthlyFood)}
-                              </span>
-                              <span className="text-xs text-gray-500 dark:text-gray-400">
-                                Food
-                              </span>
-                            </div>
-                            <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 p-3 rounded-xl text-center">
-                              <Bus className="w-4 h-4 mx-auto mb-1.5 text-orange-500" />
-                              <span className="block font-bold text-gray-900 dark:text-white">
-                                €
-                                {Math.round(
-                                  city.livingCosts.avgMonthlyTransport,
-                                )}
-                              </span>
-                              <span className="text-xs text-gray-500 dark:text-gray-400">
-                                Transport
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Ratings */}
-                        <div className="space-y-3">
-                          <StatBar
-                            label="Social Life"
-                            value={city.ratings.avgSocialLifeRating}
-                            color="bg-gradient-to-r from-pink-500 to-rose-500"
-                          />
-                          <StatBar
-                            label="Culture & Safety"
-                            value={city.ratings.avgCulturalImmersionRating}
-                            color="bg-gradient-to-r from-indigo-500 to-violet-500"
-                          />
-                        </div>
-
-                        {/* Click indicator */}
-                        <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-center text-sm font-medium text-violet-600 dark:text-violet-400 group-hover:text-fuchsia-600 dark:group-hover:text-fuchsia-400">
-                          <span>View Details</span>
-                          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
-                        </div>
-                      </CardContent>
-                    </GlassCard>
-                  </Link>
-                );
-              })}
+              <AnimatePresence>
+                {filteredCities.map((city, index) => (
+                  <DestinationCard key={city.city} city={city} index={index} />
+                ))}
+              </AnimatePresence>
             </div>
           ) : (
             <GlassCard className="text-center py-20 px-8">
-              <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <MapPin className="w-10 h-10 text-gray-400" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                No destinations found
-              </h3>
-              <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-                We couldn't find any cities matching "{searchTerm}". Try
-                adjusting your search or check back later for new submissions.
-              </p>
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                  <Icon
+                    icon="solar:map-point-search-linear"
+                    className="w-12 h-12 text-gray-400"
+                  />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                  No destinations found
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">
+                  We couldn't find any cities matching "{searchTerm}". Try
+                  adjusting your search or explore all destinations.
+                </p>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setSearchTerm("")}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 transition-shadow"
+                >
+                  <Icon icon="solar:restart-bold" className="w-5 h-5" />
+                  Clear Search
+                </motion.button>
+              </motion.div>
             </GlassCard>
           )}
         </div>

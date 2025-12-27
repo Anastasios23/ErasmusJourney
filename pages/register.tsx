@@ -44,9 +44,9 @@ import { cn } from "../src/lib/utils";
 function FloatingOrbs() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <div className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-br from-emerald-500/30 to-teal-500/30 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-10 left-10 w-96 h-96 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 rounded-full blur-3xl" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-amber-500/10 to-orange-500/10 rounded-full blur-3xl" />
+      <div className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-br from-blue-500/30 to-indigo-500/30 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-10 left-10 w-96 h-96 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-full blur-3xl" />
     </div>
   );
 }
@@ -165,7 +165,7 @@ export default function Register() {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50">
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 animate-pulse" />
+              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 animate-pulse" />
               <Loader2 className="absolute inset-0 m-auto h-8 w-8 animate-spin text-white" />
             </div>
             <p className="text-gray-500 font-medium">Checking authentication...</p>
@@ -184,8 +184,8 @@ export default function Register() {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-4 relative overflow-hidden">
           <FloatingOrbs />
           <div className="relative w-full max-w-md z-10">
-            <div className="backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border border-white/20 dark:border-gray-700/30 rounded-3xl shadow-2xl shadow-emerald-500/10 overflow-hidden">
-              <div className="relative bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 px-8 py-12 text-center overflow-hidden">
+            <div className="backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border border-white/20 dark:border-gray-700/30 rounded-3xl shadow-2xl shadow-blue-500/10 overflow-hidden">
+              <div className="relative bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 px-8 py-12 text-center overflow-hidden">
                 <div className="absolute inset-0 opacity-30">
                   <div className="absolute top-0 left-0 w-40 h-40 bg-white/20 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
                   <div className="absolute bottom-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl translate-x-1/2 translate-y-1/2" />
@@ -201,7 +201,7 @@ export default function Register() {
               <div className="p-8 text-center">
                 <p className="text-gray-600 dark:text-gray-300 mb-6">
                   We've sent a verification link to{" "}
-                  <span className="font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                  <span className="font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                     {formData.email}
                   </span>
                 </p>
@@ -214,7 +214,7 @@ export default function Register() {
                   </p>
                 </div>
                 <Link href="/login">
-                  <Button variant="outline" className="w-full rounded-xl border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30">
+                  <Button variant="outline" className="w-full rounded-xl border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30">
                     Back to Login
                   </Button>
                 </Link>
@@ -233,22 +233,22 @@ export default function Register() {
     <>
       <Head>
         <title>Register - Erasmus Journey Platform</title>
-        <meta description="Create your account to start your Erasmus journey." />
+        <meta name="description" content="Create your account to start your Erasmus journey." />
       </Head>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-4 relative overflow-hidden">
         <FloatingOrbs />
         
         <div className="relative w-full max-w-lg z-10">
           {/* Back Button */}
-          <Link href="/" className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors mb-8 group">
+          <Link href="/" className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors mb-8 group">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span className="font-medium">Back to Home</span>
           </Link>
 
           {/* Glass Card */}
-          <div className="backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border border-white/20 dark:border-gray-700/30 rounded-3xl shadow-2xl shadow-emerald-500/10 overflow-hidden">
+          <div className="backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border border-white/20 dark:border-gray-700/30 rounded-3xl shadow-2xl shadow-blue-500/10 overflow-hidden">
             {/* Header with gradient */}
-            <div className="relative bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 px-8 py-8 text-center overflow-hidden">
+            <div className="relative bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 px-8 py-8 text-center overflow-hidden">
               <div className="absolute inset-0 opacity-30">
                 <div className="absolute top-0 left-0 w-40 h-40 bg-white/20 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
                 <div className="absolute bottom-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl translate-x-1/2 translate-y-1/2" />
@@ -293,7 +293,7 @@ export default function Register() {
                         onChange={handleInputChange}
                         required
                         className={cn(
-                          "pl-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-emerald-500 focus:ring-emerald-500",
+                          "pl-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-blue-500 focus:ring-blue-500",
                           fieldErrors.firstName && "border-red-500"
                         )}
                       />
@@ -314,7 +314,7 @@ export default function Register() {
                         onChange={handleInputChange}
                         required
                         className={cn(
-                          "pl-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-emerald-500 focus:ring-emerald-500",
+                          "pl-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-blue-500 focus:ring-blue-500",
                           fieldErrors.lastName && "border-red-500"
                         )}
                       />
@@ -338,7 +338,7 @@ export default function Register() {
                       onChange={handleInputChange}
                       required
                       className={cn(
-                        "pl-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-emerald-500 focus:ring-emerald-500",
+                        "pl-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-blue-500 focus:ring-blue-500",
                         fieldErrors.email && "border-red-500"
                       )}
                     />
@@ -360,7 +360,7 @@ export default function Register() {
                       onChange={handleInputChange}
                       required
                       className={cn(
-                        "pl-12 pr-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-emerald-500 focus:ring-emerald-500",
+                        "pl-12 pr-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-blue-500 focus:ring-blue-500",
                         fieldErrors.password && "border-red-500"
                       )}
                     />
@@ -394,7 +394,7 @@ export default function Register() {
                       onChange={handleInputChange}
                       required
                       className={cn(
-                        "pl-12 pr-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-emerald-500 focus:ring-emerald-500",
+                        "pl-12 pr-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-blue-500 focus:ring-blue-500",
                         fieldErrors.confirmPassword && "border-red-500"
                       )}
                     />
@@ -418,11 +418,11 @@ export default function Register() {
                     id="agreedToTerms"
                     checked={agreedToTerms}
                     onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
-                    className="mt-0.5 data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500"
+                    className="mt-0.5 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                   />
                   <Label htmlFor="agreedToTerms" className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                     I agree to the{" "}
-                    <Link href="/terms-of-service" className="font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent hover:opacity-80">
+                    <Link href="/terms-of-service" className="font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent hover:opacity-80">
                       Terms and Conditions
                     </Link>
                   </Label>
@@ -434,7 +434,7 @@ export default function Register() {
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  className="w-full h-12 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:opacity-90 text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/25 transition-all"
+                  className="w-full h-12 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 hover:opacity-90 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/25 transition-all"
                   disabled={isLoading || passwordStrength < 60 || !agreedToTerms}
                 >
                   {isLoading ? (
@@ -484,7 +484,7 @@ export default function Register() {
             <div className="px-8 pb-8 text-center">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Already have an account?{" "}
-                <Link href="/login" className="font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
+                <Link href="/login" className="font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
                   Sign In
                 </Link>
               </p>

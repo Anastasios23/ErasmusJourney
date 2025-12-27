@@ -1,23 +1,14 @@
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import Header from "../components/Header";
 import { Button } from "../src/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../src/components/ui/card";
-import { CheckCircle, ArrowLeft, Home } from "lucide-react";
+import { Icon } from "@iconify/react";
+import { motion } from "framer-motion";
+import { HeroSection } from "@/components/ui/hero-section";
 
 export default function SubmissionConfirmation() {
-  // AUTHENTICATION DISABLED - Comment out to re-enable
-  // const { data: session, status } = useSession();
-  const session = { user: { id: "anonymous", email: "anonymous@example.com" } };
-  const status = "authenticated";
   const router = useRouter();
   const [submittedAt, setSubmittedAt] = useState<string | null>(null);
 
@@ -30,28 +21,9 @@ export default function SubmissionConfirmation() {
       setSubmittedAt(timestamp as string);
     } else {
       // If no submission data, redirect to dashboard
-      router.push("/dashboard");
+      // router.push("/dashboard");
     }
   }, [router]);
-
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <div className="pt-20 pb-16 px-4">
-          <div className="max-w-2xl mx-auto">
-            <div className="text-center">Loading...</div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // AUTHENTICATION DISABLED - Comment out to re-enable
-  // if (!session) {
-  //   router.push("/auth/signin");
-  //   return null;
-  // }
 
   const formatDate = (timestamp: string) => {
     try {
@@ -62,102 +34,81 @@ export default function SubmissionConfirmation() {
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       <Head>
-        <title>Submission Confirmed - Erasmus Journey</title>
-        <meta
-          name="description"
-          content="Your Erasmus experience has been successfully submitted for review."
-        />
+        <title>Submission Confirmed | Erasmus Journey</title>
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
-        <Header />
+      <Header />
 
-        <div className="pt-20 pb-16 px-4">
-          <div className="max-w-2xl mx-auto">
-            <Card className="text-center">
-              <CardHeader className="pb-6">
-                <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                  <CheckCircle className="w-8 h-8 text-green-600" />
-                </div>
-                <CardTitle className="text-2xl text-green-800">
-                  Submission Successful!
-                </CardTitle>
-              </CardHeader>
+      <main className="pb-20">
+        <HeroSection
+          title="Submission Successful!"
+          subtitle="Thank you for sharing your journey. Your experience will help thousands of future Erasmus students."
+          icon="solar:check-circle-bold-duotone"
+          theme="emerald"
+        />
 
-              <CardContent className="space-y-6">
-                <div className="text-gray-600">
-                  <p className="text-lg mb-2">
-                    Thank you for sharing your Erasmus experience!
-                  </p>
-                  <p className="text-sm">
-                    Your experience has been submitted for review and will help
-                    future students make informed decisions about their Erasmus
-                    journey.
-                  </p>
-                </div>
+        <div className="max-w-3xl mx-auto px-4 -mt-12 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-12 shadow-xl border border-slate-100 dark:border-slate-800 text-center"
+          >
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 mb-8">
+              <Icon icon="solar:verified-check-bold" className="w-10 h-10" />
+            </div>
 
-                {submittedAt && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">
-                      <strong>Submitted:</strong> {formatDate(submittedAt)}
-                    </p>
-                  </div>
-                )}
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+              You're all set!
+            </h2>
+            
+            <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-xl mx-auto">
+              Your Erasmus experience has been successfully recorded. Our team will review it shortly to ensure it meets our community guidelines.
+            </p>
 
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-blue-800 mb-2">
-                    What happens next?
-                  </h3>
-                  <ul className="text-sm text-blue-700 space-y-1 text-left">
-                    <li>• Our team will review your submission</li>
-                    <li>
-                      • Your experience may be featured on our destinations page
-                    </li>
-                    <li>
-                      • Your insights will help other students plan their
-                      Erasmus journey
-                    </li>
-                  </ul>
-                </div>
+            {submittedAt && (
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-full text-sm text-slate-500 dark:text-slate-400 mb-12">
+                <Icon icon="solar:calendar-minimalistic-linear" className="w-4 h-4" />
+                <span>Submitted on {formatDate(submittedAt)}</span>
+              </div>
+            )}
 
-                <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                  <Button
-                    onClick={() => router.push("/dashboard")}
-                    className="flex items-center gap-2"
-                  >
-                    <Home className="w-4 h-4" />
-                    Go to Dashboard
-                  </Button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
+              <Link href="/dashboard" className="w-full">
+                <Button className="w-full h-12 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-200 dark:shadow-none transition-all duration-200">
+                  <Icon icon="solar:home-2-linear" className="mr-2 h-5 w-5" />
+                  Go to Dashboard
+                </Button>
+              </Link>
+              <Link href="/my-submissions" className="w-full">
+                <Button variant="outline" className="w-full h-12 rounded-xl border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-200">
+                  <Icon icon="solar:document-text-linear" className="mr-2 h-5 w-5" />
+                  View My Submissions
+                </Button>
+              </Link>
+            </div>
 
-                  <Button
-                    variant="outline"
-                    onClick={() => router.push("/destinations")}
-                    className="flex items-center gap-2"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    Browse Destinations
-                  </Button>
-                </div>
-
-                <div className="pt-6 border-t border-gray-200">
-                  <p className="text-xs text-gray-500">
-                    You can view your submission status anytime from your{" "}
-                    <Link
-                      href="/dashboard"
-                      className="text-blue-600 hover:underline"
-                    >
-                      dashboard
-                    </Link>
-                    .
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+            <div className="mt-16 pt-8 border-t border-slate-100 dark:border-slate-800">
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
+                Want to help even more? Share your story on social media!
+              </p>
+              <div className="flex justify-center gap-4">
+                <button className="p-3 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">
+                  <Icon icon="solar:share-circle-linear" className="w-6 h-6" />
+                </button>
+                <button className="p-3 rounded-full bg-sky-50 text-sky-600 hover:bg-sky-100 transition-colors">
+                  <Icon icon="logos:twitter" className="w-5 h-5" />
+                </button>
+                <button className="p-3 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors">
+                  <Icon icon="logos:facebook" className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </motion.div>
         </div>
-      </div>
-    </>
+      </main>
+    </div>
   );
 }

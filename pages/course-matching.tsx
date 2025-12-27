@@ -13,6 +13,7 @@ import { StepGuard } from "../components/forms/StepGuard";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { cn } from "@/lib/utils";
 import { Badge } from "../src/components/ui/badge";
 import { Button } from "../src/components/ui/button";
 import { Input } from "../src/components/ui/input";
@@ -48,8 +49,10 @@ import {
 } from "../src/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "../src/components/ui/radio-group";
 import { Checkbox } from "../src/components/ui/checkbox";
+import { Icon } from "@iconify/react";
+import { motion } from "framer-motion";
+import { HeroSection } from "@/components/ui/hero-section";
 import Header from "../components/Header";
-import { ArrowRight, ArrowLeft, Upload, BookOpen, X } from "lucide-react";
 import { SubmissionGuard } from "../components/SubmissionGuard";
 import {
   CYPRUS_UNIVERSITIES,
@@ -60,7 +63,6 @@ import {
 } from "../src/data/universityAgreements";
 import { UNIC_COMPREHENSIVE_AGREEMENTS } from "../src/data/unic_agreements_temp";
 import { useFormAutoSave } from "../src/hooks/useFormAutoSave";
-// import { markStepCompleted } from "../src/utils/progress";
 
 interface Course {
   name: string;
@@ -102,8 +104,6 @@ export default function CourseMatching() {
     submitExperience,
   } = useErasmusExperience();
 
-  // Authentication temporarily disabled - all users can access
-
   const [formData, setFormData] = useState({
     levelOfStudy: "",
     hostUniversity: "",
@@ -132,23 +132,6 @@ export default function CourseMatching() {
   >([]);
 
   const cyprusUniversities = CYPRUS_UNIVERSITIES;
-
-  // Get departments for selected Cyprus university
-  const homeDepartments =
-    selectedHomeUniversityId === "UNIC"
-      ? // For UNIC, get unique departments from actual agreement data
-        [
-          ...new Set(
-            UNIC_COMPREHENSIVE_AGREEMENTS.filter(
-              (agreement) => agreement.academicLevel === formData.levelOfStudy,
-            ).map((agreement) => agreement.homeDepartment.trim()),
-          ),
-        ]
-      : selectedHomeUniversityId
-        ? // For other universities, use the predefined departments
-          cyprusUniversities.find((u) => u.code === selectedHomeUniversityId)
-            ?.departments || []
-        : [];
 
   // Load experience data on component mount
   useEffect(() => {
@@ -246,89 +229,8 @@ export default function CourseMatching() {
     return () => clearTimeout(timer);
   }, [formData, courses, equivalentCourses, saveToLocalStorage]);
 
-  // Save to localStorage before navigation/page unload
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      const hasFormData = Object.values(formData).some((value) => {
-        if (typeof value === "string") {
-          return value.trim() !== "";
-        }
-        return value !== null && value !== undefined;
-      });
-
-      if (hasFormData || courses.length > 0 || equivalentCourses.length > 0) {
-        saveToLocalStorage();
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [formData, courses, equivalentCourses, saveToLocalStorage]);
-
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-
-    if (field === "homeUniversity") {
-      setSelectedHomeUniversityId(value);
-      setFormData((prev) => ({
-        ...prev,
-        homeDepartment: "",
-        hostUniversity: "",
-        hostDepartment: "",
-      }));
-      setAvailableHostUniversities([]);
-    }
-
-    // Handle department selection with level-aware filtering
-    if (field === "homeDepartment") {
-      if (!formData.homeUniversity) return; // guard
-
-      let partnershipAgreements;
-      if (formData.homeUniversity === "UNIC") {
-        partnershipAgreements = getAgreementsByDepartmentAndLevel(
-          formData.homeUniversity,
-          value, // the department they just chose
-          formData.levelOfStudy as "bachelor" | "master" | "phd",
-        );
-      } else {
-        partnershipAgreements = getAgreementsByDepartment(
-          formData.homeUniversity,
-          value,
-        );
-      }
-
-      const hostUniversities = partnershipAgreements.map((agreement) => ({
-        university: agreement.partnerUniversity,
-        city: agreement.partnerCity,
-        country: agreement.partnerCountry,
-      }));
-
-      // Remove duplicates
-      const uniqueHostUniversities = hostUniversities.filter(
-        (uni, index, self) =>
-          index === self.findIndex((u) => u.university === uni.university),
-      );
-
-      setAvailableHostUniversities(uniqueHostUniversities);
-
-      // Reset host university selection
-      setFormData((prev) => ({
-        ...prev,
-        hostUniversity: "",
-        hostDepartment: "",
-      }));
-    }
-
-    // Clear data when level changes for UNIC
-    if (field === "levelOfStudy" && formData.homeUniversity === "UNIC") {
-      setFormData((prev) => ({
-        ...prev,
-        homeDepartment: "",
-        hostUniversity: "",
-        hostDepartment: "",
-      }));
-      setAvailableHostUniversities([]);
-    }
 
     if (field === "hostCourseCount") {
       const count = parseInt(value) || 0;
@@ -457,7 +359,6 @@ export default function CourseMatching() {
 
     try {
       // Basic validation
-      // Course content validation
       if (
         courses.some((c) => !c.name || !c.ects) ||
         equivalentCourses.some((e) => !e.name || !e.ects)
@@ -490,7 +391,7 @@ export default function CourseMatching() {
         ...formData,
         hostCourses: courses,
         equivalentCourses: equivalentCourses,
-        mappings: mappings, // Include mappings for validation
+        mappings: mappings,
       };
 
       const saved = await saveProgress({
@@ -538,77 +439,110 @@ export default function CourseMatching() {
           />
         </Head>
 
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
           <Header />
 
-          {/* Progress Header */}
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <FormProgressBar
-              steps={[
-                { number: 1, name: "Basic Info", href: "/basic-information" },
-                { number: 2, name: "Courses", href: "/course-matching" },
-                { number: 3, name: "Accommodation", href: "/accommodation" },
-                {
-                  number: 4,
-                  name: "Living Expenses",
-                  href: "/living-expenses",
-                },
-                {
-                  number: 5,
-                  name: "Experience",
-                  href: "/help-future-students",
-                },
-              ]}
-              currentStep={currentStepNumber}
-              completedSteps={completedStepNumbers}
-            />
-          </div>
+          <HeroSection
+            badge="Step 2 of 5"
+            badgeIcon="solar:book-bookmark-bold"
+            title="Course Matching"
+            description="Detail the courses you took abroad and their equivalents at your home university. This helps future students plan their academic journey."
+            gradient="purple"
+            size="sm"
+            animatedTitle
+          />
 
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {/* Error Alert */}
-            {submitError && (
-              <Alert variant="destructive" className="mb-6">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{submitError}</AlertDescription>
-              </Alert>
-            )}
+          <div className="pb-16 px-4">
+            <div className="max-w-4xl mx-auto -mt-8 relative z-20">
+              {/* Progress Bar */}
+              <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 shadow-xl shadow-indigo-500/5 dark:shadow-none border border-slate-100 dark:border-slate-800 mb-8">
+                <FormProgressBar
+                  steps={[
+                    {
+                      number: 1,
+                      name: "Basic Info",
+                      href: "/basic-information",
+                    },
+                    { number: 2, name: "Courses", href: "/course-matching" },
+                    {
+                      number: 3,
+                      name: "Accommodation",
+                      href: "/accommodation",
+                    },
+                    {
+                      number: 4,
+                      name: "Living Expenses",
+                      href: "/living-expenses",
+                    },
+                    {
+                      number: 5,
+                      name: "Experience",
+                      href: "/help-future-students",
+                    },
+                  ]}
+                  currentStep={currentStepNumber}
+                  completedSteps={completedStepNumbers}
+                />
+              </div>
 
-            {/* Validation Errors */}
-            {Object.keys(validationErrors).length > 0 && (
-              <Alert variant="destructive" className="mb-6">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  <ul className="list-disc pl-4">
-                    {Object.entries(validationErrors).map(([field, error]) => (
-                      <li key={field}>{error}</li>
-                    ))}
-                  </ul>
-                </AlertDescription>
-              </Alert>
-            )}
+              {/* Error Alerts */}
+              {submitError && (
+                <Alert variant="destructive" className="mb-6 rounded-2xl">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{submitError}</AlertDescription>
+                </Alert>
+              )}
 
-            {/* Display current university information from basic info */}
-            {formData.levelOfStudy &&
-              formData.homeUniversity &&
-              formData.homeDepartment && (
-                <Card className="mb-6 bg-blue-50 border-blue-200">
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                      <span className="text-sm font-medium text-blue-800">
-                        Your Academic Information
+              {/* Validation Errors */}
+              {Object.keys(validationErrors).length > 0 && (
+                <Alert variant="destructive" className="mb-6 rounded-2xl">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    <ul className="list-disc pl-4">
+                      {Object.entries(validationErrors).map(
+                        ([field, error]) => (
+                          <li key={field}>{error}</li>
+                        ),
+                      )}
+                    </ul>
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Academic Context Card */}
+              {formData.levelOfStudy &&
+                formData.homeUniversity &&
+                formData.homeDepartment && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-8 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50 rounded-3xl p-6"
+                  >
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 bg-indigo-100 dark:bg-indigo-800 rounded-xl text-indigo-600 dark:text-indigo-300">
+                        <Icon
+                          icon="solar:info-circle-linear"
+                          className="w-5 h-5"
+                        />
+                      </div>
+                      <span className="text-sm font-bold text-indigo-900 dark:text-indigo-100 uppercase tracking-wider">
+                        Your Academic Context
                       </span>
                     </div>
-                    <div className="grid md:grid-cols-3 gap-4 text-sm">
-                      <div>
-                        <span className="text-gray-600">Level:</span>
-                        <div className="font-medium capitalize">
+                    <div className="grid md:grid-cols-3 gap-6">
+                      <div className="space-y-1">
+                        <span className="text-xs font-semibold text-indigo-600/70 dark:text-indigo-400/70 uppercase">
+                          Level
+                        </span>
+                        <div className="font-bold text-slate-900 dark:text-white capitalize">
                           {formData.levelOfStudy}
                         </div>
                       </div>
-                      <div>
-                        <span className="text-gray-600">University:</span>
-                        <div className="font-medium">
+                      <div className="space-y-1">
+                        <span className="text-xs font-semibold text-indigo-600/70 dark:text-indigo-400/70 uppercase">
+                          Home University
+                        </span>
+                        <div className="font-bold text-slate-900 dark:text-white">
                           {
                             cyprusUniversities.find(
                               (u) => u.code === formData.homeUniversity,
@@ -616,190 +550,192 @@ export default function CourseMatching() {
                           }
                         </div>
                       </div>
-                      <div>
-                        <span className="text-gray-600">Department:</span>
-                        <div className="font-medium">
+                      <div className="space-y-1">
+                        <span className="text-xs font-semibold text-indigo-600/70 dark:text-indigo-400/70 uppercase">
+                          Department
+                        </span>
+                        <div className="font-bold text-slate-900 dark:text-white">
                           {formData.homeDepartment}
                         </div>
                       </div>
                     </div>
                     {formData.hostUniversity && (
-                      <div className="mt-3 pt-3 border-t border-blue-200">
-                        <span className="text-gray-600 text-sm">
-                          Host University:
+                      <div className="mt-4 pt-4 border-t border-indigo-100 dark:border-indigo-800/50">
+                        <span className="text-xs font-semibold text-indigo-600/70 dark:text-indigo-400/70 uppercase">
+                          Host University
                         </span>
-                        <div className="font-medium text-sm">
+                        <div className="font-bold text-slate-900 dark:text-white">
                           {formData.hostUniversity}
                         </div>
                       </div>
                     )}
-                  </CardContent>
-                </Card>
-              )}
+                  </motion.div>
+                )}
 
-            <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Remove the University Selection Card completely */}
-
-              {/* Course Count Planning */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-xl font-semibold text-gray-900">
-                    Course Planning
-                  </CardTitle>
-                  <p className="text-gray-600">
-                    Tell us about the courses you took during your exchange
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <FormSection
-                    title="Course Count Setup"
-                    subtitle="Specify how many courses you took and need to match"
-                  >
-                    <FormGrid columns={2}>
-                      <FormField
-                        label="Host University Courses"
-                        required
-                        error={validationErrors.hostCourseCount}
-                        helperText="Number of courses you took at your exchange university"
-                        fieldId="hostCourseCount"
+              <motion.form
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                onSubmit={handleSubmit}
+                className="space-y-8"
+              >
+                {/* Course Count Planning */}
+                <FormSection
+                  variant="purple"
+                  title="Course Planning"
+                  subtitle="Specify how many courses you took and need to match"
+                  icon="solar:checklist-minimalistic-linear"
+                >
+                  <FormGrid columns={2}>
+                    <FormField
+                      label="Host University Courses"
+                      required
+                      error={validationErrors.hostCourseCount}
+                      helperText="Number of courses you took at your exchange university"
+                    >
+                      <EnhancedSelect
+                        value={formData.hostCourseCount}
+                        onValueChange={(value) =>
+                          handleInputChange("hostCourseCount", value)
+                        }
                       >
-                        <EnhancedSelect
-                          value={formData.hostCourseCount}
-                          onValueChange={(value) =>
-                            handleInputChange("hostCourseCount", value)
-                          }
+                        <EnhancedSelectTrigger
+                          error={validationErrors.hostCourseCount}
                         >
-                          <EnhancedSelectTrigger
-                            id="hostCourseCount"
-                            error={validationErrors.hostCourseCount}
-                          >
-                            <EnhancedSelectValue placeholder="Select number of courses" />
-                          </EnhancedSelectTrigger>
-                          <EnhancedSelectContent>
-                            {Array.from({ length: 10 }, (_, i) => i + 1).map(
-                              (num) => (
-                                <EnhancedSelectItem
-                                  key={num}
-                                  value={num.toString()}
-                                >
-                                  {num} {num === 1 ? "course" : "courses"}
-                                </EnhancedSelectItem>
-                              ),
-                            )}
-                          </EnhancedSelectContent>
-                        </EnhancedSelect>
-                      </FormField>
+                          <EnhancedSelectValue placeholder="Select number" />
+                        </EnhancedSelectTrigger>
+                        <EnhancedSelectContent>
+                          {Array.from({ length: 10 }, (_, i) => i + 1).map(
+                            (num) => (
+                              <EnhancedSelectItem
+                                key={num}
+                                value={num.toString()}
+                              >
+                                {num} {num === 1 ? "course" : "courses"}
+                              </EnhancedSelectItem>
+                            ),
+                          )}
+                        </EnhancedSelectContent>
+                      </EnhancedSelect>
+                    </FormField>
 
-                      <FormField
-                        label="Home University Equivalent Courses"
-                        required
-                        error={validationErrors.homeCourseCount}
-                        helperText="Equivalent courses at your home university"
-                        fieldId="homeCourseCount"
+                    <FormField
+                      label="Home University Equivalent Courses"
+                      required
+                      error={validationErrors.homeCourseCount}
+                      helperText="Equivalent courses at your home university"
+                    >
+                      <EnhancedSelect
+                        value={formData.homeCourseCount}
+                        onValueChange={(value) =>
+                          handleInputChange("homeCourseCount", value)
+                        }
                       >
-                        <EnhancedSelect
-                          value={formData.homeCourseCount}
-                          onValueChange={(value) =>
-                            handleInputChange("homeCourseCount", value)
-                          }
+                        <EnhancedSelectTrigger
+                          error={validationErrors.homeCourseCount}
                         >
-                          <EnhancedSelectTrigger
-                            id="homeCourseCount"
-                            error={validationErrors.homeCourseCount}
-                          >
-                            <EnhancedSelectValue placeholder="Select number of courses" />
-                          </EnhancedSelectTrigger>
-                          <EnhancedSelectContent>
-                            {Array.from({ length: 10 }, (_, i) => i + 1).map(
-                              (num) => (
-                                <EnhancedSelectItem
-                                  key={num}
-                                  value={num.toString()}
-                                >
-                                  {num} {num === 1 ? "course" : "courses"}
-                                </EnhancedSelectItem>
-                              ),
-                            )}
-                          </EnhancedSelectContent>
-                        </EnhancedSelect>
-                      </FormField>
-                    </FormGrid>
+                          <EnhancedSelectValue placeholder="Select number" />
+                        </EnhancedSelectTrigger>
+                        <EnhancedSelectContent>
+                          {Array.from({ length: 10 }, (_, i) => i + 1).map(
+                            (num) => (
+                              <EnhancedSelectItem
+                                key={num}
+                                value={num.toString()}
+                              >
+                                {num} {num === 1 ? "course" : "courses"}
+                              </EnhancedSelectItem>
+                            ),
+                          )}
+                        </EnhancedSelectContent>
+                      </EnhancedSelect>
+                    </FormField>
+                  </FormGrid>
 
-                    {formData.hostCourseCount && formData.homeCourseCount && (
-                      <div className="p-4 bg-green-50 rounded-lg border border-green-200 mt-4">
-                        <div className="flex items-start space-x-3">
-                          <div className="flex-shrink-0">
-                            <BookOpen className="h-5 w-5 text-green-600 mt-0.5" />
-                          </div>
-                          <div>
-                            <h4 className="text-sm font-medium text-green-800">
-                              Course Setup Complete
-                            </h4>
-                            <p className="text-sm text-green-700 mt-1">
-                              You'll provide details for{" "}
-                              <span className="font-semibold">
-                                {formData.hostCourseCount} host university
-                                courses
-                              </span>{" "}
-                              and{" "}
-                              <span className="font-semibold">
-                                {formData.homeCourseCount} equivalent home
-                                courses
-                              </span>
-                              .
-                            </p>
-                          </div>
-                        </div>
+                  {formData.hostCourseCount && formData.homeCourseCount && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl border border-emerald-100 dark:border-emerald-800/50 flex items-center gap-3"
+                    >
+                      <div className="p-2 bg-emerald-100 dark:bg-emerald-800 rounded-xl text-emerald-600 dark:text-emerald-300">
+                        <Icon icon="solar:book-2-linear" className="w-5 h-5" />
                       </div>
-                    )}
-                  </FormSection>
-                </CardContent>
-              </Card>
+                      <p className="text-emerald-800 dark:text-emerald-200 text-sm font-medium">
+                        You'll provide details for{" "}
+                        <span className="font-bold">
+                          {formData.hostCourseCount} host courses
+                        </span>{" "}
+                        and{" "}
+                        <span className="font-bold">
+                          {formData.homeCourseCount} home equivalents
+                        </span>
+                        .
+                      </p>
+                    </motion.div>
+                  )}
+                </FormSection>
 
-              {/* Courses at Host University */}
-              {formData.hostCourseCount && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-xl font-semibold text-gray-900">
-                      Courses at Host University ({courses.length} of{" "}
-                      {formData.hostCourseCount})
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
+                {/* Courses at Host University */}
+                {formData.hostCourseCount && (
+                  <FormSection
+                    variant="purple"
+                    title={`Courses at Host University`}
+                    subtitle={`Details for the ${courses.length} courses you took abroad`}
+                    icon="solar:globus-linear"
+                  >
                     {/* Course Program Image Upload */}
                     <FormField
                       label="Course Program Image (Optional)"
                       helperText="Upload a photo of your course program or fill the manual entry below"
-                      fieldId="course-program-upload"
                     >
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                      <div className="border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl p-8 text-center hover:border-blue-400 dark:hover:border-blue-500 transition-colors duration-200 bg-slate-50/50 dark:bg-slate-900/50">
                         {uploadedFile ? (
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-center space-x-2">
-                              <BookOpen className="h-6 w-6 text-green-600" />
-                              <span className="text-sm font-medium text-green-600">
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-center gap-3">
+                              <div className="p-2 bg-emerald-100 dark:bg-emerald-900 rounded-xl text-emerald-600 dark:text-emerald-400">
+                                <Icon
+                                  icon="solar:document-check-linear"
+                                  className="w-6 h-6"
+                                />
+                              </div>
+                              <span className="text-sm font-bold text-slate-900 dark:text-white">
                                 {uploadedFile.name}
                               </span>
                               <Button
                                 type="button"
                                 variant="ghost"
-                                size="sm"
+                                size="icon"
                                 onClick={removeUploadedFile}
+                                className="rounded-full hover:bg-red-50 hover:text-red-500"
                               >
-                                <X className="h-4 w-4" />
+                                <Icon
+                                  icon="solar:trash-bin-minimalistic-linear"
+                                  className="w-5 h-5"
+                                />
                               </Button>
                             </div>
-                            <p className="text-xs text-gray-500">
-                              File uploaded successfully. You can still fill the
-                              manual entry below.
+                            <p className="text-xs text-slate-500 font-medium">
+                              File uploaded successfully. Manual entry below is
+                              still required for data accuracy.
                             </p>
                           </div>
                         ) : (
-                          <div>
-                            <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                            <p className="text-sm text-gray-600 mb-2">
-                              Upload a photo of your course program
-                            </p>
+                          <div className="space-y-4">
+                            <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center mx-auto text-blue-600 dark:text-blue-400">
+                              <Icon
+                                icon="solar:upload-minimalistic-linear"
+                                className="w-8 h-8"
+                              />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-900 dark:text-white">
+                                Upload course program
+                              </p>
+                              <p className="text-xs text-slate-500 mt-1">
+                                PNG, JPG or PDF (max. 5MB)
+                              </p>
+                            </div>
                             <input
                               type="file"
                               accept="image/*,.pdf"
@@ -810,131 +746,126 @@ export default function CourseMatching() {
                             <Button
                               type="button"
                               variant="outline"
-                              size="sm"
                               onClick={() =>
                                 document
                                   .getElementById("course-program-upload")
                                   ?.click()
                               }
+                              className="rounded-xl border-slate-200 dark:border-slate-700 font-bold"
                             >
                               Choose File
                             </Button>
-                            <p className="text-xs text-gray-500 mt-2">
-                              If the photo program is not accurate, we'll use
-                              the manual entry below
-                            </p>
                           </div>
                         )}
                       </div>
                     </FormField>
 
-                    {courses.map((course, index) => (
-                      <Card
-                        key={index}
-                        className="p-4 border-l-4 border-l-blue-500"
-                      >
-                        <div className="flex items-center justify-between mb-4">
-                          <h4 className="font-medium text-gray-900">
-                            Course {index + 1}
-                          </h4>
-                        </div>
-
-                        <FormGrid columns={2}>
-                          <FormField
-                            label="Course Name"
-                            required
-                            fieldId={`host-course-name-${index}`}
-                          >
-                            <EnhancedInput
-                              id={`host-course-name-${index}`}
-                              placeholder="Enter course name"
-                              value={course.name}
-                              onChange={(e) =>
-                                updateCourse(index, "name", e.target.value)
-                              }
-                            />
-                          </FormField>
-
-                          <FormField
-                            label="Course Code"
-                            required
-                            fieldId={`host-course-code-${index}`}
-                          >
-                            <EnhancedInput
-                              id={`host-course-code-${index}`}
-                              placeholder="Enter course code"
-                              value={course.code}
-                              onChange={(e) =>
-                                updateCourse(index, "code", e.target.value)
-                              }
-                            />
-                          </FormField>
-
-                          <FormField
-                            label="ECTS Credits"
-                            required
-                            helperText="Usually 3-6 ECTS per course"
-                            fieldId={`host-course-ects-${index}`}
-                          >
-                            <EnhancedInput
-                              id={`host-course-ects-${index}`}
-                              type="number"
-                              placeholder="Enter ECTS credits"
-                              value={course.ects}
-                              onChange={(e) =>
-                                updateCourse(index, "ects", e.target.value)
-                              }
-                            />
-                          </FormField>
-
-                          <FormField
-                            label="Level of Difficulty"
-                            helperText="Rate from 1 (very easy) to 5 (very difficult)"
-                            fieldId={`host-course-difficulty-${index}`}
-                          >
-                            <EnhancedSelect
-                              value={course.difficulty}
-                              onValueChange={(value) =>
-                                updateCourse(index, "difficulty", value)
-                              }
-                            >
-                              <EnhancedSelectTrigger
-                                id={`host-course-difficulty-${index}`}
-                              >
-                                <EnhancedSelectValue placeholder="Select difficulty" />
-                              </EnhancedSelectTrigger>
-                              <EnhancedSelectContent>
-                                <EnhancedSelectItem value="1">
-                                  1 - Very Easy
-                                </EnhancedSelectItem>
-                                <EnhancedSelectItem value="2">
-                                  2 - Easy
-                                </EnhancedSelectItem>
-                                <EnhancedSelectItem value="3">
-                                  3 - Moderate
-                                </EnhancedSelectItem>
-                                <EnhancedSelectItem value="4">
-                                  4 - Difficult
-                                </EnhancedSelectItem>
-                                <EnhancedSelectItem value="5">
-                                  5 - Very Difficult
-                                </EnhancedSelectItem>
-                              </EnhancedSelectContent>
-                            </EnhancedSelect>
-                          </FormField>
-                        </FormGrid>
-
-                        <FormField
-                          label="Exam Types"
-                          helperText="Select all types of examinations for this course"
-                          fieldId={`host-course-exams-${index}`}
+                    <div className="space-y-6">
+                      {courses.map((course, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group"
                         >
-                          <div className="flex flex-wrap gap-6">
-                            {["oral", "written", "presentation", "project"].map(
-                              (examType) => (
+                          <div className="absolute top-0 left-0 w-1 h-full bg-blue-500 group-hover:w-1.5 transition-all duration-200" />
+
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center text-sm font-bold">
+                              {index + 1}
+                            </div>
+                            <h4 className="font-bold text-slate-900 dark:text-white">
+                              Host Course Details
+                            </h4>
+                          </div>
+
+                          <FormGrid columns={2}>
+                            <FormField label="Course Name" required>
+                              <EnhancedInput
+                                placeholder="e.g. Advanced Algorithms"
+                                value={course.name}
+                                onChange={(e) =>
+                                  updateCourse(index, "name", e.target.value)
+                                }
+                              />
+                            </FormField>
+
+                            <FormField label="Course Code" required>
+                              <EnhancedInput
+                                placeholder="e.g. CS301"
+                                value={course.code}
+                                onChange={(e) =>
+                                  updateCourse(index, "code", e.target.value)
+                                }
+                              />
+                            </FormField>
+
+                            <FormField
+                              label="ECTS Credits"
+                              required
+                              helperText="Usually 3-6 ECTS"
+                            >
+                              <EnhancedInput
+                                type="number"
+                                placeholder="6"
+                                value={course.ects}
+                                onChange={(e) =>
+                                  updateCourse(index, "ects", e.target.value)
+                                }
+                              />
+                            </FormField>
+
+                            <FormField
+                              label="Difficulty Level"
+                              helperText="1 (Easy) to 5 (Hard)"
+                            >
+                              <EnhancedSelect
+                                value={course.difficulty}
+                                onValueChange={(value) =>
+                                  updateCourse(index, "difficulty", value)
+                                }
+                              >
+                                <EnhancedSelectTrigger>
+                                  <EnhancedSelectValue placeholder="Select difficulty" />
+                                </EnhancedSelectTrigger>
+                                <EnhancedSelectContent>
+                                  {[1, 2, 3, 4, 5].map((val) => (
+                                    <EnhancedSelectItem
+                                      key={val}
+                                      value={val.toString()}
+                                    >
+                                      {val} -{" "}
+                                      {
+                                        [
+                                          "Very Easy",
+                                          "Easy",
+                                          "Moderate",
+                                          "Difficult",
+                                          "Very Difficult",
+                                        ][val - 1]
+                                      }
+                                    </EnhancedSelectItem>
+                                  ))}
+                                </EnhancedSelectContent>
+                              </EnhancedSelect>
+                            </FormField>
+                          </FormGrid>
+
+                          <div className="mt-6">
+                            <Label className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 block">
+                              Examination Types
+                            </Label>
+                            <div className="flex flex-wrap gap-4">
+                              {[
+                                "oral",
+                                "written",
+                                "presentation",
+                                "project",
+                              ].map((examType) => (
                                 <div
                                   key={examType}
-                                  className="flex items-center space-x-2"
+                                  className="flex items-center gap-2 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm"
                                 >
                                   <Checkbox
                                     id={`${examType}-${index}`}
@@ -949,164 +880,165 @@ export default function CourseMatching() {
                                       )
                                     }
                                   />
-                                  <Label htmlFor={`${examType}-${index}`}>
-                                    {examType === "project"
-                                      ? "Project-Based"
-                                      : examType.charAt(0).toUpperCase() +
-                                        examType.slice(1)}
+                                  <Label
+                                    htmlFor={`${examType}-${index}`}
+                                    className="text-sm font-medium capitalize cursor-pointer"
+                                  >
+                                    {examType}
                                   </Label>
                                 </div>
-                              ),
-                            )}
+                              ))}
+                            </div>
                           </div>
-                          {course.examTypes.length > 0 && (
-                            <p className="text-xs text-gray-600 mt-2">
-                              Selected: {course.examTypes.join(", ")}
-                            </p>
-                          )}
-                        </FormField>
-                      </Card>
-                    ))}
-                  </CardContent>
-                </Card>
-              )}
+                        </motion.div>
+                      ))}
+                    </div>
+                  </FormSection>
+                )}
 
-              {/* Home University Equivalent Courses */}
-              {formData.homeCourseCount && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-xl font-semibold text-gray-900">
-                      Home University Equivalent Courses (
-                      {equivalentCourses.length} of {formData.homeCourseCount})
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {equivalentCourses.map((course, index) => (
-                      <Card
-                        key={index}
-                        className="p-4 border-l-4 border-l-green-500"
-                      >
-                        <div className="flex items-center justify-between mb-4">
-                          <h4 className="font-medium text-gray-900">
-                            Equivalent Course {index + 1}
-                          </h4>
-                        </div>
-
-                        <FormGrid columns={3}>
-                          <FormField
-                            label="Course Name"
-                            required
-                            fieldId={`home-course-name-${index}`}
-                          >
-                            <EnhancedInput
-                              id={`home-course-name-${index}`}
-                              placeholder="Enter equivalent course name"
-                              value={course.name}
-                              onChange={(e) =>
-                                updateEquivalentCourse(
-                                  index,
-                                  "name",
-                                  e.target.value,
-                                )
-                              }
-                            />
-                          </FormField>
-
-                          <FormField
-                            label="Course Code"
-                            required
-                            fieldId={`home-course-code-${index}`}
-                          >
-                            <EnhancedInput
-                              id={`home-course-code-${index}`}
-                              placeholder="Enter course code"
-                              value={course.code}
-                              onChange={(e) =>
-                                updateEquivalentCourse(
-                                  index,
-                                  "code",
-                                  e.target.value,
-                                )
-                              }
-                            />
-                          </FormField>
-
-                          <FormField
-                            label="ECTS Credits"
-                            required
-                            helperText="Credits at your home university"
-                            fieldId={`home-course-ects-${index}`}
-                          >
-                            <EnhancedInput
-                              id={`home-course-ects-${index}`}
-                              type="number"
-                              placeholder="Enter ECTS credits"
-                              value={course.ects}
-                              onChange={(e) =>
-                                updateEquivalentCourse(
-                                  index,
-                                  "ects",
-                                  e.target.value,
-                                )
-                              }
-                            />
-                          </FormField>
-                        </FormGrid>
-                      </Card>
-                    ))}
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Course Matching Evaluation */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-xl font-semibold text-gray-900">
-                    Course Matching Evaluation
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
+                {/* Home University Equivalent Courses */}
+                {formData.homeCourseCount && (
                   <FormSection
-                    title="Your Experience Assessment"
-                    subtitle="Help future students understand the course matching process"
+                    variant="purple"
+                    title="Home University Equivalents"
+                    subtitle={`Details for the ${equivalentCourses.length} courses at your home university`}
+                    icon="solar:home-2-linear"
                   >
-                    <FormField
-                      label="Was the course-matching process difficult?"
-                      required
-                      fieldId="courseMatchingDifficult"
-                    >
-                      <RadioGroup
-                        value={formData.courseMatchingDifficult}
-                        onValueChange={(value) =>
-                          handleInputChange("courseMatchingDifficult", value)
-                        }
-                        className="mt-2"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="yes" id="difficult-yes" />
-                          <Label htmlFor="difficult-yes">
-                            Yes, it was challenging
-                          </Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="no" id="difficult-no" />
-                          <Label htmlFor="difficult-no">
-                            No, it was straightforward
-                          </Label>
-                        </div>
-                      </RadioGroup>
-                    </FormField>
+                    <div className="space-y-6">
+                      {equivalentCourses.map((course, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group"
+                        >
+                          <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500 group-hover:w-1.5 transition-all duration-200" />
 
-                    {formData.courseMatchingDifficult === "yes" && (
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="w-8 h-8 bg-emerald-600 text-white rounded-lg flex items-center justify-center text-sm font-bold">
+                              {index + 1}
+                            </div>
+                            <h4 className="font-bold text-slate-900 dark:text-white">
+                              Equivalent Course Details
+                            </h4>
+                          </div>
+
+                          <FormGrid columns={3}>
+                            <FormField label="Course Name" required>
+                              <EnhancedInput
+                                placeholder="Equivalent name"
+                                value={course.name}
+                                onChange={(e) =>
+                                  updateEquivalentCourse(
+                                    index,
+                                    "name",
+                                    e.target.value,
+                                  )
+                                }
+                              />
+                            </FormField>
+
+                            <FormField label="Course Code" required>
+                              <EnhancedInput
+                                placeholder="Code"
+                                value={course.code}
+                                onChange={(e) =>
+                                  updateEquivalentCourse(
+                                    index,
+                                    "code",
+                                    e.target.value,
+                                  )
+                                }
+                              />
+                            </FormField>
+
+                            <FormField label="ECTS" required>
+                              <EnhancedInput
+                                type="number"
+                                placeholder="ECTS"
+                                value={course.ects}
+                                onChange={(e) =>
+                                  updateEquivalentCourse(
+                                    index,
+                                    "ects",
+                                    e.target.value,
+                                  )
+                                }
+                              />
+                            </FormField>
+                          </FormGrid>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </FormSection>
+                )}
+
+                {/* Course Matching Evaluation */}
+                <FormSection
+                  variant="purple"
+                  title="Experience Assessment"
+                  subtitle="Help future students understand the course matching process"
+                  icon="solar:star-linear"
+                >
+                  <FormField
+                    label="Was the course-matching process difficult?"
+                    required
+                  >
+                    <RadioGroup
+                      value={formData.courseMatchingDifficult}
+                      onValueChange={(value) =>
+                        handleInputChange("courseMatchingDifficult", value)
+                      }
+                      className="flex flex-col gap-3 mt-2"
+                    >
+                      <div
+                        className={cn(
+                          "flex items-center gap-3 p-4 rounded-2xl border transition-all duration-200 cursor-pointer",
+                          formData.courseMatchingDifficult === "yes"
+                            ? "bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800"
+                            : "bg-white border-slate-100 dark:bg-slate-900 dark:border-slate-800",
+                        )}
+                      >
+                        <RadioGroupItem value="yes" id="difficult-yes" />
+                        <Label
+                          htmlFor="difficult-yes"
+                          className="font-bold cursor-pointer"
+                        >
+                          Yes, it was challenging
+                        </Label>
+                      </div>
+                      <div
+                        className={cn(
+                          "flex items-center gap-3 p-4 rounded-2xl border transition-all duration-200 cursor-pointer",
+                          formData.courseMatchingDifficult === "no"
+                            ? "bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800"
+                            : "bg-white border-slate-100 dark:bg-slate-900 dark:border-slate-800",
+                        )}
+                      >
+                        <RadioGroupItem value="no" id="difficult-no" />
+                        <Label
+                          htmlFor="difficult-no"
+                          className="font-bold cursor-pointer"
+                        >
+                          No, it was straightforward
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </FormField>
+
+                  {formData.courseMatchingDifficult === "yes" && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                    >
                       <FormField
                         label="What were the challenges?"
                         required
                         helperText="Describe the specific difficulties you encountered"
-                        fieldId="courseMatchingChallenges"
                       >
                         <EnhancedTextarea
-                          id="courseMatchingChallenges"
-                          placeholder="Describe the challenges you faced during the course-matching process..."
+                          placeholder="Describe the challenges you faced..."
                           value={formData.courseMatchingChallenges}
                           onChange={(e) =>
                             handleInputChange(
@@ -1114,47 +1046,68 @@ export default function CourseMatching() {
                               e.target.value,
                             )
                           }
-                          className="min-h-[100px]"
+                          className="min-h-[120px]"
                         />
                       </FormField>
-                    )}
+                    </motion.div>
+                  )}
 
-                    <FormField
-                      label="Would you recommend these courses for future students?"
-                      required
-                      fieldId="recommendCourses"
+                  <FormField
+                    label="Would you recommend these courses for future students?"
+                    required
+                  >
+                    <RadioGroup
+                      value={formData.recommendCourses}
+                      onValueChange={(value) =>
+                        handleInputChange("recommendCourses", value)
+                      }
+                      className="flex flex-col gap-3 mt-2"
                     >
-                      <RadioGroup
-                        value={formData.recommendCourses}
-                        onValueChange={(value) =>
-                          handleInputChange("recommendCourses", value)
-                        }
-                        className="mt-2"
+                      <div
+                        className={cn(
+                          "flex items-center gap-3 p-4 rounded-2xl border transition-all duration-200 cursor-pointer",
+                          formData.recommendCourses === "yes"
+                            ? "bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800"
+                            : "bg-white border-slate-100 dark:bg-slate-900 dark:border-slate-800",
+                        )}
                       >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="yes" id="recommend-yes" />
-                          <Label htmlFor="recommend-yes">
-                            Yes, I recommend them
-                          </Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="no" id="recommend-no" />
-                          <Label htmlFor="recommend-no">
-                            No, I would not recommend them
-                          </Label>
-                        </div>
-                      </RadioGroup>
-                    </FormField>
+                        <RadioGroupItem value="yes" id="recommend-yes" />
+                        <Label
+                          htmlFor="recommend-yes"
+                          className="font-bold cursor-pointer"
+                        >
+                          Yes, I recommend them
+                        </Label>
+                      </div>
+                      <div
+                        className={cn(
+                          "flex items-center gap-3 p-4 rounded-2xl border transition-all duration-200 cursor-pointer",
+                          formData.recommendCourses === "no"
+                            ? "bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800"
+                            : "bg-white border-slate-100 dark:bg-slate-900 dark:border-slate-800",
+                        )}
+                      >
+                        <RadioGroupItem value="no" id="recommend-no" />
+                        <Label
+                          htmlFor="recommend-no"
+                          className="font-bold cursor-pointer"
+                        >
+                          No, I would not recommend them
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </FormField>
 
-                    {formData.recommendCourses === "no" && (
+                  {formData.recommendCourses === "no" && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                    >
                       <FormField
                         label="Why wouldn't you recommend these courses?"
                         required
-                        helperText="Help future students make informed decisions"
-                        fieldId="recommendationReason"
                       >
                         <EnhancedTextarea
-                          id="recommendationReason"
                           placeholder="Explain why you wouldn't recommend these courses..."
                           value={formData.recommendationReason}
                           onChange={(e) =>
@@ -1163,39 +1116,48 @@ export default function CourseMatching() {
                               e.target.value,
                             )
                           }
-                          className="min-h-[100px]"
+                          className="min-h-[120px]"
                         />
                       </FormField>
-                    )}
-                  </FormSection>
-                </CardContent>
-              </Card>
+                    </motion.div>
+                  )}
+                </FormSection>
 
-              {/* Navigation */}
-              <div className="pt-8">
-                <StepNavigation
-                  currentStep={currentStepNumber}
-                  totalSteps={5}
-                  onPrevious={() => router.push("/basic-information")}
-                  onNext={handleSubmit}
-                  onSaveDraft={handleSaveDraftToDatabase}
-                  canProceed={!isSubmitting}
-                  isLastStep={false}
-                  isSubmitting={isSubmitting}
-                  showPrevious={true}
-                  showSaveDraft={true}
-                />
-              </div>
+                {/* Navigation */}
+                <div className="pt-8">
+                  <StepNavigation
+                    currentStep={currentStepNumber}
+                    totalSteps={5}
+                    onPrevious={() => router.push("/basic-information")}
+                    onNext={handleSubmit}
+                    onSaveDraft={handleSaveDraftToDatabase}
+                    canProceed={!isSubmitting}
+                    isLastStep={false}
+                    isSubmitting={isSubmitting}
+                    showPrevious={true}
+                    showSaveDraft={true}
+                  />
+                </div>
 
-              {/* Auto-save indicator */}
-              <div className="fixed top-20 right-4 z-40">
-                {showSavedIndicator && (
-                  <div className="bg-gray-800 bg-opacity-90 text-white px-2 py-1 rounded text-xs shadow-lg transition-all duration-300 ease-in-out">
-                    ✓ Auto-saved
-                  </div>
-                )}
-              </div>
-            </form>
+                {/* Auto-save indicator */}
+                <div className="fixed top-24 right-6 z-50">
+                  {showSavedIndicator && (
+                    <motion.div
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      className="flex items-center bg-emerald-500/90 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-xs font-medium shadow-2xl border border-emerald-400/50"
+                    >
+                      <Icon
+                        icon="solar:check-circle-linear"
+                        className="w-4 h-4 mr-2"
+                      />
+                      Changes saved
+                    </motion.div>
+                  )}
+                </div>
+              </motion.form>
+            </div>
           </div>
         </div>
       </SubmissionGuard>

@@ -72,8 +72,8 @@ export default function Footer() {
     <footer className="relative bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:24px_24px]" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-fuchsia-500/10 rounded-full blur-3xl" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Newsletter Section */}
@@ -85,7 +85,7 @@ export default function Footer() {
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-4">
               Stay Updated on Your
-              <span className="block bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
                 Erasmus Journey
               </span>
             </h3>
@@ -97,9 +97,9 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-5 py-3.5 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
+                className="flex-1 px-5 py-3.5 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
-              <Button className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 text-white rounded-full px-8 py-3.5 font-semibold shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all">
+              <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full px-8 py-3.5 font-semibold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all">
                 Subscribe
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -113,13 +113,13 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-3 group mb-6">
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-xl blur-lg opacity-40 group-hover:opacity-60 transition-opacity" />
-                <div className="relative w-12 h-12 bg-gradient-to-br from-violet-600 to-fuchsia-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl blur-lg opacity-40 group-hover:opacity-60 transition-opacity" />
+                <div className="relative w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
                   <GraduationCap className="w-7 h-7 text-white" />
                 </div>
               </div>
               <div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
                   Erasmus
                 </span>
                 <span className="text-2xl font-bold text-white">Journey</span>
@@ -147,7 +147,7 @@ export default function Footer() {
                 <Link
                   key={social.name}
                   href={social.href}
-                  className="w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-violet-500/50 rounded-xl flex items-center justify-center text-gray-400 hover:text-violet-400 transition-all duration-300"
+                  className="w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/50 rounded-xl flex items-center justify-center text-gray-400 hover:text-blue-400 transition-all duration-300"
                 >
                   <social.icon className="w-5 h-5" />
                 </Link>
@@ -165,7 +165,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="flex items-center gap-3 text-gray-400 hover:text-violet-400 transition-colors group"
+                    className="flex items-center gap-3 text-gray-400 hover:text-blue-400 transition-colors group"
                   >
                     <link.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
                     <span>{link.name}</span>
@@ -185,9 +185,9 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="flex items-center gap-3 text-gray-400 hover:text-violet-400 transition-colors group"
+                    className="flex items-center gap-3 text-gray-400 hover:text-blue-400 transition-colors group"
                   >
-                    <div className="w-6 h-6 rounded-full bg-white/5 border border-white/10 group-hover:border-violet-500/50 group-hover:bg-violet-500/10 flex items-center justify-center transition-all">
+                    <div className="w-6 h-6 rounded-full bg-white/5 border border-white/10 group-hover:border-blue-500/50 group-hover:bg-blue-500/10 flex items-center justify-center transition-all">
                       <span className="text-xs font-semibold">{index + 1}</span>
                     </div>
                     <span>{link.name}</span>
@@ -207,7 +207,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="flex items-center gap-3 text-gray-400 hover:text-violet-400 transition-colors group"
+                    className="flex items-center gap-3 text-gray-400 hover:text-blue-400 transition-colors group"
                   >
                     <link.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
                     <span>{link.name}</span>
@@ -227,7 +227,7 @@ export default function Footer() {
                     href="https://erasmus-plus.ec.europa.eu/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-gray-500 hover:text-violet-400 transition-colors"
+                    className="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-400 transition-colors"
                   >
                     Erasmus+ Programme
                     <ExternalLink className="w-3 h-3" />
@@ -238,7 +238,7 @@ export default function Footer() {
                     href="https://ec.europa.eu/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-gray-500 hover:text-violet-400 transition-colors"
+                    className="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-400 transition-colors"
                   >
                     European Commission
                     <ExternalLink className="w-3 h-3" />
@@ -263,7 +263,7 @@ export default function Footer() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-sm text-gray-500 hover:text-violet-400 transition-colors"
+                  className="text-sm text-gray-500 hover:text-blue-400 transition-colors"
                 >
                   {link.name}
                 </Link>

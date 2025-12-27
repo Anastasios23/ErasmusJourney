@@ -27,26 +27,10 @@ import {
   TabsList,
   TabsTrigger,
 } from "../src/components/ui/tabs";
-import {
-  FileText,
-  Search,
-  Filter,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Edit,
-  Eye,
-  Trash2,
-  AlertCircle,
-  TrendingUp,
-  Home,
-  BookOpen,
-  MapPin,
-  Lightbulb,
-  BarChart3,
-  RefreshCw,
-  Plus,
-} from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { Icon } from "@iconify/react";
+import { motion } from "framer-motion";
+import { HeroSection } from "@/components/ui/hero-section";
 
 interface Submission {
   id: string;
@@ -183,55 +167,63 @@ export default function MySubmissions() {
   const getStatusBadge = (status: string) => {
     const config: Record<
       string,
-      { label: string; className: string; icon: any }
+      { label: string; className: string; icon: string }
     > = {
       DRAFT: {
         label: "Draft",
-        className: "bg-gray-100 text-gray-700",
-        icon: Edit,
+        className:
+          "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
+        icon: "solar:pen-new-square-linear",
       },
       IN_PROGRESS: {
         label: "In Progress",
-        className: "bg-blue-100 text-blue-700",
-        icon: Edit,
+        className:
+          "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+        icon: "solar:pen-new-square-linear",
       },
       SUBMITTED: {
         label: "Under Review",
-        className: "bg-yellow-100 text-yellow-700",
-        icon: Clock,
+        className:
+          "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+        icon: "solar:clock-circle-linear",
       },
       PENDING: {
         label: "Under Review",
-        className: "bg-yellow-100 text-yellow-700",
-        icon: Clock,
+        className:
+          "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+        icon: "solar:clock-circle-linear",
       },
       REVISION_NEEDED: {
         label: "Revision Needed",
-        className: "bg-orange-100 text-orange-700",
-        icon: AlertCircle,
+        className:
+          "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
+        icon: "solar:danger-triangle-linear",
       },
       APPROVED: {
         label: "Approved",
-        className: "bg-green-100 text-green-700",
-        icon: CheckCircle,
+        className:
+          "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
+        icon: "solar:check-circle-linear",
       },
       REJECTED: {
         label: "Rejected",
-        className: "bg-red-100 text-red-700",
-        icon: XCircle,
+        className:
+          "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
+        icon: "solar:close-circle-linear",
       },
       ARCHIVED: {
         label: "Archived",
-        className: "bg-gray-100 text-gray-600",
-        icon: Trash2,
+        className:
+          "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400",
+        icon: "solar:archive-linear",
       },
     };
 
-    const { label, className, icon: Icon } = config[status] || config.DRAFT;
+    const { label, className, icon } = config[status] || config.DRAFT;
 
     return (
       <Badge className={className}>
-        <Icon className="h-3 w-3 mr-1" />
+        <Icon icon={icon} className="h-3 w-3 mr-1" />
         {label}
       </Badge>
     );
@@ -239,37 +231,43 @@ export default function MySubmissions() {
 
   // Get type icon and label
   const getTypeInfo = (type: string) => {
-    const config: Record<string, { label: string; icon: any; color: string }> =
-      {
-        FULL_EXPERIENCE: {
-          label: "Full Experience",
-          icon: FileText,
-          color: "text-blue-600",
-        },
-        ACCOMMODATION: {
-          label: "Accommodation",
-          icon: Home,
-          color: "text-green-600",
-        },
-        COURSE_EXCHANGE: {
-          label: "Course Exchange",
-          icon: BookOpen,
-          color: "text-purple-600",
-        },
-        QUICK_TIP: {
-          label: "Quick Tip",
-          icon: Lightbulb,
-          color: "text-yellow-600",
-        },
-        DESTINATION_INFO: {
-          label: "Destination Info",
-          icon: MapPin,
-          color: "text-red-600",
-        },
-      };
+    const config: Record<
+      string,
+      { label: string; icon: string; color: string }
+    > = {
+      FULL_EXPERIENCE: {
+        label: "Full Experience",
+        icon: "solar:document-text-linear",
+        color: "text-blue-600",
+      },
+      ACCOMMODATION: {
+        label: "Accommodation",
+        icon: "solar:home-2-linear",
+        color: "text-emerald-600",
+      },
+      COURSE_EXCHANGE: {
+        label: "Course Exchange",
+        icon: "solar:notebook-minimalistic-linear",
+        color: "text-purple-600",
+      },
+      QUICK_TIP: {
+        label: "Quick Tip",
+        icon: "solar:lightbulb-linear",
+        color: "text-amber-600",
+      },
+      DESTINATION_INFO: {
+        label: "Destination Info",
+        icon: "solar:map-point-linear",
+        color: "text-red-600",
+      },
+    };
 
     return (
-      config[type] || { label: type, icon: FileText, color: "text-gray-600" }
+      config[type] || {
+        label: type,
+        icon: "solar:document-text-linear",
+        color: "text-slate-600",
+      }
     );
   };
 
@@ -290,14 +288,14 @@ export default function MySubmissions() {
         <Head>
           <title>My Submissions - Erasmus Journey</title>
         </Head>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
           <Header />
           <div className="pt-20 pb-16 px-4">
             <div className="max-w-7xl mx-auto">
               <div className="animate-pulse space-y-6">
-                <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-                <div className="h-32 bg-gray-200 rounded"></div>
-                <div className="h-64 bg-gray-200 rounded"></div>
+                <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded w-1/3"></div>
+                <div className="h-32 bg-slate-200 dark:bg-slate-800 rounded-2xl"></div>
+                <div className="h-64 bg-slate-200 dark:bg-slate-800 rounded-2xl"></div>
               </div>
             </div>
           </div>
@@ -316,197 +314,238 @@ export default function MySubmissions() {
         />
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
         <Header />
 
-        <div className="pt-20 pb-16 px-4">
-          <div className="max-w-7xl mx-auto">
-            {/* Page Header */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                    My Submissions
-                  </h1>
-                  <p className="text-gray-600">
-                    Track and manage all your Erasmus experience submissions
-                  </p>
-                </div>
-                <Link href="/basic-information">
-                  <Button className="bg-blue-600 hover:bg-blue-700">
-                    <Plus className="h-4 w-4 mr-2" />
-                    New Submission
-                  </Button>
-                </Link>
-              </div>
-            </div>
+        <HeroSection
+          title="My Submissions"
+          subtitle="Track and manage all your Erasmus experience submissions"
+          icon="solar:document-text-linear"
+          theme="blue"
+          size="sm"
+        />
+
+        <div className="relative -mt-8 pb-16 px-4">
+          <div className="max-w-7xl mx-auto space-y-6">
+            {/* Action Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex justify-end"
+            >
+              <Link href="/basic-information">
+                <Button className="bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg shadow-blue-200 dark:shadow-none">
+                  <Icon
+                    icon="solar:add-circle-linear"
+                    className="h-4 w-4 mr-2"
+                  />
+                  New Submission
+                </Button>
+              </Link>
+            </motion.div>
 
             {/* Stats Cards */}
             {stats && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <Card>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+              >
+                <Card className="bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
                           Total Submissions
                         </p>
-                        <p className="text-2xl font-bold text-gray-900">
+                        <p className="text-2xl font-bold text-slate-900 dark:text-white">
                           {stats.total}
                         </p>
                       </div>
-                      <div className="p-3 bg-blue-100 rounded-full">
-                        <FileText className="h-6 w-6 text-blue-600" />
+                      <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                        <Icon
+                          icon="solar:document-text-linear"
+                          className="h-6 w-6 text-blue-600 dark:text-blue-400"
+                        />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-gray-600">Approved</p>
-                        <p className="text-2xl font-bold text-green-600">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                          Approved
+                        </p>
+                        <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                           {stats.byStatus.APPROVED || 0}
                         </p>
                       </div>
-                      <div className="p-3 bg-green-100 rounded-full">
-                        <CheckCircle className="h-6 w-6 text-green-600" />
+                      <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl">
+                        <Icon
+                          icon="solar:check-circle-linear"
+                          className="h-6 w-6 text-emerald-600 dark:text-emerald-400"
+                        />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-gray-600">Under Review</p>
-                        <p className="text-2xl font-bold text-blue-600">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                          Under Review
+                        </p>
+                        <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
                           {(stats.byStatus.SUBMITTED || 0) +
                             (stats.byStatus.PENDING || 0)}
                         </p>
                       </div>
-                      <div className="p-3 bg-blue-100 rounded-full">
-                        <Clock className="h-6 w-6 text-blue-600" />
+                      <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
+                        <Icon
+                          icon="solar:clock-circle-linear"
+                          className="h-6 w-6 text-amber-600 dark:text-amber-400"
+                        />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
                           Avg Response Time
                         </p>
-                        <p className="text-2xl font-bold text-gray-900">
+                        <p className="text-2xl font-bold text-slate-900 dark:text-white">
                           {stats.avgResponseTime
                             ? `${stats.avgResponseTime}d`
                             : "N/A"}
                         </p>
                       </div>
-                      <div className="p-3 bg-purple-100 rounded-full">
-                        <TrendingUp className="h-6 w-6 text-purple-600" />
+                      <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                        <Icon
+                          icon="solar:graph-up-linear"
+                          className="h-6 w-6 text-purple-600 dark:text-purple-400"
+                        />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-              </div>
+              </motion.div>
             )}
 
             {/* Filters and Search */}
-            <Card className="mb-8">
-              <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  {/* Search */}
-                  <div className="md:col-span-2">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        placeholder="Search by title, city, university..."
-                        value={searchQuery}
-                        onChange={(e) => {
-                          setSearchQuery(e.target.value);
-                          setPage(1);
-                        }}
-                        className="pl-10"
-                      />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Card className="bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm">
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    {/* Search */}
+                    <div className="md:col-span-2">
+                      <div className="relative">
+                        <Icon
+                          icon="solar:magnifer-linear"
+                          className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400"
+                        />
+                        <Input
+                          placeholder="Search by title, city, university..."
+                          value={searchQuery}
+                          onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            setPage(1);
+                          }}
+                          className="pl-10 rounded-xl border-slate-200 dark:border-slate-700"
+                        />
+                      </div>
                     </div>
+
+                    {/* Status Filter */}
+                    <Select
+                      value={statusFilter}
+                      onValueChange={(value) => {
+                        setStatusFilter(value);
+                        setPage(1);
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Filter by status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ALL">All Statuses</SelectItem>
+                        <SelectItem value="DRAFT">Draft</SelectItem>
+                        <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
+                        <SelectItem value="SUBMITTED">Under Review</SelectItem>
+                        <SelectItem value="REVISION_NEEDED">
+                          Revision Needed
+                        </SelectItem>
+                        <SelectItem value="APPROVED">Approved</SelectItem>
+                        <SelectItem value="REJECTED">Rejected</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    {/* Type Filter */}
+                    <Select
+                      value={typeFilter}
+                      onValueChange={(value) => {
+                        setTypeFilter(value);
+                        setPage(1);
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Filter by type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ALL">All Types</SelectItem>
+                        <SelectItem value="FULL_EXPERIENCE">
+                          Full Experience
+                        </SelectItem>
+                        <SelectItem value="ACCOMMODATION">
+                          Accommodation
+                        </SelectItem>
+                        <SelectItem value="COURSE_EXCHANGE">
+                          Course Exchange
+                        </SelectItem>
+                        <SelectItem value="QUICK_TIP">Quick Tip</SelectItem>
+                        <SelectItem value="DESTINATION_INFO">
+                          Destination Info
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-
-                  {/* Status Filter */}
-                  <Select
-                    value={statusFilter}
-                    onValueChange={(value) => {
-                      setStatusFilter(value);
-                      setPage(1);
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Filter by status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ALL">All Statuses</SelectItem>
-                      <SelectItem value="DRAFT">Draft</SelectItem>
-                      <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-                      <SelectItem value="SUBMITTED">Under Review</SelectItem>
-                      <SelectItem value="REVISION_NEEDED">
-                        Revision Needed
-                      </SelectItem>
-                      <SelectItem value="APPROVED">Approved</SelectItem>
-                      <SelectItem value="REJECTED">Rejected</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  {/* Type Filter */}
-                  <Select
-                    value={typeFilter}
-                    onValueChange={(value) => {
-                      setTypeFilter(value);
-                      setPage(1);
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Filter by type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ALL">All Types</SelectItem>
-                      <SelectItem value="FULL_EXPERIENCE">
-                        Full Experience
-                      </SelectItem>
-                      <SelectItem value="ACCOMMODATION">
-                        Accommodation
-                      </SelectItem>
-                      <SelectItem value="COURSE_EXCHANGE">
-                        Course Exchange
-                      </SelectItem>
-                      <SelectItem value="QUICK_TIP">Quick Tip</SelectItem>
-                      <SelectItem value="DESTINATION_INFO">
-                        Destination Info
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
 
             {/* Error State */}
             {error && (
-              <Card className="border-red-200 bg-red-50 mb-8">
+              <Card className="border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800 rounded-2xl">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3">
-                    <AlertCircle className="h-5 w-5 text-red-600" />
-                    <p className="text-red-800">{error}</p>
+                    <Icon
+                      icon="solar:danger-circle-linear"
+                      className="h-5 w-5 text-red-600 dark:text-red-400"
+                    />
+                    <p className="text-red-800 dark:text-red-300">{error}</p>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={fetchSubmissions}
-                      className="ml-auto"
+                      className="ml-auto rounded-xl"
                     >
-                      <RefreshCw className="h-4 w-4 mr-2" />
+                      <Icon
+                        icon="solar:refresh-linear"
+                        className="h-4 w-4 mr-2"
+                      />
                       Retry
                     </Button>
                   </div>
@@ -516,78 +555,100 @@ export default function MySubmissions() {
 
             {/* Submissions List */}
             {submissions.length === 0 && !loading ? (
-              <Card>
-                <CardContent className="p-12 text-center">
-                  <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    No submissions found
-                  </h3>
-                  <p className="text-gray-600 mb-6">
-                    {searchQuery ||
-                    statusFilter !== "ALL" ||
-                    typeFilter !== "ALL"
-                      ? "Try adjusting your filters"
-                      : "Start by creating your first submission"}
-                  </p>
-                  <Link href="/basic-information">
-                    <Button className="bg-blue-600 hover:bg-blue-700">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Create Submission
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <Card className="bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm">
+                  <CardContent className="p-12 text-center">
+                    <Icon
+                      icon="solar:document-text-linear"
+                      className="h-16 w-16 text-slate-300 dark:text-slate-600 mx-auto mb-4"
+                    />
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                      No submissions found
+                    </h3>
+                    <p className="text-slate-500 dark:text-slate-400 mb-6">
+                      {searchQuery ||
+                      statusFilter !== "ALL" ||
+                      typeFilter !== "ALL"
+                        ? "Try adjusting your filters"
+                        : "Start by creating your first submission"}
+                    </p>
+                    <Link href="/basic-information">
+                      <Button className="bg-blue-600 hover:bg-blue-700 rounded-xl">
+                        <Icon
+                          icon="solar:add-circle-linear"
+                          className="h-4 w-4 mr-2"
+                        />
+                        Create Submission
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ) : (
-              <div className="space-y-4">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="space-y-4"
+              >
                 {submissions.map((submission) => {
                   const typeInfo = getTypeInfo(submission.submissionType);
-                  const TypeIcon = typeInfo.icon;
 
                   return (
                     <Card
                       key={submission.id}
-                      className="hover:shadow-md transition-shadow"
+                      className="bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-md transition-shadow"
                     >
                       <CardContent className="p-6">
                         <div className="flex items-start justify-between">
                           <div className="flex items-start gap-4 flex-1">
                             {/* Type Icon */}
                             <div
-                              className={`p-3 bg-gray-100 rounded-lg ${typeInfo.color}`}
+                              className={`p-3 bg-slate-50 dark:bg-slate-800 rounded-xl ${typeInfo.color}`}
                             >
-                              <TypeIcon className="h-6 w-6" />
+                              <Icon icon={typeInfo.icon} className="h-6 w-6" />
                             </div>
 
                             {/* Content */}
                             <div className="flex-1">
                               <div className="flex items-center gap-3 mb-2">
                                 {getStatusBadge(submission.status)}
-                                <span className="text-xs text-gray-500">
+                                <span className="text-xs text-slate-500 dark:text-slate-400">
                                   {typeInfo.label}
                                 </span>
                                 {submission.isFeatured && (
-                                  <Badge className="bg-yellow-100 text-yellow-700">
+                                  <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
                                     ⭐ Featured
                                   </Badge>
                                 )}
                               </div>
 
-                              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
                                 {submission.title || "Untitled Submission"}
                               </h3>
 
-                              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
+                              <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 dark:text-slate-400 mb-3">
                                 {submission.hostCity &&
                                   submission.hostCountry && (
                                     <span className="flex items-center gap-1">
-                                      <MapPin className="h-4 w-4" />
+                                      <Icon
+                                        icon="solar:map-point-linear"
+                                        className="h-4 w-4"
+                                      />
                                       {submission.hostCity},{" "}
                                       {submission.hostCountry}
                                     </span>
                                   )}
                                 {submission.hostUniversity && (
                                   <span className="flex items-center gap-1">
-                                    <BookOpen className="h-4 w-4" />
+                                    <Icon
+                                      icon="solar:buildings-2-linear"
+                                      className="h-4 w-4"
+                                    />
                                     {submission.hostUniversity}
                                   </span>
                                 )}
@@ -600,7 +661,7 @@ export default function MySubmissions() {
                                   )}
                               </div>
 
-                              <div className="flex items-center gap-4 text-xs text-gray-500">
+                              <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
                                 <span>
                                   Updated {formatDate(submission.updatedAt)}
                                 </span>
@@ -612,7 +673,10 @@ export default function MySubmissions() {
                                 )}
                                 {submission.qualityScore && (
                                   <span className="flex items-center gap-1">
-                                    <BarChart3 className="h-3 w-3" />
+                                    <Icon
+                                      icon="solar:chart-2-linear"
+                                      className="h-3 w-3"
+                                    />
                                     Quality:{" "}
                                     {Math.round(submission.qualityScore * 100)}%
                                   </span>
@@ -668,9 +732,12 @@ export default function MySubmissions() {
                               <Link href="/basic-information">
                                 <Button
                                   size="sm"
-                                  className="bg-blue-600 hover:bg-blue-700"
+                                  className="bg-blue-600 hover:bg-blue-700 rounded-xl"
                                 >
-                                  <Edit className="h-4 w-4 mr-2" />
+                                  <Icon
+                                    icon="solar:pen-new-square-linear"
+                                    className="h-4 w-4 mr-2"
+                                  />
                                   {submission.status === "REVISION_NEEDED"
                                     ? "Make Revisions"
                                     : "Continue Editing"}
@@ -681,14 +748,21 @@ export default function MySubmissions() {
                               <Link
                                 href={`/destinations/${encodeURIComponent((submission as any).city?.toLowerCase().replace(/\s+/g, "-") || "explore")}`}
                               >
-                                <Button variant="outline" size="sm">
-                                  <Eye className="h-4 w-4 mr-2" />
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="rounded-xl"
+                                >
+                                  <Icon
+                                    icon="solar:eye-linear"
+                                    className="h-4 w-4 mr-2"
+                                  />
                                   View Destination
                                 </Button>
                               </Link>
                             )}
                             {submission.revisionCount > 0 && (
-                              <Badge className="bg-orange-100 text-orange-700">
+                              <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">
                                 Revision {submission.revisionCount}/1
                               </Badge>
                             )}
@@ -698,7 +772,7 @@ export default function MySubmissions() {
                     </Card>
                   );
                 })}
-              </div>
+              </motion.div>
             )}
 
             {/* Pagination */}
@@ -708,16 +782,18 @@ export default function MySubmissions() {
                   variant="outline"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
+                  className="rounded-xl"
                 >
                   Previous
                 </Button>
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-slate-600 dark:text-slate-400">
                   Page {page} of {totalPages} ({total} total)
                 </span>
                 <Button
                   variant="outline"
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
+                  className="rounded-xl"
                 >
                   Next
                 </Button>

@@ -29,6 +29,8 @@ import {
   Clock,
   Euro,
 } from "lucide-react";
+import { Icon } from "@iconify/react";
+import { motion } from "framer-motion";
 import { useEffect, useState, useRef, useCallback } from "react";
 
 // ============================================================================
@@ -239,9 +241,9 @@ function HeroBackground() {
     }> = [];
 
     const colors = [
-      "139, 92, 246", // violet
-      "236, 72, 153", // pink
       "59, 130, 246", // blue
+      "99, 102, 241", // indigo
+      "139, 92, 246", // violet
       "14, 165, 233", // sky
     ];
 
@@ -272,8 +274,8 @@ function HeroBackground() {
         canvas.height / 2,
         canvas.width * 0.8,
       );
-      gradient.addColorStop(0, "rgba(139, 92, 246, 0.1)");
-      gradient.addColorStop(0.5, "rgba(236, 72, 153, 0.05)");
+      gradient.addColorStop(0, "rgba(59, 130, 246, 0.1)");
+      gradient.addColorStop(0.5, "rgba(99, 102, 241, 0.05)");
       gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -287,7 +289,7 @@ function HeroBackground() {
         mouseRef.current.y,
         300,
       );
-      mouseGradient.addColorStop(0, "rgba(139, 92, 246, 0.15)");
+      mouseGradient.addColorStop(0, "rgba(59, 130, 246, 0.15)");
       mouseGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
       ctx.fillStyle = mouseGradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -323,7 +325,7 @@ function HeroBackground() {
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(139, 92, 246, ${0.1 * (1 - d / 150)})`;
+            ctx.strokeStyle = `rgba(59, 130, 246, ${0.1 * (1 - d / 150)})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
@@ -560,7 +562,7 @@ function DestinationCard({
                   <Users className="w-4 h-4" />
                   <span>{students} students shared</span>
                 </div>
-                <ArrowUpRight className="w-5 h-5 text-violet-600 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                <ArrowUpRight className="w-5 h-5 text-blue-600 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
               </div>
             </div>
           </div>
@@ -588,7 +590,7 @@ function FeatureCard({
 }) {
   return (
     <RevealOnScroll delay={index * 100}>
-      <div className="group relative p-8 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:border-violet-200 dark:hover:border-violet-800 transition-all duration-500 hover:shadow-2xl hover:shadow-violet-500/10">
+      <div className="group relative p-8 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:border-blue-200 dark:hover:border-blue-800 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/10">
         {/* Gradient background on hover */}
         <div
           className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
@@ -600,7 +602,7 @@ function FeatureCard({
           <Icon className="w-7 h-7 text-white" />
         </div>
 
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
           {title}
         </h3>
 
@@ -630,8 +632,8 @@ function StatCounter({
 
   return (
     <div ref={ref} className="text-center">
-      <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-violet-100 dark:bg-violet-900/30 mb-4">
-        <Icon className="w-7 h-7 text-violet-600 dark:text-violet-400" />
+      <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900/30 mb-4">
+        <Icon className="w-7 h-7 text-blue-600 dark:text-blue-400" />
       </div>
       <div className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2 tabular-nums">
         {count.toLocaleString()}
@@ -664,9 +666,9 @@ function TestimonialCard({
 }) {
   return (
     <RevealOnScroll delay={index * 150}>
-      <div className="relative p-8 rounded-3xl bg-gradient-to-br from-violet-50 to-fuchsia-50 dark:from-violet-900/20 dark:to-fuchsia-900/20 border border-violet-100 dark:border-violet-800/30">
+      <div className="relative p-8 rounded-3xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-100 dark:border-blue-800/30">
         {/* Quote mark */}
-        <div className="absolute top-6 right-8 text-7xl font-serif text-violet-200 dark:text-violet-800 leading-none">
+        <div className="absolute top-6 right-8 text-7xl font-serif text-blue-200 dark:text-blue-800 leading-none">
           "
         </div>
 
@@ -675,7 +677,7 @@ function TestimonialCard({
         </p>
 
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-violet-200 dark:ring-violet-700">
+          <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-blue-200 dark:ring-blue-700">
             <Image
               src={avatar}
               alt={author}
@@ -718,7 +720,7 @@ export default function HomePage({
       title: "Discover Destinations",
       description:
         "Explore detailed guides for 200+ European cities with real student insights on costs, culture, and student life.",
-      gradient: "from-violet-500 to-purple-600",
+      gradient: "from-blue-500 to-indigo-600",
     },
     {
       icon: BookOpen,
@@ -789,7 +791,7 @@ export default function HomePage({
       {/* Progress bar */}
       <div className="fixed top-0 left-0 right-0 h-1 z-[100]">
         <div
-          className="h-full bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-500"
+          className="h-full bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500"
           style={{ width: `${scrollProgress * 100}%` }}
         />
       </div>
@@ -804,7 +806,7 @@ export default function HomePage({
 
           {/* Gradient orbs */}
           <AnimatedOrb
-            className="w-[600px] h-[600px] -top-40 -left-40 bg-gradient-to-br from-violet-500/30 to-fuchsia-500/30"
+            className="w-[600px] h-[600px] -top-40 -left-40 bg-gradient-to-br from-blue-500/30 to-indigo-500/30"
             delay={0}
           />
           <AnimatedOrb
@@ -821,7 +823,7 @@ export default function HomePage({
             <div className="text-center">
               {/* Badge */}
               <RevealOnScroll>
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-sm font-medium mb-8">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-8">
                   <Sparkles className="w-4 h-4" />
                   <span>Trusted by 500+ Cyprus students</span>
                 </div>
@@ -834,7 +836,7 @@ export default function HomePage({
                     Your Erasmus
                   </span>
                   <br />
-                  <span className="bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-500 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 bg-clip-text text-transparent">
                     Adventure Awaits
                   </span>
                 </h1>
@@ -854,19 +856,19 @@ export default function HomePage({
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <MagneticButton
                     href="/destinations"
-                    className="group relative px-8 py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-full text-white font-semibold text-lg shadow-xl shadow-violet-500/25 hover:shadow-violet-500/40 transition-shadow"
+                    className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full text-white font-semibold text-lg shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40 transition-shadow"
                   >
                     <span className="relative z-10 flex items-center gap-2">
                       <Compass className="w-5 h-5" />
                       Explore Destinations
                       <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </span>
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-violet-700 to-fuchsia-700 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </MagneticButton>
 
                   <MagneticButton
                     href="/dashboard"
-                    className="group px-8 py-4 bg-white dark:bg-gray-900 rounded-full text-gray-900 dark:text-white font-semibold text-lg border-2 border-gray-200 dark:border-gray-700 hover:border-violet-300 dark:hover:border-violet-600 transition-colors"
+                    className="group px-8 py-4 bg-white dark:bg-gray-900 rounded-full text-gray-900 dark:text-white font-semibold text-lg border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
                   >
                     <span className="flex items-center gap-2">
                       <Heart className="w-5 h-5" />
@@ -881,7 +883,7 @@ export default function HomePage({
                 <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-400">
                   <span className="text-sm font-medium">Scroll to explore</span>
                   <div className="w-6 h-10 rounded-full border-2 border-gray-300 dark:border-gray-700 flex items-start justify-center p-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-bounce" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" />
                   </div>
                 </div>
               </RevealOnScroll>
@@ -949,7 +951,7 @@ export default function HomePage({
               <RevealOnScroll delay={100}>
                 <Link
                   href="/destinations"
-                  className="group inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 font-semibold hover:gap-4 transition-all"
+                  className="group inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:gap-4 transition-all"
                 >
                   View all destinations
                   <ArrowRight className="w-5 h-5" />
@@ -972,7 +974,7 @@ export default function HomePage({
         <section className="py-32 bg-gray-50 dark:bg-gray-900/50 relative overflow-hidden">
           {/* Background decoration */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-bl from-violet-100/50 dark:from-violet-900/20 to-transparent rounded-full blur-3xl" />
+            <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-bl from-blue-100/50 dark:from-blue-900/20 to-transparent rounded-full blur-3xl" />
           </div>
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -989,7 +991,7 @@ export default function HomePage({
                 <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
                   Plan Your Exchange
                   <br />
-                  <span className="bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                     With Confidence
                   </span>
                 </h2>
@@ -1070,7 +1072,7 @@ export default function HomePage({
                   ].map((item, index) => (
                     <RevealOnScroll key={item.step} delay={300 + index * 100}>
                       <div className="flex items-center gap-4 group">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform">
                           {item.step}
                         </div>
                         <div>
@@ -1088,7 +1090,7 @@ export default function HomePage({
 
                 <RevealOnScroll delay={700}>
                   <Link href="/basic-information">
-                    <Button className="mt-12 px-8 py-6 text-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 rounded-full shadow-xl shadow-violet-500/25">
+                    <Button className="mt-12 px-8 py-6 text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-full shadow-xl shadow-blue-500/25">
                       <Plane className="w-5 h-5 mr-2" />
                       Start Sharing
                       <ArrowRight className="w-5 h-5 ml-2" />
@@ -1109,7 +1111,7 @@ export default function HomePage({
                       height={600}
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-violet-900/60 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/60 to-transparent" />
 
                     {/* Overlay card */}
                     <div className="absolute bottom-6 left-6 right-6 p-6 rounded-2xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm">
@@ -1118,7 +1120,7 @@ export default function HomePage({
                           {[1, 2, 3, 4].map((i) => (
                             <div
                               key={i}
-                              className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-fuchsia-400 border-2 border-white dark:border-gray-900"
+                              className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-400 border-2 border-white dark:border-gray-900"
                             />
                           ))}
                         </div>
@@ -1155,7 +1157,7 @@ export default function HomePage({
             {/* Section header */}
             <div className="text-center mb-16">
               <RevealOnScroll>
-                <Badge className="mb-4 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 px-4 py-1.5 rounded-full">
+                <Badge className="mb-4 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-4 py-1.5 rounded-full">
                   <Heart className="w-4 h-4 mr-2" />
                   Student Stories
                 </Badge>
@@ -1165,7 +1167,7 @@ export default function HomePage({
                 <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
                   What Students
                   <br />
-                  <span className="bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
                     Are Saying
                   </span>
                 </h2>
@@ -1186,7 +1188,7 @@ export default function HomePage({
         {/* ================================================================ */}
         <section className="py-32 relative overflow-hidden">
           {/* Background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-600 via-fuchsia-600 to-pink-600" />
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600" />
           <div
             className="absolute inset-0 opacity-30"
             style={{
@@ -1225,7 +1227,7 @@ export default function HomePage({
             <RevealOnScroll delay={300}>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link href="/destinations">
-                  <Button className="px-8 py-6 text-lg bg-white text-violet-600 hover:bg-gray-100 rounded-full font-semibold shadow-xl">
+                  <Button className="px-8 py-6 text-lg bg-white text-indigo-600 hover:bg-gray-100 rounded-full font-semibold shadow-xl">
                     <Compass className="w-5 h-5 mr-2" />
                     Explore Now
                     <ArrowRight className="w-5 h-5 ml-2" />

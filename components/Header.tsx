@@ -122,7 +122,7 @@ export default function Header() {
           href: "/university-exchanges",
           description: "Partner institutions",
           icon: School,
-          color: "from-purple-500 to-violet-600",
+          color: "from-indigo-500 to-blue-600",
           stats: "80+ partners",
         },
       ],
@@ -138,7 +138,7 @@ export default function Header() {
           href: "/student-stories",
           description: "Read real experiences",
           icon: Heart,
-          color: "from-pink-500 to-rose-600",
+          color: "from-purple-500 to-indigo-600",
           stats: "300+ stories",
         },
         {
@@ -234,23 +234,23 @@ export default function Header() {
             <Link href="/" className="flex items-center gap-3 group">
               <div className="relative">
                 {/* Glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-2xl blur-xl opacity-0 group-hover:opacity-60 transition-all duration-500 scale-150" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur-xl opacity-0 group-hover:opacity-60 transition-all duration-500 scale-150" />
 
                 {/* Animated ring */}
                 <div
-                  className="absolute -inset-1 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-spin-slow"
+                  className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-spin-slow"
                   style={{ animationDuration: "3s" }}
                 />
 
                 {/* Logo container */}
-                <div className="relative w-11 h-11 bg-gradient-to-br from-violet-600 via-fuchsia-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/30 group-hover:shadow-violet-500/50 group-hover:scale-110 transition-all duration-500">
+                <div className="relative w-11 h-11 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 group-hover:scale-110 transition-all duration-500">
                   <GraduationCap className="w-6 h-6 text-white drop-shadow-lg" />
                 </div>
               </div>
 
               {/* Logo text with gradient animation */}
               <div className="hidden sm:flex items-baseline gap-0.5">
-                <span className="text-xl font-extrabold bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 bg-clip-text text-transparent bg-[length:200%_auto] group-hover:animate-gradient">
+                <span className="text-xl font-extrabold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent bg-[length:200%_auto] group-hover:animate-gradient">
                   Erasmus
                 </span>
                 <span className="text-xl font-bold text-gray-900 dark:text-white">
@@ -285,7 +285,7 @@ export default function Header() {
                           "px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 flex items-center gap-2 group",
                           isCurrentPath(item.href) ||
                             item.subItems.some((sub) => isCurrentPath(sub.href))
-                            ? "bg-white dark:bg-gray-900 text-violet-700 dark:text-violet-300 shadow-md"
+                            ? "bg-white dark:bg-gray-900 text-blue-700 dark:text-blue-300 shadow-md"
                             : "text-gray-700 dark:text-gray-300 hover:bg-white/80 dark:hover:bg-gray-900/80",
                         )}
                       >
@@ -295,7 +295,7 @@ export default function Header() {
                           className={cn(
                             "h-3.5 w-3.5 transition-all duration-300",
                             activeDropdown === item.name
-                              ? "rotate-180 text-violet-600"
+                              ? "rotate-180 text-blue-600"
                               : "opacity-50",
                           )}
                         />
@@ -317,7 +317,7 @@ export default function Header() {
                           {/* Dropdown content */}
                           <div className="relative w-80 bg-white dark:bg-gray-900 backdrop-blur-2xl rounded-3xl shadow-2xl shadow-gray-900/20 dark:shadow-black/40 border border-gray-200/50 dark:border-gray-700/50 p-2 overflow-hidden">
                             {/* Decorative gradient */}
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-violet-500/10 to-transparent rounded-full blur-2xl" />
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-500/10 to-transparent rounded-full blur-2xl" />
 
                             {item.subItems.map((subItem, idx) => (
                               <Link
@@ -340,7 +340,7 @@ export default function Header() {
 
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-2">
-                                    <span className="font-semibold text-gray-900 dark:text-white text-sm group-hover/item:text-violet-600 dark:group-hover/item:text-violet-400 transition-colors">
+                                    <span className="font-semibold text-gray-900 dark:text-white text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
                                       {subItem.name}
                                     </span>
                                     <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-full">
@@ -365,7 +365,7 @@ export default function Header() {
                       className={cn(
                         "px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 flex items-center gap-2 group",
                         isCurrentPath(item.href)
-                          ? "bg-white dark:bg-gray-900 text-violet-700 dark:text-violet-300 shadow-md"
+                          ? "bg-white dark:bg-gray-900 text-blue-700 dark:text-blue-300 shadow-md"
                           : "text-gray-700 dark:text-gray-300 hover:bg-white/80 dark:hover:bg-gray-900/80",
                       )}
                     >
@@ -385,7 +385,7 @@ export default function Header() {
               <Button
                 className={cn(
                   "relative group overflow-hidden rounded-2xl px-6 py-2.5 font-semibold text-white transition-all duration-500",
-                  "bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600",
+                  "bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600",
                   "hover:shadow-[0_0_40px_rgba(139,92,246,0.5)]",
                   "border border-white/20",
                   analytics.nextStep &&
@@ -396,7 +396,7 @@ export default function Header() {
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
 
                 {/* Pulsing glow */}
-                <span className="absolute inset-0 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
+                <span className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
 
                 <span className="relative flex items-center gap-2">
                   <Zap className="w-4 h-4" />
@@ -409,7 +409,7 @@ export default function Header() {
 
             {/* User section */}
             {status === "loading" ? (
-              <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-violet-200 to-fuchsia-200 animate-pulse" />
+              <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-200 to-indigo-200 animate-pulse" />
             ) : status === "authenticated" && session ? (
               <div className="flex items-center gap-2">
                 <NotificationDropdown />
@@ -420,9 +420,9 @@ export default function Header() {
                       className="relative h-11 w-11 rounded-2xl p-0 overflow-hidden ring-2 ring-transparent hover:ring-violet-400/50 transition-all duration-300 group"
                     >
                       {/* Animated border */}
-                      <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                      <div className="relative h-full w-full bg-gradient-to-br from-violet-500 via-fuchsia-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm rounded-xl">
+                      <div className="relative h-full w-full bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm rounded-xl">
                         {session.user.name?.[0] || session.user.email?.[0]}
                       </div>
                     </Button>
@@ -433,9 +433,9 @@ export default function Header() {
                     forceMount
                   >
                     {/* User Info Card */}
-                    <div className="flex items-center gap-4 p-4 mb-3 bg-gradient-to-br from-violet-50 to-fuchsia-50 dark:from-violet-900/30 dark:to-fuchsia-900/30 rounded-2xl">
+                    <div className="flex items-center gap-4 p-4 mb-3 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-violet-900/30 dark:to-indigo-900/30 rounded-2xl">
                       <div className="relative">
-                        <div className="h-14 w-14 bg-gradient-to-br from-violet-500 via-fuchsia-500 to-pink-500 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                        <div className="h-14 w-14 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
                           {session.user.name?.[0] || session.user.email?.[0]}
                         </div>
                         <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white dark:border-gray-900" />
@@ -461,8 +461,8 @@ export default function Header() {
                             href={item.href}
                             className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
                           >
-                            <div className="p-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl group-hover:bg-violet-100 dark:group-hover:bg-violet-900/30 transition-colors">
-                              <item.icon className="h-4 w-4 text-gray-600 dark:text-gray-400 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors" />
+                            <div className="p-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 transition-colors">
+                              <item.icon className="h-4 w-4 text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
                             </div>
                             <span className="font-medium text-gray-700 dark:text-gray-300">
                               {item.name}
@@ -516,7 +516,7 @@ export default function Header() {
               className={cn(
                 "rounded-xl h-11 w-11 transition-all duration-300",
                 isMobileMenuOpen
-                  ? "bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300"
+                  ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                   : "hover:bg-gray-100 dark:hover:bg-gray-800",
               )}
             >
@@ -606,7 +606,7 @@ export default function Header() {
                     className={cn(
                       "flex items-center gap-4 p-4 rounded-2xl transition-all duration-300",
                       isCurrentPath(item.href)
-                        ? "bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300"
+                        ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                         : "bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800",
                     )}
                     onClick={() => setIsMobileMenuOpen(false)}
@@ -615,7 +615,7 @@ export default function Header() {
                       className={cn(
                         "p-3 rounded-xl",
                         isCurrentPath(item.href)
-                          ? "bg-violet-600 text-white"
+                          ? "bg-blue-600 text-white"
                           : "bg-gray-200 dark:bg-gray-800",
                       )}
                     >
@@ -640,7 +640,7 @@ export default function Header() {
                 href={analytics.nextStep?.href || "/basic-information"}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <Button className="w-full h-14 rounded-2xl bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 text-white text-lg shadow-xl shadow-violet-500/30 font-semibold">
+                <Button className="w-full h-14 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white text-lg shadow-xl shadow-blue-500/30 font-semibold">
                   <Zap className="w-5 h-5 mr-2" />
                   {analytics.nextStep
                     ? `Continue: ${analytics.nextStep.name}`
@@ -652,8 +652,8 @@ export default function Header() {
             {/* Mobile Auth */}
             {status === "authenticated" && session ? (
               <div className="pt-4 space-y-3">
-                <div className="flex items-center gap-4 p-4 bg-gradient-to-br from-violet-50 to-fuchsia-50 dark:from-violet-900/30 dark:to-fuchsia-900/30 rounded-2xl">
-                  <div className="h-14 w-14 bg-gradient-to-br from-violet-500 via-fuchsia-500 to-pink-500 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                <div className="flex items-center gap-4 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-violet-900/30 dark:to-indigo-900/30 rounded-2xl">
+                  <div className="h-14 w-14 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
                     {session.user.name?.[0] || session.user.email?.[0]}
                   </div>
                   <div>

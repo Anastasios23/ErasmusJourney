@@ -15,24 +15,9 @@ import {
   CardDescription,
 } from "../src/components/ui/card";
 import { Badge } from "../src/components/ui/badge";
-import {
-  User,
-  BookOpen,
-  Home,
-  Euro,
-  FileText,
-  CheckCircle,
-  Clock,
-  ArrowRight,
-  PlayCircle,
-  AlertCircle,
-  Loader2,
-  Sparkles,
-  Trophy,
-  Target,
-  Rocket,
-  Star,
-} from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { Icon } from "@iconify/react";
+import { motion } from "framer-motion";
 import { useErasmusProgress } from "../src/hooks/useErasmusProgress";
 import WelcomeTour from "../src/components/WelcomeTour";
 
@@ -40,7 +25,7 @@ interface ApplicationStep {
   id: string;
   name: string;
   href: string;
-  icon: any;
+  icon: string;
   completed: boolean;
   description: string;
   gradient: string;
@@ -66,7 +51,10 @@ function GlassCard({
   className?: string;
 }) {
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
       className={`
       relative backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 
       border border-white/20 dark:border-gray-700/30 
@@ -75,7 +63,7 @@ function GlassCard({
     `}
     >
       {children}
-    </div>
+    </motion.div>
   );
 }
 
@@ -96,46 +84,46 @@ export default function Dashboard() {
       id: "basic-info",
       name: "Basic Information",
       href: "/basic-information",
-      icon: User,
+      icon: "solar:user-circle-linear",
       completed: completedSteps.basicInfo,
       description: "Personal & academic details",
-      gradient: "from-violet-500 to-fuchsia-500",
+      gradient: "from-blue-500 to-indigo-600",
     },
     {
       id: "course-matching",
       name: "Course Matching",
       href: "/course-matching",
-      icon: BookOpen,
+      icon: "solar:notebook-minimalistic-linear",
       completed: completedSteps.courses,
       description: "Select courses and universities",
-      gradient: "from-blue-500 to-cyan-500",
+      gradient: "from-purple-500 to-indigo-600",
     },
     {
       id: "accommodation",
       name: "Accommodation",
       href: "/accommodation",
-      icon: Home,
+      icon: "solar:home-2-linear",
       completed: completedSteps.accommodation,
       description: "Housing preferences",
-      gradient: "from-amber-500 to-orange-500",
+      gradient: "from-emerald-500 to-teal-600",
     },
     {
       id: "living-expenses",
       name: "Living Expenses",
       href: "/living-expenses",
-      icon: Euro,
+      icon: "solar:wallet-linear",
       completed: completedSteps.livingExpenses,
       description: "Budget and cost planning",
-      gradient: "from-emerald-500 to-teal-500",
+      gradient: "from-orange-500 to-amber-600",
     },
     {
       id: "experience",
       name: "Your Experience",
       href: "/help-future-students",
-      icon: FileText,
+      icon: "solar:users-group-rounded-linear",
       completed: completedSteps.experience,
       description: "Share tips for future students",
-      gradient: "from-pink-500 to-rose-500",
+      gradient: "from-indigo-500 to-blue-600",
     },
   ];
 
@@ -187,8 +175,8 @@ export default function Dashboard() {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="space-y-2">
-                <Badge className="mb-2 bg-gradient-to-r from-violet-100 to-fuchsia-100 dark:from-violet-900/30 dark:to-fuchsia-900/30 text-violet-700 dark:text-violet-300 px-4 py-1.5 rounded-full border border-violet-200/50 dark:border-violet-700/50">
-                  <Sparkles className="w-4 h-4 mr-2" />
+                <Badge className="mb-2 bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-700 dark:text-blue-300 px-4 py-1.5 rounded-full border border-blue-200/50 dark:border-blue-700/50">
+                  <Icon icon="solar:widget-4-linear" className="w-4 h-4 mr-2" />
                   Dashboard
                 </Badge>
                 <h1 className="text-4xl font-extrabold tracking-tight">
@@ -243,7 +231,7 @@ export default function Dashboard() {
                       </linearGradient>
                     </defs>
                   </svg>
-                  <span className="absolute text-xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+                  <span className="absolute text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                     {Math.round(progressPercentage)}%
                   </span>
                 </div>
@@ -257,7 +245,7 @@ export default function Dashboard() {
                   </p>
                   {allStepsCompleted && (
                     <div className="flex items-center gap-1 mt-1 text-emerald-600 dark:text-emerald-400">
-                      <Trophy className="w-4 h-4" />
+                      <Icon icon="solar:cup-star-bold" className="w-4 h-4" />
                       <span className="text-xs font-semibold">All done!</span>
                     </div>
                   )}
@@ -278,7 +266,10 @@ export default function Dashboard() {
                       <Badge
                         className={`bg-gradient-to-r ${nextStep.gradient} text-white border-none shadow-lg`}
                       >
-                        <Target className="w-3.5 h-3.5 mr-1.5" />
+                        <Icon
+                          icon="solar:target-linear"
+                          className="w-3.5 h-3.5 mr-1.5"
+                        />
                         Next Step
                       </Badge>
                       <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -292,10 +283,13 @@ export default function Dashboard() {
                     <Link href={nextStep.href}>
                       <Button
                         size="lg"
-                        className={`bg-gradient-to-r ${nextStep.gradient} hover:opacity-90 text-white shadow-xl shadow-violet-500/25 px-8 py-6 text-lg rounded-2xl group`}
+                        className={`bg-gradient-to-r ${nextStep.gradient} hover:opacity-90 text-white shadow-xl shadow-blue-500/25 px-8 py-6 text-lg rounded-2xl group`}
                       >
                         <span>Continue</span>
-                        <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                        <Icon
+                          icon="solar:arrow-right-linear"
+                          className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform"
+                        />
                       </Button>
                     </Link>
                   </div>
@@ -309,7 +303,10 @@ export default function Dashboard() {
                   <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div className="space-y-3">
                       <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-none shadow-lg">
-                        <Trophy className="w-3.5 h-3.5 mr-1.5" />
+                        <Icon
+                          icon="solar:cup-star-bold"
+                          className="w-3.5 h-3.5 mr-1.5"
+                        />
                         Completed
                       </Badge>
                       <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -333,7 +330,10 @@ export default function Dashboard() {
                       <Link href="/destinations">
                         <Button className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:opacity-90 text-white shadow-xl shadow-emerald-500/25 rounded-xl px-6">
                           Explore Destinations
-                          <ArrowRight className="ml-2 h-4 w-4" />
+                          <Icon
+                            icon="solar:arrow-right-linear"
+                            className="ml-2 h-4 w-4"
+                          />
                         </Button>
                       </Link>
                     </div>
@@ -345,7 +345,10 @@ export default function Dashboard() {
             {/* Steps List */}
             <div className="space-y-5">
               <div className="flex items-center gap-3 px-1">
-                <Rocket className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+                <Icon
+                  icon="solar:rocket-2-linear"
+                  className="w-5 h-5 text-blue-600 dark:text-blue-400"
+                />
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                   Your Journey
                 </h3>
@@ -356,7 +359,7 @@ export default function Dashboard() {
                     key={step.id}
                     className={`
                       group flex items-center justify-between p-6 hover:bg-white/50 dark:hover:bg-gray-800/30 transition-all duration-300
-                      ${step === nextStep ? "bg-gradient-to-r from-violet-50/50 to-fuchsia-50/50 dark:from-violet-900/10 dark:to-fuchsia-900/10" : ""}
+                      ${step === nextStep ? "bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/10 dark:to-indigo-900/10" : ""}
                     `}
                   >
                     <div className="flex items-center gap-5">
@@ -368,15 +371,18 @@ export default function Dashboard() {
                           step.completed
                             ? "bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-emerald-500/25"
                             : step === nextStep
-                              ? `bg-gradient-to-br ${step.gradient} text-white shadow-violet-500/25 animate-pulse`
+                              ? `bg-gradient-to-br ${step.gradient} text-white shadow-blue-500/25 animate-pulse`
                               : "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 shadow-none"
                         }
                       `}
                       >
                         {step.completed ? (
-                          <CheckCircle className="h-6 w-6" />
+                          <Icon
+                            icon="solar:check-circle-bold"
+                            className="h-6 w-6"
+                          />
                         ) : (
-                          <step.icon className="h-6 w-6" />
+                          <Icon icon={step.icon} className="h-6 w-6" />
                         )}
                       </div>
 
@@ -395,7 +401,10 @@ export default function Dashboard() {
                             </span>
                           )}
                           {step.completed && (
-                            <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                            <Icon
+                              icon="solar:star-bold"
+                              className="w-4 h-4 text-amber-500"
+                            />
                           )}
                         </div>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -410,7 +419,7 @@ export default function Dashboard() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-gray-500 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/30 rounded-xl"
+                            className="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-xl"
                           >
                             Edit
                           </Button>
@@ -428,7 +437,10 @@ export default function Dashboard() {
                             {step === nextStep ? (
                               <>
                                 Start
-                                <ArrowRight className="ml-1.5 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                <Icon
+                                  icon="solar:arrow-right-linear"
+                                  className="ml-1.5 h-4 w-4 group-hover:translate-x-1 transition-transform"
+                                />
                               </>
                             ) : (
                               "Pending"

@@ -47,7 +47,7 @@ export default function FAQ() {
       id: "general",
       icon: HelpCircle,
       title: "General",
-      color: "from-violet-500 to-purple-600",
+      color: "from-blue-500 to-indigo-600",
       faqs: [
         {
           question: "What is ErasmusJourney?",
@@ -70,7 +70,7 @@ export default function FAQ() {
       id: "account",
       icon: Users,
       title: "Account & Registration",
-      color: "from-blue-500 to-indigo-600",
+      color: "from-indigo-500 to-purple-600",
       faqs: [
         {
           question: "How do I create an account?",
@@ -139,7 +139,7 @@ export default function FAQ() {
       id: "accommodation",
       icon: Home,
       title: "Accommodation",
-      color: "from-pink-500 to-rose-600",
+      color: "from-purple-500 to-indigo-600",
       faqs: [
         {
           question: "Does ErasmusJourney help find accommodation?",
@@ -225,7 +225,7 @@ export default function FAQ() {
         <section className="relative pt-32 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
           <div className="absolute inset-0 -z-10">
             <div className="absolute top-20 left-1/4 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-violet-400/20 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl" />
           </div>
 
           <div className="max-w-4xl mx-auto text-center">
