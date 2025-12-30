@@ -2,9 +2,11 @@
 const nextConfig = {
   // Enable React Strict Mode only in production to reduce dev noise
   reactStrictMode: process.env.NODE_ENV === "production",
-  // Disable TypeScript checking during build to bypass type errors
+  // TypeScript checking during build - enable for production builds
   typescript: {
-    ignoreBuildErrors: true,
+    // Set to false to enable strict type checking (recommended for production)
+    // Set to true only for development if you need to bypass temporary type errors
+    ignoreBuildErrors: process.env.SKIP_TYPE_CHECK === "true",
   },
   // Allow cross-origin requests in development for cloud environments
   allowedDevOrigins: [

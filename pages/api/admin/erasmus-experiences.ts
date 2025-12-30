@@ -7,13 +7,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  // AUTHENTICATION DISABLED - Comment out to re-enable
-  // const session = await getServerSession(req, res, authOptions);
-
-  // Check if user is admin (you might want to adjust this check)
-  // if (!session?.user?.email?.includes("admin")) {
-  //   return res.status(403).json({ error: "Admin access required" });
-  // }
+  // Check if user is admin
+  const session = await getServerSession(req, res, authOptions);
+  if (!session?.user || (session.user as any).role !== "ADMIN") {
+    return res.status(403).json({ error: "Admin access required" });
+  }
 
   switch (req.method) {
     case "GET":

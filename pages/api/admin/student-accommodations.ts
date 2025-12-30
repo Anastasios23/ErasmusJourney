@@ -6,17 +6,18 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  // AUTHENTICATION DISABLED - Comment out to re-enable
   // Check if user is admin
-  // const session = await getSession({ req });
-  // if (!session?.user || session.user.role !== "ADMIN") {
-  //   return res.status(403).json({ error: "Unauthorized" });
-  // }
+  const session = await getSession({ req });
+  if (!session?.user || (session.user as any).role !== "ADMIN") {
+    return res
+      .status(403)
+      .json({ error: "Unauthorized - Admin access required" });
+  }
 
   if (req.method === "GET") {
     try {
       // Fetch published accommodations from the Accommodation model
-      const accommodations = await prisma.accommodation.findMany({
+      const accommodations = await prisma.accommodations.findMany({
         where: {
           isActive: true,
         },

@@ -23,6 +23,7 @@ model Account {
   users             users   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -31,6 +32,9 @@ model Session {
   userId       String
   expires      DateTime
   users        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expires])
 }
 
 model VerificationToken {
@@ -121,6 +125,10 @@ model applications {
   universities     universities @relation(fields: [homeUniversityId], references: [id])
   programs         programs     @relation(fields: [programId], references: [id])
   users            users        @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([homeUniversityId])
 }
 
 model custom_destinations {

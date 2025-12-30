@@ -1,12 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "./auth/[...nextauth]";
 import { randomUUID } from "crypto";
 
 import { updateCityStatistics } from "../../src/services/statisticsService";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../lib/prisma";
 
 // Retry helper for database operations
 async function retryDatabaseOperation<T>(

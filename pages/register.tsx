@@ -168,7 +168,9 @@ export default function Register() {
               <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 animate-pulse" />
               <Loader2 className="absolute inset-0 m-auto h-8 w-8 animate-spin text-white" />
             </div>
-            <p className="text-gray-500 font-medium">Checking authentication...</p>
+            <p className="text-gray-500 font-medium">
+              Checking authentication...
+            </p>
           </div>
         </div>
       </>
@@ -194,7 +196,9 @@ export default function Register() {
                   <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl mb-4">
                     <MailCheck className="w-10 h-10 text-white" />
                   </div>
-                  <h1 className="text-2xl font-bold text-white mb-2">Verify Your Email</h1>
+                  <h1 className="text-2xl font-bold text-white mb-2">
+                    Verify Your Email
+                  </h1>
                   <p className="text-white/80 text-sm">Almost there!</p>
                 </div>
               </div>
@@ -206,15 +210,20 @@ export default function Register() {
                   </span>
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                  Please check your inbox and click the link to complete your registration.
+                  Please check your inbox and click the link to complete your
+                  registration.
                 </p>
                 <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200/50 dark:border-amber-700/30 rounded-2xl p-4 mb-6">
                   <p className="text-sm text-amber-800 dark:text-amber-300">
-                    💡 Didn't receive the email? Check your spam folder or request a new link.
+                    💡 Didn't receive the email? Check your spam folder or
+                    request a new link.
                   </p>
                 </div>
                 <Link href="/login">
-                  <Button variant="outline" className="w-full rounded-xl border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30">
+                  <Button
+                    variant="outline"
+                    className="w-full rounded-xl border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                  >
                     Back to Login
                   </Button>
                 </Link>
@@ -225,22 +234,25 @@ export default function Register() {
       </>
     );
   }
-      </div>
-    );
-  }
 
   return (
     <>
       <Head>
         <title>Register - Erasmus Journey Platform</title>
-        <meta name="description" content="Create your account to start your Erasmus journey." />
+        <meta
+          name="description"
+          content="Create your account to start your Erasmus journey."
+        />
       </Head>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-4 relative overflow-hidden">
         <FloatingOrbs />
-        
+
         <div className="relative w-full max-w-lg z-10">
           {/* Back Button */}
-          <Link href="/" className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors mb-8 group">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors mb-8 group"
+          >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span className="font-medium">Back to Home</span>
           </Link>
@@ -253,13 +265,17 @@ export default function Register() {
                 <div className="absolute top-0 left-0 w-40 h-40 bg-white/20 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
                 <div className="absolute bottom-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl translate-x-1/2 translate-y-1/2" />
               </div>
-              
+
               <div className="relative">
                 <div className="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl mb-3">
                   <GraduationCap className="w-7 h-7 text-white" />
                 </div>
-                <h1 className="text-2xl font-bold text-white mb-1">Create Your Account</h1>
-                <p className="text-white/80 text-sm">Join the Erasmus community today</p>
+                <h1 className="text-2xl font-bold text-white mb-1">
+                  Create Your Account
+                </h1>
+                <p className="text-white/80 text-sm">
+                  Join the Erasmus community today
+                </p>
               </div>
             </div>
 
@@ -267,7 +283,10 @@ export default function Register() {
             <div className="p-8">
               <form onSubmit={handleSubmit} className="space-y-5">
                 {error && (
-                  <Alert variant="destructive" className="rounded-xl border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30">
+                  <Alert
+                    variant="destructive"
+                    className="rounded-xl border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30"
+                  >
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
@@ -278,11 +297,16 @@ export default function Register() {
                     <AlertDescription>{successMessage}</AlertDescription>
                   </Alert>
                 )}
-                
+
                 {/* Name Fields */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName" className="text-gray-700 dark:text-gray-300 font-medium">First Name</Label>
+                    <Label
+                      htmlFor="firstName"
+                      className="text-gray-700 dark:text-gray-300 font-medium"
+                    >
+                      First Name
+                    </Label>
                     <div className="relative">
                       <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <Input
@@ -294,16 +318,23 @@ export default function Register() {
                         required
                         className={cn(
                           "pl-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-blue-500 focus:ring-blue-500",
-                          fieldErrors.firstName && "border-red-500"
+                          fieldErrors.firstName && "border-red-500",
                         )}
                       />
                     </div>
                     {fieldErrors.firstName && (
-                      <p className="text-sm text-red-500">{fieldErrors.firstName}</p>
+                      <p className="text-sm text-red-500">
+                        {fieldErrors.firstName}
+                      </p>
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName" className="text-gray-700 dark:text-gray-300 font-medium">Last Name</Label>
+                    <Label
+                      htmlFor="lastName"
+                      className="text-gray-700 dark:text-gray-300 font-medium"
+                    >
+                      Last Name
+                    </Label>
                     <div className="relative">
                       <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <Input
@@ -315,19 +346,26 @@ export default function Register() {
                         required
                         className={cn(
                           "pl-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-blue-500 focus:ring-blue-500",
-                          fieldErrors.lastName && "border-red-500"
+                          fieldErrors.lastName && "border-red-500",
                         )}
                       />
                     </div>
                     {fieldErrors.lastName && (
-                      <p className="text-sm text-red-500">{fieldErrors.lastName}</p>
+                      <p className="text-sm text-red-500">
+                        {fieldErrors.lastName}
+                      </p>
                     )}
                   </div>
                 </div>
 
                 {/* Email */}
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-700 dark:text-gray-300 font-medium">Email Address</Label>
+                  <Label
+                    htmlFor="email"
+                    className="text-gray-700 dark:text-gray-300 font-medium"
+                  >
+                    Email Address
+                  </Label>
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <Input
@@ -339,7 +377,7 @@ export default function Register() {
                       required
                       className={cn(
                         "pl-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-blue-500 focus:ring-blue-500",
-                        fieldErrors.email && "border-red-500"
+                        fieldErrors.email && "border-red-500",
                       )}
                     />
                   </div>
@@ -350,7 +388,12 @@ export default function Register() {
 
                 {/* Password */}
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-gray-700 dark:text-gray-300 font-medium">Password</Label>
+                  <Label
+                    htmlFor="password"
+                    className="text-gray-700 dark:text-gray-300 font-medium"
+                  >
+                    Password
+                  </Label>
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <Input
@@ -361,16 +404,22 @@ export default function Register() {
                       required
                       className={cn(
                         "pl-12 pr-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-blue-500 focus:ring-blue-500",
-                        fieldErrors.password && "border-red-500"
+                        fieldErrors.password && "border-red-500",
                       )}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
                     >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
                     </button>
                   </div>
                   <PasswordStrength
@@ -378,13 +427,20 @@ export default function Register() {
                     onStrengthChange={setPasswordStrength}
                   />
                   {fieldErrors.password && (
-                    <p className="text-sm text-red-500">{fieldErrors.password}</p>
+                    <p className="text-sm text-red-500">
+                      {fieldErrors.password}
+                    </p>
                   )}
                 </div>
 
                 {/* Confirm Password */}
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-gray-700 dark:text-gray-300 font-medium">Confirm Password</Label>
+                  <Label
+                    htmlFor="confirmPassword"
+                    className="text-gray-700 dark:text-gray-300 font-medium"
+                  >
+                    Confirm Password
+                  </Label>
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <Input
@@ -395,20 +451,32 @@ export default function Register() {
                       required
                       className={cn(
                         "pl-12 pr-12 h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:border-blue-500 focus:ring-blue-500",
-                        fieldErrors.confirmPassword && "border-red-500"
+                        fieldErrors.confirmPassword && "border-red-500",
                       )}
                     />
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                      aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                      aria-label={
+                        showConfirmPassword
+                          ? "Hide confirm password"
+                          : "Show confirm password"
+                      }
                     >
-                      {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
                     </button>
                   </div>
                   {fieldErrors.confirmPassword && (
-                    <p className="text-sm text-red-500">{fieldErrors.confirmPassword}</p>
+                    <p className="text-sm text-red-500">
+                      {fieldErrors.confirmPassword}
+                    </p>
                   )}
                 </div>
 
@@ -417,25 +485,37 @@ export default function Register() {
                   <Checkbox
                     id="agreedToTerms"
                     checked={agreedToTerms}
-                    onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      setAgreedToTerms(checked as boolean)
+                    }
                     className="mt-0.5 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                   />
-                  <Label htmlFor="agreedToTerms" className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                  <Label
+                    htmlFor="agreedToTerms"
+                    className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed"
+                  >
                     I agree to the{" "}
-                    <Link href="/terms-of-service" className="font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent hover:opacity-80">
+                    <Link
+                      href="/terms-of-service"
+                      className="font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent hover:opacity-80"
+                    >
                       Terms and Conditions
                     </Link>
                   </Label>
                 </div>
                 {fieldErrors.agreedToTerms && (
-                  <p className="text-sm text-red-500">{fieldErrors.agreedToTerms}</p>
+                  <p className="text-sm text-red-500">
+                    {fieldErrors.agreedToTerms}
+                  </p>
                 )}
 
                 {/* Submit Button */}
                 <Button
                   type="submit"
                   className="w-full h-12 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 hover:opacity-90 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/25 transition-all"
-                  disabled={isLoading || passwordStrength < 60 || !agreedToTerms}
+                  disabled={
+                    isLoading || passwordStrength < 60 || !agreedToTerms
+                  }
                 >
                   {isLoading ? (
                     <>
@@ -471,10 +551,22 @@ export default function Register() {
                 disabled={isLoading}
               >
                 <svg className="mr-3 h-5 w-5" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                  <path
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  />
                 </svg>
                 Sign up with Google
               </Button>
@@ -484,7 +576,10 @@ export default function Register() {
             <div className="px-8 pb-8 text-center">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Already have an account?{" "}
-                <Link href="/login" className="font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
+                <Link
+                  href="/login"
+                  className="font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity"
+                >
                   Sign In
                 </Link>
               </p>

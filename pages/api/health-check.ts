@@ -12,9 +12,9 @@ export default async function handler(
   try {
     // Test database connection
     console.log("Testing database connection...");
-    
+
     // Test basic query
-    const userCount = await prisma.user.count();
+    const userCount = await prisma.users.count();
     console.log(`Found ${userCount} users in database`);
 
     // Test form submissions
@@ -22,12 +22,14 @@ export default async function handler(
     console.log(`Found ${submissionCount} form submissions in database`);
 
     // Test destinations
-    const destinationCount = await prisma.destination.count();
+    const destinationCount = await prisma.destinations.count();
     console.log(`Found ${destinationCount} destinations in database`);
 
     // Test custom destinations
-    const customDestinationCount = await prisma.customDestination.count();
-    console.log(`Found ${customDestinationCount} custom destinations in database`);
+    const customDestinationCount = await prisma.custom_destinations.count();
+    console.log(
+      `Found ${customDestinationCount} custom destinations in database`,
+    );
 
     res.status(200).json({
       status: "healthy",

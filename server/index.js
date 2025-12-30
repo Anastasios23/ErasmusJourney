@@ -197,23 +197,28 @@ db.serialize(() => {
     }
 
     if (!row) {
-      // Create default admin user with hashed password
+      // Create default admin user with hashed password from environment variable
       const saltRounds = 12;
-      const hashedPassword = bcrypt.hashSync("admin123", saltRounds);
+      const adminPassword =
+        process.env.DEFAULT_ADMIN_PASSWORD ||
+        "changeme_" + Math.random().toString(36).substring(2, 15);
+      const hashedPassword = bcrypt.hashSync(adminPassword, saltRounds);
 
       const stmt = db.prepare(`
         INSERT INTO users (firstName, lastName, email, password, role)
         VALUES (?, ?, ?, ?, ?)
       `);
 
+      const adminEmail =
+        process.env.DEFAULT_ADMIN_EMAIL || "admin@erasmusjourney.com";
       stmt.run(
-        ["Admin", "User", "admin@erasmusjourney.com", hashedPassword, "admin"],
+        ["Admin", "User", adminEmail, hashedPassword, "admin"],
         function (err) {
           if (err) {
             console.error("Error creating admin user:", err);
           } else {
             console.log(
-              "Default admin user created: admin@erasmusjourney.com / admin123",
+              `Default admin user created: ${adminEmail} - Check DEFAULT_ADMIN_PASSWORD env var`,
             );
           }
         },
