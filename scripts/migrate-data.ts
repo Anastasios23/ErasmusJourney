@@ -209,7 +209,9 @@ async function main() {
     });
 
     console.log("✅ Sample users created:");
-    console.log("   - Admin: admin@erasmus.cy / [password from DEFAULT_ADMIN_PASSWORD env var]");
+    console.log(
+      "   - Admin: admin@erasmus.cy / [password from DEFAULT_ADMIN_PASSWORD env var]",
+    );
     console.log("   - Demo: demo / demo");
 
     console.log("🎉 Data migration completed successfully!");

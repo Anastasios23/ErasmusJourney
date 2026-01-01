@@ -31,7 +31,9 @@ async function checkSetup() {
       console.log("\n📋 Next steps:");
       console.log("1. Start the development server: npm run dev");
       console.log("2. Visit http://localhost:3000");
-      console.log("3. Login with: admin@erasmus.cy / [DEFAULT_ADMIN_PASSWORD from .env]");
+      console.log(
+        "3. Login with: admin@erasmus.cy / [DEFAULT_ADMIN_PASSWORD from .env]",
+      );
       console.log("4. Explore the dashboard and university partnerships");
       console.log("\n🌟 Key features:");
       console.log("- SSR Home page with latest stories");
