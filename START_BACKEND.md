@@ -58,4 +58,4 @@ If you can't start the backend, the frontend will work in offline mode:
 ## Default Admin Account
 
 - Email: `admin@erasmusjourney.com`
-- Password: `admin123`
+- Password: Set via `DEFAULT_ADMIN_PASSWORD` environment variable

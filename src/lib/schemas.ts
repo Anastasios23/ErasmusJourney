@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+// ============================================
+// STEP 1: Basic Information Schemas
+// ============================================
+
 // Simplified schema for required fields only to avoid validation errors
 export const basicInformationRequiredSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -20,6 +24,35 @@ export const basicInformationRequiredSchema = z.object({
   exchangePeriod: z.enum(["semester1", "semester2", "full_year"], {
     errorMap: () => ({ message: "Please select exchange period" }),
   }),
+});
+
+// Minimal schema for unified form step components
+export const basicInformationStepSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email address"),
+  homeUniversity: z.string().min(1, "Home university is required"),
+  hostUniversity: z.string().min(1, "Host university is required"),
+  hostCountry: z.string().min(1, "Host country is required"),
+  hostCity: z.string().min(1, "Host city is required"),
+  exchangePeriod: z.string().min(1, "Exchange period is required"),
+  currentYear: z.string().min(1, "Current year is required"),
+  // Optional fields
+  dateOfBirth: z.string().optional(),
+  nationality: z.string().optional(),
+  phoneNumber: z.string().optional(),
+  homeUniversityId: z.string().optional(),
+  hostUniversityId: z.string().optional(),
+  homeDepartment: z.string().optional(),
+  hostDepartment: z.string().optional(),
+  levelOfStudy: z.string().optional(),
+  studentId: z.string().optional(),
+  exchangeStartDate: z.string().optional(),
+  exchangeEndDate: z.string().optional(),
+  languageOfInstruction: z.string().optional(),
+  languageProficiencyLevel: z.string().optional(),
+  motivationForExchange: z.string().optional(),
+  academicGoals: z.string().optional(),
 });
 
 // Full schema for reference (not used for validation)
@@ -137,6 +170,25 @@ export const courseMappingSchema = z.object({
     .optional(),
 });
 
+// ============================================
+// STEP 2: Course Matching - Minimal Schema for Step Component
+// ============================================
+export const courseMatchingStepSchema = z.object({
+  courses: z
+    .array(
+      z.object({
+        id: z.string(),
+        homeCourseCode: z.string().optional(),
+        homeCourseName: z.string().min(1, "Home course name is required"),
+        homeCredits: z.string().min(1, "Credits are required"),
+        hostCourseCode: z.string().optional(),
+        hostCourseName: z.string().min(1, "Host course name is required"),
+        hostCredits: z.string().min(1, "Credits are required"),
+      }),
+    )
+    .min(1, "At least one course mapping is required"),
+});
+
 // Accommodation Form Schema
 export const accommodationSchema = z.object({
   // Basic Information
@@ -217,6 +269,21 @@ export const accommodationSchema = z.object({
   additionalNotes: z.string().max(1000, "Additional notes too long").optional(),
 });
 
+// ============================================
+// STEP 3: Accommodation - Minimal Schema for Step Component
+// ============================================
+export const accommodationStepSchema = z.object({
+  type: z.string().min(1, "Accommodation type is required"),
+  rent: z.string().min(1, "Monthly rent is required"),
+  currency: z.string().default("EUR"),
+  rating: z.number().min(1, "Please provide a rating").max(5),
+  review: z.string().min(1, "Please write a brief review"),
+  // Optional fields
+  duration: z.string().optional(),
+  address: z.string().optional(),
+  distanceToUniversity: z.string().optional(),
+});
+
 // Living Expenses Form Schema
 export const livingExpensesSchema = z.object({
   type: z.literal("living-expenses"),
@@ -234,6 +301,19 @@ export const livingExpensesSchema = z.object({
     monthlyIncomeAmount: z.string().optional(),
     // ... other fields optional
   }),
+});
+
+// ============================================
+// STEP 4: Living Expenses - Minimal Schema for Step Component
+// ============================================
+export const livingExpensesStepSchema = z.object({
+  currency: z.string().default("EUR"),
+  rent: z.string().optional(), // Pre-filled from accommodation
+  food: z.string().min(1, "Food expenses are required"),
+  transport: z.string().min(1, "Transport expenses are required"),
+  social: z.string().min(1, "Social expenses are required"),
+  travel: z.string().min(1, "Travel expenses are required"),
+  other: z.string().optional(),
 });
 
 // Help Future Students Form Schema
@@ -295,11 +375,139 @@ export const helpFutureStudentsSchema = z.object({
   additionalNotes: z.string().max(500, "Additional notes too long").optional(),
 });
 
+// ============================================
+// STEP 5: Experience/Help Future Students - Minimal Schema for Step Component
+// ============================================
+export const experienceStepSchema = z.object({
+  overallRating: z
+    .number()
+    .min(1, "Please rate your overall experience")
+    .max(5),
+  bestExperience: z.string().min(1, "Please share your best experience"),
+  generalTips: z.string().min(1, "Please share your tips"),
+  // Optional fields
+  worstExperience: z.string().optional(),
+  academicAdvice: z.string().optional(),
+  socialAdvice: z.string().optional(),
+  photos: z.array(z.string()).optional(),
+});
+
+// ============================================
+// Combined Form Data Schema (for final submission)
+// ============================================
+export const erasmusExperienceFormSchema = z.object({
+  basicInfo: basicInformationStepSchema,
+  courses: z.array(z.any()), // Flexible for course mappings
+  accommodation: accommodationStepSchema,
+  livingExpenses: livingExpensesStepSchema,
+  experience: experienceStepSchema,
+});
+
+// ============================================
+// Partial/Draft Schema (allows incomplete data)
+// ============================================
+export const erasmusExperienceDraftSchema = z.object({
+  basicInfo: basicInformationStepSchema.partial().optional(),
+  courses: z.array(z.any()).optional(),
+  accommodation: accommodationStepSchema.partial().optional(),
+  livingExpenses: livingExpensesStepSchema.partial().optional(),
+  experience: experienceStepSchema.partial().optional(),
+  currentStep: z.number().optional(),
+  completedSteps: z.array(z.number()).optional(),
+});
+
 // Export type definitions for TypeScript
 export type BasicInformationFormData = z.infer<typeof basicInformationSchema>;
+export type BasicInformationStepData = z.infer<
+  typeof basicInformationStepSchema
+>;
 export type CourseMappingFormData = z.infer<typeof courseMappingSchema>;
+export type CourseMatchingStepData = z.infer<typeof courseMatchingStepSchema>;
 export type AccommodationFormData = z.infer<typeof accommodationSchema>;
+export type AccommodationStepData = z.infer<typeof accommodationStepSchema>;
 export type LivingExpensesFormData = z.infer<typeof livingExpensesSchema>;
+export type LivingExpensesStepData = z.infer<typeof livingExpensesStepSchema>;
 export type HelpFutureStudentsFormData = z.infer<
   typeof helpFutureStudentsSchema
 >;
+export type ExperienceStepData = z.infer<typeof experienceStepSchema>;
+export type ErasmusExperienceFormData = z.infer<
+  typeof erasmusExperienceFormSchema
+>;
+export type ErasmusExperienceDraftData = z.infer<
+  typeof erasmusExperienceDraftSchema
+>;
+
+// ============================================
+// Validation Helper Functions
+// ============================================
+
+/**
+ * Validate a single step's data
+ */
+export function validateStep(
+  step: number,
+  data: any,
+): { success: boolean; errors: Record<string, string> } {
+  const schemas: Record<number, z.ZodSchema> = {
+    1: basicInformationStepSchema,
+    2: courseMatchingStepSchema,
+    3: accommodationStepSchema,
+    4: livingExpensesStepSchema,
+    5: experienceStepSchema,
+  };
+
+  const schema = schemas[step];
+  if (!schema) {
+    return { success: false, errors: { _form: "Invalid step number" } };
+  }
+
+  const result = schema.safeParse(data);
+  if (result.success) {
+    return { success: true, errors: {} };
+  }
+
+  const errors: Record<string, string> = {};
+  result.error.errors.forEach((err) => {
+    const path = err.path.join(".");
+    errors[path || "_form"] = err.message;
+  });
+
+  return { success: false, errors };
+}
+
+/**
+ * Validate the entire form for submission
+ */
+export function validateFullForm(data: any): {
+  success: boolean;
+  errors: Record<string, string>;
+} {
+  const result = erasmusExperienceFormSchema.safeParse(data);
+  if (result.success) {
+    return { success: true, errors: {} };
+  }
+
+  const errors: Record<string, string> = {};
+  result.error.errors.forEach((err) => {
+    const path = err.path.join(".");
+    errors[path || "_form"] = err.message;
+  });
+
+  return { success: false, errors };
+}
+
+/**
+ * Get step-specific validation schema
+ */
+export function getStepSchema(step: number): z.ZodSchema | null {
+  const schemas: Record<number, z.ZodSchema> = {
+    1: basicInformationStepSchema,
+    2: courseMatchingStepSchema,
+    3: accommodationStepSchema,
+    4: livingExpensesStepSchema,
+    5: experienceStepSchema,
+  };
+
+  return schemas[step] || null;
+}

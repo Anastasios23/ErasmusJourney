@@ -80,7 +80,7 @@ async function displayAdminInstructions() {
   console.log("===================================");
   console.log("1. 🌐 Go to: http://localhost:3000/login");
   console.log("2. 📧 Enter email: admin@erasmusjourney.com");
-  console.log("3. 🔐 Enter password: Admin123!");
+  console.log("3. 🔐 Enter password: [your DEFAULT_ADMIN_PASSWORD from .env]");
   console.log("4. ✅ Click 'Sign In'");
   console.log("\nAfter signing in, test these admin features:");
   console.log("• 🏛️  Destination Management: /admin/destinations");

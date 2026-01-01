@@ -11,9 +11,9 @@ export default async function handler(
   }
 
   try {
-    // Admin user details
+    // Admin user details - password from environment variable
     const adminEmail = "admin@erasmusjourney.com";
-    const adminPassword = "Admin123!";
+    const adminPassword = process.env.DEFAULT_ADMIN_PASSWORD || "ChangeMe123!";
     const adminFirstName = "Admin";
     const adminLastName = "User";
 

@@ -177,8 +177,9 @@ async function main() {
     console.log("👤 Creating sample users...");
     const bcrypt = await import("bcryptjs");
 
-    // Create admin user
-    const hashedAdminPassword = await bcrypt.hash("admin123", 12);
+    // Create admin user - password from environment variable
+    const adminPassword = process.env.DEFAULT_ADMIN_PASSWORD || "ChangeMe123!";
+    const hashedAdminPassword = await bcrypt.hash(adminPassword, 12);
     await prisma.user.create({
       data: {
         email: "admin@erasmus.cy",
@@ -208,7 +209,7 @@ async function main() {
     });
 
     console.log("✅ Sample users created:");
-    console.log("   - Admin: admin@erasmus.cy / admin123");
+    console.log("   - Admin: admin@erasmus.cy / [password from DEFAULT_ADMIN_PASSWORD env var]");
     console.log("   - Demo: demo / demo");
 
     console.log("🎉 Data migration completed successfully!");

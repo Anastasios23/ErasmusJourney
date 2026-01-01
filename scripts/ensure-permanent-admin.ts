@@ -1,16 +1,17 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
+import "dotenv/config";
 
 const prisma = new PrismaClient();
 
 /**
  * Permanent Admin User Configuration
- * This user will be recreated every time the database is reset or seeded
+ * Password is read from DEFAULT_ADMIN_PASSWORD environment variable
  */
 const PERMANENT_ADMIN = {
   email: "admin@erasmusjourney.com",
-  password: "Admin123!",
+  password: process.env.DEFAULT_ADMIN_PASSWORD || "ChangeMe123!",
   firstName: "Admin",
   lastName: "User",
   role: "ADMIN",
