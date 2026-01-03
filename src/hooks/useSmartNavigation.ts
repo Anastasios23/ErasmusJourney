@@ -52,7 +52,7 @@ export function useSmartNavigation() {
 
     const steps: SmartNavigationStep[] = stepDefinitions.map((step, index) => {
       const submission = submissions?.find((sub) => sub.type === step.id);
-      const isCompleted = submission && submission.status !== "DRAFT";
+      const isCompleted = submission && submission.status !== "draft";
       const isCurrent = router.pathname === step.href;
 
       // Determine if this is the next recommended step
@@ -62,7 +62,7 @@ export function useSmartNavigation() {
           const prevSubmission = submissions?.find(
             (sub) => sub.type === prevStep.id,
           );
-          return prevSubmission && prevSubmission.status !== "DRAFT";
+          return prevSubmission && prevSubmission.status !== "draft";
         });
 
       const nextRecommended = !isCompleted && previousStepsCompleted;
@@ -164,6 +164,3 @@ function generateRecommendations(
 
   return recommendations;
 }
-
-// Export types for use in components
-export type { SmartNavigationStep };

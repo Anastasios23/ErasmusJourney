@@ -353,7 +353,7 @@ export default function CourseMatchingExperiences() {
                 Back to Dashboard
               </motion.button>
             </Link>
-            <Link href="/course-matching">
+            <Link href="/share-experience">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}

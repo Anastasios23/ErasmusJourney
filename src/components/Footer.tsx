@@ -24,17 +24,18 @@ export default function Footer() {
 
   const quickLinks = [
     { name: "Destinations", href: "/destinations", icon: MapPin },
-    { name: "Universities", href: "/university-exchanges", icon: Globe },
-    { name: "Student Stories", href: "/student-stories", icon: Users },
-    { name: "Housing Reviews", href: "/student-accommodations", icon: Heart },
-    { name: "FAQ", href: "/faq", icon: MessageCircle },
+    {
+      name: "Course Matching",
+      href: "/course-matching-experiences",
+      icon: Globe,
+    },
+    { name: "Share Experience", href: "/share-experience", icon: Users },
   ];
 
   const applicationLinks = [
-    { name: "Basic Information", href: "/basic-information" },
-    { name: "Course Matching", href: "/course-matching" },
-    { name: "Accommodation", href: "/accommodation" },
-    { name: "Living Expenses", href: "/living-expenses" },
+    { name: "Share Your Experience", href: "/share-experience" },
+    { name: "My Dashboard", href: "/dashboard" },
+    { name: "My Submissions", href: "/my-submissions" },
   ];
 
   const supportLinks = [
@@ -43,14 +44,12 @@ export default function Footer() {
       href: "mailto:support@erasmusjourney.com",
       icon: Mail,
     },
-    { name: "Student Stories", href: "/student-stories", icon: MessageCircle },
-    { name: "FAQ", href: "/faq", icon: FileText },
+    { name: "Dashboard", href: "/dashboard", icon: MessageCircle },
   ];
 
   const legalLinks = [
-    { name: "Terms of Service", href: "/terms" },
-    { name: "Privacy Policy", href: "/privacy" },
-    { name: "Cookie Policy", href: "/cookies" },
+    { name: "Terms of Service", href: "#" },
+    { name: "Privacy Policy", href: "#" },
   ];
 
   const socialLinks = [

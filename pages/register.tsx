@@ -495,12 +495,9 @@ export default function Register() {
                     className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed"
                   >
                     I agree to the{" "}
-                    <Link
-                      href="/terms-of-service"
-                      className="font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent hover:opacity-80"
-                    >
+                    <span className="font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent cursor-pointer hover:opacity-80">
                       Terms and Conditions
-                    </Link>
+                    </span>
                   </Label>
                 </div>
                 {fieldErrors.agreedToTerms && (

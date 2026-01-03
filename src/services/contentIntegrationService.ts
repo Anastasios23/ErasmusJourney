@@ -242,14 +242,12 @@ export class ContentIntegrationService {
 
       livingCosts: {
         breakdown: {
-          accommodation: data.livingExpensesData?.rent?.average,
-          groceries: data.livingExpensesData?.groceries?.average,
-          transport: data.livingExpensesData?.transport?.average,
-          social: data.livingExpensesData?.eatingOut?.average,
-          bills: data.livingExpensesData?.bills?.average,
-          other: data.livingExpensesData?.other?.average,
+          rent: data.livingExpensesData?.rent?.average ?? null,
+          food: data.livingExpensesData?.groceries?.average ?? null,
+          transport: data.livingExpensesData?.transport?.average ?? null,
+          entertainment: data.livingExpensesData?.eatingOut?.average ?? null,
         },
-        totalMonthly: data.livingExpensesData?.total?.average,
+        totalMonthly: data.livingExpensesData?.total?.average ?? null,
       },
 
       userExperiences: (data.userExperiences || []).map((exp: any) => ({

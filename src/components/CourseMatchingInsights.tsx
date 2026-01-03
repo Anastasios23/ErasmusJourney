@@ -129,7 +129,7 @@ export default function CourseMatchingInsights({
       if (university) {
         url += `&university=${encodeURIComponent(university)}`;
       }
-      
+
       const response = await fetch(url);
       if (!response.ok) {
         if (response.status === 404) {
@@ -198,7 +198,7 @@ export default function CourseMatchingInsights({
               <p className="text-gray-600 mb-6">
                 Be the first to share your course matching experience in {city}!
               </p>
-              <Link href="/course-matching">
+              <Link href="/share-experience">
                 <Button>
                   Share Your Experience
                   <ArrowRight className="h-4 w-4 ml-2" />
@@ -220,15 +220,22 @@ export default function CourseMatchingInsights({
               <BookOpen className="h-5 w-5" />
               Course Matching Insights
             </CardTitle>
-            <Link href={`/course-matching-experiences?destination=${city}, ${country}`}>
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
+            <Link
+              href={`/course-matching-experiences?destination=${city}, ${country}`}
+            >
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+              >
                 View All
                 <ExternalLink className="h-4 w-4" />
               </Button>
             </Link>
           </div>
           <p className="text-sm text-gray-600">
-            Based on {insights.totalExperiences} course matching experiences from students in {city}
+            Based on {insights.totalExperiences} course matching experiences
+            from students in {city}
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -274,8 +281,12 @@ export default function CourseMatchingInsights({
                 {insights.departmentInsights.slice(0, 4).map((dept, index) => (
                   <div key={index} className="bg-gray-50 p-3 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium text-gray-900">{dept.department}</span>
-                      <Badge variant="outline">{dept.studentCount} students</Badge>
+                      <span className="font-medium text-gray-900">
+                        {dept.department}
+                      </span>
+                      <Badge variant="outline">
+                        {dept.studentCount} students
+                      </Badge>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-gray-600">
                       <span>Difficulty: {dept.avgDifficulty}/5</span>
@@ -298,7 +309,10 @@ export default function CourseMatchingInsights({
               </h3>
               <div className="space-y-3">
                 {insights.topAdvice.slice(0, 3).map((advice, index) => (
-                  <div key={index} className="bg-green-50 p-3 rounded-lg border-l-4 border-green-400">
+                  <div
+                    key={index}
+                    className="bg-green-50 p-3 rounded-lg border-l-4 border-green-400"
+                  >
                     <p className="text-sm text-green-800">{advice}</p>
                   </div>
                 ))}
@@ -314,11 +328,16 @@ export default function CourseMatchingInsights({
                 Common Challenges
               </h3>
               <div className="space-y-3">
-                {insights.commonChallenges.slice(0, 3).map((challenge, index) => (
-                  <div key={index} className="bg-yellow-50 p-3 rounded-lg border-l-4 border-yellow-400">
-                    <p className="text-sm text-yellow-800">{challenge}</p>
-                  </div>
-                ))}
+                {insights.commonChallenges
+                  .slice(0, 3)
+                  .map((challenge, index) => (
+                    <div
+                      key={index}
+                      className="bg-yellow-50 p-3 rounded-lg border-l-4 border-yellow-400"
+                    >
+                      <p className="text-sm text-yellow-800">{challenge}</p>
+                    </div>
+                  ))}
               </div>
             </div>
           )}
@@ -341,7 +360,9 @@ export default function CourseMatchingInsights({
               </div>
               {insights.experiences.length > 2 && (
                 <div className="text-center mt-4">
-                  <Link href={`/course-matching-experiences?destination=${city}, ${country}`}>
+                  <Link
+                    href={`/course-matching-experiences?destination=${city}, ${country}`}
+                  >
                     <Button variant="outline">
                       View All {insights.totalExperiences} Experiences
                       <ArrowRight className="h-4 w-4 ml-2" />

@@ -1,8 +1,6 @@
 import { prisma } from "../../lib/prisma";
-import {
-  aggregateCityData,
-  CityAggregatedData,
-} from "./cityAggregationService";
+import { aggregateCityData } from "./cityAggregationService";
+import { CityAggregatedData } from "../types/cityData";
 
 // Admin-managed destination interface
 export interface AdminDestinationData {

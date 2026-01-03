@@ -80,7 +80,8 @@ export class StudentStoryError extends Error {
       | "NOT_FOUND"
       | "VALIDATION_ERROR"
       | "API_ERROR"
-      | "NETWORK_ERROR",
+      | "NETWORK_ERROR"
+      | "UNKNOWN_ERROR",
     public readonly details?: any,
   ) {
     super(message);

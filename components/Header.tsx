@@ -96,10 +96,10 @@ export default function Header() {
         {
           name: "Destinations",
           href: "/destinations",
-          description: "Browse 150+ European cities",
+          description: "Browse European cities",
           icon: MapPin,
           color: "from-amber-500 to-orange-600",
-          stats: "150+ cities",
+          stats: "All cities",
         },
         {
           name: "Course Matching",
@@ -107,53 +107,13 @@ export default function Header() {
           description: "Find equivalent courses abroad",
           icon: BookOpen,
           color: "from-blue-500 to-indigo-600",
-          stats: "500+ courses",
-        },
-        {
-          name: "Accommodations",
-          href: "/student-accommodations",
-          description: "Student housing reviews",
-          icon: Building2,
-          color: "from-emerald-500 to-teal-600",
-          stats: "200+ reviews",
-        },
-        {
-          name: "Universities",
-          href: "/university-exchanges",
-          description: "Partner institutions",
-          icon: School,
-          color: "from-indigo-500 to-blue-600",
-          stats: "80+ partners",
-        },
-      ],
-    },
-    {
-      name: "Community",
-      href: "/student-stories",
-      icon: Users,
-      description: "Connect with fellow students",
-      subItems: [
-        {
-          name: "Student Stories",
-          href: "/student-stories",
-          description: "Read real experiences",
-          icon: Heart,
-          color: "from-purple-500 to-indigo-600",
-          stats: "300+ stories",
-        },
-        {
-          name: "FAQ & Help",
-          href: "/faq",
-          description: "Common questions answered",
-          icon: MessageSquare,
-          color: "from-cyan-500 to-blue-600",
-          stats: "50+ topics",
+          stats: "Courses",
         },
       ],
     },
     {
       name: "Share",
-      href: "/dashboard",
+      href: "/share-experience",
       icon: Plane,
       description: "Share your Erasmus story",
     },
@@ -162,14 +122,12 @@ export default function Header() {
   const userNavigation = session
     ? [
         { name: "Dashboard", href: "/dashboard", icon: User },
-        { name: "Settings", href: "/settings", icon: Settings },
         ...((session.user as any)?.role === "ADMIN"
           ? [
               { name: "─────────", href: "#", icon: User, disabled: true },
-              { name: "Admin Dashboard", href: "/admin", icon: Settings },
               {
-                name: "Review Queue",
-                href: "/admin/review",
+                name: "Admin Panel",
+                href: "/admin/review-submissions",
                 icon: ClipboardList,
               },
             ]

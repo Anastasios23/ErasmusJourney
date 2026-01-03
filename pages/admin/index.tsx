@@ -5,8 +5,8 @@ export default function AdminIndex() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect /admin to /admin/unified-dashboard
-    router.replace("/admin/unified-dashboard");
+    // Redirect /admin to /admin/review-submissions
+    router.replace("/admin/review-submissions");
   }, [router]);
 
   return (

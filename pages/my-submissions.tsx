@@ -333,7 +333,7 @@ export default function MySubmissions() {
               animate={{ opacity: 1, y: 0 }}
               className="flex justify-end"
             >
-              <Link href="/basic-information">
+              <Link href="/share-experience">
                 <Button className="bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg shadow-blue-200 dark:shadow-none">
                   <Icon
                     icon="solar:add-circle-linear"
@@ -576,7 +576,7 @@ export default function MySubmissions() {
                         ? "Try adjusting your filters"
                         : "Start by creating your first submission"}
                     </p>
-                    <Link href="/basic-information">
+                    <Link href="/share-experience">
                       <Button className="bg-blue-600 hover:bg-blue-700 rounded-xl">
                         <Icon
                           icon="solar:add-circle-linear"
@@ -729,7 +729,7 @@ export default function MySubmissions() {
                             {(submission.status === "DRAFT" ||
                               submission.status === "IN_PROGRESS" ||
                               submission.status === "REVISION_NEEDED") && (
-                              <Link href="/basic-information">
+                              <Link href="/share-experience">
                                 <Button
                                   size="sm"
                                   className="bg-blue-600 hover:bg-blue-700 rounded-xl"

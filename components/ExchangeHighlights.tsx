@@ -208,13 +208,13 @@ export default function ExchangeHighlights() {
                 the perfect academic path for your exchange program.
               </p>
               <div className="flex gap-4 justify-center">
-                <Link href="/university-exchanges">
+                <Link href="/destinations">
                   <Button className="bg-blue-600 hover:bg-blue-700">
                     View All Exchanges
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
-                <Link href="/destinations">
+                <Link href="/course-matching-experiences">
                   <Button variant="outline">Browse Destinations</Button>
                 </Link>
               </div>

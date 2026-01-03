@@ -286,10 +286,10 @@ export default function AccommodationDetailPage() {
                 The accommodation you're looking for doesn't exist or has been
                 removed.
               </p>
-              <Link href="/student-accommodations">
+              <Link href="/destinations">
                 <Button>
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Accommodations
+                  Back to Destinations
                 </Button>
               </Link>
             </div>
@@ -336,10 +336,10 @@ export default function AccommodationDetailPage() {
           <div className="max-w-6xl mx-auto">
             {/* Back Navigation */}
             <div className="mb-6">
-              <Link href="/student-accommodations">
+              <Link href="/destinations">
                 <Button variant="outline">
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Accommodations
+                  Back to Destinations
                 </Button>
               </Link>
             </div>
