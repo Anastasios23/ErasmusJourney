@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Wifi, WifiOff, Loader2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 const ConnectionTester = () => {
   const [status, setStatus] = useState<
@@ -81,9 +81,21 @@ const ConnectionTester = () => {
           ${status === "testing" ? "bg-blue-600 text-white" : ""}
         `}
       >
-        {status === "testing" && <Loader2 className="h-4 w-4 animate-spin" />}
-        {status === "connected" && <Wifi className="h-4 w-4" />}
-        {status === "failed" && <WifiOff className="h-4 w-4" />}
+        {status === "testing" && (
+          <Icon
+            icon="solar:refresh-circle-bold-duotone"
+            className="h-4 w-4 animate-spin"
+          />
+        )}
+        {status === "connected" && (
+          <Icon icon="solar:wi-fi-bold-duotone" className="h-4 w-4" />
+        )}
+        {status === "failed" && (
+          <Icon
+            icon="solar:wi-fi-no-connection-bold-duotone"
+            className="h-4 w-4"
+          />
+        )}
         <span className="text-sm font-medium">
           {status === "testing" && "Testing..."}
           {status === "connected" && "Backend Connected!"}

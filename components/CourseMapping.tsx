@@ -7,14 +7,7 @@ import {
 } from "../src/components/ui/card";
 import { Badge } from "../src/components/ui/badge";
 import { Button } from "../src/components/ui/button";
-import {
-  ArrowRight,
-  BookOpen,
-  GraduationCap,
-  Award,
-  Info,
-  Loader2,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 
 interface Course {
   code: string;
@@ -93,18 +86,27 @@ export default function CourseMapping({
     <Card className="w-full">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg flex items-center gap-2">
-          <BookOpen className="h-5 w-5 text-blue-600" />
+          <Icon
+            icon="solar:book-bold-duotone"
+            className="h-5 w-5 text-blue-600"
+          />
           Course Mapping
         </CardTitle>
         {foreignUniversity && cyprusUniversity && (
           <div className="flex items-center gap-4 text-sm text-gray-600">
             <div className="flex items-center gap-1">
-              <GraduationCap className="h-4 w-4" />
+              <Icon
+                icon="solar:square-academic-cap-bold-duotone"
+                className="h-4 w-4"
+              />
               {foreignUniversity}
             </div>
-            <ArrowRight className="h-4 w-4" />
+            <Icon icon="solar:arrow-right-bold-duotone" className="h-4 w-4" />
             <div className="flex items-center gap-1">
-              <GraduationCap className="h-4 w-4" />
+              <Icon
+                icon="solar:square-academic-cap-bold-duotone"
+                className="h-4 w-4"
+              />
               {cyprusUniversity}
             </div>
           </div>
@@ -115,7 +117,10 @@ export default function CourseMapping({
         {isProduction && courses.length === 0 && !loading && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <Info className="h-5 w-5 text-blue-600 mt-0.5" />
+              <Icon
+                icon="solar:info-circle-bold-duotone"
+                className="h-5 w-5 text-blue-600 mt-0.5"
+              />
               <div>
                 <h4 className="font-medium text-blue-900 mb-1">
                   Course Data Coming Soon
@@ -133,7 +138,10 @@ export default function CourseMapping({
         {/* Loading State */}
         {loading && (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+            <Icon
+              icon="solar:refresh-circle-bold-duotone"
+              className="h-6 w-6 animate-spin text-blue-600"
+            />
             <span className="ml-2 text-gray-600">Loading course data...</span>
           </div>
         )}
@@ -142,7 +150,10 @@ export default function CourseMapping({
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <Info className="h-5 w-5 text-red-600 mt-0.5" />
+              <Icon
+                icon="solar:info-circle-bold-duotone"
+                className="h-5 w-5 text-red-600 mt-0.5"
+              />
               <div>
                 <h4 className="font-medium text-red-900 mb-1">
                   Unable to Load Courses
@@ -190,11 +201,17 @@ export default function CourseMapping({
                   {/* Arrow */}
                   <div className="hidden md:flex items-center justify-center absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      <ArrowRight className="h-4 w-4 text-blue-600" />
+                      <Icon
+                        icon="solar:arrow-right-bold-duotone"
+                        className="h-4 w-4 text-blue-600"
+                      />
                     </div>
                   </div>
                   <div className="md:hidden flex items-center justify-center py-2">
-                    <ArrowRight className="h-4 w-4 text-blue-600" />
+                    <Icon
+                      icon="solar:arrow-right-bold-duotone"
+                      className="h-4 w-4 text-blue-600"
+                    />
                   </div>
 
                   {/* Cyprus Equivalent */}
@@ -206,7 +223,10 @@ export default function CourseMapping({
                       {course.cyprusEquivalent}
                     </h4>
                     <div className="flex items-center gap-1 text-sm text-green-600">
-                      <Award className="h-3 w-3" />
+                      <Icon
+                        icon="solar:medal-ribbon-bold-duotone"
+                        className="h-3 w-3"
+                      />
                       Credit Transfer Approved
                     </div>
                   </div>

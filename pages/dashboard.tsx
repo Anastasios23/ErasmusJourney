@@ -15,7 +15,6 @@ import {
   CardDescription,
 } from "../src/components/ui/card";
 import { Badge } from "../src/components/ui/badge";
-import { Loader2 } from "lucide-react";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import { useErasmusProgress } from "../src/hooks/useErasmusProgress";
@@ -78,12 +77,12 @@ export default function Dashboard() {
     loading: progressLoading,
   } = useErasmusProgress();
 
-  // Application steps definition with gradients
+  // Application steps definition with gradients - pointing to unified form
   const applicationSteps: ApplicationStep[] = [
     {
       id: "basic-info",
       name: "Basic Information",
-      href: "/basic-information",
+      href: "/share-experience?step=1",
       icon: "solar:user-circle-linear",
       completed: completedSteps.basicInfo,
       description: "Personal & academic details",
@@ -92,37 +91,37 @@ export default function Dashboard() {
     {
       id: "course-matching",
       name: "Course Matching",
-      href: "/course-matching",
+      href: "/share-experience?step=2",
       icon: "solar:notebook-minimalistic-linear",
       completed: completedSteps.courses,
-      description: "Select courses and universities",
+      description: "Courses taken during exchange",
       gradient: "from-purple-500 to-indigo-600",
     },
     {
       id: "accommodation",
       name: "Accommodation",
-      href: "/accommodation",
+      href: "/share-experience?step=3",
       icon: "solar:home-2-linear",
       completed: completedSteps.accommodation,
-      description: "Housing preferences",
+      description: "Housing details & tips",
       gradient: "from-emerald-500 to-teal-600",
     },
     {
       id: "living-expenses",
       name: "Living Expenses",
-      href: "/living-expenses",
+      href: "/share-experience?step=4",
       icon: "solar:wallet-linear",
       completed: completedSteps.livingExpenses,
-      description: "Budget and cost planning",
+      description: "Monthly costs breakdown",
       gradient: "from-orange-500 to-amber-600",
     },
     {
       id: "experience",
       name: "Your Experience",
-      href: "/help-future-students",
+      href: "/share-experience?step=5",
       icon: "solar:users-group-rounded-linear",
       completed: completedSteps.experience,
-      description: "Share tips for future students",
+      description: "Tips for future students",
       gradient: "from-indigo-500 to-blue-600",
     },
   ];
@@ -138,7 +137,10 @@ export default function Dashboard() {
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
             <div className="w-16 h-16 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 animate-pulse" />
-            <Loader2 className="absolute inset-0 m-auto h-8 w-8 animate-spin text-white" />
+            <Icon
+              icon="solar:refresh-circle-bold-duotone"
+              className="absolute inset-0 m-auto h-8 w-8 animate-spin text-white"
+            />
           </div>
           <p className="text-gray-500 font-medium">Loading your journey...</p>
         </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { Loader2, Search, X } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { cn } from "../lib/utils";
 
 interface University {
@@ -145,7 +145,10 @@ export function UniversitySearch({
               onClick={handleClear}
               className="p-1 hover:bg-gray-100 rounded"
             >
-              <X className="h-4 w-4 text-gray-500" />
+              <Icon
+                icon="solar:close-circle-bold-duotone"
+                className="h-4 w-4 text-gray-500"
+              />
             </button>
           )}
         </div>
@@ -153,7 +156,10 @@ export function UniversitySearch({
         // Show search input
         <div className="relative">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Icon
+              icon="solar:magnifer-bold-duotone"
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+            />
             <Input
               type="text"
               value={searchQuery}
@@ -163,7 +169,10 @@ export function UniversitySearch({
               className={cn("pl-10 pr-10", error && "border-red-500")}
             />
             {loading && (
-              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 animate-spin" />
+              <Icon
+                icon="solar:refresh-circle-bold-duotone"
+                className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 animate-spin"
+              />
             )}
           </div>
 

@@ -1,50 +1,46 @@
 import Link from "next/link";
-import {
-  Heart,
-  Mail,
-  MessageCircle,
-  FileText,
-  Globe,
-  ExternalLink,
-  Users,
-  MapPin,
-  GraduationCap,
-  ArrowRight,
-  Sparkles,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Github,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const quickLinks = [
-    { name: "Destinations", href: "/destinations", icon: MapPin },
+    {
+      name: "Destinations",
+      href: "/destinations",
+      icon: "solar:map-point-bold-duotone",
+    },
     {
       name: "Course Matching",
       href: "/course-matching-experiences",
-      icon: Globe,
+      icon: "solar:notebook-bold-duotone",
     },
-    { name: "Share Experience", href: "/share-experience", icon: Users },
+    {
+      name: "Share Experience",
+      href: "/share-experience",
+      icon: "solar:pen-new-square-bold-duotone",
+    },
   ];
 
   const applicationLinks = [
     { name: "Share Your Experience", href: "/share-experience" },
     { name: "My Dashboard", href: "/dashboard" },
-    { name: "My Submissions", href: "/my-submissions" },
   ];
 
   const supportLinks = [
     {
       name: "Email Support",
       href: "mailto:support@erasmusjourney.com",
-      icon: Mail,
+      icon: "solar:letter-bold-duotone",
     },
-    { name: "Dashboard", href: "/dashboard", icon: MessageCircle },
+    {
+      name: "Dashboard",
+      href: "/dashboard",
+      icon: "solar:widget-2-bold-duotone",
+    },
   ];
 
   const legalLinks = [
@@ -53,18 +49,26 @@ export default function Footer() {
   ];
 
   const socialLinks = [
-    { name: "Twitter", href: "https://x.com/erasmusjourney", icon: Twitter },
+    {
+      name: "Twitter",
+      href: "https://x.com/erasmusjourney",
+      icon: "mdi:twitter",
+    },
     {
       name: "Instagram",
       href: "https://instagram.com/erasmusjourney",
-      icon: Instagram,
+      icon: "mdi:instagram",
     },
     {
       name: "LinkedIn",
       href: "https://linkedin.com/company/erasmusjourney",
-      icon: Linkedin,
+      icon: "mdi:linkedin",
     },
-    { name: "GitHub", href: "https://github.com/erasmusjourney", icon: Github },
+    {
+      name: "GitHub",
+      href: "https://github.com/erasmusjourney",
+      icon: "mdi:github",
+    },
   ];
 
   return (
@@ -79,7 +83,7 @@ export default function Footer() {
         <div className="py-16 border-b border-white/10">
           <div className="max-w-2xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-white/80 text-sm font-medium mb-6">
-              <Sparkles className="w-4 h-4" />
+              <Icon icon="solar:stars-bold-duotone" className="w-4 h-4" />
               Join Our Community
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-4">
@@ -114,7 +118,10 @@ export default function Footer() {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl blur-lg opacity-40 group-hover:opacity-60 transition-opacity" />
                 <div className="relative w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                  <GraduationCap className="w-7 h-7 text-white" />
+                  <Icon
+                    icon="solar:square-academic-cap-bold-duotone"
+                    className="w-7 h-7 text-white"
+                  />
                 </div>
               </div>
               <div>
@@ -148,7 +155,7 @@ export default function Footer() {
                   href={social.href}
                   className="w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/50 rounded-xl flex items-center justify-center text-gray-400 hover:text-blue-400 transition-all duration-300"
                 >
-                  <social.icon className="w-5 h-5" />
+                  <Icon icon={social.icon} className="w-5 h-5" />
                 </Link>
               ))}
             </div>
@@ -166,7 +173,10 @@ export default function Footer() {
                     href={link.href}
                     className="flex items-center gap-3 text-gray-400 hover:text-blue-400 transition-colors group"
                   >
-                    <link.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                    <Icon
+                      icon={link.icon}
+                      className="w-4 h-4 group-hover:scale-110 transition-transform"
+                    />
                     <span>{link.name}</span>
                   </Link>
                 </li>
@@ -208,7 +218,10 @@ export default function Footer() {
                     href={link.href}
                     className="flex items-center gap-3 text-gray-400 hover:text-blue-400 transition-colors group"
                   >
-                    <link.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                    <Icon
+                      icon={link.icon}
+                      className="w-4 h-4 group-hover:scale-110 transition-transform"
+                    />
                     <span>{link.name}</span>
                   </Link>
                 </li>
@@ -229,7 +242,10 @@ export default function Footer() {
                     className="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-400 transition-colors"
                   >
                     Erasmus+ Programme
-                    <ExternalLink className="w-3 h-3" />
+                    <Icon
+                      icon="solar:square-arrow-right-up-bold-duotone"
+                      className="w-3 h-3"
+                    />
                   </Link>
                 </li>
                 <li>
@@ -240,7 +256,10 @@ export default function Footer() {
                     className="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-400 transition-colors"
                   >
                     European Commission
-                    <ExternalLink className="w-3 h-3" />
+                    <Icon
+                      icon="solar:square-arrow-right-up-bold-duotone"
+                      className="w-3 h-3"
+                    />
                   </Link>
                 </li>
               </ul>

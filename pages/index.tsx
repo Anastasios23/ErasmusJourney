@@ -8,29 +8,7 @@ import Header from "../components/Header";
 import Footer from "../src/components/Footer";
 import { Button } from "../src/components/ui/button";
 import { Badge } from "../src/components/ui/badge";
-import {
-  ArrowRight,
-  Globe,
-  Star,
-  MapPin,
-  Users,
-  Plane,
-  Sparkles,
-  GraduationCap,
-  Building2,
-  Heart,
-  ChevronRight,
-  Compass,
-  BookOpen,
-  Play,
-  ArrowUpRight,
-  Zap,
-  Shield,
-  Clock,
-  Euro,
-} from "lucide-react";
 import { Icon } from "@iconify/react";
-import { motion } from "framer-motion";
 import { useEffect, useState, useRef, useCallback } from "react";
 
 // ============================================================================
@@ -539,7 +517,10 @@ function DestinationCard({
 
               {/* Rating badge */}
               <div className="absolute top-4 right-4 flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-sm">
-                <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                <Icon
+                  icon="solar:star-bold"
+                  className="w-4 h-4 text-amber-500"
+                />
                 <span className="font-semibold text-gray-900">
                   {rating.toFixed(1)}
                 </span>
@@ -549,7 +530,10 @@ function DestinationCard({
               <div className="absolute bottom-4 left-4 right-4">
                 <h3 className="text-2xl font-bold text-white mb-1">{city}</h3>
                 <p className="text-white/80 flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
+                  <Icon
+                    icon="solar:map-point-bold-duotone"
+                    className="w-4 h-4"
+                  />
                   {country}
                 </p>
               </div>
@@ -559,10 +543,16 @@ function DestinationCard({
             <div className="p-5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                  <Users className="w-4 h-4" />
+                  <Icon
+                    icon="solar:users-group-rounded-bold-duotone"
+                    className="w-4 h-4"
+                  />
                   <span>{students} students shared</span>
                 </div>
-                <ArrowUpRight className="w-5 h-5 text-blue-600 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                <Icon
+                  icon="solar:arrow-right-up-bold"
+                  className="w-5 h-5 text-blue-600 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
+                />
               </div>
             </div>
           </div>
@@ -576,13 +566,13 @@ function DestinationCard({
 // FEATURE CARD
 // ============================================================================
 function FeatureCard({
-  icon: Icon,
+  icon,
   title,
   description,
   gradient,
   index,
 }: {
-  icon: any;
+  icon: string;
   title: string;
   description: string;
   gradient: string;
@@ -599,7 +589,7 @@ function FeatureCard({
         <div
           className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${gradient} mb-6 shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300`}
         >
-          <Icon className="w-7 h-7 text-white" />
+          <Icon icon={icon} className="w-7 h-7 text-white" />
         </div>
 
         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -621,19 +611,22 @@ function StatCounter({
   value,
   label,
   suffix = "",
-  icon: Icon,
+  icon,
 }: {
   value: number;
   label: string;
   suffix?: string;
-  icon: any;
+  icon: string;
 }) {
   const { count, ref } = useCounter(value);
 
   return (
     <div ref={ref} className="text-center">
       <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900/30 mb-4">
-        <Icon className="w-7 h-7 text-blue-600 dark:text-blue-400" />
+        <Icon
+          icon={icon}
+          className="w-7 h-7 text-blue-600 dark:text-blue-400"
+        />
       </div>
       <div className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2 tabular-nums">
         {count.toLocaleString()}
@@ -716,28 +709,28 @@ export default function HomePage({
   // Features data
   const features = [
     {
-      icon: Compass,
+      icon: "solar:compass-bold-duotone",
       title: "Discover Destinations",
       description:
         "Explore detailed guides for 200+ European cities with real student insights on costs, culture, and student life.",
       gradient: "from-blue-500 to-indigo-600",
     },
     {
-      icon: BookOpen,
+      icon: "solar:book-2-bold-duotone",
       title: "Course Experiences",
       description:
         "Learn from students who've taken similar courses abroad. Find the best academic matches for your degree.",
       gradient: "from-blue-500 to-cyan-600",
     },
     {
-      icon: Building2,
+      icon: "solar:buildings-2-bold-duotone",
       title: "Housing Reviews",
       description:
         "Real accommodation reviews from verified students. Find the perfect place to call home during your exchange.",
       gradient: "from-emerald-500 to-teal-600",
     },
     {
-      icon: Euro,
+      icon: "solar:wallet-money-bold-duotone",
       title: "Budget Planning",
       description:
         "Detailed cost breakdowns and budgeting tips from students who've lived it. Plan your finances with confidence.",
@@ -824,7 +817,7 @@ export default function HomePage({
               {/* Badge */}
               <RevealOnScroll>
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-8">
-                  <Sparkles className="w-4 h-4" />
+                  <Icon icon="solar:stars-bold-duotone" className="w-4 h-4" />
                   <span>Trusted by 500+ Cyprus students</span>
                 </div>
               </RevealOnScroll>
@@ -859,9 +852,15 @@ export default function HomePage({
                     className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full text-white font-semibold text-lg shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40 transition-shadow"
                   >
                     <span className="relative z-10 flex items-center gap-2">
-                      <Compass className="w-5 h-5" />
+                      <Icon
+                        icon="solar:compass-bold-duotone"
+                        className="w-5 h-5"
+                      />
                       Explore Destinations
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      <Icon
+                        icon="solar:arrow-right-bold"
+                        className="w-5 h-5 group-hover:translate-x-1 transition-transform"
+                      />
                     </span>
                     <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </MagneticButton>
@@ -871,7 +870,10 @@ export default function HomePage({
                     className="group px-8 py-4 bg-white dark:bg-gray-900 rounded-full text-gray-900 dark:text-white font-semibold text-lg border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
                   >
                     <span className="flex items-center gap-2">
-                      <Heart className="w-5 h-5" />
+                      <Icon
+                        icon="solar:heart-bold-duotone"
+                        className="w-5 h-5"
+                      />
                       Share Your Experience
                     </span>
                   </MagneticButton>
@@ -901,25 +903,25 @@ export default function HomePage({
                 value={totalDestinations || 150}
                 label="Destinations"
                 suffix="+"
-                icon={MapPin}
+                icon="solar:map-point-bold-duotone"
               />
               <StatCounter
                 value={totalUniversities || 200}
                 label="Universities"
                 suffix="+"
-                icon={Building2}
+                icon="solar:buildings-2-bold-duotone"
               />
               <StatCounter
                 value={totalStudents || 500}
                 label="Students"
                 suffix="+"
-                icon={Users}
+                icon="solar:users-group-rounded-bold-duotone"
               />
               <StatCounter
                 value={98}
                 label="Success Rate"
                 suffix="%"
-                icon={Star}
+                icon="solar:star-bold-duotone"
               />
             </div>
           </div>
@@ -935,7 +937,10 @@ export default function HomePage({
               <RevealOnScroll>
                 <div>
                   <Badge className="mb-4 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-4 py-1.5 rounded-full">
-                    <Globe className="w-4 h-4 mr-2" />
+                    <Icon
+                      icon="solar:global-bold-duotone"
+                      className="w-4 h-4 mr-2"
+                    />
                     Top Destinations
                   </Badge>
                   <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
@@ -954,7 +959,7 @@ export default function HomePage({
                   className="group inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:gap-4 transition-all"
                 >
                   View all destinations
-                  <ArrowRight className="w-5 h-5" />
+                  <Icon icon="solar:arrow-right-bold" className="w-5 h-5" />
                 </Link>
               </RevealOnScroll>
             </div>
@@ -982,7 +987,10 @@ export default function HomePage({
             <div className="text-center mb-16">
               <RevealOnScroll>
                 <Badge className="mb-4 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 px-4 py-1.5 rounded-full">
-                  <Zap className="w-4 h-4 mr-2" />
+                  <Icon
+                    icon="solar:bolt-bold-duotone"
+                    className="w-4 h-4 mr-2"
+                  />
                   Everything You Need
                 </Badge>
               </RevealOnScroll>
@@ -1024,7 +1032,10 @@ export default function HomePage({
               <div>
                 <RevealOnScroll>
                   <Badge className="mb-4 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-4 py-1.5 rounded-full">
-                    <Clock className="w-4 h-4 mr-2" />
+                    <Icon
+                      icon="solar:clock-circle-bold-duotone"
+                      className="w-4 h-4 mr-2"
+                    />
                     Simple Process
                   </Badge>
                 </RevealOnScroll>
@@ -1091,9 +1102,15 @@ export default function HomePage({
                 <RevealOnScroll delay={700}>
                   <Link href="/share-experience">
                     <Button className="mt-12 px-8 py-6 text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-full shadow-xl shadow-blue-500/25">
-                      <Plane className="w-5 h-5 mr-2" />
+                      <Icon
+                        icon="solar:airplane-bold-duotone"
+                        className="w-5 h-5 mr-2"
+                      />
                       Start Sharing
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                      <Icon
+                        icon="solar:arrow-right-bold"
+                        className="w-5 h-5 ml-2"
+                      />
                     </Button>
                   </Link>
                 </RevealOnScroll>
@@ -1139,7 +1156,10 @@ export default function HomePage({
                   {/* Floating elements */}
                   <div className="absolute -top-6 -right-6 p-4 rounded-2xl bg-white dark:bg-gray-900 shadow-xl animate-float">
                     <div className="flex items-center gap-2 text-emerald-600">
-                      <Shield className="w-6 h-6" />
+                      <Icon
+                        icon="solar:shield-check-bold-duotone"
+                        className="w-6 h-6"
+                      />
                       <span className="font-semibold">Verified</span>
                     </div>
                   </div>
@@ -1158,7 +1178,10 @@ export default function HomePage({
             <div className="text-center mb-16">
               <RevealOnScroll>
                 <Badge className="mb-4 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-4 py-1.5 rounded-full">
-                  <Heart className="w-4 h-4 mr-2" />
+                  <Icon
+                    icon="solar:heart-bold-duotone"
+                    className="w-4 h-4 mr-2"
+                  />
                   Student Stories
                 </Badge>
               </RevealOnScroll>
@@ -1206,7 +1229,10 @@ export default function HomePage({
 
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <RevealOnScroll>
-              <GraduationCap className="w-16 h-16 text-white/80 mx-auto mb-8" />
+              <Icon
+                icon="solar:square-academic-cap-bold-duotone"
+                className="w-16 h-16 text-white/80 mx-auto mb-8"
+              />
             </RevealOnScroll>
 
             <RevealOnScroll delay={100}>
@@ -1228,9 +1254,15 @@ export default function HomePage({
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link href="/destinations">
                   <Button className="px-8 py-6 text-lg bg-white text-indigo-600 hover:bg-gray-100 rounded-full font-semibold shadow-xl">
-                    <Compass className="w-5 h-5 mr-2" />
+                    <Icon
+                      icon="solar:compass-bold-duotone"
+                      className="w-5 h-5 mr-2"
+                    />
                     Explore Now
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                    <Icon
+                      icon="solar:arrow-right-bold"
+                      className="w-5 h-5 ml-2"
+                    />
                   </Button>
                 </Link>
                 <Link href="/register">

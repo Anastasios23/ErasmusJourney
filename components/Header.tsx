@@ -13,31 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Menu,
-  X,
-  User,
-  LogOut,
-  Settings,
-  Home,
-  ChevronDown,
-  ClipboardList,
-  Globe,
-  MapPin,
-  School,
-  Star,
-  Plane,
-  Sparkles,
-  GraduationCap,
-  ArrowRight,
-  BookOpen,
-  Building2,
-  Users,
-  Heart,
-  Zap,
-  Compass,
-  MessageSquare,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import NotificationDropdown from "@/components/NotificationDropdown";
 import { useFormSubmissions } from "@/hooks/useFormSubmissions";
 import { useSmartNavigation } from "@/hooks/useSmartNavigation";
@@ -79,56 +55,73 @@ export default function Header() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Enhanced navigation with better organization
+  // MVP Streamlined navigation
   const navigation = [
     {
       name: "Home",
       href: "/",
-      icon: Home,
+      icon: "solar:home-2-bold-duotone",
       description: "Back to homepage",
     },
     {
       name: "Explore",
       href: "/destinations",
-      icon: Compass,
+      icon: "solar:compass-bold-duotone",
       description: "Discover your perfect destination",
       subItems: [
         {
           name: "Destinations",
           href: "/destinations",
-          description: "Browse European cities",
-          icon: MapPin,
+          description: "Browse cities with real student insights",
+          icon: "solar:map-point-bold-duotone",
           color: "from-amber-500 to-orange-600",
-          stats: "All cities",
+          stats: "Cities",
         },
         {
-          name: "Course Matching",
+          name: "Courses",
           href: "/course-matching-experiences",
           description: "Find equivalent courses abroad",
-          icon: BookOpen,
+          icon: "solar:notebook-bold-duotone",
           color: "from-blue-500 to-indigo-600",
           stats: "Courses",
+        },
+        {
+          name: "Accommodation",
+          href: "/accommodation",
+          description: "Housing options and reviews",
+          icon: "solar:home-2-bold-duotone",
+          color: "from-emerald-500 to-teal-600",
+          stats: "Housing",
         },
       ],
     },
     {
       name: "Share",
       href: "/share-experience",
-      icon: Plane,
+      icon: "solar:pen-new-square-bold-duotone",
       description: "Share your Erasmus story",
     },
   ];
 
   const userNavigation = session
     ? [
-        { name: "Dashboard", href: "/dashboard", icon: User },
+        {
+          name: "Dashboard",
+          href: "/dashboard",
+          icon: "solar:widget-2-bold-duotone",
+        },
         ...((session.user as any)?.role === "ADMIN"
           ? [
-              { name: "─────────", href: "#", icon: User, disabled: true },
               {
-                name: "Admin Panel",
+                name: "─────────",
+                href: "#",
+                icon: "solar:widget-2-bold-duotone",
+                disabled: true,
+              },
+              {
+                name: "Content Moderation",
                 href: "/admin/review-submissions",
-                icon: ClipboardList,
+                icon: "solar:checklist-bold-duotone",
               },
             ]
           : []),
@@ -202,7 +195,10 @@ export default function Header() {
 
                 {/* Logo container */}
                 <div className="relative w-11 h-11 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 group-hover:scale-110 transition-all duration-500">
-                  <GraduationCap className="w-6 h-6 text-white drop-shadow-lg" />
+                  <Icon
+                    icon="solar:square-academic-cap-bold-duotone"
+                    className="w-6 h-6 text-white drop-shadow-lg"
+                  />
                 </div>
               </div>
 
@@ -214,7 +210,10 @@ export default function Header() {
                 <span className="text-xl font-bold text-gray-900 dark:text-white">
                   Journey
                 </span>
-                <Sparkles className="w-3 h-3 text-amber-500 ml-1 animate-pulse" />
+                <Icon
+                  icon="solar:stars-bold-duotone"
+                  className="w-3 h-3 text-amber-500 ml-1 animate-pulse"
+                />
               </div>
             </Link>
           </div>
@@ -247,9 +246,13 @@ export default function Header() {
                             : "text-gray-700 dark:text-gray-300 hover:bg-white/80 dark:hover:bg-gray-900/80",
                         )}
                       >
-                        <item.icon className="w-4 h-4 transition-transform group-hover:scale-110" />
+                        <Icon
+                          icon={item.icon}
+                          className="w-4 h-4 transition-transform group-hover:scale-110"
+                        />
                         {item.name}
-                        <ChevronDown
+                        <Icon
+                          icon="solar:alt-arrow-down-linear"
                           className={cn(
                             "h-3.5 w-3.5 transition-all duration-300",
                             activeDropdown === item.name
@@ -284,14 +287,16 @@ export default function Header() {
                                 className="relative flex items-start gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all duration-300 group/item"
                                 style={{ animationDelay: `${idx * 50}ms` }}
                               >
-                                {/* Icon with gradient background */}
                                 <div
                                   className={cn(
                                     "relative p-3 rounded-2xl bg-gradient-to-br shadow-lg transition-all duration-300 group-hover/item:scale-110 group-hover/item:shadow-xl group-hover/item:-translate-y-0.5",
                                     subItem.color,
                                   )}
                                 >
-                                  <subItem.icon className="w-5 h-5 text-white" />
+                                  <Icon
+                                    icon={subItem.icon}
+                                    className="w-5 h-5 text-white"
+                                  />
                                   {/* Shine effect */}
                                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/25 to-transparent" />
                                 </div>
@@ -310,7 +315,10 @@ export default function Header() {
                                   </p>
                                 </div>
 
-                                <ArrowRight className="w-4 h-4 text-gray-400 opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all" />
+                                <Icon
+                                  icon="solar:arrow-right-linear"
+                                  className="w-4 h-4 text-gray-400 opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all"
+                                />
                               </Link>
                             ))}
                           </div>
@@ -327,7 +335,10 @@ export default function Header() {
                           : "text-gray-700 dark:text-gray-300 hover:bg-white/80 dark:hover:bg-gray-900/80",
                       )}
                     >
-                      <item.icon className="w-4 h-4 transition-transform group-hover:scale-110" />
+                      <Icon
+                        icon={item.icon}
+                        className="w-4 h-4 transition-transform group-hover:scale-110"
+                      />
                       {item.name}
                     </Link>
                   )}
@@ -357,7 +368,7 @@ export default function Header() {
                 <span className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
 
                 <span className="relative flex items-center gap-2">
-                  <Zap className="w-4 h-4" />
+                  <Icon icon="solar:bolt-bold-duotone" className="w-4 h-4" />
                   {analytics.nextStep
                     ? `Continue: ${analytics.nextStep.name}`
                     : "Start Journey"}
@@ -420,7 +431,10 @@ export default function Header() {
                             className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
                           >
                             <div className="p-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 transition-colors">
-                              <item.icon className="h-4 w-4 text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+                              <Icon
+                                icon={item.icon}
+                                className="h-4 w-4 text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
+                              />
                             </div>
                             <span className="font-medium text-gray-700 dark:text-gray-300">
                               {item.name}
@@ -437,7 +451,10 @@ export default function Header() {
                       onClick={handleSignOut}
                     >
                       <div className="p-2.5 bg-red-100 dark:bg-red-900/30 rounded-xl">
-                        <LogOut className="h-4 w-4" />
+                        <Icon
+                          icon="solar:logout-2-bold-duotone"
+                          className="h-4 w-4"
+                        />
                       </div>
                       <span className="font-medium">Sign out</span>
                     </DropdownMenuItem>
@@ -521,7 +538,7 @@ export default function Header() {
                 {item.subItems ? (
                   <div className="space-y-3">
                     <div className="px-2 flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
-                      <item.icon className="w-4 h-4" />
+                      <Icon icon={item.icon} className="w-4 h-4" />
                       {item.name}
                     </div>
                     <div className="grid gap-2">
@@ -538,7 +555,10 @@ export default function Header() {
                               subItem.color,
                             )}
                           >
-                            <subItem.icon className="w-5 h-5 text-white" />
+                            <Icon
+                              icon={subItem.icon}
+                              className="w-5 h-5 text-white"
+                            />
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
@@ -553,7 +573,10 @@ export default function Header() {
                               {subItem.description}
                             </p>
                           </div>
-                          <ArrowRight className="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" />
+                          <Icon
+                            icon="solar:arrow-right-linear"
+                            className="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform"
+                          />
                         </Link>
                       ))}
                     </div>
@@ -577,7 +600,7 @@ export default function Header() {
                           : "bg-gray-200 dark:bg-gray-800",
                       )}
                     >
-                      <item.icon className="w-5 h-5" />
+                      <Icon icon={item.icon} className="w-5 h-5" />
                     </div>
                     <div>
                       <span className="font-semibold">{item.name}</span>
@@ -595,11 +618,14 @@ export default function Header() {
             {/* Mobile CTA */}
             <div className="pt-6 mt-6 border-t border-gray-200 dark:border-gray-800">
               <Link
-                href={analytics.nextStep?.href || "/basic-information"}
+                href={analytics.nextStep?.href || "/share-experience"}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <Button className="w-full h-14 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white text-lg shadow-xl shadow-blue-500/30 font-semibold">
-                  <Zap className="w-5 h-5 mr-2" />
+                  <Icon
+                    icon="solar:bolt-bold-duotone"
+                    className="w-5 h-5 mr-2"
+                  />
                   {analytics.nextStep
                     ? `Continue: ${analytics.nextStep.name}`
                     : "Start Your Journey"}
@@ -633,7 +659,10 @@ export default function Header() {
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <div className="p-3 rounded-xl bg-gray-200 dark:bg-gray-800">
-                        <item.icon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        <Icon
+                          icon={item.icon}
+                          className="w-5 h-5 text-gray-600 dark:text-gray-400"
+                        />
                       </div>
                       <span className="font-semibold">{item.name}</span>
                     </Link>
@@ -643,7 +672,10 @@ export default function Header() {
                   className="w-full flex items-center gap-4 p-4 rounded-2xl text-red-600 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30"
                 >
                   <div className="p-3 rounded-xl bg-red-100 dark:bg-red-900/30">
-                    <LogOut className="w-5 h-5" />
+                    <Icon
+                      icon="solar:logout-2-bold-duotone"
+                      className="w-5 h-5"
+                    />
                   </div>
                   <span className="font-semibold">Sign out</span>
                 </button>

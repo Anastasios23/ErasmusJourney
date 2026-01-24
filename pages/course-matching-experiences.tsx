@@ -24,18 +24,6 @@ import {
 } from "../src/components/ui/card";
 import { Badge } from "../src/components/ui/badge";
 import { Skeleton } from "../src/components/ui/skeleton";
-import {
-  BookOpen,
-  Search,
-  Filter,
-  Users,
-  GraduationCap,
-  MapPin,
-  Star,
-  TrendingUp,
-  ArrowLeft,
-  Plus,
-} from "lucide-react";
 
 interface CourseMatchingExperience {
   id: string;

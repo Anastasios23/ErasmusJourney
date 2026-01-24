@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
-import { Loader2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { cn } from "../../lib/utils";
 
 interface LoadingState {
@@ -133,7 +133,10 @@ function GlobalLoadingIndicator() {
     <div className="fixed top-0 left-0 right-0 z-50">
       <div className="bg-blue-600 text-white px-4 py-2 text-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-center space-x-2">
-          <Loader2 className="w-4 h-4 animate-spin" />
+          <Icon
+            icon="solar:refresh-circle-bold-duotone"
+            className="w-4 h-4 animate-spin"
+          />
           <span>{currentOperation?.message || "Loading..."}</span>
           {currentOperation?.progress !== undefined && (
             <span className="text-blue-200">
@@ -175,7 +178,10 @@ export function LoadingOverlay({
       )}
     >
       <div className="flex items-center space-x-2 bg-white rounded-lg shadow-lg px-4 py-2">
-        <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
+        <Icon
+          icon="solar:refresh-circle-bold-duotone"
+          className="w-5 h-5 animate-spin text-blue-600"
+        />
         <span className="text-sm text-gray-700">{message}</span>
       </div>
     </div>
@@ -208,7 +214,12 @@ export function LoadingButton({
       )}
       {...props}
     >
-      {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+      {isLoading && (
+        <Icon
+          icon="solar:refresh-circle-bold-duotone"
+          className="w-4 h-4 mr-2 animate-spin"
+        />
+      )}
       {isLoading ? loadingText : children}
     </button>
   );

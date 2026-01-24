@@ -21,17 +21,7 @@ import {
   AlertDescription,
   AlertTitle,
 } from "../src/components/ui/alert";
-import {
-  AlertCircle,
-  Eye,
-  EyeOff,
-  GraduationCap,
-  Sparkles,
-  ArrowLeft,
-  Mail,
-  Lock,
-  Loader2,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import { handleApiError } from "../src/utils/apiErrorHandler";
 import { handleForgotPassword as forgotPasswordAPI } from "../src/utils/forgotPasswordHandler";
 
@@ -138,7 +128,10 @@ export default function Login() {
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
             <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 animate-pulse" />
-            <Loader2 className="absolute inset-0 m-auto h-8 w-8 animate-spin text-white" />
+            <Icon
+              icon="solar:refresh-circle-bold-duotone"
+              className="absolute inset-0 m-auto h-8 w-8 animate-spin text-white"
+            />
           </div>
         </div>
       </div>
@@ -164,7 +157,10 @@ export default function Login() {
               href="/"
               className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors mb-8 group"
             >
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+              <Icon
+                icon="solar:arrow-left-bold-duotone"
+                className="w-4 h-4 group-hover:-translate-x-1 transition-transform"
+              />
               <span className="font-medium">Back to Home</span>
             </Link>
 
@@ -179,7 +175,10 @@ export default function Login() {
 
                 <div className="relative">
                   <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl mb-4">
-                    <GraduationCap className="w-8 h-8 text-white" />
+                    <Icon
+                      icon="solar:square-academic-cap-bold-duotone"
+                      className="w-8 h-8 text-white"
+                    />
                   </div>
                   <h1 className="text-2xl font-bold text-white mb-2">
                     {showForgotPassword ? "Reset Password" : "Welcome Back"}
@@ -201,7 +200,10 @@ export default function Login() {
                         variant="destructive"
                         className="rounded-xl border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30"
                       >
-                        <AlertCircle className="h-4 w-4" />
+                        <Icon
+                          icon="solar:danger-circle-bold-duotone"
+                          className="h-4 w-4"
+                        />
                         <AlertDescription>{error}</AlertDescription>
                       </Alert>
                     )}
@@ -215,7 +217,10 @@ export default function Login() {
                           Email
                         </Label>
                         <div className="relative">
-                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                          <Icon
+                            icon="solar:letter-bold-duotone"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                          />
                           <Input
                             id="email"
                             type="email"
@@ -237,7 +242,10 @@ export default function Login() {
                           Password
                         </Label>
                         <div className="relative">
-                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                          <Icon
+                            icon="solar:lock-keyhole-bold-duotone"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                          />
                           <Input
                             id="password"
                             type={showPassword ? "text" : "password"}
@@ -256,9 +264,15 @@ export default function Login() {
                             }
                           >
                             {showPassword ? (
-                              <EyeOff className="h-5 w-5" />
+                              <Icon
+                                icon="solar:eye-closed-bold-duotone"
+                                className="h-5 w-5"
+                              />
                             ) : (
-                              <Eye className="h-5 w-5" />
+                              <Icon
+                                icon="solar:eye-bold-duotone"
+                                className="h-5 w-5"
+                              />
                             )}
                           </button>
                         </div>
@@ -282,7 +296,10 @@ export default function Login() {
                       >
                         {isLoading ? (
                           <>
-                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                            <Icon
+                              icon="solar:refresh-circle-bold-duotone"
+                              className="w-5 h-5 mr-2 animate-spin"
+                            />
                             Signing In...
                           </>
                         ) : (
@@ -349,7 +366,10 @@ export default function Login() {
                             Email Address
                           </Label>
                           <div className="relative">
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <Icon
+                              icon="solar:letter-bold-duotone"
+                              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                            />
                             <Input
                               id="forgot-email"
                               type="email"
@@ -371,7 +391,10 @@ export default function Login() {
                         >
                           {isLoading ? (
                             <>
-                              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                              <Icon
+                                icon="solar:refresh-circle-bold-duotone"
+                                className="w-5 h-5 mr-2 animate-spin"
+                              />
                               Sending...
                             </>
                           ) : (
@@ -391,7 +414,10 @@ export default function Login() {
                       <div className="text-center space-y-5">
                         <div className="p-6 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border border-emerald-200 dark:border-emerald-800 rounded-2xl">
                           <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-                            <Sparkles className="w-6 h-6 text-white" />
+                            <Icon
+                              icon="solar:stars-bold-duotone"
+                              className="w-6 h-6 text-white"
+                            />
                           </div>
                           <p className="text-emerald-800 dark:text-emerald-300 font-medium">
                             {successMessage}

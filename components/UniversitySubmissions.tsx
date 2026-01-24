@@ -6,7 +6,8 @@ import {
   CardTitle,
 } from "../src/components/ui/card";
 import { Badge } from "../src/components/ui/badge";
-import { Users, Loader2 } from "lucide-react";
+import { Icon } from "@iconify/react";
+import { Users } from "lucide-react";
 
 interface UniversitySubmissionsProps {
   universityId: string;
@@ -74,7 +75,10 @@ export default function UniversitySubmissions({
     return (
       <Card>
         <CardContent className="p-12 text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-500 mx-auto mb-4" />
+          <Icon
+            icon="solar:refresh-circle-bold-duotone"
+            className="h-8 w-8 animate-spin text-blue-500 mx-auto mb-4"
+          />
           <p className="text-gray-600">Loading course matching data...</p>
         </CardContent>
       </Card>
@@ -85,7 +89,10 @@ export default function UniversitySubmissions({
     return (
       <Card>
         <CardContent className="p-12 text-center">
-          <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <Icon
+            icon="solar:users-group-rounded-bold-duotone"
+            className="h-12 w-12 text-gray-400 mx-auto mb-4"
+          />
           <p className="text-gray-600">{error}</p>
         </CardContent>
       </Card>

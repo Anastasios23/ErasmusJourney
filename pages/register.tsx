@@ -20,20 +20,7 @@ import {
   AlertDescription,
   AlertTitle,
 } from "../src/components/ui/alert";
-import {
-  AlertCircle,
-  Eye,
-  EyeOff,
-  MailCheck,
-  CircleCheck,
-  Loader2,
-  GraduationCap,
-  User,
-  Mail,
-  Lock,
-  ArrowLeft,
-  Sparkles,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import { registerUser } from "../src/services/api";
 import { z, ZodError } from "zod";
 import { handleApiError } from "../src/utils/apiErrorHandler";
@@ -166,7 +153,10 @@ export default function Register() {
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
               <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 animate-pulse" />
-              <Loader2 className="absolute inset-0 m-auto h-8 w-8 animate-spin text-white" />
+              <Icon
+                icon="solar:refresh-circle-bold-duotone"
+                className="absolute inset-0 m-auto h-8 w-8 animate-spin text-white"
+              />
             </div>
             <p className="text-gray-500 font-medium">
               Checking authentication...
@@ -194,7 +184,10 @@ export default function Register() {
                 </div>
                 <div className="relative">
                   <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl mb-4">
-                    <MailCheck className="w-10 h-10 text-white" />
+                    <Icon
+                      icon="solar:letter-check-bold-duotone"
+                      className="w-10 h-10 text-white"
+                    />
                   </div>
                   <h1 className="text-2xl font-bold text-white mb-2">
                     Verify Your Email
@@ -253,7 +246,10 @@ export default function Register() {
             href="/"
             className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors mb-8 group"
           >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <Icon
+              icon="solar:arrow-left-bold-duotone"
+              className="w-4 h-4 group-hover:-translate-x-1 transition-transform"
+            />
             <span className="font-medium">Back to Home</span>
           </Link>
 
@@ -268,7 +264,10 @@ export default function Register() {
 
               <div className="relative">
                 <div className="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl mb-3">
-                  <GraduationCap className="w-7 h-7 text-white" />
+                  <Icon
+                    icon="solar:square-academic-cap-bold-duotone"
+                    className="w-7 h-7 text-white"
+                  />
                 </div>
                 <h1 className="text-2xl font-bold text-white mb-1">
                   Create Your Account
@@ -287,13 +286,19 @@ export default function Register() {
                     variant="destructive"
                     className="rounded-xl border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30"
                   >
-                    <AlertCircle className="h-4 w-4" />
+                    <Icon
+                      icon="solar:danger-circle-bold-duotone"
+                      className="h-4 w-4"
+                    />
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
                 {successMessage && !emailVerificationSent && (
                   <Alert className="rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300">
-                    <CircleCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    <Icon
+                      icon="solar:check-circle-bold-duotone"
+                      className="h-4 w-4 text-emerald-600 dark:text-emerald-400"
+                    />
                     <AlertDescription>{successMessage}</AlertDescription>
                   </Alert>
                 )}
@@ -308,7 +313,10 @@ export default function Register() {
                       First Name
                     </Label>
                     <div className="relative">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <Icon
+                        icon="solar:user-circle-bold-duotone"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                      />
                       <Input
                         id="firstName"
                         type="text"
@@ -336,7 +344,10 @@ export default function Register() {
                       Last Name
                     </Label>
                     <div className="relative">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <Icon
+                        icon="solar:user-circle-bold-duotone"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                      />
                       <Input
                         id="lastName"
                         type="text"
@@ -367,7 +378,10 @@ export default function Register() {
                     Email Address
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Icon
+                      icon="solar:letter-bold-duotone"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                    />
                     <Input
                       id="email"
                       type="email"
@@ -395,7 +409,10 @@ export default function Register() {
                     Password
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Icon
+                      icon="solar:lock-keyhole-bold-duotone"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                    />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
@@ -416,9 +433,15 @@ export default function Register() {
                       }
                     >
                       {showPassword ? (
-                        <EyeOff className="h-5 w-5" />
+                        <Icon
+                          icon="solar:eye-closed-bold-duotone"
+                          className="h-5 w-5"
+                        />
                       ) : (
-                        <Eye className="h-5 w-5" />
+                        <Icon
+                          icon="solar:eye-bold-duotone"
+                          className="h-5 w-5"
+                        />
                       )}
                     </button>
                   </div>
@@ -442,7 +465,10 @@ export default function Register() {
                     Confirm Password
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Icon
+                      icon="solar:lock-keyhole-bold-duotone"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                    />
                     <Input
                       id="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
@@ -467,9 +493,15 @@ export default function Register() {
                       }
                     >
                       {showConfirmPassword ? (
-                        <EyeOff className="h-5 w-5" />
+                        <Icon
+                          icon="solar:eye-closed-bold-duotone"
+                          className="h-5 w-5"
+                        />
                       ) : (
-                        <Eye className="h-5 w-5" />
+                        <Icon
+                          icon="solar:eye-bold-duotone"
+                          className="h-5 w-5"
+                        />
                       )}
                     </button>
                   </div>
@@ -516,12 +548,18 @@ export default function Register() {
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      <Icon
+                        icon="solar:refresh-circle-bold-duotone"
+                        className="mr-2 h-5 w-5 animate-spin"
+                      />
                       Creating account...
                     </>
                   ) : (
                     <>
-                      <Sparkles className="mr-2 h-5 w-5" />
+                      <Icon
+                        icon="solar:stars-bold-duotone"
+                        className="mr-2 h-5 w-5"
+                      />
                       Create Account
                     </>
                   )}
