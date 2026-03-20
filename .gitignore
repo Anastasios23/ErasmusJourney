@@ -257,3 +257,24 @@ scratch/
 notes.txt
 TODO.md
 .notes/
+
+# ===========================
+# Workspace-specific generated artifacts
+# ===========================
+
+# Angular CLI cache
+**/.angular/
+**/.angular/cache/
+
+# Monorepo/package build outputs
+**/dist/
+**/build/
+**/coverage/
+
+# Local tool metadata (do not track)
+.cursor/
+.openhands/
+
+# Optional local env variants
+.envrc
+.direnv/
