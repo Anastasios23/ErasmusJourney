@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
+import { isBasicInformationComplete } from "../lib/basicInformation";
+import { hasCompleteCourseMatchingData } from "../lib/courseMatching";
 
 export interface StepCompletion {
   basicInfo: boolean;
@@ -74,35 +76,10 @@ export function useErasmusProgress(): ErasmusProgress {
 
     return {
       // Step 1: Basic Info - check if required fields exist
-      basicInfo: !!(
-        experienceData.basicInfo &&
-        typeof experienceData.basicInfo === "object" &&
-        Object.keys(experienceData.basicInfo).length > 0 &&
-        experienceData.basicInfo.firstName &&
-        experienceData.basicInfo.lastName &&
-        experienceData.basicInfo.email &&
-        experienceData.basicInfo.universityInCyprus &&
-        experienceData.basicInfo.departmentInCyprus &&
-        experienceData.basicInfo.levelOfStudy &&
-        experienceData.basicInfo.exchangePeriod &&
-        experienceData.basicInfo.hostCountry &&
-        experienceData.basicInfo.hostCity &&
-        experienceData.basicInfo.hostUniversity
-      ),
+      basicInfo: isBasicInformationComplete(experienceData.basicInfo),
 
       // Step 2: Courses - check if courses array has at least one complete course
-      courses: !!(
-        experienceData.courses &&
-        Array.isArray(experienceData.courses) &&
-        experienceData.courses.length > 0 &&
-        experienceData.courses.some(
-          (course: any) =>
-            course.hostCourseName &&
-            course.hostCourseCode &&
-            course.cyprusCourseName &&
-            course.cyprusCourseCode,
-        )
-      ),
+      courses: hasCompleteCourseMatchingData(experienceData.courses),
 
       // Step 3: Accommodation - check if accommodation object has required fields
       accommodation: !!(

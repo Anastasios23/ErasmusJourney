@@ -1,5 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
+import {
+  getRecognitionTypeLabel,
+  sanitizeCourseMappingsData,
+} from "../../../src/lib/courseMatching";
 
 const prisma = new PrismaClient();
 
@@ -116,7 +120,8 @@ export default async function handler(
       const experienceData = exp.experience as any || {};
       const coursesData = exp.courses as any || {};
       
-      const deptName = basicInfo.hostDepartment || "General";
+      const deptName =
+        basicInfo.homeDepartment || basicInfo.hostDepartment || "General";
       
       if (!departmentsMap.has(deptName)) {
         departmentsMap.set(deptName, {
@@ -148,7 +153,9 @@ export default async function handler(
       }
       if (basicInfo.homeUniversity) cyprusUniversities.add(basicInfo.homeUniversity);
       if (basicInfo.exchangePeriod) semesters.add(basicInfo.exchangePeriod);
-      if (basicInfo.academicYear) years.add(basicInfo.academicYear);
+      if (basicInfo.exchangeAcademicYear || basicInfo.academicYear) {
+        years.add(basicInfo.exchangeAcademicYear || basicInfo.academicYear);
+      }
 
       let rating = 0;
       if (experienceData.overallRating) {
@@ -161,7 +168,29 @@ export default async function handler(
       }
 
       // Course Mappings
-      const mappings = exp.courseMappings;
+      const draftMappings = sanitizeCourseMappingsData(exp.courses);
+      const mappings =
+        draftMappings.length > 0
+          ? draftMappings.map((mapping) => ({
+              hostCourseName: mapping.hostCourseName,
+              hostCourseCode: mapping.hostCourseCode,
+              hostCredits: mapping.hostECTS,
+              homeCourseName: mapping.homeCourseName,
+              homeCourseCode: mapping.homeCourseCode,
+              homeCredits: mapping.homeECTS,
+              recognitionType: mapping.recognitionType,
+              notes: mapping.notes,
+            }))
+          : exp.courseMappings.map((mapping) => ({
+              hostCourseName: mapping.hostCourseName,
+              hostCourseCode: mapping.hostCourseCode,
+              hostCredits: mapping.hostCredits,
+              homeCourseName: mapping.homeCourseName,
+              homeCourseCode: mapping.homeCourseCode,
+              homeCredits: mapping.homeCredits,
+              recognitionType: "",
+              notes: "",
+            }));
       let studentHasCourseData = false;
       let studentDifficulty = 0;
       let studentEcts = 0;
@@ -181,7 +210,9 @@ export default async function handler(
             ects: mapping.hostCredits,
             homeCourseName: mapping.homeCourseName,
             homeCourseCode: mapping.homeCourseCode,
-            homeCourseCredits: mapping.homeCredits
+            homeCourseCredits: mapping.homeCredits,
+            recognitionType: getRecognitionTypeLabel(mapping.recognitionType),
+            notes: mapping.notes || undefined,
           });
         }
 
@@ -210,12 +241,12 @@ export default async function handler(
 
       // Add Student Experience
       dept.students.push({
-        studentName: basicInfo.studentName || "Anonymous Student", // Privacy?
+        studentName: "Anonymous Student",
         department: deptName,
         studyLevel: basicInfo.levelOfStudy || "Undergraduate",
         submissionId: exp.id,
         semester: basicInfo.exchangePeriod || "Fall",
-        year: basicInfo.academicYear || "2024",
+        year: basicInfo.exchangeAcademicYear || basicInfo.academicYear || "2024",
         rating: rating > 0 ? rating : undefined,
         courses: detailedCourses.map(c => c.name),
         detailedCourses: detailedCourses,

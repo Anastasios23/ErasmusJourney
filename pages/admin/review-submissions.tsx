@@ -27,6 +27,10 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import Link from "next/link";
+import {
+  getRecognitionTypeLabel,
+  sanitizeCourseMappingsData,
+} from "../../src/lib/courseMatching";
 
 interface Experience {
   id: string;
@@ -305,20 +309,31 @@ export default function ReviewSubmissions() {
                           Course Mappings
                         </h3>
                         <div className="space-y-3">
-                          {selectedSubmission.courses.map(
+                          {sanitizeCourseMappingsData(selectedSubmission.courses).map(
                             (course: any, idx: number) => (
                               <div key={idx} className="p-3 border rounded-lg">
                                 <div className="font-medium">
                                   {course.hostCourseName}
                                 </div>
                                 <div className="text-sm text-gray-600">
-                                  {course.hostCourseCode} (
-                                  {course.hostCourseCredits} ECTS)
+                                  {course.hostCourseCode || "No code"} (
+                                  {course.hostECTS} ECTS)
                                 </div>
                                 <div className="text-sm mt-1">
-                                  → {course.cyprusCourseName} (
-                                  {course.cyprusCourseCredits} ECTS)
+                                  {"->"} {course.homeCourseName} (
+                                  {course.homeECTS} ECTS)
                                 </div>
+                                {course.recognitionType && (
+                                  <div className="text-sm mt-1 text-gray-600">
+                                    Recognition:{" "}
+                                    {getRecognitionTypeLabel(course.recognitionType)}
+                                  </div>
+                                )}
+                                {course.notes && (
+                                  <div className="text-sm mt-1 text-gray-600">
+                                    Notes: {course.notes}
+                                  </div>
+                                )}
                               </div>
                             ),
                           )}

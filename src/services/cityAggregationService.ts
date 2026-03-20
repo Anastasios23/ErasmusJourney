@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import { CityAggregatedData } from "../types/cityData";
+import { sanitizeCourseMappingsData } from "../lib/courseMatching";
 
 // Enhanced interface for detailed multi-student insights
 export interface EnhancedCityAggregatedData extends CityAggregatedData {
@@ -257,21 +258,19 @@ export async function aggregateCityData(city: string, country: string): Promise<
     })),
     difficultyBreakdown,
     avgCoursesMatched: calculateAverage(courseMatchingList.map((e) => {
-      const data = e.courses as any;
-      const mappings = data?.mappings || [];
-      return Array.isArray(mappings) ? mappings.length : 0;
+      const mappings = sanitizeCourseMappingsData(e.courses);
+      return mappings.length;
     })),
     avgCreditsTransferred: calculateAverage(courseMatchingList.map((e) => {
-      const data = e.courses as any;
-      const mappings = data?.mappings || [];
-      if (!Array.isArray(mappings)) return 0;
-      return mappings.reduce((sum: number, m: any) => sum + (parseFloat(m.hostEcts) || 0), 0);
+      const mappings = sanitizeCourseMappingsData(e.courses);
+      return mappings.reduce(
+        (sum: number, mapping) => sum + (mapping.hostECTS || 0),
+        0,
+      );
     })),
     successRate: totalCourseMatchingSubmissions > 0 
       ? (courseMatchingList.filter(e => {
-          const data = e.courses as any;
-          const mappings = data?.mappings || [];
-          return Array.isArray(mappings) && mappings.length > 0;
+          return sanitizeCourseMappingsData(e.courses).length > 0;
         }).length / totalCourseMatchingSubmissions) * 100 
       : 0,
     recommendationRate: 0, // Placeholder

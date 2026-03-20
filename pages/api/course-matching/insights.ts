@@ -1,5 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '../../../lib/prisma';
+import {
+  getRecognitionTypeLabel,
+  sanitizeCourseMappingsData,
+} from '../../../src/lib/courseMatching';
 
 export default async function handler(
   req: NextApiRequest,
@@ -64,6 +68,7 @@ export default async function handler(
     let totalDifficulty = 0;
     let difficultyCount = 0;
     let totalCoursesMatched = 0;
+    let totalCreditsTransferred = 0;
     let totalSuccessRate = 0;
     let totalRecommendationRate = 0;
     
@@ -78,6 +83,8 @@ export default async function handler(
     const processedExperiences = experiences.map(exp => {
       const coursesData = exp.courses as any || {};
       const experienceData = exp.experience as any || {};
+      const basicInfo = exp.basicInfo as any || {};
+      const mappings = sanitizeCourseMappingsData(exp.courses);
       
       // Difficulty
       const difficulty = parseInt(coursesData.academicDifficulty || '0');
@@ -88,10 +95,27 @@ export default async function handler(
       }
 
       // Success Rate (courses matched / total courses)
-      const hostCourses = coursesData.hostCourses || [];
-      const matchedCourses = coursesData.equivalentCourses || [];
-      const matchCount = matchedCourses.length;
-      const totalCount = hostCourses.length;
+      const hostCourses = mappings.length > 0
+        ? mappings.map((mapping) => ({
+            name: mapping.hostCourseName,
+            code: mapping.hostCourseCode || undefined,
+            ects: mapping.hostECTS || 0,
+            type: getRecognitionTypeLabel(mapping.recognitionType) || undefined,
+          }))
+        : coursesData.hostCourses || [];
+      const matchedCourses = mappings.length > 0
+        ? mappings.map((mapping) => ({
+            hostCourseName: mapping.hostCourseName,
+            homeCourseName: mapping.homeCourseName,
+            hostCourseCode: mapping.hostCourseCode || undefined,
+            homeCourseCode: mapping.homeCourseCode || undefined,
+            ects: mapping.hostECTS || 0,
+            recognitionType: mapping.recognitionType || undefined,
+            notes: mapping.notes || undefined,
+          }))
+        : coursesData.equivalentCourses || [];
+      const matchCount = mappings.length > 0 ? mappings.length : matchedCourses.length;
+      const totalCount = mappings.length > 0 ? mappings.length : hostCourses.length;
       
       let successRate = 0;
       if (totalCount > 0) {
@@ -99,17 +123,26 @@ export default async function handler(
         totalSuccessRate += successRate;
       }
       totalCoursesMatched += matchCount;
+      totalCreditsTransferred += mappings.reduce(
+        (sum, mapping) => sum + (mapping.hostECTS || 0),
+        0,
+      );
 
       // Recommendation
-      const wouldRecommend = experienceData.wouldRecommend || false;
+      const wouldRecommend = mappings.length > 0 || experienceData.wouldRecommend || false;
       if (wouldRecommend) totalRecommendationRate++;
 
       // Challenges & Advice
       if (coursesData.courseMatchingChallenges) commonChallengesSet.add(coursesData.courseMatchingChallenges);
       if (coursesData.academicAdviceForFuture) topAdviceSet.add(coursesData.academicAdviceForFuture);
+      mappings
+        .map((mapping) => mapping.notes)
+        .filter(Boolean)
+        .slice(0, 3)
+        .forEach((note) => commonChallengesSet.add(note));
 
       // Department Stats
-      const dept = (exp.basicInfo as any)?.hostDepartment || 'Unknown';
+      const dept = basicInfo.homeDepartment || basicInfo.hostDepartment || 'Unknown';
       if (!departmentStats[dept]) {
         departmentStats[dept] = { count: 0, difficultySum: 0, successSum: 0 };
       }
@@ -119,17 +152,25 @@ export default async function handler(
 
       return {
         id: exp.id,
-        studentName: (exp.basicInfo as any)?.firstName || 'Anonymous',
-        homeUniversity: exp.homeUniversity?.name || (exp.basicInfo as any)?.homeUniversity || 'Unknown',
-        homeDepartment: (exp.basicInfo as any)?.homeDepartment || 'Unknown',
-        hostUniversity: exp.hostUniversity?.name || (exp.basicInfo as any)?.hostUniversity || 'Unknown',
+        studentName: 'Anonymous Student',
+        homeUniversity: exp.homeUniversity?.name || basicInfo?.homeUniversity || 'Unknown',
+        homeDepartment: basicInfo?.homeDepartment || 'Unknown',
+        hostUniversity: exp.hostUniversity?.name || basicInfo?.hostUniversity || 'Unknown',
         hostDepartment: dept,
-        levelOfStudy: (exp.basicInfo as any)?.studyLevel || 'Unknown',
+        levelOfStudy: basicInfo?.levelOfStudy || basicInfo?.studyLevel || 'Unknown',
         hostCourseCount: totalCount,
         homeCourseCount: matchCount,
-        courseMatchingDifficult: coursesData.courseMatchingDifficult || 'Neutral',
+        courseMatchingDifficult: coursesData.courseMatchingDifficult || 'Moderate',
         courseMatchingChallenges: coursesData.courseMatchingChallenges,
-        recommendCourses: coursesData.recommendCourses || 'Yes',
+        creditsTransferredSuccessfully: mappings.reduce(
+          (sum, mapping) => sum + (mapping.homeECTS || 0),
+          0,
+        ),
+        totalCreditsAttempted: mappings.reduce(
+          (sum, mapping) => sum + (mapping.hostECTS || 0),
+          0,
+        ),
+        recommendCourses: coursesData.recommendCourses || (mappings.length > 0 ? 'Yes' : 'No'),
         hostCourses: hostCourses,
         equivalentCourses: matchedCourses,
       };
@@ -138,6 +179,7 @@ export default async function handler(
     const avgDifficulty = difficultyCount > 0 ? totalDifficulty / difficultyCount : 0;
     const avgSuccessRate = totalExperiences > 0 ? totalSuccessRate / totalExperiences : 0;
     const avgCoursesMatched = totalExperiences > 0 ? totalCoursesMatched / totalExperiences : 0;
+    const avgCreditsTransferred = totalExperiences > 0 ? totalCreditsTransferred / totalExperiences : 0;
     const recommendationRate = totalExperiences > 0 ? (totalRecommendationRate / totalExperiences) * 100 : 0;
 
     const departmentInsights = Object.entries(departmentStats).map(([dept, stats]) => ({
@@ -152,7 +194,7 @@ export default async function handler(
       avgDifficulty,
       difficultyBreakdown,
       avgCoursesMatched,
-      avgCreditsTransferred: 0, // Placeholder
+      avgCreditsTransferred,
       successRate: avgSuccessRate,
       recommendationRate,
       commonChallenges: Array.from(commonChallengesSet).slice(0, 5),

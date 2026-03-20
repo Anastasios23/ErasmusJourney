@@ -1,127 +1,69 @@
 import { z } from "zod";
+import {
+  BASIC_INFO_LEVEL_OPTIONS,
+  BASIC_INFO_PERIOD_OPTIONS,
+} from "./basicInformation";
+import { COURSE_RECOGNITION_VALUES } from "./courseMatching";
 
 // ============================================
 // STEP 1: Basic Information Schemas
 // ============================================
 
-// Simplified schema for required fields only to avoid validation errors
-export const basicInformationRequiredSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
-  dateOfBirth: z.string().min(1, "Date of birth is required"),
-  nationality: z.string().min(1, "Nationality is required"),
-  universityInCyprus: z.string().min(1, "Cyprus university is required"),
-  departmentInCyprus: z.string().min(1, "Department is required"),
-  levelOfStudy: z.enum(["bachelor", "master", "phd"], {
-    errorMap: () => ({ message: "Please select a level of study" }),
-  }),
-  currentYear: z.string().min(1, "Academic year is required"),
+const levelOfStudySchema = z.enum(BASIC_INFO_LEVEL_OPTIONS, {
+  errorMap: () => ({ message: "Please select a level of study" }),
+});
 
+const exchangePeriodSchema = z.enum(BASIC_INFO_PERIOD_OPTIONS, {
+  errorMap: () => ({ message: "Please select an exchange period" }),
+});
+
+const basicInformationSchemaBase = z.object({
+  homeUniversity: z.string().min(1, "Home university is required"),
+  homeUniversityId: z.string().optional(),
+  homeDepartment: z.string().min(1, "Home department is required"),
+  levelOfStudy: levelOfStudySchema,
   hostUniversity: z.string().min(1, "Host university is required"),
-  hostCountry: z.string().min(1, "Host country is required"),
-  hostCity: z.string().min(1, "Host city is required"),
-  exchangePeriod: z.enum(["semester1", "semester2", "full_year"], {
-    errorMap: () => ({ message: "Please select exchange period" }),
-  }),
+  hostUniversityId: z.string().optional(),
+  hostCity: z.string().optional(),
+  hostCountry: z.string().optional(),
+  exchangeAcademicYear: z
+    .string()
+    .min(1, "Exchange academic year is required"),
+  exchangePeriod: exchangePeriodSchema,
+  languageOfInstruction: z.string().optional(),
+  exchangeStartDate: z.string().optional(),
+  exchangeEndDate: z.string().optional(),
+});
+
+// Simplified schema for required fields only to avoid validation errors
+export const basicInformationRequiredSchema = basicInformationSchemaBase.pick({
+  homeUniversity: true,
+  homeDepartment: true,
+  levelOfStudy: true,
+  hostUniversity: true,
+  exchangeAcademicYear: true,
+  exchangePeriod: true,
 });
 
 // Minimal schema for unified form step components
-export const basicInformationStepSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
-  homeUniversity: z.string().min(1, "Home university is required"),
-  hostUniversity: z.string().min(1, "Host university is required"),
-  hostCountry: z.string().min(1, "Host country is required"),
-  hostCity: z.string().min(1, "Host city is required"),
-  exchangePeriod: z.string().min(1, "Exchange period is required"),
-  currentYear: z.string().min(1, "Current year is required"),
-  // Optional fields
-  dateOfBirth: z.string().optional(),
-  nationality: z.string().optional(),
-  phoneNumber: z.string().optional(),
-  homeUniversityId: z.string().optional(),
-  hostUniversityId: z.string().optional(),
-  homeDepartment: z.string().optional(),
-  hostDepartment: z.string().optional(),
-  levelOfStudy: z.string().optional(),
-  studentId: z.string().optional(),
-  exchangeStartDate: z.string().optional(),
-  exchangeEndDate: z.string().optional(),
-  languageOfInstruction: z.string().optional(),
-  languageProficiencyLevel: z.string().optional(),
-  motivationForExchange: z.string().optional(),
-  academicGoals: z.string().optional(),
-});
+export const basicInformationStepSchema = basicInformationSchemaBase.superRefine(
+  (value, context) => {
+    if (
+      value.exchangeStartDate &&
+      value.exchangeEndDate &&
+      new Date(value.exchangeStartDate) >= new Date(value.exchangeEndDate)
+    ) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["exchangeEndDate"],
+        message: "End date must be after start date",
+      });
+    }
+  },
+);
 
 // Full schema for reference (not used for validation)
-export const basicInformationSchema = z.object({
-  // Personal Information
-  firstName: z
-    .string()
-    .min(1, "First name is required")
-    .max(50, "First name too long"),
-  lastName: z
-    .string()
-    .min(1, "Last name is required")
-    .max(50, "Last name too long"),
-  email: z.string().email("Invalid email address"),
-  dateOfBirth: z.string().min(1, "Date of birth is required"),
-  nationality: z.string().min(1, "Nationality is required"),
-  phoneNumber: z.string().optional(),
-  address: z.string().optional(),
-  emergencyContactName: z.string().optional(),
-  emergencyContactPhone: z.string().optional(),
-  emergencyContactRelation: z.string().optional(),
-
-  // Academic Information
-  universityInCyprus: z.string().min(1, "Cyprus university is required"),
-  departmentInCyprus: z.string().min(1, "Department is required"),
-  levelOfStudy: z.enum(["bachelor", "master", "phd"], {
-    errorMap: () => ({ message: "Please select a level of study" }),
-  }),
-  currentYear: z.string().optional(),
-  gpa: z.string().optional(),
-  studentId: z.string().optional(),
-  academicAdvisor: z.string().optional(),
-
-  // Exchange Information
-  exchangePeriod: z.enum(["semester1", "semester2", "full_year"], {
-    errorMap: () => ({ message: "Please select exchange period" }),
-  }),
-  exchangeStartDate: z.string().optional(),
-  exchangeEndDate: z.string().optional(),
-  hostUniversity: z.string().min(1, "Host university is required"),
-  hostCountry: z.string().min(1, "Host country is required"),
-  hostCity: z.string().min(1, "Host city is required"),
-  hostDepartment: z.string().min(1, "Host department is required"),
-  hostCoordinator: z.string().optional(),
-
-  // Language Requirements
-  languageOfInstruction: z.string().optional(),
-  languageProficiencyLevel: z.string().optional(),
-  languageCertificates: z.string().optional(),
-
-  // Motivation and Goals
-  motivationForExchange: z.string().optional(),
-  academicGoals: z.string().optional(),
-  personalGoals: z.string().optional(),
-  careerGoals: z.string().optional(),
-
-  // Additional Information
-  previousExchangeExperience: z.string().optional(),
-  extracurricularActivities: z.string().optional(),
-  specialNeeds: z.string().optional(),
-  dietaryRestrictions: z.string().optional(),
-  medicalConditions: z.string().optional(),
-  additionalNotes: z.string().max(1000, "Notes too long").optional(),
-
-  // Preferences
-  accommodationPreference: z.string().optional(),
-  buddyProgramInterest: z.string().optional(),
-  orientationProgramInterest: z.string().optional(),
-});
+export const basicInformationSchema = basicInformationStepSchema;
 
 // Course Matching Form Schema
 export const courseMappingSchema = z.object({
@@ -134,28 +76,22 @@ export const courseMappingSchema = z.object({
   courses: z
     .array(
       z.object({
-        hostCourseCode: z.string().min(1, "Course code is required"),
-        hostCourseName: z.string().min(1, "Course name is required"),
-        hostCourseCredits: z
+        homeCourseCode: z.string().optional(),
+        homeCourseName: z.string().min(1, "Home course name is required"),
+        homeECTS: z
           .number()
-          .min(1, "Credits must be at least 1")
-          .max(30, "Credits too high"),
-        difficulty: z.enum(["easy", "medium", "hard"], {
-          errorMap: () => ({ message: "Please select difficulty level" }),
+          .min(0.5, "Home ECTS must be greater than 0")
+          .max(60, "Home ECTS seems too high"),
+        hostCourseCode: z.string().optional(),
+        hostCourseName: z.string().min(1, "Host course name is required"),
+        hostECTS: z
+          .number()
+          .min(0.5, "Host ECTS must be greater than 0")
+          .max(60, "Host ECTS seems too high"),
+        recognitionType: z.enum(COURSE_RECOGNITION_VALUES, {
+          errorMap: () => ({ message: "Please select a recognition type" }),
         }),
-        examTypes: z
-          .array(z.string())
-          .min(1, "At least one exam type required"),
-        grade: z.string().optional(),
-
-        // Cyprus equivalent
-        cyprusCourseCode: z.string().min(1, "Cyprus course code is required"),
-        cyprusCourseName: z.string().min(1, "Cyprus course name is required"),
-        cyprusCourseCredits: z
-          .number()
-          .min(1, "Credits must be at least 1")
-          .max(30, "Credits too high"),
-        transferApproved: z.boolean(),
+        notes: z.string().max(500, "Notes cannot exceed 500 characters").optional(),
       }),
     )
     .min(1, "At least one course mapping is required"),
@@ -177,16 +113,44 @@ export const courseMatchingStepSchema = z.object({
   courses: z
     .array(
       z.object({
-        id: z.string(),
+        id: z.string().min(1, "Course mapping ID is required"),
         homeCourseCode: z.string().optional(),
-        homeCourseName: z.string().min(1, "Home course name is required"),
-        homeCredits: z.string().min(1, "Credits are required"),
+        homeCourseName: z.string().trim().min(1, "Home course name is required"),
+        homeECTS: z
+          .number({
+            invalid_type_error: "Home ECTS is required",
+            required_error: "Home ECTS is required",
+          })
+          .gt(0, "Home ECTS must be greater than 0"),
         hostCourseCode: z.string().optional(),
-        hostCourseName: z.string().min(1, "Host course name is required"),
-        hostCredits: z.string().min(1, "Credits are required"),
+        hostCourseName: z.string().trim().min(1, "Host course name is required"),
+        hostECTS: z
+          .number({
+            invalid_type_error: "Host ECTS is required",
+            required_error: "Host ECTS is required",
+          })
+          .gt(0, "Host ECTS must be greater than 0"),
+        recognitionType: z.enum(COURSE_RECOGNITION_VALUES, {
+          errorMap: () => ({ message: "Recognition type is required" }),
+        }),
+        notes: z.string().max(500, "Notes cannot exceed 500 characters").optional(),
       }),
     )
     .min(1, "At least one course mapping is required"),
+});
+
+const courseMatchingDraftRowSchema = z.object({
+  id: z.string().min(1).optional(),
+  homeCourseCode: z.string().optional(),
+  homeCourseName: z.string().optional(),
+  homeECTS: z.number().nullable().optional(),
+  hostCourseCode: z.string().optional(),
+  hostCourseName: z.string().optional(),
+  hostECTS: z.number().nullable().optional(),
+  recognitionType: z
+    .union([z.enum(COURSE_RECOGNITION_VALUES), z.literal("")])
+    .optional(),
+  notes: z.string().max(500, "Notes cannot exceed 500 characters").optional(),
 });
 
 // Accommodation Form Schema
@@ -397,7 +361,7 @@ export const experienceStepSchema = z.object({
 // ============================================
 export const erasmusExperienceFormSchema = z.object({
   basicInfo: basicInformationStepSchema,
-  courses: z.array(z.any()), // Flexible for course mappings
+  courses: courseMatchingStepSchema.shape.courses,
   accommodation: accommodationStepSchema,
   livingExpenses: livingExpensesStepSchema,
   experience: experienceStepSchema,
@@ -408,7 +372,7 @@ export const erasmusExperienceFormSchema = z.object({
 // ============================================
 export const erasmusExperienceDraftSchema = z.object({
   basicInfo: basicInformationStepSchema.partial().optional(),
-  courses: z.array(z.any()).optional(),
+  courses: z.array(courseMatchingDraftRowSchema).optional(),
   accommodation: accommodationStepSchema.partial().optional(),
   livingExpenses: livingExpensesStepSchema.partial().optional(),
   experience: experienceStepSchema.partial().optional(),

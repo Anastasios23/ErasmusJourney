@@ -1,17 +1,55 @@
+export interface CyprusUniversityDomainInfo {
+  code: string;
+  name: string;
+  domain: string;
+}
+
+export const CYPRUS_UNIVERSITY_DOMAIN_MAP: Record<
+  string,
+  Omit<CyprusUniversityDomainInfo, "domain">
+> = {
+  "ucy.ac.cy": {
+    code: "UCY",
+    name: "University of Cyprus",
+  },
+  "cut.ac.cy": {
+    code: "CUT",
+    name: "Cyprus University of Technology",
+  },
+  "ouc.ac.cy": {
+    code: "OUC",
+    name: "Open University of Cyprus",
+  },
+  "unic.ac.cy": {
+    code: "UNIC",
+    name: "University of Nicosia",
+  },
+  "euc.ac.cy": {
+    code: "EUC",
+    name: "European University Cyprus",
+  },
+  "frederick.ac.cy": {
+    code: "Frederick",
+    name: "Frederick University",
+  },
+  "uclancyprus.ac.cy": {
+    code: "UCLan",
+    name: "University of Central Lancashire Cyprus",
+  },
+  "nup.ac.cy": {
+    code: "Neapolis",
+    name: "Neapolis University Pafos",
+  },
+  "philipsuniversity.ac.cy": {
+    code: "Philips",
+    name: "Philips University",
+  },
+};
+
 /**
  * Allowed email domains for Cyprus Universities
  */
-export const ALLOWED_DOMAINS = [
-  "ucy.ac.cy", // University of Cyprus
-  "cut.ac.cy", // Cyprus University of Technology
-  "ouc.ac.cy", // Open University of Cyprus
-  "unic.ac.cy", // University of Nicosia
-  "euc.ac.cy", // European University Cyprus
-  "frederick.ac.cy", // Frederick University
-  "uclancyprus.ac.cy", // UCLan Cyprus
-  "nup.ac.cy", // Neapolis University Paphos
-  "philipsuniversity.ac.cy", // Philips University
-];
+export const ALLOWED_DOMAINS = Object.keys(CYPRUS_UNIVERSITY_DOMAIN_MAP);
 
 /**
  * Admin emails that are always allowed regardless of domain
@@ -34,4 +72,22 @@ export function isCyprusUniversityEmail(email: string): boolean {
   const domain = normalizedEmail.split("@")[1];
 
   return ALLOWED_DOMAINS.includes(domain);
+}
+
+export function getCyprusUniversityByEmail(
+  email?: string | null,
+): CyprusUniversityDomainInfo | null {
+  if (!email || !email.includes("@")) return null;
+
+  const domain = email.toLowerCase().split("@")[1];
+  const university = CYPRUS_UNIVERSITY_DOMAIN_MAP[domain];
+
+  if (!university) {
+    return null;
+  }
+
+  return {
+    ...university,
+    domain,
+  };
 }

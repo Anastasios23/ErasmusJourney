@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { sanitizeCourseMappingsData } from "../lib/courseMatching";
 
 // Module-level deduplication tracker
 const globalPendingExperienceRequests = new Map<string, Promise<any>>();
@@ -114,7 +115,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
                 ? JSON.parse(experience.completedSteps)
                 : [],
               basicInfo: experience.basicInfo || {},
-              courses: experience.courses || [],
+              courses: sanitizeCourseMappingsData(experience.courses),
               accommodation: experience.accommodation || {},
               livingExpenses: experience.livingExpenses || {},
               experience: experience.experience || {},
@@ -228,6 +229,10 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
             ? {
                 ...prev,
                 ...stepData,
+                courses:
+                  stepData.courses !== undefined
+                    ? sanitizeCourseMappingsData(stepData.courses)
+                    : prev.courses,
                 lastSavedAt: updatedExperience.lastSavedAt,
               }
             : null,

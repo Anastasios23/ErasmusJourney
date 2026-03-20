@@ -110,14 +110,14 @@ export default function MySubmissions() {
         submissionType: "FULL_EXPERIENCE",
         status: exp.status || "DRAFT",
         title:
-          exp.basicInfo?.firstName && exp.basicInfo?.lastName
-            ? `${exp.basicInfo.firstName} ${exp.basicInfo.lastName}'s Experience`
-            : null,
+          exp.basicInfo?.hostUniversity
+            ? `Experience at ${exp.basicInfo.hostUniversity}`
+            : "Erasmus Experience",
         hostCity: exp.hostCity,
         hostCountry: exp.hostCountry,
         hostUniversity: exp.basicInfo?.hostUniversity,
-        semester: exp.semester,
-        academicYear: exp.semester?.split("-")[0],
+        semester: exp.basicInfo?.exchangePeriod || exp.semester,
+        academicYear: exp.basicInfo?.exchangeAcademicYear || null,
         reviewFeedback: exp.reviewFeedback,
         reviewedBy: exp.reviewedBy
           ? { id: exp.reviewedBy, name: "Admin" }

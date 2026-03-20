@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
 import { prisma } from "../../../lib/prisma";
 import { updateCityStatistics } from "../../../src/services/statisticsService";
+import { sanitizeCourseMappingsData } from "../../../src/lib/courseMatching";
 
 export default async function handler(
   req: NextApiRequest,
@@ -53,7 +54,7 @@ async function handleGet(res: NextApiResponse, userId: string) {
       completedSteps: JSON.parse(experience.completedSteps || "[]"),
       formData: {
         basicInfo: experience.basicInfo,
-        courses: experience.courses,
+        courses: sanitizeCourseMappingsData(experience.courses),
         accommodation: experience.accommodation,
         livingExpenses: experience.livingExpenses,
         experience: experience.experience,
@@ -103,7 +104,9 @@ async function handlePut(
         if (formData.basicInfo.hostCountry) data.hostCountry = formData.basicInfo.hostCountry;
         if (formData.basicInfo.exchangePeriod) data.semester = formData.basicInfo.exchangePeriod;
       }
-      if (formData.courses !== undefined) data.courses = formData.courses;
+      if (formData.courses !== undefined) {
+        data.courses = sanitizeCourseMappingsData(formData.courses);
+      }
       if (formData.accommodation !== undefined)
         data.accommodation = formData.accommodation;
       if (formData.livingExpenses !== undefined)
@@ -124,8 +127,7 @@ async function handlePut(
       if (isComplete) {
         // A. Aggregate Course Mappings
         if (experience.courses && experience.hostUniversityId) {
-          const coursesData = experience.courses as any;
-          const mappings = coursesData.mappings || [];
+          const mappings = sanitizeCourseMappingsData(experience.courses);
 
           // Delete existing mappings for this experience to avoid duplicates/stale data
           await tx.courseMapping.deleteMany({
@@ -138,12 +140,12 @@ async function handlePut(
               data: mappings.map((m: any) => ({
                 experienceId: experience.id,
                 universityId: experience.hostUniversityId!, // Host University
-                homeCourseCode: m.homeCode || null,
-                homeCourseName: m.homeName,
-                homeCredits: parseFloat(m.homeEcts) || 0,
-                hostCourseCode: m.hostCode || null,
-                hostCourseName: m.hostName,
-                hostCredits: parseFloat(m.hostEcts) || 0,
+                homeCourseCode: m.homeCourseCode || null,
+                homeCourseName: m.homeCourseName,
+                homeCredits: m.homeECTS || 0,
+                hostCourseCode: m.hostCourseCode || null,
+                hostCourseName: m.hostCourseName,
+                hostCredits: m.hostECTS || 0,
                 status: "APPROVED", // Auto-approve for now, or set to PENDING if moderation is needed
               })),
             });

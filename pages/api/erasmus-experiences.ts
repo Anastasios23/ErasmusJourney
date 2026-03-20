@@ -4,6 +4,14 @@ import { authOptions } from "./auth/[...nextauth]";
 import { randomUUID } from "crypto";
 
 import { updateCityStatistics } from "../../src/services/statisticsService";
+import {
+  buildExperienceSemester,
+  sanitizeBasicInformationData,
+} from "../../src/lib/basicInformation";
+import {
+  hasCompleteCourseMatchingData,
+  sanitizeCourseMappingsData,
+} from "../../src/lib/courseMatching";
 import { prisma } from "../../lib/prisma";
 
 // Retry helper for database operations
@@ -32,6 +40,89 @@ async function retryDatabaseOperation<T>(
     }
   }
   throw new Error("Max retries exceeded");
+}
+
+async function resolveUniversityByReference(
+  reference?: string | null,
+  name?: string | null,
+) {
+  const normalizedReference = reference?.trim();
+  const normalizedName = name?.trim();
+
+  if (!normalizedReference && !normalizedName) {
+    return null;
+  }
+
+  return prisma.universities.findFirst({
+    where: {
+      OR: [
+        ...(normalizedReference
+          ? [{ id: normalizedReference }, { code: normalizedReference }]
+          : []),
+        ...(normalizedName ? [{ name: normalizedName }] : []),
+      ],
+    },
+    select: {
+      id: true,
+      name: true,
+      city: true,
+      country: true,
+    },
+  });
+}
+
+async function buildBasicInfoPersistenceData(
+  incomingBasicInfo: any,
+  existingBasicInfo: any,
+) {
+  if (!incomingBasicInfo && !existingBasicInfo) {
+    return null;
+  }
+
+  const mergedBasicInfo = sanitizeBasicInformationData({
+    ...sanitizeBasicInformationData(existingBasicInfo),
+    ...(incomingBasicInfo || {}),
+  });
+
+  const [homeUniversity, hostUniversity] = await Promise.all([
+    resolveUniversityByReference(
+      mergedBasicInfo.homeUniversityId,
+      mergedBasicInfo.homeUniversity,
+    ),
+    resolveUniversityByReference(
+      mergedBasicInfo.hostUniversityId,
+      mergedBasicInfo.hostUniversity,
+    ),
+  ]);
+
+  const persistedBasicInfo = sanitizeBasicInformationData({
+    ...mergedBasicInfo,
+    homeUniversity: mergedBasicInfo.homeUniversity || homeUniversity?.name || "",
+    homeUniversityId: homeUniversity?.id || "",
+    hostUniversity: mergedBasicInfo.hostUniversity || hostUniversity?.name || "",
+    hostUniversityId: hostUniversity?.id || "",
+    hostCity: mergedBasicInfo.hostCity || hostUniversity?.city || "",
+    hostCountry: mergedBasicInfo.hostCountry || hostUniversity?.country || "",
+  });
+
+  return {
+    basicInfo: persistedBasicInfo,
+    homeUniversityId: homeUniversity?.id || null,
+    hostUniversityId: hostUniversity?.id || null,
+    hostCity: persistedBasicInfo.hostCity || null,
+    hostCountry: persistedBasicInfo.hostCountry || null,
+    semester: buildExperienceSemester(persistedBasicInfo),
+  };
+}
+
+function serializeExperienceForClient<T extends Record<string, any>>(
+  experience: T,
+): T {
+  return {
+    ...experience,
+    basicInfo: sanitizeBasicInformationData(experience.basicInfo),
+    courses: sanitizeCourseMappingsData(experience.courses),
+  };
 }
 
 export default async function handler(
@@ -90,7 +181,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
       return res.status(403).json({ error: "Access denied" });
     }
 
-    return res.status(200).json(experience);
+    return res.status(200).json(serializeExperienceForClient(experience as any));
   } else {
     // Get all experiences for this user with retry logic
     const experiences = await retryDatabaseOperation(() =>
@@ -100,7 +191,9 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
       }),
     );
 
-    return res.status(200).json(experiences);
+    return res
+      .status(200)
+      .json(experiences.map((experience) => serializeExperienceForClient(experience as any)));
   }
 }
 
@@ -274,6 +367,10 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     updateData.completedSteps = JSON.stringify(updateData.completedSteps);
   }
 
+  if (updateData.courses !== undefined) {
+    updateData.courses = sanitizeCourseMappingsData(updateData.courses);
+  }
+
   // Find the existing experience with retry logic
   const existingExperience: any = await retryDatabaseOperation(() =>
     prisma.erasmusExperience.findUnique({
@@ -292,6 +389,11 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       submittedAt: new Date(),
       isComplete: true,
     };
+    const normalizedCourseMappings = sanitizeCourseMappingsData(
+      updateData.courses ?? existingExperience.courses,
+    );
+
+    submissionData.courses = normalizedCourseMappings;
 
     // Handle overallReflection -> experience mapping
     if (updateData.overallReflection) {
@@ -335,26 +437,18 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       }
     });
 
-    // Extract key fields from basicInfo for top-level access if needed
-    if (updateData.basicInfo || existingExperience.basicInfo) {
-      const basicInfo =
-        typeof existingExperience.basicInfo === "object" &&
-        existingExperience.basicInfo !== null
-          ? {
-              ...(existingExperience.basicInfo as any),
-              ...updateData.basicInfo,
-            }
-          : updateData.basicInfo || {};
+    const basicInfoContext = await buildBasicInfoPersistenceData(
+      updateData.basicInfo,
+      existingExperience.basicInfo,
+    );
 
-      submissionData.basicInfo = basicInfo;
-
-      // Extract top-level fields for querying (only fields that exist in form)
-      if ((basicInfo as any).hostCity) {
-        (submissionData as any).hostCity = (basicInfo as any).hostCity;
-      }
-      if ((basicInfo as any).hostCountry) {
-        (submissionData as any).hostCountry = (basicInfo as any).hostCountry;
-      }
+    if (basicInfoContext) {
+      submissionData.basicInfo = basicInfoContext.basicInfo;
+      submissionData.homeUniversityId = basicInfoContext.homeUniversityId;
+      submissionData.hostUniversityId = basicInfoContext.hostUniversityId;
+      submissionData.hostCity = basicInfoContext.hostCity;
+      submissionData.hostCountry = basicInfoContext.hostCountry;
+      submissionData.semester = basicInfoContext.semester;
     }
 
     // --- VALIDATION START ---
@@ -369,19 +463,20 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
     if (
       !basicInfoVal.homeUniversity ||
+      !basicInfoVal.homeDepartment ||
+      !basicInfoVal.levelOfStudy ||
       !basicInfoVal.hostUniversity ||
-      !basicInfoVal.semester ||
-      !basicInfoVal.year
+      !basicInfoVal.exchangeAcademicYear ||
+      !basicInfoVal.exchangePeriod
     ) {
       console.log("[API] Basic Info Validation Failed. Missing fields.");
       errors.push(
-        "Basic Information is incomplete (University, Semester, Year required).",
+        "Basic Information is incomplete (home university, department, level, host university, academic year, and period are required).",
       );
     }
 
     // 2. Courses
-    const coursesVal = submissionData.courses || {};
-    const mappingsVal = coursesVal.mappings || [];
+    const mappingsVal = sanitizeCourseMappingsData(submissionData.courses);
     console.log(
       "[API] Validating Courses. Mappings count:",
       mappingsVal.length,
@@ -390,16 +485,10 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     if (!Array.isArray(mappingsVal) || mappingsVal.length === 0) {
       console.log("[API] Course Validation Failed. No mappings.");
       errors.push("At least one course mapping is required.");
-    } else {
-      // Check if mappings are valid
-      const incompleteMappings = mappingsVal.some(
-        (m: any) => !m.homeName?.trim() || !m.hostName?.trim(),
+    } else if (!hasCompleteCourseMatchingData(mappingsVal)) {
+      errors.push(
+        "All course mappings must include home course name, host course name, home ECTS, host ECTS, and recognition type.",
       );
-      if (incompleteMappings) {
-        errors.push(
-          "All course mappings must have both home and host course names.",
-        );
-      }
     }
 
     // 3. Accommodation
@@ -422,18 +511,21 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
     // 4. Living Expenses
     const livingExpensesVal = submissionData.livingExpenses || {};
+    const hasCurrentStepShape =
+      livingExpensesVal.food &&
+      livingExpensesVal.transport &&
+      livingExpensesVal.social &&
+      livingExpensesVal.travel;
     const expenses = livingExpensesVal.expenses || {};
 
-    if (!livingExpensesVal.expenses) {
+    if (
+      !hasCurrentStepShape &&
+      (expenses.groceries === undefined ||
+        expenses.transportation === undefined ||
+        expenses.socialLife === undefined ||
+        expenses.travel === undefined)
+    ) {
       errors.push("Living Expenses are incomplete.");
-    } else {
-      // Check for core expenses (should be present and ideally numbers)
-      if (
-        expenses.groceries === undefined ||
-        expenses.transportation === undefined
-      ) {
-        errors.push("Monthly expense estimates are required.");
-      }
     }
 
     if (errors.length > 0) {
@@ -455,8 +547,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
         // 2. Perform data aggregation
         // A. Aggregate Course Mappings
         if (experience.courses && experience.hostUniversityId) {
-          const coursesData = experience.courses as any;
-          const mappings = coursesData.mappings || [];
+          const mappings = sanitizeCourseMappingsData(experience.courses);
 
           // Delete existing mappings for this experience to avoid duplicates/stale data
           await tx.courseMapping.deleteMany({
@@ -469,12 +560,12 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
               data: mappings.map((m: any) => ({
                 experienceId: experience.id,
                 universityId: experience.hostUniversityId!, // Host University
-                homeCourseCode: m.homeCode || null,
-                homeCourseName: m.homeName,
-                homeCredits: parseFloat(m.homeEcts) || 0,
-                hostCourseCode: m.hostCode || null,
-                hostCourseName: m.hostName,
-                hostCredits: parseFloat(m.hostEcts) || 0,
+                homeCourseCode: m.homeCourseCode || null,
+                homeCourseName: m.homeCourseName || "",
+                homeCredits: m.homeECTS || 0,
+                hostCourseCode: m.hostCourseCode || null,
+                hostCourseName: m.hostCourseName || "",
+                hostCredits: m.hostECTS || 0,
                 status: "APPROVED", // Auto-approve for now
               })),
             });
@@ -524,7 +615,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       ).catch((err) => console.error("Failed to update city stats:", err));
     }
 
-    return res.status(200).json(updatedExperience);
+    return res
+      .status(200)
+      .json(serializeExperienceForClient(updatedExperience as any));
   } else {
     // Regular update (save progress)
     const updateFields: any = {
@@ -532,17 +625,18 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       ...updateData,
     };
 
-    // Extract top-level fields from basicInfo if present
-    if (updateData.basicInfo) {
-      const basicInfo = updateData.basicInfo;
+    const basicInfoContext = await buildBasicInfoPersistenceData(
+      updateData.basicInfo,
+      existingExperience.basicInfo,
+    );
 
-      // Extract hostCity and hostCountry to top level for querying
-      if ((basicInfo as any).hostCity) {
-        updateFields.hostCity = (basicInfo as any).hostCity;
-      }
-      if ((basicInfo as any).hostCountry) {
-        updateFields.hostCountry = (basicInfo as any).hostCountry;
-      }
+    if (basicInfoContext) {
+      updateFields.basicInfo = basicInfoContext.basicInfo;
+      updateFields.homeUniversityId = basicInfoContext.homeUniversityId;
+      updateFields.hostUniversityId = basicInfoContext.hostUniversityId;
+      updateFields.hostCity = basicInfoContext.hostCity;
+      updateFields.hostCountry = basicInfoContext.hostCountry;
+      updateFields.semester = basicInfoContext.semester;
     }
 
     // Merge nested experience.helpForStudents correctly
@@ -569,6 +663,8 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       }),
     );
 
-    return res.status(200).json(updatedExperience);
+    return res
+      .status(200)
+      .json(serializeExperienceForClient(updatedExperience as any));
   }
 }

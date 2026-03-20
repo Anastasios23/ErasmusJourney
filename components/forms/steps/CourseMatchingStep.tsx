@@ -1,26 +1,54 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useFormContext } from "../FormProvider";
 import { EnhancedInput } from "@/components/ui/enhanced-input";
+import {
+  EnhancedSelect,
+  EnhancedSelectContent,
+  EnhancedSelectItem,
+  EnhancedSelectTrigger,
+  EnhancedSelectValue,
+} from "@/components/ui/enhanced-select";
+import { EnhancedTextarea } from "@/components/ui/enhanced-textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, BookOpen, GraduationCap } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-
-interface CourseMapping {
-  id: string;
-  homeCourseCode: string;
-  homeCourseName: string;
-  homeCredits: string;
-  hostCourseCode: string;
-  hostCourseName: string;
-  hostCredits: string;
-}
+import {
+  ArrowRightLeft,
+  BookOpen,
+  GraduationCap,
+  Plus,
+  Trash2,
+} from "lucide-react";
+import {
+  buildCourseMappingsPayload,
+  COURSE_RECOGNITION_OPTIONS,
+  createEmptyCourseMappingRow,
+  type CourseMappingFormRow,
+  toCourseMappingFormRows,
+} from "@/lib/courseMatching";
 
 interface CourseMatchingStepProps {
   data: any;
   onComplete: (data: any) => void;
   onSave: (data: any) => void;
+}
+
+function hasVisibleContent(mapping: CourseMappingFormRow) {
+  return !!(
+    mapping.homeCourseCode.trim() ||
+    mapping.homeCourseName.trim() ||
+    mapping.homeECTS.trim() ||
+    mapping.hostCourseCode.trim() ||
+    mapping.hostCourseName.trim() ||
+    mapping.hostECTS.trim() ||
+    mapping.recognitionType ||
+    mapping.notes.trim()
+  );
+}
+
+function getInitialMappings(input: unknown): CourseMappingFormRow[] {
+  const rows = toCourseMappingFormRows(input);
+  return rows.length > 0 ? rows : [createEmptyCourseMappingRow()];
 }
 
 export default function CourseMatchingStep({
@@ -29,119 +57,138 @@ export default function CourseMatchingStep({
   onSave,
 }: CourseMatchingStepProps) {
   const { updateFormData } = useFormContext();
-  const [mappings, setMappings] = useState<CourseMapping[]>([]);
+  const [mappings, setMappings] = useState<CourseMappingFormRow[]>(() =>
+    getInitialMappings(data?.courses),
+  );
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (data?.courses && Array.isArray(data.courses)) {
-      setMappings(data.courses);
-    } else if (mappings.length === 0) {
-      // Start with one empty mapping if none exist
-      addMapping();
-    }
-  }, [data]);
+    setMappings(getInitialMappings(data?.courses));
+  }, [data?.courses]);
 
-  const addMapping = () => {
-    const newMapping: CourseMapping = {
-      id: crypto.randomUUID(),
-      homeCourseCode: "",
-      homeCourseName: "",
-      homeCredits: "",
-      hostCourseCode: "",
-      hostCourseName: "",
-      hostCredits: "",
-    };
-    setMappings([...mappings, newMapping]);
-  };
-
-  const removeMapping = (id: string) => {
-    setMappings(mappings.filter((m) => m.id !== id));
-  };
-
-  const updateMapping = (id: string, field: keyof CourseMapping, value: string) => {
-    const newMappings = mappings.map((m) => {
-      if (m.id === id) {
-        return { ...m, [field]: value };
-      }
-      return m;
-    });
-    setMappings(newMappings);
-    updateFormData("courses", newMappings);
-    
-    // Clear error for this field if it exists
-    if (errors[`${id}-${field}`]) {
-      const newErrors = { ...errors };
-      delete newErrors[`${id}-${field}`];
-      setErrors(newErrors);
-    }
-  };
+  const sanitizedMappings = useMemo(
+    () => buildCourseMappingsPayload(mappings),
+    [mappings],
+  );
 
   const calculateTotalECTS = (type: "home" | "host") => {
-    return mappings.reduce((total, m) => {
-      const credits = parseFloat(type === "home" ? m.homeCredits : m.hostCredits) || 0;
-      return total + credits;
+    return sanitizedMappings.reduce((total, mapping) => {
+      const ects = type === "home" ? mapping.homeECTS : mapping.hostECTS;
+      return total + (ects || 0);
     }, 0);
   };
 
+  const syncMappings = (nextMappings: CourseMappingFormRow[]) => {
+    const nextPayload = buildCourseMappingsPayload(nextMappings);
+
+    setMappings(nextMappings);
+    updateFormData("courses", nextPayload);
+
+    if (errors.general && nextPayload.length > 0) {
+      const nextErrors = { ...errors };
+      delete nextErrors.general;
+      setErrors(nextErrors);
+    }
+  };
+
+  const addMapping = () => {
+    syncMappings([...mappings, createEmptyCourseMappingRow()]);
+  };
+
+  const removeMapping = (id: string) => {
+    syncMappings(mappings.filter((mapping) => mapping.id !== id));
+  };
+
+  const updateMapping = <K extends keyof CourseMappingFormRow>(
+    id: string,
+    field: K,
+    value: CourseMappingFormRow[K],
+  ) => {
+    const nextMappings = mappings.map((mapping) =>
+      mapping.id === id ? { ...mapping, [field]: value } : mapping,
+    );
+
+    syncMappings(nextMappings);
+
+    const errorKey = `${id}-${String(field)}`;
+    if (errors[errorKey]) {
+      const nextErrors = { ...errors };
+      delete nextErrors[errorKey];
+      setErrors(nextErrors);
+    }
+  };
+
   const validate = () => {
-    const newErrors: Record<string, string> = {};
+    const nextErrors: Record<string, string> = {};
+    const visibleMappings = mappings.filter(hasVisibleContent);
     let isValid = true;
 
-    if (mappings.length === 0) {
-      newErrors["general"] = "Please add at least one course mapping.";
+    if (visibleMappings.length === 0) {
+      nextErrors.general = "Please add at least one course equivalence example.";
       isValid = false;
     }
 
-    mappings.forEach((m) => {
-      // If a mapping exists, these fields are mandatory
-      if (!m.homeCourseName.trim()) {
-        newErrors[`${m.id}-homeCourseName`] = "Required";
+    visibleMappings.forEach((mapping) => {
+      if (!mapping.homeCourseName.trim()) {
+        nextErrors[`${mapping.id}-homeCourseName`] = "Home course name is required";
         isValid = false;
       }
-      if (!m.homeCredits.trim() || isNaN(parseFloat(m.homeCredits))) {
-        newErrors[`${m.id}-homeCredits`] = "Required (number)";
+
+      const homeECTS = Number.parseFloat(mapping.homeECTS);
+      if (!mapping.homeECTS.trim() || Number.isNaN(homeECTS) || homeECTS <= 0) {
+        nextErrors[`${mapping.id}-homeECTS`] = "Home ECTS must be a number greater than 0";
         isValid = false;
       }
-      if (!m.hostCourseName.trim()) {
-        newErrors[`${m.id}-hostCourseName`] = "Required";
+
+      if (!mapping.hostCourseName.trim()) {
+        nextErrors[`${mapping.id}-hostCourseName`] = "Host course name is required";
         isValid = false;
       }
-      if (!m.hostCredits.trim() || isNaN(parseFloat(m.hostCredits))) {
-        newErrors[`${m.id}-hostCredits`] = "Required (number)";
+
+      const hostECTS = Number.parseFloat(mapping.hostECTS);
+      if (!mapping.hostECTS.trim() || Number.isNaN(hostECTS) || hostECTS <= 0) {
+        nextErrors[`${mapping.id}-hostECTS`] = "Host ECTS must be a number greater than 0";
+        isValid = false;
+      }
+
+      if (!mapping.recognitionType) {
+        nextErrors[`${mapping.id}-recognitionType`] = "Recognition type is required";
         isValid = false;
       }
     });
 
-    setErrors(newErrors);
+    setErrors(nextErrors);
     return isValid;
   };
 
   const handleContinue = () => {
-    if (validate()) {
-      onComplete({ courses: mappings });
-    } else {
-      // Scroll to first error
+    if (!validate()) {
       const firstError = document.querySelector(".text-red-500");
       firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
     }
+
+    onComplete({ courses: buildCourseMappingsPayload(mappings) });
   };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="h-8 w-1 bg-blue-600 rounded-full"></div>
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
+          <div className="flex items-start gap-3">
+            <div className="h-8 w-1 bg-indigo-600 rounded-full mt-1"></div>
             <div>
               <h3 className="text-xl font-semibold text-gray-900">
-                Course Matching
+                Course Exchanges / Course Matching
               </h3>
               <p className="text-sm text-gray-500">
-                List the courses you took abroad and their equivalents at your home university.
+                Add anonymous examples of how host university courses were
+                recognized at your home university.
               </p>
             </div>
           </div>
-          <div className="flex gap-4 text-sm font-medium">
+
+          <div className="flex flex-wrap gap-3 text-sm font-medium">
             <div className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full">
               Home ECTS: {calculateTotalECTS("home")}
             </div>
@@ -159,12 +206,16 @@ export default function CourseMatchingStep({
 
         <div className="space-y-6">
           {mappings.map((mapping, index) => (
-            <Card key={mapping.id} className="border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <Card
+              key={mapping.id}
+              className="border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200"
+            >
               <CardHeader className="pb-3 bg-gray-50/50 border-b border-gray-100 rounded-t-xl flex flex-row items-center justify-between">
                 <CardTitle className="text-base font-medium text-gray-700 flex items-center gap-2">
                   <BookOpen className="w-4 h-4 text-blue-500" />
-                  Course Pair #{index + 1}
+                  Course Mapping #{index + 1}
                 </CardTitle>
+
                 {mappings.length > 1 && (
                   <Button
                     variant="ghost"
@@ -176,94 +227,222 @@ export default function CourseMatchingStep({
                   </Button>
                 )}
               </CardHeader>
-              <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Home University Course */}
-                <div className="space-y-4 relative">
-                  <div className="absolute -right-4 top-1/2 hidden md:block text-gray-300">
-                    →
-                  </div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <GraduationCap className="w-4 h-4 text-indigo-500" />
-                    <h4 className="font-medium text-sm text-gray-900">Home University Course</h4>
-                  </div>
-                  
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="col-span-1 space-y-2">
-                      <Label htmlFor={`home-code-${mapping.id}`} className="text-xs text-gray-500">Code</Label>
+
+              <CardContent className="pt-6 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-4 relative">
+                    <div className="absolute -right-5 top-10 hidden md:flex items-center justify-center text-gray-300">
+                      <ArrowRightLeft className="w-4 h-4" />
+                    </div>
+
+                    <div className="flex items-center gap-2 mb-2">
+                      <GraduationCap className="w-4 h-4 text-indigo-500" />
+                      <h4 className="font-medium text-sm text-gray-900">
+                        Home University Course
+                      </h4>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="col-span-1 space-y-2">
+                        <Label
+                          htmlFor={`home-code-${mapping.id}`}
+                          className="text-xs text-gray-500"
+                        >
+                          Code
+                        </Label>
+                        <EnhancedInput
+                          id={`home-code-${mapping.id}`}
+                          placeholder="CS101"
+                          value={mapping.homeCourseCode}
+                          onChange={(event) =>
+                            updateMapping(
+                              mapping.id,
+                              "homeCourseCode",
+                              event.target.value,
+                            )
+                          }
+                          className="h-9"
+                        />
+                      </div>
+
+                      <div className="col-span-2 space-y-2">
+                        <Label
+                          htmlFor={`home-name-${mapping.id}`}
+                          className="text-xs text-gray-500"
+                        >
+                          Course Name *
+                        </Label>
+                        <EnhancedInput
+                          id={`home-name-${mapping.id}`}
+                          placeholder="Algorithms and Data Structures"
+                          value={mapping.homeCourseName}
+                          onChange={(event) =>
+                            updateMapping(
+                              mapping.id,
+                              "homeCourseName",
+                              event.target.value,
+                            )
+                          }
+                          error={errors[`${mapping.id}-homeCourseName`]}
+                          className="h-9"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor={`home-ects-${mapping.id}`}
+                        className="text-xs text-gray-500"
+                      >
+                        ECTS *
+                      </Label>
                       <EnhancedInput
-                        id={`home-code-${mapping.id}`}
-                        placeholder="CS101"
-                        value={mapping.homeCourseCode}
-                        onChange={(e) => updateMapping(mapping.id, "homeCourseCode", e.target.value)}
-                        className="h-9"
+                        id={`home-ects-${mapping.id}`}
+                        type="number"
+                        min="0"
+                        step="0.5"
+                        placeholder="6"
+                        value={mapping.homeECTS}
+                        onChange={(event) =>
+                          updateMapping(mapping.id, "homeECTS", event.target.value)
+                        }
+                        error={errors[`${mapping.id}-homeECTS`]}
+                        className="h-9 w-28"
                       />
                     </div>
-                    <div className="col-span-2 space-y-2">
-                      <Label htmlFor={`home-name-${mapping.id}`} className="text-xs text-gray-500">Course Name *</Label>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <GraduationCap className="w-4 h-4 text-teal-500" />
+                      <h4 className="font-medium text-sm text-gray-900">
+                        Host University Course
+                      </h4>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="col-span-1 space-y-2">
+                        <Label
+                          htmlFor={`host-code-${mapping.id}`}
+                          className="text-xs text-gray-500"
+                        >
+                          Code
+                        </Label>
+                        <EnhancedInput
+                          id={`host-code-${mapping.id}`}
+                          placeholder="INF-201"
+                          value={mapping.hostCourseCode}
+                          onChange={(event) =>
+                            updateMapping(
+                              mapping.id,
+                              "hostCourseCode",
+                              event.target.value,
+                            )
+                          }
+                          className="h-9"
+                        />
+                      </div>
+
+                      <div className="col-span-2 space-y-2">
+                        <Label
+                          htmlFor={`host-name-${mapping.id}`}
+                          className="text-xs text-gray-500"
+                        >
+                          Course Name *
+                        </Label>
+                        <EnhancedInput
+                          id={`host-name-${mapping.id}`}
+                          placeholder="Advanced Algorithms"
+                          value={mapping.hostCourseName}
+                          onChange={(event) =>
+                            updateMapping(
+                              mapping.id,
+                              "hostCourseName",
+                              event.target.value,
+                            )
+                          }
+                          error={errors[`${mapping.id}-hostCourseName`]}
+                          className="h-9"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor={`host-ects-${mapping.id}`}
+                        className="text-xs text-gray-500"
+                      >
+                        ECTS *
+                      </Label>
                       <EnhancedInput
-                        id={`home-name-${mapping.id}`}
-                        placeholder="Intro to Programming"
-                        value={mapping.homeCourseName}
-                        onChange={(e) => updateMapping(mapping.id, "homeCourseName", e.target.value)}
-                        error={errors[`${mapping.id}-homeCourseName`]}
-                        className="h-9"
+                        id={`host-ects-${mapping.id}`}
+                        type="number"
+                        min="0"
+                        step="0.5"
+                        placeholder="6"
+                        value={mapping.hostECTS}
+                        onChange={(event) =>
+                          updateMapping(mapping.id, "hostECTS", event.target.value)
+                        }
+                        error={errors[`${mapping.id}-hostECTS`]}
+                        className="h-9 w-28"
                       />
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor={`home-credits-${mapping.id}`} className="text-xs text-gray-500">ECTS Credits *</Label>
-                    <EnhancedInput
-                      id={`home-credits-${mapping.id}`}
-                      type="number"
-                      placeholder="6"
-                      value={mapping.homeCredits}
-                      onChange={(e) => updateMapping(mapping.id, "homeCredits", e.target.value)}
-                      error={errors[`${mapping.id}-homeCredits`]}
-                      className="h-9 w-24"
-                    />
                   </div>
                 </div>
 
-                {/* Host University Course */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <GraduationCap className="w-4 h-4 text-teal-500" />
-                    <h4 className="font-medium text-sm text-gray-900">Host University Course</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor={`recognition-type-${mapping.id}`}
+                      className="text-xs text-gray-500"
+                    >
+                      Recognition Type *
+                    </Label>
+                    <EnhancedSelect
+                      value={mapping.recognitionType || undefined}
+                      onValueChange={(value) =>
+                        updateMapping(
+                          mapping.id,
+                          "recognitionType",
+                          value as CourseMappingFormRow["recognitionType"],
+                        )
+                      }
+                    >
+                      <EnhancedSelectTrigger
+                        id={`recognition-type-${mapping.id}`}
+                        error={errors[`${mapping.id}-recognitionType`]}
+                      >
+                        <EnhancedSelectValue placeholder="Select recognition type" />
+                      </EnhancedSelectTrigger>
+                      <EnhancedSelectContent>
+                        {COURSE_RECOGNITION_OPTIONS.map((option) => (
+                          <EnhancedSelectItem
+                            key={option.value}
+                            value={option.value}
+                          >
+                            {option.label}
+                          </EnhancedSelectItem>
+                        ))}
+                      </EnhancedSelectContent>
+                    </EnhancedSelect>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="col-span-1 space-y-2">
-                      <Label htmlFor={`host-code-${mapping.id}`} className="text-xs text-gray-500">Code</Label>
-                      <EnhancedInput
-                        id={`host-code-${mapping.id}`}
-                        placeholder="INF-100"
-                        value={mapping.hostCourseCode}
-                        onChange={(e) => updateMapping(mapping.id, "hostCourseCode", e.target.value)}
-                        className="h-9"
-                      />
-                    </div>
-                    <div className="col-span-2 space-y-2">
-                      <Label htmlFor={`host-name-${mapping.id}`} className="text-xs text-gray-500">Course Name *</Label>
-                      <EnhancedInput
-                        id={`host-name-${mapping.id}`}
-                        placeholder="Computer Science I"
-                        value={mapping.hostCourseName}
-                        onChange={(e) => updateMapping(mapping.id, "hostCourseName", e.target.value)}
-                        error={errors[`${mapping.id}-hostCourseName`]}
-                        className="h-9"
-                      />
-                    </div>
-                  </div>
                   <div className="space-y-2">
-                    <Label htmlFor={`host-credits-${mapping.id}`} className="text-xs text-gray-500">ECTS Credits *</Label>
-                    <EnhancedInput
-                      id={`host-credits-${mapping.id}`}
-                      type="number"
-                      placeholder="6"
-                      value={mapping.hostCredits}
-                      onChange={(e) => updateMapping(mapping.id, "hostCredits", e.target.value)}
-                      error={errors[`${mapping.id}-hostCredits`]}
-                      className="h-9 w-24"
+                    <Label
+                      htmlFor={`notes-${mapping.id}`}
+                      className="text-xs text-gray-500"
+                    >
+                      Notes
+                    </Label>
+                    <EnhancedTextarea
+                      id={`notes-${mapping.id}`}
+                      placeholder="Optional context about the equivalence decision"
+                      value={mapping.notes}
+                      onChange={(event) =>
+                        updateMapping(mapping.id, "notes", event.target.value)
+                      }
+                      className="min-h-[96px]"
                     />
                   </div>
                 </div>
@@ -277,15 +456,14 @@ export default function CourseMatchingStep({
             className="w-full border-dashed border-2 py-8 text-gray-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50/50 transition-all"
           >
             <Plus className="w-5 h-5 mr-2" />
-            Add Another Course Pair
+            Add Another Course Mapping
           </Button>
         </div>
       </div>
 
-      {/* Action Buttons */}
       <div className="flex justify-between items-center pt-6 border-t border-gray-100">
         <button
-          onClick={() => onSave({ courses: mappings })}
+          onClick={() => onSave({ ...data, courses: buildCourseMappingsPayload(mappings) })}
           className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
         >
           Save Draft
