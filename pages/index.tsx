@@ -866,7 +866,7 @@ export default function HomePage({
                   </MagneticButton>
 
                   <MagneticButton
-                    href="/dashboard"
+                    href="/share-experience"
                     className="group px-8 py-4 bg-white dark:bg-gray-900 rounded-full text-gray-900 dark:text-white font-semibold text-lg border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
                   >
                     <span className="flex items-center gap-2">

@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../../lib/prisma";
+import { CYPRUS_UNIVERSITIES } from "../../../../src/data/universityAgreements";
 
 /**
  * University Departments API
@@ -42,7 +43,41 @@ export default async function handler(
     });
 
     if (!university) {
-      return res.status(404).json({ error: "University not found" });
+      const normalizedId = id.trim().toLowerCase();
+      const fallbackUniversity = CYPRUS_UNIVERSITIES.find((item) => {
+        return (
+          item.code.toLowerCase() === normalizedId ||
+          item.name.toLowerCase() === normalizedId ||
+          item.shortName.toLowerCase() === normalizedId
+        );
+      });
+
+      if (!fallbackUniversity) {
+        return res.status(404).json({ error: "University not found" });
+      }
+
+      const fallbackDepartments = Array.from(
+        new Set(
+          fallbackUniversity.departments
+            .map((department) => department.trim())
+            .filter(Boolean),
+        ),
+      ).sort((left, right) => left.localeCompare(right));
+
+      res.setHeader(
+        "Cache-Control",
+        "public, s-maxage=3600, stale-while-revalidate=7200",
+      );
+
+      return res.status(200).json({
+        university: {
+          id: fallbackUniversity.code,
+          name: fallbackUniversity.name,
+          code: fallbackUniversity.code,
+        },
+        departments: fallbackDepartments,
+        total: fallbackDepartments.length,
+      });
     }
 
     // Extract all departments from all faculties
