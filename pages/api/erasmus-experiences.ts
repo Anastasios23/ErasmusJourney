@@ -12,6 +12,10 @@ import {
   hasCompleteCourseMatchingData,
   sanitizeCourseMappingsData,
 } from "../../src/lib/courseMatching";
+import {
+  getCyprusUniversityByEmail,
+  getEnforcedHomeUniversityFields,
+} from "../../lib/authUtils";
 import { prisma } from "../../lib/prisma";
 
 // Retry helper for database operations
@@ -74,6 +78,7 @@ async function resolveUniversityByReference(
 async function buildBasicInfoPersistenceData(
   incomingBasicInfo: any,
   existingBasicInfo: any,
+  signedInEmail?: string | null,
 ) {
   if (!incomingBasicInfo && !existingBasicInfo) {
     return null;
@@ -83,22 +88,28 @@ async function buildBasicInfoPersistenceData(
     ...sanitizeBasicInformationData(existingBasicInfo),
     ...(incomingBasicInfo || {}),
   });
+  const derivedHomeUniversity = getCyprusUniversityByEmail(signedInEmail);
 
   const [homeUniversity, hostUniversity] = await Promise.all([
     resolveUniversityByReference(
-      mergedBasicInfo.homeUniversityId,
-      mergedBasicInfo.homeUniversity,
+      derivedHomeUniversity?.code || mergedBasicInfo.homeUniversityId,
+      derivedHomeUniversity?.name || mergedBasicInfo.homeUniversity,
     ),
     resolveUniversityByReference(
       mergedBasicInfo.hostUniversityId,
       mergedBasicInfo.hostUniversity,
     ),
   ]);
+  const enforcedHomeUniversity = getEnforcedHomeUniversityFields({
+    email: signedInEmail,
+    fallbackName: mergedBasicInfo.homeUniversity,
+    fallbackId: mergedBasicInfo.homeUniversityId,
+    resolvedUniversity: homeUniversity,
+  });
 
   const persistedBasicInfo = sanitizeBasicInformationData({
     ...mergedBasicInfo,
-    homeUniversity: mergedBasicInfo.homeUniversity || homeUniversity?.name || "",
-    homeUniversityId: homeUniversity?.id || "",
+    ...enforcedHomeUniversity,
     hostUniversity: mergedBasicInfo.hostUniversity || hostUniversity?.name || "",
     hostUniversityId: hostUniversity?.id || "",
     hostCity: mergedBasicInfo.hostCity || hostUniversity?.city || "",
@@ -107,7 +118,7 @@ async function buildBasicInfoPersistenceData(
 
   return {
     basicInfo: persistedBasicInfo,
-    homeUniversityId: homeUniversity?.id || null,
+    homeUniversityId: persistedBasicInfo.homeUniversityId || null,
     hostUniversityId: hostUniversity?.id || null,
     hostCity: persistedBasicInfo.hostCity || null,
     hostCountry: persistedBasicInfo.hostCountry || null,
@@ -362,6 +373,12 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     return res.status(400).json({ error: "Experience ID is required" });
   }
 
+  const session = await getServerSession(req, res, authOptions);
+
+  if (!session?.user?.id) {
+    return res.status(401).json({ error: "Authentication required" });
+  }
+
   // Ensure completedSteps is stringified if it's an array
   if (updateData.completedSteps && Array.isArray(updateData.completedSteps)) {
     updateData.completedSteps = JSON.stringify(updateData.completedSteps);
@@ -380,6 +397,10 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
   if (!existingExperience) {
     return res.status(404).json({ error: "Experience not found" });
+  }
+
+  if ((existingExperience as any).userId !== session.user.id) {
+    return res.status(403).json({ error: "Access denied" });
   }
 
   if (action === "submit") {
@@ -440,6 +461,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     const basicInfoContext = await buildBasicInfoPersistenceData(
       updateData.basicInfo,
       existingExperience.basicInfo,
+      session.user.email,
     );
 
     if (basicInfoContext) {
@@ -628,6 +650,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     const basicInfoContext = await buildBasicInfoPersistenceData(
       updateData.basicInfo,
       existingExperience.basicInfo,
+      session.user.email,
     );
 
     if (basicInfoContext) {
