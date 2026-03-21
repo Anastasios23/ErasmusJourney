@@ -68,6 +68,22 @@ export const basicInformationStepSchema = basicInformationSchemaBase.superRefine
   },
 );
 
+export const basicInformationDraftSchema = basicInformationSchemaBase
+  .partial()
+  .superRefine((value, context) => {
+    if (
+      value.exchangeStartDate &&
+      value.exchangeEndDate &&
+      new Date(value.exchangeStartDate) >= new Date(value.exchangeEndDate)
+    ) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["exchangeEndDate"],
+        message: "End date must be after start date",
+      });
+    }
+  });
+
 // Full schema for reference (not used for validation)
 export const basicInformationSchema = basicInformationStepSchema;
 
@@ -415,7 +431,7 @@ export const erasmusExperienceFormSchema = z.object({
 // Partial/Draft Schema (allows incomplete data)
 // ============================================
 export const erasmusExperienceDraftSchema = z.object({
-  basicInfo: basicInformationStepSchema.partial().optional(),
+  basicInfo: basicInformationDraftSchema.optional(),
   courses: z.array(courseMatchingDraftRowSchema).optional(),
   accommodation: accommodationStepSchema.partial().optional(),
   livingExpenses: livingExpensesStepSchema.partial().optional(),
