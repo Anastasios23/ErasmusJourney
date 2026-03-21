@@ -32,9 +32,7 @@ const basicInformationSchemaBase = z.object({
   hostUniversityId: z.string().optional(),
   hostCity: z.string().optional(),
   hostCountry: z.string().optional(),
-  exchangeAcademicYear: z
-    .string()
-    .min(1, "Exchange academic year is required"),
+  exchangeAcademicYear: z.string().min(1, "Exchange academic year is required"),
   exchangePeriod: exchangePeriodSchema,
   languageOfInstruction: z.string().optional(),
   exchangeStartDate: z.string().optional(),
@@ -52,8 +50,8 @@ export const basicInformationRequiredSchema = basicInformationSchemaBase.pick({
 });
 
 // Minimal schema for unified form step components
-export const basicInformationStepSchema = basicInformationSchemaBase.superRefine(
-  (value, context) => {
+export const basicInformationStepSchema =
+  basicInformationSchemaBase.superRefine((value, context) => {
     if (
       value.exchangeStartDate &&
       value.exchangeEndDate &&
@@ -65,8 +63,7 @@ export const basicInformationStepSchema = basicInformationSchemaBase.superRefine
         message: "End date must be after start date",
       });
     }
-  },
-);
+  });
 
 export const basicInformationDraftSchema = basicInformationSchemaBase
   .partial()
@@ -113,7 +110,10 @@ export const courseMappingSchema = z.object({
         recognitionType: z.enum(COURSE_RECOGNITION_VALUES, {
           errorMap: () => ({ message: "Please select a recognition type" }),
         }),
-        notes: z.string().max(500, "Notes cannot exceed 500 characters").optional(),
+        notes: z
+          .string()
+          .max(500, "Notes cannot exceed 500 characters")
+          .optional(),
       }),
     )
     .min(1, "At least one course mapping is required"),
@@ -137,7 +137,10 @@ export const courseMatchingStepSchema = z.object({
       z.object({
         id: z.string().min(1, "Course mapping ID is required"),
         homeCourseCode: z.string().optional(),
-        homeCourseName: z.string().trim().min(1, "Home course name is required"),
+        homeCourseName: z
+          .string()
+          .trim()
+          .min(1, "Home course name is required"),
         homeECTS: z
           .number({
             invalid_type_error: "Home ECTS is required",
@@ -145,7 +148,10 @@ export const courseMatchingStepSchema = z.object({
           })
           .gt(0, "Home ECTS must be greater than 0"),
         hostCourseCode: z.string().optional(),
-        hostCourseName: z.string().trim().min(1, "Host course name is required"),
+        hostCourseName: z
+          .string()
+          .trim()
+          .min(1, "Host course name is required"),
         hostECTS: z
           .number({
             invalid_type_error: "Host ECTS is required",
@@ -155,7 +161,10 @@ export const courseMatchingStepSchema = z.object({
         recognitionType: z.enum(COURSE_RECOGNITION_VALUES, {
           errorMap: () => ({ message: "Recognition type is required" }),
         }),
-        notes: z.string().max(500, "Notes cannot exceed 500 characters").optional(),
+        notes: z
+          .string()
+          .max(500, "Notes cannot exceed 500 characters")
+          .optional(),
       }),
     )
     .min(1, "At least one course mapping is required"),
@@ -284,9 +293,7 @@ export const accommodationStepSchema = z.object({
     .min(0, "Minutes to university cannot be negative")
     .max(240, "Minutes to university seems too high")
     .optional(),
-  howFoundAccommodation: z
-    .enum(HOW_FOUND_ACCOMMODATION_VALUES)
-    .optional(),
+  howFoundAccommodation: z.enum(HOW_FOUND_ACCOMMODATION_VALUES).optional(),
   difficultyFindingAccommodation: z
     .enum(DIFFICULTY_FINDING_ACCOMMODATION_VALUES)
     .optional(),
