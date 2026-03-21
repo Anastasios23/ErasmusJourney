@@ -14,6 +14,10 @@ import { FormProgressBar } from "../components/forms/FormProgressBar";
 import { StepNavigation } from "../components/forms/StepNavigation";
 import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
 import { useFormProgress } from "../src/context/FormProgressContext";
+import {
+  createEmptyAccommodationStepData,
+  sanitizeAccommodationStepData,
+} from "../src/lib/accommodation";
 import { toast } from "../src/hooks/use-toast";
 import { cn } from "../src/lib/utils";
 
@@ -110,7 +114,7 @@ export default function ShareExperience() {
   const [formData, setFormData] = useState({
     basicInfo: {},
     courses: [],
-    accommodation: {},
+    accommodation: createEmptyAccommodationStepData(),
     livingExpenses: {},
     experience: {},
   });
@@ -128,7 +132,9 @@ export default function ShareExperience() {
       setFormData({
         basicInfo: experienceData.basicInfo || {},
         courses: experienceData.courses || [],
-        accommodation: experienceData.accommodation || {},
+        accommodation: sanitizeAccommodationStepData(
+          experienceData.accommodation,
+        ),
         livingExpenses: experienceData.livingExpenses || {},
         experience: experienceData.experience || {},
       });

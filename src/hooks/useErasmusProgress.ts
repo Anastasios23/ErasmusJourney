@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { isAccommodationStepComplete } from "../lib/accommodation";
 import { isBasicInformationComplete } from "../lib/basicInformation";
 import { hasCompleteCourseMatchingData } from "../lib/courseMatching";
 
@@ -82,13 +83,7 @@ export function useErasmusProgress(): ErasmusProgress {
       courses: hasCompleteCourseMatchingData(experienceData.courses),
 
       // Step 3: Accommodation - check if accommodation object has required fields
-      accommodation: !!(
-        experienceData.accommodation &&
-        typeof experienceData.accommodation === "object" &&
-        Object.keys(experienceData.accommodation).length > 0 &&
-        experienceData.accommodation.accommodationType &&
-        experienceData.accommodation.monthlyRent
-      ),
+      accommodation: isAccommodationStepComplete(experienceData.accommodation),
 
       // Step 4: Living Expenses - check if expenses object exists with data
       livingExpenses: !!(

@@ -12,6 +12,7 @@ import {
   Star,
 } from "lucide-react";
 import { GeneratedAccommodation } from "../hooks/useGeneratedDestinations";
+import { getAccommodationTypeLabel } from "../lib/accommodation";
 
 interface GeneratedAccommodationCardProps {
   accommodation: GeneratedAccommodation;
@@ -60,7 +61,7 @@ export default function GeneratedAccommodationCard({
           <div className="flex flex-col items-end gap-1">
             <Badge variant="secondary" className="text-xs">
               <Building className="h-3 w-3 mr-1" />
-              {accommodation.accommodationType}
+              {getAccommodationTypeLabel(accommodation.accommodationType)}
             </Badge>
             {accommodation.featured && (
               <Badge variant="default" className="text-xs">

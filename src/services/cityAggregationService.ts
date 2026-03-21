@@ -1,4 +1,8 @@
 import { prisma } from "../../lib/prisma";
+import {
+  getAccommodationTypeLabel,
+  sanitizeAccommodationStepData,
+} from "../lib/accommodation";
 import { CityAggregatedData } from "../types/cityData";
 import { sanitizeCourseMappingsData } from "../lib/courseMatching";
 
@@ -166,8 +170,7 @@ export async function aggregateCityData(city: string, country: string): Promise<
     })),
     avgMonthlyUtilities: calculateAverage(livingCostsList.map((e) => {
       const data = e.livingExpenses as any;
-      const accData = e.accommodation as any;
-      return parseFloat(data?.utilities || accData?.utilities || "0");
+      return parseFloat(data?.utilities || "0");
     })),
     avgMonthlyOther: calculateAverage(livingCostsList.map((e) => {
       const data = e.livingExpenses as any;
@@ -206,8 +209,8 @@ export async function aggregateCityData(city: string, country: string): Promise<
       return parseInt(data?.costOfLiving || "0") || 0;
     })),
     avgAccommodationRating: calculateAverage(ratingsList.map((e) => {
-      const data = e.accommodation as any;
-      return parseInt(data?.rating || "0") || 0;
+      const data = sanitizeAccommodationStepData(e.accommodation as any);
+      return data.accommodationRating || 0;
     })),
     ratingSubmissions,
   };
@@ -218,10 +221,10 @@ export async function aggregateCityData(city: string, country: string): Promise<
   const accommodationTypesMap = new Map<string, { count: number; totalRent: number }>();
 
   accommodationList.forEach((exp) => {
-    const acc = exp.accommodation as any;
-    if (acc?.type) {
-      const type = acc.type;
-      const rent = parseFloat(acc.rent || "0");
+    const acc = sanitizeAccommodationStepData(exp.accommodation as any);
+    if (acc.accommodationType) {
+      const type = getAccommodationTypeLabel(acc.accommodationType);
+      const rent = acc.monthlyRent || 0;
       const current = accommodationTypesMap.get(type) || { count: 0, totalRent: 0 };
       accommodationTypesMap.set(type, {
         count: current.count + 1,
@@ -404,7 +407,9 @@ async function generateStudentProfiles(city: string, country: string) {
     .map((profile, index) => {
       const basicInfo = profile.basicInfo as any || {};
       const livingData = profile.livingExpenses as any || {};
-      const accommodationData = profile.accommodation as any || {};
+      const accommodationData = sanitizeAccommodationStepData(
+        profile.accommodation as any,
+      );
       const experienceData = profile.experience as any || {};
 
       return {
@@ -414,7 +419,7 @@ async function generateStudentProfiles(city: string, country: string) {
         studyPeriod: profile.semester || basicInfo.exchangePeriod || "Unknown",
         fieldOfStudy: basicInfo.fieldOfStudy || "Unknown",
         totalMonthlyCost: parseFloat(livingData.total || livingData.totalMonthlyBudget || "0") || (
-          (parseFloat(livingData.rent || accommodationData.rent || "0")) +
+          ((accommodationData.monthlyRent || parseFloat(livingData.rent || "0"))) +
           (parseFloat(livingData.food || "0")) +
           (parseFloat(livingData.transport || "0")) +
           (parseFloat(livingData.social || "0")) +
@@ -423,7 +428,9 @@ async function generateStudentProfiles(city: string, country: string) {
         ),
         overallRating: parseInt(experienceData.overallRating || "0"),
         accommodationType:
-          accommodationData.type ||
+          (accommodationData.accommodationType
+            ? getAccommodationTypeLabel(accommodationData.accommodationType)
+            : "") ||
           "Unknown",
         topTip: extractBestTip(experienceData),
         rawData: {

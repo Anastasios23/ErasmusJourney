@@ -3,6 +3,12 @@ import {
   BASIC_INFO_LEVEL_OPTIONS,
   BASIC_INFO_PERIOD_OPTIONS,
 } from "./basicInformation";
+import {
+  ACCOMMODATION_TYPE_VALUES,
+  BILLS_INCLUDED_VALUES,
+  DIFFICULTY_FINDING_ACCOMMODATION_VALUES,
+  HOW_FOUND_ACCOMMODATION_VALUES,
+} from "./accommodation";
 import { COURSE_RECOGNITION_VALUES } from "./courseMatching";
 
 // ============================================
@@ -237,15 +243,53 @@ export const accommodationSchema = z.object({
 // STEP 3: Accommodation - Minimal Schema for Step Component
 // ============================================
 export const accommodationStepSchema = z.object({
-  type: z.string().min(1, "Accommodation type is required"),
-  rent: z.string().min(1, "Monthly rent is required"),
+  accommodationType: z.enum(ACCOMMODATION_TYPE_VALUES, {
+    errorMap: () => ({ message: "Accommodation type is required" }),
+  }),
+  monthlyRent: z
+    .number({
+      invalid_type_error: "Monthly rent is required",
+      required_error: "Monthly rent is required",
+    })
+    .min(0, "Monthly rent cannot be negative")
+    .max(10000, "Monthly rent seems too high"),
   currency: z.string().default("EUR"),
-  rating: z.number().min(1, "Please provide a rating").max(5),
-  review: z.string().min(1, "Please write a brief review"),
-  // Optional fields
-  duration: z.string().optional(),
-  address: z.string().optional(),
-  distanceToUniversity: z.string().optional(),
+  billsIncluded: z.enum(BILLS_INCLUDED_VALUES, {
+    errorMap: () => ({ message: "Please specify whether bills are included" }),
+  }),
+  areaOrNeighborhood: z
+    .string()
+    .trim()
+    .max(120, "Area or neighborhood is too long")
+    .optional(),
+  minutesToUniversity: z
+    .number()
+    .int("Minutes to university must be a whole number")
+    .min(0, "Minutes to university cannot be negative")
+    .max(240, "Minutes to university seems too high")
+    .optional(),
+  howFoundAccommodation: z
+    .enum(HOW_FOUND_ACCOMMODATION_VALUES)
+    .optional(),
+  difficultyFindingAccommodation: z
+    .enum(DIFFICULTY_FINDING_ACCOMMODATION_VALUES)
+    .optional(),
+  accommodationRating: z
+    .number({
+      invalid_type_error: "Accommodation rating is required",
+      required_error: "Accommodation rating is required",
+    })
+    .min(1, "Please provide a rating")
+    .max(5),
+  wouldRecommend: z.boolean({
+    invalid_type_error: "Please say whether you would recommend it",
+    required_error: "Please say whether you would recommend it",
+  }),
+  accommodationReview: z
+    .string()
+    .trim()
+    .max(1000, "Accommodation review is too long")
+    .optional(),
 });
 
 // Living Expenses Form Schema

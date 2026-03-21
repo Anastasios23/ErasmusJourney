@@ -1,5 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
+import {
+  getAccommodationTypeLabel,
+  getBillsIncludedLabel,
+  getDifficultyFindingAccommodationLabel,
+  getHowFoundAccommodationLabel,
+  sanitizeAccommodationStepData,
+} from "../../src/lib/accommodation";
 
 const prisma = new PrismaClient();
 
@@ -110,12 +117,38 @@ async function generateAccommodationExperience(
 ) {
   const basicInfo = experience.basicInfo as any;
   const livingExpenses = experience.livingExpenses as any;
+  const accommodation = sanitizeAccommodationStepData(accommodationData);
 
   // Extract accommodation details
-  const accommodationType = accommodationData.accommodationType || "Unknown";
-  const neighborhood = accommodationData.location || accommodationData.area;
+  const accommodationType = accommodation.accommodationType
+    ? getAccommodationTypeLabel(accommodation.accommodationType)
+    : "Unknown";
+  const neighborhood = accommodation.areaOrNeighborhood;
   const monthlyRent =
-    accommodationData.monthlyRent || livingExpenses?.expenses?.accommodation;
+    accommodation.monthlyRent || livingExpenses?.expenses?.accommodation;
+  const structuredTips = [
+    accommodation.billsIncluded
+      ? `Bills included: ${getBillsIncludedLabel(accommodation.billsIncluded)}`
+      : null,
+    accommodation.minutesToUniversity !== undefined
+      ? `${accommodation.minutesToUniversity} minutes to university`
+      : null,
+    accommodation.howFoundAccommodation
+      ? `Found via ${getHowFoundAccommodationLabel(
+          accommodation.howFoundAccommodation,
+        )}`
+      : null,
+    accommodation.difficultyFindingAccommodation
+      ? `Finding difficulty: ${getDifficultyFindingAccommodationLabel(
+          accommodation.difficultyFindingAccommodation,
+        )}`
+      : null,
+    typeof accommodation.wouldRecommend === "boolean"
+      ? accommodation.wouldRecommend
+        ? "Student would recommend it"
+        : "Student would not recommend it"
+      : null,
+  ].filter(Boolean);
 
   // Create accommodation experience
   await prisma.generatedAccommodation.create({
@@ -128,20 +161,11 @@ async function generateAccommodationExperience(
       monthlyRent: monthlyRent ? parseFloat(monthlyRent) : null,
       title: `${accommodationType} in ${neighborhood || basicInfo?.hostCity}`,
       description:
-        accommodationData.personalExperience ||
-        accommodationData.description ||
-        "Student accommodation experience",
-      pros: accommodationData.positiveAspects
-        ? JSON.stringify(accommodationData.positiveAspects)
-        : null,
-      cons: accommodationData.negativeAspects
-        ? JSON.stringify(accommodationData.negativeAspects)
-        : null,
-      tips: accommodationData.tips
-        ? JSON.stringify(accommodationData.tips)
-        : null,
-      bookingAdvice:
-        accommodationData.bookingProcess || accommodationData.howToBook,
+        accommodation.accommodationReview || "Anonymous student accommodation snapshot",
+      pros: null,
+      cons: null,
+      tips: structuredTips.length > 0 ? JSON.stringify(structuredTips) : null,
+      bookingAdvice: null,
     },
   });
 }

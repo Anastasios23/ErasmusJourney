@@ -21,6 +21,10 @@ import { StatBar } from "../../src/components/ui/stat-bar";
 import { InsightBadge } from "../../src/components/ui/insight-badge";
 import { prisma } from "../../lib/prisma";
 import CourseMatchingInsights from "../../src/components/CourseMatchingInsights";
+import {
+  getAccommodationTypeLabel,
+  sanitizeAccommodationStepData,
+} from "../../src/lib/accommodation";
 
 interface StudentExperience {
   id: string;
@@ -885,13 +889,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // Transform experiences to anonymized student stories
     const studentExperiences: StudentExperience[] = experiences.map((exp) => {
       const basicInfo = (exp.basicInfo as any) || {};
-      const accommodation = (exp.accommodation as any) || {};
+      const accommodation = sanitizeAccommodationStepData(
+        exp.accommodation as any,
+      );
       const livingExpenses = (exp.livingExpenses as any) || {};
       const expData = (exp.experience as any) || {};
 
       // Calculate overall rating from accommodation rating or default
-      const overallRating =
-        parseFloat(accommodation.accommodationRating) || 4.0;
+      const overallRating = accommodation.accommodationRating || 4.0;
 
       // Calculate monthly budget from living expenses
       const monthlyBudget =
@@ -906,7 +911,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         university: basicInfo.hostUniversity || "University Student",
         semester: exp.semester || basicInfo.exchangePeriod || "Exchange Period",
         overallRating: Math.min(5, Math.max(1, overallRating)),
-        accommodationType: accommodation.accommodationType || "Not specified",
+        accommodationType: accommodation.accommodationType
+          ? getAccommodationTypeLabel(accommodation.accommodationType)
+          : "Not specified",
         monthlyBudget: monthlyBudget > 0 ? Math.round(monthlyBudget) : 800,
         topTip:
           expData.additionalAdvice || livingExpenses.overallBudgetAdvice || "",
@@ -914,11 +921,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           livingExpenses.budgetTips ||
           livingExpenses.moneyManagementTools ||
           "",
-        socialLifeRating: parseFloat(accommodation.accommodationRating) || 4.0,
-        academicRating: parseFloat(accommodation.accommodationRating) || 4.0,
-        wouldRecommend:
-          accommodation.wouldRecommend === "yes" ||
-          accommodation.wouldRecommend === true,
+        socialLifeRating: accommodation.accommodationRating || 4.0,
+        academicRating: accommodation.accommodationRating || 4.0,
+        wouldRecommend: accommodation.wouldRecommend === true,
       };
     });
 

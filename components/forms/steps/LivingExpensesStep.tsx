@@ -29,7 +29,10 @@ export default function LivingExpensesStep({
   const { updateFormData } = useFormContext();
   const [formData, setFormData] = useState<LivingExpensesData>({
     currency: "EUR",
-    rent: data?.accommodation?.rent || "",
+    rent:
+      typeof data?.accommodation?.monthlyRent === "number"
+        ? String(data.accommodation.monthlyRent)
+        : "",
     food: "",
     transport: "",
     social: "",
@@ -43,9 +46,15 @@ export default function LivingExpensesStep({
   useEffect(() => {
     if (data?.livingExpenses) {
       setFormData((prev) => ({ ...prev, ...data.livingExpenses }));
-    } else if (data?.accommodation?.rent && !formData.rent) {
+    } else if (
+      typeof data?.accommodation?.monthlyRent === "number" &&
+      !formData.rent
+    ) {
       // Pre-fill rent if not already set
-      setFormData((prev) => ({ ...prev, rent: data.accommodation.rent }));
+      setFormData((prev) => ({
+        ...prev,
+        rent: String(data.accommodation.monthlyRent),
+      }));
     }
   }, [data]);
 

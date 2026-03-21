@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
 import { prisma } from "../../../lib/prisma";
+import { sanitizeAccommodationStepData } from "../../../src/lib/accommodation";
 
 export default async function handler(
   req: NextApiRequest,
@@ -65,7 +66,9 @@ async function handleGet(
       completedSteps,
       basicInfo: experience.basicInfo,
       courses: experience.courses,
-      accommodation: experience.accommodation,
+      accommodation: sanitizeAccommodationStepData(
+        experience.accommodation as any,
+      ),
       livingExpenses: experience.livingExpenses,
       experience: experience.experience,
       status: experience.status,
@@ -107,7 +110,7 @@ async function handlePut(
       });
     }
 
-    const isComplete = completedSteps?.length >= 4; // All 4 steps completed
+    const isComplete = completedSteps?.length >= 5; // All 5 steps completed
     const status = isComplete ? "IN_PROGRESS" : "DRAFT"; // IN_PROGRESS means ready for final review/submit
 
     const data = {
@@ -118,7 +121,9 @@ async function handlePut(
       lastSavedAt: new Date(),
       basicInfo: basicInfo || undefined,
       courses: courses || undefined,
-      accommodation: accommodation || undefined,
+      accommodation: accommodation
+        ? sanitizeAccommodationStepData(accommodation)
+        : undefined,
       livingExpenses: livingExpenses || undefined,
       experience: experience || undefined,
     };

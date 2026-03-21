@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Star } from "lucide-react";
+
 import { useFormContext } from "../FormProvider";
 import { EnhancedInput } from "@/components/ui/enhanced-input";
 import {
@@ -10,18 +12,16 @@ import {
 } from "@/components/ui/enhanced-select";
 import { EnhancedTextarea } from "@/components/ui/enhanced-textarea";
 import { Label } from "@/components/ui/label";
-import { Star } from "lucide-react";
-
-interface AccommodationData {
-  type: string;
-  rent: string;
-  currency: string;
-  duration: string;
-  rating: number;
-  review: string;
-  address?: string;
-  distanceToUniversity?: string;
-}
+import {
+  ACCOMMODATION_TYPE_OPTIONS,
+  BILLS_INCLUDED_OPTIONS,
+  DIFFICULTY_FINDING_ACCOMMODATION_OPTIONS,
+  HOW_FOUND_ACCOMMODATION_OPTIONS,
+  type AccommodationStepData,
+  createEmptyAccommodationStepData,
+  sanitizeAccommodationStepData,
+} from "@/lib/accommodation";
+import { accommodationStepSchema } from "@/lib/schemas";
 
 interface AccommodationStepProps {
   data: any;
@@ -35,51 +35,73 @@ export default function AccommodationStep({
   onSave,
 }: AccommodationStepProps) {
   const { updateFormData } = useFormContext();
-  const [formData, setFormData] = useState<AccommodationData>({
-    type: "",
-    rent: "",
-    currency: "EUR",
-    duration: "",
-    rating: 0,
-    review: "",
-    address: "",
-    distanceToUniversity: "",
-    ...data?.accommodation,
-  });
-
+  const [formData, setFormData] = useState<AccommodationStepData>(() =>
+    data?.accommodation
+      ? sanitizeAccommodationStepData(data.accommodation)
+      : createEmptyAccommodationStepData(),
+  );
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (data?.accommodation) {
-      setFormData((prev) => ({ ...prev, ...data.accommodation }));
-    }
+    setFormData(
+      data?.accommodation
+        ? sanitizeAccommodationStepData(data.accommodation)
+        : createEmptyAccommodationStepData(),
+    );
   }, [data]);
 
-  const handleInputChange = (field: keyof AccommodationData, value: any) => {
-    const newData = { ...formData, [field]: value };
-    setFormData(newData);
-    updateFormData("accommodation", newData);
+  const persist = (nextData: AccommodationStepData) => {
+    const sanitized = sanitizeAccommodationStepData(nextData);
+    setFormData(sanitized);
+    updateFormData("accommodation", sanitized);
+  };
+
+  const handleInputChange = <K extends keyof AccommodationStepData>(
+    field: K,
+    value: AccommodationStepData[K],
+  ) => {
+    persist({ ...formData, [field]: value });
 
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
+      setErrors((current) => ({ ...current, [field]: "" }));
     }
+  };
+
+  const handleNumberInputChange = (
+    field: "monthlyRent" | "minutesToUniversity",
+    value: string,
+  ) => {
+    handleInputChange(
+      field,
+      value === "" || !/^-?\d+(\.\d+)?$/.test(value)
+        ? undefined
+        : (Number(value) as any),
+    );
   };
 
   const validate = () => {
-    const newErrors: Record<string, string> = {};
-    
-    if (!formData.type) newErrors.type = "Required";
-    if (!formData.rent) newErrors.rent = "Required";
-    if (!formData.rating) newErrors.rating = "Please provide a rating";
-    if (!formData.review) newErrors.review = "Please write a brief review";
+    const result = accommodationStepSchema.safeParse(formData);
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    if (result.success) {
+      setErrors({});
+      return true;
+    }
+
+    const nextErrors: Record<string, string> = {};
+    result.error.errors.forEach((error) => {
+      const path = error.path.join(".");
+      nextErrors[path || "_form"] = error.message;
+    });
+
+    setErrors(nextErrors);
+    return false;
   };
 
   const handleContinue = () => {
+    const sanitized = sanitizeAccommodationStepData(formData);
+
     if (validate()) {
-      onComplete({ accommodation: formData });
+      onComplete({ accommodation: sanitized });
     } else {
       const firstError = document.querySelector(".text-red-500");
       firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -88,15 +110,24 @@ export default function AccommodationStep({
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
+      <div className="bg-orange-50 border border-orange-100 rounded-xl p-4">
+        <p className="text-sm text-orange-950">
+          Step 3 now stores only anonymous, structured housing signals. Share a
+          general area if useful, but do not include an exact address or any
+          landlord contact details.
+        </p>
+      </div>
+
       <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
         <div className="flex items-center gap-3 mb-6">
           <div className="h-8 w-1 bg-orange-500 rounded-full"></div>
           <div>
             <h3 className="text-xl font-semibold text-gray-900">
-              Accommodation Details
+              Housing Snapshot
             </h3>
             <p className="text-sm text-gray-500">
-              Share your living experience to help future students find housing.
+              Capture the structured housing details that future students can
+              compare safely across cities and neighborhoods.
             </p>
           </div>
         </div>
@@ -105,35 +136,41 @@ export default function AccommodationStep({
           <div className="space-y-2">
             <Label>Accommodation Type *</Label>
             <EnhancedSelect
-              value={formData.type}
-              onValueChange={(value) => handleInputChange("type", value)}
+              value={formData.accommodationType}
+              onValueChange={(value) =>
+                handleInputChange("accommodationType", value as any)
+              }
             >
-              <EnhancedSelectTrigger error={errors.type}>
+              <EnhancedSelectTrigger error={errors.accommodationType}>
                 <EnhancedSelectValue placeholder="Select type" />
               </EnhancedSelectTrigger>
               <EnhancedSelectContent>
-                <EnhancedSelectItem value="Dormitory">University Dormitory</EnhancedSelectItem>
-                <EnhancedSelectItem value="Shared Apartment">Shared Apartment (Flatshare)</EnhancedSelectItem>
-                <EnhancedSelectItem value="Private Studio">Private Studio/Apartment</EnhancedSelectItem>
-                <EnhancedSelectItem value="Host Family">Host Family</EnhancedSelectItem>
-                <EnhancedSelectItem value="Other">Other</EnhancedSelectItem>
+                {ACCOMMODATION_TYPE_OPTIONS.map((option) => (
+                  <EnhancedSelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </EnhancedSelectItem>
+                ))}
               </EnhancedSelectContent>
             </EnhancedSelect>
-            {errors.type && (
-              <p className="text-sm text-red-500 mt-1">{errors.type}</p>
+            {errors.accommodationType && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.accommodationType}
+              </p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="rent">Monthly Rent *</Label>
+            <Label htmlFor="monthlyRent">Monthly Rent *</Label>
             <div className="flex gap-2">
               <EnhancedInput
-                id="rent"
+                id="monthlyRent"
                 type="number"
                 placeholder="e.g. 450"
-                value={formData.rent}
-                onChange={(e) => handleInputChange("rent", e.target.value)}
-                error={errors.rent}
+                value={formData.monthlyRent ?? ""}
+                onChange={(event) =>
+                  handleNumberInputChange("monthlyRent", event.target.value)
+                }
+                error={errors.monthlyRent}
                 className="flex-1"
               />
               <div className="w-24">
@@ -155,23 +192,124 @@ export default function AccommodationStep({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="address">Address / Area (Optional)</Label>
+            <Label>Bills Included *</Label>
+            <EnhancedSelect
+              value={formData.billsIncluded}
+              onValueChange={(value) =>
+                handleInputChange("billsIncluded", value as any)
+              }
+            >
+              <EnhancedSelectTrigger error={errors.billsIncluded}>
+                <EnhancedSelectValue placeholder="Select one" />
+              </EnhancedSelectTrigger>
+              <EnhancedSelectContent>
+                {BILLS_INCLUDED_OPTIONS.map((option) => (
+                  <EnhancedSelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </EnhancedSelectItem>
+                ))}
+              </EnhancedSelectContent>
+            </EnhancedSelect>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Would Recommend? *</Label>
+            <EnhancedSelect
+              value={
+                typeof formData.wouldRecommend === "boolean"
+                  ? formData.wouldRecommend
+                    ? "yes"
+                    : "no"
+                  : undefined
+              }
+              onValueChange={(value) =>
+                handleInputChange("wouldRecommend", value === "yes")
+              }
+            >
+              <EnhancedSelectTrigger error={errors.wouldRecommend}>
+                <EnhancedSelectValue placeholder="Select one" />
+              </EnhancedSelectTrigger>
+              <EnhancedSelectContent>
+                <EnhancedSelectItem value="yes">Yes</EnhancedSelectItem>
+                <EnhancedSelectItem value="no">No</EnhancedSelectItem>
+              </EnhancedSelectContent>
+            </EnhancedSelect>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="areaOrNeighborhood">Area or Neighborhood</Label>
             <EnhancedInput
-              id="address"
-              placeholder="e.g. City Center, near Central Station"
-              value={formData.address}
-              onChange={(e) => handleInputChange("address", e.target.value)}
+              id="areaOrNeighborhood"
+              placeholder="e.g. Gracia, city center, near campus"
+              value={formData.areaOrNeighborhood || ""}
+              onChange={(event) =>
+                handleInputChange("areaOrNeighborhood", event.target.value)
+              }
+              helperText="Keep this general. Do not enter a full address."
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="distance">Distance to University (Optional)</Label>
+            <Label htmlFor="minutesToUniversity">Minutes to University</Label>
             <EnhancedInput
-              id="distance"
-              placeholder="e.g. 15 min walk, 20 min bus"
-              value={formData.distanceToUniversity}
-              onChange={(e) => handleInputChange("distanceToUniversity", e.target.value)}
+              id="minutesToUniversity"
+              type="number"
+              placeholder="e.g. 20"
+              value={formData.minutesToUniversity ?? ""}
+              onChange={(event) =>
+                handleNumberInputChange(
+                  "minutesToUniversity",
+                  event.target.value,
+                )
+              }
+              error={errors.minutesToUniversity}
+              helperText="Approximate one-way travel time in minutes."
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label>How Did You Find It?</Label>
+            <EnhancedSelect
+              value={formData.howFoundAccommodation}
+              onValueChange={(value) =>
+                handleInputChange("howFoundAccommodation", value as any)
+              }
+            >
+              <EnhancedSelectTrigger>
+                <EnhancedSelectValue placeholder="Optional" />
+              </EnhancedSelectTrigger>
+              <EnhancedSelectContent>
+                {HOW_FOUND_ACCOMMODATION_OPTIONS.map((option) => (
+                  <EnhancedSelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </EnhancedSelectItem>
+                ))}
+              </EnhancedSelectContent>
+            </EnhancedSelect>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Difficulty Finding Accommodation</Label>
+            <EnhancedSelect
+              value={formData.difficultyFindingAccommodation}
+              onValueChange={(value) =>
+                handleInputChange(
+                  "difficultyFindingAccommodation",
+                  value as any,
+                )
+              }
+            >
+              <EnhancedSelectTrigger>
+                <EnhancedSelectValue placeholder="Optional" />
+              </EnhancedSelectTrigger>
+              <EnhancedSelectContent>
+                {DIFFICULTY_FINDING_ACCOMMODATION_OPTIONS.map((option) => (
+                  <EnhancedSelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </EnhancedSelectItem>
+                ))}
+              </EnhancedSelectContent>
+            </EnhancedSelect>
           </div>
         </div>
       </div>
@@ -180,24 +318,26 @@ export default function AccommodationStep({
         <div className="flex items-center gap-3 mb-6">
           <div className="h-8 w-1 bg-yellow-500 rounded-full"></div>
           <h3 className="text-xl font-semibold text-gray-900">
-            Review & Rating
+            Recommendation Snapshot
           </h3>
         </div>
 
         <div className="space-y-6">
           <div className="space-y-2">
-            <Label>Overall Rating *</Label>
+            <Label>Accommodation Rating *</Label>
             <div className="flex gap-2">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
                   type="button"
-                  onClick={() => handleInputChange("rating", star)}
+                  onClick={() =>
+                    handleInputChange("accommodationRating", star)
+                  }
                   className="focus:outline-none transition-transform hover:scale-110"
                 >
                   <Star
                     className={`w-8 h-8 ${
-                      star <= formData.rating
+                      star <= (formData.accommodationRating || 0)
                         ? "fill-yellow-400 text-yellow-400"
                         : "text-gray-300 hover:text-yellow-200"
                     }`}
@@ -205,20 +345,24 @@ export default function AccommodationStep({
                 </button>
               ))}
             </div>
-            {errors.rating && (
-              <p className="text-sm text-red-500 mt-1">{errors.rating}</p>
+            {errors.accommodationRating && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.accommodationRating}
+              </p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="review">Review *</Label>
+            <Label htmlFor="accommodationReview">Accommodation Review</Label>
             <EnhancedTextarea
-              id="review"
-              placeholder="Describe your accommodation experience. Was it clean? Social? Good location? Any tips for finding housing?"
-              value={formData.review}
-              onChange={(e) => handleInputChange("review", e.target.value)}
+              id="accommodationReview"
+              placeholder="Optional: share a short anonymous summary of the space, location, or booking experience."
+              value={formData.accommodationReview || ""}
+              onChange={(event) =>
+                handleInputChange("accommodationReview", event.target.value)
+              }
               rows={5}
-              error={errors.review}
+              error={errors.accommodationReview}
             />
           </div>
         </div>
@@ -226,7 +370,12 @@ export default function AccommodationStep({
 
       <div className="flex justify-between items-center pt-6 border-t border-gray-100">
         <button
-          onClick={() => onSave({ accommodation: formData })}
+          onClick={() =>
+            onSave({
+              ...data,
+              accommodation: sanitizeAccommodationStepData(formData),
+            })
+          }
           className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
         >
           Save Draft

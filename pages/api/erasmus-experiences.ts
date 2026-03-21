@@ -3,6 +3,14 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "./auth/[...nextauth]";
 import { randomUUID } from "crypto";
 
+import {
+  createEmptyAccommodationStepData,
+  getAccommodationTypeLabel,
+  getBillsIncludedLabel,
+  getDifficultyFindingAccommodationLabel,
+  getHowFoundAccommodationLabel,
+  sanitizeAccommodationStepData,
+} from "../../src/lib/accommodation";
 import { updateCityStatistics } from "../../src/services/statisticsService";
 import {
   buildExperienceSemester,
@@ -132,6 +140,7 @@ function serializeExperienceForClient<T extends Record<string, any>>(
   return {
     ...experience,
     basicInfo: sanitizeBasicInformationData(experience.basicInfo),
+    accommodation: sanitizeAccommodationStepData(experience.accommodation),
     courses: sanitizeCourseMappingsData(experience.courses),
   };
 }
@@ -308,7 +317,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
               submittedAt: null,
               basicInfo: {},
               courses: [],
-              accommodation: {},
+              accommodation: createEmptyAccommodationStepData(),
               livingExpenses: {},
               experience: {},
               lastSavedAt: new Date(),
@@ -332,7 +341,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
             // Initialize empty data structures
             basicInfo: {},
             courses: [],
-            accommodation: {},
+            accommodation: createEmptyAccommodationStepData(),
             livingExpenses: {},
             experience: {},
           },
@@ -386,6 +395,12 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
   if (updateData.courses !== undefined) {
     updateData.courses = sanitizeCourseMappingsData(updateData.courses);
+  }
+
+  if (updateData.accommodation !== undefined) {
+    updateData.accommodation = sanitizeAccommodationStepData(
+      updateData.accommodation,
+    );
   }
 
   // Find the existing experience with retry logic
@@ -473,6 +488,10 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       submissionData.semester = basicInfoContext.semester;
     }
 
+    submissionData.accommodation = sanitizeAccommodationStepData(
+      updateData.accommodation ?? existingExperience.accommodation,
+    );
+
     // --- VALIDATION START ---
     const errors: string[] = [];
 
@@ -521,13 +540,15 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     );
 
     if (
-      !accommodationVal.type ||
-      !accommodationVal.rent ||
-      !accommodationVal.rating
+      !accommodationVal.accommodationType ||
+      typeof accommodationVal.monthlyRent !== "number" ||
+      !accommodationVal.billsIncluded ||
+      typeof accommodationVal.accommodationRating !== "number" ||
+      typeof accommodationVal.wouldRecommend !== "boolean"
     ) {
       console.log("[API] Accommodation Validation Failed. Missing fields.");
       errors.push(
-        "Accommodation details are incomplete (Type, Rent, Rating required).",
+        "Accommodation details are incomplete (type, monthly rent, bills included, rating, and recommendation are required).",
       );
     }
 
@@ -596,7 +617,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
         // B. Aggregate Accommodation Review
         if (experience.accommodation) {
-          const accomData = experience.accommodation as any;
+          const accomData = sanitizeAccommodationStepData(
+            experience.accommodation as any,
+          );
 
           // Delete existing review for this experience
           await tx.accommodationReview.deleteMany({
@@ -604,19 +627,52 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
           });
 
           // Create new review
-          if (accomData.type && accomData.rent) {
+          if (
+            accomData.accommodationType &&
+            typeof accomData.monthlyRent === "number" &&
+            typeof accomData.accommodationRating === "number"
+          ) {
+            const structuredNotes = [
+              accomData.billsIncluded
+                ? `Bills included: ${getBillsIncludedLabel(accomData.billsIncluded)}`
+                : null,
+              accomData.minutesToUniversity !== undefined
+                ? `${accomData.minutesToUniversity} minutes to university`
+                : null,
+              accomData.howFoundAccommodation
+                ? `Found via ${getHowFoundAccommodationLabel(
+                    accomData.howFoundAccommodation,
+                  )}`
+                : null,
+              accomData.difficultyFindingAccommodation
+                ? `Finding difficulty: ${getDifficultyFindingAccommodationLabel(
+                    accomData.difficultyFindingAccommodation,
+                  )}`
+                : null,
+              typeof accomData.wouldRecommend === "boolean"
+                ? accomData.wouldRecommend
+                  ? "Student would recommend it"
+                  : "Student would not recommend it"
+                : null,
+            ].filter(Boolean);
+
             await tx.accommodationReview.create({
               data: {
                 experienceId: experience.id,
                 name:
-                  accomData.address ||
-                  `${accomData.type} in ${experience.hostCity || "City"}`,
-                type: accomData.type,
-                address: accomData.address || null,
-                pricePerMonth: parseFloat(accomData.rent) || 0,
+                  `${getAccommodationTypeLabel(accomData.accommodationType)} in ${
+                    accomData.areaOrNeighborhood || experience.hostCity || "City"
+                  }`,
+                type: accomData.accommodationType,
+                neighborhood: accomData.areaOrNeighborhood || null,
+                pricePerMonth: accomData.monthlyRent,
                 currency: accomData.currency || "EUR",
-                rating: parseInt(accomData.rating) || 0,
-                comment: accomData.review || null,
+                rating: accomData.accommodationRating,
+                comment:
+                  accomData.accommodationReview ||
+                  (structuredNotes.length > 0
+                    ? structuredNotes.join(". ")
+                    : null),
               },
             });
           }

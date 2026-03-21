@@ -2,6 +2,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
 import { prisma } from "../../../lib/prisma";
+import {
+  getAccommodationTypeLabel,
+  sanitizeAccommodationStepData,
+} from "../../../src/lib/accommodation";
 import { updateCityStatistics } from "../../../src/services/statisticsService";
 import { sanitizeCourseMappingsData } from "../../../src/lib/courseMatching";
 
@@ -55,7 +59,9 @@ async function handleGet(res: NextApiResponse, userId: string) {
       formData: {
         basicInfo: experience.basicInfo,
         courses: sanitizeCourseMappingsData(experience.courses),
-        accommodation: experience.accommodation,
+        accommodation: sanitizeAccommodationStepData(
+          experience.accommodation as any,
+        ),
         livingExpenses: experience.livingExpenses,
         experience: experience.experience,
       },
@@ -107,8 +113,11 @@ async function handlePut(
       if (formData.courses !== undefined) {
         data.courses = sanitizeCourseMappingsData(formData.courses);
       }
-      if (formData.accommodation !== undefined)
-        data.accommodation = formData.accommodation;
+      if (formData.accommodation !== undefined) {
+        data.accommodation = sanitizeAccommodationStepData(
+          formData.accommodation,
+        );
+      }
       if (formData.livingExpenses !== undefined)
         data.livingExpenses = formData.livingExpenses;
       if (formData.experience !== undefined) data.experience = formData.experience;
@@ -154,7 +163,9 @@ async function handlePut(
 
         // B. Aggregate Accommodation Review
         if (experience.accommodation) {
-          const accomData = experience.accommodation as any;
+          const accomData = sanitizeAccommodationStepData(
+            experience.accommodation as any,
+          );
           
           // Delete existing review for this experience
           await tx.accommodationReview.deleteMany({
@@ -162,18 +173,24 @@ async function handlePut(
           });
 
           // Create new review
-          if (accomData.type && accomData.rent) {
+          if (
+            accomData.accommodationType &&
+            typeof accomData.monthlyRent === "number" &&
+            typeof accomData.accommodationRating === "number"
+          ) {
              await tx.accommodationReview.create({
               data: {
                 experienceId: experience.id,
-                name: accomData.address || `${accomData.type} in ${experience.hostCity || 'City'}`,
-                type: accomData.type,
-                address: accomData.address || null,
-                pricePerMonth: parseFloat(accomData.rent) || 0,
+                name: `${getAccommodationTypeLabel(
+                  accomData.accommodationType,
+                )} in ${accomData.areaOrNeighborhood || experience.hostCity || "City"}`,
+                type: accomData.accommodationType,
+                address: null,
+                neighborhood: accomData.areaOrNeighborhood || null,
+                pricePerMonth: accomData.monthlyRent,
                 currency: accomData.currency || "EUR",
-                rating: parseInt(accomData.rating) || 0,
-                comment: accomData.review || null,
-                // Optional: Map other fields if schema supports them
+                rating: accomData.accommodationRating,
+                comment: accomData.accommodationReview || null,
               },
             });
           }

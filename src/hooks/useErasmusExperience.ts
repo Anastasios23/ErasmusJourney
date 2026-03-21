@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import {
+  createEmptyAccommodationStepData,
+  sanitizeAccommodationStepData,
+} from "../lib/accommodation";
 import { sanitizeCourseMappingsData } from "../lib/courseMatching";
 
 // Module-level deduplication tracker
@@ -116,7 +120,9 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
                 : [],
               basicInfo: experience.basicInfo || {},
               courses: sanitizeCourseMappingsData(experience.courses),
-              accommodation: experience.accommodation || {},
+              accommodation: sanitizeAccommodationStepData(
+                experience.accommodation,
+              ),
               livingExpenses: experience.livingExpenses || {},
               experience: experience.experience || {},
               status: experience.status as any,
@@ -146,7 +152,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
             completedSteps: [],
             basicInfo: {},
             courses: [],
-            accommodation: {},
+            accommodation: createEmptyAccommodationStepData(),
             livingExpenses: {},
             experience: {},
             status: "DRAFT",
@@ -233,6 +239,10 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
                   stepData.courses !== undefined
                     ? sanitizeCourseMappingsData(stepData.courses)
                     : prev.courses,
+                accommodation:
+                  stepData.accommodation !== undefined
+                    ? sanitizeAccommodationStepData(stepData.accommodation)
+                    : prev.accommodation,
                 lastSavedAt: updatedExperience.lastSavedAt,
               }
             : null,
@@ -379,7 +389,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
         completedSteps: [],
         basicInfo: null,
         courses: null,
-        accommodation: null,
+        accommodation: createEmptyAccommodationStepData(),
         livingExpenses: null,
         experience: null,
         status: "DRAFT",

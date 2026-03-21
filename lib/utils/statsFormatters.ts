@@ -247,6 +247,11 @@ export function getAccommodationTypeLabel(type: string): string {
     HOMESTAY: "Homestay",
     STUDIO: "Studio",
     OTHER: "Other",
+    student_residence: "Student residence",
+    shared_apartment: "Shared apartment",
+    private_apartment: "Private apartment",
+    homestay: "Homestay",
+    other: "Other",
   };
   return labels[type] || type;
 }

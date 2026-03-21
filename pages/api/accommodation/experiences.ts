@@ -1,5 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/prisma";
+import {
+  getAccommodationTypeLabel,
+  getBillsIncludedLabel,
+  getDifficultyFindingAccommodationLabel,
+  getHowFoundAccommodationLabel,
+  sanitizeAccommodationStepData,
+} from "../../../src/lib/accommodation";
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,10 +17,7 @@ export default async function handler(
   }
 
   try {
-    // Optionally accept filters from query params
     const { city, country, universityId, accommodationType } = req.query;
-
-    // Build where clause for filtering
     const whereClause: any = {};
 
     if (city) {
@@ -46,7 +50,6 @@ export default async function handler(
       };
     }
 
-    // Query accommodation reviews with relations
     const reviews = await prisma.accommodationReview.findMany({
       where: whereClause,
       include: {
@@ -74,74 +77,82 @@ export default async function handler(
       orderBy: { createdAt: "desc" },
     });
 
-    // Format and send only public fields
     const accommodationExperiences = reviews.map((review) => {
       const experience = review.experience;
       const expData = (experience.experience as any) || {};
-      const accomData = (experience.accommodation as any) || {};
+      const accommodation = sanitizeAccommodationStepData(
+        experience.accommodation as any,
+      );
+      const accommodationTypeCode =
+        review.type || accommodation.accommodationType;
+      const structuredTips = [
+        accommodation.billsIncluded
+          ? `Bills included: ${getBillsIncludedLabel(
+              accommodation.billsIncluded,
+            )}`
+          : null,
+        accommodation.minutesToUniversity !== undefined
+          ? `${accommodation.minutesToUniversity} minutes to university`
+          : null,
+        accommodation.howFoundAccommodation
+          ? `Found via ${getHowFoundAccommodationLabel(
+              accommodation.howFoundAccommodation,
+            )}`
+          : null,
+        accommodation.difficultyFindingAccommodation
+          ? `Finding difficulty: ${getDifficultyFindingAccommodationLabel(
+              accommodation.difficultyFindingAccommodation,
+            )}`
+          : null,
+      ]
+        .filter(Boolean)
+        .join(" | ");
 
       return {
         id: review.id,
-        // Student info (anonymized)
         studentName: experience.users?.firstName
           ? `${experience.users.firstName} ${experience.users.lastName?.charAt(0)}.`
           : "Anonymous Student",
-
-        // Accommodation details
-        accommodationType: review.type || "Not specified",
-        address: review.address || accomData.address,
-        neighborhood: review.neighborhood || accomData.neighborhood,
+        accommodationType: accommodationTypeCode
+          ? getAccommodationTypeLabel(accommodationTypeCode)
+          : "Not specified",
+        accommodationTypeCode: accommodationTypeCode || null,
+        neighborhood: review.neighborhood || accommodation.areaOrNeighborhood,
         city: experience.hostCity || "Unknown City",
         country: experience.hostCountry || "Unknown Country",
-
-        // Financial details
-        monthlyRent: review.pricePerMonth || 0,
-        billsIncluded: accomData.billsIncluded, // Still from JSON if not in model
-        utilityCosts: accomData.utilityCosts || accomData.monthlyUtilities,
-        depositAmount: accomData.depositAmount,
-
-        // Rating and evaluation
-        rating: review.rating || 0,
-        wouldRecommend: accomData.wouldRecommend, // Still from JSON
-
-        // Experience details - mapped from general experience if specific fields missing
-        pros: accomData.pros
-          ? [accomData.pros]
-          : expData.bestExperience
-            ? [expData.bestExperience]
-            : [],
-        cons: accomData.cons
-          ? [accomData.cons]
-          : expData.worstExperience
-            ? [expData.worstExperience]
-            : [],
-        tips: expData.generalTips || accomData.tips,
-        additionalNotes: review.comment || expData.generalTips,
-
-        // Practical info
-        facilities: accomData.facilities || {},
-        transportLinks: accomData.transportLinks || accomData.transport,
-        nearbyAmenities: accomData.nearbyAmenities || accomData.amenities || [],
-        findingDifficulty: accomData.findingDifficulty,
-
-        // Academic context
+        monthlyRent: review.pricePerMonth || accommodation.monthlyRent || 0,
+        currency: review.currency || accommodation.currency || "EUR",
+        billsIncluded: accommodation.billsIncluded,
+        minutesToUniversity: accommodation.minutesToUniversity,
+        howFoundAccommodation: accommodation.howFoundAccommodation,
+        difficultyFindingAccommodation:
+          accommodation.difficultyFindingAccommodation,
+        rating: review.rating || accommodation.accommodationRating || 0,
+        wouldRecommend: accommodation.wouldRecommend,
+        pros: expData.bestExperience ? [expData.bestExperience] : [],
+        cons: expData.worstExperience ? [expData.worstExperience] : [],
+        tips: expData.generalTips || structuredTips || undefined,
+        additionalNotes:
+          accommodation.accommodationReview ||
+          review.comment ||
+          structuredTips ||
+          expData.generalTips,
+        findingDifficulty: accommodation.difficultyFindingAccommodation,
         university: experience.hostUniversity?.name || "Unknown University",
         universityInCyprus:
           experience.homeUniversity?.name || "Unknown University",
-
-        // Metadata
         createdAt: review.createdAt,
-        verified: true, // Assumed verified if it's in the review table
+        verified: true,
       };
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       accommodations: accommodationExperiences,
       total: accommodationExperiences.length,
     });
   } catch (error) {
     console.error("Error fetching accommodation experiences:", error);
-    res
+    return res
       .status(500)
       .json({ error: "Failed to fetch accommodation experiences" });
   }

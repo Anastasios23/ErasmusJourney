@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma";
+import { sanitizeAccommodationStepData } from "../lib/accommodation";
 
 export async function updateCityStatistics(city: string, country: string) {
   try {
@@ -37,12 +38,12 @@ export async function updateCityStatistics(city: string, country: string) {
 
     experiences.forEach((exp) => {
       const expenses = exp.livingExpenses as any;
-      const accommodation = exp.accommodation as any;
+      const accommodation = sanitizeAccommodationStepData(exp.accommodation as any);
 
       // Rent (prefer accommodation section, fallback to expenses)
       let rent = 0;
-      if (accommodation?.rent) {
-        rent = parseFloat(accommodation.rent);
+      if (typeof accommodation.monthlyRent === "number") {
+        rent = accommodation.monthlyRent;
       } else if (expenses?.rent) {
         rent = parseFloat(expenses.rent);
       }
