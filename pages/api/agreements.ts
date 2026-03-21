@@ -1,5 +1,74 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "../../lib/prisma";
+import {
+  ALL_UNIVERSITY_AGREEMENTS,
+  CYPRUS_UNIVERSITIES,
+  type UniversityAgreement,
+} from "../../src/data/universityAgreements";
+
+function normalizeText(value?: string | null): string {
+  return (value || "").trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+function toCanonicalLevel(
+  level?: string,
+): "bachelor" | "master" | "phd" | null {
+  const normalized = normalizeText(level);
+
+  if (!normalized || normalized === "all") {
+    return null;
+  }
+
+  if (
+    normalized === "bachelor" ||
+    normalized === "master" ||
+    normalized === "phd"
+  ) {
+    return normalized;
+  }
+
+  return null;
+}
+
+function getCanonicalHomeUniversity(input?: string): {
+  code: string;
+  name: string;
+} | null {
+  const normalized = normalizeText(input);
+
+  if (!normalized || normalized === "all") {
+    return null;
+  }
+
+  const matched = CYPRUS_UNIVERSITIES.find((university) => {
+    return (
+      normalizeText(university.code) === normalized ||
+      normalizeText(university.name) === normalized ||
+      normalizeText(university.shortName) === normalized
+    );
+  });
+
+  if (!matched) {
+    return null;
+  }
+
+  return {
+    code: matched.code,
+    name: matched.name,
+  };
+}
+
+function buildAgreementId(agreement: UniversityAgreement): string {
+  return [
+    agreement.homeUniversity,
+    agreement.homeDepartment,
+    agreement.partnerUniversity,
+    agreement.partnerCity,
+    agreement.partnerCountry,
+    agreement.academicLevel || "all",
+  ]
+    .map((part) => normalizeText(part))
+    .join("|");
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,94 +81,86 @@ export default async function handler(
   try {
     const { homeUniversity, department, level } = req.query;
 
-    // Build the where clause dynamically
-    const whereClause: any = {
-      isActive: true,
-    };
+    const homeUniversityInput =
+      typeof homeUniversity === "string" ? homeUniversity : undefined;
+    const departmentInput =
+      typeof department === "string" ? department : undefined;
+    const levelInput = typeof level === "string" ? level : undefined;
 
-    // Filter by home university if provided
-    if (homeUniversity && homeUniversity !== "all") {
-      // Find university by name or code
-      const university = await prisma.university.findFirst({
-        where: {
-          OR: [
-            { name: homeUniversity as string },
-            { code: homeUniversity as string },
-          ],
-        },
-      });
+    const canonicalHomeUniversity =
+      getCanonicalHomeUniversity(homeUniversityInput);
+    const normalizedDepartment = normalizeText(departmentInput);
+    const requestedLevel = toCanonicalLevel(levelInput);
 
-      if (university) {
-        whereClause.homeUniversityId = university.id;
-      } else {
-        // If no university found, return empty results
-        return res.status(200).json({ agreements: [] });
-      }
+    if (
+      homeUniversityInput &&
+      homeUniversityInput !== "all" &&
+      !canonicalHomeUniversity
+    ) {
+      return res.status(200).json({ agreements: [], total: 0 });
     }
 
-    // Filter by department if provided
-    if (department && department !== "all") {
-      // Find department by name
-      const departmentRecord = await prisma.department.findFirst({
-        where: {
-          name: department as string,
-        },
-      });
-
-      if (departmentRecord) {
-        whereClause.homeDepartmentId = departmentRecord.id;
-      } else {
-        // If no department found, return empty results
-        return res.status(200).json({ agreements: [] });
+    const filteredAgreements = ALL_UNIVERSITY_AGREEMENTS.filter((agreement) => {
+      if (
+        canonicalHomeUniversity &&
+        normalizeText(agreement.homeUniversity) !==
+          normalizeText(canonicalHomeUniversity.code)
+      ) {
+        return false;
       }
-    }
 
-    // Fetch agreements with all related data
-    const agreements = await prisma.agreement.findMany({
-      where: whereClause,
-      include: {
-        homeUniversity: true,
-        homeDepartment: {
-          include: {
-            faculty: true,
-          },
-        },
-        partnerUniversity: true,
-      },
-      orderBy: [
-        { partnerCountry: "asc" },
-        { partnerCity: "asc" },
-        { partnerUniversity: { name: "asc" } },
-      ],
+      if (
+        normalizedDepartment &&
+        normalizedDepartment !== "all" &&
+        normalizeText(agreement.homeDepartment) !== normalizedDepartment
+      ) {
+        return false;
+      }
+
+      if (!requestedLevel) {
+        return true;
+      }
+
+      const agreementLevel = normalizeText(agreement.academicLevel || "all");
+      return agreementLevel === "all" || agreementLevel === requestedLevel;
     });
 
-    // Format the response to match the expected structure
-    const formattedAgreements = agreements.map((agreement) => ({
-      id: agreement.id,
-      homeUniversity: {
-        id: agreement.homeUniversity.id,
-        name: agreement.homeUniversity.name,
-        code: agreement.homeUniversity.code,
-      },
-      homeDepartment: {
-        id: agreement.homeDepartment.id,
-        name: agreement.homeDepartment.name,
-        faculty: agreement.homeDepartment.faculty?.name,
-      },
-      partnerUniversity: {
-        id: agreement.partnerUniversity.id,
-        name: agreement.partnerUniversity.name,
-        code: agreement.partnerUniversity.code,
-        country: agreement.partnerUniversity.country,
-        city: agreement.partnerUniversity.city,
-      },
-      partnerCity: agreement.partnerCity,
-      partnerCountry: agreement.partnerCountry,
-      agreementType: agreement.agreementType,
-      isActive: agreement.isActive,
-      startDate: agreement.startDate,
-      endDate: agreement.endDate,
-    }));
+    const formattedAgreements = filteredAgreements.map((agreement) => {
+      const homeUniversityProfile = CYPRUS_UNIVERSITIES.find(
+        (university) =>
+          normalizeText(university.code) ===
+          normalizeText(agreement.homeUniversity),
+      );
+
+      return {
+        id: buildAgreementId(agreement),
+        homeUniversity: {
+          id: homeUniversityProfile?.code || agreement.homeUniversity,
+          name: homeUniversityProfile?.name || agreement.homeUniversity,
+          code: homeUniversityProfile?.code || agreement.homeUniversity,
+        },
+        homeDepartment: {
+          id: normalizeText(agreement.homeDepartment),
+          name: agreement.homeDepartment,
+          faculty: undefined,
+        },
+        partnerUniversity: {
+          id: normalizeText(
+            `${agreement.partnerUniversity}|${agreement.partnerCity}|${agreement.partnerCountry}`,
+          ),
+          name: agreement.partnerUniversity,
+          code: null,
+          country: agreement.partnerCountry,
+          city: agreement.partnerCity,
+        },
+        partnerCity: agreement.partnerCity,
+        partnerCountry: agreement.partnerCountry,
+        agreementType: agreement.agreementType || "student",
+        isActive: true,
+        startDate: null,
+        endDate: null,
+      };
+    });
 
     res.status(200).json({
       agreements: formattedAgreements,

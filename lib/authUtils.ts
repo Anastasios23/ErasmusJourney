@@ -1,50 +1,46 @@
+import { CYPRUS_UNIVERSITIES } from "../src/data/universityAgreements";
+
 export interface CyprusUniversityDomainInfo {
   code: string;
   name: string;
   domain: string;
 }
 
+const CYPRUS_UNIVERSITIES_BY_CODE = new Map(
+  CYPRUS_UNIVERSITIES.map((university) => [
+    university.code.toLowerCase(),
+    university,
+  ]),
+);
+
+const CYPRUS_UNIVERSITY_DOMAIN_TO_CODE: Record<string, string> = {
+  "ucy.ac.cy": "UCY",
+  "unic.ac.cy": "UNIC",
+  "euc.ac.cy": "EUC",
+  "frederick.ac.cy": "Frederick",
+  "uclancyprus.ac.cy": "UCLan",
+};
+
 export const CYPRUS_UNIVERSITY_DOMAIN_MAP: Record<
   string,
   Omit<CyprusUniversityDomainInfo, "domain">
-> = {
-  "ucy.ac.cy": {
-    code: "UCY",
-    name: "University of Cyprus",
+> = Object.entries(CYPRUS_UNIVERSITY_DOMAIN_TO_CODE).reduce(
+  (accumulator, [domain, code]) => {
+    const university = CYPRUS_UNIVERSITIES_BY_CODE.get(code.toLowerCase());
+
+    if (!university) {
+      return accumulator;
+    }
+
+    accumulator[domain] = {
+      code: university.code,
+      name: university.name,
+    };
+
+    return accumulator;
   },
-  "cut.ac.cy": {
-    code: "CUT",
-    name: "Cyprus University of Technology",
-  },
-  "ouc.ac.cy": {
-    code: "OUC",
-    name: "Open University of Cyprus",
-  },
-  "unic.ac.cy": {
-    code: "UNIC",
-    name: "University of Nicosia",
-  },
-  "euc.ac.cy": {
-    code: "EUC",
-    name: "European University Cyprus",
-  },
-  "frederick.ac.cy": {
-    code: "Frederick",
-    name: "Frederick University",
-  },
-  "uclancyprus.ac.cy": {
-    code: "UCLan",
-    name: "University of Central Lancashire Cyprus",
-  },
-  "nup.ac.cy": {
-    code: "Neapolis",
-    name: "Neapolis University Pafos",
-  },
-  "philipsuniversity.ac.cy": {
-    code: "Philips",
-    name: "Philips University",
-  },
-};
+  {} as Record<string, Omit<CyprusUniversityDomainInfo, "domain">>,
+);
 
 /**
  * Allowed email domains for Cyprus Universities
