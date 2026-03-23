@@ -24,6 +24,8 @@ import {
   mergeHostUniversityOptions,
   type HostUniversityOption,
 } from "@/lib/basicInformationOptions";
+import { CYPRUS_UNIVERSITIES } from "@/data/universityAgreements";
+import { normalizeDepartmentList } from "@/lib/departmentNormalization";
 
 interface BasicInformationStepProps {
   data: any;
@@ -45,9 +47,10 @@ function createSelectedHostOption(
       hostCountry: formData.hostCountry,
       hostUniversityId: formData.hostUniversityId || undefined,
     }),
-    label: formData.hostCity && formData.hostCountry
-      ? `${formData.hostUniversity} (${formData.hostCity}, ${formData.hostCountry})`
-      : formData.hostUniversity,
+    label:
+      formData.hostCity && formData.hostCountry
+        ? `${formData.hostUniversity} (${formData.hostCity}, ${formData.hostCountry})`
+        : formData.hostUniversity,
     hostUniversity: formData.hostUniversity,
     hostCity: formData.hostCity,
     hostCountry: formData.hostCountry,
@@ -66,6 +69,18 @@ export default function BasicInformationStep({
     () => getCyprusUniversityByEmail(session?.user?.email),
     [session?.user?.email],
   );
+  const isHomeUniversityLocked = Boolean(derivedHomeUniversity?.code);
+  const homeUniversityOptions = useMemo(
+    () =>
+      [...CYPRUS_UNIVERSITIES]
+        .sort((left, right) => left.name.localeCompare(right.name))
+        .map((university) => ({
+          code: university.code,
+          label: `${university.name} (${university.code})`,
+          name: university.name,
+        })),
+    [],
+  );
 
   const [formData, setFormData] = useState<BasicInformationData>(() =>
     sanitizeBasicInformationData(data?.basicInfo),
@@ -78,41 +93,68 @@ export default function BasicInformationStep({
   const [departmentsLoading, setDepartmentsLoading] = useState(false);
   const [hostOptionsLoading, setHostOptionsLoading] = useState(false);
 
+  const selectedHomeUniversityCode = useMemo(() => {
+    if (derivedHomeUniversity?.code) {
+      return derivedHomeUniversity.code;
+    }
+
+    if (formData.homeUniversityId) {
+      return formData.homeUniversityId;
+    }
+
+    const matched = CYPRUS_UNIVERSITIES.find(
+      (university) =>
+        university.name.toLowerCase() === formData.homeUniversity.toLowerCase(),
+    );
+
+    return matched?.code || "";
+  }, [
+    derivedHomeUniversity?.code,
+    formData.homeUniversity,
+    formData.homeUniversityId,
+  ]);
+
   useEffect(() => {
     setFormData(sanitizeBasicInformationData(data?.basicInfo));
   }, [data]);
 
   useEffect(() => {
-    if (!derivedHomeUniversity?.name) {
+    if (!derivedHomeUniversity?.name || !derivedHomeUniversity.code) {
       return;
     }
 
-    setFormData((current) =>
-      current.homeUniversity === derivedHomeUniversity.name
-        ? current
-        : sanitizeBasicInformationData({
-            ...current,
-            homeUniversity: derivedHomeUniversity.name,
-          }),
-    );
-  }, [derivedHomeUniversity?.name]);
+    setFormData((current) => {
+      if (
+        current.homeUniversity === derivedHomeUniversity.name &&
+        current.homeUniversityId === derivedHomeUniversity.code
+      ) {
+        return current;
+      }
+
+      return sanitizeBasicInformationData({
+        ...current,
+        homeUniversity: derivedHomeUniversity.name,
+        homeUniversityId: derivedHomeUniversity.code,
+      });
+    });
+  }, [derivedHomeUniversity?.code, derivedHomeUniversity?.name]);
 
   useEffect(() => {
-    if (!derivedHomeUniversity?.code) {
+    if (!selectedHomeUniversityCode) {
       setDepartmentOptions([]);
       return;
     }
 
     let isActive = true;
     const fallbackDepartments = getFallbackHomeDepartments(
-      derivedHomeUniversity.code,
+      selectedHomeUniversityCode,
     );
 
     setDepartmentOptions(fallbackDepartments);
     setDepartmentsLoading(true);
 
     fetch(
-      `/api/universities/${encodeURIComponent(derivedHomeUniversity.code)}/departments`,
+      `/api/universities/${encodeURIComponent(selectedHomeUniversityCode)}/departments`,
     )
       .then(async (response) => {
         if (!response.ok) {
@@ -126,13 +168,10 @@ export default function BasicInformationStep({
           return;
         }
 
-        const mergedDepartments = Array.from(
-          new Set(
-            [...fallbackDepartments, ...(payload.departments || [])]
-              .map((department) => department.trim())
-              .filter(Boolean),
-          ),
-        ).sort((left, right) => left.localeCompare(right));
+        const mergedDepartments = normalizeDepartmentList([
+          ...fallbackDepartments,
+          ...(payload.departments || []),
+        ]);
 
         setDepartmentOptions(mergedDepartments);
       })
@@ -148,13 +187,13 @@ export default function BasicInformationStep({
     return () => {
       isActive = false;
     };
-  }, [derivedHomeUniversity?.code]);
+  }, [selectedHomeUniversityCode]);
 
   useEffect(() => {
     const selectedHost = createSelectedHostOption(formData);
 
     if (
-      !derivedHomeUniversity?.code ||
+      !selectedHomeUniversityCode ||
       !formData.homeDepartment ||
       !formData.levelOfStudy
     ) {
@@ -165,18 +204,21 @@ export default function BasicInformationStep({
 
     let isActive = true;
     const fallbackOptions = getFallbackHostUniversityOptions({
-      homeUniversityCode: derivedHomeUniversity.code,
+      homeUniversityCode: selectedHomeUniversityCode,
       homeDepartment: formData.homeDepartment,
       levelOfStudy: formData.levelOfStudy,
     });
 
     setHostUniversityOptions(
-      mergeHostUniversityOptions(fallbackOptions, selectedHost ? [selectedHost] : []),
+      mergeHostUniversityOptions(
+        fallbackOptions,
+        selectedHost ? [selectedHost] : [],
+      ),
     );
     setHostOptionsLoading(true);
 
     const params = new URLSearchParams({
-      homeUniversity: derivedHomeUniversity.code,
+      homeUniversityCode: selectedHomeUniversityCode,
       department: formData.homeDepartment,
       level: formData.levelOfStudy.toLowerCase(),
     });
@@ -206,7 +248,9 @@ export default function BasicInformationStep({
             hostUniversityId: agreement.partnerUniversity?.id,
           }),
           label: `${agreement.partnerUniversity?.name || "Partner University"} (${
-            agreement.partnerUniversity?.city || agreement.partnerCity || "Unknown City"
+            agreement.partnerUniversity?.city ||
+            agreement.partnerCity ||
+            "Unknown City"
           }, ${
             agreement.partnerUniversity?.country ||
             agreement.partnerCountry ||
@@ -216,7 +260,9 @@ export default function BasicInformationStep({
           hostCity:
             agreement.partnerUniversity?.city || agreement.partnerCity || "",
           hostCountry:
-            agreement.partnerUniversity?.country || agreement.partnerCountry || "",
+            agreement.partnerUniversity?.country ||
+            agreement.partnerCountry ||
+            "",
           hostUniversityId: agreement.partnerUniversity?.id,
         }));
 
@@ -241,7 +287,7 @@ export default function BasicInformationStep({
       isActive = false;
     };
   }, [
-    derivedHomeUniversity?.code,
+    selectedHomeUniversityCode,
     formData.homeDepartment,
     formData.levelOfStudy,
     formData.hostUniversity,
@@ -284,7 +330,12 @@ export default function BasicInformationStep({
 
     const nextData = sanitizeBasicInformationData({
       ...formData,
-      homeUniversity: derivedHomeUniversity?.name || formData.homeUniversity,
+      homeUniversity: isHomeUniversityLocked
+        ? derivedHomeUniversity?.name || formData.homeUniversity
+        : formData.homeUniversity,
+      homeUniversityId: isHomeUniversityLocked
+        ? derivedHomeUniversity?.code || formData.homeUniversityId
+        : formData.homeUniversityId,
       [field]: value,
       ...(shouldResetHost
         ? {
@@ -318,7 +369,12 @@ export default function BasicInformationStep({
 
     const nextData = sanitizeBasicInformationData({
       ...formData,
-      homeUniversity: derivedHomeUniversity?.name || formData.homeUniversity,
+      homeUniversity: isHomeUniversityLocked
+        ? derivedHomeUniversity?.name || formData.homeUniversity
+        : formData.homeUniversity,
+      homeUniversityId: isHomeUniversityLocked
+        ? derivedHomeUniversity?.code || formData.homeUniversityId
+        : formData.homeUniversityId,
       hostUniversity: selectedOption.hostUniversity,
       hostUniversityId: selectedOption.hostUniversityId || "",
       hostCity: selectedOption.hostCity,
@@ -332,12 +388,15 @@ export default function BasicInformationStep({
     persistBasicInfo(nextData);
   };
 
-  const validateForm = (candidate: BasicInformationData = formData): boolean => {
+  const validateForm = (
+    candidate: BasicInformationData = formData,
+  ): boolean => {
     const newErrors: Record<string, string> = {};
 
     if (!candidate.homeUniversity) {
-      newErrors.homeUniversity =
-        "We could not derive your home university from your signed-in email.";
+      newErrors.homeUniversity = isHomeUniversityLocked
+        ? "We could not derive your home university from your signed-in email."
+        : "Home university is required.";
     }
 
     if (!candidate.homeDepartment) {
@@ -376,7 +435,12 @@ export default function BasicInformationStep({
   const handleContinue = () => {
     const cleanedData = sanitizeBasicInformationData({
       ...formData,
-      homeUniversity: derivedHomeUniversity?.name || formData.homeUniversity,
+      homeUniversity: isHomeUniversityLocked
+        ? derivedHomeUniversity?.name || formData.homeUniversity
+        : formData.homeUniversity,
+      homeUniversityId: isHomeUniversityLocked
+        ? derivedHomeUniversity?.code || formData.homeUniversityId
+        : formData.homeUniversityId,
     });
 
     setFormData(cleanedData);
@@ -392,7 +456,12 @@ export default function BasicInformationStep({
   const handleSave = () => {
     const cleanedData = sanitizeBasicInformationData({
       ...formData,
-      homeUniversity: derivedHomeUniversity?.name || formData.homeUniversity,
+      homeUniversity: isHomeUniversityLocked
+        ? derivedHomeUniversity?.name || formData.homeUniversity
+        : formData.homeUniversity,
+      homeUniversityId: isHomeUniversityLocked
+        ? derivedHomeUniversity?.code || formData.homeUniversityId
+        : formData.homeUniversityId,
     });
 
     setFormData(cleanedData);
@@ -426,18 +495,73 @@ export default function BasicInformationStep({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-2 space-y-2">
             <Label htmlFor="homeUniversity">Home University</Label>
-            <EnhancedInput
-              id="homeUniversity"
-              value={derivedHomeUniversity?.name || formData.homeUniversity}
-              disabled
-              readOnly
-              error={errors.homeUniversity}
-              helperText={
-                derivedHomeUniversity?.domain
-                  ? `Derived from your authenticated university email (${derivedHomeUniversity.domain}).`
-                  : "Sign in with your university email to derive this field automatically."
-              }
-            />
+            {isHomeUniversityLocked ? (
+              <EnhancedInput
+                id="homeUniversity"
+                value={derivedHomeUniversity?.name || formData.homeUniversity}
+                disabled
+                readOnly
+                error={errors.homeUniversity}
+                helperText={
+                  derivedHomeUniversity?.domain
+                    ? `Locked from your authenticated university email (${derivedHomeUniversity.domain}).`
+                    : "Locked from your authenticated university email."
+                }
+              />
+            ) : (
+              <EnhancedSelect
+                value={selectedHomeUniversityCode}
+                onValueChange={(value) => {
+                  const selectedUniversity = homeUniversityOptions.find(
+                    (university) => university.code === value,
+                  );
+
+                  if (!selectedUniversity) {
+                    return;
+                  }
+
+                  const nextData = sanitizeBasicInformationData({
+                    ...formData,
+                    homeUniversity: selectedUniversity.name,
+                    homeUniversityId: selectedUniversity.code,
+                    homeDepartment: "",
+                    hostUniversity: "",
+                    hostUniversityId: "",
+                    hostCity: "",
+                    hostCountry: "",
+                  });
+
+                  if (
+                    errors.homeUniversity ||
+                    errors.homeDepartment ||
+                    errors.hostUniversity
+                  ) {
+                    setErrors((current) => ({
+                      ...current,
+                      homeUniversity: "",
+                      homeDepartment: "",
+                      hostUniversity: "",
+                    }));
+                  }
+
+                  persistBasicInfo(nextData);
+                }}
+              >
+                <EnhancedSelectTrigger error={errors.homeUniversity}>
+                  <EnhancedSelectValue placeholder="Select your home university" />
+                </EnhancedSelectTrigger>
+                <EnhancedSelectContent>
+                  {homeUniversityOptions.map((university) => (
+                    <EnhancedSelectItem
+                      key={university.code}
+                      value={university.code}
+                    >
+                      {university.label}
+                    </EnhancedSelectItem>
+                  ))}
+                </EnhancedSelectContent>
+              </EnhancedSelect>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -592,7 +716,9 @@ export default function BasicInformationStep({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="exchangeAcademicYear">Exchange Academic Year *</Label>
+            <Label htmlFor="exchangeAcademicYear">
+              Exchange Academic Year *
+            </Label>
             <EnhancedInput
               id="exchangeAcademicYear"
               placeholder="e.g. 2026/2027"

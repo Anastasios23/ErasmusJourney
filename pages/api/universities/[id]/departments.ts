@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../../lib/prisma";
 import { CYPRUS_UNIVERSITIES } from "../../../../src/data/universityAgreements";
+import { normalizeDepartmentList } from "../../../../src/lib/departmentNormalization";
 
 /**
  * University Departments API
@@ -56,13 +57,9 @@ export default async function handler(
         return res.status(404).json({ error: "University not found" });
       }
 
-      const fallbackDepartments = Array.from(
-        new Set(
-          fallbackUniversity.departments
-            .map((department) => department.trim())
-            .filter(Boolean),
-        ),
-      ).sort((left, right) => left.localeCompare(right));
+      const fallbackDepartments = normalizeDepartmentList(
+        fallbackUniversity.departments,
+      );
 
       res.setHeader(
         "Cache-Control",
@@ -89,7 +86,7 @@ export default async function handler(
     });
 
     // Remove duplicates and sort
-    const uniqueDepartments = [...new Set(departments)].sort();
+    const uniqueDepartments = normalizeDepartmentList(departments);
 
     // Cache for 1 hour (departments don't change frequently)
     res.setHeader(

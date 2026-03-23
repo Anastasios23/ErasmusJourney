@@ -4,6 +4,10 @@ import {
   CYPRUS_UNIVERSITIES,
   type UniversityAgreement,
 } from "../../src/data/universityAgreements";
+import {
+  getCanonicalDepartmentLabel,
+  getDepartmentMatchKey,
+} from "../../src/lib/departmentNormalization";
 
 function normalizeText(value?: string | null): string {
   return (value || "").trim().toLowerCase().replace(/\s+/g, " ");
@@ -79,17 +83,21 @@ export default async function handler(
   }
 
   try {
-    const { homeUniversity, department, level } = req.query;
+    const { homeUniversity, homeUniversityCode, department, level } = req.query;
 
     const homeUniversityInput =
-      typeof homeUniversity === "string" ? homeUniversity : undefined;
+      typeof homeUniversityCode === "string"
+        ? homeUniversityCode
+        : typeof homeUniversity === "string"
+          ? homeUniversity
+          : undefined;
     const departmentInput =
       typeof department === "string" ? department : undefined;
     const levelInput = typeof level === "string" ? level : undefined;
 
     const canonicalHomeUniversity =
       getCanonicalHomeUniversity(homeUniversityInput);
-    const normalizedDepartment = normalizeText(departmentInput);
+    const normalizedDepartmentKey = getDepartmentMatchKey(departmentInput);
     const requestedLevel = toCanonicalLevel(levelInput);
 
     if (
@@ -109,12 +117,13 @@ export default async function handler(
         return false;
       }
 
-      if (
-        normalizedDepartment &&
-        normalizedDepartment !== "all" &&
-        normalizeText(agreement.homeDepartment) !== normalizedDepartment
-      ) {
-        return false;
+      if (normalizedDepartmentKey && normalizedDepartmentKey !== "all") {
+        if (
+          getDepartmentMatchKey(agreement.homeDepartment) !==
+          normalizedDepartmentKey
+        ) {
+          return false;
+        }
       }
 
       if (!requestedLevel) {
@@ -140,8 +149,8 @@ export default async function handler(
           code: homeUniversityProfile?.code || agreement.homeUniversity,
         },
         homeDepartment: {
-          id: normalizeText(agreement.homeDepartment),
-          name: agreement.homeDepartment,
+          id: getDepartmentMatchKey(agreement.homeDepartment),
+          name: getCanonicalDepartmentLabel(agreement.homeDepartment),
           faculty: undefined,
         },
         partnerUniversity: {

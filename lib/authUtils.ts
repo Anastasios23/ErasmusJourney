@@ -13,13 +13,29 @@ const CYPRUS_UNIVERSITIES_BY_CODE = new Map(
   ]),
 );
 
-const CYPRUS_UNIVERSITY_DOMAIN_TO_CODE: Record<string, string> = {
-  "ucy.ac.cy": "UCY",
-  "unic.ac.cy": "UNIC",
-  "euc.ac.cy": "EUC",
-  "frederick.ac.cy": "Frederick",
-  "uclancyprus.ac.cy": "UCLan",
+const DOMAIN_ALLOWLIST_BY_CODE: Record<string, string[]> = {
+  // MVP scope: 5 canonical universities from agreements source.
+  ucy: ["ucy.ac.cy"],
+  unic: ["unic.ac.cy"],
+  euc: ["euc.ac.cy"],
+  uclan: ["uclancyprus.ac.cy", "uclan.ac.cy"],
+  frederick: ["frederick.ac.cy"],
 };
+
+const CYPRUS_UNIVERSITY_DOMAIN_TO_CODE: Record<string, string> =
+  CYPRUS_UNIVERSITIES.reduce(
+    (accumulator, university) => {
+      const codeKey = university.code.toLowerCase();
+      const explicitDomains = DOMAIN_ALLOWLIST_BY_CODE[codeKey] || [];
+
+      explicitDomains.forEach((domain) => {
+        accumulator[domain] = university.code;
+      });
+
+      return accumulator;
+    },
+    {} as Record<string, string>,
+  );
 
 export const CYPRUS_UNIVERSITY_DOMAIN_MAP: Record<
   string,

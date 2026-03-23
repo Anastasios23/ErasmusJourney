@@ -3,6 +3,10 @@ import {
   CYPRUS_UNIVERSITIES,
 } from "@/data/universityAgreements";
 import type { BasicInfoLevel } from "./basicInformation";
+import {
+  getDepartmentMatchKey,
+  normalizeDepartmentList,
+} from "./departmentNormalization";
 
 export interface HostUniversityOption {
   value: string;
@@ -90,7 +94,9 @@ export function mergeHostUniversityOptions(
   );
 }
 
-export function getFallbackHomeDepartments(homeUniversityCode?: string): string[] {
+export function getFallbackHomeDepartments(
+  homeUniversityCode?: string,
+): string[] {
   const university = CYPRUS_UNIVERSITIES.find(
     (item) => normalizeValue(item.code) === normalizeValue(homeUniversityCode),
   );
@@ -99,11 +105,7 @@ export function getFallbackHomeDepartments(homeUniversityCode?: string): string[
     return [];
   }
 
-  return Array.from(
-    new Set(
-      university.departments.map((department) => department.trim()).filter(Boolean),
-    ),
-  ).sort((left, right) => left.localeCompare(right));
+  return normalizeDepartmentList(university.departments);
 }
 
 export function getFallbackHostUniversityOptions(input: {
@@ -112,10 +114,10 @@ export function getFallbackHostUniversityOptions(input: {
   levelOfStudy?: BasicInfoLevel | "";
 }): HostUniversityOption[] {
   const homeUniversityCode = normalizeValue(input.homeUniversityCode);
-  const homeDepartment = normalizeValue(input.homeDepartment);
+  const homeDepartmentKey = getDepartmentMatchKey(input.homeDepartment);
   const academicLevel = toAcademicLevel(input.levelOfStudy);
 
-  if (!homeUniversityCode || !homeDepartment) {
+  if (!homeUniversityCode || !homeDepartmentKey) {
     return [];
   }
 
@@ -124,7 +126,7 @@ export function getFallbackHostUniversityOptions(input: {
       return false;
     }
 
-    if (normalizeValue(agreement.homeDepartment) !== homeDepartment) {
+    if (getDepartmentMatchKey(agreement.homeDepartment) !== homeDepartmentKey) {
       return false;
     }
 
