@@ -18,6 +18,7 @@ type RawExperience = {
   hostCity: string | null;
   hostCountry: string | null;
   hostUniversityId: string | null;
+  hostUniversity: { name: string } | null;
   basicInfo: unknown;
   accommodation: unknown;
   livingExpenses: unknown;
@@ -40,6 +41,7 @@ type GroupedDestinationData = {
   livingOther: number[];
   accommodationType: Map<string, { count: number; rents: number[] }>;
   accommodationDifficulty: Map<string, number>;
+  currencies: Map<string, number>;
   courseExamples: PublicDestinationCourseExample[];
   practicalTips: string[];
 };
@@ -66,6 +68,15 @@ function destinationSlug(city: string, country: string): string {
   return `${slugify(city)}-${slugify(country)}`;
 }
 
+function normalizeCurrency(value: unknown): string | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.trim().toUpperCase();
+  return normalized || null;
+}
+
 function average(values: number[]): number | null {
   if (values.length === 0) {
     return null;
@@ -75,7 +86,10 @@ function average(values: number[]): number | null {
   return Number((total / values.length).toFixed(2));
 }
 
-function pushIfNumber(target: number[], value: number | null | undefined): void {
+function pushIfNumber(
+  target: number[],
+  value: number | null | undefined,
+): void {
   if (typeof value === "number" && Number.isFinite(value)) {
     target.push(value);
   }
@@ -91,7 +105,9 @@ function normalizeTipText(value: unknown): string | null {
     return null;
   }
 
-  return normalized.length > 300 ? `${normalized.slice(0, 297)}...` : normalized;
+  return normalized.length > 300
+    ? `${normalized.slice(0, 297)}...`
+    : normalized;
 }
 
 function recognitionLabel(recognitionType: string): string {
@@ -109,6 +125,26 @@ function recognitionLabel(recognitionType: string): string {
   }
 }
 
+function deriveCurrency(currencies: Map<string, number>): string {
+  if (currencies.size === 0) {
+    return "EUR";
+  }
+
+  if (currencies.size === 1) {
+    return Array.from(currencies.keys())[0];
+  }
+
+  const [topCurrency] = Array.from(currencies.entries()).sort(
+    (left, right) => right[1] - left[1],
+  );
+
+  if (!topCurrency) {
+    return "EUR";
+  }
+
+  return `${topCurrency[0]} (mixed)`;
+}
+
 function buildMonthlyTotal(values: {
   rent: number | null;
   food: number | null;
@@ -124,7 +160,10 @@ function buildMonthlyTotal(values: {
     values.social,
     values.travel,
     values.other,
-  ].filter((value): value is number => typeof value === "number" && Number.isFinite(value));
+  ].filter(
+    (value): value is number =>
+      typeof value === "number" && Number.isFinite(value),
+  );
 
   if (items.length === 0) {
     return null;
@@ -146,6 +185,11 @@ async function loadApprovedExperiences(): Promise<RawExperience[]> {
       hostCity: true,
       hostCountry: true,
       hostUniversityId: true,
+      hostUniversity: {
+        select: {
+          name: true,
+        },
+      },
       basicInfo: true,
       accommodation: true,
       livingExpenses: true,
@@ -156,7 +200,9 @@ async function loadApprovedExperiences(): Promise<RawExperience[]> {
   });
 }
 
-function buildGroupedDestinations(experiences: RawExperience[]): Map<string, GroupedDestinationData> {
+function buildGroupedDestinations(
+  experiences: RawExperience[],
+): Map<string, GroupedDestinationData> {
   const grouped = new Map<string, GroupedDestinationData>();
 
   for (const experience of experiences) {
@@ -184,8 +230,12 @@ function buildGroupedDestinations(experiences: RawExperience[]): Map<string, Gro
         livingSocial: [],
         livingTravel: [],
         livingOther: [],
-        accommodationType: new Map<string, { count: number; rents: number[] }>(),
+        accommodationType: new Map<
+          string,
+          { count: number; rents: number[] }
+        >(),
         accommodationDifficulty: new Map<string, number>(),
+        currencies: new Map<string, number>(),
         courseExamples: [],
         practicalTips: [],
       });
@@ -194,8 +244,12 @@ function buildGroupedDestinations(experiences: RawExperience[]): Map<string, Gro
     const destination = grouped.get(key)!;
     destination.submissionCount += 1;
 
-    const basicInfo = sanitizeBasicInformationData(toRecord(experience.basicInfo));
-    const accommodation = sanitizeAccommodationStepData(toRecord(experience.accommodation));
+    const basicInfo = sanitizeBasicInformationData(
+      toRecord(experience.basicInfo),
+    );
+    const accommodation = sanitizeAccommodationStepData(
+      toRecord(experience.accommodation),
+    );
     const livingExpenses = sanitizeLivingExpensesStepData(
       toRecord(experience.livingExpenses),
       {
@@ -208,8 +262,16 @@ function buildGroupedDestinations(experiences: RawExperience[]): Map<string, Gro
 
     if (basicInfo.hostUniversity) {
       destination.universities.add(basicInfo.hostUniversity);
-    } else if (experience.hostUniversityId) {
-      destination.universities.add(experience.hostUniversityId);
+    } else if (experience.hostUniversity?.name) {
+      destination.universities.add(experience.hostUniversity.name);
+    }
+
+    const normalizedCurrency = normalizeCurrency(livingExpenses.currency);
+    if (normalizedCurrency) {
+      destination.currencies.set(
+        normalizedCurrency,
+        (destination.currencies.get(normalizedCurrency) || 0) + 1,
+      );
     }
 
     pushIfNumber(destination.rents, livingExpenses.rent);
@@ -230,7 +292,10 @@ function buildGroupedDestinations(experiences: RawExperience[]): Map<string, Gro
       };
 
       current.count += 1;
-      pushIfNumber(current.rents, livingExpenses.rent ?? accommodation.monthlyRent);
+      pushIfNumber(
+        current.rents,
+        livingExpenses.rent ?? accommodation.monthlyRent,
+      );
       destination.accommodationType.set(label, current);
     }
 
@@ -254,7 +319,7 @@ function buildGroupedDestinations(experiences: RawExperience[]): Map<string, Gro
         homeCourseName: mapping.homeCourseName,
         hostCourseName: mapping.hostCourseName,
         recognitionType: recognitionLabel(mapping.recognitionType),
-        notes: mapping.notes,
+        notes: mapping.notes || undefined,
       });
     }
 
@@ -273,7 +338,9 @@ function buildGroupedDestinations(experiences: RawExperience[]): Map<string, Gro
   return grouped;
 }
 
-function toListItem(destination: GroupedDestinationData): PublicDestinationListItem {
+function toListItem(
+  destination: GroupedDestinationData,
+): PublicDestinationListItem {
   return {
     slug: destination.slug,
     city: destination.city,
@@ -285,7 +352,9 @@ function toListItem(destination: GroupedDestinationData): PublicDestinationListI
   };
 }
 
-export async function getPublicDestinationList(): Promise<PublicDestinationListItem[]> {
+export async function getPublicDestinationList(): Promise<
+  PublicDestinationListItem[]
+> {
   const experiences = await loadApprovedExperiences();
   const grouped = buildGroupedDestinations(experiences);
 
@@ -348,7 +417,7 @@ export async function getPublicDestinationDetailBySlug(
         .sort((left, right) => right.count - left.count),
     },
     costSummary: {
-      currency: "EUR",
+      currency: deriveCurrency(destination.currencies),
       sampleSize: destination.monthlyCosts.length,
       averageRent: average(destination.rents),
       averageFood: average(destination.livingFood),

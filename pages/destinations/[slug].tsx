@@ -89,6 +89,15 @@ export default function DestinationDetailPage({
           </div>
         </section>
 
+        <section className="space-y-1">
+          <h2 className="text-xl font-semibold text-slate-900">
+            Accommodation & Cost Insights
+          </h2>
+          <p className="text-sm text-slate-600">
+            Core living and housing signals extracted from approved submissions.
+          </p>
+        </section>
+
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <Card>
             <CardHeader>
@@ -212,6 +221,15 @@ export default function DestinationDetailPage({
               </p>
             </CardContent>
           </Card>
+        </section>
+
+        <section className="space-y-1">
+          <h2 className="text-xl font-semibold text-slate-900">
+            Equivalence & Practical Guidance
+          </h2>
+          <p className="text-sm text-slate-600">
+            Course mapping examples and real student tips for this destination.
+          </p>
         </section>
 
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">

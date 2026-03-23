@@ -42,7 +42,7 @@ export interface PublicDestinationCourseExample {
   homeCourseName: string;
   hostCourseName: string;
   recognitionType: string;
-  notes: string;
+  notes?: string;
 }
 
 export interface PublicDestinationDetail {
