@@ -111,7 +111,6 @@ export default function LivingExpensesStep({
     if (canonicalData.food === null) newErrors.food = "Required";
     if (canonicalData.transport === null) newErrors.transport = "Required";
     if (canonicalData.social === null) newErrors.social = "Required";
-    if (canonicalData.travel === null) newErrors.travel = "Required";
 
     setErrors(newErrors);
     return hasRequiredLivingExpenses(canonicalData);

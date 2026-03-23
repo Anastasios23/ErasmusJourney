@@ -98,8 +98,6 @@ export function hasRequiredLivingExpenses(
     value.transport !== null &&
     value.transport !== undefined &&
     value.social !== null &&
-    value.social !== undefined &&
-    value.travel !== null &&
-    value.travel !== undefined
+    value.social !== undefined
   );
 }

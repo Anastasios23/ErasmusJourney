@@ -58,35 +58,42 @@ export function normalizeAcademicYear(value: unknown): string {
 }
 
 export function sanitizeBasicInformationData(
-  value?: Partial<Record<string, unknown>> | null,
+  value?:
+    | Partial<Record<string, unknown>>
+    | Partial<BasicInformationData>
+    | null,
 ): BasicInformationData {
-  const levelOfStudy = asString(value?.levelOfStudy) as BasicInfoLevel;
-  const exchangePeriod = asString(value?.exchangePeriod) as BasicInfoPeriod;
+  const raw = (value ?? {}) as Partial<Record<string, unknown>>;
+  const levelOfStudy = asString(raw.levelOfStudy) as BasicInfoLevel;
+  const exchangePeriod = asString(raw.exchangePeriod) as BasicInfoPeriod;
 
   return {
-    homeUniversity: asString(value?.homeUniversity),
+    homeUniversity: asString(raw.homeUniversity),
     homeUniversityCode:
-      asString(value?.homeUniversityCode) || asString(value?.homeUniversityId),
-    homeDepartment: asString(value?.homeDepartment),
+      asString(raw.homeUniversityCode) || asString(raw.homeUniversityId),
+    homeDepartment: asString(raw.homeDepartment),
     levelOfStudy: BASIC_INFO_LEVEL_OPTIONS.includes(levelOfStudy)
       ? levelOfStudy
       : "",
-    hostUniversity: asString(value?.hostUniversity),
-    hostUniversityId: asString(value?.hostUniversityId),
-    hostCity: asString(value?.hostCity),
-    hostCountry: asString(value?.hostCountry),
-    exchangeAcademicYear: normalizeAcademicYear(value?.exchangeAcademicYear),
+    hostUniversity: asString(raw.hostUniversity),
+    hostUniversityId: asString(raw.hostUniversityId),
+    hostCity: asString(raw.hostCity),
+    hostCountry: asString(raw.hostCountry),
+    exchangeAcademicYear: normalizeAcademicYear(raw.exchangeAcademicYear),
     exchangePeriod: BASIC_INFO_PERIOD_OPTIONS.includes(exchangePeriod)
       ? exchangePeriod
       : "",
-    languageOfInstruction: asString(value?.languageOfInstruction),
-    exchangeStartDate: asString(value?.exchangeStartDate),
-    exchangeEndDate: asString(value?.exchangeEndDate),
+    languageOfInstruction: asString(raw.languageOfInstruction),
+    exchangeStartDate: asString(raw.exchangeStartDate),
+    exchangeEndDate: asString(raw.exchangeEndDate),
   };
 }
 
 export function isBasicInformationComplete(
-  value?: Partial<Record<string, unknown>> | null,
+  value?:
+    | Partial<Record<string, unknown>>
+    | Partial<BasicInformationData>
+    | null,
 ): boolean {
   const sanitized = sanitizeBasicInformationData(value);
 
@@ -94,7 +101,10 @@ export function isBasicInformationComplete(
 }
 
 export function buildExperienceSemester(
-  value?: Partial<Record<string, unknown>> | null,
+  value?:
+    | Partial<Record<string, unknown>>
+    | Partial<BasicInformationData>
+    | null,
 ): string | null {
   const sanitized = sanitizeBasicInformationData(value);
 

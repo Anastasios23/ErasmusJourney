@@ -81,6 +81,18 @@ describe("living expenses sanitization", () => {
       hasRequiredLivingExpenses({
         currency: "EUR",
         rent: null,
+        food: 200,
+        transport: 40,
+        social: 90,
+        travel: null,
+        other: null,
+      }),
+    ).toBe(true);
+
+    expect(
+      hasRequiredLivingExpenses({
+        currency: "EUR",
+        rent: null,
         food: null,
         transport: 40,
         social: 90,

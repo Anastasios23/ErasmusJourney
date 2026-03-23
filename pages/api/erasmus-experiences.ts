@@ -234,15 +234,31 @@ async function buildBasicInfoPersistenceData(
   };
 }
 
+function asPartialRecord(
+  value: unknown,
+): Partial<Record<string, unknown>> | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+
+  return value as Partial<Record<string, unknown>>;
+}
+
 function serializeExperienceForClient<T extends Record<string, any>>(
   experience: T,
 ): T {
   return {
     ...experience,
-    basicInfo: sanitizeBasicInformationData(experience.basicInfo),
-    accommodation: sanitizeAccommodationStepData(experience.accommodation),
-    livingExpenses: sanitizeLivingExpensesStepData(experience.livingExpenses),
-    courses: sanitizeCourseMappingsData(experience.courses),
+    basicInfo: sanitizeBasicInformationData(
+      asPartialRecord(experience.basicInfo),
+    ),
+    accommodation: sanitizeAccommodationStepData(
+      asPartialRecord(experience.accommodation),
+    ),
+    livingExpenses: sanitizeLivingExpensesStepData(
+      asPartialRecord(experience.livingExpenses),
+    ),
+    courses: sanitizeCourseMappingsData(asPartialRecord(experience.courses)),
   };
 }
 
@@ -307,7 +323,9 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
       .json(serializeExperienceForClient(experience as any));
   } else {
     // Get all experiences for this user with retry logic
-    const experiences = await retryDatabaseOperation(() =>
+    const experiences: Awaited<
+      ReturnType<typeof prisma.erasmusExperience.findMany>
+    > = await retryDatabaseOperation(() =>
       prisma.erasmusExperience.findMany({
         where: { userId },
         orderBy: { updatedAt: "desc" },

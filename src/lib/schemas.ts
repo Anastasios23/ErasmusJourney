@@ -366,14 +366,6 @@ export const livingExpensesStepSchema = z
         message: "Social expenses are required",
       });
     }
-
-    if (value.travel === null) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["travel"],
-        message: "Travel expenses are required",
-      });
-    }
   });
 
 // Help Future Students Form Schema

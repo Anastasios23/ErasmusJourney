@@ -6,7 +6,7 @@ import {
   getDifficultyFindingAccommodationLabel,
   getHowFoundAccommodationLabel,
   sanitizeAccommodationStepData,
-} from "../../src/lib/accommodation";
+} from "../../../src/lib/accommodation";
 
 const prisma = new PrismaClient();
 
@@ -161,7 +161,8 @@ async function generateAccommodationExperience(
       monthlyRent: monthlyRent ? parseFloat(monthlyRent) : null,
       title: `${accommodationType} in ${neighborhood || basicInfo?.hostCity}`,
       description:
-        accommodation.accommodationReview || "Anonymous student accommodation snapshot",
+        accommodation.accommodationReview ||
+        "Anonymous student accommodation snapshot",
       pros: null,
       cons: null,
       tips: structuredTips.length > 0 ? JSON.stringify(structuredTips) : null,

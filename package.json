@@ -5,11 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:next-only": "set SKIP_TYPE_CHECK=true&& next build",
     "postinstall": "prisma generate",
     "start": "next start",
     "test": "vitest",
     "format.fix": "prettier --write .",
     "typecheck": "tsc",
+    "typecheck:next-only": "tsc --project tsconfig.next-only.json --noEmit",
     "start-backend": "node start-backend.js",
     "backend": "cd server && npm run dev",
     "db:generate": "prisma generate",

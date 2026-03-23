@@ -35,7 +35,9 @@ describe("accommodation step contract", () => {
       wouldRecommend: true,
       accommodationReview: "Good value and safe area.",
     });
-    expect("address" in (sanitized as Record<string, unknown>)).toBe(false);
+    expect(Object.prototype.hasOwnProperty.call(sanitized, "address")).toBe(
+      false,
+    );
   });
 
   it("does not coerce free-text distance into minutes", () => {
