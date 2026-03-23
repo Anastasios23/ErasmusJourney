@@ -20,11 +20,52 @@ import {
   hasCompleteCourseMatchingData,
   sanitizeCourseMappingsData,
 } from "../../src/lib/courseMatching";
-import {
-  getCyprusUniversityByEmail,
-  getEnforcedHomeUniversityFields,
-} from "../../lib/authUtils";
+import { getCyprusUniversityByEmail } from "../../lib/authUtils";
 import { prisma } from "../../lib/prisma";
+import { CYPRUS_UNIVERSITIES } from "../../src/data/universityAgreements";
+
+class Step1ValidationError extends Error {
+  statusCode: number;
+  validationCode:
+    | "MISSING_HOME_UNIVERSITY_CODE"
+    | "INVALID_HOME_UNIVERSITY_CODE";
+
+  constructor(
+    statusCode: number,
+    validationCode:
+      | "MISSING_HOME_UNIVERSITY_CODE"
+      | "INVALID_HOME_UNIVERSITY_CODE",
+    message: string,
+  ) {
+    super(message);
+    this.name = "Step1ValidationError";
+    this.statusCode = statusCode;
+    this.validationCode = validationCode;
+  }
+}
+
+function normalizeKey(value?: string | null): string {
+  return (value || "").trim().toLowerCase();
+}
+
+const CANONICAL_UNIVERSITIES_BY_CODE = new Map(
+  CYPRUS_UNIVERSITIES.map((university) => [
+    normalizeKey(university.code),
+    university,
+  ]),
+);
+
+function getCanonicalUniversityByCode(code?: string | null) {
+  if (!code) {
+    return null;
+  }
+
+  return CANONICAL_UNIVERSITIES_BY_CODE.get(normalizeKey(code)) || null;
+}
+
+function getSupportedUniversityCodesMessage(): string {
+  return CYPRUS_UNIVERSITIES.map((university) => university.code).join(", ");
+}
 
 // Retry helper for database operations
 async function retryDatabaseOperation<T>(
@@ -97,28 +138,68 @@ async function buildBasicInfoPersistenceData(
     ...(incomingBasicInfo || {}),
   });
   const derivedHomeUniversity = getCyprusUniversityByEmail(signedInEmail);
+  const submittedFallbackCode = mergedBasicInfo.homeUniversityId?.trim();
+
+  let canonicalHomeUniversityCode = "";
+  let canonicalHomeUniversityName = "";
+
+  if (derivedHomeUniversity?.code) {
+    const canonicalFromEmail = getCanonicalUniversityByCode(
+      derivedHomeUniversity.code,
+    );
+
+    if (!canonicalFromEmail) {
+      throw new Step1ValidationError(
+        422,
+        "INVALID_HOME_UNIVERSITY_CODE",
+        "Your authenticated university is not in the supported MVP scope.",
+      );
+    }
+
+    canonicalHomeUniversityCode = canonicalFromEmail.code;
+    canonicalHomeUniversityName = canonicalFromEmail.name;
+  } else {
+    if (!submittedFallbackCode) {
+      throw new Step1ValidationError(
+        400,
+        "MISSING_HOME_UNIVERSITY_CODE",
+        "Home university code is required when your email domain is not recognized. Please select one of the supported universities.",
+      );
+    }
+
+    const canonicalFallbackUniversity = getCanonicalUniversityByCode(
+      submittedFallbackCode,
+    );
+
+    if (!canonicalFallbackUniversity) {
+      throw new Step1ValidationError(
+        422,
+        "INVALID_HOME_UNIVERSITY_CODE",
+        `Invalid home university code '${submittedFallbackCode}'. Supported universities are: ${getSupportedUniversityCodesMessage()}.`,
+      );
+    }
+
+    canonicalHomeUniversityCode = canonicalFallbackUniversity.code;
+    canonicalHomeUniversityName = canonicalFallbackUniversity.name;
+  }
 
   const [homeUniversity, hostUniversity] = await Promise.all([
     resolveUniversityByReference(
-      derivedHomeUniversity?.code || mergedBasicInfo.homeUniversityId,
-      derivedHomeUniversity?.name || mergedBasicInfo.homeUniversity,
+      canonicalHomeUniversityCode,
+      canonicalHomeUniversityName,
     ),
     resolveUniversityByReference(
       mergedBasicInfo.hostUniversityId,
       mergedBasicInfo.hostUniversity,
     ),
   ]);
-  const enforcedHomeUniversity = getEnforcedHomeUniversityFields({
-    email: signedInEmail,
-    fallbackName: mergedBasicInfo.homeUniversity,
-    fallbackId: mergedBasicInfo.homeUniversityId,
-    resolvedUniversity: homeUniversity,
-  });
 
   const persistedBasicInfo = sanitizeBasicInformationData({
     ...mergedBasicInfo,
-    ...enforcedHomeUniversity,
-    hostUniversity: mergedBasicInfo.hostUniversity || hostUniversity?.name || "",
+    homeUniversity: homeUniversity?.name || canonicalHomeUniversityName,
+    homeUniversityId: canonicalHomeUniversityCode,
+    hostUniversity:
+      mergedBasicInfo.hostUniversity || hostUniversity?.name || "",
     hostUniversityId: hostUniversity?.id || "",
     hostCity: mergedBasicInfo.hostCity || hostUniversity?.city || "",
     hostCountry: mergedBasicInfo.hostCountry || hostUniversity?.country || "",
@@ -126,7 +207,7 @@ async function buildBasicInfoPersistenceData(
 
   return {
     basicInfo: persistedBasicInfo,
-    homeUniversityId: persistedBasicInfo.homeUniversityId || null,
+    homeUniversityId: homeUniversity?.id || null,
     hostUniversityId: hostUniversity?.id || null,
     hostCity: persistedBasicInfo.hostCity || null,
     hostCountry: persistedBasicInfo.hostCountry || null,
@@ -201,7 +282,9 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
       return res.status(403).json({ error: "Access denied" });
     }
 
-    return res.status(200).json(serializeExperienceForClient(experience as any));
+    return res
+      .status(200)
+      .json(serializeExperienceForClient(experience as any));
   } else {
     // Get all experiences for this user with retry logic
     const experiences = await retryDatabaseOperation(() =>
@@ -213,7 +296,11 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
 
     return res
       .status(200)
-      .json(experiences.map((experience) => serializeExperienceForClient(experience as any)));
+      .json(
+        experiences.map((experience) =>
+          serializeExperienceForClient(experience as any),
+        ),
+      );
   }
 }
 
@@ -473,11 +560,25 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       }
     });
 
-    const basicInfoContext = await buildBasicInfoPersistenceData(
-      updateData.basicInfo,
-      existingExperience.basicInfo,
-      session.user.email,
-    );
+    let basicInfoContext = null;
+
+    try {
+      basicInfoContext = await buildBasicInfoPersistenceData(
+        updateData.basicInfo,
+        existingExperience.basicInfo,
+        session.user.email,
+      );
+    } catch (error) {
+      if (error instanceof Step1ValidationError) {
+        return res.status(error.statusCode).json({
+          error: "Basic information validation failed",
+          code: error.validationCode,
+          message: error.message,
+        });
+      }
+
+      throw error;
+    }
 
     if (basicInfoContext) {
       submissionData.basicInfo = basicInfoContext.basicInfo;
@@ -659,10 +760,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
             await tx.accommodationReview.create({
               data: {
                 experienceId: experience.id,
-                name:
-                  `${getAccommodationTypeLabel(accomData.accommodationType)} in ${
-                    accomData.areaOrNeighborhood || experience.hostCity || "City"
-                  }`,
+                name: `${getAccommodationTypeLabel(accomData.accommodationType)} in ${
+                  accomData.areaOrNeighborhood || experience.hostCity || "City"
+                }`,
                 type: accomData.accommodationType,
                 neighborhood: accomData.areaOrNeighborhood || null,
                 pricePerMonth: accomData.monthlyRent,
@@ -703,11 +803,25 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       ...updateData,
     };
 
-    const basicInfoContext = await buildBasicInfoPersistenceData(
-      updateData.basicInfo,
-      existingExperience.basicInfo,
-      session.user.email,
-    );
+    let basicInfoContext = null;
+
+    try {
+      basicInfoContext = await buildBasicInfoPersistenceData(
+        updateData.basicInfo,
+        existingExperience.basicInfo,
+        session.user.email,
+      );
+    } catch (error) {
+      if (error instanceof Step1ValidationError) {
+        return res.status(error.statusCode).json({
+          error: "Basic information validation failed",
+          code: error.validationCode,
+          message: error.message,
+        });
+      }
+
+      throw error;
+    }
 
     if (basicInfoContext) {
       updateFields.basicInfo = basicInfoContext.basicInfo;
