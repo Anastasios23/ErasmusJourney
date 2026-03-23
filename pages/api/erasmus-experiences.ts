@@ -24,6 +24,8 @@ import { getCyprusUniversityByEmail } from "../../lib/authUtils";
 import { prisma } from "../../lib/prisma";
 import { CYPRUS_UNIVERSITIES } from "../../src/data/universityAgreements";
 import {
+  createEmptyLivingExpensesStepData,
+  hasLegacyLivingExpensesShape,
   hasRequiredLivingExpenses,
   sanitizeLivingExpensesStepData,
 } from "../../src/lib/livingExpenses";
@@ -377,7 +379,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
               basicInfo: {},
               courses: [],
               accommodation: createEmptyAccommodationStepData(),
-              livingExpenses: {},
+              livingExpenses: createEmptyLivingExpensesStepData(),
               experience: {},
               lastSavedAt: new Date(),
               updatedAt: new Date(),
@@ -401,7 +403,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
             basicInfo: {},
             courses: [],
             accommodation: createEmptyAccommodationStepData(),
-            livingExpenses: {},
+            livingExpenses: createEmptyLivingExpensesStepData(),
             experience: {},
           },
         }),

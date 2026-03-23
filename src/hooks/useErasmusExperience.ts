@@ -412,7 +412,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
         basicInfo: null,
         courses: null,
         accommodation: createEmptyAccommodationStepData(),
-        livingExpenses: null,
+        livingExpenses: createEmptyLivingExpensesStepData(),
         experience: null,
         status: "DRAFT",
         isComplete: false,

@@ -16,6 +16,8 @@
     "db:push": "prisma db push && npx tsx scripts/ensure-permanent-admin.ts",
     "db:migrate": "prisma migrate dev",
     "db:seed": "npx tsx scripts/migrate-data.ts && npx tsx scripts/ensure-permanent-admin.ts",
+    "db:backfill-living-expenses:dry-run": "npx tsx scripts/backfill-living-expenses-canonical.ts",
+    "db:backfill-living-expenses": "npx tsx scripts/backfill-living-expenses-canonical.ts --apply",
     "db:seed-admin": "npx tsx scripts/ensure-permanent-admin.ts",
     "db:test-admin": "npx tsx scripts/test-admin-user.ts",
     "db:reset": "prisma migrate reset --force && npm run db:seed"

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useCallback } from "react";
+import React, { createContext, useContext } from "react";
 
 interface FormData {
   basicInfo?: any;
@@ -12,7 +12,6 @@ interface FormContextType {
   formData: FormData;
   currentStep: number;
   onSave: (data: any) => void;
-  updateFormData: (sectionKey: string, data: any) => void;
 }
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
@@ -30,22 +29,10 @@ export function FormProvider({
   onSave,
   currentStep,
 }: FormProviderProps) {
-  const updateFormData = useCallback(
-    (sectionKey: string, data: any) => {
-      const updatedData = {
-        ...formData,
-        [sectionKey]: data,
-      };
-      onSave(updatedData);
-    },
-    [formData, onSave],
-  );
-
   const value: FormContextType = {
     formData,
     currentStep,
     onSave,
-    updateFormData,
   };
 
   return <FormContext.Provider value={value}>{children}</FormContext.Provider>;
