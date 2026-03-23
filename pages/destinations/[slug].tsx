@@ -25,6 +25,7 @@ import {
   getAccommodationTypeLabel,
   sanitizeAccommodationStepData,
 } from "../../src/lib/accommodation";
+import { sanitizeLivingExpensesStepData } from "../../src/lib/livingExpenses";
 
 interface StudentExperience {
   id: string;
@@ -90,9 +91,14 @@ export default function DestinationDetail({
   country,
   studentExperiences,
 }: DestinationDetailProps) {
-  const [selectedTab, setSelectedTab] = useState<"overview" | "universities" | "cost" | "accommodation" | "matching" | "experiences">(
-    "overview",
-  );
+  const [selectedTab, setSelectedTab] = useState<
+    | "overview"
+    | "universities"
+    | "cost"
+    | "accommodation"
+    | "matching"
+    | "experiences"
+  >("overview");
 
   // Gradient colors for student cards
   const gradients = [
@@ -121,7 +127,7 @@ export default function DestinationDetail({
       {/* Hero Section with Background Image */}
       <div className="relative h-[400px] -mt-20 overflow-hidden">
         {/* Background Image */}
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage: `url('https://images.unsplash.com/photo-1583422409516-2895a77efded?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80')`,
@@ -163,7 +169,8 @@ export default function DestinationDetail({
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-lg text-white/90 mb-8 max-w-2xl mx-auto"
             >
-              The ultimate Erasmus destination for Cypriot students. Sun, sea, and world-class education await.
+              The ultimate Erasmus destination for Cypriot students. Sun, sea,
+              and world-class education await.
             </motion.p>
 
             {/* Action Buttons */}
@@ -177,7 +184,10 @@ export default function DestinationDetail({
                 <Icon icon="solar:bookmark-bold" className="w-4 h-4 mr-2" />
                 Save Destination
               </Button>
-              <Button variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30 px-6 py-2.5 rounded-lg font-medium backdrop-blur-md">
+              <Button
+                variant="outline"
+                className="bg-white/10 hover:bg-white/20 text-white border-white/30 px-6 py-2.5 rounded-lg font-medium backdrop-blur-md"
+              >
                 <Icon icon="solar:play-circle-bold" className="w-4 h-4 mr-2" />
                 Watch Guide
               </Button>
@@ -254,11 +264,19 @@ export default function DestinationDetail({
           <Card className="bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="pt-6">
               <div className="flex items-center gap-2 mb-2">
-                <Icon icon="solar:wallet-bold" className="w-5 h-5 text-blue-600" />
-                <span className="text-sm text-slate-500 dark:text-gray-400">Avg. Monthly Cost</span>
+                <Icon
+                  icon="solar:wallet-bold"
+                  className="w-5 h-5 text-blue-600"
+                />
+                <span className="text-sm text-slate-500 dark:text-gray-400">
+                  Avg. Monthly Cost
+                </span>
               </div>
               <div className="text-3xl font-bold text-slate-900 dark:text-white">
-                €{Math.round(cityData.livingCosts.avgTotalMonthly).toLocaleString()}
+                €
+                {Math.round(
+                  cityData.livingCosts.avgTotalMonthly,
+                ).toLocaleString()}
               </div>
               <div className="flex items-center gap-1 mt-2 text-xs text-emerald-600">
                 <Icon icon="solar:arrow-down-linear" className="w-3 h-3" />
@@ -271,8 +289,13 @@ export default function DestinationDetail({
           <Card className="bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="pt-6">
               <div className="flex items-center gap-2 mb-2">
-                <Icon icon="solar:shield-check-bold" className="w-5 h-5 text-blue-600" />
-                <span className="text-sm text-slate-500 dark:text-gray-400">Safety Score</span>
+                <Icon
+                  icon="solar:shield-check-bold"
+                  className="w-5 h-5 text-blue-600"
+                />
+                <span className="text-sm text-slate-500 dark:text-gray-400">
+                  Safety Score
+                </span>
               </div>
               <div className="text-3xl font-bold text-slate-900 dark:text-white">
                 {cityData.ratings.avgOverallRating.toFixed(1)}/10
@@ -287,8 +310,13 @@ export default function DestinationDetail({
           <Card className="bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="pt-6">
               <div className="flex items-center gap-2 mb-2">
-                <Icon icon="solar:star-bold" className="w-5 h-5 text-blue-600" />
-                <span className="text-sm text-slate-500 dark:text-gray-400">Student Satisfaction</span>
+                <Icon
+                  icon="solar:star-bold"
+                  className="w-5 h-5 text-blue-600"
+                />
+                <span className="text-sm text-slate-500 dark:text-gray-400">
+                  Student Satisfaction
+                </span>
               </div>
               <div className="text-3xl font-bold text-slate-900 dark:text-white">
                 {(cityData.ratings.avgOverallRating / 2).toFixed(1)}/5
@@ -304,7 +332,9 @@ export default function DestinationDetail({
             <CardContent className="pt-6">
               <div className="flex items-center gap-2 mb-2">
                 <Icon icon="solar:sun-bold" className="w-5 h-5 text-blue-600" />
-                <span className="text-sm text-slate-500 dark:text-gray-400">Avg. Weather</span>
+                <span className="text-sm text-slate-500 dark:text-gray-400">
+                  Avg. Weather
+                </span>
               </div>
               <div className="text-3xl font-bold text-slate-900 dark:text-white">
                 18°C
@@ -343,12 +373,20 @@ export default function DestinationDetail({
                         <span className="text-sm font-medium text-slate-700 dark:text-gray-300">
                           Rent (Shared Apartment)
                         </span>
-                        <span className="text-sm font-bold text-slate-900 dark:text-white">\u20ac{Math.round(cityData.livingCosts.avgMonthlyRent)} <span className="text-xs font-normal text-slate-500">/mo</span></span>
+                        <span className="text-sm font-bold text-slate-900 dark:text-white">
+                          \u20ac
+                          {Math.round(cityData.livingCosts.avgMonthlyRent)}{" "}
+                          <span className="text-xs font-normal text-slate-500">
+                            /mo
+                          </span>
+                        </span>
                       </div>
                       <div className="h-2 bg-slate-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-blue-600 rounded-full"
-                          style={{ width: `${(cityData.livingCosts.avgMonthlyRent / cityData.livingCosts.avgTotalMonthly) * 100}%` }}
+                          style={{
+                            width: `${(cityData.livingCosts.avgMonthlyRent / cityData.livingCosts.avgTotalMonthly) * 100}%`,
+                          }}
                         />
                       </div>
                     </div>
@@ -358,12 +396,20 @@ export default function DestinationDetail({
                         <span className="text-sm font-medium text-slate-700 dark:text-gray-300">
                           Groceries & Food
                         </span>
-                        <span className="text-sm font-bold text-slate-900 dark:text-white">\u20ac{Math.round(cityData.livingCosts.avgMonthlyFood)} <span className="text-xs font-normal text-slate-500">/mo</span></span>
+                        <span className="text-sm font-bold text-slate-900 dark:text-white">
+                          \u20ac
+                          {Math.round(cityData.livingCosts.avgMonthlyFood)}{" "}
+                          <span className="text-xs font-normal text-slate-500">
+                            /mo
+                          </span>
+                        </span>
                       </div>
                       <div className="h-2 bg-slate-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-emerald-600 rounded-full"
-                          style={{ width: `${(cityData.livingCosts.avgMonthlyFood / cityData.livingCosts.avgTotalMonthly) * 100}%` }}
+                          style={{
+                            width: `${(cityData.livingCosts.avgMonthlyFood / cityData.livingCosts.avgTotalMonthly) * 100}%`,
+                          }}
                         />
                       </div>
                     </div>
@@ -373,12 +419,20 @@ export default function DestinationDetail({
                         <span className="text-sm font-medium text-slate-700 dark:text-gray-300">
                           Transport
                         </span>
-                        <span className="text-sm font-bold text-slate-900 dark:text-white">\u20ac{Math.round(cityData.livingCosts.avgMonthlyTransport)} <span className="text-xs font-normal text-slate-500">/mo</span></span>
+                        <span className="text-sm font-bold text-slate-900 dark:text-white">
+                          \u20ac
+                          {Math.round(cityData.livingCosts.avgMonthlyTransport)}{" "}
+                          <span className="text-xs font-normal text-slate-500">
+                            /mo
+                          </span>
+                        </span>
                       </div>
                       <div className="h-2 bg-slate-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-amber-600 rounded-full"
-                          style={{ width: `${(cityData.livingCosts.avgMonthlyTransport / cityData.livingCosts.avgTotalMonthly) * 100}%` }}
+                          style={{
+                            width: `${(cityData.livingCosts.avgMonthlyTransport / cityData.livingCosts.avgTotalMonthly) * 100}%`,
+                          }}
                         />
                       </div>
                     </div>
@@ -388,12 +442,22 @@ export default function DestinationDetail({
                         <span className="text-sm font-medium text-slate-700 dark:text-gray-300">
                           Leisure & Activities
                         </span>
-                        <span className="text-sm font-bold text-slate-900 dark:text-white">\u20ac{Math.round(cityData.livingCosts.avgMonthlyOther || 200)} <span className="text-xs font-normal text-slate-500">/mo</span></span>
+                        <span className="text-sm font-bold text-slate-900 dark:text-white">
+                          \u20ac
+                          {Math.round(
+                            cityData.livingCosts.avgMonthlyOther || 200,
+                          )}{" "}
+                          <span className="text-xs font-normal text-slate-500">
+                            /mo
+                          </span>
+                        </span>
                       </div>
                       <div className="h-2 bg-slate-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-purple-600 rounded-full"
-                          style={{ width: `${((cityData.livingCosts.avgMonthlyOther || 200) / cityData.livingCosts.avgTotalMonthly) * 100}%` }}
+                          style={{
+                            width: `${((cityData.livingCosts.avgMonthlyOther || 200) / cityData.livingCosts.avgTotalMonthly) * 100}%`,
+                          }}
                         />
                       </div>
                     </div>
@@ -402,13 +466,18 @@ export default function DestinationDetail({
                   {/* Money Saving Tip */}
                   <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-100 dark:border-blue-800">
                     <div className="flex items-start gap-3">
-                      <Icon icon="solar:lightbulb-bold" className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <Icon
+                        icon="solar:lightbulb-bold"
+                        className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
+                      />
                       <div>
                         <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-1">
                           Money Saving Tip
                         </h4>
                         <p className="text-xs text-blue-800 dark:text-blue-200">
-                          Get the T-Jove travel card if you're under 30. It offers unlimited travel for 3 months for around \u20ac40 across all zones!
+                          Get the T-Jove travel card if you're under 30. It
+                          offers unlimited travel for 3 months for around
+                          \u20ac40 across all zones!
                         </p>
                       </div>
                     </div>
@@ -520,13 +589,19 @@ export default function DestinationDetail({
               <Card className="bg-gradient-to-br from-blue-600 to-blue-700 border-blue-700 shadow-xl text-white">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center gap-2">
-                    <Icon icon="solar:users-group-rounded-bold" className="w-5 h-5" />
+                    <Icon
+                      icon="solar:users-group-rounded-bold"
+                      className="w-5 h-5"
+                    />
                     Cypriot Community
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-blue-50 mb-4">
-                    There are currently <span className="font-bold text-white">42 students</span> from Cyprus in {city}. Join the WhatsApp group to find roommates and share tips!
+                    There are currently{" "}
+                    <span className="font-bold text-white">42 students</span>{" "}
+                    from Cyprus in {city}. Join the WhatsApp group to find
+                    roommates and share tips!
                   </p>
                   <div className="flex items-center gap-2 mb-4">
                     <div className="flex -space-x-2">
@@ -892,7 +967,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       const accommodation = sanitizeAccommodationStepData(
         exp.accommodation as any,
       );
-      const livingExpenses = (exp.livingExpenses as any) || {};
+      const livingExpenses = sanitizeLivingExpensesStepData(
+        exp.livingExpenses as any,
+        {
+          fallbackRent:
+            typeof accommodation.monthlyRent === "number"
+              ? accommodation.monthlyRent
+              : null,
+        },
+      );
+      const legacyLivingExpenses = (exp.livingExpenses as any) || {};
       const expData = (exp.experience as any) || {};
 
       // Calculate overall rating from accommodation rating or default
@@ -900,11 +984,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
       // Calculate monthly budget from living expenses
       const monthlyBudget =
-        (parseFloat(livingExpenses.groceries) || 0) +
-        (parseFloat(livingExpenses.transportation) || 0) +
-        (parseFloat(livingExpenses.eatingOut) || 0) +
-        (parseFloat(livingExpenses.socialLife) || 0) +
-        (parseFloat(accommodation.monthlyRent) || 0);
+        (livingExpenses.rent || 0) +
+        (livingExpenses.food || 0) +
+        (livingExpenses.transport || 0) +
+        (livingExpenses.social || 0) +
+        (livingExpenses.travel || 0) +
+        (livingExpenses.other || 0);
 
       return {
         id: exp.id,
@@ -916,10 +1001,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           : "Not specified",
         monthlyBudget: monthlyBudget > 0 ? Math.round(monthlyBudget) : 800,
         topTip:
-          expData.additionalAdvice || livingExpenses.overallBudgetAdvice || "",
+          expData.additionalAdvice ||
+          legacyLivingExpenses.overallBudgetAdvice ||
+          "",
         budgetAdvice:
-          livingExpenses.budgetTips ||
-          livingExpenses.moneyManagementTools ||
+          legacyLivingExpenses.budgetTips ||
+          legacyLivingExpenses.moneyManagementTools ||
           "",
         socialLifeRating: accommodation.accommodationRating || 4.0,
         academicRating: accommodation.accommodationRating || 4.0,

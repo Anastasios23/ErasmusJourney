@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../auth/[...nextauth]";
 import { PrismaClient } from "@prisma/client";
+import { sanitizeLivingExpensesStepData } from "../../../../../src/lib/livingExpenses";
 
 const prisma = new PrismaClient();
 
@@ -226,23 +227,34 @@ async function calculateCityStats(
     const socialLifeCosts: number[] = [];
 
     experiences.forEach((exp) => {
-      const expenses = (exp.livingExpenses as any)?.expenses;
-      if (expenses) {
-        if (expenses.groceries && !isNaN(parseFloat(expenses.groceries))) {
-          groceriesCosts.push(parseFloat(expenses.groceries));
-        }
-        if (
-          expenses.transportation &&
-          !isNaN(parseFloat(expenses.transportation))
-        ) {
-          transportationCosts.push(parseFloat(expenses.transportation));
-        }
-        if (expenses.eatingOut && !isNaN(parseFloat(expenses.eatingOut))) {
-          eatingOutCosts.push(parseFloat(expenses.eatingOut));
-        }
-        if (expenses.socialLife && !isNaN(parseFloat(expenses.socialLife))) {
-          socialLifeCosts.push(parseFloat(expenses.socialLife));
-        }
+      const accommodation = (exp.accommodation as any) || {};
+      const fallbackRent =
+        typeof accommodation.monthlyRent === "number"
+          ? accommodation.monthlyRent
+          : parseFloat(accommodation.monthlyRent || "") || null;
+      const expenses = sanitizeLivingExpensesStepData(
+        exp.livingExpenses as any,
+        {
+          fallbackRent,
+        },
+      );
+      const rawExpenses = (exp.livingExpenses as any) || {};
+
+      if (typeof expenses.food === "number") {
+        groceriesCosts.push(expenses.food);
+      }
+      if (typeof expenses.transport === "number") {
+        transportationCosts.push(expenses.transport);
+      }
+      const eatingOut =
+        typeof rawExpenses.eatingOut === "number"
+          ? rawExpenses.eatingOut
+          : parseFloat(rawExpenses.eatingOut || "") || null;
+      if (typeof eatingOut === "number") {
+        eatingOutCosts.push(eatingOut);
+      }
+      if (typeof expenses.social === "number") {
+        socialLifeCosts.push(expenses.social);
       }
     });
 

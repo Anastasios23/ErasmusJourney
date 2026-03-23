@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import { sanitizeAccommodationStepData } from "../lib/accommodation";
+import { sanitizeLivingExpensesStepData } from "../lib/livingExpenses";
 
 export async function updateCityStatistics(city: string, country: string) {
   try {
@@ -37,15 +38,26 @@ export async function updateCityStatistics(city: string, country: string) {
     let expenseCount = 0;
 
     experiences.forEach((exp) => {
-      const expenses = exp.livingExpenses as any;
-      const accommodation = sanitizeAccommodationStepData(exp.accommodation as any);
+      const rawExpenses = (exp.livingExpenses as any) || {};
+      const accommodation = sanitizeAccommodationStepData(
+        exp.accommodation as any,
+      );
+      const expenses = sanitizeLivingExpensesStepData(
+        exp.livingExpenses as any,
+        {
+          fallbackRent:
+            typeof accommodation.monthlyRent === "number"
+              ? accommodation.monthlyRent
+              : null,
+        },
+      );
 
       // Rent (prefer accommodation section, fallback to expenses)
       let rent = 0;
       if (typeof accommodation.monthlyRent === "number") {
         rent = accommodation.monthlyRent;
-      } else if (expenses?.rent) {
-        rent = parseFloat(expenses.rent);
+      } else if (typeof expenses.rent === "number") {
+        rent = expenses.rent;
       }
 
       if (rent > 0) {
@@ -57,28 +69,25 @@ export async function updateCityStatistics(city: string, country: string) {
       }
 
       // Other Expenses
-      if (expenses) {
-        const groceries = parseFloat(expenses.food || expenses.groceries || "0");
-        const transport = parseFloat(expenses.transport || expenses.transportation || "0");
-        const eatingOut = parseFloat(expenses.eatingOut || "0");
-        const social = parseFloat(expenses.social || expenses.entertainment || "0");
-        
-        // Dynamic total if not provided
-        let total = parseFloat(expenses.total || expenses.totalMonthlyBudget || "0");
-        if (total === 0) {
-          total = rent + groceries + transport + eatingOut + social + 
-                  parseFloat(expenses.travel || "0") + 
-                  parseFloat(expenses.other || "0");
-        }
+      const groceries = expenses.food || 0;
+      const transport = expenses.transport || 0;
+      const social = expenses.social || 0;
+      const travel = expenses.travel || 0;
+      const other = expenses.other || 0;
+      const eatingOut =
+        typeof rawExpenses.eatingOut === "number"
+          ? rawExpenses.eatingOut
+          : parseFloat(rawExpenses.eatingOut || "0") || 0;
 
-        if (total > 0) {
-          totalGroceries += groceries;
-          totalTransport += transport;
-          totalEatingOut += eatingOut;
-          totalSocial += social;
-          totalExpenses += total;
-          expenseCount++;
-        }
+      const total = rent + groceries + transport + social + travel + other;
+
+      if (total > 0) {
+        totalGroceries += groceries;
+        totalTransport += transport;
+        totalEatingOut += eatingOut;
+        totalSocial += social;
+        totalExpenses += total;
+        expenseCount++;
       }
     });
 
@@ -101,16 +110,33 @@ export async function updateCityStatistics(city: string, country: string) {
         },
       },
       update: {
-        avgMonthlyRentCents: rentCount > 0 ? Math.round((totalRent / rentCount) * 100) : undefined,
-        medianRentCents: rentCount > 0 ? Math.round(medianRent * 100) : undefined,
+        avgMonthlyRentCents:
+          rentCount > 0 ? Math.round((totalRent / rentCount) * 100) : undefined,
+        medianRentCents:
+          rentCount > 0 ? Math.round(medianRent * 100) : undefined,
         minRentCents: rentCount > 0 ? Math.round(rentMin * 100) : undefined,
         maxRentCents: rentCount > 0 ? Math.round(rentMax * 100) : undefined,
         rentSampleSize: rentCount,
-        avgGroceriesCents: expenseCount > 0 ? Math.round((totalGroceries / expenseCount) * 100) : undefined,
-        avgTransportCents: expenseCount > 0 ? Math.round((totalTransport / expenseCount) * 100) : undefined,
-        avgEatingOutCents: expenseCount > 0 ? Math.round((totalEatingOut / expenseCount) * 100) : undefined,
-        avgSocialLifeCents: expenseCount > 0 ? Math.round((totalSocial / expenseCount) * 100) : undefined,
-        avgTotalExpensesCents: expenseCount > 0 ? Math.round((totalExpenses / expenseCount) * 100) : undefined,
+        avgGroceriesCents:
+          expenseCount > 0
+            ? Math.round((totalGroceries / expenseCount) * 100)
+            : undefined,
+        avgTransportCents:
+          expenseCount > 0
+            ? Math.round((totalTransport / expenseCount) * 100)
+            : undefined,
+        avgEatingOutCents:
+          expenseCount > 0
+            ? Math.round((totalEatingOut / expenseCount) * 100)
+            : undefined,
+        avgSocialLifeCents:
+          expenseCount > 0
+            ? Math.round((totalSocial / expenseCount) * 100)
+            : undefined,
+        avgTotalExpensesCents:
+          expenseCount > 0
+            ? Math.round((totalExpenses / expenseCount) * 100)
+            : undefined,
         expenseSampleSize: expenseCount,
         lastCalculated: new Date(),
       },
@@ -118,16 +144,33 @@ export async function updateCityStatistics(city: string, country: string) {
         city,
         country,
         semester: "ALL",
-        avgMonthlyRentCents: rentCount > 0 ? Math.round((totalRent / rentCount) * 100) : undefined,
-        medianRentCents: rentCount > 0 ? Math.round(medianRent * 100) : undefined,
+        avgMonthlyRentCents:
+          rentCount > 0 ? Math.round((totalRent / rentCount) * 100) : undefined,
+        medianRentCents:
+          rentCount > 0 ? Math.round(medianRent * 100) : undefined,
         minRentCents: rentCount > 0 ? Math.round(rentMin * 100) : undefined,
         maxRentCents: rentCount > 0 ? Math.round(rentMax * 100) : undefined,
         rentSampleSize: rentCount,
-        avgGroceriesCents: expenseCount > 0 ? Math.round((totalGroceries / expenseCount) * 100) : undefined,
-        avgTransportCents: expenseCount > 0 ? Math.round((totalTransport / expenseCount) * 100) : undefined,
-        avgEatingOutCents: expenseCount > 0 ? Math.round((totalEatingOut / expenseCount) * 100) : undefined,
-        avgSocialLifeCents: expenseCount > 0 ? Math.round((totalSocial / expenseCount) * 100) : undefined,
-        avgTotalExpensesCents: expenseCount > 0 ? Math.round((totalExpenses / expenseCount) * 100) : undefined,
+        avgGroceriesCents:
+          expenseCount > 0
+            ? Math.round((totalGroceries / expenseCount) * 100)
+            : undefined,
+        avgTransportCents:
+          expenseCount > 0
+            ? Math.round((totalTransport / expenseCount) * 100)
+            : undefined,
+        avgEatingOutCents:
+          expenseCount > 0
+            ? Math.round((totalEatingOut / expenseCount) * 100)
+            : undefined,
+        avgSocialLifeCents:
+          expenseCount > 0
+            ? Math.round((totalSocial / expenseCount) * 100)
+            : undefined,
+        avgTotalExpensesCents:
+          expenseCount > 0
+            ? Math.round((totalExpenses / expenseCount) * 100)
+            : undefined,
         expenseSampleSize: expenseCount,
       },
     });

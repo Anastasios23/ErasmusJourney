@@ -187,6 +187,10 @@ export default function ShareExperience() {
       setFormData(updatedFormData);
 
       if (stepNumber === 5) {
+        if (isSubmitting) {
+          return;
+        }
+
         try {
           setIsSubmitting(true);
           setSubmitError(null);
@@ -256,6 +260,7 @@ export default function ShareExperience() {
     },
     [
       formData,
+      isSubmitting,
       completedStepNumbers,
       saveProgress,
       submitExperience,
@@ -340,6 +345,7 @@ export default function ShareExperience() {
       data: formData,
       onComplete: (data: any) => handleStepComplete(currentStep, data),
       onSave: handleFormDataChange,
+      isSubmitting,
     };
 
     switch (currentStep) {

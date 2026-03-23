@@ -19,12 +19,14 @@ interface ExperienceStepProps {
   data: any;
   onComplete: (data: any) => void;
   onSave: (data: any) => void;
+  isSubmitting?: boolean;
 }
 
 export default function ExperienceStep({
   data,
   onComplete,
   onSave,
+  isSubmitting = false,
 }: ExperienceStepProps) {
   const { updateFormData } = useFormContext();
   const [formData, setFormData] = useState<ExperienceData>({
@@ -246,16 +248,20 @@ export default function ExperienceStep({
 
       <div className="flex justify-between items-center pt-6 border-t border-gray-100">
         <button
+          type="button"
           onClick={() => onSave({ experience: formData })}
+          disabled={isSubmitting}
           className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
         >
-          Save Draft
+          {isSubmitting ? "Saving..." : "Save Draft"}
         </button>
         <button
+          type="button"
           onClick={handleComplete}
+          disabled={isSubmitting}
           className="px-8 py-2.5 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
         >
-          Submit Experience
+          {isSubmitting ? "Submitting..." : "Submit Experience"}
         </button>
       </div>
     </div>

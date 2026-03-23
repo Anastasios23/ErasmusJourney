@@ -31,6 +31,7 @@ import {
   getRecognitionTypeLabel,
   sanitizeCourseMappingsData,
 } from "../../src/lib/courseMatching";
+import { sanitizeLivingExpensesStepData } from "../../src/lib/livingExpenses";
 
 interface Experience {
   id: string;
@@ -309,34 +310,36 @@ export default function ReviewSubmissions() {
                           Course Mappings
                         </h3>
                         <div className="space-y-3">
-                          {sanitizeCourseMappingsData(selectedSubmission.courses).map(
-                            (course: any, idx: number) => (
-                              <div key={idx} className="p-3 border rounded-lg">
-                                <div className="font-medium">
-                                  {course.hostCourseName}
-                                </div>
-                                <div className="text-sm text-gray-600">
-                                  {course.hostCourseCode || "No code"} (
-                                  {course.hostECTS} ECTS)
-                                </div>
-                                <div className="text-sm mt-1">
-                                  {"->"} {course.homeCourseName} (
-                                  {course.homeECTS} ECTS)
-                                </div>
-                                {course.recognitionType && (
-                                  <div className="text-sm mt-1 text-gray-600">
-                                    Recognition:{" "}
-                                    {getRecognitionTypeLabel(course.recognitionType)}
-                                  </div>
-                                )}
-                                {course.notes && (
-                                  <div className="text-sm mt-1 text-gray-600">
-                                    Notes: {course.notes}
-                                  </div>
-                                )}
+                          {sanitizeCourseMappingsData(
+                            selectedSubmission.courses,
+                          ).map((course: any, idx: number) => (
+                            <div key={idx} className="p-3 border rounded-lg">
+                              <div className="font-medium">
+                                {course.hostCourseName}
                               </div>
-                            ),
-                          )}
+                              <div className="text-sm text-gray-600">
+                                {course.hostCourseCode || "No code"} (
+                                {course.hostECTS} ECTS)
+                              </div>
+                              <div className="text-sm mt-1">
+                                {"->"} {course.homeCourseName} (
+                                {course.homeECTS} ECTS)
+                              </div>
+                              {course.recognitionType && (
+                                <div className="text-sm mt-1 text-gray-600">
+                                  Recognition:{" "}
+                                  {getRecognitionTypeLabel(
+                                    course.recognitionType,
+                                  )}
+                                </div>
+                              )}
+                              {course.notes && (
+                                <div className="text-sm mt-1 text-gray-600">
+                                  Notes: {course.notes}
+                                </div>
+                              )}
+                            </div>
+                          ))}
                         </div>
                       </div>
                     )}
@@ -381,25 +384,65 @@ export default function ReviewSubmissions() {
                   )}
 
                   {/* Living Expenses */}
-                  {selectedSubmission.livingExpenses?.expenses && (
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">
-                        Living Expenses
-                      </h3>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        {Object.entries(
-                          selectedSubmission.livingExpenses.expenses,
-                        ).map(([key, value]) => (
-                          <div key={key}>
-                            <div className="text-gray-500 capitalize">
-                              {key}
+                  {(() => {
+                    const normalizedLivingExpenses =
+                      sanitizeLivingExpensesStepData(
+                        selectedSubmission.livingExpenses,
+                        {
+                          fallbackRent:
+                            typeof selectedSubmission.accommodation
+                              ?.monthlyRent === "number"
+                              ? selectedSubmission.accommodation.monthlyRent
+                              : null,
+                        },
+                      );
+
+                    return (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3">
+                          Living Expenses
+                        </h3>
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <div className="text-gray-500">Accommodation</div>
+                            <div className="font-medium">
+                              €{normalizedLivingExpenses.rent ?? "—"}
                             </div>
-                            <div className="font-medium">€{String(value)}</div>
                           </div>
-                        ))}
+                          <div>
+                            <div className="text-gray-500">Food</div>
+                            <div className="font-medium">
+                              €{normalizedLivingExpenses.food ?? "—"}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-gray-500">Transport</div>
+                            <div className="font-medium">
+                              €{normalizedLivingExpenses.transport ?? "—"}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-gray-500">Social</div>
+                            <div className="font-medium">
+                              €{normalizedLivingExpenses.social ?? "—"}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-gray-500">Travel</div>
+                            <div className="font-medium">
+                              €{normalizedLivingExpenses.travel ?? "—"}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-gray-500">Other</div>
+                            <div className="font-medium">
+                              €{normalizedLivingExpenses.other ?? "—"}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
 
                   {/* Review Actions */}
                   <div className="border-t pt-6">
