@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 
-import { useFormContext } from "../FormProvider";
 import { EnhancedInput } from "@/components/ui/enhanced-input";
 import {
   EnhancedSelect,
@@ -34,7 +33,6 @@ export default function AccommodationStep({
   onComplete,
   onSave,
 }: AccommodationStepProps) {
-  const { updateFormData } = useFormContext();
   const [formData, setFormData] = useState<AccommodationStepData>(() =>
     data?.accommodation
       ? sanitizeAccommodationStepData(data.accommodation)
@@ -53,7 +51,7 @@ export default function AccommodationStep({
   const persist = (nextData: AccommodationStepData) => {
     const sanitized = sanitizeAccommodationStepData(nextData);
     setFormData(sanitized);
-    updateFormData("accommodation", sanitized);
+    onSave({ accommodation: sanitized });
   };
 
   const handleInputChange = <K extends keyof AccommodationStepData>(
@@ -176,7 +174,9 @@ export default function AccommodationStep({
               <div className="w-24">
                 <EnhancedSelect
                   value={formData.currency}
-                  onValueChange={(value) => handleInputChange("currency", value)}
+                  onValueChange={(value) =>
+                    handleInputChange("currency", value)
+                  }
                 >
                   <EnhancedSelectTrigger>
                     <EnhancedSelectValue />
@@ -330,9 +330,7 @@ export default function AccommodationStep({
                 <button
                   key={star}
                   type="button"
-                  onClick={() =>
-                    handleInputChange("accommodationRating", star)
-                  }
+                  onClick={() => handleInputChange("accommodationRating", star)}
                   className="focus:outline-none transition-transform hover:scale-110"
                 >
                   <Star
@@ -372,7 +370,6 @@ export default function AccommodationStep({
         <button
           onClick={() =>
             onSave({
-              ...data,
               accommodation: sanitizeAccommodationStepData(formData),
             })
           }

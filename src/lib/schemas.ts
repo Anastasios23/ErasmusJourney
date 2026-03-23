@@ -327,19 +327,21 @@ export const livingExpensesSchema = z.object({
   other: z.number().nullable(),
 });
 
+export const livingExpensesCanonicalSchema = z.object({
+  currency: z.string().default(createEmptyLivingExpensesStepData().currency),
+  rent: z.number().nullable(),
+  food: z.number().nullable(),
+  transport: z.number().nullable(),
+  social: z.number().nullable(),
+  travel: z.number().nullable(),
+  other: z.number().nullable(),
+});
+
 // ============================================
 // STEP 4: Living Expenses - Minimal Schema for Step Component
 // ============================================
 export const livingExpensesStepSchema = z
-  .object({
-    currency: z.string().default(createEmptyLivingExpensesStepData().currency),
-    rent: z.number().nullable(),
-    food: z.number().nullable(),
-    transport: z.number().nullable(),
-    social: z.number().nullable(),
-    travel: z.number().nullable(),
-    other: z.number().nullable(),
-  })
+  .object(livingExpensesCanonicalSchema.shape)
   .superRefine((value, context) => {
     if (value.food === null) {
       context.addIssue({
@@ -468,7 +470,7 @@ export const erasmusExperienceDraftSchema = z.object({
   basicInfo: basicInformationDraftSchema.optional(),
   courses: z.array(courseMatchingDraftRowSchema).optional(),
   accommodation: accommodationStepSchema.partial().optional(),
-  livingExpenses: livingExpensesStepSchema.partial().optional(),
+  livingExpenses: livingExpensesCanonicalSchema.partial().optional(),
   experience: experienceStepSchema.partial().optional(),
   currentStep: z.number().optional(),
   completedSteps: z.array(z.number()).optional(),

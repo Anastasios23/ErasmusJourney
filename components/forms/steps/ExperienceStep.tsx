@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useFormContext } from "../FormProvider";
 import { EnhancedTextarea } from "@/components/ui/enhanced-textarea";
 import { Label } from "@/components/ui/label";
 import { PhotoUpload } from "@/components/ui/photo-upload";
@@ -28,7 +27,6 @@ export default function ExperienceStep({
   onSave,
   isSubmitting = false,
 }: ExperienceStepProps) {
-  const { updateFormData } = useFormContext();
   const [formData, setFormData] = useState<ExperienceData>({
     overallRating: 0,
     bestExperience: "",
@@ -51,7 +49,7 @@ export default function ExperienceStep({
   const handleInputChange = (field: keyof ExperienceData, value: any) => {
     const newData = { ...formData, [field]: value };
     setFormData(newData);
-    updateFormData("experience", newData);
+    onSave({ experience: newData });
 
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
@@ -253,7 +251,7 @@ export default function ExperienceStep({
           disabled={isSubmitting}
           className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
         >
-          {isSubmitting ? "Saving..." : "Save Draft"}
+          Save Draft
         </button>
         <button
           type="button"

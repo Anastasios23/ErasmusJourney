@@ -1,5 +1,13 @@
 import Link from "next/link";
-import { AlertTriangle, CheckCircle, ExternalLink, Heart, MapPin, Star, Users } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle,
+  ExternalLink,
+  Heart,
+  MapPin,
+  Star,
+  Users,
+} from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
@@ -105,13 +113,21 @@ export default function AccommodationExperienceCard({
   );
 
   const getRecommendationText = (recommend: boolean | string | undefined) => {
-    if (recommend === true || recommend === "yes" || recommend === "Definitely") {
+    if (
+      recommend === true ||
+      recommend === "yes" ||
+      recommend === "Definitely"
+    ) {
       return { text: "Recommends", color: "text-green-600" };
     }
     if (recommend === "Probably" || recommend === "maybe") {
       return { text: "Probably recommends", color: "text-blue-600" };
     }
-    if (recommend === false || recommend === "no" || recommend === "Definitely Not") {
+    if (
+      recommend === false ||
+      recommend === "no" ||
+      recommend === "Definitely Not"
+    ) {
       return { text: "Does not recommend", color: "text-red-600" };
     }
     return { text: "No recommendation", color: "text-gray-500" };
@@ -147,12 +163,18 @@ export default function AccommodationExperienceCard({
                   {accommodationTypeLabel}
                 </h3>
                 {isReal && (
-                  <Badge variant="outline" className="border-blue-600 text-blue-600">
+                  <Badge
+                    variant="outline"
+                    className="border-blue-600 text-blue-600"
+                  >
                     Real Experience
                   </Badge>
                 )}
                 {verified && (
-                  <Badge variant="outline" className="border-green-600 text-green-600">
+                  <Badge
+                    variant="outline"
+                    className="border-green-600 text-green-600"
+                  >
                     Verified
                   </Badge>
                 )}
@@ -167,7 +189,9 @@ export default function AccommodationExperienceCard({
               </div>
             </div>
 
-            <div className="text-right">{rating > 0 && renderStars(rating)}</div>
+            <div className="text-right">
+              {rating > 0 && renderStars(rating)}
+            </div>
           </div>
 
           <div className="rounded-lg bg-blue-50 p-3">
@@ -179,7 +203,9 @@ export default function AccommodationExperienceCard({
             </div>
             {universityInCyprus && university && (
               <p className="text-xs text-blue-700">
-                {universityInCyprus} -> {university}
+                {universityInCyprus}
+                {" -> "}
+                {university}
               </p>
             )}
           </div>

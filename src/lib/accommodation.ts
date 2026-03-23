@@ -25,8 +25,7 @@ export const DIFFICULTY_FINDING_ACCOMMODATION_VALUES = [
   "very_difficult",
 ] as const;
 
-export type AccommodationTypeValue =
-  (typeof ACCOMMODATION_TYPE_VALUES)[number];
+export type AccommodationTypeValue = (typeof ACCOMMODATION_TYPE_VALUES)[number];
 export type BillsIncludedValue = (typeof BILLS_INCLUDED_VALUES)[number];
 export type HowFoundAccommodationValue =
   (typeof HOW_FOUND_ACCOMMODATION_VALUES)[number];
@@ -216,9 +215,7 @@ function normalizeHowFoundAccommodation(
 function normalizeDifficultyFindingAccommodation(
   value: unknown,
 ): DifficultyFindingAccommodationValue | undefined {
-  const normalized = asString(value)
-    .toLowerCase()
-    .replace(/[ -]/g, "_");
+  const normalized = asString(value).toLowerCase().replace(/[ -]/g, "_");
 
   switch (normalized) {
     case "very_easy":
@@ -259,44 +256,45 @@ export function createEmptyAccommodationStepData(): AccommodationStepData {
 }
 
 export function sanitizeAccommodationStepData(
-  value?: Partial<Record<string, unknown>> | null,
+  value?: AccommodationStepData | Partial<Record<string, unknown>> | null,
 ): AccommodationStepData {
-  const monthlyRent = asStrictNumber(value?.monthlyRent ?? value?.rent);
+  const rawValue = (value || {}) as Partial<Record<string, unknown>>;
+  const monthlyRent = asStrictNumber(rawValue.monthlyRent ?? rawValue.rent);
   const minutesToUniversity = asStrictNumber(
-    value?.minutesToUniversity ?? value?.distanceToUniversity,
+    rawValue.minutesToUniversity ?? rawValue.distanceToUniversity,
   );
   const accommodationRating = asStrictNumber(
-    value?.accommodationRating ?? value?.rating,
+    rawValue.accommodationRating ?? rawValue.rating,
   );
   const areaOrNeighborhood = asString(
-    value?.areaOrNeighborhood ??
-      value?.neighborhood ??
-      value?.area ??
-      value?.location,
+    rawValue.areaOrNeighborhood ??
+      rawValue.neighborhood ??
+      rawValue.area ??
+      rawValue.location,
   );
   const accommodationReview = asString(
-    value?.accommodationReview ?? value?.review,
+    rawValue.accommodationReview ?? rawValue.review,
   );
 
   return {
     accommodationType: normalizeAccommodationType(
-      value?.accommodationType ?? value?.type,
+      rawValue.accommodationType ?? rawValue.type,
     ),
     monthlyRent,
-    currency: asString(value?.currency).toUpperCase() || "EUR",
-    billsIncluded: normalizeBillsIncluded(value?.billsIncluded),
+    currency: asString(rawValue.currency).toUpperCase() || "EUR",
+    billsIncluded: normalizeBillsIncluded(rawValue.billsIncluded),
     areaOrNeighborhood: areaOrNeighborhood || undefined,
     minutesToUniversity,
     howFoundAccommodation: normalizeHowFoundAccommodation(
-      value?.howFoundAccommodation,
+      rawValue.howFoundAccommodation,
     ),
     difficultyFindingAccommodation: normalizeDifficultyFindingAccommodation(
-      value?.difficultyFindingAccommodation ??
-        value?.easyToFind ??
-        value?.findingDifficulty,
+      rawValue.difficultyFindingAccommodation ??
+        rawValue.easyToFind ??
+        rawValue.findingDifficulty,
     ),
     accommodationRating,
-    wouldRecommend: normalizeWouldRecommend(value?.wouldRecommend),
+    wouldRecommend: normalizeWouldRecommend(rawValue.wouldRecommend),
     accommodationReview: accommodationReview || undefined,
   };
 }
@@ -349,9 +347,7 @@ export function getBillsIncludedLabel(value?: string | null): string {
   }
 }
 
-export function getHowFoundAccommodationLabel(
-  value?: string | null,
-): string {
+export function getHowFoundAccommodationLabel(value?: string | null): string {
   const normalized = normalizeHowFoundAccommodation(value);
 
   switch (normalized) {

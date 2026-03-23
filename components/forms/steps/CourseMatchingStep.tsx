@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useFormContext } from "../FormProvider";
 import { EnhancedInput } from "@/components/ui/enhanced-input";
 import {
   EnhancedSelect,
@@ -56,7 +55,6 @@ export default function CourseMatchingStep({
   onComplete,
   onSave,
 }: CourseMatchingStepProps) {
-  const { updateFormData } = useFormContext();
   const [mappings, setMappings] = useState<CourseMappingFormRow[]>(() =>
     getInitialMappings(data?.courses),
   );
@@ -82,7 +80,7 @@ export default function CourseMatchingStep({
     const nextPayload = buildCourseMappingsPayload(nextMappings);
 
     setMappings(nextMappings);
-    updateFormData("courses", nextPayload);
+    onSave({ courses: nextPayload });
 
     if (errors.general && nextPayload.length > 0) {
       const nextErrors = { ...errors };
@@ -124,35 +122,41 @@ export default function CourseMatchingStep({
     let isValid = true;
 
     if (visibleMappings.length === 0) {
-      nextErrors.general = "Please add at least one course equivalence example.";
+      nextErrors.general =
+        "Please add at least one course equivalence example.";
       isValid = false;
     }
 
     visibleMappings.forEach((mapping) => {
       if (!mapping.homeCourseName.trim()) {
-        nextErrors[`${mapping.id}-homeCourseName`] = "Home course name is required";
+        nextErrors[`${mapping.id}-homeCourseName`] =
+          "Home course name is required";
         isValid = false;
       }
 
       const homeECTS = Number.parseFloat(mapping.homeECTS);
       if (!mapping.homeECTS.trim() || Number.isNaN(homeECTS) || homeECTS <= 0) {
-        nextErrors[`${mapping.id}-homeECTS`] = "Home ECTS must be a number greater than 0";
+        nextErrors[`${mapping.id}-homeECTS`] =
+          "Home ECTS must be a number greater than 0";
         isValid = false;
       }
 
       if (!mapping.hostCourseName.trim()) {
-        nextErrors[`${mapping.id}-hostCourseName`] = "Host course name is required";
+        nextErrors[`${mapping.id}-hostCourseName`] =
+          "Host course name is required";
         isValid = false;
       }
 
       const hostECTS = Number.parseFloat(mapping.hostECTS);
       if (!mapping.hostECTS.trim() || Number.isNaN(hostECTS) || hostECTS <= 0) {
-        nextErrors[`${mapping.id}-hostECTS`] = "Host ECTS must be a number greater than 0";
+        nextErrors[`${mapping.id}-hostECTS`] =
+          "Host ECTS must be a number greater than 0";
         isValid = false;
       }
 
       if (!mapping.recognitionType) {
-        nextErrors[`${mapping.id}-recognitionType`] = "Recognition type is required";
+        nextErrors[`${mapping.id}-recognitionType`] =
+          "Recognition type is required";
         isValid = false;
       }
     });
@@ -304,7 +308,11 @@ export default function CourseMatchingStep({
                         placeholder="6"
                         value={mapping.homeECTS}
                         onChange={(event) =>
-                          updateMapping(mapping.id, "homeECTS", event.target.value)
+                          updateMapping(
+                            mapping.id,
+                            "homeECTS",
+                            event.target.value,
+                          )
                         }
                         error={errors[`${mapping.id}-homeECTS`]}
                         className="h-9 w-28"
@@ -382,7 +390,11 @@ export default function CourseMatchingStep({
                         placeholder="6"
                         value={mapping.hostECTS}
                         onChange={(event) =>
-                          updateMapping(mapping.id, "hostECTS", event.target.value)
+                          updateMapping(
+                            mapping.id,
+                            "hostECTS",
+                            event.target.value,
+                          )
                         }
                         error={errors[`${mapping.id}-hostECTS`]}
                         className="h-9 w-28"
@@ -463,7 +475,9 @@ export default function CourseMatchingStep({
 
       <div className="flex justify-between items-center pt-6 border-t border-gray-100">
         <button
-          onClick={() => onSave({ ...data, courses: buildCourseMappingsPayload(mappings) })}
+          onClick={() =>
+            onSave({ courses: buildCourseMappingsPayload(mappings) })
+          }
           className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
         >
           Save Draft

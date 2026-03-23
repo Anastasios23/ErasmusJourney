@@ -349,11 +349,11 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
           );
 
           // Navigate to confirmation page
-          router.push(
-            `/submission-confirmation?submitted=true&timestamp=${encodeURIComponent(
-              result.submittedAt,
-            )}`,
-          );
+          const query = new URLSearchParams({
+            submitted: "true",
+            timestamp: String(result.submittedAt || Date.now()),
+          });
+          router.push(`/submission-confirmation?${query.toString()}`);
 
           return true;
         } else {

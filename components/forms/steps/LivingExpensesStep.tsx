@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useFormContext } from "../FormProvider";
 import { EnhancedInput } from "@/components/ui/enhanced-input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -58,7 +57,6 @@ export default function LivingExpensesStep({
   onComplete,
   onSave,
 }: LivingExpensesStepProps) {
-  const { updateFormData } = useFormContext();
   const fallbackRent =
     typeof data?.accommodation?.monthlyRent === "number"
       ? data.accommodation.monthlyRent
@@ -89,16 +87,15 @@ export default function LivingExpensesStep({
     value: string,
   ) => {
     const newData = { ...formData, [field]: value };
-    setFormData(newData);
-    updateFormData(
-      "livingExpenses",
-      toCanonicalData(
-        newData,
-        typeof data?.accommodation?.monthlyRent === "number"
-          ? data.accommodation.monthlyRent
-          : null,
-      ),
+    const canonicalData = toCanonicalData(
+      newData,
+      typeof data?.accommodation?.monthlyRent === "number"
+        ? data.accommodation.monthlyRent
+        : null,
     );
+
+    setFormData(newData);
+    onSave({ livingExpenses: canonicalData });
   };
 
   const validate = () => {

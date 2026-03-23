@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -121,6 +121,7 @@ export default function ShareExperience() {
     livingExpenses: createEmptyLivingExpensesStepData(),
     experience: {},
   });
+  const formDataRef = useRef(formData);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -132,7 +133,7 @@ export default function ShareExperience() {
   // Load saved experience data
   useEffect(() => {
     if (!experienceLoading && experienceData) {
-      setFormData({
+      const hydratedFormData = {
         basicInfo: experienceData.basicInfo || {},
         courses: experienceData.courses || [],
         accommodation: sanitizeAccommodationStepData(
@@ -142,7 +143,10 @@ export default function ShareExperience() {
           experienceData.livingExpenses,
         ),
         experience: experienceData.experience || {},
-      });
+      };
+
+      formDataRef.current = hydratedFormData;
+      setFormData(hydratedFormData);
 
       // Set to last completed step or first incomplete step
       if (experienceData.currentStep) {
@@ -159,14 +163,24 @@ export default function ShareExperience() {
     }
   }, [currentStep, setCurrentStep, getStepName]);
 
+  useEffect(() => {
+    formDataRef.current = formData;
+  }, [formData]);
+
   // Handle form data changes
   const handleFormDataChange = useCallback(
-    async (updatedData: any) => {
-      setFormData(updatedData);
+    async (stepDataPatch: any) => {
+      const mergedData = {
+        ...formDataRef.current,
+        ...stepDataPatch,
+      };
+
+      formDataRef.current = mergedData;
+      setFormData(mergedData);
 
       // Auto-save
       try {
-        const success = await saveProgress(updatedData);
+        const success = await saveProgress(mergedData);
         if (success) {
           setLastSaved(new Date());
           setShowSavedIndicator(true);
@@ -183,7 +197,8 @@ export default function ShareExperience() {
   const handleStepComplete = useCallback(
     async (stepNumber: number, stepData: any) => {
       // Merge step data
-      const updatedFormData = { ...formData, ...stepData };
+      const updatedFormData = { ...formDataRef.current, ...stepData };
+      formDataRef.current = updatedFormData;
       setFormData(updatedFormData);
 
       if (stepNumber === 5) {
@@ -259,7 +274,6 @@ export default function ShareExperience() {
       }
     },
     [
-      formData,
       isSubmitting,
       completedStepNumbers,
       saveProgress,
@@ -273,7 +287,7 @@ export default function ShareExperience() {
   const handleSaveDraft = useCallback(async () => {
     try {
       await saveProgress({
-        ...formData,
+        ...formDataRef.current,
         currentStep,
       });
 
@@ -293,7 +307,7 @@ export default function ShareExperience() {
         variant: "destructive",
       });
     }
-  }, [formData, currentStep, saveProgress]);
+  }, [currentStep, saveProgress]);
 
   // Handle previous step
   const handlePreviousStep = useCallback(() => {

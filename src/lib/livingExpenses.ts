@@ -8,22 +8,7 @@ export interface LivingExpensesStepData {
   other: number | null;
 }
 
-interface LegacyLivingExpensesShape {
-  currency?: unknown;
-  rent?: unknown;
-  food?: unknown;
-  transport?: unknown;
-  social?: unknown;
-  travel?: unknown;
-  other?: unknown;
-  expenses?: {
-    groceries?: unknown;
-    transportation?: unknown;
-    socialLife?: unknown;
-    travel?: unknown;
-    otherExpenses?: unknown;
-  };
-}
+type LivingExpensesInput = Partial<Record<keyof LivingExpensesStepData, unknown>>;
 
 function toNullableNumber(value: unknown): number | null {
   if (value === null || value === undefined || value === "") {
@@ -70,34 +55,32 @@ export function createEmptyLivingExpensesStepData(): LivingExpensesStepData {
 }
 
 export function sanitizeLivingExpensesStepData(
-  value?: Partial<LegacyLivingExpensesShape> | null,
+  value?: LivingExpensesInput | null,
   options?: { fallbackRent?: number | null },
 ): LivingExpensesStepData {
-  const legacyExpenses = value?.expenses;
+  const rawValue = (value || {}) as LivingExpensesInput;
   const fallbackRent =
     typeof options?.fallbackRent === "number" ? options.fallbackRent : null;
 
-  const rent = toNullableNumber(value?.rent);
+  const rent = toNullableNumber(rawValue.rent);
 
   return {
-    currency: toCurrency(value?.currency),
+    currency: toCurrency(rawValue.currency),
     rent: rent ?? fallbackRent,
-    food:
-      toNullableNumber(value?.food) ??
-      toNullableNumber(legacyExpenses?.groceries),
-    transport:
-      toNullableNumber(value?.transport) ??
-      toNullableNumber(legacyExpenses?.transportation),
-    social:
-      toNullableNumber(value?.social) ??
-      toNullableNumber(legacyExpenses?.socialLife),
-    travel:
-      toNullableNumber(value?.travel) ??
-      toNullableNumber(legacyExpenses?.travel),
-    other:
-      toNullableNumber(value?.other) ??
-      toNullableNumber(legacyExpenses?.otherExpenses),
+    food: toNullableNumber(rawValue.food),
+    transport: toNullableNumber(rawValue.transport),
+    social: toNullableNumber(rawValue.social),
+    travel: toNullableNumber(rawValue.travel),
+    other: toNullableNumber(rawValue.other),
   };
+}
+
+export function hasLegacyLivingExpensesShape(value: unknown): boolean {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  return Object.prototype.hasOwnProperty.call(value, "expenses");
 }
 
 export function hasRequiredLivingExpenses(

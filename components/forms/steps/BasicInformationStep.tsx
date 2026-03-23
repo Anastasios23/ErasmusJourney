@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useFormContext } from "../FormProvider";
 import { EnhancedInput } from "@/components/ui/enhanced-input";
 import {
   EnhancedSelect,
@@ -64,7 +63,6 @@ export default function BasicInformationStep({
   onSave,
 }: BasicInformationStepProps) {
   const { data: session } = useSession();
-  const { updateFormData } = useFormContext();
   const derivedHomeUniversity = useMemo(
     () => getCyprusUniversityByEmail(session?.user?.email),
     [session?.user?.email],
@@ -318,7 +316,7 @@ export default function BasicInformationStep({
 
   const persistBasicInfo = (nextData: BasicInformationData) => {
     setFormData(nextData);
-    updateFormData("basicInfo", nextData);
+    onSave({ basicInfo: nextData });
   };
 
   const handleInputChange = (
@@ -465,7 +463,7 @@ export default function BasicInformationStep({
     });
 
     setFormData(cleanedData);
-    onSave({ ...data, basicInfo: cleanedData });
+    onSave({ basicInfo: cleanedData });
   };
 
   return (

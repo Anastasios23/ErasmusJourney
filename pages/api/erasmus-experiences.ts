@@ -63,29 +63,6 @@ function getCanonicalUniversityByCode(code?: string | null) {
   if (!code) {
     return null;
   }
-
-  return CANONICAL_UNIVERSITIES_BY_CODE.get(normalizeKey(code)) || null;
-}
-
-function getSupportedUniversityCodesMessage(): string {
-  return CYPRUS_UNIVERSITIES.map((university) => university.code).join(", ");
-}
-
-// Retry helper for database operations
-async function retryDatabaseOperation<T>(
-  operation: () => Promise<T>,
-  maxRetries = 3,
-  delayMs = 1000,
-): Promise<T> {
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      return await operation();
-    } catch (error: any) {
-      const isConnectionError =
-        error?.code === "P1001" ||
-        error?.message?.includes("Can't reach database") ||
-        error?.name === "PrismaClientInitializationError";
-
       if (isConnectionError && attempt < maxRetries) {
         console.log(
           `Database connection failed, retrying (${attempt}/${maxRetries})...`,
@@ -136,16 +113,6 @@ async function buildBasicInfoPersistenceData(
   if (!incomingBasicInfo && !existingBasicInfo) {
     return null;
   }
-
-  const mergedBasicInfo = sanitizeBasicInformationData({
-    ...sanitizeBasicInformationData(existingBasicInfo),
-    ...(incomingBasicInfo || {}),
-  });
-  const derivedHomeUniversity = getCyprusUniversityByEmail(signedInEmail);
-  const submittedFallbackCode = mergedBasicInfo.homeUniversityCode?.trim();
-
-  let canonicalHomeUniversityCode = "";
-  let canonicalHomeUniversityName = "";
 
   if (derivedHomeUniversity?.code) {
     const canonicalFromEmail = getCanonicalUniversityByCode(
@@ -495,18 +462,6 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     );
   }
 
-  if (updateData.livingExpenses !== undefined) {
-    updateData.livingExpenses = sanitizeLivingExpensesStepData(
-      updateData.livingExpenses,
-      {
-        fallbackRent:
-          updateData.accommodation?.monthlyRent ??
-          existingExperience?.accommodation?.monthlyRent ??
-          null,
-      },
-    );
-  }
-
   // Find the existing experience with retry logic
   const existingExperience: any = await retryDatabaseOperation(() =>
     prisma.erasmusExperience.findUnique({
@@ -520,6 +475,17 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
   if ((existingExperience as any).userId !== session.user.id) {
     return res.status(403).json({ error: "Access denied" });
+  }
+
+  if (
+    updateData.livingExpenses !== undefined &&
+    hasLegacyLivingExpensesShape(updateData.livingExpenses)
+  ) {
+    return res.status(422).json({
+      error: "Invalid living expenses payload",
+      message:
+        "Legacy nested expenses format is not supported. Use canonical fields: currency, rent, food, transport, social, travel, other.",
+    });
   }
 
   if (action === "submit") {

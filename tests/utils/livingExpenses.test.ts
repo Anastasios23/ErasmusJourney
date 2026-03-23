@@ -41,7 +41,7 @@ describe("living expenses sanitization", () => {
     });
   });
 
-  it("maps legacy nested expenses shape into canonical shape", () => {
+  it("does not accept legacy nested expenses shape", () => {
     expect(
       sanitizeLivingExpensesStepData({
         currency: "EUR",
@@ -52,15 +52,15 @@ describe("living expenses sanitization", () => {
           travel: "70",
           otherExpenses: "15",
         },
-      }),
+      } as any),
     ).toEqual({
       currency: "EUR",
       rent: null,
-      food: 300,
-      transport: 50,
-      social: 90,
-      travel: 70,
-      other: 15,
+      food: null,
+      transport: null,
+      social: null,
+      travel: null,
+      other: null,
     });
   });
 
