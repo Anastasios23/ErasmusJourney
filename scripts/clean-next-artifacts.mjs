@@ -19,6 +19,20 @@ if (existsSync(target)) {
 
 mkdirSync(target, { recursive: true });
 
+const serverPagesDir = resolve(target, "server", "pages");
+const fallbackPagesDir = resolve(
+  target,
+  "static",
+  "chunks",
+  "fallback",
+  "pages",
+);
+const fallbackChunksDir = resolve(target, "static", "chunks", "fallback");
+
+mkdirSync(serverPagesDir, { recursive: true });
+mkdirSync(fallbackPagesDir, { recursive: true });
+mkdirSync(fallbackChunksDir, { recursive: true });
+
 const routesManifestPath = resolve(target, "routes-manifest.json");
 writeFileSync(
   routesManifestPath,
@@ -41,4 +55,26 @@ writeFileSync(
   "utf8",
 );
 
-console.log("[clean:next] Prepared .next/routes-manifest.json.");
+const serverPageStub = `"use strict";
+module.exports = {};
+module.exports.default = function StubPage() { return null; };
+`;
+
+writeFileSync(resolve(serverPagesDir, "_document.js"), serverPageStub, "utf8");
+writeFileSync(resolve(serverPagesDir, "_app.js"), serverPageStub, "utf8");
+writeFileSync(resolve(serverPagesDir, "_error.js"), serverPageStub, "utf8");
+
+const fallbackChunkStub = "/* placeholder stub for dev startup */\n";
+writeFileSync(
+  resolve(fallbackChunksDir, "react-refresh.js"),
+  fallbackChunkStub,
+  "utf8",
+);
+writeFileSync(resolve(fallbackPagesDir, "_app.js"), fallbackChunkStub, "utf8");
+writeFileSync(
+  resolve(fallbackPagesDir, "_error.js"),
+  fallbackChunkStub,
+  "utf8",
+);
+
+console.log("[clean:next] Prepared .next startup placeholders.");
