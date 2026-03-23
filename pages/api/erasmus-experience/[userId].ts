@@ -102,13 +102,16 @@ async function handlePut(
     if (formData) {
       if (formData.basicInfo !== undefined) {
         data.basicInfo = formData.basicInfo;
-        
+
         // Extract top-level fields for efficient querying
-        if (formData.basicInfo.homeUniversityId) data.homeUniversityId = formData.basicInfo.homeUniversityId;
-        if (formData.basicInfo.hostUniversityId) data.hostUniversityId = formData.basicInfo.hostUniversityId;
-        if (formData.basicInfo.hostCity) data.hostCity = formData.basicInfo.hostCity;
-        if (formData.basicInfo.hostCountry) data.hostCountry = formData.basicInfo.hostCountry;
-        if (formData.basicInfo.exchangePeriod) data.semester = formData.basicInfo.exchangePeriod;
+        if (formData.basicInfo.hostUniversityId)
+          data.hostUniversityId = formData.basicInfo.hostUniversityId;
+        if (formData.basicInfo.hostCity)
+          data.hostCity = formData.basicInfo.hostCity;
+        if (formData.basicInfo.hostCountry)
+          data.hostCountry = formData.basicInfo.hostCountry;
+        if (formData.basicInfo.exchangePeriod)
+          data.semester = formData.basicInfo.exchangePeriod;
       }
       if (formData.courses !== undefined) {
         data.courses = sanitizeCourseMappingsData(formData.courses);
@@ -120,7 +123,8 @@ async function handlePut(
       }
       if (formData.livingExpenses !== undefined)
         data.livingExpenses = formData.livingExpenses;
-      if (formData.experience !== undefined) data.experience = formData.experience;
+      if (formData.experience !== undefined)
+        data.experience = formData.experience;
     }
 
     // Use a transaction to handle the update and potential aggregation
@@ -166,7 +170,7 @@ async function handlePut(
           const accomData = sanitizeAccommodationStepData(
             experience.accommodation as any,
           );
-          
+
           // Delete existing review for this experience
           await tx.accommodationReview.deleteMany({
             where: { experienceId: experience.id },
@@ -178,7 +182,7 @@ async function handlePut(
             typeof accomData.monthlyRent === "number" &&
             typeof accomData.accommodationRating === "number"
           ) {
-             await tx.accommodationReview.create({
+            await tx.accommodationReview.create({
               data: {
                 experienceId: experience.id,
                 name: `${getAccommodationTypeLabel(
@@ -202,8 +206,8 @@ async function handlePut(
 
     // 3. Update City Statistics (Fire and forget)
     if (isComplete && result.hostCity && result.hostCountry) {
-      updateCityStatistics(result.hostCity, result.hostCountry).catch(err => 
-        console.error("Failed to update city stats:", err)
+      updateCityStatistics(result.hostCity, result.hostCountry).catch((err) =>
+        console.error("Failed to update city stats:", err),
       );
     }
 

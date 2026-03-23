@@ -98,8 +98,8 @@ export default function BasicInformationStep({
       return derivedHomeUniversity.code;
     }
 
-    if (formData.homeUniversityId) {
-      return formData.homeUniversityId;
+    if (formData.homeUniversityCode) {
+      return formData.homeUniversityCode;
     }
 
     const matched = CYPRUS_UNIVERSITIES.find(
@@ -111,7 +111,7 @@ export default function BasicInformationStep({
   }, [
     derivedHomeUniversity?.code,
     formData.homeUniversity,
-    formData.homeUniversityId,
+    formData.homeUniversityCode,
   ]);
 
   useEffect(() => {
@@ -126,7 +126,7 @@ export default function BasicInformationStep({
     setFormData((current) => {
       if (
         current.homeUniversity === derivedHomeUniversity.name &&
-        current.homeUniversityId === derivedHomeUniversity.code
+        current.homeUniversityCode === derivedHomeUniversity.code
       ) {
         return current;
       }
@@ -134,7 +134,7 @@ export default function BasicInformationStep({
       return sanitizeBasicInformationData({
         ...current,
         homeUniversity: derivedHomeUniversity.name,
-        homeUniversityId: derivedHomeUniversity.code,
+        homeUniversityCode: derivedHomeUniversity.code,
       });
     });
   }, [derivedHomeUniversity?.code, derivedHomeUniversity?.name]);
@@ -333,9 +333,9 @@ export default function BasicInformationStep({
       homeUniversity: isHomeUniversityLocked
         ? derivedHomeUniversity?.name || formData.homeUniversity
         : formData.homeUniversity,
-      homeUniversityId: isHomeUniversityLocked
-        ? derivedHomeUniversity?.code || formData.homeUniversityId
-        : formData.homeUniversityId,
+      homeUniversityCode: isHomeUniversityLocked
+        ? derivedHomeUniversity?.code || formData.homeUniversityCode
+        : formData.homeUniversityCode,
       [field]: value,
       ...(shouldResetHost
         ? {
@@ -372,9 +372,9 @@ export default function BasicInformationStep({
       homeUniversity: isHomeUniversityLocked
         ? derivedHomeUniversity?.name || formData.homeUniversity
         : formData.homeUniversity,
-      homeUniversityId: isHomeUniversityLocked
-        ? derivedHomeUniversity?.code || formData.homeUniversityId
-        : formData.homeUniversityId,
+      homeUniversityCode: isHomeUniversityLocked
+        ? derivedHomeUniversity?.code || formData.homeUniversityCode
+        : formData.homeUniversityCode,
       hostUniversity: selectedOption.hostUniversity,
       hostUniversityId: selectedOption.hostUniversityId || "",
       hostCity: selectedOption.hostCity,
@@ -438,9 +438,9 @@ export default function BasicInformationStep({
       homeUniversity: isHomeUniversityLocked
         ? derivedHomeUniversity?.name || formData.homeUniversity
         : formData.homeUniversity,
-      homeUniversityId: isHomeUniversityLocked
-        ? derivedHomeUniversity?.code || formData.homeUniversityId
-        : formData.homeUniversityId,
+      homeUniversityCode: isHomeUniversityLocked
+        ? derivedHomeUniversity?.code || formData.homeUniversityCode
+        : formData.homeUniversityCode,
     });
 
     setFormData(cleanedData);
@@ -459,9 +459,9 @@ export default function BasicInformationStep({
       homeUniversity: isHomeUniversityLocked
         ? derivedHomeUniversity?.name || formData.homeUniversity
         : formData.homeUniversity,
-      homeUniversityId: isHomeUniversityLocked
-        ? derivedHomeUniversity?.code || formData.homeUniversityId
-        : formData.homeUniversityId,
+      homeUniversityCode: isHomeUniversityLocked
+        ? derivedHomeUniversity?.code || formData.homeUniversityCode
+        : formData.homeUniversityCode,
     });
 
     setFormData(cleanedData);
@@ -523,7 +523,7 @@ export default function BasicInformationStep({
                   const nextData = sanitizeBasicInformationData({
                     ...formData,
                     homeUniversity: selectedUniversity.name,
-                    homeUniversityId: selectedUniversity.code,
+                    homeUniversityCode: selectedUniversity.code,
                     homeDepartment: "",
                     hostUniversity: "",
                     hostUniversityId: "",

@@ -25,7 +25,7 @@ const exchangePeriodSchema = z.enum(BASIC_INFO_PERIOD_OPTIONS, {
 
 const basicInformationSchemaBase = z.object({
   homeUniversity: z.string().min(1, "Home university is required"),
-  homeUniversityId: z.string().optional(),
+  homeUniversityCode: z.string().optional(),
   homeDepartment: z.string().min(1, "Home department is required"),
   levelOfStudy: levelOfStudySchema,
   hostUniversity: z.string().min(1, "Host university is required"),

@@ -10,7 +10,7 @@ export type BasicInfoPeriod = (typeof BASIC_INFO_PERIOD_OPTIONS)[number];
 
 export interface BasicInformationData {
   homeUniversity: string;
-  homeUniversityId: string;
+  homeUniversityCode: string;
   homeDepartment: string;
   levelOfStudy: BasicInfoLevel | "";
   hostUniversity: string;
@@ -65,7 +65,8 @@ export function sanitizeBasicInformationData(
 
   return {
     homeUniversity: asString(value?.homeUniversity),
-    homeUniversityId: asString(value?.homeUniversityId),
+    homeUniversityCode:
+      asString(value?.homeUniversityCode) || asString(value?.homeUniversityId),
     homeDepartment: asString(value?.homeDepartment),
     levelOfStudy: BASIC_INFO_LEVEL_OPTIONS.includes(levelOfStudy)
       ? levelOfStudy
@@ -89,9 +90,7 @@ export function isBasicInformationComplete(
 ): boolean {
   const sanitized = sanitizeBasicInformationData(value);
 
-  return BASIC_INFORMATION_REQUIRED_FIELDS.every(
-    (field) => !!sanitized[field],
-  );
+  return BASIC_INFORMATION_REQUIRED_FIELDS.every((field) => !!sanitized[field]);
 }
 
 export function buildExperienceSemester(

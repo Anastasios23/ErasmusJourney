@@ -10,7 +10,7 @@ interface StepNavigationProps {
   onNext?: (e?: React.FormEvent | React.MouseEvent) => void | Promise<void>;
   onSubmit?: (e?: React.FormEvent | React.MouseEvent) => void | Promise<void>;
   onSaveDraft?: () => Promise<void>;
-  canProceed: boolean;
+  canProceed?: boolean;
   isLastStep: boolean;
   isSubmitting?: boolean;
   showPrevious?: boolean;
@@ -24,7 +24,7 @@ export function StepNavigation({
   onNext,
   onSubmit,
   onSaveDraft,
-  canProceed,
+  canProceed = true,
   isLastStep,
   isSubmitting = false,
   showPrevious = true,
@@ -100,38 +100,51 @@ export function StepNavigation({
         )}
 
         {/* Next/Submit Button */}
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          {isLastStep ? (
-            <Button
-              type="button"
-              onClick={onSubmit}
-              disabled={!canProceed || isSubmitting || isSavingDraft}
-              className="flex items-center gap-2 px-8 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 text-white border-none shadow-lg shadow-violet-500/20 transition-all"
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                  Submitting...
-                </>
-              ) : (
-                <>
-                  <Icon icon="solar:check-circle-linear" className="h-4 w-4" />
-                  Submit Experience
-                </>
-              )}
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              onClick={onNext}
-              disabled={!canProceed || isSubmitting || isSavingDraft}
-              className="flex items-center gap-2 px-8 bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 text-white shadow-lg transition-all"
-            >
-              Next Step
-              <Icon icon="solar:arrow-right-linear" className="h-4 w-4" />
-            </Button>
-          )}
-        </motion.div>
+        {isLastStep
+          ? onSubmit && (
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Button
+                  type="button"
+                  onClick={onSubmit}
+                  disabled={!canProceed || isSubmitting || isSavingDraft}
+                  className="flex items-center gap-2 px-8 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 text-white border-none shadow-lg shadow-violet-500/20 transition-all"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <Icon
+                        icon="solar:check-circle-linear"
+                        className="h-4 w-4"
+                      />
+                      Submit Experience
+                    </>
+                  )}
+                </Button>
+              </motion.div>
+            )
+          : onNext && (
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Button
+                  type="button"
+                  onClick={onNext}
+                  disabled={!canProceed || isSubmitting || isSavingDraft}
+                  className="flex items-center gap-2 px-8 bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 text-white shadow-lg transition-all"
+                >
+                  Next Step
+                  <Icon icon="solar:arrow-right-linear" className="h-4 w-4" />
+                </Button>
+              </motion.div>
+            )}
       </div>
     </div>
   );

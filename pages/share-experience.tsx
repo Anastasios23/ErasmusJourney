@@ -31,7 +31,6 @@ import ExperienceStep from "../components/forms/steps/ExperienceStep";
 // Import validation schemas and helpers
 import {
   validateStep,
-  validateFullForm,
   getStepSchema,
   basicInformationStepSchema,
   courseMatchingStepSchema,
@@ -256,64 +255,6 @@ export default function ShareExperience() {
     }
   }, [currentStep]);
 
-  // Handle next step
-  const handleNextStep = useCallback(async () => {
-    // This will be called by the step component's onComplete
-    if (currentStep < 5) {
-      setLocalCurrentStep(currentStep + 1);
-    }
-  }, [currentStep]);
-
-  // Handle final submission
-  const handleFinalSubmit = useCallback(async () => {
-    setIsSubmitting(true);
-    setSubmitError(null);
-
-    // Validate all steps before submission
-    const validationResult = validateFullForm(formData);
-    if (!validationResult.success) {
-      const errorMessages = Object.entries(validationResult.errors)
-        .map(([field, message]) => `${field}: ${message}`)
-        .join("\n");
-
-      setSubmitError(`Please complete all required fields:\n${errorMessages}`);
-      toast({
-        title: "Validation Error",
-        description: "Please complete all required fields before submitting.",
-        variant: "destructive",
-      });
-      setIsSubmitting(false);
-      return;
-    }
-
-    try {
-      const success = await submitExperience(formData);
-
-      if (success) {
-        toast({
-          title: "Success!",
-          description:
-            "Your Erasmus experience has been submitted successfully.",
-        });
-        // Redirect handled by submitExperience hook
-      } else {
-        throw new Error("Submission failed");
-      }
-    } catch (error) {
-      console.error("Submission error:", error);
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to submit experience";
-      setSubmitError(errorMessage);
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [formData, submitExperience]);
-
   // Navigate to specific step
   const handleStepClick = useCallback(
     (stepNumber: number) => {
@@ -328,10 +269,6 @@ export default function ShareExperience() {
     },
     [completedStepNumbers],
   );
-
-  // Check if can proceed to next step
-  const canProceed =
-    completedStepNumbers.includes(currentStep) || currentStep === 5;
 
   // Loading state
   if (sessionStatus === "loading" || experienceLoading) {
@@ -503,10 +440,7 @@ export default function ShareExperience() {
                   currentStep={currentStep}
                   totalSteps={5}
                   onPrevious={handlePreviousStep}
-                  onNext={currentStep < 5 ? handleNextStep : undefined}
-                  onSubmit={currentStep === 5 ? handleFinalSubmit : undefined}
                   onSaveDraft={handleSaveDraft}
-                  canProceed={true}
                   isLastStep={currentStep === 5}
                   isSubmitting={isSubmitting}
                   showPrevious={currentStep > 1}

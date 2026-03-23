@@ -138,7 +138,7 @@ async function buildBasicInfoPersistenceData(
     ...(incomingBasicInfo || {}),
   });
   const derivedHomeUniversity = getCyprusUniversityByEmail(signedInEmail);
-  const submittedFallbackCode = mergedBasicInfo.homeUniversityId?.trim();
+  const submittedFallbackCode = mergedBasicInfo.homeUniversityCode?.trim();
 
   let canonicalHomeUniversityCode = "";
   let canonicalHomeUniversityName = "";
@@ -163,7 +163,7 @@ async function buildBasicInfoPersistenceData(
       throw new Step1ValidationError(
         400,
         "MISSING_HOME_UNIVERSITY_CODE",
-        "Home university code is required when your email domain is not recognized. Please select one of the supported universities.",
+        "Invalid home university selection. Please choose a university from the official Erasmus Journey list.",
       );
     }
 
@@ -175,7 +175,7 @@ async function buildBasicInfoPersistenceData(
       throw new Step1ValidationError(
         422,
         "INVALID_HOME_UNIVERSITY_CODE",
-        `Invalid home university code '${submittedFallbackCode}'. Supported universities are: ${getSupportedUniversityCodesMessage()}.`,
+        `Invalid home university selection. Please choose a university from the official Erasmus Journey list. Supported codes: ${getSupportedUniversityCodesMessage()}.`,
       );
     }
 
@@ -197,7 +197,7 @@ async function buildBasicInfoPersistenceData(
   const persistedBasicInfo = sanitizeBasicInformationData({
     ...mergedBasicInfo,
     homeUniversity: homeUniversity?.name || canonicalHomeUniversityName,
-    homeUniversityId: canonicalHomeUniversityCode,
+    homeUniversityCode: canonicalHomeUniversityCode,
     hostUniversity:
       mergedBasicInfo.hostUniversity || hostUniversity?.name || "",
     hostUniversityId: hostUniversity?.id || "",
