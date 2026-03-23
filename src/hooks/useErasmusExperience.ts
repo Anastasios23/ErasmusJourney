@@ -147,6 +147,14 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
             });
             return mappedData;
           }
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          const errorMessage =
+            errorData.details ||
+            errorData.error ||
+            `Failed to load experience: ${response.status}`;
+
+          throw new Error(errorMessage);
         }
 
         // If no experience exists, create one
@@ -236,7 +244,10 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
             errorData.error || errorData.details || "Failed to save progress";
 
           // More user-friendly error messages
-          if (response.status === 500 && errorMessage.includes("database")) {
+          if (
+            response.status === 503 ||
+            errorMessage.toLowerCase().includes("database")
+          ) {
             throw new Error(
               "Unable to connect to database. Your changes will be saved when connection is restored.",
             );

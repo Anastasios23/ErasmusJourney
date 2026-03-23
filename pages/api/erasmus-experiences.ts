@@ -29,6 +29,11 @@ import {
   hasRequiredLivingExpenses,
   sanitizeLivingExpensesStepData,
 } from "../../src/lib/livingExpenses";
+import {
+  getDatabaseUnavailableDetails,
+  getErrorMessage,
+  isDatabaseConnectionError,
+} from "../../lib/databaseErrors";
 
 class Step1ValidationError extends Error {
   statusCode: number;
@@ -85,14 +90,7 @@ async function retryDatabaseOperation<T>(
     try {
       return await operation();
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : String(error || "");
-      const isConnectionError =
-        /connection|timeout|econn|p1001|p2024|can't reach database/i.test(
-          message,
-        );
-
-      if (isConnectionError && attempt < maxRetries) {
+      if (isDatabaseConnectionError(error) && attempt < maxRetries) {
         console.log(
           `Database connection failed, retrying (${attempt}/${maxRetries})...`,
         );
@@ -282,9 +280,18 @@ export default async function handler(
     }
   } catch (error) {
     console.error("API Error:", error);
+
+    if (isDatabaseConnectionError(error)) {
+      return res.status(503).json({
+        error: "Database unavailable",
+        details: getDatabaseUnavailableDetails(),
+        cause: getErrorMessage(error),
+      });
+    }
+
     return res.status(500).json({
       error: "Internal server error",
-      details: error instanceof Error ? error.message : "Unknown error",
+      details: getErrorMessage(error),
     });
   }
 }
@@ -483,9 +490,18 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
         "Error stack:",
         error instanceof Error ? error.stack : "No stack trace",
       );
+
+      if (isDatabaseConnectionError(error)) {
+        return res.status(503).json({
+          error: "Database unavailable",
+          details: getDatabaseUnavailableDetails(),
+          cause: getErrorMessage(error),
+        });
+      }
+
       return res.status(500).json({
         error: "Failed to create experience",
-        details: error instanceof Error ? error.message : "Unknown error",
+        details: getErrorMessage(error),
         stack: error instanceof Error ? error.stack : undefined,
       });
     }
