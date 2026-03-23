@@ -79,6 +79,7 @@ __snapshots__/
 # ===========================
 logs/
 *.log
+*.smoke-*.out
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
