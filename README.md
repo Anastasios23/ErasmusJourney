@@ -4,96 +4,87 @@ A web application helping future Erasmus students from Cyprus plan their exchang
 
 ## Active App Boundary
 
-The active product in this repository is the Next.js app at the repository root.
+The active product in this repository is the root Next.js application.
 
 - Primary development path: `npm run dev`
 - Primary production build: `npm run build`
-- Primary typecheck signal: `npm run typecheck:next-only`
+- Primary CI typecheck signal: `npm run typecheck:next-only`
+- Root `tsconfig.json` is editor compatibility for the active app only
 
-Legacy directories such as `angular-ssr/`, `api-service/`, and `server/` are not part of the main Next.js execution path for the current MVP. They remain in the repo for historical or auxiliary purposes and should not be treated as the default startup path.
+Legacy directories such as `angular-ssr/`, `api-service/`, and `server/` are not part of the default startup path. They remain in the repo for historical or auxiliary reasons and should not be treated as required for MVP development.
 
-Legacy workspace commands, if you explicitly need them, are documented in [docs/LEGACY_WORKSPACES.md](./docs/LEGACY_WORKSPACES.md).
+If you need background on those archived paths, see [docs/LEGACY_WORKSPACES.md](./docs/LEGACY_WORKSPACES.md).
 
-## Core Features (MVP)
+## Core Features
 
-### For Past Erasmus Students
+### For past Erasmus students
 
-- **5-Step Experience Form** (`/share-experience`) - Share your Erasmus experience:
-  1. Basic Information (university, destination, study period)
-  2. Course Matching (courses taken abroad and equivalences)
-  3. Accommodation (housing type, rent, neighborhood)
-  4. Living Expenses (monthly costs breakdown)
-  5. Tips & Advice (help future students)
+- **5-step experience form** (`/share-experience`)
+  1. Basic information
+  2. Course matching
+  3. Accommodation
+  4. Living expenses
+  5. Tips and advice
 
-### For Future Erasmus Students
+### For future Erasmus students
 
-- **Destinations** (`/destinations`) - Browse cities with aggregated student data
-- **Course Matching** (`/course-matching-experiences`) - See what courses students took
-- **Destination Details** (`/destinations/[city]`) - Detailed city info with costs, accommodation tips
+- **Destinations** (`/destinations`) for aggregated city data
+- **Course matching** (`/course-matching-experiences`) for approved course equivalences
+- **Destination details** (`/destinations/[slug]`) for city-specific insights
 
-### User Features
+### For signed-in users
 
-- **Dashboard** (`/dashboard`) - Track form progress
-- **My Submissions** (`/my-submissions`) - View submitted experiences
+- **Dashboard** (`/dashboard`) to track form progress
+- **My submissions** (`/my-submissions`) to review submitted experiences
 
-### Admin
+### For admins
 
-- **Review Submissions** (`/admin/review-submissions`) - Approve student submissions
+- **Review submissions** (`/admin/review-submissions`) to moderate student data before it becomes public
 
 ## Tech Stack
 
-- **Framework**: Next.js 15 with Pages Router
+- **Framework**: Next.js 15 with the Pages Router
 - **Database**: PostgreSQL with Prisma ORM
 - **Auth**: NextAuth.js
-- **Styling**: TailwindCSS + Radix UI
-- **State**: React Query
+- **Styling**: TailwindCSS with Radix UI primitives
+- **State/Data**: React Query
 
 ## Getting Started
 
 ```bash
-# Install dependencies
 npm install
-
-# Set up environment variables
 cp .env.example .env.local
 # Edit .env.local with your database URL and auth secrets
-
-# Run database migrations
-npx prisma migrate dev
-
-# Start development server
+npm run db:push
 npm run dev
 ```
 
-## Page Structure (MVP)
+## Page Structure
 
-```
+```text
 pages/
-├── index.tsx                  # Homepage
-├── share-experience.tsx       # 5-step form (main entry point)
-├── dashboard.tsx              # User dashboard
-├── my-submissions.tsx         # User's submissions
-├── destinations/
-│   ├── index.tsx             # All destinations
-│   └── [slug].tsx            # Destination detail
-├── course-matching-experiences.tsx  # Course exchange data
-├── login.tsx                  # Login
-├── register.tsx               # Register
-├── admin/
-│   ├── index.tsx             # Redirect to review
-│   └── review-submissions.tsx # Admin review page
-└── accommodation/
-    └── [id].tsx              # Accommodation detail
+|-- index.tsx
+|-- share-experience.tsx
+|-- dashboard.tsx
+|-- my-submissions.tsx
+|-- destinations/
+|   |-- index.tsx
+|   `-- [slug].tsx
+|-- course-matching-experiences.tsx
+|-- login.tsx
+|-- register.tsx
+|-- admin/
+|   |-- index.tsx
+|   `-- review-submissions.tsx
+`-- accommodation/
+    `-- [id].tsx
 ```
 
 ## Data Flow
 
-1. Past students fill out the 5-step form at `/share-experience`
-2. Admin reviews and approves submissions at `/admin/review-submissions`
-3. Approved data is aggregated and displayed on:
-   - `/destinations` - City listings with stats
-   - `/destinations/[city]` - Detailed city pages
-   - `/course-matching-experiences` - Course information
+1. Past students submit experiences through `/share-experience`.
+2. Admins review submissions in `/admin/review-submissions`.
+3. Approved data is aggregated into destination and course-matching views.
 
 ## Environment Variables
 
