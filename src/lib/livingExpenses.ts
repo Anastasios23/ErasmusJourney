@@ -8,7 +8,9 @@ export interface LivingExpensesStepData {
   other: number | null;
 }
 
-type LivingExpensesInput = Partial<Record<keyof LivingExpensesStepData, unknown>>;
+type LivingExpensesInput = Partial<
+  Record<keyof LivingExpensesStepData, unknown>
+>;
 
 function toNullableNumber(value: unknown): number | null {
   if (value === null || value === undefined || value === "") {
