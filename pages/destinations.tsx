@@ -24,12 +24,12 @@ interface DestinationsPageProps {
   destinations: PublicDestinationListItem[];
 }
 
-function formatCurrency(value: number | null): string {
+function formatAmount(value: number | null): string {
   if (value === null) {
     return "N/A";
   }
 
-  return `€${Math.round(value).toLocaleString()}`;
+  return Math.round(value).toLocaleString();
 }
 
 export default function DestinationsPage({
@@ -194,13 +194,13 @@ export default function DestinationsPage({
                     <div>
                       <p className="text-slate-500">Average rent</p>
                       <p className="font-semibold text-slate-900">
-                        {formatCurrency(destination.averageRent)}
+                        {formatAmount(destination.averageRent)}
                       </p>
                     </div>
                     <div>
                       <p className="text-slate-500">Average monthly cost</p>
                       <p className="font-semibold text-slate-900">
-                        {formatCurrency(destination.averageMonthlyCost)}
+                        {formatAmount(destination.averageMonthlyCost)}
                       </p>
                     </div>
                   </CardContent>

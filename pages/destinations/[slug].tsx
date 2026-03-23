@@ -16,17 +16,19 @@ interface DestinationDetailPageProps {
   destination: PublicDestinationDetail;
 }
 
-function formatCurrency(value: number | null): string {
+function formatMoney(value: number | null, currency: string): string {
   if (value === null) {
     return "N/A";
   }
 
-  return `€${Math.round(value).toLocaleString()}`;
+  return `${Math.round(value).toLocaleString()} ${currency}`;
 }
 
 export default function DestinationDetailPage({
   destination,
 }: DestinationDetailPageProps) {
+  const currencyLabel = destination.costSummary.currency || "EUR";
+
   return (
     <div className="min-h-screen bg-slate-50">
       <Head>
@@ -74,7 +76,7 @@ export default function DestinationDetailPage({
               <CardContent className="pt-5">
                 <p className="text-slate-500">Avg rent</p>
                 <p className="font-semibold text-slate-900">
-                  {formatCurrency(destination.averageRent)}
+                  {formatMoney(destination.averageRent, currencyLabel)}
                 </p>
               </CardContent>
             </Card>
@@ -82,7 +84,7 @@ export default function DestinationDetailPage({
               <CardContent className="pt-5">
                 <p className="text-slate-500">Avg monthly cost</p>
                 <p className="font-semibold text-slate-900">
-                  {formatCurrency(destination.averageMonthlyCost)}
+                  {formatMoney(destination.averageMonthlyCost, currencyLabel)}
                 </p>
               </CardContent>
             </Card>
@@ -113,7 +115,10 @@ export default function DestinationDetailPage({
               <p className="text-slate-600">
                 Average rent:{" "}
                 <span className="font-semibold">
-                  {formatCurrency(destination.accommodationSummary.averageRent)}
+                  {formatMoney(
+                    destination.accommodationSummary.averageRent,
+                    currencyLabel,
+                  )}
                 </span>
               </p>
 
@@ -134,7 +139,7 @@ export default function DestinationDetailPage({
                           {item.type} ({item.count})
                         </span>
                         <span className="font-medium text-slate-900">
-                          {formatCurrency(item.averageRent)}
+                          {formatMoney(item.averageRent, currencyLabel)}
                         </span>
                       </li>
                     ))}
@@ -182,42 +187,63 @@ export default function DestinationDetailPage({
               <p className="text-slate-700">
                 Rent:{" "}
                 <span className="font-medium">
-                  {formatCurrency(destination.costSummary.averageRent)}
+                  {formatMoney(
+                    destination.costSummary.averageRent,
+                    currencyLabel,
+                  )}
                 </span>
               </p>
               <p className="text-slate-700">
                 Food:{" "}
                 <span className="font-medium">
-                  {formatCurrency(destination.costSummary.averageFood)}
+                  {formatMoney(
+                    destination.costSummary.averageFood,
+                    currencyLabel,
+                  )}
                 </span>
               </p>
               <p className="text-slate-700">
                 Transport:{" "}
                 <span className="font-medium">
-                  {formatCurrency(destination.costSummary.averageTransport)}
+                  {formatMoney(
+                    destination.costSummary.averageTransport,
+                    currencyLabel,
+                  )}
                 </span>
               </p>
               <p className="text-slate-700">
                 Social:{" "}
                 <span className="font-medium">
-                  {formatCurrency(destination.costSummary.averageSocial)}
+                  {formatMoney(
+                    destination.costSummary.averageSocial,
+                    currencyLabel,
+                  )}
                 </span>
               </p>
               <p className="text-slate-700">
                 Travel:{" "}
                 <span className="font-medium">
-                  {formatCurrency(destination.costSummary.averageTravel)}
+                  {formatMoney(
+                    destination.costSummary.averageTravel,
+                    currencyLabel,
+                  )}
                 </span>
               </p>
               <p className="text-slate-700">
                 Other:{" "}
                 <span className="font-medium">
-                  {formatCurrency(destination.costSummary.averageOther)}
+                  {formatMoney(
+                    destination.costSummary.averageOther,
+                    currencyLabel,
+                  )}
                 </span>
               </p>
               <p className="text-slate-800 font-semibold pt-2 border-t">
                 Average monthly total:{" "}
-                {formatCurrency(destination.costSummary.averageMonthlyCost)}
+                {formatMoney(
+                  destination.costSummary.averageMonthlyCost,
+                  currencyLabel,
+                )}
               </p>
             </CardContent>
           </Card>
