@@ -65,6 +65,33 @@ function getCanonicalUniversityByCode(code?: string | null) {
   if (!code) {
     return null;
   }
+
+  return CANONICAL_UNIVERSITIES_BY_CODE.get(normalizeKey(code)) || null;
+}
+
+function getSupportedUniversityCodesMessage(): string {
+  return [...CANONICAL_UNIVERSITIES_BY_CODE.values()]
+    .map((university) => university.code)
+    .sort((left, right) => left.localeCompare(right))
+    .join(", ");
+}
+
+async function retryDatabaseOperation<T>(
+  operation: () => Promise<T>,
+  maxRetries = 3,
+  delayMs = 500,
+): Promise<T> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : String(error || "");
+      const isConnectionError =
+        /connection|timeout|econn|p1001|p2024|can't reach database/i.test(
+          message,
+        );
+
       if (isConnectionError && attempt < maxRetries) {
         console.log(
           `Database connection failed, retrying (${attempt}/${maxRetries})...`,
@@ -72,9 +99,11 @@ function getCanonicalUniversityByCode(code?: string | null) {
         await new Promise((resolve) => setTimeout(resolve, delayMs * attempt));
         continue;
       }
+
       throw error;
     }
   }
+
   throw new Error("Max retries exceeded");
 }
 
@@ -115,6 +144,23 @@ async function buildBasicInfoPersistenceData(
   if (!incomingBasicInfo && !existingBasicInfo) {
     return null;
   }
+
+  const mergedBasicInfo = sanitizeBasicInformationData({
+    ...(existingBasicInfo || {}),
+    ...(incomingBasicInfo || {}),
+  });
+
+  const derivedHomeUniversity = getCyprusUniversityByEmail(
+    signedInEmail || undefined,
+  );
+  const inferredFallbackCode = getCanonicalUniversityByCode(
+    mergedBasicInfo.homeUniversity,
+  )?.code;
+  const submittedFallbackCode =
+    mergedBasicInfo.homeUniversityCode || inferredFallbackCode || null;
+
+  let canonicalHomeUniversityCode = "";
+  let canonicalHomeUniversityName = "";
 
   if (derivedHomeUniversity?.code) {
     const canonicalFromEmail = getCanonicalUniversityByCode(
