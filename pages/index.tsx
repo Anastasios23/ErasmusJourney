@@ -481,12 +481,20 @@ function DestinationCard({
     setGlare({ x: 50, y: 50 });
   };
 
+  const destinationSlug = `${city}-${country}`
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+
   return (
     <RevealOnScroll delay={index * 100}>
-      <Link href={`/destinations/${city.toLowerCase().replace(/\s+/g, "-")}`}>
+      <Link href={`/destinations/${destinationSlug}`} className="block">
         <div
           ref={cardRef}
-          className="relative group cursor-pointer"
+          className="relative z-0 group cursor-pointer isolate"
           style={{
             transform: transform || undefined,
             transition: "transform 0.2s ease-out",
@@ -789,7 +797,7 @@ export default function HomePage({
         />
       </div>
 
-      <main className="min-h-screen bg-white dark:bg-gray-950 overflow-hidden">
+      <main className="relative z-0 min-h-screen bg-white dark:bg-gray-950 overflow-hidden">
         {/* ================================================================ */}
         {/* HERO SECTION */}
         {/* ================================================================ */}
@@ -818,7 +826,11 @@ export default function HomePage({
               <RevealOnScroll>
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-8">
                   <Icon icon="solar:stars-bold-duotone" className="w-4 h-4" />
-                  <span>Trusted by 500+ Cyprus students</span>
+                  <span>
+                    {totalStudents > 0
+                      ? `Trusted by ${totalStudents}+ Cyprus students`
+                      : "Built for Cyprus students"}
+                  </span>
                 </div>
               </RevealOnScroll>
 
@@ -900,21 +912,21 @@ export default function HomePage({
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
               <StatCounter
-                value={totalDestinations || 150}
+                value={totalDestinations}
                 label="Destinations"
-                suffix="+"
+                suffix={totalDestinations > 0 ? "+" : ""}
                 icon="solar:map-point-bold-duotone"
               />
               <StatCounter
-                value={totalUniversities || 200}
+                value={totalUniversities}
                 label="Universities"
-                suffix="+"
+                suffix={totalUniversities > 0 ? "+" : ""}
                 icon="solar:buildings-2-bold-duotone"
               />
               <StatCounter
-                value={totalStudents || 500}
+                value={totalStudents}
                 label="Students"
-                suffix="+"
+                suffix={totalStudents > 0 ? "+" : ""}
                 icon="solar:users-group-rounded-bold-duotone"
               />
               <StatCounter
@@ -930,7 +942,7 @@ export default function HomePage({
         {/* ================================================================ */}
         {/* FEATURED DESTINATIONS */}
         {/* ================================================================ */}
-        <section className="py-32 relative">
+        <section className="relative z-0 py-32">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Section header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
@@ -1467,8 +1479,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
     const props = {
       totalUniversities: universitiesCount,
       latestStories,
-      totalStudents: experiencesCount || 500,
-      totalDestinations: destinationsCount || 150,
+      totalStudents: experiencesCount,
+      totalDestinations: destinationsCount,
       featuredDestinations,
     };
 
@@ -1481,10 +1493,10 @@ export const getServerSideProps: GetServerSideProps = async () => {
     console.error("Error fetching homepage data:", error);
     return {
       props: {
-        totalUniversities: 200,
+        totalUniversities: 0,
         latestStories: [],
-        totalStudents: 500,
-        totalDestinations: 150,
+        totalStudents: 0,
+        totalDestinations: 0,
         featuredDestinations: FALLBACK_DESTINATIONS,
       },
     };

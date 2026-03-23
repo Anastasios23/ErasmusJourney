@@ -30,9 +30,7 @@ export default function DestinationDetailPage({
   return (
     <div className="min-h-screen bg-slate-50">
       <Head>
-        <title>
-          {destination.city}, {destination.country} | Erasmus Journey
-        </title>
+        <title>{`${destination.city}, ${destination.country} | Erasmus Journey`}</title>
         <meta
           name="description"
           content={`Approved student insights for ${destination.city}, ${destination.country}.`}
@@ -347,11 +345,27 @@ export const getServerSideProps: GetServerSideProps<
     return { notFound: true };
   }
 
-  const { getPublicDestinationDetailBySlug } = await import(
+  const { getPublicDestinationDetailBySlug, getPublicDestinationList } = await import(
     "../../src/server/publicDestinations"
   );
 
   const destination = await getPublicDestinationDetailBySlug(slug);
+
+  if (!destination && !slug.includes("-")) {
+    const destinations = await getPublicDestinationList();
+    const matchedByCity = destinations.find(
+      (item) => item.city.toLowerCase().replace(/\s+/g, "-") === slug,
+    );
+
+    if (matchedByCity) {
+      return {
+        redirect: {
+          destination: `/destinations/${matchedByCity.slug}`,
+          permanent: false,
+        },
+      };
+    }
+  }
 
   if (!destination) {
     return { notFound: true };

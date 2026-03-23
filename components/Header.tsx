@@ -350,16 +350,19 @@ export default function Header() {
           {/* Right side actions */}
           <div className="hidden lg:flex items-center gap-3">
             {/* Primary CTA with glow */}
-            <Link href={analytics.nextStep?.href || "/basic-information"}>
-              <Button
-                className={cn(
-                  "relative group overflow-hidden rounded-2xl px-6 py-2.5 font-semibold text-white transition-all duration-500",
-                  "bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600",
-                  "hover:shadow-[0_0_40px_rgba(139,92,246,0.5)]",
-                  "border border-white/20",
-                  analytics.nextStep &&
-                    "ring-2 ring-violet-400/50 ring-offset-2 ring-offset-white dark:ring-offset-gray-950",
-                )}
+            <Button
+              asChild
+              className={cn(
+                "relative group overflow-hidden rounded-2xl px-6 py-2.5 font-semibold text-white transition-all duration-500",
+                "bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600",
+                "hover:shadow-[0_0_40px_rgba(139,92,246,0.5)]",
+                "border border-white/20",
+                analytics.nextStep &&
+                  "ring-2 ring-violet-400/50 ring-offset-2 ring-offset-white dark:ring-offset-gray-950",
+              )}
+            >
+              <Link
+                href={analytics.nextStep?.href || "/share-experience?step=1"}
               >
                 {/* Animated shine */}
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
@@ -373,8 +376,8 @@ export default function Header() {
                     ? `Continue: ${analytics.nextStep.name}`
                     : "Start Journey"}
                 </span>
-              </Button>
-            </Link>
+              </Link>
+            </Button>
 
             {/* User section */}
             {status === "loading" ? (
@@ -617,11 +620,14 @@ export default function Header() {
 
             {/* Mobile CTA */}
             <div className="pt-6 mt-6 border-t border-gray-200 dark:border-gray-800">
-              <Link
-                href={analytics.nextStep?.href || "/share-experience"}
-                onClick={() => setIsMobileMenuOpen(false)}
+              <Button
+                asChild
+                className="w-full h-14 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white text-lg shadow-xl shadow-blue-500/30 font-semibold"
               >
-                <Button className="w-full h-14 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white text-lg shadow-xl shadow-blue-500/30 font-semibold">
+                <Link
+                  href={analytics.nextStep?.href || "/share-experience?step=1"}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
                   <Icon
                     icon="solar:bolt-bold-duotone"
                     className="w-5 h-5 mr-2"
@@ -629,8 +635,8 @@ export default function Header() {
                   {analytics.nextStep
                     ? `Continue: ${analytics.nextStep.name}`
                     : "Start Your Journey"}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
 
             {/* Mobile Auth */}

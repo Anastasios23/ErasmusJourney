@@ -319,10 +319,7 @@ export default function AccommodationDetailPage() {
   return (
     <>
       <Head>
-        <title>
-          {accommodation.accommodationType} in {accommodation.city} - Erasmus
-          Journey Platform
-        </title>
+        <title>{`${accommodation.accommodationType} in ${accommodation.city} - Erasmus Journey Platform`}</title>
         <meta
           name="description"
           content={accommodation.description.substring(0, 160)}

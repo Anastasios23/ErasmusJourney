@@ -86,6 +86,20 @@ const FORM_STEPS = [
   },
 ];
 
+function parseStepQuery(step: string | string[] | undefined): number | null {
+  if (typeof step !== "string") {
+    return null;
+  }
+
+  const parsed = Number(step);
+
+  if (!Number.isInteger(parsed) || parsed < 1 || parsed > FORM_STEPS.length) {
+    return null;
+  }
+
+  return parsed;
+}
+
 export default function ShareExperience() {
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
@@ -133,6 +147,7 @@ export default function ShareExperience() {
   // Load saved experience data
   useEffect(() => {
     if (!experienceLoading && experienceData) {
+      const requestedStep = parseStepQuery(router.query.step);
       const hydratedFormData = {
         basicInfo: experienceData.basicInfo || {},
         courses: experienceData.courses || [],
@@ -148,12 +163,45 @@ export default function ShareExperience() {
       formDataRef.current = hydratedFormData;
       setFormData(hydratedFormData);
 
-      // Set to last completed step or first incomplete step
-      if (experienceData.currentStep) {
+      // Respect direct step links from the dashboard when present.
+      if (requestedStep) {
+        setLocalCurrentStep(requestedStep);
+      } else if (experienceData.currentStep) {
         setLocalCurrentStep(experienceData.currentStep);
       }
     }
-  }, [experienceLoading, experienceData]);
+  }, [experienceLoading, experienceData, router.query.step]);
+
+  useEffect(() => {
+    if (!router.isReady) {
+      return;
+    }
+
+    const requestedStep = parseStepQuery(router.query.step);
+    if (requestedStep && requestedStep !== currentStep) {
+      setLocalCurrentStep(requestedStep);
+    }
+  }, [router.isReady, router.query.step]);
+
+  useEffect(() => {
+    if (!router.isReady) {
+      return;
+    }
+
+    const currentQueryStep = parseStepQuery(router.query.step);
+    if (currentQueryStep === currentStep) {
+      return;
+    }
+
+    router.replace(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, step: String(currentStep) },
+      },
+      undefined,
+      { shallow: true },
+    );
+  }, [currentStep, router]);
 
   // Sync local step with context
   useEffect(() => {

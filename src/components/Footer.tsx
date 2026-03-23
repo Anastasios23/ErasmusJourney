@@ -1,11 +1,66 @@
 import Link from "next/link";
 import { Icon } from "@iconify/react";
-import { cn } from "@/lib/utils";
+import { FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterState, setNewsletterState] = useState<{
+    status: "idle" | "submitting" | "success" | "error";
+    message: string;
+  }>({
+    status: "idle",
+    message: "",
+  });
+
+  const handleNewsletterSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const email = newsletterEmail.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      setNewsletterState({
+        status: "error",
+        message: "Enter a valid email address.",
+      });
+      return;
+    }
+
+    setNewsletterState({ status: "submitting", message: "" });
+
+    try {
+      const response = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const payload = await response.json();
+
+      if (!response.ok) {
+        throw new Error(payload?.message || "Unable to subscribe right now.");
+      }
+
+      setNewsletterState({
+        status: "success",
+        message: payload?.message || "Subscription successful.",
+      });
+      setNewsletterEmail("");
+    } catch (error) {
+      setNewsletterState({
+        status: "error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Unable to subscribe right now.",
+      });
+    }
+  };
 
   const quickLinks = [
     {
@@ -72,7 +127,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white overflow-hidden">
+    <footer className="relative z-20 bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:24px_24px]" />
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
@@ -96,17 +151,48 @@ export default function Footer() {
               Get tips, guides, and exclusive insights for your exchange
               experience.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <form
+              onSubmit={handleNewsletterSubmit}
+              className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+            >
               <input
                 type="email"
                 placeholder="Enter your email"
+                value={newsletterEmail}
+                onChange={(event) => {
+                  setNewsletterEmail(event.target.value);
+                  if (newsletterState.status !== "idle") {
+                    setNewsletterState({ status: "idle", message: "" });
+                  }
+                }}
+                required
+                aria-label="Email address"
                 className="flex-1 px-5 py-3.5 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
-              <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full px-8 py-3.5 font-semibold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all">
-                Subscribe
+              <Button
+                type="submit"
+                disabled={newsletterState.status === "submitting"}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full px-8 py-3.5 font-semibold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all disabled:opacity-70"
+              >
+                {newsletterState.status === "submitting"
+                  ? "Subscribing..."
+                  : "Subscribe"}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
-            </div>
+            </form>
+            {newsletterState.message ? (
+              <p
+                className={`mt-3 text-sm ${
+                  newsletterState.status === "success"
+                    ? "text-emerald-400"
+                    : "text-rose-300"
+                }`}
+                role="status"
+                aria-live="polite"
+              >
+                {newsletterState.message}
+              </p>
+            ) : null}
           </div>
         </div>
 

@@ -14,6 +14,23 @@ export interface SmartNavigationStep {
   estimatedTime: string;
 }
 
+function getCurrentUnifiedFormStep(
+  pathname: string,
+  step: string | string[] | undefined,
+): number | null {
+  if (pathname !== "/share-experience" || typeof step !== "string") {
+    return null;
+  }
+
+  const parsed = Number(step);
+
+  if (!Number.isInteger(parsed) || parsed < 1) {
+    return null;
+  }
+
+  return parsed;
+}
+
 export function useSmartNavigation() {
   const router = useRouter();
   const { submissions } = useFormSubmissions();
@@ -23,37 +40,56 @@ export function useSmartNavigation() {
       {
         id: "basic-info",
         name: "Basic Information",
-        href: "/basic-information",
+        href: "/share-experience?step=1",
         description: "Personal & academic details",
         estimatedTime: "10 min",
+        stepNumber: 1,
       },
       {
         id: "course-matching",
         name: "Course Matching",
-        href: "/course-matching",
+        href: "/share-experience?step=2",
         description: "Select courses and universities",
         estimatedTime: "15 min",
+        stepNumber: 2,
       },
       {
         id: "accommodation",
         name: "Accommodation",
-        href: "/accommodation",
+        href: "/share-experience?step=3",
         description: "Housing preferences",
         estimatedTime: "12 min",
+        stepNumber: 3,
       },
       {
         id: "living-expenses",
         name: "Living Expenses",
-        href: "/living-expenses",
+        href: "/share-experience?step=4",
         description: "Budget and cost planning",
         estimatedTime: "8 min",
+        stepNumber: 4,
+      },
+      {
+        id: "experience",
+        name: "Share Experience",
+        href: "/share-experience?step=5",
+        description: "Tips for future students",
+        estimatedTime: "12 min",
+        stepNumber: 5,
       },
     ];
+
+    const currentUnifiedFormStep = getCurrentUnifiedFormStep(
+      router.pathname,
+      router.query.step,
+    );
 
     const steps: SmartNavigationStep[] = stepDefinitions.map((step, index) => {
       const submission = submissions?.find((sub) => sub.type === step.id);
       const isCompleted = submission && submission.status !== "draft";
-      const isCurrent = router.pathname === step.href;
+      const isCurrent =
+        router.pathname === "/share-experience" &&
+        currentUnifiedFormStep === step.stepNumber;
 
       // Determine if this is the next recommended step
       const previousStepsCompleted =
@@ -89,7 +125,7 @@ export function useSmartNavigation() {
     });
 
     return steps;
-  }, [submissions, router.pathname]);
+  }, [submissions, router.pathname, router.query.step]);
 
   // Analytics and recommendations
   const analytics = useMemo(() => {

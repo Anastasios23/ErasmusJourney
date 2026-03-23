@@ -47,6 +47,8 @@ next-env.d.ts
 .jest-cache/
 __snapshots__/
 *.test.js.snap
+playwright-report/
+test-results/
 
 # ===========================
 # Environment Variables

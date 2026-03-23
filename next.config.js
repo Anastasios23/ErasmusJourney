@@ -38,9 +38,6 @@ const nextConfig = {
         moduleIds: "named", // More stable module IDs
       };
 
-      // Disable problematic HMR features in cloud environment
-      config.devtool = "eval-cheap-module-source-map";
-
       // Add custom HMR configuration
       if (config.entry && typeof config.entry === "object") {
         Object.keys(config.entry).forEach((key) => {
