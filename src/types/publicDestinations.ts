@@ -45,6 +45,57 @@ export interface PublicDestinationCourseExample {
   notes?: string;
 }
 
+export interface PublicDestinationAreaInsight {
+  name: string;
+  count: number;
+}
+
+export interface PublicDestinationAccommodationInsights {
+  slug: string;
+  city: string;
+  country: string;
+  hostUniversityCount: number;
+  submissionCount: number;
+  currency: string;
+  sampleSize: number;
+  rentSampleSize: number;
+  averageRent: number | null;
+  recommendationRate: number | null;
+  recommendationSampleSize: number;
+  recommendationYesCount: number;
+  types: PublicDestinationAccommodationTypeInsight[];
+  difficulty: PublicDestinationDifficultyInsight[];
+  commonAreas: PublicDestinationAreaInsight[];
+  reviewSnippets: string[];
+}
+
+export interface PublicDestinationCourseEquivalenceItem {
+  homeCourseName: string;
+  hostCourseName: string;
+  hostUniversity?: string;
+  recognitionType: string;
+  notes?: string;
+}
+
+export interface PublicDestinationCourseEquivalenceGroup {
+  homeUniversity: string;
+  homeDepartment?: string;
+  mappingCount: number;
+  hostUniversities: string[];
+  examples: PublicDestinationCourseEquivalenceItem[];
+}
+
+export interface PublicDestinationCourseEquivalences {
+  slug: string;
+  city: string;
+  country: string;
+  hostUniversityCount: number;
+  submissionCount: number;
+  homeUniversityCount: number;
+  totalMappings: number;
+  groups: PublicDestinationCourseEquivalenceGroup[];
+}
+
 export interface PublicDestinationDetail {
   slug: string;
   city: string;

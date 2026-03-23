@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { GetServerSideProps } from "next";
 import Header from "../../components/Header";
 import Footer from "../../src/components/Footer";
+import PublicDestinationSubnav from "../../src/components/PublicDestinationSubnav";
 import {
   Card,
   CardContent,
@@ -62,6 +63,10 @@ export default function DestinationDetailPage({
               guidance rather than exact comparisons.
             </div>
           ) : null}
+          <PublicDestinationSubnav
+            slug={destination.slug}
+            active="overview"
+          />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <Card>
               <CardContent className="pt-5">
@@ -111,6 +116,12 @@ export default function DestinationDetailPage({
           <p className="text-sm text-slate-600">
             Core living and housing signals extracted from approved submissions.
           </p>
+          <Link
+            href={`/destinations/${destination.slug}/accommodation`}
+            className="inline-flex text-sm font-medium text-slate-700 underline underline-offset-4"
+          >
+            Open the dedicated accommodation insights page
+          </Link>
         </section>
 
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -270,6 +281,12 @@ export default function DestinationDetailPage({
           <p className="text-sm text-slate-600">
             Course mapping examples and real student tips for this destination.
           </p>
+          <Link
+            href={`/destinations/${destination.slug}/courses`}
+            className="inline-flex text-sm font-medium text-slate-700 underline underline-offset-4"
+          >
+            Open the dedicated course equivalence page
+          </Link>
         </section>
 
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">

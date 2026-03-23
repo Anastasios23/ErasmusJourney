@@ -9,6 +9,13 @@ const MIXED_CURRENCY_SUFFIX = /\s*\(mixed\)\s*$/i;
 const UUID_LIKE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const OPAQUE_ID_LIKE = /^(?=.{24,}$)[A-Za-z0-9_-]+$/;
+const EMAIL_LIKE = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i;
+const URL_LIKE = /\b(?:https?:\/\/|www\.)\S+/i;
+const PHONE_LIKE = /(?:\+?\d[\d\s().-]{7,}\d)/;
+const STREET_ADDRESS_LIKE =
+  /\b(?:street|st\.?|avenue|ave\.?|road|rd\.?|boulevard|blvd\.?|lane|ln\.?|drive|dr\.?|strasse|straße|via|viale|piazza|calle|carrer|rue|rua|avenida|avda\.?|plaza|platz)\b/i;
+const UNIT_ADDRESS_LIKE =
+  /\b(?:apt\.?|apartment|flat|unit|suite|building|bldg\.?)\s*[#-]?\s*\d+/i;
 
 function normalizeCurrencyLabel(value?: string | null): string {
   if (typeof value !== "string") {
@@ -85,4 +92,61 @@ export function normalizePublicDestinationText(
   }
 
   return `${normalized.slice(0, Math.max(0, maxLength - 3)).trimEnd()}...`;
+}
+
+function hasUnsafePublicTextDetails(
+  value: string,
+  options?: { rejectAddressLikePatterns?: boolean },
+): boolean {
+  if (EMAIL_LIKE.test(value) || URL_LIKE.test(value) || PHONE_LIKE.test(value)) {
+    return true;
+  }
+
+  if (
+    options?.rejectAddressLikePatterns &&
+    (STREET_ADDRESS_LIKE.test(value) || UNIT_ADDRESS_LIKE.test(value))
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+export function sanitizePublicDestinationNarrative(
+  value: unknown,
+  options?: { maxLength?: number },
+): string | null {
+  const normalized = normalizePublicDestinationText(value, {
+    maxLength: options?.maxLength ?? 220,
+  });
+
+  if (!normalized) {
+    return null;
+  }
+
+  return hasUnsafePublicTextDetails(normalized, {
+    rejectAddressLikePatterns: true,
+  })
+    ? null
+    : normalized;
+}
+
+export function sanitizePublicDestinationArea(value: unknown): string | null {
+  const normalized = normalizePublicDestinationText(value, { maxLength: 80 });
+
+  if (!normalized) {
+    return null;
+  }
+
+  const firstSegment = normalized.split(/[|,;/]/)[0]?.trim() || "";
+
+  if (!firstSegment) {
+    return null;
+  }
+
+  return hasUnsafePublicTextDetails(firstSegment, {
+    rejectAddressLikePatterns: true,
+  })
+    ? null
+    : firstSegment;
 }
