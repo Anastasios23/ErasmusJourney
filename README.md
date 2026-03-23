@@ -2,6 +2,18 @@
 
 A web application helping future Erasmus students from Cyprus plan their exchange experience by learning from past students.
 
+## Active App Boundary
+
+The active product in this repository is the Next.js app at the repository root.
+
+- Primary development path: `npm run dev`
+- Primary production build: `npm run build`
+- Primary typecheck signal: `npm run typecheck:next-only`
+
+Legacy directories such as `angular-ssr/`, `api-service/`, and `server/` are not part of the main Next.js execution path for the current MVP. They remain in the repo for historical or auxiliary purposes and should not be treated as the default startup path.
+
+Legacy workspace commands, if you explicitly need them, are documented in [docs/LEGACY_WORKSPACES.md](./docs/LEGACY_WORKSPACES.md).
+
 ## Core Features (MVP)
 
 ### For Past Erasmus Students

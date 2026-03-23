@@ -30,8 +30,11 @@ import {
   sanitizeLivingExpensesStepData,
 } from "../../src/lib/livingExpenses";
 import {
+  getDatabaseUnavailableCause,
   getDatabaseUnavailableDetails,
   getErrorMessage,
+  getInternalServerDetails,
+  getInternalServerStack,
   isDatabaseConnectionError,
 } from "../../lib/databaseErrors";
 
@@ -282,10 +285,12 @@ export default async function handler(
     console.error("API Error:", error);
 
     if (isDatabaseConnectionError(error)) {
+      const cause = getDatabaseUnavailableCause(error);
+
       return res.status(503).json({
         error: "Database unavailable",
         details: getDatabaseUnavailableDetails(),
-        cause: getErrorMessage(error),
+        ...(cause ? { cause } : {}),
       });
     }
 
@@ -492,17 +497,24 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
       );
 
       if (isDatabaseConnectionError(error)) {
+        const cause = getDatabaseUnavailableCause(error);
+
         return res.status(503).json({
           error: "Database unavailable",
           details: getDatabaseUnavailableDetails(),
-          cause: getErrorMessage(error),
+          ...(cause ? { cause } : {}),
         });
       }
 
       return res.status(500).json({
         error: "Failed to create experience",
-        details: getErrorMessage(error),
-        stack: error instanceof Error ? error.stack : undefined,
+        details: getInternalServerDetails(
+          error,
+          "Unable to create the experience right now.",
+        ),
+        ...(getInternalServerStack(error)
+          ? { stack: getInternalServerStack(error) }
+          : {}),
       });
     }
   }

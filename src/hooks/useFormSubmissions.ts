@@ -6,7 +6,7 @@ import {
   AuthenticationError,
   ValidationError,
 } from "../utils/apiErrorHandler";
-import { apiService } from "../services/api";
+import { sessionManager } from "../services/api";
 import { FormType, FormStatus } from "../types/forms";
 import { livingExpensesSchema } from "../lib/schemas";
 
@@ -247,9 +247,7 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
         // Use the provided basicInfoId or get it from the session manager
         const infoId =
           basicInfoId ||
-          (apiService.sessionManager
-            ? apiService.sessionManager.getBasicInfoId()
-            : undefined);
+          sessionManager.getBasicInfoId();
         if (infoId) {
           payload.basicInfoId = infoId;
         } else {
@@ -265,10 +263,9 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
       // If this is a basic-info submission, store the returned ID for future use
       if (
         type === "basic-info" &&
-        response.submissionId &&
-        apiService.sessionManager
+        response.submissionId
       ) {
-        apiService.sessionManager.setBasicInfoId(response.submissionId);
+        sessionManager.setBasicInfoId(response.submissionId);
       }
 
       // Refresh submissions after successful submission
@@ -434,15 +431,11 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
   }, [session?.user?.email, status]);
 
   const getBasicInfoId = () => {
-    return apiService.sessionManager
-      ? apiService.sessionManager.getBasicInfoId()
-      : undefined;
+    return sessionManager.getBasicInfoId();
   };
 
   const setBasicInfoId = (id: string) => {
-    if (apiService.sessionManager) {
-      apiService.sessionManager.setBasicInfoId(id);
-    }
+    sessionManager.setBasicInfoId(id);
   };
 
   return {

@@ -11,8 +11,16 @@ import {
   sanitizeLivingExpensesStepData,
 } from "../lib/livingExpenses";
 
+interface ExperienceLoadResult {
+  data: ErasmusExperienceData | null;
+  error: string | null;
+}
+
 // Module-level deduplication tracker
-const globalPendingExperienceRequests = new Map<string, Promise<any>>();
+const globalPendingExperienceRequests = new Map<
+  string,
+  Promise<ExperienceLoadResult>
+>();
 const globalExperienceCache = new Map<
   string,
   { data: any; timestamp: number }
@@ -68,6 +76,24 @@ interface UseErasmusExperienceReturn {
   refreshData: () => Promise<void>;
 }
 
+async function getApiErrorMessage(
+  response: Response,
+  fallbackMessage: string,
+): Promise<string> {
+  try {
+    const payload = await response.json();
+
+    return (
+      payload?.details ||
+      payload?.message ||
+      payload?.error ||
+      fallbackMessage
+    );
+  } catch {
+    return fallbackMessage;
+  }
+}
+
 export function useErasmusExperience(): UseErasmusExperienceReturn {
   const { data: session } = useSession();
   const router = useRouter();
@@ -97,8 +123,9 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
     // Check if a request is already in flight
     if (globalPendingExperienceRequests.has(cacheKey)) {
       try {
-        const data = await globalPendingExperienceRequests.get(cacheKey);
-        setData(data);
+        const result = await globalPendingExperienceRequests.get(cacheKey);
+        setData(result?.data ?? null);
+        setError(result?.error ?? null);
         setLoading(false);
       } catch (err) {
         // Error already handled by the primary requester
@@ -106,55 +133,55 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
       return;
     }
 
-    const requestPromise = (async () => {
-      try {
-        setLoading(true);
-        setError(null);
+    setLoading(true);
+    setError(null);
 
+    const requestPromise: Promise<ExperienceLoadResult> = (async () => {
+      try {
         // Try to get existing experience from the new API
         const response = await fetch("/api/erasmus-experiences");
 
-        if (response.ok) {
-          const experiences = await response.json();
-          // Get the first experience (since we only allow one per user now)
-          if (experiences.length > 0) {
-            const experience = experiences[0];
-            const mappedData: ErasmusExperienceData = {
-              id: experience.id,
-              currentStep: experience.currentStep || 1,
-              completedSteps: experience.completedSteps
-                ? JSON.parse(experience.completedSteps)
-                : [],
-              basicInfo: experience.basicInfo || {},
-              courses: sanitizeCourseMappingsData(experience.courses),
-              accommodation: sanitizeAccommodationStepData(
-                experience.accommodation,
-              ),
-              livingExpenses: sanitizeLivingExpensesStepData(
-                experience.livingExpenses,
-              ),
-              experience: experience.experience || {},
-              status: experience.status as any,
-              isComplete: experience.isComplete || false,
-              hasSubmitted: experience.status === "SUBMITTED",
-              lastSavedAt: experience.lastSavedAt,
-              submittedAt: experience.submittedAt,
-            };
+        if (!response.ok) {
+          return {
+            data: null,
+            error: await getApiErrorMessage(
+              response,
+              `Failed to load experience: ${response.status}`,
+            ),
+          };
+        }
 
-            globalExperienceCache.set(cacheKey, {
-              data: mappedData,
-              timestamp: Date.now(),
-            });
-            return mappedData;
-          }
-        } else {
-          const errorData = await response.json().catch(() => ({}));
-          const errorMessage =
-            errorData.details ||
-            errorData.error ||
-            `Failed to load experience: ${response.status}`;
+        const experiences = await response.json();
+        // Get the first experience (since we only allow one per user now)
+        if (experiences.length > 0) {
+          const experience = experiences[0];
+          const mappedData: ErasmusExperienceData = {
+            id: experience.id,
+            currentStep: experience.currentStep || 1,
+            completedSteps: experience.completedSteps
+              ? JSON.parse(experience.completedSteps)
+              : [],
+            basicInfo: experience.basicInfo || {},
+            courses: sanitizeCourseMappingsData(experience.courses),
+            accommodation: sanitizeAccommodationStepData(
+              experience.accommodation,
+            ),
+            livingExpenses: sanitizeLivingExpensesStepData(
+              experience.livingExpenses,
+            ),
+            experience: experience.experience || {},
+            status: experience.status as any,
+            isComplete: experience.isComplete || false,
+            hasSubmitted: experience.status === "SUBMITTED",
+            lastSavedAt: experience.lastSavedAt,
+            submittedAt: experience.submittedAt,
+          };
 
-          throw new Error(errorMessage);
+          globalExperienceCache.set(cacheKey, {
+            data: mappedData,
+            timestamp: Date.now(),
+          });
+          return { data: mappedData, error: null };
         }
 
         // If no experience exists, create one
@@ -183,16 +210,22 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
             data: newData,
             timestamp: Date.now(),
           });
-          return newData;
+          return { data: newData, error: null };
         } else {
-          const errorText = await createResponse.text();
-          throw new Error(
-            `Failed to create experience: ${createResponse.status}`,
-          );
+          return {
+            data: null,
+            error: await getApiErrorMessage(
+              createResponse,
+              `Failed to create experience: ${createResponse.status}`,
+            ),
+          };
         }
       } catch (err) {
         console.error("Error fetching Erasmus experience:", err);
-        throw err;
+        return {
+          data: null,
+          error: err instanceof Error ? err.message : "Failed to load data",
+        };
       }
     })();
 
@@ -200,12 +233,8 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
 
     try {
       const result = await requestPromise;
-      setData(result);
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to load data";
-      setError(errorMessage);
-      setData(null);
+      setData(result.data);
+      setError(result.error);
     } finally {
       globalPendingExperienceRequests.delete(cacheKey);
       setLoading(false);
@@ -216,7 +245,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
     async (stepData: Partial<ErasmusExperienceData>): Promise<boolean> => {
       if (!data?.id) {
         const errorMsg =
-          "No experience found. Please refresh the page and try again.";
+          error || "No experience found. Please refresh the page and try again.";
         setError(errorMsg);
         console.error("saveProgress failed: no data.id", { data });
         return false;
@@ -249,7 +278,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
             errorMessage.toLowerCase().includes("database")
           ) {
             throw new Error(
-              "Unable to connect to database. Your changes will be saved when connection is restored.",
+              "Unable to connect to the database. Please try again when the connection is restored.",
             );
           }
 
@@ -290,7 +319,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
         return false;
       }
     },
-    [data?.id],
+    [data?.id, error],
   );
 
   const submitExperience = useCallback(
@@ -300,6 +329,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
       if (!data?.id) {
         console.log("❌ No data.id", { data });
         const errorMsg =
+          error ||
           "No experience data found. Please refresh the page and fill out the form again.";
         setError(errorMsg);
         return false;
@@ -375,6 +405,16 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
             errorData.details ||
             errorData.error ||
             `Failed to submit experience: ${response.status}`;
+
+          if (
+            response.status === 503 ||
+            errorMessage.toLowerCase().includes("database")
+          ) {
+            throw new Error(
+              "Unable to connect to the database. Please try again when the connection is restored.",
+            );
+          }
+
           throw new Error(errorMessage);
         }
       } catch (err) {
@@ -387,7 +427,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
         setLoading(false);
       }
     },
-    [data?.id, router],
+    [data?.id, error, router],
   );
 
   const deleteExperience = useCallback(async (): Promise<boolean> => {
@@ -451,7 +491,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
     const sessionId = session?.user?.id || "anonymous";
 
     if (sessionId !== lastSessionId.current) {
-      fetchData();
+      void fetchData();
       lastSessionId.current = sessionId;
     }
   }, [session?.user?.id, fetchData]);

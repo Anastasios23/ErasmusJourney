@@ -8,6 +8,18 @@ import { randomUUID } from "crypto";
 
 import { isCyprusUniversityEmail } from "../../../lib/authUtils";
 
+const nextAuthSecret = process.env.NEXTAUTH_SECRET;
+
+if (process.env.NODE_ENV === "production" && !nextAuthSecret) {
+  throw new Error("NEXTAUTH_SECRET must be set in production.");
+}
+
+if (process.env.NODE_ENV !== "production" && !nextAuthSecret) {
+  console.warn(
+    "NEXTAUTH_SECRET is not set. Falling back to a development-only secret.",
+  );
+}
+
 export const authOptions: NextAuthOptions = {
   // Note: Prisma adapter removed because we're using JWT strategy
   // For Google OAuth, users will be created in the authorize callback
@@ -74,7 +86,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-development",
+  secret: nextAuthSecret || "fallback-secret-for-development",
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days

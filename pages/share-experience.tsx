@@ -120,6 +120,7 @@ export default function ShareExperience() {
     error: experienceError,
     saveProgress,
     submitExperience,
+    refreshData: refreshExperience,
   } = useErasmusExperience();
 
   // Local state
@@ -399,6 +400,57 @@ export default function ShareExperience() {
   // Unauthenticated state
   if (sessionStatus === "unauthenticated") {
     return null; // Will redirect
+  }
+
+  if (experienceError && !experienceData) {
+    return (
+      <>
+        <Head>
+          <title>Share Your Erasmus Experience | Erasmus Journey</title>
+          <meta
+            name="description"
+            content="Share your Erasmus experience to help future students"
+          />
+        </Head>
+
+        <Header />
+
+        <HeroSection
+          title="Share Your Experience"
+          subtitle="Help future Erasmus students by sharing your journey"
+          icon="solar:document-add-linear"
+          size="sm"
+        />
+
+        <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950 py-8">
+          <div className="container max-w-3xl mx-auto px-4">
+            <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+              <CardContent className="p-6 md:p-8">
+                <Alert variant="destructive" className="mb-6">
+                  <Icon
+                    icon="solar:danger-triangle-bold-duotone"
+                    className="h-4 w-4"
+                  />
+                  <AlertDescription>{experienceError}</AlertDescription>
+                </Alert>
+
+                <div className="flex flex-wrap gap-3">
+                  <Button onClick={() => void refreshExperience()}>
+                    Retry connection
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => void router.push("/dashboard")}
+                  >
+                    Back to dashboard
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+      </>
+    );
   }
 
   // Render step content

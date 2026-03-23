@@ -1,5 +1,5 @@
 {
-  "name": "fusion-starter",
+  "name": "erasmus-journey",
   "private": true,
   "type": "module",
   "scripts": {
@@ -16,10 +16,11 @@
     "e2e:install": "playwright install chromium",
     "e2e:smoke": "npm run build:next-only && playwright test tests/e2e/header-cta.spec.js --project=chromium",
     "format.fix": "prettier --write .",
-    "typecheck": "tsc",
+    "typecheck": "npm run typecheck:next-only",
     "typecheck:next-only": "tsc --project tsconfig.next-only.json --noEmit",
-    "start-backend": "node start-backend.js",
-    "backend": "cd server && npm run dev",
+    "legacy:server:dev": "npm --prefix server run dev",
+    "legacy:api-service:dev": "npm --prefix api-service run start:dev",
+    "legacy:angular-ssr:dev": "npm --prefix angular-ssr run start",
     "db:generate": "prisma generate",
     "db:push": "prisma db push && npx tsx scripts/ensure-permanent-admin.ts",
     "db:migrate": "prisma migrate dev",
