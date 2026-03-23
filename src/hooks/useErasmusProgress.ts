@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { isAccommodationStepComplete } from "../lib/accommodation";
 import { isBasicInformationComplete } from "../lib/basicInformation";
 import { hasCompleteCourseMatchingData } from "../lib/courseMatching";
+import { isLivingExpensesStepComplete } from "../lib/livingExpenses";
 
 export interface StepCompletion {
   basicInfo: boolean;
@@ -42,7 +43,9 @@ export function useErasmusProgress(): ErasmusProgress {
       if (!response.ok) {
         const errorText = await response.text();
         console.error("API Error Response:", errorText);
-        throw new Error(`Failed to fetch experience data: ${response.status} - ${errorText}`);
+        throw new Error(
+          `Failed to fetch experience data: ${response.status} - ${errorText}`,
+        );
       }
 
       const data = await response.json();
@@ -85,13 +88,9 @@ export function useErasmusProgress(): ErasmusProgress {
       // Step 3: Accommodation - check if accommodation object has required fields
       accommodation: isAccommodationStepComplete(experienceData.accommodation),
 
-      // Step 4: Living Expenses - check if expenses object exists with data
-      livingExpenses: !!(
-        experienceData.livingExpenses &&
-        typeof experienceData.livingExpenses === "object" &&
-        Object.keys(experienceData.livingExpenses).length > 0 &&
-        experienceData.livingExpenses.expenses &&
-        Object.keys(experienceData.livingExpenses.expenses).length > 0
+      // Step 4: Living Expenses - require canonical Step 4 fields only
+      livingExpenses: isLivingExpensesStepComplete(
+        experienceData.livingExpenses,
       ),
 
       // Step 5: Experience/Story - check if experience object has content

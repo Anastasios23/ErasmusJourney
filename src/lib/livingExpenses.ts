@@ -101,3 +101,9 @@ export function hasRequiredLivingExpenses(
     value.social !== undefined
   );
 }
+
+export function isLivingExpensesStepComplete(
+  value?: LivingExpensesInput | null,
+): boolean {
+  return hasRequiredLivingExpenses(sanitizeLivingExpensesStepData(value));
+}

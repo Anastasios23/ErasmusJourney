@@ -20,6 +20,7 @@
     "db:seed": "npx tsx scripts/migrate-data.ts && npx tsx scripts/ensure-permanent-admin.ts",
     "db:backfill-living-expenses:dry-run": "npx tsx scripts/backfill-living-expenses-canonical.ts",
     "db:backfill-living-expenses": "npx tsx scripts/backfill-living-expenses-canonical.ts --apply",
+    "db:verify-living-expenses:canonical": "npx tsx scripts/verify-living-expenses-canonical.ts",
     "smoke:public-destinations": "npx tsx scripts/smoke-public-destinations.ts",
     "proof:approved-to-public": "npx tsx scripts/proof-approved-to-public.ts",
     "db:seed-admin": "npx tsx scripts/ensure-permanent-admin.ts",

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   createEmptyLivingExpensesStepData,
   hasRequiredLivingExpenses,
+  isLivingExpensesStepComplete,
   sanitizeLivingExpensesStepData,
 } from "../../src/lib/livingExpenses";
 
@@ -99,6 +100,31 @@ describe("living expenses sanitization", () => {
         travel: 70,
         other: null,
       }),
+    ).toBe(false);
+  });
+
+  it("treats canonical step completion the same way as submit validation", () => {
+    expect(
+      isLivingExpensesStepComplete({
+        currency: "EUR",
+        rent: 500,
+        food: 220,
+        transport: 45,
+        social: 100,
+        travel: null,
+        other: 30,
+      }),
+    ).toBe(true);
+
+    expect(
+      isLivingExpensesStepComplete({
+        currency: "EUR",
+        expenses: {
+          groceries: "200",
+          transportation: "35",
+          socialLife: "80",
+        },
+      } as any),
     ).toBe(false);
   });
 });

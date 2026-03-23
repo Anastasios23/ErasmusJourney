@@ -18,18 +18,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../src/components/ui/select";
+import { formatPublicDestinationListAmount } from "../src/lib/publicDestinationPresentation";
 import type { PublicDestinationListItem } from "../src/types/publicDestinations";
 
 interface DestinationsPageProps {
   destinations: PublicDestinationListItem[];
-}
-
-function formatAmount(value: number | null): string {
-  if (value === null) {
-    return "N/A";
-  }
-
-  return Math.round(value).toLocaleString();
 }
 
 export default function DestinationsPage({
@@ -95,8 +88,10 @@ export default function DestinationsPage({
             Destination list from approved submissions
           </h1>
           <p className="text-slate-600 max-w-3xl">
-            This page consumes approved Erasmus submissions and shows the first
-            MVP public metrics for each destination.
+            Only approved, complete submissions are included here. Cost figures
+            on this list intentionally omit a currency symbol because each
+            destination can report a different local currency or mixed
+            currencies.
           </p>
         </section>
 
@@ -186,7 +181,7 @@ export default function DestinationsPage({
                       </p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Student submissions</p>
+                      <p className="text-slate-500">Approved submissions</p>
                       <p className="font-semibold text-slate-900">
                         {destination.submissionCount}
                       </p>
@@ -194,13 +189,17 @@ export default function DestinationsPage({
                     <div>
                       <p className="text-slate-500">Average rent</p>
                       <p className="font-semibold text-slate-900">
-                        {formatAmount(destination.averageRent)}
+                        {formatPublicDestinationListAmount(
+                          destination.averageRent,
+                        )}
                       </p>
                     </div>
                     <div>
                       <p className="text-slate-500">Average monthly cost</p>
                       <p className="font-semibold text-slate-900">
-                        {formatAmount(destination.averageMonthlyCost)}
+                        {formatPublicDestinationListAmount(
+                          destination.averageMonthlyCost,
+                        )}
                       </p>
                     </div>
                   </CardContent>

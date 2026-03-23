@@ -5,6 +5,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     globals: true,
+    exclude: ["angular-ssr/**", "api-service/**", "node_modules/**"],
     setupFiles: ["./tests/setup.ts"],
   },
   resolve: {

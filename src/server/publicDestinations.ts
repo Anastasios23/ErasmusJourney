@@ -7,6 +7,7 @@ import {
 import { sanitizeBasicInformationData } from "../lib/basicInformation";
 import { sanitizeCourseMappingsData } from "../lib/courseMatching";
 import { sanitizeLivingExpensesStepData } from "../lib/livingExpenses";
+import { normalizePublicDestinationText } from "../lib/publicDestinationPresentation";
 import type {
   PublicDestinationCourseExample,
   PublicDestinationDetail,
@@ -95,19 +96,21 @@ function pushIfNumber(
   }
 }
 
-function normalizeTipText(value: unknown): string | null {
-  if (typeof value !== "string") {
-    return null;
+function dedupeCaseInsensitive(values: string[]): string[] {
+  const seen = new Set<string>();
+  const deduped: string[] = [];
+
+  for (const value of values) {
+    const key = value.toLowerCase();
+    if (seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    deduped.push(value);
   }
 
-  const normalized = value.trim().replace(/\s+/g, " ");
-  if (!normalized) {
-    return null;
-  }
-
-  return normalized.length > 300
-    ? `${normalized.slice(0, 297)}...`
-    : normalized;
+  return deduped;
 }
 
 function recognitionLabel(recognitionType: string): string {
@@ -319,17 +322,19 @@ function buildGroupedDestinations(
         homeCourseName: mapping.homeCourseName,
         hostCourseName: mapping.hostCourseName,
         recognitionType: recognitionLabel(mapping.recognitionType),
-        notes: mapping.notes || undefined,
+        notes:
+          normalizePublicDestinationText(mapping.notes, { maxLength: 220 }) ||
+          undefined,
       });
     }
 
     const experienceData = toRecord(experience.experience);
     const tips = [
-      normalizeTipText(experienceData?.generalTips),
-      normalizeTipText(experienceData?.academicAdvice),
-      normalizeTipText(experienceData?.socialAdvice),
-      normalizeTipText(experienceData?.bestExperience),
-      normalizeTipText(accommodation.accommodationReview),
+      normalizePublicDestinationText(experienceData?.generalTips),
+      normalizePublicDestinationText(experienceData?.academicAdvice),
+      normalizePublicDestinationText(experienceData?.socialAdvice),
+      normalizePublicDestinationText(experienceData?.bestExperience),
+      normalizePublicDestinationText(accommodation.accommodationReview),
     ].filter((tip): tip is string => Boolean(tip));
 
     destination.practicalTips.push(...tips);
@@ -392,7 +397,10 @@ export async function getPublicDestinationDetailBySlug(
     ).values(),
   ).slice(0, 8);
 
-  const uniqueTips = Array.from(new Set(destination.practicalTips)).slice(0, 8);
+  const uniqueTips = dedupeCaseInsensitive(destination.practicalTips).slice(
+    0,
+    8,
+  );
 
   return {
     slug: destination.slug,
