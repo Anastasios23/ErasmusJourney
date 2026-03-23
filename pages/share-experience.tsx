@@ -18,6 +18,10 @@ import {
   createEmptyAccommodationStepData,
   sanitizeAccommodationStepData,
 } from "../src/lib/accommodation";
+import {
+  createEmptyLivingExpensesStepData,
+  sanitizeLivingExpensesStepData,
+} from "../src/lib/livingExpenses";
 import { toast } from "../src/hooks/use-toast";
 import { cn } from "../src/lib/utils";
 
@@ -114,7 +118,7 @@ export default function ShareExperience() {
     basicInfo: {},
     courses: [],
     accommodation: createEmptyAccommodationStepData(),
-    livingExpenses: {},
+    livingExpenses: createEmptyLivingExpensesStepData(),
     experience: {},
   });
 
@@ -134,7 +138,9 @@ export default function ShareExperience() {
         accommodation: sanitizeAccommodationStepData(
           experienceData.accommodation,
         ),
-        livingExpenses: experienceData.livingExpenses || {},
+        livingExpenses: sanitizeLivingExpensesStepData(
+          experienceData.livingExpenses,
+        ),
         experience: experienceData.experience || {},
       });
 
@@ -180,6 +186,41 @@ export default function ShareExperience() {
       const updatedFormData = { ...formData, ...stepData };
       setFormData(updatedFormData);
 
+      if (stepNumber === 5) {
+        try {
+          setIsSubmitting(true);
+          setSubmitError(null);
+
+          const success = await submitExperience(updatedFormData);
+
+          if (success) {
+            toast({
+              title: "Success!",
+              description:
+                "Your Erasmus experience has been submitted successfully.",
+            });
+          } else {
+            throw new Error("Submission failed");
+          }
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : "Failed to submit experience";
+
+          setSubmitError(errorMessage);
+          toast({
+            title: "Error",
+            description: errorMessage,
+            variant: "destructive",
+          });
+        } finally {
+          setIsSubmitting(false);
+        }
+
+        return;
+      }
+
       // Save progress with step completion
       try {
         const updatedCompletedSteps = [
@@ -217,6 +258,7 @@ export default function ShareExperience() {
       formData,
       completedStepNumbers,
       saveProgress,
+      submitExperience,
       markStepCompleted,
       getStepName,
     ],

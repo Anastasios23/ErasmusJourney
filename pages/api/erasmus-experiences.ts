@@ -23,6 +23,10 @@ import {
 import { getCyprusUniversityByEmail } from "../../lib/authUtils";
 import { prisma } from "../../lib/prisma";
 import { CYPRUS_UNIVERSITIES } from "../../src/data/universityAgreements";
+import {
+  hasRequiredLivingExpenses,
+  sanitizeLivingExpensesStepData,
+} from "../../src/lib/livingExpenses";
 
 class Step1ValidationError extends Error {
   statusCode: number;
@@ -222,6 +226,7 @@ function serializeExperienceForClient<T extends Record<string, any>>(
     ...experience,
     basicInfo: sanitizeBasicInformationData(experience.basicInfo),
     accommodation: sanitizeAccommodationStepData(experience.accommodation),
+    livingExpenses: sanitizeLivingExpensesStepData(experience.livingExpenses),
     courses: sanitizeCourseMappingsData(experience.courses),
   };
 }
@@ -490,6 +495,18 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     );
   }
 
+  if (updateData.livingExpenses !== undefined) {
+    updateData.livingExpenses = sanitizeLivingExpensesStepData(
+      updateData.livingExpenses,
+      {
+        fallbackRent:
+          updateData.accommodation?.monthlyRent ??
+          existingExperience?.accommodation?.monthlyRent ??
+          null,
+      },
+    );
+  }
+
   // Find the existing experience with retry logic
   const existingExperience: any = await retryDatabaseOperation(() =>
     prisma.erasmusExperience.findUnique({
@@ -592,6 +609,15 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     submissionData.accommodation = sanitizeAccommodationStepData(
       updateData.accommodation ?? existingExperience.accommodation,
     );
+    submissionData.livingExpenses = sanitizeLivingExpensesStepData(
+      updateData.livingExpenses ?? existingExperience.livingExpenses,
+      {
+        fallbackRent:
+          submissionData.accommodation?.monthlyRent ??
+          existingExperience?.accommodation?.monthlyRent ??
+          null,
+      },
+    );
 
     // --- VALIDATION START ---
     const errors: string[] = [];
@@ -654,21 +680,17 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // 4. Living Expenses
-    const livingExpensesVal = submissionData.livingExpenses || {};
-    const hasCurrentStepShape =
-      livingExpensesVal.food &&
-      livingExpensesVal.transport &&
-      livingExpensesVal.social &&
-      livingExpensesVal.travel;
-    const expenses = livingExpensesVal.expenses || {};
+    const livingExpensesVal = sanitizeLivingExpensesStepData(
+      submissionData.livingExpenses,
+      {
+        fallbackRent:
+          submissionData.accommodation?.monthlyRent ??
+          existingExperience?.accommodation?.monthlyRent ??
+          null,
+      },
+    );
 
-    if (
-      !hasCurrentStepShape &&
-      (expenses.groceries === undefined ||
-        expenses.transportation === undefined ||
-        expenses.socialLife === undefined ||
-        expenses.travel === undefined)
-    ) {
+    if (!hasRequiredLivingExpenses(livingExpensesVal)) {
       errors.push("Living Expenses are incomplete.");
     }
 
@@ -802,6 +824,18 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       lastSavedAt: new Date(),
       ...updateData,
     };
+
+    if (updateFields.livingExpenses !== undefined) {
+      updateFields.livingExpenses = sanitizeLivingExpensesStepData(
+        updateFields.livingExpenses,
+        {
+          fallbackRent:
+            updateFields.accommodation?.monthlyRent ??
+            existingExperience?.accommodation?.monthlyRent ??
+            null,
+        },
+      );
+    }
 
     let basicInfoContext = null;
 

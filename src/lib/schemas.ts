@@ -10,6 +10,7 @@ import {
   HOW_FOUND_ACCOMMODATION_VALUES,
 } from "./accommodation";
 import { COURSE_RECOGNITION_VALUES } from "./courseMatching";
+import { createEmptyLivingExpensesStepData } from "./livingExpenses";
 
 // ============================================
 // STEP 1: Basic Information Schemas
@@ -317,35 +318,61 @@ export const accommodationStepSchema = z.object({
 
 // Living Expenses Form Schema
 export const livingExpensesSchema = z.object({
-  type: z.literal("living-expenses"),
-  title: z.string(),
-  data: z.object({
-    spendingHabit: z.string().optional(),
-    expenses: z.object({
-      groceries: z.string(),
-      transportation: z.string(),
-      eatingOut: z.string(),
-      socialLife: z.string(),
-      travel: z.string(),
-      otherExpenses: z.string(),
-    }),
-    monthlyIncomeAmount: z.string().optional(),
-    // ... other fields optional
-  }),
+  currency: z.string().default("EUR"),
+  rent: z.number().nullable(),
+  food: z.number().nullable(),
+  transport: z.number().nullable(),
+  social: z.number().nullable(),
+  travel: z.number().nullable(),
+  other: z.number().nullable(),
 });
 
 // ============================================
 // STEP 4: Living Expenses - Minimal Schema for Step Component
 // ============================================
-export const livingExpensesStepSchema = z.object({
-  currency: z.string().default("EUR"),
-  rent: z.string().optional(), // Pre-filled from accommodation
-  food: z.string().min(1, "Food expenses are required"),
-  transport: z.string().min(1, "Transport expenses are required"),
-  social: z.string().min(1, "Social expenses are required"),
-  travel: z.string().min(1, "Travel expenses are required"),
-  other: z.string().optional(),
-});
+export const livingExpensesStepSchema = z
+  .object({
+    currency: z.string().default(createEmptyLivingExpensesStepData().currency),
+    rent: z.number().nullable(),
+    food: z.number().nullable(),
+    transport: z.number().nullable(),
+    social: z.number().nullable(),
+    travel: z.number().nullable(),
+    other: z.number().nullable(),
+  })
+  .superRefine((value, context) => {
+    if (value.food === null) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["food"],
+        message: "Food expenses are required",
+      });
+    }
+
+    if (value.transport === null) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["transport"],
+        message: "Transport expenses are required",
+      });
+    }
+
+    if (value.social === null) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["social"],
+        message: "Social expenses are required",
+      });
+    }
+
+    if (value.travel === null) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["travel"],
+        message: "Travel expenses are required",
+      });
+    }
+  });
 
 // Help Future Students Form Schema
 export const helpFutureStudentsSchema = z.object({

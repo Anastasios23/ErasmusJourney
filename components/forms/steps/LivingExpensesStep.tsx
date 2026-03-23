@@ -4,10 +4,15 @@ import { EnhancedInput } from "@/components/ui/enhanced-input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Wallet, ShoppingCart, Bus, Beer, Plane } from "lucide-react";
+import {
+  sanitizeLivingExpensesStepData,
+  hasRequiredLivingExpenses,
+  type LivingExpensesStepData,
+} from "@/lib/livingExpenses";
 
-interface LivingExpensesData {
+interface LivingExpensesUiData {
   currency: string;
-  rent: string; // Pre-filled from accommodation step if available
+  rent: string;
   food: string;
   transport: string;
   social: string;
@@ -21,76 +26,128 @@ interface LivingExpensesStepProps {
   onSave: (data: any) => void;
 }
 
+function toUiValue(value: number | null | undefined): string {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  return String(value);
+}
+
+function toUiData(value: LivingExpensesStepData): LivingExpensesUiData {
+  return {
+    currency: value.currency,
+    rent: toUiValue(value.rent),
+    food: toUiValue(value.food),
+    transport: toUiValue(value.transport),
+    social: toUiValue(value.social),
+    travel: toUiValue(value.travel),
+    other: toUiValue(value.other),
+  };
+}
+
+function toCanonicalData(
+  uiData: LivingExpensesUiData,
+  fallbackRent?: number | null,
+): LivingExpensesStepData {
+  return sanitizeLivingExpensesStepData(uiData, { fallbackRent });
+}
+
 export default function LivingExpensesStep({
   data,
   onComplete,
   onSave,
 }: LivingExpensesStepProps) {
   const { updateFormData } = useFormContext();
-  const [formData, setFormData] = useState<LivingExpensesData>({
-    currency: "EUR",
-    rent:
-      typeof data?.accommodation?.monthlyRent === "number"
-        ? String(data.accommodation.monthlyRent)
-        : "",
-    food: "",
-    transport: "",
-    social: "",
-    travel: "",
-    other: "",
-    ...data?.livingExpenses,
-  });
+  const fallbackRent =
+    typeof data?.accommodation?.monthlyRent === "number"
+      ? data.accommodation.monthlyRent
+      : null;
+  const [formData, setFormData] = useState<LivingExpensesUiData>(() =>
+    toUiData(
+      sanitizeLivingExpensesStepData(data?.livingExpenses, { fallbackRent }),
+    ),
+  );
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (data?.livingExpenses) {
-      setFormData((prev) => ({ ...prev, ...data.livingExpenses }));
-    } else if (
-      typeof data?.accommodation?.monthlyRent === "number" &&
-      !formData.rent
-    ) {
-      // Pre-fill rent if not already set
-      setFormData((prev) => ({
-        ...prev,
-        rent: String(data.accommodation.monthlyRent),
-      }));
-    }
+    setFormData(
+      toUiData(
+        sanitizeLivingExpensesStepData(data?.livingExpenses, {
+          fallbackRent:
+            typeof data?.accommodation?.monthlyRent === "number"
+              ? data.accommodation.monthlyRent
+              : null,
+        }),
+      ),
+    );
   }, [data]);
 
-  const handleInputChange = (field: keyof LivingExpensesData, value: string) => {
+  const handleInputChange = (
+    field: keyof LivingExpensesUiData,
+    value: string,
+  ) => {
     const newData = { ...formData, [field]: value };
     setFormData(newData);
-    updateFormData("livingExpenses", newData);
+    updateFormData(
+      "livingExpenses",
+      toCanonicalData(
+        newData,
+        typeof data?.accommodation?.monthlyRent === "number"
+          ? data.accommodation.monthlyRent
+          : null,
+      ),
+    );
   };
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    
-    if (!formData.food) newErrors.food = "Required";
-    if (!formData.transport) newErrors.transport = "Required";
-    if (!formData.social) newErrors.social = "Required";
-    if (!formData.travel) newErrors.travel = "Required";
+
+    const canonicalData = toCanonicalData(
+      formData,
+      typeof data?.accommodation?.monthlyRent === "number"
+        ? data.accommodation.monthlyRent
+        : null,
+    );
+
+    if (canonicalData.food === null) newErrors.food = "Required";
+    if (canonicalData.transport === null) newErrors.transport = "Required";
+    if (canonicalData.social === null) newErrors.social = "Required";
+    if (canonicalData.travel === null) newErrors.travel = "Required";
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return hasRequiredLivingExpenses(canonicalData);
   };
 
   const calculateTotal = () => {
-    const { rent, food, transport, social, travel, other } = formData;
+    const canonicalData = toCanonicalData(
+      formData,
+      typeof data?.accommodation?.monthlyRent === "number"
+        ? data.accommodation.monthlyRent
+        : null,
+    );
+
     return (
-      (parseFloat(rent) || 0) +
-      (parseFloat(food) || 0) +
-      (parseFloat(transport) || 0) +
-      (parseFloat(social) || 0) +
-      (parseFloat(travel) || 0) +
-      (parseFloat(other) || 0)
+      (canonicalData.rent || 0) +
+      (canonicalData.food || 0) +
+      (canonicalData.transport || 0) +
+      (canonicalData.social || 0) +
+      (canonicalData.travel || 0) +
+      (canonicalData.other || 0)
     );
   };
 
   const handleContinue = () => {
     if (validate()) {
-      onComplete({ livingExpenses: formData });
+      onComplete({
+        livingExpenses: toCanonicalData(
+          formData,
+          typeof data?.accommodation?.monthlyRent === "number"
+            ? data.accommodation.monthlyRent
+            : null,
+        ),
+      });
     } else {
       const firstError = document.querySelector(".text-red-500");
       firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -128,7 +185,9 @@ export default function LivingExpensesStep({
                 <Wallet className="w-5 h-5" />
               </div>
               <div>
-                <Label htmlFor="rent" className="text-base">Accommodation</Label>
+                <Label htmlFor="rent" className="text-base">
+                  Accommodation
+                </Label>
                 <p className="text-xs text-gray-500">Rent & Utilities</p>
               </div>
             </div>
@@ -151,7 +210,9 @@ export default function LivingExpensesStep({
                 <ShoppingCart className="w-5 h-5" />
               </div>
               <div>
-                <Label htmlFor="food" className="text-base">Groceries & Food</Label>
+                <Label htmlFor="food" className="text-base">
+                  Groceries & Food
+                </Label>
                 <p className="text-xs text-gray-500">Supermarket, eating out</p>
               </div>
             </div>
@@ -160,7 +221,9 @@ export default function LivingExpensesStep({
                 value={[parseFloat(formData.food) || 0]}
                 max={1000}
                 step={10}
-                onValueChange={(vals) => handleInputChange("food", vals[0].toString())}
+                onValueChange={(vals) =>
+                  handleInputChange("food", vals[0].toString())
+                }
                 className="flex-1"
               />
               <EnhancedInput
@@ -182,8 +245,12 @@ export default function LivingExpensesStep({
                 <Bus className="w-5 h-5" />
               </div>
               <div>
-                <Label htmlFor="transport" className="text-base">Transportation</Label>
-                <p className="text-xs text-gray-500">Public transport, bike, taxi</p>
+                <Label htmlFor="transport" className="text-base">
+                  Transportation
+                </Label>
+                <p className="text-xs text-gray-500">
+                  Public transport, bike, taxi
+                </p>
               </div>
             </div>
             <div className="md:col-span-8 flex items-center gap-4">
@@ -191,7 +258,9 @@ export default function LivingExpensesStep({
                 value={[parseFloat(formData.transport) || 0]}
                 max={500}
                 step={5}
-                onValueChange={(vals) => handleInputChange("transport", vals[0].toString())}
+                onValueChange={(vals) =>
+                  handleInputChange("transport", vals[0].toString())
+                }
                 className="flex-1"
               />
               <EnhancedInput
@@ -213,7 +282,9 @@ export default function LivingExpensesStep({
                 <Beer className="w-5 h-5" />
               </div>
               <div>
-                <Label htmlFor="social" className="text-base">Social & Leisure</Label>
+                <Label htmlFor="social" className="text-base">
+                  Social & Leisure
+                </Label>
                 <p className="text-xs text-gray-500">Parties, gym, hobbies</p>
               </div>
             </div>
@@ -222,7 +293,9 @@ export default function LivingExpensesStep({
                 value={[parseFloat(formData.social) || 0]}
                 max={1000}
                 step={10}
-                onValueChange={(vals) => handleInputChange("social", vals[0].toString())}
+                onValueChange={(vals) =>
+                  handleInputChange("social", vals[0].toString())
+                }
                 className="flex-1"
               />
               <EnhancedInput
@@ -244,8 +317,12 @@ export default function LivingExpensesStep({
                 <Plane className="w-5 h-5" />
               </div>
               <div>
-                <Label htmlFor="travel" className="text-base">Travel</Label>
-                <p className="text-xs text-gray-500">Trips to other cities/countries</p>
+                <Label htmlFor="travel" className="text-base">
+                  Travel
+                </Label>
+                <p className="text-xs text-gray-500">
+                  Trips to other cities/countries
+                </p>
               </div>
             </div>
             <div className="md:col-span-8 flex items-center gap-4">
@@ -253,7 +330,9 @@ export default function LivingExpensesStep({
                 value={[parseFloat(formData.travel) || 0]}
                 max={1000}
                 step={10}
-                onValueChange={(vals) => handleInputChange("travel", vals[0].toString())}
+                onValueChange={(vals) =>
+                  handleInputChange("travel", vals[0].toString())
+                }
                 className="flex-1"
               />
               <EnhancedInput
@@ -272,7 +351,16 @@ export default function LivingExpensesStep({
 
       <div className="flex justify-between items-center pt-6 border-t border-gray-100">
         <button
-          onClick={() => onSave({ livingExpenses: formData })}
+          onClick={() =>
+            onSave({
+              livingExpenses: toCanonicalData(
+                formData,
+                typeof data?.accommodation?.monthlyRent === "number"
+                  ? data.accommodation.monthlyRent
+                  : null,
+              ),
+            })
+          }
           className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
         >
           Save Draft

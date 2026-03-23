@@ -6,10 +6,17 @@ import {
   sanitizeAccommodationStepData,
 } from "../lib/accommodation";
 import { sanitizeCourseMappingsData } from "../lib/courseMatching";
+import {
+  createEmptyLivingExpensesStepData,
+  sanitizeLivingExpensesStepData,
+} from "../lib/livingExpenses";
 
 // Module-level deduplication tracker
 const globalPendingExperienceRequests = new Map<string, Promise<any>>();
-const globalExperienceCache = new Map<string, { data: any; timestamp: number }>();
+const globalExperienceCache = new Map<
+  string,
+  { data: any; timestamp: number }
+>();
 const CACHE_DURATION = 10 * 1000; // 10 seconds cache for full experience data
 
 interface ErasmusExperienceData {
@@ -78,7 +85,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
 
     const cacheKey = `experience_${session.user.id}`;
     const now = Date.now();
-    
+
     // Check cache
     const cached = globalExperienceCache.get(cacheKey);
     if (cached && now - cached.timestamp < CACHE_DURATION) {
@@ -123,7 +130,9 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
               accommodation: sanitizeAccommodationStepData(
                 experience.accommodation,
               ),
-              livingExpenses: experience.livingExpenses || {},
+              livingExpenses: sanitizeLivingExpensesStepData(
+                experience.livingExpenses,
+              ),
               experience: experience.experience || {},
               status: experience.status as any,
               isComplete: experience.isComplete || false,
@@ -131,8 +140,11 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
               lastSavedAt: experience.lastSavedAt,
               submittedAt: experience.submittedAt,
             };
-            
-            globalExperienceCache.set(cacheKey, { data: mappedData, timestamp: Date.now() });
+
+            globalExperienceCache.set(cacheKey, {
+              data: mappedData,
+              timestamp: Date.now(),
+            });
             return mappedData;
           }
         }
@@ -153,17 +165,22 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
             basicInfo: {},
             courses: [],
             accommodation: createEmptyAccommodationStepData(),
-            livingExpenses: {},
+            livingExpenses: createEmptyLivingExpensesStepData(),
             experience: {},
             status: "DRAFT",
             isComplete: false,
             hasSubmitted: false,
           };
-          globalExperienceCache.set(cacheKey, { data: newData, timestamp: Date.now() });
+          globalExperienceCache.set(cacheKey, {
+            data: newData,
+            timestamp: Date.now(),
+          });
           return newData;
         } else {
           const errorText = await createResponse.text();
-          throw new Error(`Failed to create experience: ${createResponse.status}`);
+          throw new Error(
+            `Failed to create experience: ${createResponse.status}`,
+          );
         }
       } catch (err) {
         console.error("Error fetching Erasmus experience:", err);
@@ -177,7 +194,8 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
       const result = await requestPromise;
       setData(result);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to load data";
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load data";
       setError(errorMessage);
       setData(null);
     } finally {
@@ -243,6 +261,10 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
                   stepData.accommodation !== undefined
                     ? sanitizeAccommodationStepData(stepData.accommodation)
                     : prev.accommodation,
+                livingExpenses:
+                  stepData.livingExpenses !== undefined
+                    ? sanitizeLivingExpensesStepData(stepData.livingExpenses)
+                    : prev.livingExpenses,
                 lastSavedAt: updatedExperience.lastSavedAt,
               }
             : null,
