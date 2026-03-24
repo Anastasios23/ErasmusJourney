@@ -42,7 +42,7 @@ test("database unavailable on load shows friendly retry UI and recovers without 
 
   await page.goto("/share-experience?step=1");
 
-  await expect(page.getByText(databaseUnavailableMessage)).toBeVisible({
+  await expect(page.locator("main").getByText(databaseUnavailableMessage)).toBeVisible({
     timeout: 20_000,
   });
   await expect(
@@ -59,7 +59,7 @@ test("database unavailable on load shows friendly retry UI and recovers without 
   await expect(
     page.getByRole("heading", { name: "Basic Information", exact: true }),
   ).toBeVisible({ timeout: 20_000 });
-  await expect(page.getByText(databaseUnavailableMessage)).toHaveCount(0);
+  await expect(page.locator("main").getByText(databaseUnavailableMessage)).toHaveCount(0);
   await expect(page.getByText(/^Saved$/)).toHaveCount(0);
   await expect(page.getByText(/Last saved:/)).toHaveCount(0);
   await expect(getAttempts).toBe(2);
@@ -94,7 +94,7 @@ test("database unavailable on save draft does not show a misleading saved state"
   await clickAction(page, page.getByRole("button", { name: /save draft/i }));
 
   await waitForStableCount(page, () => Promise.resolve(state.mutations.length), 1);
-  await expect(page.getByText(databaseUnavailableMessage)).toBeVisible();
+  await expect(page.locator("main").getByText(databaseUnavailableMessage)).toBeVisible();
   await expect(page.getByText(/^Saved$/)).toHaveCount(0);
   await expect(page.getByText(/Last saved:/)).toHaveCount(0);
 });

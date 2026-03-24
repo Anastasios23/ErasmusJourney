@@ -12,13 +12,10 @@ const nextConfig = {
   allowedDevOrigins: [
     // Allow the current fly.dev domain
     "e76e6937e0ab4494b4f81584380dda25-a5461613bb5b4ba69ae071f5c.fly.dev",
-    // Allow localhost variations
-    "localhost:3000",
-    "127.0.0.1:3000",
-    "localhost:3101",
-    "127.0.0.1:3101",
-    "localhost:3102",
-    "127.0.0.1:3102",
+    // Allow localhost variations used in local development and smoke tests
+    "localhost",
+    "*.localhost",
+    "127.0.0.1",
   ],
   // Enhanced webpack config for cloud environment stability
   webpack: (config) => {
