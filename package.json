@@ -29,6 +29,7 @@
     "db:verify-living-expenses:canonical": "npx tsx scripts/verify-living-expenses-canonical.ts",
     "smoke:public-destinations": "npx tsx scripts/smoke-public-destinations.ts",
     "proof:approved-to-public": "npx tsx scripts/proof-approved-to-public.ts",
+    "proof:preview-to-approval": "vitest run tests/server/publicDestinations.previewToApproval.test.ts tests/api/adminPublicImpactPreviewRoutes.test.ts",
     "db:seed-admin": "npx tsx scripts/ensure-permanent-admin.ts",
     "db:test-admin": "npx tsx scripts/test-admin-user.ts",
     "db:reset": "prisma migrate reset --force && npm run db:seed"

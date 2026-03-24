@@ -3,7 +3,10 @@ import { getServerSession } from "next-auth/next";
 
 import { authOptions } from "../../../auth/[...nextauth]";
 import { prisma } from "../../../../../lib/prisma";
-import { getAdminPublicImpactPreviewByExperienceId } from "../../../../../src/server/publicDestinations";
+import {
+  getAdminPublicImpactPreviewByExperienceId,
+  getAdminPublicImpactPreviewUnavailableReasonByExperienceId,
+} from "../../../../../src/server/publicDestinations";
 
 export default async function handler(
   req: NextApiRequest,
@@ -36,6 +39,17 @@ export default async function handler(
     const preview = await getAdminPublicImpactPreviewByExperienceId(id);
 
     if (!preview) {
+      const unavailableReason =
+        await getAdminPublicImpactPreviewUnavailableReasonByExperienceId(id);
+
+      if (unavailableReason) {
+        return res.status(404).json({
+          error: unavailableReason.message,
+          code: unavailableReason.code,
+          missingFields: unavailableReason.missingFields,
+        });
+      }
+
       return res
         .status(404)
         .json({ error: "Preview unavailable for this experience" });

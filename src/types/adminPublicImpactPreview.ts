@@ -4,6 +4,14 @@ import type {
   PublicDestinationDetail,
 } from "./publicDestinations";
 
+export type AdminPublicImpactMissingField = "hostCity" | "hostCountry";
+
+export interface AdminPublicImpactPreviewUnavailable {
+  code: "INCOMPLETE_DESTINATION_IDENTITY";
+  message: string;
+  missingFields: AdminPublicImpactMissingField[];
+}
+
 export interface PendingAccommodationPublicContribution {
   type?: string;
   rent?: number;

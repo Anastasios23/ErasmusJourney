@@ -84,6 +84,7 @@ export async function setupShareExperienceRoutes(page, options = {}) {
     agreementRequests: [],
     experienceGetRequests: [],
     formsRequests: [],
+    uploadRequests: [],
     experienceRecord: structuredClone(initialExperience),
   };
 
@@ -188,6 +189,19 @@ export async function setupShareExperienceRoutes(page, options = {}) {
       status: 200,
       contentType: "application/json",
       body: JSON.stringify(state.experienceRecord),
+    });
+  });
+
+  await page.route("**/api/upload*", async (route) => {
+    state.uploadRequests.push(route.request().url());
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        success: true,
+        url: `/uploads/${session.user.id}/smoke-upload.png`,
+      }),
     });
   });
 

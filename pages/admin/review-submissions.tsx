@@ -28,7 +28,10 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import Link from "next/link";
-import type { AdminPublicImpactPreview } from "../../src/types/adminPublicImpactPreview";
+import type {
+  AdminPublicImpactPreview,
+  AdminPublicImpactPreviewUnavailable,
+} from "../../src/types/adminPublicImpactPreview";
 import {
   getRecognitionTypeLabel,
   sanitizeCourseMappingsData,
@@ -73,6 +76,8 @@ export default function ReviewSubmissions() {
     useState<AdminPublicImpactPreview | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
+  const [previewUnavailableReason, setPreviewUnavailableReason] =
+    useState<AdminPublicImpactPreviewUnavailable | null>(null);
 
   // Check admin access
   useEffect(() => {
@@ -92,6 +97,7 @@ export default function ReviewSubmissions() {
     if (!selectedSubmission) {
       setImpactPreview(null);
       setPreviewError(null);
+      setPreviewUnavailableReason(null);
       setPreviewLoading(false);
       return;
     }
@@ -103,6 +109,7 @@ export default function ReviewSubmissions() {
       try {
         setPreviewLoading(true);
         setPreviewError(null);
+        setPreviewUnavailableReason(null);
 
         const response = await fetch(
           `/api/admin/erasmus-experiences/${selectedSubmission.id}/preview`,
@@ -115,6 +122,19 @@ export default function ReviewSubmissions() {
           const errorData = await response
             .json()
             .catch(() => ({ error: "Failed to load public impact preview" }));
+
+          if (active && errorData?.code === "INCOMPLETE_DESTINATION_IDENTITY") {
+            setPreviewUnavailableReason({
+              code: errorData.code,
+              message:
+                errorData.error ||
+                "Public impact preview requires both host city and host country.",
+              missingFields: Array.isArray(errorData.missingFields)
+                ? errorData.missingFields
+                : [],
+            });
+          }
+
           throw new Error(
             errorData.error || "Failed to load public impact preview",
           );
@@ -123,6 +143,7 @@ export default function ReviewSubmissions() {
         const data = (await response.json()) as AdminPublicImpactPreview;
         if (active) {
           setImpactPreview(data);
+          setPreviewUnavailableReason(null);
         }
       } catch (err) {
         if (controller.signal.aborted) {
@@ -152,6 +173,9 @@ export default function ReviewSubmissions() {
       controller.abort();
     };
   }, [selectedSubmission]);
+
+  const approvalBlockedByPublishability =
+    previewUnavailableReason?.code === "INCOMPLETE_DESTINATION_IDENTITY";
 
   const fetchSubmissions = async () => {
     try {
@@ -535,6 +559,16 @@ export default function ReviewSubmissions() {
                           Loading public impact preview...
                         </CardContent>
                       </Card>
+                    ) : previewUnavailableReason ? (
+                      <Alert>
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>
+                          {previewUnavailableReason.message}
+                          {previewUnavailableReason.missingFields.length > 0
+                            ? ` Missing: ${previewUnavailableReason.missingFields.join(", ")}.`
+                            : ""}
+                        </AlertDescription>
+                      </Alert>
                     ) : previewError ? (
                       <Alert variant="destructive">
                         <AlertCircle className="h-4 w-4" />
@@ -548,6 +582,13 @@ export default function ReviewSubmissions() {
                           Public impact preview unavailable for this submission.
                         </CardContent>
                       </Card>
+                    )}
+                    {approvalBlockedByPublishability && (
+                      <div className="mt-3 text-sm text-amber-700">
+                        Complete the destination identity fields before
+                        approval. Public destination preview and publication are
+                        blocked until host city and host country are present.
+                      </div>
                     )}
                   </div>
 
@@ -574,7 +615,7 @@ export default function ReviewSubmissions() {
                     <div className="flex gap-3">
                       <Button
                         onClick={() => handleReview("APPROVED")}
-                        disabled={reviewing}
+                        disabled={reviewing || approvalBlockedByPublishability}
                         className="bg-green-600 hover:bg-green-700"
                       >
                         <CheckCircle className="h-4 w-4 mr-2" />

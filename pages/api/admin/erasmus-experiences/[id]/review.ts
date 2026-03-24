@@ -1,10 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../auth/[...nextauth]";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../../../../../lib/prisma";
+import { buildPreviewUnavailableReason } from "../../../../../src/lib/adminPublicImpactPreview";
 import { sanitizeLivingExpensesStepData } from "../../../../../src/lib/livingExpenses";
-
-const prisma = new PrismaClient();
 
 /**
  * Admin Review API Endpoint
@@ -87,6 +86,18 @@ export default async function handler(
       return res.status(400).json({
         error: "Maximum revision limit reached. Please approve or reject.",
       });
+    }
+
+    if (action === "APPROVED") {
+      const unavailableReason = buildPreviewUnavailableReason(experience);
+
+      if (unavailableReason) {
+        return res.status(400).json({
+          error: unavailableReason.message,
+          code: unavailableReason.code,
+          missingFields: unavailableReason.missingFields,
+        });
+      }
     }
 
     // Prepare update data

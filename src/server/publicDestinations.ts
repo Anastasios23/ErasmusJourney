@@ -16,6 +16,7 @@ import {
   sanitizePublicDestinationArea,
   sanitizePublicDestinationNarrative,
 } from "../lib/publicDestinationPresentation";
+import { buildPreviewUnavailableReason } from "../lib/adminPublicImpactPreview";
 import type { AdminPublicImpactPreview } from "../types/adminPublicImpactPreview";
 import type {
   PublicDestinationAccommodationInsights,
@@ -876,12 +877,12 @@ export async function getAdminPublicImpactPreviewByExperienceId(
     return null;
   }
 
-  const city = (previewExperience.hostCity || "").trim();
-  const country = (previewExperience.hostCountry || "").trim();
-
-  if (!city || !country) {
+  if (buildPreviewUnavailableReason(previewExperience)) {
     return null;
   }
+
+  const city = previewExperience.hostCity!.trim();
+  const country = previewExperience.hostCountry!.trim();
 
   const slug = destinationSlug(city, country);
   const currentGrouped = buildGroupedDestinations(approvedExperiences);
@@ -928,4 +929,16 @@ export async function getAdminPublicImpactPreviewByExperienceId(
       contributionExamples: courseContributionExamples,
     },
   };
+}
+
+export async function getAdminPublicImpactPreviewUnavailableReasonByExperienceId(
+  experienceId: string,
+) {
+  const experience = await loadExperienceById(experienceId);
+
+  if (!experience) {
+    return null;
+  }
+
+  return buildPreviewUnavailableReason(experience);
 }
