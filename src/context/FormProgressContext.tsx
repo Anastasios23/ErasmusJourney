@@ -7,7 +7,6 @@ import {
   useMemo,
   useRef,
 } from "react";
-import { useSession } from "next-auth/react";
 import { useErasmusExperience } from "../hooks/useErasmusExperience";
 
 type FormStep =
@@ -61,14 +60,9 @@ export function FormProgressProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const { data: session } = useSession();
-
   // Use the unified experience hook
-  const {
-    data: experienceData,
-    saveProgress,
-    loading: experienceLoading,
-  } = useErasmusExperience();
+  const { data: experienceData, loading: experienceLoading } =
+    useErasmusExperience();
 
   const [completedSteps, setCompletedSteps] = useState<FormStep[]>([]);
   const [currentStep, setCurrentStep] = useState<FormStep>("basic-info");
@@ -76,9 +70,6 @@ export function FormProgressProvider({
   const [formDataCache, setFormDataCache] = useState<Record<string, any>>({});
   // Track if we have synced with backend
   const [isSynced, setIsSynced] = useState(false);
-
-  // Add request debouncing
-  const requestTimeouts = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
   // Cache form data
   const cacheFormData = useCallback((type: string, data: any) => {
@@ -134,30 +125,6 @@ export function FormProgressProvider({
     }
   }, [experienceData, experienceLoading]);
 
-  // Debounced request
-  const debouncedRequest = useCallback(
-    (key: string, fn: () => void, delay = 100) => {
-      // Clear existing timeout
-      const existingTimeout = requestTimeouts.current.get(key);
-      if (existingTimeout) {
-        clearTimeout(existingTimeout);
-      }
-
-      // Set new timeout
-      const newTimeout = setTimeout(fn, delay);
-      requestTimeouts.current.set(key, newTimeout);
-    },
-    [],
-  );
-
-  useEffect(() => {
-    return () => {
-      // Clear all timeouts on unmount
-      requestTimeouts.current.forEach((timeout) => clearTimeout(timeout));
-      requestTimeouts.current.clear();
-    };
-  }, []);
-
   const isStepCompleted = useCallback(
     (step: FormStep) => completedSteps.includes(step),
     [completedSteps],
@@ -177,40 +144,11 @@ export function FormProgressProvider({
     [isStepCompleted],
   );
 
-  const markStepCompleted = useCallback(
-    async (step: FormStep) => {
-      // Update local state
-      let newCompletedSteps: FormStep[] = [];
-      setCompletedSteps((prev) => {
-        if (prev.includes(step)) {
-          newCompletedSteps = prev;
-          return prev;
-        }
-        newCompletedSteps = [...prev, step];
-        return newCompletedSteps;
-      });
-
-      // Save to backend
-      if (saveProgress && experienceData?.id) {
-        const stepNumber = getStepNumber(step);
-        const nextStepNumber = stepNumber + 1;
-
-        // Calculate new completed steps numbers
-        const currentCompletedNumbers = completedSteps.map((s) =>
-          getStepNumber(s),
-        );
-        if (!currentCompletedNumbers.includes(stepNumber)) {
-          currentCompletedNumbers.push(stepNumber);
-        }
-
-        await saveProgress({
-          completedSteps: currentCompletedNumbers,
-          currentStep: nextStepNumber <= 5 ? nextStepNumber : 5,
-        });
-      }
-    },
-    [saveProgress, experienceData?.id, completedSteps],
-  );
+  const markStepCompleted = useCallback((step: FormStep) => {
+    setCompletedSteps((prev) =>
+      prev.includes(step) ? prev : [...prev, step],
+    );
+  }, []);
 
   const currentStepNumber = getStepNumber(currentStep);
   const completedStepNumbers = completedSteps.map((step) =>
