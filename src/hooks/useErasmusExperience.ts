@@ -6,6 +6,7 @@ import {
   sanitizeAccommodationStepData,
 } from "../lib/accommodation";
 import { sanitizeCourseMappingsData } from "../lib/courseMatching";
+import { publishErasmusProgressSync } from "../lib/erasmusProgressSync";
 import {
   createEmptyLivingExpensesStepData,
   sanitizeLivingExpensesStepData,
@@ -74,6 +75,20 @@ interface UseErasmusExperienceReturn {
   submitExperience: (submissionData?: any) => Promise<boolean>;
   deleteExperience: () => Promise<boolean>;
   refreshData: () => Promise<void>;
+}
+
+function updateExperienceCache(
+  userId: string | undefined,
+  nextData: ErasmusExperienceData,
+) {
+  if (!userId) {
+    return;
+  }
+
+  globalExperienceCache.set(`experience_${userId}`, {
+    data: nextData,
+    timestamp: Date.now(),
+  });
 }
 
 async function getApiErrorMessage(
@@ -289,29 +304,31 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
         }
 
         const updatedExperience = await response.json();
+        const nextData: ErasmusExperienceData = {
+          ...data,
+          ...stepData,
+          courses:
+            stepData.courses !== undefined
+              ? sanitizeCourseMappingsData(stepData.courses)
+              : data.courses,
+          accommodation:
+            stepData.accommodation !== undefined
+              ? sanitizeAccommodationStepData(stepData.accommodation)
+              : data.accommodation,
+          livingExpenses:
+            stepData.livingExpenses !== undefined
+              ? sanitizeLivingExpensesStepData(stepData.livingExpenses)
+              : data.livingExpenses,
+          lastSavedAt: updatedExperience.lastSavedAt,
+        };
 
-        // Update local data
-        setData((prev) =>
-          prev
-            ? {
-                ...prev,
-                ...stepData,
-                courses:
-                  stepData.courses !== undefined
-                    ? sanitizeCourseMappingsData(stepData.courses)
-                    : prev.courses,
-                accommodation:
-                  stepData.accommodation !== undefined
-                    ? sanitizeAccommodationStepData(stepData.accommodation)
-                    : prev.accommodation,
-                livingExpenses:
-                  stepData.livingExpenses !== undefined
-                    ? sanitizeLivingExpensesStepData(stepData.livingExpenses)
-                    : prev.livingExpenses,
-                lastSavedAt: updatedExperience.lastSavedAt,
-              }
-            : null,
-        );
+        setData(nextData);
+        updateExperienceCache(session?.user?.id, nextData);
+        publishErasmusProgressSync({
+          userId: session?.user?.id,
+          experienceId: data.id,
+          action: "save",
+        });
 
         return true;
       } catch (err) {
@@ -322,7 +339,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
         return false;
       }
     },
-    [data?.id, error],
+    [data, error, session?.user?.id],
   );
 
   const submitExperience = useCallback(
@@ -381,16 +398,21 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
           console.log("🎉 SUCCESS:", result);
 
           // Update local state
-          setData((prev) =>
-            prev
-              ? {
-                  ...prev,
-                  status: "SUBMITTED",
-                  isComplete: true,
-                  submittedAt: result.submittedAt,
-                }
-              : null,
-          );
+          const nextData: ErasmusExperienceData = {
+            ...data,
+            status: "SUBMITTED",
+            isComplete: true,
+            hasSubmitted: true,
+            submittedAt: result.submittedAt,
+          };
+
+          setData(nextData);
+          updateExperienceCache(session?.user?.id, nextData);
+          publishErasmusProgressSync({
+            userId: session?.user?.id,
+            experienceId: data.id,
+            action: "submit",
+          });
 
           // Navigate to confirmation page
           const query = new URLSearchParams({
@@ -430,7 +452,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
         setLoading(false);
       }
     },
-    [data?.id, error, router],
+    [data, error, router, session?.user?.id],
   );
 
   const deleteExperience = useCallback(async (): Promise<boolean> => {
@@ -460,7 +482,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
       }
 
       // Reset to default data
-      setData({
+      const resetData: ErasmusExperienceData = {
         currentStep: 1,
         completedSteps: [],
         basicInfo: null,
@@ -471,6 +493,14 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
         status: "DRAFT",
         isComplete: false,
         hasSubmitted: false,
+      };
+
+      setData(resetData);
+      updateExperienceCache(session?.user?.id, resetData);
+      publishErasmusProgressSync({
+        userId: session?.user?.id,
+        experienceId: data?.id,
+        action: "delete",
       });
 
       return true;

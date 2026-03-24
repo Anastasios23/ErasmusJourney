@@ -2,6 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 import { isAccommodationStepComplete } from "../lib/accommodation";
 import { isBasicInformationComplete } from "../lib/basicInformation";
 import { hasCompleteCourseMatchingData } from "../lib/courseMatching";
+import {
+  ERASMUS_PROGRESS_SYNC_EVENT,
+  isErasmusProgressSyncStorageEvent,
+} from "../lib/erasmusProgressSync";
 import { isLivingExpensesStepComplete } from "../lib/livingExpenses";
 import { getNextAccessibleShareExperienceStep } from "../lib/shareExperienceStepAccess";
 
@@ -22,6 +26,7 @@ export interface ErasmusProgress {
   experienceData: any | null;
   loading: boolean;
   error: string | null;
+  refreshProgress: () => Promise<void>;
 }
 
 /**
@@ -33,9 +38,13 @@ export function useErasmusProgress(): ErasmusProgress {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchProgress = useCallback(async () => {
+  const fetchProgress = useCallback(async (options?: { silent?: boolean }) => {
+    const silent = options?.silent === true;
+
     try {
-      setLoading(true);
+      if (!silent) {
+        setLoading(true);
+      }
       setError(null);
 
       // Fetch the user's erasmus experience
@@ -59,12 +68,51 @@ export function useErasmusProgress(): ErasmusProgress {
       console.error("Error fetching erasmus progress:", err);
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
-    fetchProgress();
+    void fetchProgress();
+  }, [fetchProgress]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const refreshSilently = () => {
+      void fetchProgress({ silent: true });
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        refreshSilently();
+      }
+    };
+
+    const handleStorage = (event: StorageEvent) => {
+      if (isErasmusProgressSyncStorageEvent(event)) {
+        refreshSilently();
+      }
+    };
+
+    window.addEventListener(ERASMUS_PROGRESS_SYNC_EVENT, refreshSilently);
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("focus", refreshSilently);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener(ERASMUS_PROGRESS_SYNC_EVENT, refreshSilently);
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("focus", refreshSilently);
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibilityChange,
+      );
+    };
   }, [fetchProgress]);
 
   // Calculate completion status for each step
@@ -122,5 +170,6 @@ export function useErasmusProgress(): ErasmusProgress {
     experienceData,
     loading,
     error,
+    refreshProgress: () => fetchProgress({ silent: true }),
   };
 }
