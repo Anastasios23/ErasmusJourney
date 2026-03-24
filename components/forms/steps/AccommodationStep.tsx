@@ -46,12 +46,11 @@ export default function AccommodationStep({
         ? sanitizeAccommodationStepData(data.accommodation)
         : createEmptyAccommodationStepData(),
     );
-  }, [data]);
+  }, [data?.accommodation]);
 
   const persist = (nextData: AccommodationStepData) => {
     const sanitized = sanitizeAccommodationStepData(nextData);
     setFormData(sanitized);
-    onSave({ accommodation: sanitized });
   };
 
   const handleInputChange = <K extends keyof AccommodationStepData>(
@@ -104,6 +103,12 @@ export default function AccommodationStep({
       const firstError = document.querySelector(".text-red-500");
       firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
+  };
+
+  const handleSave = () => {
+    onSave({
+      accommodation: sanitizeAccommodationStepData(formData),
+    });
   };
 
   return (
@@ -368,11 +373,7 @@ export default function AccommodationStep({
 
       <div className="flex justify-between items-center pt-6 border-t border-gray-100">
         <button
-          onClick={() =>
-            onSave({
-              accommodation: sanitizeAccommodationStepData(formData),
-            })
-          }
+          onClick={handleSave}
           className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
         >
           Save Draft

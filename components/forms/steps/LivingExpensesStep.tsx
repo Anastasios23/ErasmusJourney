@@ -80,22 +80,15 @@ export default function LivingExpensesStep({
         }),
       ),
     );
-  }, [data]);
+  }, [data?.livingExpenses, data?.accommodation?.monthlyRent]);
 
   const handleInputChange = (
     field: keyof LivingExpensesUiData,
     value: string,
   ) => {
     const newData = { ...formData, [field]: value };
-    const canonicalData = toCanonicalData(
-      newData,
-      typeof data?.accommodation?.monthlyRent === "number"
-        ? data.accommodation.monthlyRent
-        : null,
-    );
 
     setFormData(newData);
-    onSave({ livingExpenses: canonicalData });
   };
 
   const validate = () => {
@@ -148,6 +141,17 @@ export default function LivingExpensesStep({
       const firstError = document.querySelector(".text-red-500");
       firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
+  };
+
+  const handleSave = () => {
+    onSave({
+      livingExpenses: toCanonicalData(
+        formData,
+        typeof data?.accommodation?.monthlyRent === "number"
+          ? data.accommodation.monthlyRent
+          : null,
+      ),
+    });
   };
 
   return (
@@ -347,16 +351,7 @@ export default function LivingExpensesStep({
 
       <div className="flex justify-between items-center pt-6 border-t border-gray-100">
         <button
-          onClick={() =>
-            onSave({
-              livingExpenses: toCanonicalData(
-                formData,
-                typeof data?.accommodation?.monthlyRent === "number"
-                  ? data.accommodation.monthlyRent
-                  : null,
-              ),
-            })
-          }
+          onClick={handleSave}
           className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
         >
           Save Draft

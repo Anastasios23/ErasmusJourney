@@ -16,6 +16,7 @@ import LegacyErrorBoundary from "../src/components/ErrorBoundary";
 import HMRErrorHandler from "../src/components/HMRErrorHandler";
 import EnhancedOfflineIndicator from "../src/components/EnhancedOfflineIndicator";
 import { AuthErrorBoundary } from "../src/components/AuthErrorBoundary";
+import { getPageTransitionKey } from "../src/lib/pageTransitionKey";
 import "../src/index.css";
 import { useEffect } from "react";
 import {
@@ -37,6 +38,7 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   const router = useRouter();
+  const pageTransitionKey = getPageTransitionKey(router.asPath);
 
   useEffect(() => {
     // Completely disable all fetch monitoring to prevent conflicts with analytics tools
@@ -76,7 +78,7 @@ export default function App({
                         <Sonner />
                         <AnimatePresence mode="wait">
                           <motion.div
-                            key={router.asPath}
+                            key={pageTransitionKey}
                             initial="initial"
                             animate="animate"
                             exit="exit"

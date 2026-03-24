@@ -80,7 +80,6 @@ export default function CourseMatchingStep({
     const nextPayload = buildCourseMappingsPayload(nextMappings);
 
     setMappings(nextMappings);
-    onSave({ courses: nextPayload });
 
     if (errors.general && nextPayload.length > 0) {
       const nextErrors = { ...errors };
@@ -173,6 +172,10 @@ export default function CourseMatchingStep({
     }
 
     onComplete({ courses: buildCourseMappingsPayload(mappings) });
+  };
+
+  const handleSave = () => {
+    onSave({ courses: buildCourseMappingsPayload(mappings) });
   };
 
   return (
@@ -475,9 +478,7 @@ export default function CourseMatchingStep({
 
       <div className="flex justify-between items-center pt-6 border-t border-gray-100">
         <button
-          onClick={() =>
-            onSave({ courses: buildCourseMappingsPayload(mappings) })
-          }
+          onClick={handleSave}
           className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
         >
           Save Draft

@@ -17,40 +17,12 @@ const nextConfig = {
     "127.0.0.1:3000",
   ],
   // Enhanced webpack config for cloud environment stability
-  webpack: (config, { dev, isServer }) => {
+  webpack: (config) => {
     // Add fallback for @prisma/client
     config.resolve.fallback = {
       ...config.resolve.fallback,
       "@prisma/client": false,
     };
-
-    if (dev && !isServer) {
-      // Improve file watching for cloud environments
-      config.watchOptions = {
-        aggregateTimeout: 5000, // Longer delay for stability
-        poll: false,
-        ignored: /node_modules/,
-      };
-
-      // Configure HMR for better error handling
-      config.optimization = {
-        ...config.optimization,
-        moduleIds: "named", // More stable module IDs
-      };
-
-      // Add custom HMR configuration
-      if (config.entry && typeof config.entry === "object") {
-        Object.keys(config.entry).forEach((key) => {
-          if (Array.isArray(config.entry[key])) {
-            config.entry[key] = config.entry[key].filter(
-              (entry) =>
-                !entry.includes("webpack-hot-middleware") &&
-                !entry.includes("webpack/hot"),
-            );
-          }
-        });
-      }
-    }
     return config;
   },
   // Reduce network requests and improve stability

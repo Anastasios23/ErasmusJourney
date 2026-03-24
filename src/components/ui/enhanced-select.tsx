@@ -25,7 +25,19 @@ interface EnhancedSelectValueProps
   disabled?: boolean;
 }
 
-const EnhancedSelect = SelectPrimitive.Root;
+function EnhancedSelect(props: EnhancedSelectProps) {
+  const shouldNormalizeValue = Object.prototype.hasOwnProperty.call(
+    props,
+    "value",
+  );
+
+  return (
+    <SelectPrimitive.Root
+      {...props}
+      value={shouldNormalizeValue ? (props.value ?? "") : props.value}
+    />
+  );
+}
 
 const EnhancedSelectGroup = SelectPrimitive.Group;
 

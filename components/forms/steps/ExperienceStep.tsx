@@ -21,13 +21,8 @@ interface ExperienceStepProps {
   isSubmitting?: boolean;
 }
 
-export default function ExperienceStep({
-  data,
-  onComplete,
-  onSave,
-  isSubmitting = false,
-}: ExperienceStepProps) {
-  const [formData, setFormData] = useState<ExperienceData>({
+function createExperienceFormData(value?: Partial<ExperienceData> | null) {
+  return {
     overallRating: 0,
     bestExperience: "",
     worstExperience: "",
@@ -35,21 +30,29 @@ export default function ExperienceStep({
     socialAdvice: "",
     generalTips: "",
     photos: [],
-    ...data?.experience,
-  });
+    ...(value || {}),
+  };
+}
+
+export default function ExperienceStep({
+  data,
+  onComplete,
+  onSave,
+  isSubmitting = false,
+}: ExperienceStepProps) {
+  const [formData, setFormData] = useState<ExperienceData>(() =>
+    createExperienceFormData(data?.experience),
+  );
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (data?.experience) {
-      setFormData((prev) => ({ ...prev, ...data.experience }));
-    }
-  }, [data]);
+    setFormData(createExperienceFormData(data?.experience));
+  }, [data?.experience]);
 
   const handleInputChange = (field: keyof ExperienceData, value: any) => {
     const newData = { ...formData, [field]: value };
     setFormData(newData);
-    onSave({ experience: newData });
 
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
@@ -75,6 +78,10 @@ export default function ExperienceStep({
       const firstError = document.querySelector(".text-red-500");
       firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
+  };
+
+  const handleSave = () => {
+    onSave({ experience: formData });
   };
 
   return (
@@ -247,7 +254,7 @@ export default function ExperienceStep({
       <div className="flex justify-between items-center pt-6 border-t border-gray-100">
         <button
           type="button"
-          onClick={() => onSave({ experience: formData })}
+          onClick={handleSave}
           disabled={isSubmitting}
           className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
         >

@@ -4,7 +4,21 @@ import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-const Select = SelectPrimitive.Root;
+function Select(
+  props: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root>,
+) {
+  const shouldNormalizeValue = Object.prototype.hasOwnProperty.call(
+    props,
+    "value",
+  );
+
+  return (
+    <SelectPrimitive.Root
+      {...props}
+      value={shouldNormalizeValue ? (props.value ?? "") : props.value}
+    />
+  );
+}
 
 const SelectGroup = SelectPrimitive.Group;
 

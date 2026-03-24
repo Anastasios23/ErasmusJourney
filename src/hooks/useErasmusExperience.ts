@@ -95,16 +95,19 @@ async function getApiErrorMessage(
 }
 
 export function useErasmusExperience(): UseErasmusExperienceReturn {
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
   const [data, setData] = useState<ErasmusExperienceData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    // Check if user is authenticated first
+    if (sessionStatus === "loading") {
+      return;
+    }
+
     if (!session?.user?.id) {
-      console.log("No session found, skipping data fetch");
+      setData(null);
       setLoading(false);
       return;
     }
@@ -239,7 +242,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
       globalPendingExperienceRequests.delete(cacheKey);
       setLoading(false);
     }
-  }, [session?.user?.id]);
+  }, [session?.user?.id, sessionStatus]);
 
   const saveProgress = useCallback(
     async (stepData: Partial<ErasmusExperienceData>): Promise<boolean> => {
@@ -488,13 +491,17 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
   const lastSessionId = useRef<string | null>(null);
 
   useEffect(() => {
+    if (sessionStatus === "loading") {
+      return;
+    }
+
     const sessionId = session?.user?.id || "anonymous";
 
     if (sessionId !== lastSessionId.current) {
       void fetchData();
       lastSessionId.current = sessionId;
     }
-  }, [session?.user?.id, fetchData]);
+  }, [session?.user?.id, sessionStatus, fetchData]);
 
   return {
     data,
