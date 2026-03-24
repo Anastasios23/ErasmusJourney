@@ -23,6 +23,7 @@ import {
   sanitizeLivingExpensesStepData,
 } from "../src/lib/livingExpenses";
 import { toast } from "../src/hooks/use-toast";
+import { clampShareExperienceStep } from "../src/lib/shareExperienceStepAccess";
 import { cn } from "../src/lib/utils";
 
 // Import step components
@@ -100,6 +101,25 @@ function parseStepQuery(step: string | string[] | undefined): number | null {
   return parsed;
 }
 
+function getRequestedStep(
+  step: string | string[] | undefined,
+  asPath: string,
+): number | null {
+  const parsedFromQuery = parseStepQuery(step);
+
+  if (parsedFromQuery) {
+    return parsedFromQuery;
+  }
+
+  const search = asPath.split("?")[1];
+  if (!search) {
+    return null;
+  }
+
+  const searchParams = new URLSearchParams(search);
+  return parseStepQuery(searchParams.get("step") ?? undefined);
+}
+
 export default function ShareExperience() {
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
@@ -138,6 +158,7 @@ export default function ShareExperience() {
   });
   const formDataRef = useRef(formData);
   const hydratedExperienceIdRef = useRef<string | null>(null);
+  const pendingResolvedStepRef = useRef<number | null>(null);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -156,7 +177,7 @@ export default function ShareExperience() {
       return;
     }
 
-    const requestedStep = parseStepQuery(router.query.step);
+    const requestedStep = getRequestedStep(router.query.step, router.asPath);
     const hydratedFormData = {
       basicInfo: experienceData.basicInfo || {},
       courses: experienceData.courses || [],
@@ -173,31 +194,74 @@ export default function ShareExperience() {
     formDataRef.current = hydratedFormData;
     setFormData(hydratedFormData);
 
-    // Respect direct step links from the dashboard when present.
-    if (requestedStep) {
-      setLocalCurrentStep(requestedStep);
-    } else if (experienceData.currentStep) {
-      setLocalCurrentStep(experienceData.currentStep);
+    const initialStep = clampShareExperienceStep(
+      requestedStep ?? experienceData.currentStep ?? 1,
+      hydratedFormData,
+    );
+
+    pendingResolvedStepRef.current = initialStep;
+    setLocalCurrentStep(initialStep);
+  }, [experienceLoading, experienceData?.id, router.asPath, router.query.step]);
+
+  useEffect(() => {
+    if (!router.isReady || experienceLoading) {
+      return;
     }
-  }, [experienceLoading, experienceData?.id, router.query.step]);
+
+    if (
+      experienceData?.id &&
+      hydratedExperienceIdRef.current !== experienceData.id
+    ) {
+      return;
+    }
+
+    const requestedStep = getRequestedStep(router.query.step, router.asPath);
+    if (!requestedStep) {
+      return;
+    }
+
+    const allowedStep = clampShareExperienceStep(
+      requestedStep,
+      formDataRef.current,
+    );
+
+    pendingResolvedStepRef.current = allowedStep;
+
+    if (allowedStep !== currentStep) {
+      setLocalCurrentStep(allowedStep);
+    }
+  }, [
+    experienceData?.id,
+    experienceLoading,
+    router.asPath,
+    router.isReady,
+    router.query.step,
+  ]);
 
   useEffect(() => {
     if (!router.isReady) {
       return;
     }
 
-    const requestedStep = parseStepQuery(router.query.step);
-    if (requestedStep && requestedStep !== currentStep) {
-      setLocalCurrentStep(requestedStep);
-    }
-  }, [router.isReady, router.query.step]);
-
-  useEffect(() => {
-    if (!router.isReady) {
+    if (
+      experienceData?.id &&
+      hydratedExperienceIdRef.current !== experienceData.id
+    ) {
       return;
     }
 
-    const currentQueryStep = parseStepQuery(router.query.step);
+    if (
+      pendingResolvedStepRef.current !== null &&
+      currentStep !== pendingResolvedStepRef.current
+    ) {
+      return;
+    }
+
+    if (pendingResolvedStepRef.current === currentStep) {
+      pendingResolvedStepRef.current = null;
+    }
+
+    const currentQueryStep = getRequestedStep(router.query.step, router.asPath);
     if (currentQueryStep === currentStep) {
       return;
     }
@@ -210,7 +274,15 @@ export default function ShareExperience() {
       undefined,
       { shallow: true },
     );
-  }, [currentStep, router.isReady, router.pathname, router.query, router.replace]);
+  }, [
+    currentStep,
+    experienceData?.id,
+    router.asPath,
+    router.isReady,
+    router.pathname,
+    router.query,
+    router.replace,
+  ]);
 
   // Sync local step with context
   useEffect(() => {
@@ -376,16 +448,13 @@ export default function ShareExperience() {
   // Navigate to specific step
   const handleStepClick = useCallback(
     (stepNumber: number) => {
-      // Only allow navigation to completed steps or the next step
-      if (
-        completedStepNumbers.includes(stepNumber) ||
-        stepNumber === 1 ||
-        completedStepNumbers.includes(stepNumber - 1)
-      ) {
+      const allowedStep = clampShareExperienceStep(stepNumber, formDataRef.current);
+
+      if (allowedStep === stepNumber) {
         setLocalCurrentStep(stepNumber);
       }
     },
-    [completedStepNumbers],
+    [],
   );
 
   // Loading state

@@ -13,6 +13,15 @@ const mockRouterPush = vi.fn();
 const mockSetCurrentStep = vi.fn();
 const mockMarkStepCompleted = vi.fn();
 
+const completeBasicInfo = {
+  homeUniversity: "University of Nicosia (UNIC)",
+  homeDepartment: "Computer Science",
+  levelOfStudy: "Bachelor",
+  hostUniversity: "University of Amsterdam",
+  exchangeAcademicYear: "2026/2027",
+  exchangePeriod: "Fall",
+};
+
 let mockExperienceState: {
   data: any;
   loading: boolean;
@@ -279,5 +288,69 @@ describe("ShareExperience page", () => {
     rerender(<ShareExperience />);
 
     expect(screen.getByTestId("basic-year")).toHaveTextContent("2027/2028");
+  });
+
+  it("clamps an inaccessible deep link back to step 1", async () => {
+    mockRouter = {
+      ...mockRouter,
+      query: { step: "2" },
+      asPath: "/share-experience?step=2",
+    };
+
+    mockExperienceState = {
+      ...mockExperienceState,
+      data: {
+        ...mockExperienceState.data,
+        currentStep: 2,
+        basicInfo: {},
+      },
+    };
+
+    render(<ShareExperience />);
+
+    expect(screen.queryByText("Course Matching Step")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /trigger step save/i })).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(mockRouterReplace).toHaveBeenCalledWith(
+        {
+          pathname: "/share-experience",
+          query: { step: "1" },
+        },
+        undefined,
+        { shallow: true },
+      );
+    });
+  });
+
+  it("keeps a direct step 2 link when step 1 is complete", async () => {
+    mockRouter = {
+      ...mockRouter,
+      query: { step: "2" },
+      asPath: "/share-experience?step=2",
+    };
+
+    mockExperienceState = {
+      ...mockExperienceState,
+      data: {
+        ...mockExperienceState.data,
+        currentStep: 2,
+        basicInfo: completeBasicInfo,
+      },
+    };
+
+    render(<ShareExperience />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Course Matching Step")).toBeInTheDocument();
+    });
+
+    expect(mockRouterReplace).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        query: expect.objectContaining({ step: "1" }),
+      }),
+      undefined,
+      { shallow: true },
+    );
   });
 });

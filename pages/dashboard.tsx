@@ -21,6 +21,7 @@ import { useErasmusProgress } from "../src/hooks/useErasmusProgress";
 import WelcomeTour from "../src/components/WelcomeTour";
 
 interface ApplicationStep {
+  number: number;
   id: string;
   name: string;
   href: string;
@@ -80,6 +81,7 @@ export default function Dashboard() {
   // Application steps definition with gradients - pointing to unified form
   const applicationSteps: ApplicationStep[] = [
     {
+      number: 1,
       id: "basic-info",
       name: "Basic Information",
       href: "/share-experience?step=1",
@@ -89,6 +91,7 @@ export default function Dashboard() {
       gradient: "from-blue-500 to-indigo-600",
     },
     {
+      number: 2,
       id: "course-matching",
       name: "Course Matching",
       href: "/share-experience?step=2",
@@ -98,6 +101,7 @@ export default function Dashboard() {
       gradient: "from-purple-500 to-indigo-600",
     },
     {
+      number: 3,
       id: "accommodation",
       name: "Accommodation",
       href: "/share-experience?step=3",
@@ -107,6 +111,7 @@ export default function Dashboard() {
       gradient: "from-emerald-500 to-teal-600",
     },
     {
+      number: 4,
       id: "living-expenses",
       name: "Living Expenses",
       href: "/share-experience?step=4",
@@ -116,6 +121,7 @@ export default function Dashboard() {
       gradient: "from-orange-500 to-amber-600",
     },
     {
+      number: 5,
       id: "experience",
       name: "Your Experience",
       href: "/share-experience?step=5",
@@ -356,12 +362,16 @@ export default function Dashboard() {
                 </h3>
               </div>
               <GlassCard className="overflow-hidden divide-y divide-gray-100/50 dark:divide-gray-800/50">
-                {applicationSteps.map((step, index) => (
+                {applicationSteps.map((step) => {
+                  const isAccessible = step.completed || step === nextStep;
+
+                  return (
                   <div
                     key={step.id}
                     className={`
                       group flex items-center justify-between p-6 hover:bg-white/50 dark:hover:bg-gray-800/30 transition-all duration-300
                       ${step === nextStep ? "bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/10 dark:to-indigo-900/10" : ""}
+                      ${!isAccessible ? "opacity-80" : ""}
                     `}
                   >
                     <div className="flex items-center gap-5">
@@ -373,7 +383,7 @@ export default function Dashboard() {
                           step.completed
                             ? "bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-emerald-500/25"
                             : step === nextStep
-                              ? `bg-gradient-to-br ${step.gradient} text-white shadow-blue-500/25 animate-pulse`
+                              ? `bg-gradient-to-br ${step.gradient} text-white shadow-blue-500/25`
                               : "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 shadow-none"
                         }
                       `}
@@ -426,7 +436,7 @@ export default function Dashboard() {
                             Edit
                           </Button>
                         </Link>
-                      ) : (
+                      ) : isAccessible ? (
                         <Link href={step.href}>
                           <Button
                             size="sm"
@@ -449,10 +459,20 @@ export default function Dashboard() {
                             )}
                           </Button>
                         </Link>
+                      ) : (
+                        <Button
+                          size="sm"
+                          disabled
+                          aria-disabled="true"
+                          className="bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-xl px-6"
+                        >
+                          Locked
+                        </Button>
                       )}
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </GlassCard>
             </div>
           </div>

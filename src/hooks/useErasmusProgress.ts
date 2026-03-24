@@ -3,6 +3,7 @@ import { isAccommodationStepComplete } from "../lib/accommodation";
 import { isBasicInformationComplete } from "../lib/basicInformation";
 import { hasCompleteCourseMatchingData } from "../lib/courseMatching";
 import { isLivingExpensesStepComplete } from "../lib/livingExpenses";
+import { getNextAccessibleShareExperienceStep } from "../lib/shareExperienceStepAccess";
 
 export interface StepCompletion {
   basicInfo: boolean;
@@ -110,18 +111,7 @@ export function useErasmusProgress(): ErasmusProgress {
   const completedCount = Object.values(completedSteps).filter(Boolean).length;
   const progressPercentage = Math.round((completedCount / totalSteps) * 100);
 
-  // Find the next incomplete step (1-5)
-  const currentStep = completedSteps.basicInfo
-    ? completedSteps.courses
-      ? completedSteps.accommodation
-        ? completedSteps.livingExpenses
-          ? completedSteps.experience
-            ? 5 // All complete
-            : 5 // Experience incomplete
-          : 4 // Living expenses incomplete
-        : 3 // Accommodation incomplete
-      : 2 // Courses incomplete
-    : 1; // Basic info incomplete
+  const currentStep = getNextAccessibleShareExperienceStep(experienceData);
 
   return {
     completedSteps,
