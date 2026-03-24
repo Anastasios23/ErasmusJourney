@@ -202,7 +202,7 @@ export default function ShareExperience() {
       return;
     }
 
-    router.replace(
+    void router.replace(
       {
         pathname: router.pathname,
         query: { ...router.query, step: String(currentStep) },
@@ -210,7 +210,7 @@ export default function ShareExperience() {
       undefined,
       { shallow: true },
     );
-  }, [currentStep, router]);
+  }, [currentStep, router.isReady, router.pathname, router.query, router.replace]);
 
   // Sync local step with context
   useEffect(() => {

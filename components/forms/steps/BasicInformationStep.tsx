@@ -303,10 +303,6 @@ export default function BasicInformationStep({
     selectedHomeUniversityCode,
     formData.homeDepartment,
     formData.levelOfStudy,
-    formData.hostUniversity,
-    formData.hostCity,
-    formData.hostCountry,
-    formData.hostUniversityId,
   ]);
 
   const selectedHostOption = useMemo(() => {

@@ -15,6 +15,10 @@ const nextConfig = {
     // Allow localhost variations
     "localhost:3000",
     "127.0.0.1:3000",
+    "localhost:3101",
+    "127.0.0.1:3101",
+    "localhost:3102",
+    "127.0.0.1:3102",
   ],
   // Enhanced webpack config for cloud environment stability
   webpack: (config) => {
