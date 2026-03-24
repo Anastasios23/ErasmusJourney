@@ -16,6 +16,7 @@ import {
   sanitizePublicDestinationArea,
   sanitizePublicDestinationNarrative,
 } from "../lib/publicDestinationPresentation";
+import type { AdminPublicImpactPreview } from "../types/adminPublicImpactPreview";
 import type {
   PublicDestinationAccommodationInsights,
   PublicDestinationCourseEquivalenceGroup,
@@ -254,6 +255,28 @@ async function loadApprovedExperiences(): Promise<RawExperience[]> {
   });
 }
 
+async function loadExperienceById(id: string): Promise<RawExperience | null> {
+  return prisma.erasmusExperience.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      hostCity: true,
+      hostCountry: true,
+      hostUniversityId: true,
+      hostUniversity: {
+        select: {
+          name: true,
+        },
+      },
+      basicInfo: true,
+      accommodation: true,
+      livingExpenses: true,
+      courses: true,
+      experience: true,
+    },
+  });
+}
+
 function buildGroupedDestinations(
   experiences: RawExperience[],
 ): Map<string, GroupedDestinationData> {
@@ -474,6 +497,210 @@ function toListItem(
   };
 }
 
+function buildDestinationDetail(
+  destination: GroupedDestinationData,
+): PublicDestinationDetail {
+  const uniqueTips = dedupeCaseInsensitive(destination.practicalTips).slice(
+    0,
+    8,
+  );
+
+  return {
+    slug: destination.slug,
+    city: destination.city,
+    country: destination.country,
+    hostUniversityCount: destination.universities.size,
+    submissionCount: destination.submissionCount,
+    averageRent: average(destination.rents),
+    averageMonthlyCost: average(destination.monthlyCosts),
+    accommodationSummary: {
+      sampleSize: destination.rents.length,
+      averageRent: average(destination.rents),
+      types: Array.from(destination.accommodationType.entries())
+        .map(([type, value]) => ({
+          type,
+          count: value.count,
+          averageRent: average(value.rents),
+        }))
+        .sort((left, right) => right.count - left.count),
+      difficulty: Array.from(destination.accommodationDifficulty.entries())
+        .map(([level, count]) => ({ level, count }))
+        .sort((left, right) => right.count - left.count),
+    },
+    costSummary: {
+      currency: deriveCurrency(destination.currencies),
+      sampleSize: destination.monthlyCosts.length,
+      averageRent: average(destination.rents),
+      averageFood: average(destination.livingFood),
+      averageTransport: average(destination.livingTransport),
+      averageSocial: average(destination.livingSocial),
+      averageTravel: average(destination.livingTravel),
+      averageOther: average(destination.livingOther),
+      averageMonthlyCost: average(destination.monthlyCosts),
+    },
+    courseEquivalenceExamples: buildUniqueCourseExamples(
+      destination.courseEquivalences,
+    ),
+    practicalTips: uniqueTips,
+  };
+}
+
+function buildAccommodationInsights(
+  destination: GroupedDestinationData,
+): PublicDestinationAccommodationInsights {
+  return {
+    slug: destination.slug,
+    city: destination.city,
+    country: destination.country,
+    hostUniversityCount: destination.universities.size,
+    submissionCount: destination.submissionCount,
+    currency: deriveCurrency(destination.currencies),
+    sampleSize: destination.accommodationSubmissionCount,
+    rentSampleSize: destination.rents.length,
+    averageRent: average(destination.rents),
+    recommendationRate: percentage(
+      destination.accommodationRecommendationYesCount,
+      destination.accommodationRecommendationTotal,
+    ),
+    recommendationSampleSize: destination.accommodationRecommendationTotal,
+    recommendationYesCount: destination.accommodationRecommendationYesCount,
+    types: Array.from(destination.accommodationType.entries())
+      .map(([type, value]) => ({
+        type,
+        count: value.count,
+        averageRent: average(value.rents),
+      }))
+      .sort((left, right) => right.count - left.count),
+    difficulty: Array.from(destination.accommodationDifficulty.entries())
+      .map(([level, count]) => ({ level, count }))
+      .sort((left, right) => right.count - left.count),
+    commonAreas: Array.from(destination.accommodationAreas.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((left, right) => {
+        if (right.count !== left.count) {
+          return right.count - left.count;
+        }
+
+        return left.name.localeCompare(right.name);
+      })
+      .slice(0, 8),
+    reviewSnippets: dedupeCaseInsensitive(
+      destination.accommodationReviewSnippets,
+    ).slice(0, 6),
+  };
+}
+
+function buildCourseEquivalences(
+  destination: GroupedDestinationData,
+): PublicDestinationCourseEquivalences {
+  const groups = buildCourseEquivalenceGroups(destination.courseEquivalences);
+  const homeUniversities = new Set(
+    groups.map((group) => group.homeUniversity.toLowerCase()),
+  );
+
+  return {
+    slug: destination.slug,
+    city: destination.city,
+    country: destination.country,
+    hostUniversityCount: destination.universities.size,
+    submissionCount: destination.submissionCount,
+    homeUniversityCount: homeUniversities.size,
+    totalMappings: destination.courseEquivalences.length,
+    groups,
+  };
+}
+
+function buildPendingAccommodationContribution(
+  experience: RawExperience,
+): AdminPublicImpactPreview["accommodation"]["contribution"] {
+  const accommodation = sanitizeAccommodationStepData(
+    toRecord(experience.accommodation),
+  );
+
+  const type = accommodation.accommodationType
+    ? getAccommodationTypeLabel(accommodation.accommodationType)
+    : undefined;
+  const area = sanitizePublicDestinationArea(accommodation.areaOrNeighborhood);
+  const difficulty = accommodation.difficultyFindingAccommodation
+    ? getDifficultyFindingAccommodationLabel(
+        accommodation.difficultyFindingAccommodation,
+      )
+    : undefined;
+  const reviewSnippet = sanitizePublicDestinationNarrative(
+    accommodation.accommodationReview,
+    { maxLength: 180 },
+  );
+
+  if (
+    !type &&
+    typeof accommodation.monthlyRent !== "number" &&
+    !area &&
+    !difficulty &&
+    typeof accommodation.wouldRecommend !== "boolean" &&
+    !reviewSnippet
+  ) {
+    return null;
+  }
+
+  return {
+    type,
+    rent: accommodation.monthlyRent,
+    currency: accommodation.currency || "EUR",
+    area: area || undefined,
+    difficulty,
+    wouldRecommend: accommodation.wouldRecommend,
+    reviewSnippet: reviewSnippet || undefined,
+  };
+}
+
+function buildPendingCourseContributionExamples(
+  experience: RawExperience,
+): AdminPublicImpactPreview["courses"]["contributionExamples"] {
+  const basicInfo = sanitizeBasicInformationData(toRecord(experience.basicInfo));
+  const homeUniversity =
+    normalizeLabel(basicInfo.homeUniversity, 140) ||
+    "Unspecified home university";
+  const homeDepartment = normalizeLabel(
+    getCanonicalDepartmentLabel(basicInfo.homeDepartment),
+    120,
+  );
+  const hostUniversity =
+    normalizeLabel(basicInfo.hostUniversity, 140) ||
+    normalizeLabel(experience.hostUniversity?.name, 140) ||
+    undefined;
+
+  const examples: AdminPublicImpactPreview["courses"]["contributionExamples"] =
+    [];
+
+  for (const mapping of sanitizeCourseMappingsData(experience.courses)) {
+    const homeCourseName = normalizeLabel(mapping.homeCourseName, 160);
+    const hostCourseName = normalizeLabel(mapping.hostCourseName, 160);
+
+    if (!homeCourseName || !hostCourseName) {
+      continue;
+    }
+
+    examples.push({
+      homeUniversity,
+      homeDepartment: homeDepartment || undefined,
+      hostUniversity,
+      homeCourseName,
+      hostCourseName,
+      recognitionType: recognitionLabel(mapping.recognitionType),
+      notes:
+        sanitizePublicDestinationNarrative(mapping.notes, {
+          maxLength: 220,
+        }) || undefined,
+    });
+
+    if (examples.length >= 6) {
+      break;
+    }
+  }
+
+  return examples;
+}
+
 function buildUniqueCourseExamples(
   entries: GroupedCourseEquivalence[],
 ): PublicDestinationCourseExample[] {
@@ -606,49 +833,7 @@ export async function getPublicDestinationDetailBySlug(
     return null;
   }
 
-  const uniqueTips = dedupeCaseInsensitive(destination.practicalTips).slice(
-    0,
-    8,
-  );
-
-  return {
-    slug: destination.slug,
-    city: destination.city,
-    country: destination.country,
-    hostUniversityCount: destination.universities.size,
-    submissionCount: destination.submissionCount,
-    averageRent: average(destination.rents),
-    averageMonthlyCost: average(destination.monthlyCosts),
-    accommodationSummary: {
-      sampleSize: destination.rents.length,
-      averageRent: average(destination.rents),
-      types: Array.from(destination.accommodationType.entries())
-        .map(([type, value]) => ({
-          type,
-          count: value.count,
-          averageRent: average(value.rents),
-        }))
-        .sort((left, right) => right.count - left.count),
-      difficulty: Array.from(destination.accommodationDifficulty.entries())
-        .map(([level, count]) => ({ level, count }))
-        .sort((left, right) => right.count - left.count),
-    },
-    costSummary: {
-      currency: deriveCurrency(destination.currencies),
-      sampleSize: destination.monthlyCosts.length,
-      averageRent: average(destination.rents),
-      averageFood: average(destination.livingFood),
-      averageTransport: average(destination.livingTransport),
-      averageSocial: average(destination.livingSocial),
-      averageTravel: average(destination.livingTravel),
-      averageOther: average(destination.livingOther),
-      averageMonthlyCost: average(destination.monthlyCosts),
-    },
-    courseEquivalenceExamples: buildUniqueCourseExamples(
-      destination.courseEquivalences,
-    ),
-    practicalTips: uniqueTips,
-  };
+  return buildDestinationDetail(destination);
 }
 
 export async function getPublicAccommodationInsightsByDestinationSlug(
@@ -662,46 +847,7 @@ export async function getPublicAccommodationInsightsByDestinationSlug(
     return null;
   }
 
-  return {
-    slug: destination.slug,
-    city: destination.city,
-    country: destination.country,
-    hostUniversityCount: destination.universities.size,
-    submissionCount: destination.submissionCount,
-    currency: deriveCurrency(destination.currencies),
-    sampleSize: destination.accommodationSubmissionCount,
-    rentSampleSize: destination.rents.length,
-    averageRent: average(destination.rents),
-    recommendationRate: percentage(
-      destination.accommodationRecommendationYesCount,
-      destination.accommodationRecommendationTotal,
-    ),
-    recommendationSampleSize: destination.accommodationRecommendationTotal,
-    recommendationYesCount: destination.accommodationRecommendationYesCount,
-    types: Array.from(destination.accommodationType.entries())
-      .map(([type, value]) => ({
-        type,
-        count: value.count,
-        averageRent: average(value.rents),
-      }))
-      .sort((left, right) => right.count - left.count),
-    difficulty: Array.from(destination.accommodationDifficulty.entries())
-      .map(([level, count]) => ({ level, count }))
-      .sort((left, right) => right.count - left.count),
-    commonAreas: Array.from(destination.accommodationAreas.entries())
-      .map(([name, count]) => ({ name, count }))
-      .sort((left, right) => {
-        if (right.count !== left.count) {
-          return right.count - left.count;
-        }
-
-        return left.name.localeCompare(right.name);
-      })
-      .slice(0, 8),
-    reviewSnippets: dedupeCaseInsensitive(
-      destination.accommodationReviewSnippets,
-    ).slice(0, 6),
-  };
+  return buildAccommodationInsights(destination);
 }
 
 export async function getPublicCourseEquivalencesByDestinationSlug(
@@ -715,19 +861,71 @@ export async function getPublicCourseEquivalencesByDestinationSlug(
     return null;
   }
 
-  const groups = buildCourseEquivalenceGroups(destination.courseEquivalences);
-  const homeUniversities = new Set(
-    groups.map((group) => group.homeUniversity.toLowerCase()),
+  return buildCourseEquivalences(destination);
+}
+
+export async function getAdminPublicImpactPreviewByExperienceId(
+  experienceId: string,
+): Promise<AdminPublicImpactPreview | null> {
+  const [approvedExperiences, previewExperience] = await Promise.all([
+    loadApprovedExperiences(),
+    loadExperienceById(experienceId),
+  ]);
+
+  if (!previewExperience) {
+    return null;
+  }
+
+  const city = (previewExperience.hostCity || "").trim();
+  const country = (previewExperience.hostCountry || "").trim();
+
+  if (!city || !country) {
+    return null;
+  }
+
+  const slug = destinationSlug(city, country);
+  const currentGrouped = buildGroupedDestinations(approvedExperiences);
+  const currentDestination = findDestinationBySlug(currentGrouped, slug);
+  const previewAlreadyApproved = approvedExperiences.some(
+    (experience) => experience.id === previewExperience.id,
   );
+  const projectedGrouped = buildGroupedDestinations(
+    previewAlreadyApproved
+      ? approvedExperiences
+      : [...approvedExperiences, previewExperience],
+  );
+  const projectedDestination = findDestinationBySlug(projectedGrouped, slug);
+
+  if (!projectedDestination) {
+    return null;
+  }
+
+  const courseContributionExamples =
+    buildPendingCourseContributionExamples(previewExperience);
 
   return {
-    slug: destination.slug,
-    city: destination.city,
-    country: destination.country,
-    hostUniversityCount: destination.universities.size,
-    submissionCount: destination.submissionCount,
-    homeUniversityCount: homeUniversities.size,
-    totalMappings: destination.courseEquivalences.length,
-    groups,
+    slug,
+    city: projectedDestination.city,
+    country: projectedDestination.country,
+    destination: {
+      isNewDestination: !currentDestination,
+      before: currentDestination ? buildDestinationDetail(currentDestination) : null,
+      after: buildDestinationDetail(projectedDestination),
+    },
+    accommodation: {
+      before: currentDestination
+        ? buildAccommodationInsights(currentDestination)
+        : null,
+      after: buildAccommodationInsights(projectedDestination),
+      contribution: buildPendingAccommodationContribution(previewExperience),
+    },
+    courses: {
+      before: currentDestination
+        ? buildCourseEquivalences(currentDestination)
+        : null,
+      after: buildCourseEquivalences(projectedDestination),
+      contributionCount: courseContributionExamples.length,
+      contributionExamples: courseContributionExamples,
+    },
   };
 }

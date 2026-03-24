@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Header from "../../components/Header";
+import PublicImpactPreview from "../../src/components/admin/PublicImpactPreview";
 import { Button } from "../../src/components/ui/button";
 import {
   Card,
@@ -27,6 +28,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import Link from "next/link";
+import type { AdminPublicImpactPreview } from "../../src/types/adminPublicImpactPreview";
 import {
   getRecognitionTypeLabel,
   sanitizeCourseMappingsData,
@@ -67,6 +69,10 @@ export default function ReviewSubmissions() {
   const [feedback, setFeedback] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [impactPreview, setImpactPreview] =
+    useState<AdminPublicImpactPreview | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
 
   // Check admin access
   useEffect(() => {
@@ -81,6 +87,71 @@ export default function ReviewSubmissions() {
       fetchSubmissions();
     }
   }, [status]);
+
+  useEffect(() => {
+    if (!selectedSubmission) {
+      setImpactPreview(null);
+      setPreviewError(null);
+      setPreviewLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    let active = true;
+
+    const fetchImpactPreview = async () => {
+      try {
+        setPreviewLoading(true);
+        setPreviewError(null);
+
+        const response = await fetch(
+          `/api/admin/erasmus-experiences/${selectedSubmission.id}/preview`,
+          {
+            signal: controller.signal,
+          },
+        );
+
+        if (!response.ok) {
+          const errorData = await response
+            .json()
+            .catch(() => ({ error: "Failed to load public impact preview" }));
+          throw new Error(
+            errorData.error || "Failed to load public impact preview",
+          );
+        }
+
+        const data = (await response.json()) as AdminPublicImpactPreview;
+        if (active) {
+          setImpactPreview(data);
+        }
+      } catch (err) {
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        console.error("Error loading public impact preview:", err);
+        if (active) {
+          setImpactPreview(null);
+          setPreviewError(
+            err instanceof Error
+              ? err.message
+              : "Failed to load public impact preview",
+          );
+        }
+      } finally {
+        if (active) {
+          setPreviewLoading(false);
+        }
+      }
+    };
+
+    fetchImpactPreview();
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [selectedSubmission]);
 
   const fetchSubmissions = async () => {
     try {
@@ -221,6 +292,8 @@ export default function ReviewSubmissions() {
                         setSelectedSubmission(null);
                         setFeedback("");
                         setError(null);
+                        setImpactPreview(null);
+                        setPreviewError(null);
                       }}
                     >
                       <ArrowLeft className="h-4 w-4 mr-2" />
@@ -445,6 +518,39 @@ export default function ReviewSubmissions() {
                   })()}
 
                   {/* Review Actions */}
+                  <div className="border-t pt-6 space-y-4">
+                    <div>
+                      <h3 className="text-lg font-semibold">
+                        Projected Public Impact
+                      </h3>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Preview what the public destination, accommodation, and
+                        course pages would show if this submission is approved.
+                      </p>
+                    </div>
+
+                    {previewLoading ? (
+                      <Card>
+                        <CardContent className="py-8 text-sm text-gray-600">
+                          Loading public impact preview...
+                        </CardContent>
+                      </Card>
+                    ) : previewError ? (
+                      <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>{previewError}</AlertDescription>
+                      </Alert>
+                    ) : impactPreview ? (
+                      <PublicImpactPreview preview={impactPreview} />
+                    ) : (
+                      <Card>
+                        <CardContent className="py-8 text-sm text-gray-600">
+                          Public impact preview unavailable for this submission.
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+
                   <div className="border-t pt-6">
                     <h3 className="text-lg font-semibold mb-3">
                       Review Decision
