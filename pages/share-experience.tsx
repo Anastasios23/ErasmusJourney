@@ -137,6 +137,7 @@ export default function ShareExperience() {
     experience: {},
   });
   const formDataRef = useRef(formData);
+  const hydratedExperienceIdRef = useRef<string | null>(null);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -147,31 +148,38 @@ export default function ShareExperience() {
 
   // Load saved experience data
   useEffect(() => {
-    if (!experienceLoading && experienceData) {
-      const requestedStep = parseStepQuery(router.query.step);
-      const hydratedFormData = {
-        basicInfo: experienceData.basicInfo || {},
-        courses: experienceData.courses || [],
-        accommodation: sanitizeAccommodationStepData(
-          experienceData.accommodation,
-        ),
-        livingExpenses: sanitizeLivingExpensesStepData(
-          experienceData.livingExpenses,
-        ),
-        experience: experienceData.experience || {},
-      };
-
-      formDataRef.current = hydratedFormData;
-      setFormData(hydratedFormData);
-
-      // Respect direct step links from the dashboard when present.
-      if (requestedStep) {
-        setLocalCurrentStep(requestedStep);
-      } else if (experienceData.currentStep) {
-        setLocalCurrentStep(experienceData.currentStep);
-      }
+    if (experienceLoading || !experienceData?.id) {
+      return;
     }
-  }, [experienceLoading, experienceData, router.query.step]);
+
+    if (hydratedExperienceIdRef.current === experienceData.id) {
+      return;
+    }
+
+    const requestedStep = parseStepQuery(router.query.step);
+    const hydratedFormData = {
+      basicInfo: experienceData.basicInfo || {},
+      courses: experienceData.courses || [],
+      accommodation: sanitizeAccommodationStepData(
+        experienceData.accommodation,
+      ),
+      livingExpenses: sanitizeLivingExpensesStepData(
+        experienceData.livingExpenses,
+      ),
+      experience: experienceData.experience || {},
+    };
+
+    hydratedExperienceIdRef.current = experienceData.id;
+    formDataRef.current = hydratedFormData;
+    setFormData(hydratedFormData);
+
+    // Respect direct step links from the dashboard when present.
+    if (requestedStep) {
+      setLocalCurrentStep(requestedStep);
+    } else if (experienceData.currentStep) {
+      setLocalCurrentStep(experienceData.currentStep);
+    }
+  }, [experienceLoading, experienceData?.id, router.query.step]);
 
   useEffect(() => {
     if (!router.isReady) {

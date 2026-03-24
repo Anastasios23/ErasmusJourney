@@ -114,7 +114,7 @@ export default function BasicInformationStep({
 
   useEffect(() => {
     setFormData(sanitizeBasicInformationData(data?.basicInfo));
-  }, [data]);
+  }, [data?.basicInfo]);
 
   useEffect(() => {
     if (!derivedHomeUniversity?.name || !derivedHomeUniversity.code) {
@@ -144,6 +144,7 @@ export default function BasicInformationStep({
     }
 
     let isActive = true;
+    const controller = new AbortController();
     const fallbackDepartments = getFallbackHomeDepartments(
       selectedHomeUniversityCode,
     );
@@ -153,6 +154,7 @@ export default function BasicInformationStep({
 
     fetch(
       `/api/universities/${encodeURIComponent(selectedHomeUniversityCode)}/departments`,
+      { signal: controller.signal },
     )
       .then(async (response) => {
         if (!response.ok) {
@@ -174,6 +176,10 @@ export default function BasicInformationStep({
         setDepartmentOptions(mergedDepartments);
       })
       .catch((error) => {
+        if (controller.signal.aborted) {
+          return;
+        }
+
         console.error("Error loading home departments:", error);
       })
       .finally(() => {
@@ -184,6 +190,7 @@ export default function BasicInformationStep({
 
     return () => {
       isActive = false;
+      controller.abort();
     };
   }, [selectedHomeUniversityCode]);
 
@@ -201,6 +208,7 @@ export default function BasicInformationStep({
     }
 
     let isActive = true;
+    const controller = new AbortController();
     const fallbackOptions = getFallbackHostUniversityOptions({
       homeUniversityCode: selectedHomeUniversityCode,
       homeDepartment: formData.homeDepartment,
@@ -221,7 +229,9 @@ export default function BasicInformationStep({
       level: formData.levelOfStudy.toLowerCase(),
     });
 
-    fetch(`/api/agreements?${params.toString()}`)
+    fetch(`/api/agreements?${params.toString()}`, {
+      signal: controller.signal,
+    })
       .then(async (response) => {
         if (!response.ok) {
           throw new Error("Failed to load agreements");
@@ -273,6 +283,10 @@ export default function BasicInformationStep({
         );
       })
       .catch((error) => {
+        if (controller.signal.aborted) {
+          return;
+        }
+
         console.error("Error loading host universities:", error);
       })
       .finally(() => {
@@ -283,6 +297,7 @@ export default function BasicInformationStep({
 
     return () => {
       isActive = false;
+      controller.abort();
     };
   }, [
     selectedHomeUniversityCode,
@@ -316,7 +331,6 @@ export default function BasicInformationStep({
 
   const persistBasicInfo = (nextData: BasicInformationData) => {
     setFormData(nextData);
-    onSave({ basicInfo: nextData });
   };
 
   const handleInputChange = (

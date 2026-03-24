@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -16,7 +16,7 @@ import {
 import { Icon } from "@iconify/react";
 import NotificationDropdown from "@/components/NotificationDropdown";
 import { useFormSubmissions } from "@/hooks/useFormSubmissions";
-import { useSmartNavigation } from "@/hooks/useSmartNavigation";
+import { buildSmartNavigation } from "@/hooks/useSmartNavigation";
 import { cn } from "@/lib/utils";
 
 export default function Header() {
@@ -29,7 +29,15 @@ export default function Header() {
   const headerRef = useRef<HTMLElement>(null);
 
   const { submissions } = useFormSubmissions();
-  const { shouldHighlightStep, analytics } = useSmartNavigation();
+  const { shouldHighlightStep, analytics } = useMemo(
+    () =>
+      buildSmartNavigation({
+        pathname: router.pathname,
+        step: router.query.step,
+        submissions,
+      }),
+    [router.pathname, router.query.step, submissions],
+  );
 
   // Track scroll position for header background change
   useEffect(() => {

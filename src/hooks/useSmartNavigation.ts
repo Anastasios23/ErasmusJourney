@@ -2,6 +2,17 @@ import { useMemo } from "react";
 import { useRouter } from "next/router";
 import { useFormSubmissions } from "./useFormSubmissions";
 
+interface NavigationSubmissionSummary {
+  type: string;
+  status: string;
+}
+
+interface SmartNavigationInput {
+  pathname: string;
+  step: string | string[] | undefined;
+  submissions?: NavigationSubmissionSummary[];
+}
+
 export interface SmartNavigationStep {
   id: string;
   name: string;
@@ -31,141 +42,143 @@ function getCurrentUnifiedFormStep(
   return parsed;
 }
 
+const STEP_DEFINITIONS = [
+  {
+    id: "basic-info",
+    name: "Basic Information",
+    href: "/share-experience?step=1",
+    description: "Personal & academic details",
+    estimatedTime: "10 min",
+    stepNumber: 1,
+  },
+  {
+    id: "course-matching",
+    name: "Course Matching",
+    href: "/share-experience?step=2",
+    description: "Select courses and universities",
+    estimatedTime: "15 min",
+    stepNumber: 2,
+  },
+  {
+    id: "accommodation",
+    name: "Accommodation",
+    href: "/share-experience?step=3",
+    description: "Housing preferences",
+    estimatedTime: "12 min",
+    stepNumber: 3,
+  },
+  {
+    id: "living-expenses",
+    name: "Living Expenses",
+    href: "/share-experience?step=4",
+    description: "Budget and cost planning",
+    estimatedTime: "8 min",
+    stepNumber: 4,
+  },
+  {
+    id: "experience",
+    name: "Share Experience",
+    href: "/share-experience?step=5",
+    description: "Tips for future students",
+    estimatedTime: "12 min",
+    stepNumber: 5,
+  },
+];
+
+export function buildSmartNavigation({
+  pathname,
+  step,
+  submissions,
+}: SmartNavigationInput) {
+  const currentUnifiedFormStep = getCurrentUnifiedFormStep(pathname, step);
+
+  const steps: SmartNavigationStep[] = STEP_DEFINITIONS.map((entry, index) => {
+    const submission = submissions?.find((item) => item.type === entry.id);
+    const isCompleted = Boolean(submission && submission.status !== "draft");
+    const isCurrent =
+      pathname === "/share-experience" &&
+      currentUnifiedFormStep === entry.stepNumber;
+
+    const previousStepsCompleted =
+      index === 0 ||
+      STEP_DEFINITIONS.slice(0, index).every((previousEntry) => {
+        const previousSubmission = submissions?.find(
+          (item) => item.type === previousEntry.id,
+        );
+        return Boolean(previousSubmission && previousSubmission.status !== "draft");
+      });
+
+    const nextRecommended = !isCompleted && previousStepsCompleted;
+
+    let urgency: "low" | "medium" | "high" = "low";
+    if (nextRecommended) {
+      urgency = index === 0 ? "high" : "medium";
+    } else if (!isCompleted && index > 0) {
+      urgency = "low";
+    }
+
+    return {
+      id: entry.id,
+      name: entry.name,
+      href: entry.href,
+      description: entry.description,
+      completed: isCompleted,
+      current: isCurrent,
+      nextRecommended,
+      urgency,
+      estimatedTime: entry.estimatedTime,
+    };
+  });
+
+  const completed = steps.filter((entry) => entry.completed);
+  const nextStep = steps.find((entry) => entry.nextRecommended);
+  const totalSteps = steps.length;
+  const progressPercentage = (completed.length / totalSteps) * 100;
+  const remainingSteps = steps.filter((entry) => !entry.completed);
+  const estimatedTimeRemaining = remainingSteps.reduce((total, entry) => {
+    const minutes = parseInt(entry.estimatedTime.replace(" min", ""));
+    return total + minutes;
+  }, 0);
+
+  const analytics = {
+    completedSteps: completed.length,
+    totalSteps,
+    progressPercentage,
+    nextStep,
+    estimatedTimeRemaining,
+    isComplete: completed.length === totalSteps,
+    urgentSteps: steps.filter((entry) => entry.urgency === "high"),
+    recommendedActions: generateRecommendations(steps, nextStep),
+  };
+
+  return {
+    steps,
+    analytics,
+    getStepByHref: (href: string) => steps.find((entry) => entry.href === href),
+    getNextStep: () => steps.find((entry) => entry.nextRecommended),
+    getCompletedSteps: () => steps.filter((entry) => entry.completed),
+    shouldHighlightStep: (stepId: string) => {
+      const matchedStep = steps.find((entry) => entry.id === stepId);
+      return Boolean(
+        matchedStep?.nextRecommended || matchedStep?.urgency === "high",
+      );
+    },
+  };
+}
+
 export function useSmartNavigation() {
   const router = useRouter();
   const { submissions } = useFormSubmissions();
 
-  const smartSteps = useMemo(() => {
-    const stepDefinitions = [
-      {
-        id: "basic-info",
-        name: "Basic Information",
-        href: "/share-experience?step=1",
-        description: "Personal & academic details",
-        estimatedTime: "10 min",
-        stepNumber: 1,
-      },
-      {
-        id: "course-matching",
-        name: "Course Matching",
-        href: "/share-experience?step=2",
-        description: "Select courses and universities",
-        estimatedTime: "15 min",
-        stepNumber: 2,
-      },
-      {
-        id: "accommodation",
-        name: "Accommodation",
-        href: "/share-experience?step=3",
-        description: "Housing preferences",
-        estimatedTime: "12 min",
-        stepNumber: 3,
-      },
-      {
-        id: "living-expenses",
-        name: "Living Expenses",
-        href: "/share-experience?step=4",
-        description: "Budget and cost planning",
-        estimatedTime: "8 min",
-        stepNumber: 4,
-      },
-      {
-        id: "experience",
-        name: "Share Experience",
-        href: "/share-experience?step=5",
-        description: "Tips for future students",
-        estimatedTime: "12 min",
-        stepNumber: 5,
-      },
-    ];
-
-    const currentUnifiedFormStep = getCurrentUnifiedFormStep(
-      router.pathname,
-      router.query.step,
-    );
-
-    const steps: SmartNavigationStep[] = stepDefinitions.map((step, index) => {
-      const submission = submissions?.find((sub) => sub.type === step.id);
-      const isCompleted = submission && submission.status !== "draft";
-      const isCurrent =
-        router.pathname === "/share-experience" &&
-        currentUnifiedFormStep === step.stepNumber;
-
-      // Determine if this is the next recommended step
-      const previousStepsCompleted =
-        index === 0 ||
-        stepDefinitions.slice(0, index).every((prevStep) => {
-          const prevSubmission = submissions?.find(
-            (sub) => sub.type === prevStep.id,
-          );
-          return prevSubmission && prevSubmission.status !== "draft";
-        });
-
-      const nextRecommended = !isCompleted && previousStepsCompleted;
-
-      // Calculate urgency based on completion status and position
-      let urgency: "low" | "medium" | "high" = "low";
-      if (nextRecommended) {
-        urgency = index === 0 ? "high" : "medium"; // First step is high priority
-      } else if (!isCompleted && index > 0) {
-        urgency = "low"; // Future steps are low priority until unlocked
-      }
-
-      return {
-        id: step.id,
-        name: step.name,
-        href: step.href,
-        description: step.description,
-        completed: isCompleted,
-        current: isCurrent,
-        nextRecommended,
-        urgency,
-        estimatedTime: step.estimatedTime,
-      };
-    });
-
-    return steps;
-  }, [submissions, router.pathname, router.query.step]);
-
-  // Analytics and recommendations
-  const analytics = useMemo(() => {
-    const completed = smartSteps.filter((step) => step.completed);
-    const nextStep = smartSteps.find((step) => step.nextRecommended);
-    const totalSteps = smartSteps.length;
-    const progressPercentage = (completed.length / totalSteps) * 100;
-
-    // Calculate estimated time remaining
-    const remainingSteps = smartSteps.filter((step) => !step.completed);
-    const estimatedTimeRemaining = remainingSteps.reduce((total, step) => {
-      const minutes = parseInt(step.estimatedTime.replace(" min", ""));
-      return total + minutes;
-    }, 0);
-
-    return {
-      completedSteps: completed.length,
-      totalSteps,
-      progressPercentage,
-      nextStep,
-      estimatedTimeRemaining,
-      isComplete: completed.length === totalSteps,
-      urgentSteps: smartSteps.filter((step) => step.urgency === "high"),
-      recommendedActions: generateRecommendations(smartSteps, nextStep),
-    };
-  }, [smartSteps]);
-
-  return {
-    steps: smartSteps,
-    analytics,
-    // Helper functions
-    getStepByHref: (href: string) =>
-      smartSteps.find((step) => step.href === href),
-    getNextStep: () => smartSteps.find((step) => step.nextRecommended),
-    getCompletedSteps: () => smartSteps.filter((step) => step.completed),
-    shouldHighlightStep: (stepId: string) => {
-      const step = smartSteps.find((s) => s.id === stepId);
-      return step?.nextRecommended || step?.urgency === "high";
-    },
-  };
+  return useMemo(
+    () =>
+      buildSmartNavigation({
+        pathname: router.pathname,
+        step: router.query.step,
+        submissions,
+      }),
+    [router.pathname, router.query.step, submissions],
+  );
 }
 
 function generateRecommendations(
