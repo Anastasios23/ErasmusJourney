@@ -6,6 +6,7 @@ import {
   ERASMUS_PROGRESS_SYNC_EVENT,
   isErasmusProgressSyncStorageEvent,
 } from "../lib/erasmusProgressSync";
+import { isExperienceStepComplete } from "../lib/experienceStep";
 import { isLivingExpensesStepComplete } from "../lib/livingExpenses";
 import { getNextAccessibleShareExperienceStep } from "../lib/shareExperienceStepAccess";
 
@@ -127,6 +128,20 @@ export function useErasmusProgress(): ErasmusProgress {
       };
     }
 
+    if (
+      experienceData.status === "SUBMITTED" ||
+      experienceData.isComplete === true ||
+      experienceData.hasSubmitted === true
+    ) {
+      return {
+        basicInfo: true,
+        courses: true,
+        accommodation: true,
+        livingExpenses: true,
+        experience: true,
+      };
+    }
+
     return {
       // Step 1: Basic Info - check if required fields exist
       basicInfo: isBasicInformationComplete(experienceData.basicInfo),
@@ -143,14 +158,7 @@ export function useErasmusProgress(): ErasmusProgress {
       ),
 
       // Step 5: Experience/Story - check if experience object has content
-      experience: !!(
-        experienceData.experience &&
-        typeof experienceData.experience === "object" &&
-        Object.keys(experienceData.experience).length > 0 &&
-        (experienceData.experience.overallExperience ||
-          experienceData.experience.tipsForFutureStudents ||
-          experienceData.experience.helpForStudents)
-      ),
+      experience: isExperienceStepComplete(experienceData.experience),
     };
   }, [experienceData]);
 
@@ -159,7 +167,12 @@ export function useErasmusProgress(): ErasmusProgress {
   const completedCount = Object.values(completedSteps).filter(Boolean).length;
   const progressPercentage = Math.round((completedCount / totalSteps) * 100);
 
-  const currentStep = getNextAccessibleShareExperienceStep(experienceData);
+  const currentStep =
+    experienceData?.status === "SUBMITTED" ||
+    experienceData?.isComplete === true ||
+    experienceData?.hasSubmitted === true
+      ? totalSteps
+      : getNextAccessibleShareExperienceStep(experienceData);
 
   return {
     completedSteps,

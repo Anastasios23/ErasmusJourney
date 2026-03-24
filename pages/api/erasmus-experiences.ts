@@ -37,6 +37,7 @@ import {
   getInternalServerStack,
   isDatabaseConnectionError,
 } from "../../lib/databaseErrors";
+import { serializeErasmusExperienceForClient } from "../../src/server/serializeErasmusExperience";
 
 class Step1ValidationError extends Error {
   statusCode: number;
@@ -235,34 +236,6 @@ async function buildBasicInfoPersistenceData(
   };
 }
 
-function asPartialRecord(
-  value: unknown,
-): Partial<Record<string, unknown>> | null {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    return null;
-  }
-
-  return value as Partial<Record<string, unknown>>;
-}
-
-function serializeExperienceForClient<T extends Record<string, any>>(
-  experience: T,
-): T {
-  return {
-    ...experience,
-    basicInfo: sanitizeBasicInformationData(
-      asPartialRecord(experience.basicInfo),
-    ),
-    accommodation: sanitizeAccommodationStepData(
-      asPartialRecord(experience.accommodation),
-    ),
-    livingExpenses: sanitizeLivingExpensesStepData(
-      asPartialRecord(experience.livingExpenses),
-    ),
-    courses: sanitizeCourseMappingsData(asPartialRecord(experience.courses)),
-  };
-}
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -332,7 +305,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
 
     return res
       .status(200)
-      .json(serializeExperienceForClient(experience as any));
+      .json(serializeErasmusExperienceForClient(experience as any));
   } else {
     // Get all experiences for this user with retry logic
     const experiences: Awaited<
@@ -348,7 +321,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
       .status(200)
       .json(
         experiences.map((experience) =>
-          serializeExperienceForClient(experience as any),
+          serializeErasmusExperienceForClient(experience as any),
         ),
       );
   }
@@ -877,7 +850,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
     return res
       .status(200)
-      .json(serializeExperienceForClient(updatedExperience as any));
+      .json(serializeErasmusExperienceForClient(updatedExperience as any));
   } else {
     // Regular update (save progress)
     const updateFields: any = {
@@ -952,6 +925,6 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
     return res
       .status(200)
-      .json(serializeExperienceForClient(updatedExperience as any));
+      .json(serializeErasmusExperienceForClient(updatedExperience as any));
   }
 }

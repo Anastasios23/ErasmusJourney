@@ -214,4 +214,30 @@ describe("useErasmusProgress", () => {
       expect(screen.getByTestId("current-step")).toHaveTextContent("4");
     });
   });
+
+  it("treats submitted experiences as fully complete", async () => {
+    global.fetch = vi.fn().mockResolvedValueOnce(
+      createResponse([
+        {
+          id: "experience-1",
+          status: "SUBMITTED",
+          isComplete: true,
+          hasSubmitted: true,
+          basicInfo: {},
+          courses: [],
+          accommodation: {},
+          livingExpenses: {},
+          experience: {},
+        },
+      ]),
+    ) as typeof fetch;
+
+    render(<ProgressHarness />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("completed-count")).toHaveTextContent("5");
+      expect(screen.getByTestId("progress")).toHaveTextContent("100");
+      expect(screen.getByTestId("current-step")).toHaveTextContent("5");
+    });
+  });
 });
