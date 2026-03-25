@@ -1,53 +1,79 @@
 # Erasmus Journey MVP
 
-A web application helping future Erasmus students from Cyprus plan their exchange experience by learning from past students.
+A web application helping future Erasmus students from Cyprus plan their exchange by learning from approved student submissions.
 
 ## Active App Boundary
 
 The active product in this repository is the root Next.js application.
 
-- Primary development path: `npm run dev`
-- Primary production build: `npm run build`
-- Primary CI typecheck signal: `npm run typecheck:next-only`
-- Root `tsconfig.json` is editor compatibility for the active app only
+- Dev: `npm run dev`
+- Clean dev: `npm run dev:fresh`
+- Build: `npm run build`
+- Typecheck: `npm run typecheck:next-only`
+- Tests: `npm test`
 
-Legacy directories such as `angular-ssr/`, `api-service/`, and `server/` are not part of the default startup path. They remain in the repo for historical or auxiliary reasons and should not be treated as required for MVP development.
+Archived experiments now live under `legacy/` and are not part of the default runtime path for the MVP. If you need background on those workspaces, see [docs/LEGACY_WORKSPACES.md](./docs/LEGACY_WORKSPACES.md).
 
-If you need background on those archived paths, see [docs/LEGACY_WORKSPACES.md](./docs/LEGACY_WORKSPACES.md).
+## Canonical Public Routes
 
-## Core Features
+These are the current MVP public routes:
 
-### For past Erasmus students
+- `/destinations`
+- `/destinations/[slug]`
+- `/destinations/[slug]/accommodation`
+- `/destinations/[slug]/courses`
 
-- **5-step experience form** (`/share-experience`)
-  1. Basic information
-  2. Course matching
-  3. Accommodation
-  4. Living expenses
-  5. Tips and advice
+Supplementary public pages may still exist in `pages/`, but the destination routes above are the canonical public browsing path for the current app.
 
-### For future Erasmus students
+## Authenticated And Admin Routes
 
-- **Destinations** (`/destinations`) for aggregated city data
-- **Course matching** (`/course-matching-experiences`) for approved course equivalences
-- **Destination details** (`/destinations/[slug]`) for city-specific insights
+- `/share-experience` for the 5-step Erasmus experience form
+- `/dashboard` for progress tracking
+- `/my-submissions` for reviewing saved and submitted experiences
+- `/admin/review-submissions` for moderation and approval
 
-### For signed-in users
+## Architecture Boundaries
 
-- **Dashboard** (`/dashboard`) to track form progress
-- **My submissions** (`/my-submissions`) to review submitted experiences
-
-### For admins
-
-- **Review submissions** (`/admin/review-submissions`) to moderate student data before it becomes public
+- Page routes live in `pages/`
+- API routes live in `pages/api/`
+- Shared server aggregation and publishing logic lives in `src/server/`
+- Shared client and UI code lives in `src/`, `components/`, and `lib/`
 
 ## Tech Stack
 
 - **Framework**: Next.js 15 with the Pages Router
+- **UI**: React 18, TailwindCSS, Radix UI
 - **Database**: PostgreSQL with Prisma ORM
 - **Auth**: NextAuth.js
-- **Styling**: TailwindCSS with Radix UI primitives
-- **State/Data**: React Query
+- **Tests**: Vitest + Playwright
+
+## Primary Route Map
+
+```text
+pages/
+|-- index.tsx
+|-- share-experience.tsx
+|-- dashboard.tsx
+|-- my-submissions.tsx
+|-- destinations.tsx
+|-- destinations/
+|   |-- [slug].tsx
+|   `-- [slug]/
+|       |-- accommodation.tsx
+|       `-- courses.tsx
+|-- login.tsx
+|-- register.tsx
+`-- admin/
+    `-- review-submissions.tsx
+```
+
+## Data Flow
+
+1. Signed-in students create and update a draft through `/share-experience` and `pages/api/erasmus-experiences.ts`.
+2. The API sanitizes step data into canonical `basicInfo`, `courses`, `accommodation`, `livingExpenses`, and `experience` payloads before persistence.
+3. Admin preview and review flows validate publishability before approval, including required public destination fields such as `hostCity` and `hostCountry`.
+4. Approved submissions are aggregated through `src/server/publicDestinations`.
+5. Public destination pages read only approved, publishable data.
 
 ## Getting Started
 
@@ -59,32 +85,40 @@ npm run db:push
 npm run dev
 ```
 
-## Page Structure
+Use `npm run dev:fresh` when you want to clear stale `.next` artifacts before starting the app.
 
-```text
-pages/
-|-- index.tsx
-|-- share-experience.tsx
-|-- dashboard.tsx
-|-- my-submissions.tsx
-|-- destinations/
-|   |-- index.tsx
-|   `-- [slug].tsx
-|-- course-matching-experiences.tsx
-|-- login.tsx
-|-- register.tsx
-|-- admin/
-|   |-- index.tsx
-|   `-- review-submissions.tsx
-`-- accommodation/
-    `-- [id].tsx
+## Local Postgres With Docker Compose
+
+If you want a repeatable local PostgreSQL setup for Prisma, proofs, and public smoke checks, use the root `compose.yaml`.
+
+```bash
+npm run db:docker:up
 ```
 
-## Data Flow
+Default local database connection:
 
-1. Past students submit experiences through `/share-experience`.
-2. Admins review submissions in `/admin/review-submissions`.
-3. Approved data is aggregated into destination and course-matching views.
+```env
+DATABASE_URL="postgresql://erasmus:erasmus123@localhost:5432/erasmusjourney"
+```
+
+After the container is healthy:
+
+```bash
+npm run db:push
+```
+
+Useful local commands:
+
+- `npm run db:docker:down`
+- `npm run db:docker:logs`
+- `npm run db:docker:ps`
+
+Equivalent raw Docker Compose commands still work if you prefer them:
+
+- `docker compose up -d postgres`
+- `docker compose down`
+- `docker compose logs -f postgres`
+- `docker compose ps`
 
 ## Environment Variables
 
@@ -93,3 +127,13 @@ DATABASE_URL="postgresql://..."
 NEXTAUTH_SECRET="your-secret"
 NEXTAUTH_URL="http://localhost:3000"
 ```
+
+`NEXTAUTH_SECRET` is required for production and production-like execution.
+
+## Quality Gates
+
+- `npm run typecheck:next-only`
+- `npm test`
+- `npm run smoke:public-destinations`
+- `npm run proof:approved-to-public`
+- `npm run proof:preview-to-approval`

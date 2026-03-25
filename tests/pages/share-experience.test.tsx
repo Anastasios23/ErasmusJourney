@@ -353,4 +353,22 @@ describe("ShareExperience page", () => {
       { shallow: true },
     );
   });
+
+  it("does not rewrite the requested step while experience data is still loading", () => {
+    mockRouter = {
+      ...mockRouter,
+      query: { step: "2" },
+      asPath: "/share-experience?step=2",
+    };
+
+    mockExperienceState = {
+      data: null,
+      loading: true,
+      error: null,
+    };
+
+    render(<ShareExperience />);
+
+    expect(mockRouterReplace).not.toHaveBeenCalled();
+  });
 });

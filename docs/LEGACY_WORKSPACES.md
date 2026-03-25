@@ -1,6 +1,6 @@
 # Legacy Workspaces
 
-These directories are not part of the active Erasmus Journey MVP runtime path.
+These directories live under `legacy/` and are not part of the active Erasmus Journey MVP runtime path.
 
 ## Active app
 
@@ -11,19 +11,19 @@ These directories are not part of the active Erasmus Journey MVP runtime path.
 
 ## Legacy directories
 
-- `server/`
+- `legacy/server/`
   - Historical standalone Express + SQLite backend
-  - Manual local command if you explicitly need it: `npm --prefix server run dev`
-- `api-service/`
+  - Manual local command if you explicitly need it: `npm --prefix legacy/server run dev`
+- `legacy/api-service/`
   - Historical NestJS service spike
-  - Manual local command if you explicitly need it: `npm --prefix api-service run start:dev`
-- `angular-ssr/`
+  - Manual local command if you explicitly need it: `npm --prefix legacy/api-service run start:dev`
+- `legacy/angular-ssr/`
   - Historical Angular SSR experiment
-  - Manual local command if you explicitly need it: `npm --prefix angular-ssr run start`
+  - Manual local command if you explicitly need it: `npm --prefix legacy/angular-ssr run start`
 
 ## Guidance
 
 - Do not treat these workspaces as required for normal Next.js development.
-- Do not point current user-facing setup instructions at `server/`.
+- Do not point current user-facing setup instructions at `legacy/server/`.
 - Prefer root `pages/api/*` and `src/server/*` for active backend behavior in the MVP.
 - Keep legacy workspace commands out of the root `package.json` developer interface.

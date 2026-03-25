@@ -243,6 +243,10 @@ export default function ShareExperience() {
       return;
     }
 
+    if (experienceLoading) {
+      return;
+    }
+
     if (
       experienceData?.id &&
       hydratedExperienceIdRef.current !== experienceData.id
@@ -277,6 +281,7 @@ export default function ShareExperience() {
   }, [
     currentStep,
     experienceData?.id,
+    experienceLoading,
     router.asPath,
     router.isReady,
     router.pathname,

@@ -1,6 +1,6 @@
 # Erasmus Journey
 
-The active product in this repository is the root Next.js application. Treat `angular-ssr/`, `api-service/`, and `server/` as archived side paths rather than the default runtime.
+The active product in this repository is the root Next.js application. Treat `legacy/angular-ssr/`, `legacy/api-service/`, and `legacy/server/` as archived side paths rather than the default runtime.
 
 ## Core Stack
 
@@ -30,6 +30,6 @@ The active product in this repository is the root Next.js application. Treat `an
 ## Repository Guidance
 
 - Keep the root package interface focused on the Next.js app.
-- Do not add new default startup paths through `server/`, `api-service/`, or `angular-ssr/`.
+- Do not add new default startup paths through `legacy/server/`, `legacy/api-service/`, or `legacy/angular-ssr/`.
 - Prefer `tsconfig.next-only.json` as the CI type boundary for the active app.
 - Keep user-facing setup docs aligned with the root Next.js flow.

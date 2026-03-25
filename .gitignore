@@ -72,9 +72,9 @@ test-results/
 /prisma/dev.db
 /prisma/dev.db-journal
 /prisma/migrations/*/migration.sql~
-/server/*.db
-/server/*.sqlite
-/server/*.sqlite3
+/legacy/server/*.db
+/legacy/server/*.sqlite
+/legacy/server/*.sqlite3
 
 # ===========================
 # Logs

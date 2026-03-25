@@ -14,9 +14,7 @@
   "exclude": [
     "node_modules",
     ".next",
-    "angular-ssr",
-    "api-service",
-    "server",
+    "legacy",
     "scripts",
     "tests"
   ]

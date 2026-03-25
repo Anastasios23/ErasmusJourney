@@ -85,6 +85,54 @@ function getSupportedUniversityCodesMessage(): string {
     .join(", ");
 }
 
+function getRequestFailureContext(req: NextApiRequest): string {
+  const action =
+    req.body &&
+    typeof req.body === "object" &&
+    "action" in req.body &&
+    typeof req.body.action === "string"
+      ? req.body.action
+      : null;
+
+  if (req.method === "POST" && action === "create") {
+    return "create action";
+  }
+
+  if (req.method === "PUT" && action === "submit") {
+    return "submit action";
+  }
+
+  if (req.method === "PUT") {
+    return "update action";
+  }
+
+  if (req.method === "GET") {
+    return "read action";
+  }
+
+  return `${req.method || "unknown"} request`;
+}
+
+function logRequestFailure(
+  message: string,
+  error: unknown,
+  context?: Record<string, unknown>,
+) {
+  if (context) {
+    console.error(`[erasmus-experiences] ${message}`, context, error);
+    return;
+  }
+
+  console.error(`[erasmus-experiences] ${message}`, error);
+}
+
+function logDatabaseUnavailable(context: string, error: unknown) {
+  console.error(`[erasmus-experiences] Database unavailable during ${context}`, {
+    cause: getDatabaseUnavailableCause(error) || "unknown",
+    error: getErrorMessage(error),
+  });
+}
+
 async function retryDatabaseOperation<T>(
   operation: () => Promise<T>,
   maxRetries = 3,
@@ -95,9 +143,6 @@ async function retryDatabaseOperation<T>(
       return await operation();
     } catch (error) {
       if (isDatabaseConnectionError(error) && attempt < maxRetries) {
-        console.log(
-          `Database connection failed, retrying (${attempt}/${maxRetries})...`,
-        );
         await new Promise((resolve) => setTimeout(resolve, delayMs * attempt));
         continue;
       }
@@ -255,9 +300,10 @@ export default async function handler(
         return res.status(405).json({ error: `Method ${method} not allowed` });
     }
   } catch (error) {
-    console.error("API Error:", error);
+    const failureContext = getRequestFailureContext(req);
 
     if (isDatabaseConnectionError(error)) {
+      logDatabaseUnavailable(failureContext, error);
       const cause = getDatabaseUnavailableCause(error);
 
       return res.status(503).json({
@@ -266,6 +312,8 @@ export default async function handler(
         ...(cause ? { cause } : {}),
       });
     }
+
+    logRequestFailure(`${failureContext} failed`, error);
 
     return res.status(500).json({
       error: "Internal server error",
@@ -336,13 +384,11 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
       const session = await getServerSession(req, res, authOptions);
 
       if (!session?.user?.id) {
-        console.error("No session or user ID found");
         return res.status(401).json({ error: "Authentication required" });
       }
 
       const userId = session.user.id;
       const userEmail = session.user.email;
-      console.log(`Creating/fetching experience for user: ${userId}`);
 
       // CRITICAL: Verify the user actually exists in the database
       let userExists = await retryDatabaseOperation(() =>
@@ -354,10 +400,6 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
       // If user doesn't exist by ID, try to find by email and create if needed
       if (!userExists && userEmail) {
-        console.log(
-          `User ${userId} not found by ID, checking email: ${userEmail}`,
-        );
-
         // Check if user exists by email
         const userByEmail = await retryDatabaseOperation(() =>
           prisma.users.findUnique({
@@ -368,7 +410,6 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
         if (!userByEmail) {
           // Create the user since they authenticated via OAuth but don't exist in DB
-          console.log(`Creating user from session: ${userEmail}`);
           const newUser = (await retryDatabaseOperation(() =>
             prisma.users.create({
               data: {
@@ -383,13 +424,16 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
               },
             }),
           )) as { id: string };
-          console.log(`Created user: ${newUser.id}`);
           userExists = { id: newUser.id };
         } else {
           // User exists by email but with different ID - update session won't help here
           const existingUser = userByEmail as { id: string };
           console.error(
-            `User exists with different ID. Session ID: ${userId}, DB ID: ${existingUser.id}`,
+            "[erasmus-experiences] Session mismatch during create action",
+            {
+              sessionUserId: userId,
+              databaseUserId: existingUser.id,
+            },
           );
           return res.status(409).json({
             error: "Session mismatch",
@@ -399,7 +443,6 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
       }
 
       if (!userExists) {
-        console.error(`User ${userId} from session does not exist in database`);
         return res.status(404).json({
           error: "User not found",
           details: "Please log out and log in again to create your account.",
@@ -414,9 +457,6 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
       );
 
       if (existingExperience) {
-        console.log(
-          `Found existing experience: ${(existingExperience as any).id}, resetting to DRAFT`,
-        );
         // Reset the existing experience to draft state
         const updatedExperience = await retryDatabaseOperation(() =>
           prisma.erasmusExperience.update({
@@ -438,7 +478,6 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
         return res.status(200).json(updatedExperience);
       }
 
-      console.log("No existing experience found, creating new one");
       // Create a new draft experience (with retry)
       const newExperience = await retryDatabaseOperation(() =>
         prisma.erasmusExperience.create({
@@ -458,18 +497,10 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
         }),
       );
 
-      console.log(
-        `Successfully created experience: ${(newExperience as any).id}`,
-      );
       return res.status(201).json(newExperience);
     } catch (error) {
-      console.error("Error in handlePost (create):", error);
-      console.error(
-        "Error stack:",
-        error instanceof Error ? error.stack : "No stack trace",
-      );
-
       if (isDatabaseConnectionError(error)) {
+        logDatabaseUnavailable("create action", error);
         const cause = getDatabaseUnavailableCause(error);
 
         return res.status(503).json({
@@ -478,6 +509,8 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
           ...(cause ? { cause } : {}),
         });
       }
+
+      logRequestFailure("create action failed", error);
 
       return res.status(500).json({
         error: "Failed to create experience",
@@ -492,19 +525,13 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     }
   }
 
-  console.log(
-    `[API] Invalid action received: "${action}". Falling through to 400.`,
-  );
   return res.status(400).json({ error: "Invalid action" });
 }
 
 async function handlePut(req: NextApiRequest, res: NextApiResponse) {
   const { id, action, ...updateData } = req.body;
 
-  console.log(`[API] handlePut called. ID: ${id}, Action: ${action}`);
-
   if (!id) {
-    console.error("[API] Error: Experience ID is required");
     return res.status(400).json({ error: "Experience ID is required" });
   }
 
@@ -657,10 +684,6 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
     // 1. Basic Info
     const basicInfoVal = submissionData.basicInfo || {};
-    console.log(
-      "[API] Validating Basic Info:",
-      JSON.stringify(basicInfoVal, null, 2),
-    );
 
     if (
       !basicInfoVal.homeUniversity ||
@@ -670,7 +693,6 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       !basicInfoVal.exchangeAcademicYear ||
       !basicInfoVal.exchangePeriod
     ) {
-      console.log("[API] Basic Info Validation Failed. Missing fields.");
       errors.push(
         "Basic Information is incomplete (home university, department, level, host university, academic year, and period are required).",
       );
@@ -678,13 +700,8 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
     // 2. Courses
     const mappingsVal = sanitizeCourseMappingsData(submissionData.courses);
-    console.log(
-      "[API] Validating Courses. Mappings count:",
-      mappingsVal.length,
-    );
 
     if (!Array.isArray(mappingsVal) || mappingsVal.length === 0) {
-      console.log("[API] Course Validation Failed. No mappings.");
       errors.push("At least one course mapping is required.");
     } else if (!hasCompleteCourseMatchingData(mappingsVal)) {
       errors.push(
@@ -694,10 +711,6 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
     // 3. Accommodation
     const accommodationVal = submissionData.accommodation || {};
-    console.log(
-      "[API] Validating Accommodation:",
-      JSON.stringify(accommodationVal, null, 2),
-    );
 
     if (
       !accommodationVal.accommodationType ||
@@ -706,7 +719,6 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       typeof accommodationVal.accommodationRating !== "number" ||
       typeof accommodationVal.wouldRecommend !== "boolean"
     ) {
-      console.log("[API] Accommodation Validation Failed. Missing fields.");
       errors.push(
         "Accommodation details are incomplete (type, monthly rent, bills included, rating, and recommendation are required).",
       );
@@ -845,7 +857,11 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       updateCityStatistics(
         (updatedExperience as any).hostCity,
         (updatedExperience as any).hostCountry,
-      ).catch((err) => console.error("Failed to update city stats:", err));
+      ).catch((err) =>
+        logRequestFailure("failed to update city statistics after submit", err, {
+          experienceId: (updatedExperience as any).id,
+        }),
+      );
     }
 
     return res

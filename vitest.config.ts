@@ -6,8 +6,7 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     exclude: [
-      "angular-ssr/**",
-      "api-service/**",
+      "legacy/**",
       "node_modules/**",
       "tests/e2e/**",
     ],
