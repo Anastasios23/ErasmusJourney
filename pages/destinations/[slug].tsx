@@ -9,6 +9,7 @@ import PublicDestinationSubnav from "../../src/components/PublicDestinationSubna
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "../../src/components/ui/card";
@@ -29,6 +30,20 @@ export default function DestinationDetailPage({
   const currencyMeta = getPublicDestinationCurrencyMeta(
     destination.costSummary.currency,
   );
+  const sortedAccommodationTypes = [...destination.accommodationSummary.types].sort(
+    (left, right) => right.count - left.count || left.type.localeCompare(right.type),
+  );
+  const sortedAccommodationDifficulty = [
+    ...destination.accommodationSummary.difficulty,
+  ].sort(
+    (left, right) =>
+      right.count - left.count || left.level.localeCompare(right.level),
+  );
+  const topAccommodationType = sortedAccommodationTypes[0] ?? null;
+  const topAccommodationDifficulty = sortedAccommodationDifficulty[0] ?? null;
+  const highlightedCourseExample =
+    destination.courseEquivalenceExamples[0] ?? null;
+  const highlightedTip = destination.practicalTips[0] ?? null;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -115,18 +130,115 @@ export default function DestinationDetailPage({
           </div>
         </section>
 
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <Card>
+            <CardHeader className="space-y-3">
+              <CardTitle>Start with housing and budget</CardTitle>
+              <CardDescription className="text-slate-600">
+                Open this path first if your main question is whether this city
+                feels financially realistic and manageable for day-to-day
+                living.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm">
+              <ul className="space-y-2 text-slate-700">
+                <li>
+                  Average rent:{" "}
+                  <span className="font-medium text-slate-900">
+                    {formatPublicDestinationMoney(
+                      destination.averageRent,
+                      destination.costSummary.currency,
+                    )}
+                  </span>
+                  .
+                </li>
+                <li>
+                  Average monthly total:{" "}
+                  <span className="font-medium text-slate-900">
+                    {formatPublicDestinationMoney(
+                      destination.averageMonthlyCost,
+                      destination.costSummary.currency,
+                    )}
+                  </span>{" "}
+                  from {destination.costSummary.sampleSize} published budget
+                  {destination.costSummary.sampleSize === 1 ? " report" : " reports"}.
+                </li>
+                <li>
+                  {topAccommodationType
+                    ? `Most reported housing type: ${topAccommodationType.type} (${topAccommodationType.count} reports).`
+                    : "No accommodation-type pattern is strong enough to summarize yet."}
+                </li>
+                <li>
+                  {topAccommodationDifficulty
+                    ? `Most common housing-search difficulty: ${topAccommodationDifficulty.level} (${topAccommodationDifficulty.count} reports).`
+                    : "No recurring housing-search difficulty pattern is available yet."}
+                </li>
+              </ul>
+              <Link
+                href={`/destinations/${destination.slug}/accommodation`}
+                className="inline-flex items-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-800"
+              >
+                Open accommodation insights
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="space-y-3">
+              <CardTitle>Start with academics and practical tips</CardTitle>
+              <CardDescription className="text-slate-600">
+                Open this path first if you want to judge academic fit and
+                gather concrete student advice before nomination or approval.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm">
+              <ul className="space-y-2 text-slate-700">
+                <li>
+                  {destination.courseEquivalenceExamples.length} published course
+                  {destination.courseEquivalenceExamples.length === 1
+                    ? " example"
+                    : " examples"}{" "}
+                  are available in this overview.
+                </li>
+                <li>
+                  {highlightedCourseExample
+                    ? `Preview example: ${highlightedCourseExample.homeCourseName} to ${highlightedCourseExample.hostCourseName}.`
+                    : "No course example preview is available yet."}
+                </li>
+                <li>
+                  {destination.practicalTips.length} practical{" "}
+                  {destination.practicalTips.length === 1 ? "tip" : "tips"}{" "}
+                  published for this destination.
+                </li>
+                <li>
+                  {highlightedTip
+                    ? `First practical signal: ${highlightedTip}`
+                    : "No practical tip preview is available yet."}
+                </li>
+              </ul>
+              <Link
+                href={`/destinations/${destination.slug}/courses`}
+                className="inline-flex items-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-800"
+              >
+                Open course equivalence page
+              </Link>
+            </CardContent>
+          </Card>
+        </section>
+
         <section className="space-y-1">
           <h2 className="text-xl font-semibold text-slate-900">
             Accommodation & Cost Insights
           </h2>
           <p className="text-sm text-slate-600">
-            Core living and housing signals extracted from approved submissions.
+            Quick housing and cost snapshot. Open the accommodation page when
+            you need fuller evidence and neighborhood context.
           </p>
           <Link
             href={`/destinations/${destination.slug}/accommodation`}
             className="inline-flex text-sm font-medium text-slate-700 underline underline-offset-4"
           >
-            Open the dedicated accommodation insights page
+            See the full accommodation breakdown
           </Link>
         </section>
 
@@ -154,13 +266,13 @@ export default function DestinationDetailPage({
 
               <div>
                 <p className="font-medium text-slate-800 mb-2">Types</p>
-                {destination.accommodationSummary.types.length === 0 ? (
+                {sortedAccommodationTypes.length === 0 ? (
                   <p className="text-slate-500">
                     No accommodation type data yet.
                   </p>
                 ) : (
                   <ul className="space-y-2">
-                    {destination.accommodationSummary.types.map((item) => (
+                    {sortedAccommodationTypes.map((item) => (
                       <li
                         key={item.type}
                         className="flex justify-between gap-3"
@@ -184,11 +296,11 @@ export default function DestinationDetailPage({
                 <p className="font-medium text-slate-800 mb-2">
                   Difficulty finding accommodation
                 </p>
-                {destination.accommodationSummary.difficulty.length === 0 ? (
+                {sortedAccommodationDifficulty.length === 0 ? (
                   <p className="text-slate-500">No difficulty signals yet.</p>
                 ) : (
                   <ul className="space-y-1">
-                    {destination.accommodationSummary.difficulty.map((item) => (
+                    {sortedAccommodationDifficulty.map((item) => (
                       <li key={item.level} className="text-slate-700">
                         {item.level}:{" "}
                         <span className="font-medium">{item.count}</span>
@@ -285,13 +397,14 @@ export default function DestinationDetailPage({
             Equivalence & Practical Guidance
           </h2>
           <p className="text-sm text-slate-600">
-            Course mapping examples and real student tips for this destination.
+            Quick academic-fit snapshot. Open the dedicated courses page for the
+            clearer grouped view by home university and department.
           </p>
           <Link
             href={`/destinations/${destination.slug}/courses`}
             className="inline-flex text-sm font-medium text-slate-700 underline underline-offset-4"
           >
-            Open the dedicated course equivalence page
+            See the full grouped course view
           </Link>
         </section>
 
@@ -313,11 +426,17 @@ export default function DestinationDetailPage({
                         key={`${example.homeCourseName}-${example.hostCourseName}-${index}`}
                         className="text-sm space-y-1"
                       >
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                          Home course
+                        </p>
                         <p className="text-slate-900 font-medium">
                           {example.homeCourseName}
                         </p>
-                        <p className="text-slate-700">
-                          to {example.hostCourseName}
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 pt-1">
+                          Matched host course
+                        </p>
+                        <p className="text-slate-700 font-medium">
+                          {example.hostCourseName}
                         </p>
                         <p className="text-slate-600">
                           Recognition: {example.recognitionType}

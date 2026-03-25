@@ -75,6 +75,16 @@ describe("destination detail page", () => {
         "Based on 4 approved submissions across 2 host universities.",
       ),
     ).toBeInTheDocument();
+    expect(screen.getByText("Start with housing and budget")).toBeInTheDocument();
+    expect(
+      screen.getByText("Start with academics and practical tips"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Open accommodation insights" }),
+    ).toHaveAttribute("href", "/destinations/amsterdam-netherlands/accommodation");
+    expect(
+      screen.getByRole("link", { name: "Open course equivalence page" }),
+    ).toHaveAttribute("href", "/destinations/amsterdam-netherlands/courses");
   });
 
   it("returns notFound for an invalid destination slug", async () => {

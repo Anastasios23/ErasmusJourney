@@ -92,4 +92,33 @@ describe("destinations page", () => {
       ),
     ).toBeInTheDocument();
   });
+
+  it("explains the destination-first flow when accommodation is the entry focus", () => {
+    render(
+      <DestinationsPage
+        focus="accommodation"
+        destinations={[
+          {
+            slug: "amsterdam-netherlands",
+            city: "Amsterdam",
+            country: "Netherlands",
+            hostUniversityCount: 2,
+            submissionCount: 4,
+            averageRent: 650,
+            averageMonthlyCost: 1150,
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText("Accommodation Flow")).toBeInTheDocument();
+    expect(
+      screen.getByText("Housing insights live inside each destination page."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /open a city first, then use its accommodation tab/i,
+      ),
+    ).toBeInTheDocument();
+  });
 });

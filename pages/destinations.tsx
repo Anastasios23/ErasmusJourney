@@ -23,12 +23,16 @@ import PublicDestinationSignalNotice from "../src/components/PublicDestinationSi
 import { formatPublicDestinationListAmount } from "../src/lib/publicDestinationPresentation";
 import type { PublicDestinationListItem } from "../src/types/publicDestinations";
 
+type DestinationsFocus = "accommodation" | "courses" | null;
+
 interface DestinationsPageProps {
   destinations: PublicDestinationListItem[];
+  focus?: DestinationsFocus;
 }
 
 export default function DestinationsPage({
   destinations,
+  focus = null,
 }: DestinationsPageProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [countryFilter, setCountryFilter] = useState<string>("__all");
@@ -82,6 +86,8 @@ export default function DestinationsPage({
     return sorted;
   }, [countryFilter, destinations, searchQuery, sortBy]);
 
+  const focusGuidance = getDestinationsFocusGuidance(focus);
+
   return (
     <div className="min-h-screen bg-slate-50">
       <Head>
@@ -112,6 +118,22 @@ export default function DestinationsPage({
             confidence.
           </p>
         </section>
+
+        {focusGuidance ? (
+          <Card className="border-sky-200 bg-sky-50">
+            <CardContent className="space-y-2 py-5">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="info">{focusGuidance.badge}</Badge>
+                <p className="text-sm font-medium text-sky-950">
+                  {focusGuidance.title}
+                </p>
+              </div>
+              <p className="text-sm text-sky-900/80 max-w-3xl">
+                {focusGuidance.description}
+              </p>
+            </CardContent>
+          </Card>
+        ) : null}
 
         <section className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
@@ -265,16 +287,44 @@ export default function DestinationsPage({
 
 export const getServerSideProps: GetServerSideProps<
   DestinationsPageProps
-> = async () => {
+> = async (context) => {
   const { getPublicDestinationList } = await import(
     "../src/server/publicDestinations"
   );
 
   const destinations = await getPublicDestinationList();
+  const focusParam = context.query.focus;
+  const focus =
+    focusParam === "accommodation" || focusParam === "courses"
+      ? focusParam
+      : null;
 
   return {
     props: {
       destinations,
+      focus,
     },
   };
 };
+
+function getDestinationsFocusGuidance(focus: DestinationsFocus) {
+  if (focus === "accommodation") {
+    return {
+      badge: "Accommodation Flow",
+      title: "Housing insights live inside each destination page.",
+      description:
+        "Open a city first, then use its accommodation tab to compare rent signals, neighborhood patterns, and anonymized student reviews.",
+    };
+  }
+
+  if (focus === "courses") {
+    return {
+      badge: "Courses Flow",
+      title: "Course examples live inside each destination page.",
+      description:
+        "Open a city first, then use its courses tab to inspect published equivalence examples grouped by home university and department.",
+    };
+  }
+
+  return null;
+}
