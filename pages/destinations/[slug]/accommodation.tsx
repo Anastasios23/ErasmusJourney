@@ -11,6 +11,7 @@ import { Badge } from "../../../src/components/ui/badge";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "../../../src/components/ui/card";
@@ -35,6 +36,32 @@ export default function DestinationAccommodationPage({
     destination.commonAreas.length > 0 ||
     destination.reviewSnippets.length > 0 ||
     destination.recommendationSampleSize > 0;
+
+  const sortedTypes = [...destination.types].sort(
+    (left, right) => right.count - left.count || left.type.localeCompare(right.type),
+  );
+  const sortedDifficulty = [...destination.difficulty].sort(
+    (left, right) =>
+      right.count - left.count || left.level.localeCompare(right.level),
+  );
+  const sortedAreas = [...destination.commonAreas].sort(
+    (left, right) => right.count - left.count || left.name.localeCompare(right.name),
+  );
+
+  const topType = sortedTypes[0] ?? null;
+  const topDifficulty = sortedDifficulty[0] ?? null;
+  const topArea = sortedAreas[0] ?? null;
+  const rentEvidenceLine =
+    destination.rentSampleSize === 0
+      ? "Average rent is not available yet."
+      : `Average rent is based on ${destination.rentSampleSize} ${
+          destination.rentSampleSize === 1 ? "report" : "reports"
+        }.`;
+  const areaEvidenceLine = topArea
+    ? `Generalized area mentions most often point to ${topArea.name} (${topArea.count} ${
+        topArea.count === 1 ? "mention" : "mentions"
+      }).`
+    : "Area labels are still too limited to suggest a recurring neighborhood pattern.";
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -85,7 +112,7 @@ export default function DestinationAccommodationPage({
             slug={destination.slug}
             active="accommodation"
           />
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
             <Card>
               <CardContent className="pt-5">
                 <p className="text-slate-500">Host universities</p>
@@ -136,34 +163,63 @@ export default function DestinationAccommodationPage({
           </Card>
         ) : (
           <>
-            <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <section className="grid grid-cols-1 gap-5 lg:grid-cols-2">
               <Card>
-                <CardHeader>
-                  <CardTitle>Snapshot</CardTitle>
+                <CardHeader className="space-y-3">
+                  <CardTitle>Housing snapshot</CardTitle>
+                  <CardDescription className="text-slate-600">
+                    Use these signals to compare the typical housing experience
+                    in this city, not to copy one student&apos;s exact setup.
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-3 text-sm">
-                  <p className="text-slate-700">
-                    Average rent:{" "}
-                    <span className="font-semibold text-slate-900">
+                <CardContent className="space-y-4 text-sm">
+                  <div className="rounded-xl border border-slate-200 bg-white px-4 py-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                      Average reported rent
+                    </p>
+                    <p className="mt-2 text-2xl font-semibold text-slate-900">
                       {formatPublicDestinationMoney(
                         destination.averageRent,
                         destination.currency,
                       )}
-                    </span>
-                  </p>
-                  <p className="text-slate-700">
-                    Rent sample size:{" "}
-                    <span className="font-semibold text-slate-900">
-                      {destination.rentSampleSize}
-                    </span>
-                  </p>
-                  <p className="text-slate-700">
-                    Positive recommendations:{" "}
-                    <span className="font-semibold text-slate-900">
-                      {destination.recommendationYesCount}/
-                      {destination.recommendationSampleSize}
-                    </span>
-                  </p>
+                    </p>
+                    <p className="mt-2 text-slate-600">{rentEvidenceLine}</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <p className="font-medium text-slate-900">
+                      What approved students most often report
+                    </p>
+                    <ul className="space-y-2 text-slate-700">
+                      <li>
+                        {getAccommodationRecommendationLine(
+                          destination.recommendationYesCount,
+                          destination.recommendationSampleSize,
+                          destination.recommendationRate,
+                        )}
+                      </li>
+                      {topType ? (
+                        <li>
+                          Most reported housing type:{" "}
+                          <span className="font-medium text-slate-900">
+                            {topType.type}
+                          </span>{" "}
+                          ({topType.count} of {destination.sampleSize} entries).
+                        </li>
+                      ) : null}
+                      {topDifficulty ? (
+                        <li>
+                          Most common search difficulty:{" "}
+                          <span className="font-medium text-slate-900">
+                            {topDifficulty.level}
+                          </span>{" "}
+                          ({topDifficulty.count} reports).
+                        </li>
+                      ) : null}
+                      <li>{areaEvidenceLine}</li>
+                    </ul>
+                  </div>
+
                   <p className="text-slate-600">
                     Neighborhood labels and snippets are shortened and filtered
                     before publication.
@@ -172,17 +228,21 @@ export default function DestinationAccommodationPage({
               </Card>
 
               <Card>
-                <CardHeader>
+                <CardHeader className="space-y-3">
                   <CardTitle>Accommodation type distribution</CardTitle>
+                  <CardDescription className="text-slate-600">
+                    Percentages refer to published accommodation entries for
+                    this destination.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {destination.types.length === 0 ? (
+                  {sortedTypes.length === 0 ? (
                     <p className="text-sm text-slate-500">
                       No accommodation type data yet.
                     </p>
                   ) : (
                     <ul className="space-y-3 text-sm">
-                      {destination.types.map((item) => {
+                      {sortedTypes.map((item) => {
                         const share =
                           destination.sampleSize > 0
                             ? Math.round((item.count / destination.sampleSize) * 100)
@@ -199,7 +259,7 @@ export default function DestinationAccommodationPage({
                               </p>
                               <p className="text-slate-500">
                                 {item.count} reports
-                                {share === null ? "" : ` • ${share}%`}
+                                {share === null ? "" : ` | ${share}%`}
                               </p>
                             </div>
                             <p className="font-medium text-slate-900">
@@ -217,19 +277,23 @@ export default function DestinationAccommodationPage({
               </Card>
             </section>
 
-            <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <section className="grid grid-cols-1 gap-5 lg:grid-cols-2">
               <Card>
-                <CardHeader>
+                <CardHeader className="space-y-3">
                   <CardTitle>Difficulty finding accommodation</CardTitle>
+                  <CardDescription className="text-slate-600">
+                    Counts show how often students described the housing search
+                    with each difficulty level.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {destination.difficulty.length === 0 ? (
+                  {sortedDifficulty.length === 0 ? (
                     <p className="text-sm text-slate-500">
                       No difficulty signals yet.
                     </p>
                   ) : (
                     <ul className="space-y-2 text-sm">
-                      {destination.difficulty.map((item) => (
+                      {sortedDifficulty.map((item) => (
                         <li
                           key={item.level}
                           className="flex items-center justify-between gap-4"
@@ -246,17 +310,21 @@ export default function DestinationAccommodationPage({
               </Card>
 
               <Card>
-                <CardHeader>
-                  <CardTitle>Common areas and neighborhoods</CardTitle>
+                <CardHeader className="space-y-3">
+                  <CardTitle>Common areas and neighborhood labels</CardTitle>
+                  <CardDescription className="text-slate-600">
+                    These are generalized area mentions only. Exact addresses
+                    are removed before publication.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {destination.commonAreas.length === 0 ? (
+                  {sortedAreas.length === 0 ? (
                     <p className="text-sm text-slate-500">
                       No neighborhood data yet.
                     </p>
                   ) : (
                     <div className="flex flex-wrap gap-2">
-                      {destination.commonAreas.map((area) => (
+                      {sortedAreas.map((area) => (
                         <span
                           key={area.name}
                           className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700"
@@ -272,8 +340,12 @@ export default function DestinationAccommodationPage({
 
             <section>
               <Card>
-                <CardHeader>
+                <CardHeader className="space-y-3">
                   <CardTitle>Sanitized student review snippets</CardTitle>
+                  <CardDescription className="text-slate-600">
+                    Shortened comments help surface recurring themes without
+                    exposing personal details or exact property locations.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   {destination.reviewSnippets.length === 0 ? (
@@ -302,6 +374,26 @@ export default function DestinationAccommodationPage({
       <Footer />
     </div>
   );
+}
+
+function getAccommodationRecommendationLine(
+  recommendationYesCount: number,
+  recommendationSampleSize: number,
+  recommendationRate: number | null,
+): string {
+  if (recommendationSampleSize === 0 || recommendationRate === null) {
+    return "No public recommendation responses are available yet.";
+  }
+
+  if (recommendationRate >= 70) {
+    return `${recommendationYesCount} of ${recommendationSampleSize} students would recommend their accommodation setup here, so overall sentiment leans positive.`;
+  }
+
+  if (recommendationRate >= 50) {
+    return `${recommendationYesCount} of ${recommendationSampleSize} students would recommend their accommodation setup here, so sentiment is mixed rather than clearly positive or negative.`;
+  }
+
+  return `Only ${recommendationYesCount} of ${recommendationSampleSize} students would recommend their accommodation setup here, so compare the difficulty and snippet sections carefully.`;
 }
 
 export const getServerSideProps: GetServerSideProps<

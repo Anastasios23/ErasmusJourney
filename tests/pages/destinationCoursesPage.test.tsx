@@ -67,6 +67,76 @@ describe("destination courses page", () => {
     ).toBeInTheDocument();
   });
 
+  it("renders grouped mappings with clearer scanning labels and ordering", () => {
+    render(
+      <CoursesPage
+        destination={{
+          slug: "amsterdam-netherlands",
+          city: "Amsterdam",
+          country: "Netherlands",
+          hostUniversityCount: 2,
+          submissionCount: 4,
+          homeUniversityCount: 2,
+          totalMappings: 4,
+          groups: [
+            {
+              homeUniversity: "University of Nicosia",
+              homeDepartment: "Computer Science",
+              mappingCount: 1,
+              hostUniversities: ["UvA"],
+              examples: [
+                {
+                  homeCourseName: "Algorithms",
+                  hostCourseName: "Advanced Algorithms",
+                  hostUniversity: "UvA",
+                  recognitionType: "Full recognition",
+                  notes: "Bring the syllabus to the approval meeting.",
+                },
+              ],
+            },
+            {
+              homeUniversity: "University of Cyprus",
+              homeDepartment: "Business",
+              mappingCount: 3,
+              hostUniversities: ["VU Amsterdam", "HvA"],
+              examples: [
+                {
+                  homeCourseName: "Marketing Strategy",
+                  hostCourseName: "International Marketing",
+                  hostUniversity: "VU Amsterdam",
+                  recognitionType: "Partial recognition",
+                  notes: "Previous students said the case-study workload was manageable.",
+                },
+              ],
+            },
+          ],
+        }}
+      />,
+    );
+
+    expect(
+      screen.getByText("How to read these equivalence examples"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /each card starts from the home university and department/i,
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText("Home course").length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("Matched host course").length,
+    ).toBeGreaterThan(0);
+    expect(screen.getByText("3 published mappings")).toBeInTheDocument();
+    expect(screen.getByText("2 host universities")).toBeInTheDocument();
+
+    const headings = screen
+      .getAllByRole("heading", { level: 3 })
+      .map((element) => element.textContent);
+    expect(headings.indexOf("University of Cyprus")).toBeLessThan(
+      headings.indexOf("University of Nicosia"),
+    );
+  });
+
   it("returns notFound for an invalid courses slug", async () => {
     mockGetCourseEquivalences.mockResolvedValue(null);
     mockGetDestinationList.mockResolvedValue([]);
