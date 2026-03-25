@@ -137,3 +137,5 @@ NEXTAUTH_URL="http://localhost:3000"
 - `npm run smoke:public-destinations`
 - `npm run proof:approved-to-public`
 - `npm run proof:preview-to-approval`
+
+For the formal MVP release gate, use [docs/MVP_SIGNOFF.md](./docs/MVP_SIGNOFF.md).
