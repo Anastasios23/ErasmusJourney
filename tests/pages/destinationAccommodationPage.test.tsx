@@ -67,6 +67,12 @@ describe("destination accommodation page", () => {
         /none of them currently include public accommodation data/i,
       ),
     ).toBeInTheDocument();
+    expect(screen.getByText("Early signal")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Based on 2 approved submissions across 1 host university.",
+      ),
+    ).toBeInTheDocument();
   });
 
   it("returns notFound for an invalid accommodation slug", async () => {

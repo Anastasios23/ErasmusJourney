@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import type { GetServerSideProps } from "next";
 import Header from "../components/Header";
 import Footer from "../src/components/Footer";
@@ -18,6 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../src/components/ui/select";
+import { Input } from "../src/components/ui/input";
+import PublicDestinationSignalNotice from "../src/components/PublicDestinationSignalNotice";
 import { formatPublicDestinationListAmount } from "../src/lib/publicDestinationPresentation";
 import type { PublicDestinationListItem } from "../src/types/publicDestinations";
 
@@ -28,6 +30,7 @@ interface DestinationsPageProps {
 export default function DestinationsPage({
   destinations,
 }: DestinationsPageProps) {
+  const [searchQuery, setSearchQuery] = useState("");
   const [countryFilter, setCountryFilter] = useState<string>("__all");
   const [sortBy, setSortBy] = useState<
     "submission_desc" | "cost_asc" | "city_asc"
@@ -44,12 +47,22 @@ export default function DestinationsPage({
   );
 
   const filteredAndSortedDestinations = useMemo(() => {
+    const normalizedSearchQuery = searchQuery.trim().toLowerCase();
     const filtered = destinations.filter((destination) => {
-      if (countryFilter === "__all") {
-        return true;
+      const matchesCountry =
+        countryFilter === "__all" || destination.country === countryFilter;
+      const matchesSearch =
+        !normalizedSearchQuery ||
+        [destination.city, destination.country, destination.slug]
+          .join(" ")
+          .toLowerCase()
+          .includes(normalizedSearchQuery);
+
+      if (!matchesCountry) {
+        return false;
       }
 
-      return destination.country === countryFilter;
+      return matchesSearch;
     });
 
     const sorted = [...filtered].sort((left, right) => {
@@ -67,7 +80,7 @@ export default function DestinationsPage({
     });
 
     return sorted;
-  }, [countryFilter, destinations, sortBy]);
+  }, [countryFilter, destinations, searchQuery, sortBy]);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -93,17 +106,45 @@ export default function DestinationsPage({
             destination can report a different local currency or mixed
             currencies.
           </p>
+          <p className="text-sm text-slate-500 max-w-3xl">
+            Use this list to compare cities quickly, then open a destination to
+            inspect accommodation and course detail with the right level of
+            confidence.
+          </p>
         </section>
 
         <section className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2 text-sm text-slate-600">
+          <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
             <Badge variant="outline">
               Showing {filteredAndSortedDestinations.length} /{" "}
               {destinations.length}
             </Badge>
+            {searchQuery.trim() ? (
+              <Badge variant="outline">Search: {searchQuery.trim()}</Badge>
+            ) : null}
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end w-full sm:w-auto">
+            <div className="w-full sm:w-72">
+              <label htmlFor="destination-search" className="sr-only">
+                Search destinations
+              </label>
+              <Input
+                id="destination-search"
+                type="search"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Search by city, country, or slug"
+                aria-describedby="destination-search-help"
+              />
+              <p
+                id="destination-search-help"
+                className="mt-1 text-xs text-slate-500"
+              >
+                Search by city, country, or slug.
+              </p>
+            </div>
+
             <div className="w-full sm:w-52">
               <Select value={countryFilter} onValueChange={setCountryFilter}>
                 <SelectTrigger>
@@ -153,7 +194,7 @@ export default function DestinationsPage({
         ) : filteredAndSortedDestinations.length === 0 ? (
           <Card>
             <CardContent className="py-10 text-center text-slate-600">
-              No destinations match the selected country filter.
+              No destinations match the current search and filter selection.
             </CardContent>
           </Card>
         ) : (
@@ -201,6 +242,13 @@ export default function DestinationsPage({
                           destination.averageMonthlyCost,
                         )}
                       </p>
+                    </div>
+                    <div className="col-span-2">
+                      <PublicDestinationSignalNotice
+                        submissionCount={destination.submissionCount}
+                        hostUniversityCount={destination.hostUniversityCount}
+                        compact
+                      />
                     </div>
                   </CardContent>
                 </Card>

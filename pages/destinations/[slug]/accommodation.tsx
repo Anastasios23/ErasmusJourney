@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { GetServerSideProps } from "next";
 
 import Header from "../../../components/Header";
+import PublicDestinationSignalNotice from "../../../src/components/PublicDestinationSignalNotice";
 import PublicDestinationSubnav from "../../../src/components/PublicDestinationSubnav";
 import Footer from "../../../src/components/Footer";
 import { Badge } from "../../../src/components/ui/badge";
@@ -69,6 +70,10 @@ export default function DestinationAccommodationPage({
             This page uses approved submissions only. Data is aggregated and
             anonymized, and exact addresses or identity details are not shown.
           </p>
+          <PublicDestinationSignalNotice
+            submissionCount={destination.submissionCount}
+            hostUniversityCount={destination.hostUniversityCount}
+          />
           {currencyMeta.isMixed ? (
             <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
               Students reported more than one currency here. Rent figures below

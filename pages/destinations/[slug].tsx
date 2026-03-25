@@ -1,8 +1,10 @@
+import React from "react";
 import Head from "next/head";
 import Link from "next/link";
 import type { GetServerSideProps } from "next";
 import Header from "../../components/Header";
 import Footer from "../../src/components/Footer";
+import PublicDestinationSignalNotice from "../../src/components/PublicDestinationSignalNotice";
 import PublicDestinationSubnav from "../../src/components/PublicDestinationSubnav";
 import {
   Card,
@@ -56,6 +58,10 @@ export default function DestinationDetailPage({
             This public snapshot uses approved, complete submissions only. Costs
             are shown exactly as reported by students for this destination.
           </p>
+          <PublicDestinationSignalNotice
+            submissionCount={destination.submissionCount}
+            hostUniversityCount={destination.hostUniversityCount}
+          />
           {currencyMeta.isMixed ? (
             <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
               Students reported more than one currency here. Amounts below are

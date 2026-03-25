@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const mockGetCourseEquivalences = vi.fn();
+const mockGetDestinationDetail = vi.fn();
 const mockGetDestinationList = vi.fn();
 
 vi.mock("next/head", () => ({
@@ -22,53 +22,63 @@ vi.mock("../../src/components/PublicDestinationSubnav", () => ({
 }));
 
 vi.mock("../../src/server/publicDestinations", () => ({
-  getPublicCourseEquivalencesByDestinationSlug: mockGetCourseEquivalences,
+  getPublicDestinationDetailBySlug: mockGetDestinationDetail,
   getPublicDestinationList: mockGetDestinationList,
 }));
 
-import CoursesPage, {
+import DestinationDetailPage, {
   getServerSideProps,
-} from "../../pages/destinations/[slug]/courses";
+} from "../../pages/destinations/[slug]";
 
-describe("destination courses page", () => {
+describe("destination detail page", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("renders the empty state when approved submissions exist but no public course mappings are publishable", () => {
+  it("renders the public signal notice for approved destination data", () => {
     render(
-      <CoursesPage
+      <DestinationDetailPage
         destination={{
           slug: "amsterdam-netherlands",
           city: "Amsterdam",
           country: "Netherlands",
-          hostUniversityCount: 1,
-          submissionCount: 2,
-          homeUniversityCount: 0,
-          totalMappings: 0,
-          groups: [],
+          hostUniversityCount: 2,
+          submissionCount: 4,
+          averageRent: 650,
+          averageMonthlyCost: 1150,
+          accommodationSummary: {
+            sampleSize: 3,
+            averageRent: 650,
+            types: [],
+            difficulty: [],
+          },
+          costSummary: {
+            currency: "EUR",
+            sampleSize: 4,
+            averageRent: 650,
+            averageFood: 180,
+            averageTransport: 70,
+            averageSocial: 140,
+            averageTravel: 50,
+            averageOther: 60,
+            averageMonthlyCost: 1150,
+          },
+          courseEquivalenceExamples: [],
+          practicalTips: [],
         }}
       />,
     );
 
-    expect(
-      screen.getByText("No approved course mappings yet"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Growing sample")).toBeInTheDocument();
     expect(
       screen.getByText(
-        /none of them currently include public course equivalence examples/i,
-      ),
-    ).toBeInTheDocument();
-    expect(screen.getByText("Early signal")).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        "Based on 2 approved submissions across 1 host university.",
+        "Based on 4 approved submissions across 2 host universities.",
       ),
     ).toBeInTheDocument();
   });
 
-  it("returns notFound for an invalid courses slug", async () => {
-    mockGetCourseEquivalences.mockResolvedValue(null);
+  it("returns notFound for an invalid destination slug", async () => {
+    mockGetDestinationDetail.mockResolvedValue(null);
     mockGetDestinationList.mockResolvedValue([]);
 
     const result = await getServerSideProps({

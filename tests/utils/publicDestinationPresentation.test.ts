@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   formatPublicDestinationListAmount,
   formatPublicDestinationMoney,
+  getPublicDestinationSignalSummary,
   getPublicDestinationCurrencyMeta,
   normalizePublicDestinationText,
   sanitizePublicDestinationArea,
@@ -28,6 +29,34 @@ describe("public destination presentation helpers", () => {
       baseCurrency: "EUR",
       isMixed: true,
       label: "EUR (mixed currencies)",
+    });
+  });
+
+  it("classifies destination signal strength from approved submission counts", () => {
+    expect(getPublicDestinationSignalSummary(2, 1)).toEqual({
+      label: "Early signal",
+      tone: "warning",
+      evidenceLine: "Based on 2 approved submissions across 1 host university.",
+      description:
+        "Useful for an initial snapshot, but costs, housing, and course examples should be treated as directional guidance.",
+    });
+
+    expect(getPublicDestinationSignalSummary(4, 2)).toEqual({
+      label: "Growing sample",
+      tone: "info",
+      evidenceLine:
+        "Based on 4 approved submissions across 2 host universities.",
+      description:
+        "Patterns are starting to repeat, but this is still a limited sample for detailed comparisons.",
+    });
+
+    expect(getPublicDestinationSignalSummary(7, 3)).toEqual({
+      label: "Stronger signal",
+      tone: "success",
+      evidenceLine:
+        "Based on 7 approved submissions across 3 host universities.",
+      description:
+        "Enough approved reports are available to compare recurring patterns more confidently, while still allowing for personal variation.",
     });
   });
 

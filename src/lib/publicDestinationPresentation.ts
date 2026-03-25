@@ -5,6 +5,15 @@ type CurrencyDisplayMeta = {
   label: string;
 };
 
+export type PublicDestinationSignalTone = "warning" | "info" | "success";
+
+export interface PublicDestinationSignalSummary {
+  label: string;
+  tone: PublicDestinationSignalTone;
+  evidenceLine: string;
+  description: string;
+}
+
 const MIXED_CURRENCY_SUFFIX = /\s*\(mixed\)\s*$/i;
 const UUID_LIKE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -66,6 +75,57 @@ export function formatPublicDestinationListAmount(
   }
 
   return Math.round(value).toLocaleString();
+}
+
+export function getPublicDestinationSignalSummary(
+  submissionCount: number,
+  hostUniversityCount = 0,
+): PublicDestinationSignalSummary {
+  const normalizedSubmissionCount = Math.max(0, Math.trunc(submissionCount));
+  const normalizedHostUniversityCount = Math.max(
+    0,
+    Math.trunc(hostUniversityCount),
+  );
+  const submissionLabel =
+    normalizedSubmissionCount === 1 ? "submission" : "submissions";
+  const hostUniversityLine =
+    normalizedHostUniversityCount > 0
+      ? ` across ${normalizedHostUniversityCount} host ${
+          normalizedHostUniversityCount === 1 ? "university" : "universities"
+        }`
+      : "";
+  const evidenceLine =
+    normalizedSubmissionCount === 0
+      ? "No approved submissions are aggregated here yet."
+      : `Based on ${normalizedSubmissionCount} approved ${submissionLabel}${hostUniversityLine}.`;
+
+  if (normalizedSubmissionCount <= 2) {
+    return {
+      label: "Early signal",
+      tone: "warning",
+      evidenceLine,
+      description:
+        "Useful for an initial snapshot, but costs, housing, and course examples should be treated as directional guidance.",
+    };
+  }
+
+  if (normalizedSubmissionCount <= 5) {
+    return {
+      label: "Growing sample",
+      tone: "info",
+      evidenceLine,
+      description:
+        "Patterns are starting to repeat, but this is still a limited sample for detailed comparisons.",
+    };
+  }
+
+  return {
+    label: "Stronger signal",
+    tone: "success",
+    evidenceLine,
+    description:
+      "Enough approved reports are available to compare recurring patterns more confidently, while still allowing for personal variation.",
+  };
 }
 
 export function normalizePublicDestinationText(

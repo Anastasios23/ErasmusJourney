@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { GetServerSideProps } from "next";
 
 import Header from "../../../components/Header";
+import PublicDestinationSignalNotice from "../../../src/components/PublicDestinationSignalNotice";
 import PublicDestinationSubnav from "../../../src/components/PublicDestinationSubnav";
 import Footer from "../../../src/components/Footer";
 import { Badge } from "../../../src/components/ui/badge";
@@ -59,6 +60,10 @@ export default function DestinationCoursesPage({
             Approved mappings only. Student identities are not shown, and notes
             are shortened before publication.
           </p>
+          <PublicDestinationSignalNotice
+            submissionCount={destination.submissionCount}
+            hostUniversityCount={destination.hostUniversityCount}
+          />
           <PublicDestinationSubnav slug={destination.slug} active="courses" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <Card>
