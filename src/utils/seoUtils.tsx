@@ -1,5 +1,10 @@
+import React from "react";
 import Head from "next/head";
 import { StudentStoryResponse } from "../types/studentStories";
+import {
+  PUBLIC_DESTINATIONS_ROUTE,
+  buildPublicDestinationRoute,
+} from "../lib/publicRoutes";
 
 interface StoryMetaTagsProps {
   story: StudentStoryResponse;
@@ -16,7 +21,11 @@ export function StoryMetaTags({
       ? story.story.substring(0, 157) + "..."
       : story.story;
 
-  const url = `${baseUrl}/stories/${story.id}`;
+  const destinationRoute = buildPublicDestinationRoute({
+    city: story.city,
+    country: story.country,
+  });
+  const url = `${baseUrl}${destinationRoute}`;
   const imageUrl = `${baseUrl}/api/og/story/${story.id}`;
 
   return (
@@ -47,7 +56,7 @@ export function StoryMetaTags({
       {/* Article-specific Tags */}
       <meta property="article:published_time" content={story.createdAt} />
       <meta property="article:author" content={story.studentName} />
-      <meta property="article:section" content="Student Stories" />
+      <meta property="article:section" content="Destination Insights" />
       {story.helpTopics.map((topic, index) => (
         <meta key={index} property="article:tag" content={topic} />
       ))}
@@ -76,18 +85,19 @@ export function StoriesListMetaTags({
   totalStories,
   baseUrl = "https://erasmusjourney.com",
 }: StoriesListMetaTagsProps) {
-  const title = "Student Stories - Real Erasmus Experiences | Erasmus Journey";
-  const description = `Read ${totalStories}+ inspiring stories from Erasmus students. Get insights, tips, and motivation for your study abroad journey.`;
+  const title = "Destination Insights - Real Erasmus Signals | Erasmus Journey";
+  const description = `Browse ${totalStories}+ approved student signals through destination pages with housing, course, and planning context.`;
+  const destinationsUrl = `${baseUrl}${PUBLIC_DESTINATIONS_ROUTE}`;
 
   return (
     <Head>
       <title>{title}</title>
       <meta name="description" content={description} />
-      <link rel="canonical" href={`${baseUrl}/student-stories`} />
+      <link rel="canonical" href={destinationsUrl} />
 
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      <meta property="og:url" content={`${baseUrl}/student-stories`} />
+      <meta property="og:url" content={destinationsUrl} />
       <meta property="og:type" content="website" />
       <meta
         property="og:image"
@@ -114,6 +124,10 @@ export function generateStoryStructuredData(
   story: StudentStoryResponse,
   baseUrl = "https://erasmusjourney.com",
 ) {
+  const destinationRoute = buildPublicDestinationRoute({
+    city: story.city,
+    country: story.country,
+  });
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -140,7 +154,7 @@ export function generateStoryStructuredData(
     dateModified: story.createdAt,
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${baseUrl}/stories/${story.id}`,
+      "@id": `${baseUrl}${destinationRoute}`,
     },
     about: {
       "@type": "Place",
@@ -152,7 +166,7 @@ export function generateStoryStructuredData(
       },
     },
     keywords: story.helpTopics.join(", "),
-    articleSection: "Student Stories",
+    articleSection: "Destination Insights",
     wordCount: story.story.split(" ").length,
   };
 

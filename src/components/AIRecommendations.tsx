@@ -185,22 +185,27 @@ export default function AIRecommendations({
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-blue-600" />
             AI-Powered Recommendations
           </CardTitle>
-          <Button variant="ghost" size="sm" onClick={fetchRecommendations}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={fetchRecommendations}
+            className="self-start sm:self-auto"
+          >
             <RefreshCw className="h-4 w-4 mr-1" />
             Refresh
           </Button>
         </div>
         <p className="text-sm text-gray-600">
-          Stories matched based on your interests and preferences
+          Destination examples matched to your interests and preferences
         </p>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {recommendations.map((rec) => (
             <Card key={rec.id} className="hover:shadow-lg transition-shadow">
               <div className="relative">
@@ -308,10 +313,10 @@ export default function AIRecommendations({
         {recommendations.length > 0 && (
           <div className="mt-6 text-center">
             <p className="text-xs text-gray-500 mb-3">
-              Powered by AI • Updated in real-time based on your preferences
+              Powered by AI | Updated in real-time based on your preferences
             </p>
             <Link href={PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE}>
-              <Button variant="outline">
+              <Button variant="outline" className="w-full sm:w-auto">
                 <BookOpen className="h-4 w-4 mr-2" />
                 Browse Course Examples
               </Button>

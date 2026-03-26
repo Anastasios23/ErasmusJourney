@@ -56,7 +56,7 @@ const tourSteps: TourStep[] = [
   {
     title: "Connect with Students",
     description:
-      "Read stories from other students, join the community, and get mentorship from experienced exchange participants.",
+      "Browse destination pages, join the community, and get mentorship from experienced exchange participants.",
     icon: MessageSquare,
     action: "Join Community",
     actionUrl: "/community",

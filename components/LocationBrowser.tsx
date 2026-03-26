@@ -119,16 +119,16 @@ const LocationBrowser = () => {
 
   return (
     <>
-      <section className="py-12 bg-white border-t border-gray-100">
+      <section className="border-t border-gray-100 bg-white py-14 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 sm:mb-10">
             <Badge className="mb-4 bg-green-100 text-green-800 px-4 py-2">
-              🌍 Browse by Destination
+              Browse by Destination
             </Badge>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
               Explore by City
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-6">
+            <p className="text-base sm:text-xl text-gray-600 max-w-3xl mx-auto mb-6">
               Open a city first, then jump into the overview or housing page for
               the path you want to inspect.
             </p>
@@ -155,7 +155,7 @@ const LocationBrowser = () => {
           {selectedCity && results.length > 0 && (
             <div className="space-y-6">
               <div className="text-center">
-                <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">
                   Destination paths for {selectedCity}
                 </h3>
                 <p className="text-gray-600">
@@ -166,11 +166,11 @@ const LocationBrowser = () => {
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                 {results.map((entry, index) => (
                   <Card
                     key={entry.id}
-                    className="group hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="group cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.01] sm:hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     onClick={() => handleEntryClick(entry)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
@@ -223,7 +223,7 @@ const LocationBrowser = () => {
                                 aria-hidden="true"
                               />
                             )}
-                            {entry.type === "story" ? "Story" : "Stay"}
+                            {entry.type === "story" ? "Overview" : "Housing"}
                           </Badge>
                         </div>
                         {entry.price && (
@@ -236,7 +236,7 @@ const LocationBrowser = () => {
                       </div>
 
                       <div className="p-6">
-                        <div className="flex items-start justify-between mb-3">
+                        <div className="mb-3 flex items-start justify-between gap-3">
                           <h3 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
                             {entry.title}
                           </h3>
@@ -255,7 +255,7 @@ const LocationBrowser = () => {
                           {entry.excerpt}
                         </p>
 
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                           <div className="flex items-center space-x-2">
                             <Avatar className="h-6 w-6">
                               <AvatarFallback className="text-xs">
@@ -275,7 +275,7 @@ const LocationBrowser = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            className="justify-start px-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 sm:justify-center sm:px-3"
                           >
                             {entry.type === "story"
                               ? "Open Overview"
@@ -296,7 +296,7 @@ const LocationBrowser = () => {
                 <Button
                   size="lg"
                   onClick={() => handleViewAll(selectedCity)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   <Users className="mr-2 h-5 w-5" aria-hidden="true" />
                   Open {selectedCity}

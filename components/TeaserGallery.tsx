@@ -108,16 +108,16 @@ const TeaserGallery = () => {
 
   return (
     <>
-      <section className="py-12 bg-gradient-to-br from-blue-50 to-indigo-50">
+      <section className="bg-gradient-to-br from-blue-50 to-indigo-50 py-14 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 sm:mb-10">
             <Badge className="mb-4 bg-blue-100 text-blue-800 px-4 py-2">
-              ✨ Sneak Peek
+              Preview Picks
             </Badge>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
               Start with a city, then go deeper
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-base sm:text-xl text-gray-600 max-w-3xl mx-auto">
               Preview the kind of approved destination context students use
               before opening the full overview, housing, and course pages.
             </p>
@@ -149,11 +149,11 @@ const TeaserGallery = () => {
             )}
 
             {/* Cards Grid */}
-            <div className="grid md:grid-cols-3 gap-6 px-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 px-0 sm:px-8">
               {visiblePreviews.map((entry) => (
                 <Card
                   key={entry.id}
-                  className="group hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+                  className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.01] sm:hover:scale-105"
                   onClick={() => handleReadMore(entry)}
                 >
                   <CardContent className="p-0">
@@ -181,7 +181,7 @@ const TeaserGallery = () => {
                           ) : (
                             <Home className="h-3 w-3 mr-1" aria-hidden="true" />
                           )}
-                          {entry.type === "story" ? "Story" : "Stay"}
+                          {entry.type === "story" ? "Overview" : "Housing"}
                         </Badge>
                       </div>
                       {entry.price && (
@@ -212,7 +212,7 @@ const TeaserGallery = () => {
                         {entry.excerpt}
                       </p>
 
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-center space-x-2">
                           <Avatar className="h-6 w-6">
                             <AvatarFallback className="text-xs">
@@ -241,7 +241,7 @@ const TeaserGallery = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          className="justify-start px-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 sm:justify-center sm:px-3"
                         >
                           Open Destination
                           <ArrowRight
@@ -262,7 +262,7 @@ const TeaserGallery = () => {
             <Link href={PUBLIC_DESTINATIONS_ROUTE}>
               <Button
                 size="lg"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white"
               >
                 Explore Destination Hubs
                 <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />

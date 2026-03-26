@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
@@ -17,6 +18,7 @@ import {
   getDifficultyFindingAccommodationLabel,
   getHowFoundAccommodationLabel,
 } from "../lib/accommodation";
+import { buildPublicDestinationRoute } from "../lib/publicRoutes";
 
 interface AccommodationExperienceCardProps {
   accommodation: {
@@ -427,10 +429,16 @@ export default function AccommodationExperienceCard({
               )}
 
               {isReal && (
-                <Link href={`/accommodation/${id}`}>
+                <Link
+                  href={buildPublicDestinationRoute({
+                    city,
+                    country,
+                    subpage: "accommodation",
+                  })}
+                >
                   <Button variant="outline" size="sm">
                     <ExternalLink className="mr-1 h-4 w-4" />
-                    Full Details
+                    Open Housing Page
                   </Button>
                 </Link>
               )}

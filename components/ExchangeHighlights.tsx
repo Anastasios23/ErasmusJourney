@@ -16,7 +16,7 @@ import {
   PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE,
   PUBLIC_DESTINATIONS_ROUTE,
 } from "../src/lib/publicRoutes";
-import { ArrowRight, GraduationCap } from "lucide-react";
+import { ArrowRight, GraduationCap, MapPin, Star } from "lucide-react";
 
 // Sample featured exchanges for homepage
 const featuredExchanges = [
@@ -30,7 +30,6 @@ const featuredExchanges = [
     exchange: {
       university: "TU Munich",
       country: "Germany",
-      flag: "🇩🇪",
     },
     courses: ["Database Systems", "Machine Learning", "Software Engineering"],
     rating: 4.8,
@@ -46,7 +45,6 @@ const featuredExchanges = [
     exchange: {
       university: "KTH Stockholm",
       country: "Sweden",
-      flag: "🇸🇪",
     },
     courses: ["Thermodynamics", "Sustainable Energy", "Fluid Mechanics"],
     rating: 4.9,
@@ -61,7 +59,6 @@ const featuredExchanges = [
     exchange: {
       university: "Bocconi Milan",
       country: "Italy",
-      flag: "🇮🇹",
     },
     courses: ["International Marketing", "Corporate Finance", "Strategy"],
     rating: 4.7,
@@ -70,46 +67,54 @@ const featuredExchanges = [
 
 export default function ExchangeHighlights() {
   return (
-    <section className="py-16 bg-white">
+    <section className="bg-white py-14 sm:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-10 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
             Destination snapshots from Cyprus students
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-base sm:text-xl text-gray-600 max-w-3xl mx-auto">
             Use destination-level evidence first, then open course examples and
             practical details for the cities that fit you best.
           </p>
         </div>
 
         {/* Stats Bar */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-10 sm:mb-12">
           <div className="text-center">
-            <div className="text-3xl font-bold text-blue-600">150+</div>
+            <div className="text-2xl sm:text-3xl font-bold text-blue-600">
+              150+
+            </div>
             <div className="text-sm text-gray-600">Students Abroad</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-green-600">25+</div>
+            <div className="text-2xl sm:text-3xl font-bold text-green-600">
+              25+
+            </div>
             <div className="text-sm text-gray-600">Partner Universities</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-purple-600">15+</div>
+            <div className="text-2xl sm:text-3xl font-bold text-purple-600">
+              15+
+            </div>
             <div className="text-sm text-gray-600">Countries</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-orange-600">4.8</div>
+            <div className="text-2xl sm:text-3xl font-bold text-orange-600">
+              4.8
+            </div>
             <div className="text-sm text-gray-600">Average Rating</div>
           </div>
         </div>
 
         {/* Featured Exchanges */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
           {featuredExchanges.map((exchange, index) => (
             <Card
               key={index}
               className="hover:shadow-lg transition-all duration-300 group cursor-pointer"
             >
-              <CardHeader className="pb-3">
+              <CardHeader className="space-y-3 pb-3">
                 <div className="flex items-center space-x-3">
                   <Avatar className="h-10 w-10">
                     <AvatarImage
@@ -128,16 +133,22 @@ export default function ExchangeHighlights() {
                       {exchange.student.name}
                     </h3>
                     <p className="text-sm text-gray-600">
-                      {exchange.student.department} •{" "}
+                      {exchange.student.department} |{" "}
                       {exchange.student.cyprusUni}
                     </p>
                   </div>
                 </div>
+                <Badge
+                  variant="outline"
+                  className="w-fit border-blue-200 text-blue-700"
+                >
+                  Destination-first preview
+                </Badge>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Destination */}
-                <div className="flex items-center space-x-2">
-                  <span className="text-2xl">{exchange.exchange.flag}</span>
+                <div className="flex items-start space-x-2 rounded-lg bg-slate-50 p-3">
+                  <MapPin className="mt-0.5 h-4 w-4 text-blue-600" />
                   <div>
                     <p className="font-medium text-gray-900">
                       {exchange.exchange.university}
@@ -152,16 +163,14 @@ export default function ExchangeHighlights() {
                 <div className="flex items-center space-x-2">
                   <div className="flex text-yellow-400">
                     {[...Array(5)].map((_, i) => (
-                      <span
+                      <Star
                         key={i}
                         className={
                           i < Math.floor(exchange.rating)
-                            ? "text-yellow-400"
-                            : "text-gray-300"
+                            ? "h-4 w-4 fill-current text-yellow-400"
+                            : "h-4 w-4 text-gray-300"
                         }
-                      >
-                        ★
-                      </span>
+                      />
                     ))}
                   </div>
                   <span className="text-sm text-gray-600">
@@ -205,21 +214,23 @@ export default function ExchangeHighlights() {
                 </div>
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">
-                Explore All Exchange History
+                Open the public destination flow
               </h3>
               <p className="text-gray-600 mb-6">
-                Browse detailed course mappings, student experiences, and find
-                the perfect academic path for your exchange program.
+                Start with destination pages, then drill into course examples
+                and practical planning details only where the signal is useful.
               </p>
-              <div className="flex gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                 <Link href={PUBLIC_DESTINATIONS_ROUTE}>
-                  <Button className="bg-blue-600 hover:bg-blue-700">
+                  <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700">
                     View All Destinations
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
                 <Link href={PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE}>
-                  <Button variant="outline">Browse Course Examples</Button>
+                  <Button variant="outline" className="w-full sm:w-auto">
+                    Browse Course Examples
+                  </Button>
                 </Link>
               </div>
             </CardContent>

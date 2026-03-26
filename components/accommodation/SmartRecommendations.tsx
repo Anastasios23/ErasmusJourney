@@ -18,6 +18,10 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useFormSubmissions } from "../../src/hooks/useFormSubmissions";
+import {
+  PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE,
+  buildPublicDestinationRoute,
+} from "../../src/lib/publicRoutes";
 
 interface SmartRecommendation {
   id: string;
@@ -146,10 +150,23 @@ export default function SmartRecommendations({
       window.open(recommendation.data.url, "_blank");
     } else if (
       recommendation.type === "accommodation" &&
-      recommendation.data.id
+      recommendation.data
     ) {
-      // Navigate to accommodation detail page
-      window.location.href = `/accommodation/${recommendation.data.id}`;
+      const basicInfoData = getDraftData("basic-info");
+      const hostCity =
+        recommendation.data.city || userProfile?.hostCity || basicInfoData?.hostCity;
+      const hostCountry =
+        recommendation.data.country ||
+        userProfile?.hostCountry ||
+        basicInfoData?.hostCountry;
+
+      window.location.href = hostCity
+        ? buildPublicDestinationRoute({
+            city: hostCity,
+            country: hostCountry,
+            subpage: "accommodation",
+          })
+        : PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE;
     }
   };
 
