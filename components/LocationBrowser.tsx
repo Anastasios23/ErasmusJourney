@@ -59,8 +59,8 @@ const LocationBrowser = () => {
       {
         id: `story_${selectedCity}_1`,
         type: "story",
-        title: `My ${selectedCity} Adventure`,
-        excerpt: `Living in ${selectedCity} was absolutely incredible. The culture, the people, the experiences...`,
+        title: `${selectedCity} destination overview`,
+        excerpt: `A quick destination-level view of what students most often notice first about ${selectedCity}.`,
         imageUrl: `https://images.unsplash.com/photo-${1600000000000 + Math.random() * 100000000}?w=300&h=200&fit=crop`,
         rating: 5,
         studentName: "Sarah M.",
@@ -69,8 +69,8 @@ const LocationBrowser = () => {
       {
         id: `accommodation_${selectedCity}_1`,
         type: "accommodation",
-        title: `Student Apartment in ${selectedCity}`,
-        excerpt: `Perfect location for students, close to university and city center. Great amenities and friendly neighbors...`,
+        title: `${selectedCity} housing snapshot`,
+        excerpt: `A housing example with practical notes on area, commute, and the kind of setup students actually report.`,
         imageUrl: `https://images.unsplash.com/photo-${1600000000000 + Math.random() * 100000000}?w=300&h=200&fit=crop`,
         rating: 4,
         studentName: "Marco L.",
@@ -80,8 +80,8 @@ const LocationBrowser = () => {
       {
         id: `story_${selectedCity}_2`,
         type: "story",
-        title: `Best semester in ${selectedCity}`,
-        excerpt: `I never expected ${selectedCity} to become my second home. Every day was a new adventure...`,
+        title: `${selectedCity} academic notes`,
+        excerpt: `A short preview of academic fit, pace, and what students usually flag before opening the full destination tabs.`,
         imageUrl: `https://images.unsplash.com/photo-${1600000000000 + Math.random() * 100000000}?w=300&h=200&fit=crop`,
         rating: 5,
         studentName: "Anna K.",

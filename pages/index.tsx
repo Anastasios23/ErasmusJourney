@@ -1195,10 +1195,10 @@ export default function HomePage({
                         </div>
                         <div>
                           <div className="font-semibold text-gray-900 dark:text-white">
-                            500+ students
+                            500+ approved submissions
                           </div>
                           <div className="text-sm text-gray-500">
-                            shared their journey
+                            shaping public destination pages
                           </div>
                         </div>
                       </div>
@@ -1224,33 +1224,40 @@ export default function HomePage({
         {/* ================================================================ */}
         {/* TESTIMONIALS */}
         {/* ================================================================ */}
-        <section className="py-32 bg-gray-50 dark:bg-gray-900/50">
+        <section className="py-24 md:py-32 bg-gray-50 dark:bg-gray-900/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Section header */}
-            <div className="text-center mb-16">
+            <div className="text-center mb-12 md:mb-16">
               <RevealOnScroll>
                 <Badge className="mb-4 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-4 py-1.5 rounded-full">
                   <Icon
                     icon="solar:heart-bold-duotone"
                     className="w-4 h-4 mr-2"
                   />
-                  Student Stories
+                  Student Signals
                 </Badge>
               </RevealOnScroll>
 
               <RevealOnScroll delay={100}>
-                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-                  What Students
+                <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                  What students
                   <br />
                   <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
-                    Are Saying
+                    wish they knew first
                   </span>
                 </h2>
+              </RevealOnScroll>
+
+              <RevealOnScroll delay={180}>
+                <p className="mx-auto max-w-2xl text-base md:text-xl text-gray-600 dark:text-gray-400">
+                  Use these quotes as a confidence check after you have already
+                  compared the destination overview, housing, and courses tabs.
+                </p>
               </RevealOnScroll>
             </div>
 
             {/* Testimonial cards */}
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 md:gap-8">
               {testimonials.map((testimonial, index) => (
                 <TestimonialCard key={index} {...testimonial} index={index} />
               ))}
@@ -1261,7 +1268,7 @@ export default function HomePage({
         {/* ================================================================ */}
         {/* CTA SECTION */}
         {/* ================================================================ */}
-        <section className="py-32 relative overflow-hidden">
+        <section className="py-24 md:py-32 relative overflow-hidden">
           {/* Background */}
           <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600" />
           <div
@@ -1289,37 +1296,38 @@ export default function HomePage({
 
             <RevealOnScroll delay={100}>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-                Ready to Start Your
+                Ready to compare
                 <br />
-                Erasmus Journey?
+                real destination signals?
               </h2>
             </RevealOnScroll>
 
             <RevealOnScroll delay={200}>
               <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
-                Join hundreds of Cyprus students who've already discovered their
-                perfect exchange destination.
+                Browse approved destination pages now, then share your own
+                experience once you have something useful to add back into the
+                dataset.
               </p>
             </RevealOnScroll>
 
             <RevealOnScroll delay={300}>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link href="/destinations">
-                  <Button className="px-8 py-6 text-lg bg-white text-indigo-600 hover:bg-gray-100 rounded-full font-semibold shadow-xl">
+                <Link href={PUBLIC_DESTINATIONS_ROUTE}>
+                  <Button className="w-full sm:w-auto px-8 py-6 text-lg bg-white text-indigo-600 hover:bg-gray-100 rounded-full font-semibold shadow-xl">
                     <Icon
                       icon="solar:compass-bold-duotone"
                       className="w-5 h-5 mr-2"
                     />
-                    Explore Now
+                    Browse Destination Hubs
                     <Icon
                       icon="solar:arrow-right-bold"
                       className="w-5 h-5 ml-2"
                     />
                   </Button>
                 </Link>
-                <Link href="/register">
-                  <Button className="px-8 py-6 text-lg bg-transparent text-white border-2 border-white/30 hover:bg-white/10 rounded-full font-semibold">
-                    Create Account
+                <Link href="/share-experience">
+                  <Button className="w-full sm:w-auto px-8 py-6 text-lg bg-transparent text-white border-2 border-white/30 hover:bg-white/10 rounded-full font-semibold">
+                    Share Your Experience
                   </Button>
                 </Link>
               </div>

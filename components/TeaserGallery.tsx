@@ -42,9 +42,9 @@ const TeaserGallery = () => {
       {
         id: "1",
         type: "story",
-        title: "My Amazing Semester in Barcelona",
+        title: "Barcelona destination snapshot",
         excerpt:
-          "A life-changing experience studying at UPC Barcelona and discovering Spanish culture...",
+          "A quick destination-level preview of cost, pace, and student life signals in Barcelona.",
         imageUrl:
           "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&h=250&fit=crop",
         city: "Barcelona",
@@ -54,9 +54,9 @@ const TeaserGallery = () => {
       {
         id: "2",
         type: "story",
-        title: "Finding the Perfect Student Accommodation in Prague",
+        title: "Prague housing notes",
         excerpt:
-          "Tips and tricks for finding affordable, comfortable housing in Prague. From dorms to shared apartments...",
+          "What students tend to flag first about commute, pricing, and housing patterns in Prague.",
         imageUrl:
           "https://images.unsplash.com/photo-1541849546-216549ae216d?w=400&h=250&fit=crop",
         city: "Prague",
@@ -66,9 +66,9 @@ const TeaserGallery = () => {
       {
         id: "3",
         type: "story",
-        title: "Navigating Academic Life at Sorbonne University",
+        title: "Paris course planning preview",
         excerpt:
-          "Everything you need to know about the academic system in France and making the most of your time in Paris...",
+          "A preview of the academic fit questions students usually check before opening the full destination pages.",
         imageUrl:
           "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=250&fit=crop",
         city: "Paris",
