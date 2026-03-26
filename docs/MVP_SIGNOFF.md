@@ -14,6 +14,8 @@ npm run proof:approved-to-public
 npm run proof:preview-to-approval
 ```
 
+If you are using a fresh local database with no approved submissions yet, run `npm run db:seed:proof` once before the public smoke/proof commands.
+
 ## Manual Release Checklist
 
 | Check | Status |

@@ -107,6 +107,12 @@ After the container is healthy:
 npm run db:push
 ```
 
+If you are starting from a fresh local database and want the public smoke/proof checks to run against non-empty approved data, seed the focused proof dataset once:
+
+```bash
+npm run db:seed:proof
+```
+
 Useful local commands:
 
 - `npm run db:docker:down`
@@ -137,5 +143,7 @@ NEXTAUTH_URL="http://localhost:3000"
 - `npm run smoke:public-destinations`
 - `npm run proof:approved-to-public`
 - `npm run proof:preview-to-approval`
+
+Fresh local database note: if your database has schema but no approved submissions yet, run `npm run db:seed:proof` before the public smoke/proof commands.
 
 For the formal MVP release gate, use [docs/MVP_SIGNOFF.md](./docs/MVP_SIGNOFF.md).

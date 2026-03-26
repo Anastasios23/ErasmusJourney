@@ -75,7 +75,7 @@ async function main(): Promise<void> {
 
   assert(
     approvedExperiences.length > 0,
-    "No approved+complete experiences found for proof run.",
+    "No approved+complete experiences found for proof run. On a fresh local database, run `npm run db:seed:proof` first.",
   );
 
   const list = await getPublicDestinationList();
