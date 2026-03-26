@@ -6,6 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "./card";
 import { Progress } from "./progress";
 import { cn } from "@/lib/utils";
 import {
+  PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE,
+  PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE,
+  PUBLIC_DESTINATIONS_ROUTE,
+} from "@/lib/publicRoutes";
+import {
   ChevronRight,
   CheckCircle,
   Clock,
@@ -290,8 +295,12 @@ export function QuickStartGuide({
     new: {
       title: "New to Erasmus? Start Here",
       steps: [
-        { text: "Explore destinations", href: "/destinations", icon: Map },
-        { text: "Read student stories", href: "/student-stories", icon: Users },
+        { text: "Explore destinations", href: PUBLIC_DESTINATIONS_ROUTE, icon: Map },
+        {
+          text: "Open housing insights",
+          href: PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE,
+          icon: Home,
+        },
         {
           text: "Check university partnerships",
           href: "/university-exchanges",
@@ -313,8 +322,8 @@ export function QuickStartGuide({
           icon: Target,
         },
         {
-          text: "Find accommodation",
-          href: "/student-accommodations",
+          text: "Check housing snapshots",
+          href: PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE,
           icon: Home,
         },
         { text: "Connect with mentors", href: "/community", icon: Users },
@@ -324,20 +333,24 @@ export function QuickStartGuide({
     explorer: {
       title: "Exploring Your Options?",
       steps: [
-        { text: "Browse 500+ destinations", href: "/destinations", icon: Map },
+        {
+          text: "Browse destination hubs",
+          href: PUBLIC_DESTINATIONS_ROUTE,
+          icon: Map,
+        },
         {
           text: "Compare universities",
           href: "/university-exchanges",
           icon: BookOpen,
         },
         {
-          text: "Read real experiences",
-          href: "/student-stories",
+          text: "Review course examples",
+          href: PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE,
           icon: Users,
         },
         {
-          text: "Calculate costs",
-          href: "/student-accommodations",
+          text: "Check housing costs",
+          href: PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE,
           icon: Euro,
         },
       ],

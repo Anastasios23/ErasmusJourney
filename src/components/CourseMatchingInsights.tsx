@@ -17,6 +17,7 @@ import {
   ExternalLink,
   ArrowRight,
 } from "lucide-react";
+import { buildPublicDestinationRoute } from "@/lib/publicRoutes";
 
 interface CourseMatchingInsight {
   totalExperiences: number;
@@ -221,7 +222,11 @@ export default function CourseMatchingInsights({
               Course Matching Insights
             </CardTitle>
             <Link
-              href={`/course-matching-experiences?destination=${city}, ${country}`}
+              href={buildPublicDestinationRoute({
+                city,
+                country,
+                subpage: "courses",
+              })}
             >
               <Button
                 variant="outline"
@@ -361,7 +366,11 @@ export default function CourseMatchingInsights({
               {insights.experiences.length > 2 && (
                 <div className="text-center mt-4">
                   <Link
-                    href={`/course-matching-experiences?destination=${city}, ${country}`}
+                    href={buildPublicDestinationRoute({
+                      city,
+                      country,
+                      subpage: "courses",
+                    })}
                   >
                     <Button variant="outline">
                       View All {insights.totalExperiences} Experiences

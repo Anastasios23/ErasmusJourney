@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { Icon } from "@iconify/react";
-import { FormEvent, useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import {
+  PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE,
+  PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE,
+  PUBLIC_DESTINATIONS_ROUTE,
+} from "@/lib/publicRoutes";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -65,12 +70,17 @@ export default function Footer() {
   const quickLinks = [
     {
       name: "Destinations",
-      href: "/destinations",
+      href: PUBLIC_DESTINATIONS_ROUTE,
       icon: "solar:map-point-bold-duotone",
     },
     {
-      name: "Course Matching",
-      href: "/course-matching-experiences",
+      name: "Housing Insights",
+      href: PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE,
+      icon: "solar:home-bold-duotone",
+    },
+    {
+      name: "Course Examples",
+      href: PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE,
       icon: "solar:notebook-bold-duotone",
     },
     {
@@ -218,9 +228,8 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-gray-400 leading-relaxed mb-6 max-w-sm">
-              Empowering students to make the most of their Erasmus experience
-              through comprehensive guidance, community support, and seamless
-              application processes.
+              Approved destination insights, housing summaries, and course
+              examples to help Cyprus students plan smarter exchanges.
             </p>
 
             {/* Status indicator */}

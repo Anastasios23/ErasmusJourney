@@ -16,6 +16,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import {
+  PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE,
+  buildPublicDestinationRoute,
+} from "@/lib/publicRoutes";
 
 interface StoryRecommendation {
   id: string;
@@ -285,7 +289,10 @@ export default function AIRecommendations({
 
                   <div className="pt-2">
                     <Link
-                      href={`/destinations/${encodeURIComponent((rec as any).city?.toLowerCase().replace(/\s+/g, "-") || "explore")}`}
+                      href={buildPublicDestinationRoute({
+                        city: rec.city,
+                        country: rec.country,
+                      })}
                     >
                       <Button size="sm" className="w-full">
                         Explore Destination
@@ -303,10 +310,10 @@ export default function AIRecommendations({
             <p className="text-xs text-gray-500 mb-3">
               Powered by AI • Updated in real-time based on your preferences
             </p>
-            <Link href="/course-matching-experiences">
+            <Link href={PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE}>
               <Button variant="outline">
                 <BookOpen className="h-4 w-4 mr-2" />
-                View Course Experiences
+                Browse Course Examples
               </Button>
             </Link>
           </div>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "./button";
 import { Badge } from "./badge";
 import { cn } from "@/lib/utils";
+import { PUBLIC_DESTINATIONS_ROUTE } from "@/lib/publicRoutes";
 import {
   ArrowRight,
   Users,
@@ -265,11 +266,11 @@ export function StoryCTA({ className }: { className?: string }) {
       description="Help future students by sharing your insights, tips, and memorable moments from your exchange experience."
       primaryAction={{
         text: "Share Your Story",
-        href: "/share-story",
+        href: "/share-experience",
       }}
       secondaryAction={{
-        text: "Read Stories",
-        href: "/student-stories",
+        text: "Browse Destinations",
+        href: PUBLIC_DESTINATIONS_ROUTE,
       }}
       socialProof={{
         studentCount: 456,

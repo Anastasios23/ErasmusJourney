@@ -12,6 +12,7 @@ import {
   MessageSquare,
   Target,
 } from "lucide-react";
+import { PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE } from "@/lib/publicRoutes";
 
 interface TourStep {
   title: string;
@@ -50,7 +51,7 @@ const tourSteps: TourStep[] = [
       "Explore housing options, get budget estimates, and connect with housing offices in your destination city.",
     icon: Home,
     action: "Browse Housing",
-    actionUrl: "/student-accommodations",
+    actionUrl: PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE,
   },
   {
     title: "Connect with Students",

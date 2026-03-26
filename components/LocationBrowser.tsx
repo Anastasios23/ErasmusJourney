@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import EmailCaptureModal from "./EmailCaptureModal";
@@ -15,6 +13,7 @@ import {
   SelectValue,
 } from "../src/components/ui/select";
 import { Avatar, AvatarFallback } from "../src/components/ui/avatar";
+import { buildPublicDestinationRoute } from "../src/lib/publicRoutes";
 import { ArrowRight, MapPin, Star, Home, BookOpen, Users } from "lucide-react";
 
 interface BrowseEntry {
@@ -99,8 +98,7 @@ const LocationBrowser = () => {
       return;
     }
 
-    // Navigate to browse page with city filter
-    router.push(`/destinations?city=${encodeURIComponent(city)}`);
+    router.push(buildPublicDestinationRoute({ city }));
   };
 
   const router = useRouter();
@@ -111,11 +109,12 @@ const LocationBrowser = () => {
       return;
     }
 
-    if (entry.type === "story") {
-      router.push("/student-stories");
-    } else {
-      router.push("/student-accommodations");
-    }
+    router.push(
+      buildPublicDestinationRoute({
+        city: entry.city,
+        subpage: entry.type === "accommodation" ? "accommodation" : undefined,
+      }),
+    );
   };
 
   return (
@@ -130,8 +129,8 @@ const LocationBrowser = () => {
               Explore by City
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-6">
-              Find stories and accommodations from students who've lived in your
-              destination city.
+              Open a city first, then jump into the overview or housing page for
+              the path you want to inspect.
             </p>
 
             <div className="max-w-md mx-auto">
@@ -157,12 +156,13 @@ const LocationBrowser = () => {
             <div className="space-y-6">
               <div className="text-center">
                 <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-                  Stories & Stays in {selectedCity}
+                  Destination paths for {selectedCity}
                 </h3>
                 <p className="text-gray-600">
-                  {results.filter((r) => r.type === "story").length} stories and{" "}
+                  {results.filter((r) => r.type === "story").length} overview
+                  examples and{" "}
                   {results.filter((r) => r.type === "accommodation").length}{" "}
-                  accommodations
+                  housing examples
                 </p>
               </div>
 
@@ -193,7 +193,7 @@ const LocationBrowser = () => {
                     }}
                     tabIndex={0}
                     role="button"
-                    aria-label={`${entry.type === "story" ? "Read story" : "View accommodation"}: ${entry.title} by ${entry.studentName} in ${entry.city}`}
+                    aria-label={`${entry.type === "story" ? "Open destination overview" : "Open accommodation insights"}: ${entry.title} by ${entry.studentName} in ${entry.city}`}
                   >
                     <CardContent className="p-0">
                       <div className="aspect-video relative overflow-hidden rounded-t-lg">
@@ -277,7 +277,9 @@ const LocationBrowser = () => {
                             size="sm"
                             className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                           >
-                            Read More
+                            {entry.type === "story"
+                              ? "Open Overview"
+                              : "Open Housing"}
                             <ArrowRight
                               className="h-3 w-3 ml-1"
                               aria-hidden="true"
@@ -297,13 +299,13 @@ const LocationBrowser = () => {
                   className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   <Users className="mr-2 h-5 w-5" aria-hidden="true" />
-                  View All in {selectedCity}
+                  Open {selectedCity}
                   <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
                 </Button>
                 <p className="text-sm text-gray-500 mt-2">
                   {session
-                    ? "Explore the complete collection"
-                    : "Sign up to see all experiences in this city"}
+                    ? "Jump into the full destination hub"
+                    : "Sign up to unlock the full destination picture"}
                 </p>
               </div>
             </div>
@@ -319,7 +321,7 @@ const LocationBrowser = () => {
                 No experiences found in {selectedCity}
               </h3>
               <p className="text-gray-600">
-                Be the first to share your story from this destination!
+                Be the first to add a usable destination signal for this city.
               </p>
             </div>
           )}
@@ -330,7 +332,7 @@ const LocationBrowser = () => {
         isOpen={showEmailCapture}
         onClose={() => setShowEmailCapture(false)}
         title="Unlock Full Access"
-        description={`Join our community to explore all stories and accommodations in ${selectedCity}.`}
+        description={`Join our community to explore the full destination, housing, and course picture for ${selectedCity}.`}
       />
     </>
   );

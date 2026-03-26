@@ -1,8 +1,14 @@
+import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Lock, UserPlus, Eye, BookOpen } from "lucide-react";
+import { Lock, UserPlus, Eye, BookOpen, Home } from "lucide-react";
+import {
+  PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE,
+  PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE,
+  PUBLIC_DESTINATIONS_ROUTE,
+} from "@/lib/publicRoutes";
 
 interface LoginPromptProps {
   title?: string;
@@ -40,7 +46,6 @@ const LoginPrompt: React.FC<LoginPromptProps> = ({
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* Login/Register Buttons */}
           <div className="space-y-3">
             <Link href={loginUrl} className="block">
               <Button className="w-full bg-blue-600 hover:bg-blue-700 h-11 text-base">
@@ -59,7 +64,6 @@ const LoginPrompt: React.FC<LoginPromptProps> = ({
             </Link>
           </div>
 
-          {/* Benefits Section */}
           {showBenefits && (
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
               <h4 className="font-semibold text-blue-900 mb-2 text-sm">
@@ -98,14 +102,13 @@ const LoginPrompt: React.FC<LoginPromptProps> = ({
             </div>
           )}
 
-          {/* Alternatives Section */}
           {showAlternatives && (
             <div className="pt-4 border-t border-gray-200">
               <p className="text-sm text-gray-500 mb-3 text-center">
                 Want to explore first? You can browse without an account:
               </p>
-              <div className="grid grid-cols-2 gap-2">
-                <Link href="/destinations">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <Link href={PUBLIC_DESTINATIONS_ROUTE}>
                   <Button
                     variant="ghost"
                     className="w-full text-xs h-9 text-blue-600 hover:bg-blue-50"
@@ -114,23 +117,31 @@ const LoginPrompt: React.FC<LoginPromptProps> = ({
                     Destinations
                   </Button>
                 </Link>
-                <Link href="/course-matching-experiences">
+                <Link href={PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE}>
+                  <Button
+                    variant="ghost"
+                    className="w-full text-xs h-9 text-blue-600 hover:bg-blue-50"
+                  >
+                    <Home className="h-3 w-3 mr-1" />
+                    Housing
+                  </Button>
+                </Link>
+                <Link href={PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE}>
                   <Button
                     variant="ghost"
                     className="w-full text-xs h-9 text-blue-600 hover:bg-blue-50"
                   >
                     <BookOpen className="h-3 w-3 mr-1" />
-                    Course Experiences
+                    Course Examples
                   </Button>
                 </Link>
               </div>
             </div>
           )}
 
-          {/* Security Notice */}
           <div className="text-center">
             <p className="text-xs text-gray-400">
-              🔒 Your data is secure and will never be shared with third parties
+              Your data is secure and will never be shared with third parties.
             </p>
           </div>
         </CardContent>

@@ -12,6 +12,7 @@ import {
   FileText,
   MessageSquare,
 } from "lucide-react";
+import { PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE } from "@/lib/publicRoutes";
 
 interface ActivityItem {
   id: string;
@@ -55,7 +56,7 @@ const mockActivities: ActivityItem[] = [
     description: "You searched for accommodations in Barcelona, Spain",
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4), // 4 hours ago
     status: "completed",
-    url: "/student-accommodations",
+    url: PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE,
   },
   {
     id: "4",

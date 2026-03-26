@@ -8,6 +8,12 @@ import Header from "../components/Header";
 import Footer from "../src/components/Footer";
 import { Button } from "../src/components/ui/button";
 import { Badge } from "../src/components/ui/badge";
+import {
+  PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE,
+  PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE,
+  PUBLIC_DESTINATIONS_ROUTE,
+  buildPublicDestinationRoute,
+} from "../src/lib/publicRoutes";
 import { Icon } from "@iconify/react";
 import { useEffect, useState, useRef, useCallback } from "react";
 
@@ -481,17 +487,12 @@ function DestinationCard({
     setGlare({ x: 50, y: 50 });
   };
 
-  const destinationSlug = `${city}-${country}`
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-
   return (
     <RevealOnScroll delay={index * 100}>
-      <Link href={`/destinations/${destinationSlug}`} className="block">
+      <Link
+        href={buildPublicDestinationRoute({ city, country })}
+        className="block"
+      >
         <div
           ref={cardRef}
           className="relative z-0 group cursor-pointer isolate"
@@ -578,36 +579,49 @@ function FeatureCard({
   title,
   description,
   gradient,
+  href,
+  cta,
   index,
 }: {
   icon: string;
   title: string;
   description: string;
   gradient: string;
+  href: string;
+  cta: string;
   index: number;
 }) {
   return (
     <RevealOnScroll delay={index * 100}>
-      <div className="group relative p-8 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:border-blue-200 dark:hover:border-blue-800 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/10">
-        {/* Gradient background on hover */}
-        <div
-          className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
-        />
+      <Link href={href} className="group block h-full">
+        <div className="relative h-full p-8 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:border-blue-200 dark:hover:border-blue-800 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/10">
+          <div
+            className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
+          />
 
-        <div
-          className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${gradient} mb-6 shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300`}
-        >
-          <Icon icon={icon} className="w-7 h-7 text-white" />
+          <div
+            className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${gradient} mb-6 shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300`}
+          >
+            <Icon icon={icon} className="w-7 h-7 text-white" />
+          </div>
+
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            {title}
+          </h3>
+
+          <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+            {description}
+          </p>
+
+          <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400">
+            {cta}
+            <Icon
+              icon="solar:arrow-right-bold"
+              className="w-4 h-4 transition-transform group-hover:translate-x-1"
+            />
+          </div>
         </div>
-
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-          {title}
-        </h3>
-
-        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-          {description}
-        </p>
-      </div>
+      </Link>
     </RevealOnScroll>
   );
 }
@@ -718,31 +732,39 @@ export default function HomePage({
   const features = [
     {
       icon: "solar:compass-bold-duotone",
-      title: "Discover Destinations",
+      title: "Start With A Destination",
       description:
-        "Explore detailed guides for 200+ European cities with real student insights on costs, culture, and student life.",
+        "Browse approved destination hubs first so you can compare cities before getting lost in details.",
       gradient: "from-blue-500 to-indigo-600",
-    },
-    {
-      icon: "solar:book-2-bold-duotone",
-      title: "Course Experiences",
-      description:
-        "Learn from students who've taken similar courses abroad. Find the best academic matches for your degree.",
-      gradient: "from-blue-500 to-cyan-600",
+      href: PUBLIC_DESTINATIONS_ROUTE,
+      cta: "Browse destination hubs",
     },
     {
       icon: "solar:buildings-2-bold-duotone",
-      title: "Housing Reviews",
+      title: "Open Housing Insights",
       description:
-        "Real accommodation reviews from verified students. Find the perfect place to call home during your exchange.",
+        "Jump into accommodation pages for rent ranges, housing types, and recommendation sentiment from approved submissions.",
       gradient: "from-emerald-500 to-teal-600",
+      href: PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE,
+      cta: "See housing-first flow",
+    },
+    {
+      icon: "solar:book-2-bold-duotone",
+      title: "Review Course Examples",
+      description:
+        "Scan grouped course equivalence examples and academic notes inside each destination's courses page.",
+      gradient: "from-blue-500 to-cyan-600",
+      href: PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE,
+      cta: "Open course examples",
     },
     {
       icon: "solar:wallet-money-bold-duotone",
-      title: "Budget Planning",
+      title: "Trust The Signal",
       description:
-        "Detailed cost breakdowns and budgeting tips from students who've lived it. Plan your finances with confidence.",
+        "See when a destination is still an early signal versus a stronger sample before trusting averages and examples.",
       gradient: "from-amber-500 to-orange-600",
+      href: PUBLIC_DESTINATIONS_ROUTE,
+      cta: "Compare cost confidence",
     },
   ];
 
@@ -780,10 +802,10 @@ export default function HomePage({
   return (
     <>
       <Head>
-        <title>Erasmus Journey | Discover Your Exchange Adventure</title>
+        <title>Erasmus Journey | Start With The Right Destination</title>
         <meta
           name="description"
-          content="Plan your perfect Erasmus exchange with real student experiences, destination guides, course reviews, and budget tips from Cyprus university students."
+          content="Browse approved Erasmus destination hubs, compare housing and course insights, and plan your exchange with evidence from Cyprus university students."
         />
       </Head>
 
@@ -838,11 +860,11 @@ export default function HomePage({
               <RevealOnScroll delay={100}>
                 <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8">
                   <span className="text-gray-900 dark:text-white">
-                    Your Erasmus
+                    Start with the
                   </span>
                   <br />
                   <span className="bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 bg-clip-text text-transparent">
-                    Adventure Awaits
+                    Right Destination
                   </span>
                 </h1>
               </RevealOnScroll>
@@ -850,9 +872,9 @@ export default function HomePage({
               {/* Subtitle */}
               <RevealOnScroll delay={200}>
                 <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed">
-                  Discover destinations, read real student experiences, and plan
-                  your perfect exchange semester with insights from fellow
-                  Cyprus students.
+                  Browse approved destination pages first, compare signal
+                  strength, then open housing and course insights for the cities
+                  you are seriously considering.
                 </p>
               </RevealOnScroll>
 
@@ -860,7 +882,7 @@ export default function HomePage({
               <RevealOnScroll delay={300}>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <MagneticButton
-                    href="/destinations"
+                    href={PUBLIC_DESTINATIONS_ROUTE}
                     className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full text-white font-semibold text-lg shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40 transition-shadow"
                   >
                     <span className="relative z-10 flex items-center gap-2">
@@ -868,7 +890,7 @@ export default function HomePage({
                         icon="solar:compass-bold-duotone"
                         className="w-5 h-5"
                       />
-                      Explore Destinations
+                      Browse Destinations
                       <Icon
                         icon="solar:arrow-right-bold"
                         className="w-5 h-5 group-hover:translate-x-1 transition-transform"
@@ -890,6 +912,13 @@ export default function HomePage({
                     </span>
                   </MagneticButton>
                 </div>
+              </RevealOnScroll>
+
+              <RevealOnScroll delay={350}>
+                <p className="mt-6 text-sm md:text-base text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+                  Public pages only show approved, complete submissions, so the
+                  overview, accommodation, and courses tabs stay aligned.
+                </p>
               </RevealOnScroll>
 
               {/* Scroll indicator */}
@@ -953,21 +982,25 @@ export default function HomePage({
                       icon="solar:global-bold-duotone"
                       className="w-4 h-4 mr-2"
                     />
-                    Top Destinations
+                    Destination Hubs
                   </Badge>
                   <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
-                    Where Students
+                    Pick the city,
                     <br />
                     <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
-                      Love to Go
+                      then drill deeper
                     </span>
                   </h2>
+                  <p className="mt-4 max-w-2xl text-lg text-gray-600 dark:text-gray-400">
+                    Every featured city opens into one overview plus dedicated
+                    accommodation and courses pages.
+                  </p>
                 </div>
               </RevealOnScroll>
 
               <RevealOnScroll delay={100}>
                 <Link
-                  href="/destinations"
+                  href={PUBLIC_DESTINATIONS_ROUTE}
                   className="group inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:gap-4 transition-all"
                 >
                   View all destinations
@@ -1003,24 +1036,25 @@ export default function HomePage({
                     icon="solar:bolt-bold-duotone"
                     className="w-4 h-4 mr-2"
                   />
-                  Everything You Need
+                  Destination-First Workflow
                 </Badge>
               </RevealOnScroll>
 
               <RevealOnScroll delay={100}>
                 <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-                  Plan Your Exchange
+                  Choose the city first,
                   <br />
                   <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                    With Confidence
+                    then open what matters
                   </span>
                 </h2>
               </RevealOnScroll>
 
               <RevealOnScroll delay={200}>
                 <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                  Real insights from real students who've been there. No
-                  guesswork, just experience.
+                  The fastest useful path is simple: destination overview,
+                  housing signal, course examples, then your own submission when
+                  you are ready to help the next student.
                 </p>
               </RevealOnScroll>
             </div>
@@ -1064,8 +1098,9 @@ export default function HomePage({
 
                 <RevealOnScroll delay={200}>
                   <p className="text-xl text-gray-600 dark:text-gray-400 mb-12">
-                    Completed your Erasmus? Share your experience in just 5
-                    minutes and help future students make informed decisions.
+                    Completed your Erasmus? Share the exact information future
+                    students need, from destination identity to housing,
+                    academics, and final submission.
                   </p>
                 </RevealOnScroll>
 
@@ -1074,23 +1109,28 @@ export default function HomePage({
                   {[
                     {
                       step: 1,
-                      title: "Basic Info",
-                      desc: "Share where and when you went",
+                      title: "Basics",
+                      desc: "Share your home and host university details",
                     },
                     {
                       step: 2,
                       title: "Courses",
-                      desc: "Rate your academic experience",
+                      desc: "Add course equivalence context and academic notes",
                     },
                     {
                       step: 3,
-                      title: "Living",
-                      desc: "Housing and budget tips",
+                      title: "Accommodation",
+                      desc: "Capture housing type, price, and recommendations",
                     },
                     {
                       step: 4,
-                      title: "Publish",
-                      desc: "Help fellow students!",
+                      title: "Budget",
+                      desc: "Keep the living-expenses contract clean and numeric",
+                    },
+                    {
+                      step: 5,
+                      title: "Submit",
+                      desc: "Send the full experience for moderation",
                     },
                   ].map((item, index) => (
                     <RevealOnScroll key={item.step} delay={300 + index * 100}>

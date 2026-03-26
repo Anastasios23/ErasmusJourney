@@ -12,6 +12,10 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "../src/components/ui/avatar";
+import {
+  PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE,
+  PUBLIC_DESTINATIONS_ROUTE,
+} from "../src/lib/publicRoutes";
 import { ArrowRight, GraduationCap } from "lucide-react";
 
 // Sample featured exchanges for homepage
@@ -70,11 +74,11 @@ export default function ExchangeHighlights() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Student Exchange Success Stories
+            Destination snapshots from Cyprus students
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            See where Cyprus students have studied abroad and what courses they
-            completed. Get inspiration for your own academic journey.
+            Use destination-level evidence first, then open course examples and
+            practical details for the cities that fit you best.
           </p>
         </div>
 
@@ -208,14 +212,14 @@ export default function ExchangeHighlights() {
                 the perfect academic path for your exchange program.
               </p>
               <div className="flex gap-4 justify-center">
-                <Link href="/destinations">
+                <Link href={PUBLIC_DESTINATIONS_ROUTE}>
                   <Button className="bg-blue-600 hover:bg-blue-700">
-                    View All Exchanges
+                    View All Destinations
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
-                <Link href="/course-matching-experiences">
-                  <Button variant="outline">Browse Destinations</Button>
+                <Link href={PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE}>
+                  <Button variant="outline">Browse Course Examples</Button>
                 </Link>
               </div>
             </CardContent>

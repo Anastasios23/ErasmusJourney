@@ -128,10 +128,10 @@ export function generateLinkedFormUrl(
   const baseUrls: Record<string, string> = {
     "basic-info": "/basic-information",
     "living-expenses": "/living-expenses",
-    accommodation: "/student-accommodations",
+    accommodation: "/destinations?focus=accommodation",
     "course-matching": "/course-matching",
-    experience: "/share-story",
-    story: "/share-story",
+    experience: "/share-experience",
+    story: "/share-experience",
   };
 
   const baseUrl = baseUrls[formType] || `/${formType}`;

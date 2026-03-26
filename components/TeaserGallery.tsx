@@ -7,6 +7,10 @@ import { Button } from "../src/components/ui/button";
 import { Badge } from "../src/components/ui/badge";
 import { Avatar, AvatarFallback } from "../src/components/ui/avatar";
 import {
+  PUBLIC_DESTINATIONS_ROUTE,
+  buildPublicDestinationRoute,
+} from "../src/lib/publicRoutes";
+import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
@@ -79,8 +83,11 @@ const TeaserGallery = () => {
   const router = useRouter();
 
   const handleReadMore = (entry: PreviewEntry) => {
-    // Navigate to individual story page
-    router.push(`/stories/${entry.id}`);
+    router.push(
+      entry.city
+        ? buildPublicDestinationRoute({ city: entry.city })
+        : PUBLIC_DESTINATIONS_ROUTE,
+    );
   };
 
   const nextSlide = () => {
@@ -108,12 +115,11 @@ const TeaserGallery = () => {
               ✨ Sneak Peek
             </Badge>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Real Student Stories
+              Start with a city, then go deeper
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Get inspired by authentic experiences from students who have lived
-              their Erasmus dreams. Discover what makes each destination special
-              through their eyes.
+              Preview the kind of approved destination context students use
+              before opening the full overview, housing, and course pages.
             </p>
           </div>
 
@@ -237,7 +243,7 @@ const TeaserGallery = () => {
                           size="sm"
                           className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                         >
-                          Read More
+                          Open Destination
                           <ArrowRight
                             className="h-3 w-3 ml-1"
                             aria-hidden="true"
@@ -253,17 +259,17 @@ const TeaserGallery = () => {
 
           {/* Call to Action */}
           <div className="text-center mt-8">
-            <Link href="/course-matching-experiences">
+            <Link href={PUBLIC_DESTINATIONS_ROUTE}>
               <Button
                 size="lg"
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
-                View All Experiences
+                Explore Destination Hubs
                 <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
               </Button>
             </Link>
             <p className="text-sm text-gray-500 mt-2">
-              Discover authentic student course experiences
+              Browse approved destination pages with housing and course insight
             </p>
           </div>
         </div>
