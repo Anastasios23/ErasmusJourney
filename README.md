@@ -146,5 +146,10 @@ NEXTAUTH_URL="http://localhost:3000"
 
 Fresh local database note: if your database has schema but no approved submissions yet, run `npm run db:seed:proof` before the public smoke/proof commands.
 
+If you want shortcut commands for release-style verification:
+
+- `npm run mvp:signoff:prep`
+- `npm run mvp:signoff:auto`
+
 For the formal MVP release gate, use [docs/MVP_SIGNOFF.md](./docs/MVP_SIGNOFF.md).
 For the final browser-side signoff pass, use [docs/MVP_MANUAL_RUNBOOK.md](./docs/MVP_MANUAL_RUNBOOK.md).

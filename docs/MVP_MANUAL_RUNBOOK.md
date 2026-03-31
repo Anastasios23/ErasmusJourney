@@ -13,6 +13,12 @@ npm run db:seed:proof
 npm run dev
 ```
 
+Equivalent shortcut for the database/setup part:
+
+```bash
+npm run mvp:signoff:prep
+```
+
 Use two browser sessions:
 
 - student session: normal browser window

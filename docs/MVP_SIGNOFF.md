@@ -18,6 +18,13 @@ If you are using a fresh local database with no approved submissions yet, run `n
 
 For the final 10 to 15 minute browser pass, use [docs/MVP_MANUAL_RUNBOOK.md](./MVP_MANUAL_RUNBOOK.md).
 
+Helper commands:
+
+```bash
+npm run mvp:signoff:prep
+npm run mvp:signoff:auto
+```
+
 ## Manual Release Checklist
 
 | Check | Status |

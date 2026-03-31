@@ -29,6 +29,8 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "npx tsx scripts/migrate-data.ts && npx tsx scripts/ensure-permanent-admin.ts",
     "db:seed:proof": "npx tsx scripts/seed-proof-public-data.ts",
+    "mvp:signoff:prep": "npm run db:docker:up && npm run db:push && npm run db:seed:proof",
+    "mvp:signoff:auto": "node scripts/run-mvp-signoff-auto.mjs",
     "db:backfill-living-expenses:dry-run": "npx tsx scripts/backfill-living-expenses-canonical.ts",
     "db:backfill-living-expenses": "npx tsx scripts/backfill-living-expenses-canonical.ts --apply",
     "db:verify-living-expenses:canonical": "npx tsx scripts/verify-living-expenses-canonical.ts",
