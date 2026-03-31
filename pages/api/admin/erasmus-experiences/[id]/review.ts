@@ -154,17 +154,13 @@ export default async function handler(
       experience.hostCountry &&
       experience.semester
     ) {
-      try {
-        // Trigger stats calculation asynchronously
-        calculateCityStats(
-          experience.hostCity,
-          experience.hostCountry,
-          experience.semester,
-        );
-      } catch (error) {
+      void calculateCityStats(
+        experience.hostCity,
+        experience.hostCountry,
+        experience.semester,
+      ).catch((error) => {
         console.error("Error triggering stats calculation:", error);
-        // Don't fail the request if stats calculation fails
-      }
+      });
     }
 
     return res.status(200).json({
@@ -227,6 +223,7 @@ async function calculateCityStats(
     const transportationCosts: number[] = [];
     const eatingOutCosts: number[] = [];
     const socialLifeCosts: number[] = [];
+    const totalExpenseValues: number[] = [];
 
     experiences.forEach((exp) => {
       const accommodation = (exp.accommodation as any) || {};
@@ -258,6 +255,21 @@ async function calculateCityStats(
       if (typeof expenses.social === "number") {
         socialLifeCosts.push(expenses.social);
       }
+
+      const totalExpense = [
+        expenses.rent,
+        expenses.food,
+        expenses.transport,
+        expenses.social,
+        expenses.travel,
+        expenses.other,
+      ].reduce((sum, value) => {
+        return typeof value === "number" ? sum + value : sum;
+      }, 0);
+
+      if (totalExpense > 0) {
+        totalExpenseValues.push(totalExpense);
+      }
     });
 
     // Calculate statistics with outlier removal
@@ -266,6 +278,7 @@ async function calculateCityStats(
     const transportStats = calculateStats(transportationCosts);
     const eatingOutStats = calculateStats(eatingOutCosts);
     const socialStats = calculateStats(socialLifeCosts);
+    const totalExpenseStats = calculateStats(totalExpenseValues);
 
     // Upsert city statistics
     await prisma.cityStatistics.upsert({
@@ -277,28 +290,34 @@ async function calculateCityStats(
         },
       },
       update: {
-        totalSubmissions: experiences.length,
-        avgRent: rentStats.avg,
-        minRent: rentStats.min,
-        maxRent: rentStats.max,
-        avgGroceries: groceriesStats.avg,
-        avgTransportation: transportStats.avg,
-        avgEatingOut: eatingOutStats.avg,
-        avgSocialLife: socialStats.avg,
+        avgMonthlyRentCents: toCents(rentStats.avg),
+        medianRentCents: toCents(rentStats.median),
+        minRentCents: toCents(rentStats.min),
+        maxRentCents: toCents(rentStats.max),
+        rentSampleSize: accommodationCosts.length,
+        avgGroceriesCents: toCents(groceriesStats.avg),
+        avgTransportCents: toCents(transportStats.avg),
+        avgEatingOutCents: toCents(eatingOutStats.avg),
+        avgSocialLifeCents: toCents(socialStats.avg),
+        avgTotalExpensesCents: toCents(totalExpenseStats.avg),
+        expenseSampleSize: totalExpenseValues.length,
         lastCalculated: new Date(),
       },
       create: {
         city,
         country,
         semester,
-        totalSubmissions: experiences.length,
-        avgRent: rentStats.avg,
-        minRent: rentStats.min,
-        maxRent: rentStats.max,
-        avgGroceries: groceriesStats.avg,
-        avgTransportation: transportStats.avg,
-        avgEatingOut: eatingOutStats.avg,
-        avgSocialLife: socialStats.avg,
+        avgMonthlyRentCents: toCents(rentStats.avg),
+        medianRentCents: toCents(rentStats.median),
+        minRentCents: toCents(rentStats.min),
+        maxRentCents: toCents(rentStats.max),
+        rentSampleSize: accommodationCosts.length,
+        avgGroceriesCents: toCents(groceriesStats.avg),
+        avgTransportCents: toCents(transportStats.avg),
+        avgEatingOutCents: toCents(eatingOutStats.avg),
+        avgSocialLifeCents: toCents(socialStats.avg),
+        avgTotalExpensesCents: toCents(totalExpenseStats.avg),
+        expenseSampleSize: totalExpenseValues.length,
       },
     });
 
@@ -316,18 +335,27 @@ async function calculateCityStats(
  */
 function calculateStats(values: number[]): {
   avg: number | null;
+  median: number | null;
   min: number | null;
   max: number | null;
 } {
   if (values.length === 0) {
-    return { avg: null, min: null, max: null };
+    return { avg: null, median: null, min: null, max: null };
   }
 
   if (values.length < 10) {
     // For small datasets, don't remove outliers
     const avg = values.reduce((a, b) => a + b, 0) / values.length;
+    const sorted = [...values].sort((a, b) => a - b);
+    const middle = Math.floor(sorted.length / 2);
+    const median =
+      sorted.length % 2 !== 0
+        ? sorted[middle]
+        : (sorted[middle - 1] + sorted[middle]) / 2;
+
     return {
       avg: Math.round(avg * 100) / 100,
+      median: Math.round(median * 100) / 100,
       min: Math.min(...values),
       max: Math.max(...values),
     };
@@ -341,12 +369,22 @@ function calculateStats(values: number[]): {
   const filtered = sorted.slice(removeCount, sorted.length - removeCount);
 
   const avg = filtered.reduce((a, b) => a + b, 0) / filtered.length;
+  const middle = Math.floor(filtered.length / 2);
+  const median =
+    filtered.length % 2 !== 0
+      ? filtered[middle]
+      : (filtered[middle - 1] + filtered[middle]) / 2;
 
   return {
     avg: Math.round(avg * 100) / 100,
+    median: Math.round(median * 100) / 100,
     min: Math.min(...filtered),
     max: Math.max(...filtered),
   };
+}
+
+function toCents(value: number | null) {
+  return typeof value === "number" ? Math.round(value * 100) : null;
 }
 
 /**

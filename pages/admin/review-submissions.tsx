@@ -58,7 +58,9 @@ interface Experience {
     id: string;
     name: string | null;
     email: string | null;
-  };
+  } | null;
+  publicImpactPreview?: AdminPublicImpactPreview | null;
+  publicImpactPreviewUnavailableReason?: AdminPublicImpactPreviewUnavailable | null;
 }
 
 export default function ReviewSubmissions() {
@@ -94,7 +96,7 @@ export default function ReviewSubmissions() {
   }, [status]);
 
   useEffect(() => {
-    if (!selectedSubmission?.id) {
+    if (!selectedSubmission) {
       setImpactPreview(null);
       setPreviewError(null);
       setPreviewUnavailableReason(null);
@@ -102,81 +104,13 @@ export default function ReviewSubmissions() {
       return;
     }
 
-    let active = true;
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-    const submissionId = selectedSubmission.id;
-
-    const fetchImpactPreview = async () => {
-      try {
-        setPreviewLoading(true);
-        setPreviewError(null);
-        setPreviewUnavailableReason(null);
-
-        const response = (await Promise.race([
-          fetch(`/api/admin/erasmus-experiences/${submissionId}/preview`),
-          new Promise<never>((_, reject) => {
-            timeoutId = setTimeout(() => {
-              reject(new Error("Timed out loading public impact preview"));
-            }, 15_000);
-          }),
-        ])) as Response;
-
-        if (!response.ok) {
-          const errorData = await response
-            .json()
-            .catch(() => ({ error: "Failed to load public impact preview" }));
-
-          if (active && errorData?.code === "INCOMPLETE_DESTINATION_IDENTITY") {
-            setPreviewUnavailableReason({
-              code: errorData.code,
-              message:
-                errorData.error ||
-                "Public impact preview requires both host city and host country.",
-              missingFields: Array.isArray(errorData.missingFields)
-                ? errorData.missingFields
-                : [],
-            });
-          }
-
-          throw new Error(
-            errorData.error || "Failed to load public impact preview",
-          );
-        }
-
-        const data = (await response.json()) as AdminPublicImpactPreview;
-        if (active) {
-          setImpactPreview(data);
-          setPreviewUnavailableReason(null);
-        }
-      } catch (err) {
-        console.error("Error loading public impact preview:", err);
-        if (active) {
-          setImpactPreview(null);
-          setPreviewError(
-            err instanceof Error
-              ? err.message
-              : "Failed to load public impact preview",
-          );
-        }
-      } finally {
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-        }
-        if (active) {
-          setPreviewLoading(false);
-        }
-      }
-    };
-
-    fetchImpactPreview();
-
-    return () => {
-      active = false;
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [selectedSubmission?.id]);
+    setPreviewLoading(false);
+    setPreviewError(null);
+    setImpactPreview(selectedSubmission.publicImpactPreview || null);
+    setPreviewUnavailableReason(
+      selectedSubmission.publicImpactPreviewUnavailableReason || null,
+    );
+  }, [selectedSubmission]);
 
   const approvalBlockedByPublishability =
     previewUnavailableReason?.code === "INCOMPLETE_DESTINATION_IDENTITY";

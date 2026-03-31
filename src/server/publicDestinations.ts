@@ -713,7 +713,7 @@ function buildUniqueCourseExamples(
           homeCourseName: entry.homeCourseName,
           hostCourseName: entry.hostCourseName,
           recognitionType: entry.recognitionType,
-          notes: entry.notes,
+          ...(typeof entry.notes === "string" ? { notes: entry.notes } : {}),
         },
       ]),
     ).values(),
@@ -770,9 +770,11 @@ function buildCourseEquivalenceGroups(
             {
               homeCourseName: entry.homeCourseName,
               hostCourseName: entry.hostCourseName,
-              hostUniversity: entry.hostUniversity,
+              ...(typeof entry.hostUniversity === "string"
+                ? { hostUniversity: entry.hostUniversity }
+                : {}),
               recognitionType: entry.recognitionType,
-              notes: entry.notes,
+              ...(typeof entry.notes === "string" ? { notes: entry.notes } : {}),
             },
           ]),
         ).values(),
@@ -780,7 +782,9 @@ function buildCourseEquivalenceGroups(
 
       return {
         homeUniversity: group.homeUniversity,
-        homeDepartment: group.homeDepartment,
+        ...(typeof group.homeDepartment === "string"
+          ? { homeDepartment: group.homeDepartment }
+          : {}),
         mappingCount: group.entries.length,
         hostUniversities: Array.from(group.hostUniversities).sort((left, right) =>
           left.localeCompare(right),

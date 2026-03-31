@@ -1,8 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { mockGetServerSession, mockFindMany } = vi.hoisted(() => ({
+const {
+  mockGetServerSession,
+  mockFindMany,
+  mockPreviewBuilder,
+  mockPreviewUnavailableReason,
+} = vi.hoisted(() => ({
   mockGetServerSession: vi.fn(),
   mockFindMany: vi.fn(),
+  mockPreviewBuilder: vi.fn(),
+  mockPreviewUnavailableReason: vi.fn(),
 }));
 
 vi.mock("next-auth/next", () => ({
@@ -19,6 +26,12 @@ vi.mock("../../lib/prisma", () => ({
       findMany: mockFindMany,
     },
   },
+}));
+
+vi.mock("../../src/server/publicDestinations", () => ({
+  getAdminPublicImpactPreviewByExperienceId: mockPreviewBuilder,
+  getAdminPublicImpactPreviewUnavailableReasonByExperienceId:
+    mockPreviewUnavailableReason,
 }));
 
 import handler from "../../pages/api/admin/erasmus-experiences";
@@ -50,6 +63,8 @@ function createMockRes() {
 describe("admin erasmus experiences route", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockPreviewBuilder.mockResolvedValue(null);
+    mockPreviewUnavailableReason.mockResolvedValue(null);
   });
 
   it("returns 403 for non-admin sessions", async () => {
@@ -86,6 +101,25 @@ describe("admin erasmus experiences route", () => {
         homeUniversity: null,
       },
     ]);
+    mockPreviewBuilder.mockResolvedValue({
+      slug: "barcelona-spain",
+      destination: {
+        isNewDestination: true,
+        before: null,
+        after: { submissionCount: 1 },
+      },
+      accommodation: {
+        before: null,
+        after: { sampleSize: 1, reviewSnippets: [] },
+        contribution: null,
+      },
+      courses: {
+        before: null,
+        after: { totalMappings: 1, groups: [], homeUniversityCount: 1 },
+        contributionCount: 0,
+        contributionExamples: [],
+      },
+    });
 
     const req = createMockReq({ status: "SUBMITTED" });
     const res = createMockRes();
@@ -115,6 +149,10 @@ describe("admin erasmus experiences route", () => {
           email: "manual.student@ucy.ac.cy",
           name: "Manual Student",
         },
+        publicImpactPreview: expect.objectContaining({
+          slug: "barcelona-spain",
+        }),
+        publicImpactPreviewUnavailableReason: null,
       }),
     ]);
   });

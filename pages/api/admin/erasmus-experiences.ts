@@ -2,6 +2,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
 import { prisma } from "../../../lib/prisma";
+import {
+  getAdminPublicImpactPreviewByExperienceId,
+  getAdminPublicImpactPreviewUnavailableReasonByExperienceId,
+} from "../../../src/server/publicDestinations";
 
 function buildDisplayName(user: {
   firstName?: string | null;
@@ -79,18 +83,39 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    return res.json(
-      experiences.map(({ users, ...experience }) => ({
-        ...experience,
-        user: users
-          ? {
-              id: users.id,
-              email: users.email,
-              name: buildDisplayName(users),
-            }
-          : null,
-      })),
+    const enrichedExperiences = await Promise.all(
+      experiences.map(async ({ users, ...experience }) => {
+        let publicImpactPreview = null;
+        let publicImpactPreviewUnavailableReason = null;
+
+        if (experience.status === "SUBMITTED") {
+          publicImpactPreview =
+            await getAdminPublicImpactPreviewByExperienceId(experience.id);
+
+          if (!publicImpactPreview) {
+            publicImpactPreviewUnavailableReason =
+              await getAdminPublicImpactPreviewUnavailableReasonByExperienceId(
+                experience.id,
+              );
+          }
+        }
+
+        return {
+          ...experience,
+          user: users
+            ? {
+                id: users.id,
+                email: users.email,
+                name: buildDisplayName(users),
+              }
+            : null,
+          publicImpactPreview,
+          publicImpactPreviewUnavailableReason,
+        };
+      }),
     );
+
+    return res.json(enrichedExperiences);
   } catch (error) {
     console.error("Error fetching erasmus experiences:", error);
     return res.status(500).json({ error: "Internal server error" });

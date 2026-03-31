@@ -1,3 +1,4 @@
+import React from "react";
 import type { AdminPublicImpactPreview } from "../../types/adminPublicImpactPreview";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -37,8 +38,14 @@ function MetricDelta({
 export default function PublicImpactPreview({
   preview,
 }: PublicImpactPreviewProps) {
-  const overviewCurrency = preview.destination.after.costSummary.currency;
-  const accommodationCurrency = preview.accommodation.after.currency;
+  const destinationBefore = preview.destination.before;
+  const destinationAfter = preview.destination.after;
+  const accommodationBefore = preview.accommodation.before;
+  const accommodationAfter = preview.accommodation.after;
+  const coursesBefore = preview.courses.before;
+  const coursesAfter = preview.courses.after;
+  const overviewCurrency = destinationAfter.costSummary.currency;
+  const accommodationCurrency = accommodationAfter?.currency || overviewCurrency;
 
   return (
     <div className="space-y-4">
@@ -68,28 +75,28 @@ export default function PublicImpactPreview({
         <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <MetricDelta
             label="Submissions"
-            before={String(preview.destination.before?.submissionCount ?? 0)}
-            after={String(preview.destination.after.submissionCount)}
+            before={String(destinationBefore?.submissionCount ?? 0)}
+            after={String(destinationAfter.submissionCount)}
           />
           <MetricDelta
             label="Avg rent"
             before={formatPublicDestinationMoney(
-              preview.destination.before?.averageRent ?? null,
+              destinationBefore?.averageRent ?? null,
               overviewCurrency,
             )}
             after={formatPublicDestinationMoney(
-              preview.destination.after.averageRent,
+              destinationAfter.averageRent,
               overviewCurrency,
             )}
           />
           <MetricDelta
             label="Avg monthly cost"
             before={formatPublicDestinationMoney(
-              preview.destination.before?.averageMonthlyCost ?? null,
+              destinationBefore?.averageMonthlyCost ?? null,
               overviewCurrency,
             )}
             after={formatPublicDestinationMoney(
-              preview.destination.after.averageMonthlyCost,
+              destinationAfter.averageMonthlyCost,
               overviewCurrency,
             )}
           />
@@ -164,20 +171,18 @@ export default function PublicImpactPreview({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <MetricDelta
               label="Accommodation entries"
-              before={String(preview.accommodation.before?.sampleSize ?? 0)}
-              after={String(preview.accommodation.after.sampleSize)}
+              before={String(accommodationBefore?.sampleSize ?? 0)}
+              after={String(accommodationAfter?.sampleSize ?? 0)}
             />
             <MetricDelta
               label="Recommendation responses"
-              before={String(
-                preview.accommodation.before?.recommendationSampleSize ?? 0,
-              )}
-              after={String(preview.accommodation.after.recommendationSampleSize)}
+              before={String(accommodationBefore?.recommendationSampleSize ?? 0)}
+              after={String(accommodationAfter?.recommendationSampleSize ?? 0)}
             />
             <MetricDelta
               label="Review snippets"
-              before={String(preview.accommodation.before?.reviewSnippets.length ?? 0)}
-              after={String(preview.accommodation.after.reviewSnippets.length)}
+              before={String(accommodationBefore?.reviewSnippets.length ?? 0)}
+              after={String(accommodationAfter?.reviewSnippets.length ?? 0)}
             />
           </div>
 
@@ -185,25 +190,25 @@ export default function PublicImpactPreview({
             <MetricDelta
               label="Avg rent"
               before={formatPublicDestinationMoney(
-                preview.accommodation.before?.averageRent ?? null,
+                accommodationBefore?.averageRent ?? null,
                 accommodationCurrency,
               )}
               after={formatPublicDestinationMoney(
-                preview.accommodation.after.averageRent,
+                accommodationAfter?.averageRent ?? null,
                 accommodationCurrency,
               )}
             />
             <MetricDelta
               label="Recommendation rate"
               before={
-                preview.accommodation.before?.recommendationRate === null
+                accommodationBefore?.recommendationRate == null
                   ? "N/A"
-                  : `${preview.accommodation.before.recommendationRate}%`
+                  : `${accommodationBefore.recommendationRate}%`
               }
               after={
-                preview.accommodation.after.recommendationRate === null
+                accommodationAfter?.recommendationRate == null
                   ? "N/A"
-                  : `${preview.accommodation.after.recommendationRate}%`
+                  : `${accommodationAfter.recommendationRate}%`
               }
             />
           </div>
@@ -263,18 +268,18 @@ export default function PublicImpactPreview({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <MetricDelta
               label="Course mappings"
-              before={String(preview.courses.before?.totalMappings ?? 0)}
-              after={String(preview.courses.after.totalMappings)}
+              before={String(coursesBefore?.totalMappings ?? 0)}
+              after={String(coursesAfter?.totalMappings ?? 0)}
             />
             <MetricDelta
               label="Home universities"
-              before={String(preview.courses.before?.homeUniversityCount ?? 0)}
-              after={String(preview.courses.after.homeUniversityCount)}
+              before={String(coursesBefore?.homeUniversityCount ?? 0)}
+              after={String(coursesAfter?.homeUniversityCount ?? 0)}
             />
             <MetricDelta
               label="Visible groups"
-              before={String(preview.courses.before?.groups.length ?? 0)}
-              after={String(preview.courses.after.groups.length)}
+              before={String(coursesBefore?.groups.length ?? 0)}
+              after={String(coursesAfter?.groups.length ?? 0)}
             />
           </div>
         </CardContent>

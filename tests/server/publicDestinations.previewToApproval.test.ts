@@ -192,4 +192,43 @@ describe("public destination preview-to-approval proof", () => {
       missingFields: ["hostCity"],
     });
   });
+
+  it("omits undefined optional course fields from public destination payloads", async () => {
+    experiences = [
+      createExperienceRecord({
+        id: "approved-serialization",
+        basicInfo: {
+          homeUniversity: "University of Cyprus",
+          hostCity: "Amsterdam",
+          hostCountry: "Netherlands",
+        },
+        hostUniversity: null,
+        courses: [
+          {
+            id: "course-serialization",
+            homeCourseName: "Operating Systems",
+            hostCourseName: "Distributed Operating Systems",
+            homeECTS: 6,
+            hostECTS: 6,
+            recognitionType: "full_equivalence",
+            notes: undefined,
+          },
+        ],
+      }),
+    ];
+
+    const [detail, courses] = await Promise.all([
+      getPublicDestinationDetailBySlug("amsterdam-netherlands"),
+      getPublicCourseEquivalencesByDestinationSlug("amsterdam-netherlands"),
+    ]);
+
+    expect(detail).not.toBeNull();
+    expect(courses).not.toBeNull();
+    expect(detail?.courseEquivalenceExamples[0]).not.toHaveProperty("notes");
+    expect(courses?.groups[0]).not.toHaveProperty("homeDepartment");
+    expect(courses?.groups[0]?.examples[0]).not.toHaveProperty("hostUniversity");
+    expect(courses?.groups[0]?.examples[0]).not.toHaveProperty("notes");
+    expect(JSON.parse(JSON.stringify(detail))).toEqual(detail);
+    expect(JSON.parse(JSON.stringify(courses))).toEqual(courses);
+  });
 });
