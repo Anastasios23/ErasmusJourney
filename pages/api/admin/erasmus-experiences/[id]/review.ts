@@ -61,15 +61,6 @@ export default async function handler(
     // Fetch the experience
     const experience = await prisma.erasmusExperience.findUnique({
       where: { id },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
     });
 
     if (!experience) {

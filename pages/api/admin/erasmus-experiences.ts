@@ -3,6 +3,14 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
 import { prisma } from "../../../lib/prisma";
 
+function buildDisplayName(user: {
+  firstName?: string | null;
+  lastName?: string | null;
+}) {
+  const name = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+  return name || null;
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -41,11 +49,12 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     const experiences = await prisma.erasmusExperience.findMany({
       where,
       include: {
-        user: {
+        users: {
           select: {
             id: true,
-            name: true,
             email: true,
+            firstName: true,
+            lastName: true,
           },
         },
         hostUniversity: {
@@ -70,7 +79,18 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    return res.json(experiences);
+    return res.json(
+      experiences.map(({ users, ...experience }) => ({
+        ...experience,
+        user: users
+          ? {
+              id: users.id,
+              email: users.email,
+              name: buildDisplayName(users),
+            }
+          : null,
+      })),
+    );
   } catch (error) {
     console.error("Error fetching erasmus experiences:", error);
     return res.status(500).json({ error: "Internal server error" });

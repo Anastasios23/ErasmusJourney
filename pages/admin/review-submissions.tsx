@@ -94,7 +94,7 @@ export default function ReviewSubmissions() {
   }, [status]);
 
   useEffect(() => {
-    if (!selectedSubmission) {
+    if (!selectedSubmission?.id) {
       setImpactPreview(null);
       setPreviewError(null);
       setPreviewUnavailableReason(null);
@@ -102,8 +102,9 @@ export default function ReviewSubmissions() {
       return;
     }
 
-    const controller = new AbortController();
     let active = true;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    const submissionId = selectedSubmission.id;
 
     const fetchImpactPreview = async () => {
       try {
@@ -111,12 +112,14 @@ export default function ReviewSubmissions() {
         setPreviewError(null);
         setPreviewUnavailableReason(null);
 
-        const response = await fetch(
-          `/api/admin/erasmus-experiences/${selectedSubmission.id}/preview`,
-          {
-            signal: controller.signal,
-          },
-        );
+        const response = (await Promise.race([
+          fetch(`/api/admin/erasmus-experiences/${submissionId}/preview`),
+          new Promise<never>((_, reject) => {
+            timeoutId = setTimeout(() => {
+              reject(new Error("Timed out loading public impact preview"));
+            }, 15_000);
+          }),
+        ])) as Response;
 
         if (!response.ok) {
           const errorData = await response
@@ -146,10 +149,6 @@ export default function ReviewSubmissions() {
           setPreviewUnavailableReason(null);
         }
       } catch (err) {
-        if (controller.signal.aborted) {
-          return;
-        }
-
         console.error("Error loading public impact preview:", err);
         if (active) {
           setImpactPreview(null);
@@ -160,6 +159,9 @@ export default function ReviewSubmissions() {
           );
         }
       } finally {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
         if (active) {
           setPreviewLoading(false);
         }
@@ -170,9 +172,11 @@ export default function ReviewSubmissions() {
 
     return () => {
       active = false;
-      controller.abort();
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
     };
-  }, [selectedSubmission]);
+  }, [selectedSubmission?.id]);
 
   const approvalBlockedByPublishability =
     previewUnavailableReason?.code === "INCOMPLETE_DESTINATION_IDENTITY";
