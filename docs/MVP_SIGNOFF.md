@@ -16,6 +16,8 @@ npm run proof:preview-to-approval
 
 If you are using a fresh local database with no approved submissions yet, run `npm run db:seed:proof` once before the public smoke/proof commands.
 
+For the final 10 to 15 minute browser pass, use [docs/MVP_MANUAL_RUNBOOK.md](./MVP_MANUAL_RUNBOOK.md).
+
 ## Manual Release Checklist
 
 | Check | Status |
