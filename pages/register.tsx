@@ -26,6 +26,7 @@ import { z, ZodError } from "zod";
 import { handleApiError } from "../src/utils/apiErrorHandler";
 import PasswordStrength from "../src/components/PasswordStrength";
 import { cn } from "../src/lib/utils";
+import { normalizeInternalCallbackPath } from "../src/lib/authRedirect";
 
 // Floating orbs component
 function FloatingOrbs() {
@@ -70,6 +71,10 @@ const registrationSchema = z
 export default function Register() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const safeCallbackUrl = normalizeInternalCallbackPath(
+    router.query.callbackUrl as string | string[] | undefined,
+    "/dashboard",
+  );
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -90,9 +95,9 @@ export default function Register() {
 
   useEffect(() => {
     if (status === "authenticated" && session) {
-      router.push("/dashboard");
+      void router.push(safeCallbackUrl);
     }
-  }, [session, status, router]);
+  }, [safeCallbackUrl, session, status, router]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -140,7 +145,7 @@ export default function Register() {
   };
 
   const handleGoogleSignUp = async () => {
-    await signIn("google", { callbackUrl: "/dashboard" });
+    await signIn("google", { callbackUrl: safeCallbackUrl });
   };
 
   if (status === "loading") {

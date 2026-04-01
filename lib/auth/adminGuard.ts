@@ -2,6 +2,7 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { Session } from "next-auth";
+import { buildLoginRedirectUrl } from "@/lib/authRedirect";
 
 /**
  * Higher-order function to protect admin routes
@@ -32,7 +33,10 @@ export function withAdminAuth(
     if (!session) {
       return {
         redirect: {
-          destination: `/login?callbackUrl=${encodeURIComponent(context.resolvedUrl)}`,
+          destination: buildLoginRedirectUrl(
+            context.resolvedUrl,
+            context.resolvedUrl,
+          ),
           permanent: false,
         },
       };
@@ -96,7 +100,10 @@ export function withAuth(
     if (!session) {
       return {
         redirect: {
-          destination: `/login?callbackUrl=${encodeURIComponent(context.resolvedUrl)}`,
+          destination: buildLoginRedirectUrl(
+            context.resolvedUrl,
+            context.resolvedUrl,
+          ),
           permanent: false,
         },
       };

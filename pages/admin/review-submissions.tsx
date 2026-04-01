@@ -37,6 +37,7 @@ import {
   sanitizeCourseMappingsData,
 } from "../../src/lib/courseMatching";
 import { sanitizeLivingExpensesStepData } from "../../src/lib/livingExpenses";
+import { buildLoginRedirectUrl } from "../../src/lib/authRedirect";
 
 interface Experience {
   id: string;
@@ -84,7 +85,12 @@ export default function ReviewSubmissions() {
   // Check admin access
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login");
+      void router.replace(
+        buildLoginRedirectUrl(
+          router.asPath,
+          "/admin/review-submissions",
+        ),
+      );
     }
   }, [status, router]);
 

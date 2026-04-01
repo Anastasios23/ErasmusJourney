@@ -19,6 +19,7 @@ import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import { useErasmusProgress } from "../src/hooks/useErasmusProgress";
 import WelcomeTour from "../src/components/WelcomeTour";
+import { buildLoginRedirectUrl } from "../src/lib/authRedirect";
 
 interface ApplicationStep {
   number: number;
@@ -156,7 +157,7 @@ export default function Dashboard() {
 
   // Auth check
   if (status === "unauthenticated") {
-    router.push("/login");
+    void router.replace(buildLoginRedirectUrl(router.asPath, "/dashboard"));
     return null;
   }
 
@@ -288,18 +289,19 @@ export default function Dashboard() {
                         forward with your Erasmus application.
                       </p>
                     </div>
-                    <Link href={nextStep.href}>
-                      <Button
-                        size="lg"
-                        className={`bg-gradient-to-r ${nextStep.gradient} hover:opacity-90 text-white shadow-xl shadow-blue-500/25 px-8 py-6 text-lg rounded-2xl group`}
-                      >
+                    <Button
+                      asChild
+                      size="lg"
+                      className={`bg-gradient-to-r ${nextStep.gradient} hover:opacity-90 text-white shadow-xl shadow-blue-500/25 px-8 py-6 text-lg rounded-2xl group`}
+                    >
+                      <Link href={nextStep.href}>
                         <span>Continue</span>
                         <Icon
                           icon="solar:arrow-right-linear"
                           className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform"
                         />
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
                   </div>
                 </CardContent>
               </GlassCard>
@@ -327,23 +329,25 @@ export default function Dashboard() {
                       </p>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3">
-                      <Link href="/submissions">
-                        <Button
-                          variant="outline"
-                          className="border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-xl px-6"
-                        >
-                          View Submission
-                        </Button>
-                      </Link>
-                      <Link href="/destinations">
-                        <Button className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:opacity-90 text-white shadow-xl shadow-emerald-500/25 rounded-xl px-6">
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-xl px-6"
+                      >
+                        <Link href="/submissions">View Submission</Link>
+                      </Button>
+                      <Button
+                        asChild
+                        className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:opacity-90 text-white shadow-xl shadow-emerald-500/25 rounded-xl px-6"
+                      >
+                        <Link href="/destinations">
                           Explore Destinations
                           <Icon
                             icon="solar:arrow-right-linear"
                             className="ml-2 h-4 w-4"
                           />
-                        </Button>
-                      </Link>
+                        </Link>
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -427,25 +431,25 @@ export default function Dashboard() {
 
                     <div className="flex items-center gap-3">
                       {step.completed ? (
-                        <Link href={step.href}>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-xl"
-                          >
-                            Edit
-                          </Button>
-                        </Link>
+                        <Button
+                          asChild
+                          variant="ghost"
+                          size="sm"
+                          className="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-xl"
+                        >
+                          <Link href={step.href}>Edit</Link>
+                        </Button>
                       ) : isAccessible ? (
-                        <Link href={step.href}>
-                          <Button
-                            size="sm"
-                            className={
-                              step === nextStep
-                                ? `bg-gradient-to-r ${step.gradient} hover:opacity-90 text-white shadow-lg rounded-xl px-6`
-                                : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl"
-                            }
-                          >
+                        <Button
+                          asChild
+                          size="sm"
+                          className={
+                            step === nextStep
+                              ? `bg-gradient-to-r ${step.gradient} hover:opacity-90 text-white shadow-lg rounded-xl px-6`
+                              : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl"
+                          }
+                        >
+                          <Link href={step.href}>
                             {step === nextStep ? (
                               <>
                                 Start
@@ -457,8 +461,8 @@ export default function Dashboard() {
                             ) : (
                               "Pending"
                             )}
-                          </Button>
-                        </Link>
+                          </Link>
+                        </Button>
                       ) : (
                         <Button
                           size="sm"

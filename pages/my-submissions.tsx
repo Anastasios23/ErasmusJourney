@@ -30,6 +30,7 @@ import {
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import { HeroSection } from "@/components/ui/hero-section";
+import { buildLoginRedirectUrl } from "../src/lib/authRedirect";
 
 interface Submission {
   id: string;
@@ -86,9 +87,17 @@ export default function MySubmissions() {
   // Fetch submissions
   useEffect(() => {
     if (authStatus === "authenticated") {
-      fetchSubmissions();
+      void fetchSubmissions();
     }
   }, [authStatus]);
+
+  useEffect(() => {
+    if (authStatus === "unauthenticated") {
+      void router.replace(
+        buildLoginRedirectUrl(router.asPath, "/my-submissions"),
+      );
+    }
+  }, [authStatus, router]);
 
   const fetchSubmissions = async () => {
     try {
@@ -301,6 +310,10 @@ export default function MySubmissions() {
         </div>
       </>
     );
+  }
+
+  if (authStatus === "unauthenticated") {
+    return null;
   }
 
   return (

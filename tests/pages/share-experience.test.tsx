@@ -12,6 +12,13 @@ const mockRouterReplace = vi.fn();
 const mockRouterPush = vi.fn();
 const mockSetCurrentStep = vi.fn();
 const mockMarkStepCompleted = vi.fn();
+let mockSessionStatus: "authenticated" | "unauthenticated" | "loading" =
+  "authenticated";
+let mockSessionData: any = {
+  user: {
+    email: "student@ucy.ac.cy",
+  },
+};
 
 const completeBasicInfo = {
   homeUniversity: "University of Nicosia (UNIC)",
@@ -43,12 +50,8 @@ vi.mock("next/head", () => ({
 
 vi.mock("next-auth/react", () => ({
   useSession: () => ({
-    data: {
-      user: {
-        email: "student@ucy.ac.cy",
-      },
-    },
-    status: "authenticated",
+    data: mockSessionData,
+    status: mockSessionStatus,
   }),
 }));
 
@@ -208,6 +211,12 @@ describe("ShareExperience page", () => {
 
     mockSaveProgress.mockResolvedValue(true);
     mockSubmitExperience.mockResolvedValue(true);
+    mockSessionStatus = "authenticated";
+    mockSessionData = {
+      user: {
+        email: "student@ucy.ac.cy",
+      },
+    };
 
     mockExperienceState = {
       data: {
@@ -288,6 +297,19 @@ describe("ShareExperience page", () => {
     rerender(<ShareExperience />);
 
     expect(screen.getByTestId("basic-year")).toHaveTextContent("2027/2028");
+  });
+
+  it("redirects unauthenticated users to login with a single clean callback", async () => {
+    mockSessionStatus = "unauthenticated";
+    mockSessionData = null;
+
+    render(<ShareExperience />);
+
+    await waitFor(() => {
+      expect(mockRouterReplace).toHaveBeenCalledWith(
+        "/login?callbackUrl=%2Fshare-experience%3Fstep%3D1",
+      );
+    });
   });
 
   it("clamps an inaccessible deep link back to step 1", async () => {

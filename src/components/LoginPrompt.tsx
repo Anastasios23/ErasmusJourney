@@ -9,6 +9,10 @@ import {
   PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE,
   PUBLIC_DESTINATIONS_ROUTE,
 } from "@/lib/publicRoutes";
+import {
+  buildLoginRedirectUrl,
+  buildRegisterRedirectUrl,
+} from "@/lib/authRedirect";
 
 interface LoginPromptProps {
   title?: string;
@@ -27,8 +31,8 @@ const LoginPrompt: React.FC<LoginPromptProps> = ({
   showAlternatives = true,
   className = "",
 }) => {
-  const loginUrl = `/login?callbackUrl=${encodeURIComponent(currentPath)}`;
-  const registerUrl = `/register?callbackUrl=${encodeURIComponent(currentPath)}`;
+  const loginUrl = buildLoginRedirectUrl(currentPath, currentPath);
+  const registerUrl = buildRegisterRedirectUrl(currentPath, currentPath);
 
   return (
     <div

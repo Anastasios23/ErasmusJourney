@@ -24,6 +24,7 @@ import {
 import { Icon } from "@iconify/react";
 import { handleApiError } from "../src/utils/apiErrorHandler";
 import { handleForgotPassword as forgotPasswordAPI } from "../src/utils/forgotPasswordHandler";
+import { normalizeInternalCallbackPath } from "../src/lib/authRedirect";
 
 // Floating orbs component
 function FloatingOrbs() {
@@ -39,6 +40,10 @@ function FloatingOrbs() {
 export default function Login() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const safeCallbackUrl = normalizeInternalCallbackPath(
+    router.query.callbackUrl as string | string[] | undefined,
+    "/dashboard",
+  );
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -52,9 +57,9 @@ export default function Login() {
 
   useEffect(() => {
     if (status === "authenticated") {
-      router.push((router.query.callbackUrl as string) || "/dashboard");
+      void router.push(safeCallbackUrl);
     }
-  }, [status, router]);
+  }, [safeCallbackUrl, status, router]);
 
   useEffect(() => {
     if (router.query.error) {
@@ -85,14 +90,14 @@ export default function Login() {
       redirect: false,
       email,
       password,
-      callbackUrl: (router.query.callbackUrl as string) || "/",
+      callbackUrl: safeCallbackUrl,
     });
 
     if (result?.error) {
       setError(result.error);
       setIsLoading(false);
     } else if (result?.ok) {
-      window.location.href = (router.query.callbackUrl as string) || "/";
+      window.location.href = safeCallbackUrl;
     } else {
       setError("Login failed. Please try again.");
       setIsLoading(false);
@@ -101,8 +106,7 @@ export default function Login() {
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    const callbackUrl = (router.query.callbackUrl as string) || "/";
-    await signIn("google", { callbackUrl });
+    await signIn("google", { callbackUrl: safeCallbackUrl });
   };
 
   const handleForgotPassword = async (e: FormEvent) => {

@@ -25,6 +25,7 @@ import {
 import { toast } from "../src/hooks/use-toast";
 import { clampShareExperienceStep } from "../src/lib/shareExperienceStepAccess";
 import { cn } from "../src/lib/utils";
+import { buildLoginRedirectUrl } from "../src/lib/authRedirect";
 
 // Import step components
 import BasicInformationStep from "../components/forms/steps/BasicInformationStep";
@@ -163,7 +164,9 @@ export default function ShareExperience() {
   // Redirect to login if not authenticated
   useEffect(() => {
     if (sessionStatus === "unauthenticated") {
-      router.replace(`/login?callbackUrl=${encodeURIComponent(router.asPath)}`);
+      void router.replace(
+        buildLoginRedirectUrl(router.asPath, "/share-experience?step=1"),
+      );
     }
   }, [sessionStatus, router]);
 

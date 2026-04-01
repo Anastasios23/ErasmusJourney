@@ -80,6 +80,7 @@ async function stopServer(child) {
 
 async function main() {
   const baseUrl = process.env.MVP_SIGNOFF_BASE_URL || "http://127.0.0.1:3101";
+  const liveBaseUrl = process.env.MVP_SIGNOFF_LIVE_BASE_URL;
   const { port } = new URL(baseUrl);
 
   logStep("Running typecheck");
@@ -119,9 +120,37 @@ async function main() {
     await runCommand(npmCommand, ["run", "smoke:public-destinations"], {
       env: { SMOKE_BASE_URL: baseUrl },
     });
+
+    logStep("Running unauthenticated auth redirect browser smoke");
+    await runCommand(
+      npmCommand,
+      ["run", "e2e:smoke:share-experience:redirect"],
+      {
+        env: { PLAYWRIGHT_BASE_URL: baseUrl },
+      },
+    );
   } finally {
     logStep("Stopping production server");
     await stopServer(server);
+  }
+
+  if (liveBaseUrl) {
+    logStep(`Waiting for live deployment at ${liveBaseUrl}`);
+    await waitForUrl(`${liveBaseUrl}/`);
+
+    logStep("Running live public destination smoke checks");
+    await runCommand(npmCommand, ["run", "smoke:public-destinations"], {
+      env: { SMOKE_BASE_URL: liveBaseUrl },
+    });
+
+    logStep("Running live unauthenticated auth redirect browser smoke");
+    await runCommand(
+      npmCommand,
+      ["run", "e2e:smoke:share-experience:redirect"],
+      {
+        env: { PLAYWRIGHT_BASE_URL: liveBaseUrl },
+      },
+    );
   }
 
   logStep("Automated MVP signoff gate passed");

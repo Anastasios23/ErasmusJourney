@@ -16,6 +16,7 @@
     "e2e:install": "playwright install chromium",
     "e2e:smoke": "npm run build:next-only && playwright test tests/e2e --project=chromium",
     "e2e:smoke:share-experience": "set PLAYWRIGHT_SERVER_MODE=dev&& playwright test tests/e2e/share-experience --project=chromium",
+    "e2e:smoke:share-experience:redirect": "playwright test tests/e2e/auth/unauthenticated-redirect.spec.js --project=chromium",
     "e2e:smoke:share-experience:prod": "npm run build:next-only && playwright test tests/e2e/share-experience --project=chromium",
     "format.fix": "prettier --write .",
     "typecheck": "npm run typecheck:next-only",

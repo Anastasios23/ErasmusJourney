@@ -25,6 +25,18 @@ npm run mvp:signoff:prep
 npm run mvp:signoff:auto
 ```
 
+`npm run mvp:signoff:auto` now includes:
+- local typecheck, tests, proofs, and public smoke checks
+- a browser smoke that verifies `/share-experience?step=1` redirects once to `/login?callbackUrl=%2Fshare-experience%3Fstep%3D1`
+
+To make production verification part of the same gate, run:
+
+```bash
+MVP_SIGNOFF_LIVE_BASE_URL=https://erasmus-journey.vercel.app npm run mvp:signoff:auto
+```
+
+The live signoff step is release-blocking. `/api/health` must return `200` with `status: "healthy"` and the canonical public destination routes must all return `200`.
+
 ## Manual Release Checklist
 
 | Check | Status |

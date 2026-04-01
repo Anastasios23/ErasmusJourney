@@ -43,7 +43,21 @@ async function main(): Promise<void> {
   const baseUrl = process.env.SMOKE_BASE_URL || "http://localhost:3000";
   const notFoundSlug = "__destination-not-found-smoke__";
 
-  console.log(`Running public destination smoke checks against ${baseUrl}`);
+  console.log(`Running MVP public smoke checks against ${baseUrl}`);
+
+  await expectStatus(`${baseUrl}/`, 200);
+
+  const healthResponse = await expectStatus(`${baseUrl}/api/health`, 200);
+  const healthPayload = (await healthResponse.json()) as JsonObject;
+
+  assert(healthPayload.status === "healthy", "health.status must be healthy");
+  assert(
+    healthPayload.database && typeof healthPayload.database === "object",
+    "health.database must be an object",
+  );
+
+  const database = healthPayload.database as JsonObject;
+  assert(database.connected === true, "health.database.connected must be true");
 
   await expectStatus(`${baseUrl}/destinations`, 200);
 
@@ -101,6 +115,8 @@ async function main(): Promise<void> {
     );
 
     await expectStatus(`${baseUrl}/destinations/${slug}`, 200);
+    await expectStatus(`${baseUrl}/destinations/${slug}/accommodation`, 200);
+    await expectStatus(`${baseUrl}/destinations/${slug}/courses`, 200);
   } else {
     console.log("No destinations returned; skipping existing-slug checks.");
   }
@@ -108,7 +124,7 @@ async function main(): Promise<void> {
   await expectStatus(`${baseUrl}/api/public/destinations/${notFoundSlug}`, 404);
   await expectStatus(`${baseUrl}/destinations/${notFoundSlug}`, 404);
 
-  console.log("Public destination smoke checks passed.");
+  console.log("MVP public smoke checks passed.");
 }
 
 main().catch((error) => {

@@ -2,8 +2,6 @@ import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-import { prisma } from "../lib/prisma";
-import { getAllCitiesAggregatedData } from "../src/services/cityAggregationService";
 import Header from "../components/Header";
 import Footer from "../src/components/Footer";
 import { Button } from "../src/components/ui/button";
@@ -12,42 +10,36 @@ import {
   PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE,
   PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE,
   PUBLIC_DESTINATIONS_ROUTE,
-  buildPublicDestinationRoute,
 } from "../src/lib/publicRoutes";
 import { Icon } from "@iconify/react";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
+import type { PublicDestinationSignalTone } from "../src/lib/publicDestinationPresentation";
+import {
+  loadHomePagePublicData,
+  type HomePageFeaturedDestinationData,
+} from "../src/server/homePagePublicData";
 
 // ============================================================================
 // TYPES
 // ============================================================================
-interface Story {
-  id: string;
-  title?: string;
-  studentName?: string;
-  excerpt?: string | null;
-  story?: string;
-  imageUrl?: string | null;
-  createdAt: string;
-  city?: string;
-  country?: string;
-  university?: string;
-  likes?: number;
-}
-
 interface HomePageProps {
-  totalUniversities: number;
-  latestStories: Story[];
-  totalStudents: number;
-  totalDestinations: number;
+  publicDataAvailable: boolean;
+  totalHostUniversities: number | null;
+  totalApprovedSubmissions: number | null;
+  totalDestinations: number | null;
+  strongerSignalDestinations: number | null;
   featuredDestinations: FeaturedDestination[];
 }
 
-interface FeaturedDestination {
+interface FeaturedDestination extends HomePageFeaturedDestinationData {
   city: string;
   country: string;
+  slug: string;
   image: string;
-  students: number;
-  rating: number;
+  submissionCount: number;
+  hostUniversityCount: number;
+  signalLabel: string;
+  signalTone: PublicDestinationSignalTone;
 }
 
 // City images mapping for destinations without custom imageUrl
@@ -107,7 +99,7 @@ interface CacheEntry<T> {
 }
 
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
-let homepageCache: CacheEntry<any> | null = null;
+let homepageCache: CacheEntry<HomePageProps> | null = null;
 
 function getCachedData<T>(cache: CacheEntry<T> | null): T | null {
   if (!cache) return null;
@@ -448,18 +440,24 @@ function RevealOnScroll({
 // DESTINATION CARD WITH TILT
 // ============================================================================
 function DestinationCard({
+  slug,
   city,
   country,
   image,
-  students,
-  rating,
+  submissionCount,
+  hostUniversityCount,
+  signalLabel,
+  signalTone,
   index,
 }: {
+  slug: string;
   city: string;
   country: string;
   image: string;
-  students: number;
-  rating: number;
+  submissionCount: number;
+  hostUniversityCount: number;
+  signalLabel: string;
+  signalTone: PublicDestinationSignalTone;
   index: number;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -489,10 +487,7 @@ function DestinationCard({
 
   return (
     <RevealOnScroll delay={index * 100}>
-      <Link
-        href={buildPublicDestinationRoute({ city, country })}
-        className="block"
-      >
+      <Link href={`${PUBLIC_DESTINATIONS_ROUTE}/${slug}`} className="block">
         <div
           ref={cardRef}
           className="relative z-0 group cursor-pointer isolate"
@@ -524,15 +519,25 @@ function DestinationCard({
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-              {/* Rating badge */}
+              {/* Signal badge */}
               <div className="absolute top-4 right-4 flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-sm">
                 <Icon
-                  icon="solar:star-bold"
-                  className="w-4 h-4 text-amber-500"
+                  icon={
+                    signalTone === "success"
+                      ? "solar:shield-check-bold-duotone"
+                      : signalTone === "info"
+                        ? "solar:chart-square-bold-duotone"
+                        : "solar:danger-triangle-bold-duotone"
+                  }
+                  className={
+                    signalTone === "success"
+                      ? "w-4 h-4 text-emerald-600"
+                      : signalTone === "info"
+                        ? "w-4 h-4 text-sky-600"
+                        : "w-4 h-4 text-amber-600"
+                  }
                 />
-                <span className="font-semibold text-gray-900">
-                  {rating.toFixed(1)}
-                </span>
+                <span className="font-semibold text-gray-900">{signalLabel}</span>
               </div>
 
               {/* Location */}
@@ -550,13 +555,21 @@ function DestinationCard({
 
             {/* Stats */}
             <div className="p-5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-4 text-gray-600 dark:text-gray-400">
                   <Icon
                     icon="solar:users-group-rounded-bold-duotone"
                     className="w-4 h-4"
                   />
-                  <span>{students} students shared</span>
+                  <span>{submissionCount} approved submissions</span>
+                  <span className="flex items-center gap-2">
+                    <Icon
+                      icon="solar:buildings-2-bold-duotone"
+                      className="w-4 h-4"
+                    />
+                    {hostUniversityCount} host
+                    {hostUniversityCount === 1 ? " university" : " universities"}
+                  </span>
                 </div>
                 <Icon
                   icon="solar:arrow-right-up-bold"
@@ -635,12 +648,13 @@ function StatCounter({
   suffix = "",
   icon,
 }: {
-  value: number;
+  value: number | null;
   label: string;
   suffix?: string;
   icon: string;
 }) {
-  const { count, ref } = useCounter(value);
+  const isAvailable = typeof value === "number";
+  const { count, ref } = useCounter(isAvailable ? value : 0);
 
   return (
     <div ref={ref} className="text-center">
@@ -651,12 +665,16 @@ function StatCounter({
         />
       </div>
       <div className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2 tabular-nums">
-        {count.toLocaleString()}
-        {suffix}
+        {isAvailable ? `${count.toLocaleString()}${suffix}` : "—"}
       </div>
       <div className="text-gray-500 dark:text-gray-400 font-medium">
         {label}
       </div>
+      {!isAvailable ? (
+        <div className="mt-1 text-xs uppercase tracking-[0.2em] text-amber-600 dark:text-amber-400">
+          Unavailable
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -719,14 +737,35 @@ function TestimonialCard({
 // MAIN COMPONENT
 // ============================================================================
 export default function HomePage({
-  totalUniversities,
-  latestStories,
-  totalStudents,
+  publicDataAvailable,
+  totalHostUniversities,
+  totalApprovedSubmissions,
   totalDestinations,
+  strongerSignalDestinations,
   featuredDestinations,
 }: HomePageProps) {
   const scrollProgress = useScrollProgress();
-  const parallax = useMouseParallax(0.01);
+  const hasFeaturedDestinations = featuredDestinations.length > 0;
+  const heroBadgeClasses = publicDataAvailable
+    ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+    : "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300";
+  const heroBadgeText = !publicDataAvailable
+    ? "Public destination data is temporarily unavailable"
+    : typeof totalApprovedSubmissions === "number" && totalApprovedSubmissions > 0
+      ? `Built from ${totalApprovedSubmissions.toLocaleString()} approved student reports`
+      : "Awaiting the first approved student reports";
+  const overlayHeadline = !publicDataAvailable
+    ? "Public destination signal unavailable"
+    : typeof totalApprovedSubmissions === "number" && totalApprovedSubmissions > 0
+      ? `${totalApprovedSubmissions.toLocaleString()} approved submissions`
+      : "No approved submissions published yet";
+  const overlaySubline = !publicDataAvailable
+    ? "Check the public destination data path before launch"
+    : typeof strongerSignalDestinations === "number"
+      ? `${strongerSignalDestinations.toLocaleString()} destination ${
+          strongerSignalDestinations === 1 ? "hub has" : "hubs have"
+        } a stronger signal sample`
+      : "Featured destination pages update from approved reports only";
 
   // Features data
   const features = [
@@ -842,17 +881,15 @@ export default function HomePage({
           />
 
           {/* Content */}
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-32">
             <div className="text-center">
               {/* Badge */}
               <RevealOnScroll>
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-8">
+                <div
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-8 ${heroBadgeClasses}`}
+                >
                   <Icon icon="solar:stars-bold-duotone" className="w-4 h-4" />
-                  <span>
-                    {totalStudents > 0
-                      ? `Trusted by ${totalStudents}+ Cyprus students`
-                      : "Built for Cyprus students"}
-                  </span>
+                  <span>{heroBadgeText}</span>
                 </div>
               </RevealOnScroll>
 
@@ -937,32 +974,46 @@ export default function HomePage({
         {/* ================================================================ */}
         {/* STATS SECTION */}
         {/* ================================================================ */}
-        <section className="relative py-24 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
+        <section className="relative py-20 md:py-24 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
               <StatCounter
                 value={totalDestinations}
                 label="Destinations"
-                suffix={totalDestinations > 0 ? "+" : ""}
+                suffix={
+                  typeof totalDestinations === "number" && totalDestinations > 0
+                    ? "+"
+                    : ""
+                }
                 icon="solar:map-point-bold-duotone"
               />
               <StatCounter
-                value={totalUniversities}
-                label="Universities"
-                suffix={totalUniversities > 0 ? "+" : ""}
+                value={totalHostUniversities}
+                label="Host Universities"
+                suffix={
+                  typeof totalHostUniversities === "number" &&
+                  totalHostUniversities > 0
+                    ? "+"
+                    : ""
+                }
                 icon="solar:buildings-2-bold-duotone"
               />
               <StatCounter
-                value={totalStudents}
-                label="Students"
-                suffix={totalStudents > 0 ? "+" : ""}
+                value={totalApprovedSubmissions}
+                label="Approved Reports"
+                suffix={
+                  typeof totalApprovedSubmissions === "number" &&
+                  totalApprovedSubmissions > 0
+                    ? "+"
+                    : ""
+                }
                 icon="solar:users-group-rounded-bold-duotone"
               />
               <StatCounter
-                value={98}
-                label="Success Rate"
-                suffix="%"
-                icon="solar:star-bold-duotone"
+                value={strongerSignalDestinations}
+                label="Stronger Signals"
+                suffix=""
+                icon="solar:shield-check-bold-duotone"
               />
             </div>
           </div>
@@ -971,7 +1022,7 @@ export default function HomePage({
         {/* ================================================================ */}
         {/* FEATURED DESTINATIONS */}
         {/* ================================================================ */}
-        <section className="relative z-0 py-32">
+        <section className="relative z-0 py-24 md:py-28">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Section header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
@@ -1010,18 +1061,46 @@ export default function HomePage({
             </div>
 
             {/* Destination cards */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {featuredDestinations.map((dest, index) => (
-                <DestinationCard key={dest.city} {...dest} index={index} />
-              ))}
-            </div>
+            {hasFeaturedDestinations ? (
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {featuredDestinations.map((dest, index) => (
+                  <DestinationCard key={dest.slug} {...dest} index={index} />
+                ))}
+              </div>
+            ) : (
+              <RevealOnScroll>
+                <div className="rounded-[2rem] border border-dashed border-amber-300/80 dark:border-amber-700/60 bg-amber-50/80 dark:bg-amber-950/30 p-8 md:p-10">
+                  <div className="max-w-2xl">
+                    <Badge className="mb-4 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 px-4 py-1.5 rounded-full">
+                      <Icon
+                        icon="solar:danger-triangle-bold-duotone"
+                        className="w-4 h-4 mr-2"
+                      />
+                      {publicDataAvailable
+                        ? "No published destination hubs yet"
+                        : "Destination data unavailable"}
+                    </Badge>
+                    <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                      {publicDataAvailable
+                        ? "Approve complete reports to unlock featured destination pages."
+                        : "The homepage cannot load approved destination data right now."}
+                    </h3>
+                    <p className="mt-4 text-base md:text-lg text-gray-600 dark:text-gray-400">
+                      {publicDataAvailable
+                        ? "The homepage now shows only approved public destination aggregates, so it stays empty until publishable reports exist."
+                        : "Fix the production data path before signoff so the homepage, destination list, and health check all rely on the same source of truth."}
+                    </p>
+                  </div>
+                </div>
+              </RevealOnScroll>
+            )}
           </div>
         </section>
 
         {/* ================================================================ */}
         {/* FEATURES SECTION */}
         {/* ================================================================ */}
-        <section className="py-32 bg-gray-50 dark:bg-gray-900/50 relative overflow-hidden">
+        <section className="py-24 md:py-28 bg-gray-50 dark:bg-gray-900/50 relative overflow-hidden">
           {/* Background decoration */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-bl from-blue-100/50 dark:from-blue-900/20 to-transparent rounded-full blur-3xl" />
@@ -1071,7 +1150,7 @@ export default function HomePage({
         {/* ================================================================ */}
         {/* HOW IT WORKS */}
         {/* ================================================================ */}
-        <section className="py-32 relative">
+        <section className="py-24 md:py-28 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               {/* Left content */}
@@ -1195,10 +1274,10 @@ export default function HomePage({
                         </div>
                         <div>
                           <div className="font-semibold text-gray-900 dark:text-white">
-                            500+ approved submissions
+                            {overlayHeadline}
                           </div>
                           <div className="text-sm text-gray-500">
-                            shaping public destination pages
+                            {overlaySubline}
                           </div>
                         </div>
                       </div>
@@ -1373,180 +1452,50 @@ export default function HomePage({
 // ============================================================================
 // DATA FETCHING
 // ============================================================================
-
-// Fallback destinations used when database has no data
-const FALLBACK_DESTINATIONS: FeaturedDestination[] = [
-  {
-    city: "Barcelona",
-    country: "Spain",
-    image: CITY_IMAGES["barcelona"],
-    students: 156,
-    rating: 4.8,
-  },
-  {
-    city: "Amsterdam",
-    country: "Netherlands",
-    image: CITY_IMAGES["amsterdam"],
-    students: 142,
-    rating: 4.7,
-  },
-  {
-    city: "Prague",
-    country: "Czech Republic",
-    image: CITY_IMAGES["prague"],
-    students: 128,
-    rating: 4.6,
-  },
-  {
-    city: "Lisbon",
-    country: "Portugal",
-    image: CITY_IMAGES["lisbon"],
-    students: 134,
-    rating: 4.7,
-  },
-];
+function getFeaturedDestinationImage(city: string): string {
+  return CITY_IMAGES[city.toLowerCase()] || DEFAULT_DESTINATION_IMAGE;
+}
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    // Check for cached data first to reduce database load
     const cachedData = getCachedData(homepageCache);
     if (cachedData) {
-      console.log("[Homepage] Serving cached data");
       return { props: cachedData };
     }
 
-    console.log("[Homepage] Fetching fresh data from database...");
-
-    // Fetch statistics and city data in parallel
-    const [
-      universitiesCount,
-      experiencesCount,
-      destinationsCount,
-      cityAggregatedData,
-      featuredAdminDestinations,
-    ] = await Promise.all([
-      prisma.universities.count().catch(() => 0),
-      prisma.erasmusExperience
-        .count({ where: { status: "SUBMITTED" } })
-        .catch(() => 0),
-      prisma.destinations.count().catch(() => 0),
-      getAllCitiesAggregatedData().catch(() => []),
-      // Also check admin_destinations for featured cities with custom images
-      prisma.admin_destinations
-        .findMany({
-          where: { featured: true, active: true },
-          select: { city: true, country: true, imageUrl: true },
-        })
-        .catch(() => []),
-    ]);
-
-    // Create a map of admin destination images
-    const adminImageMap: Record<string, string> = {};
-    featuredAdminDestinations.forEach((dest: any) => {
-      if (dest.imageUrl) {
-        adminImageMap[dest.city.toLowerCase()] = dest.imageUrl;
-      }
-    });
-
-    // Transform aggregated city data into featured destinations
-    // Sort by total submissions (popularity) and take top 4
-    let featuredDestinations: FeaturedDestination[] = cityAggregatedData
-      .filter((city: any) => city.totalSubmissions > 0)
-      .sort((a: any, b: any) => b.totalSubmissions - a.totalSubmissions)
-      .slice(0, 4)
-      .map((city: any) => {
-        const cityKey = city.city.toLowerCase();
-        return {
-          city: city.city,
-          country: city.country,
-          image:
-            adminImageMap[cityKey] ||
-            CITY_IMAGES[cityKey] ||
-            DEFAULT_DESTINATION_IMAGE,
-          students: city.totalSubmissions,
-          rating: city.ratings?.avgOverallRating || 4.5,
-        };
-      });
-
-    // If no data from database, use fallback destinations
-    if (featuredDestinations.length === 0) {
-      featuredDestinations = FALLBACK_DESTINATIONS;
-    } else if (featuredDestinations.length < 4) {
-      // Fill remaining slots with fallback destinations that aren't already included
-      const existingCities = new Set(
-        featuredDestinations.map((d) => d.city.toLowerCase()),
-      );
-      const additionalDestinations = FALLBACK_DESTINATIONS.filter(
-        (d) => !existingCities.has(d.city.toLowerCase()),
-      ).slice(0, 4 - featuredDestinations.length);
-      featuredDestinations = [
-        ...featuredDestinations,
-        ...additionalDestinations,
-      ];
-    }
-
-    // Fetch latest submitted experiences for stories
-    const experiences = await prisma.erasmusExperience
-      .findMany({
-        where: {
-          status: "SUBMITTED",
-          isComplete: true,
-        },
-        include: {
-          users: {
-            select: {
-              firstName: true,
-              lastName: true,
-            },
-          },
-        },
-        orderBy: { submittedAt: "desc" },
-        take: 6,
-      })
-      .catch(() => []);
-
-    const latestStories = experiences.map((exp: any) => ({
-      id: exp.id,
-      title:
-        exp.basicInfo?.title ||
-        `Experience in ${exp.basicInfo?.hostCity || "Europe"}`,
-      studentName:
-        `${exp.users?.firstName || "Anonymous"} ${exp.users?.lastName?.charAt(0) || ""}`.trim(),
-      excerpt:
-        exp.experience?.overallExperience || exp.experience?.advice || null,
-      story: exp.experience?.overallExperience || null,
-      imageUrl: exp.basicInfo?.imageUrl || null,
-      createdAt: exp.submittedAt?.toISOString() || new Date().toISOString(),
-      city: exp.basicInfo?.hostCity || null,
-      country: exp.basicInfo?.hostCountry || null,
-      university: exp.basicInfo?.hostUniversity || null,
-      likes: Math.floor(Math.random() * 50) + 10,
-    }));
-
-    // Build the props object
-    const props = {
-      totalUniversities: universitiesCount,
-      latestStories,
-      totalStudents: experiencesCount,
-      totalDestinations: destinationsCount,
-      featuredDestinations,
+    const homePagePublicData = await loadHomePagePublicData();
+    const props: HomePageProps = {
+      publicDataAvailable: homePagePublicData.isAvailable,
+      totalHostUniversities: homePagePublicData.stats.totalHostUniversities,
+      totalApprovedSubmissions:
+        homePagePublicData.stats.totalApprovedSubmissions,
+      totalDestinations: homePagePublicData.stats.totalDestinations,
+      strongerSignalDestinations:
+        homePagePublicData.stats.strongerSignalDestinations,
+      featuredDestinations: homePagePublicData.featuredDestinations.map(
+        (destination) => ({
+          ...destination,
+          image: getFeaturedDestinationImage(destination.city),
+        }),
+      ),
     };
 
-    // Cache the data for subsequent requests
     homepageCache = setCachedData(props);
-    console.log("[Homepage] Data cached successfully");
-
     return { props };
   } catch (error) {
     console.error("Error fetching homepage data:", error);
+
+    const props: HomePageProps = {
+      publicDataAvailable: false,
+      totalHostUniversities: null,
+      totalApprovedSubmissions: null,
+      totalDestinations: null,
+      strongerSignalDestinations: null,
+      featuredDestinations: [],
+    };
+
     return {
-      props: {
-        totalUniversities: 0,
-        latestStories: [],
-        totalStudents: 0,
-        totalDestinations: 0,
-        featuredDestinations: FALLBACK_DESTINATIONS,
-      },
+      props,
     };
   }
 };
