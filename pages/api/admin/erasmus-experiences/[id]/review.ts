@@ -4,6 +4,7 @@ import { authOptions } from "../../../auth/[...nextauth]";
 import { prisma } from "../../../../../lib/prisma";
 import { buildPreviewUnavailableReason } from "../../../../../src/lib/adminPublicImpactPreview";
 import { sanitizeLivingExpensesStepData } from "../../../../../src/lib/livingExpenses";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 /**
  * Admin Review API Endpoint
@@ -173,7 +174,10 @@ export default async function handler(
     console.error("Error reviewing experience:", error);
     return res.status(500).json({
       error: "Failed to review experience",
-      details: error instanceof Error ? error.message : "Unknown error",
+      details: getClientSafeErrorMessage(
+        error,
+        "Unable to review the experience right now.",
+      ),
     });
   }
 }

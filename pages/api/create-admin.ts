@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcryptjs";
 import { prisma } from "../../lib/prisma";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 export default async function handler(
   req: NextApiRequest,
@@ -94,7 +95,10 @@ export default async function handler(
     console.error("Error creating admin user:", error);
     return res.status(500).json({
       error: "Failed to create admin user",
-      details: error.message,
+      details: getClientSafeErrorMessage(
+        error,
+        "Unable to create the admin user right now.",
+      ),
     });
   }
 }

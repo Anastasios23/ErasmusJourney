@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/prisma";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 interface RecommendationRequest {
   userId?: string;
@@ -127,7 +128,10 @@ export default async function handler(
     console.error("Error generating recommendations:", error);
     res.status(500).json({
       error: "Failed to generate recommendations",
-      details: error instanceof Error ? error.message : "Unknown error",
+      details: getClientSafeErrorMessage(
+        error,
+        "Unable to generate recommendations right now.",
+      ),
     });
   }
 }

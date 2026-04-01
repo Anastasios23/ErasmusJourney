@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]";
 import { prisma } from "../../../../lib/prisma";
 import { ContentManagementService } from "../../../../src/services/contentManagementService";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 export default async function handler(
   req: NextApiRequest,
@@ -137,7 +138,10 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     console.error("Error fetching destinations:", error);
     res.status(500).json({
       error: "Internal server error",
-      message: error instanceof Error ? error.message : "Unknown error",
+      message: getClientSafeErrorMessage(
+        error,
+        "Unable to fetch destinations right now.",
+      ),
     });
   }
 }
@@ -205,7 +209,10 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     console.error("Error creating destination:", error);
     res.status(500).json({
       error: "Internal server error",
-      message: error instanceof Error ? error.message : "Unknown error",
+      message: getClientSafeErrorMessage(
+        error,
+        "Unable to create the destination right now.",
+      ),
     });
   }
 }

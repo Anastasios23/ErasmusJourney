@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../../lib/prisma";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 export default async function handler(
   req: NextApiRequest,
@@ -89,7 +90,10 @@ async function handleUpdateStory(
     console.error("Error updating story:", error);
     res.status(500).json({
       error: "Failed to update story",
-      details: error instanceof Error ? error.message : "Unknown error",
+      details: getClientSafeErrorMessage(
+        error,
+        "Unable to update the story right now.",
+      ),
     });
   }
 }
@@ -133,7 +137,10 @@ async function handleDeleteStory(
     console.error("Error deleting story:", error);
     res.status(500).json({
       error: "Failed to delete story",
-      details: error instanceof Error ? error.message : "Unknown error",
+      details: getClientSafeErrorMessage(
+        error,
+        "Unable to delete the story right now.",
+      ),
     });
   }
 }

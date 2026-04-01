@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getCourseMatchingExperiences } from "../../../src/utils/courseMatchingData";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 export default async function handler(
   req: NextApiRequest,
@@ -44,7 +45,10 @@ export default async function handler(
         difficultyBreakdown: {},
         recommendationRate: 0,
       },
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: getClientSafeErrorMessage(
+        error,
+        "Unable to load course matching experiences right now.",
+      ),
     });
   }
 }

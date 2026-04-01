@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 // Simple destination data for testing
 const testDestinations = [
@@ -55,7 +56,10 @@ export default async function handler(
     console.error("Error verifying destinations:", error);
     res.status(500).json({
       error: "Failed to verify destinations",
-      details: error instanceof Error ? error.message : "Unknown error",
+      details: getClientSafeErrorMessage(
+        error,
+        "Unable to verify destinations right now.",
+      ),
     });
   }
 }

@@ -30,11 +30,12 @@ import {
   sanitizeLivingExpensesStepData,
 } from "../../src/lib/livingExpenses";
 import {
+  getClientSafeDatabaseUnavailableCause,
+  getClientSafeDatabaseUnavailableDetails,
+  getClientSafeErrorMessage,
   getDatabaseUnavailableCause,
   getDatabaseUnavailableDetails,
   getErrorMessage,
-  getInternalServerDetails,
-  getInternalServerStack,
   isDatabaseConnectionError,
 } from "../../lib/databaseErrors";
 import { serializeErasmusExperienceForClient } from "../../src/server/serializeErasmusExperience";
@@ -304,11 +305,11 @@ export default async function handler(
 
     if (isDatabaseConnectionError(error)) {
       logDatabaseUnavailable(failureContext, error);
-      const cause = getDatabaseUnavailableCause(error);
+      const cause = getClientSafeDatabaseUnavailableCause(error);
 
       return res.status(503).json({
         error: "Database unavailable",
-        details: getDatabaseUnavailableDetails(),
+        details: getClientSafeDatabaseUnavailableDetails(),
         ...(cause ? { cause } : {}),
       });
     }
@@ -317,7 +318,7 @@ export default async function handler(
 
     return res.status(500).json({
       error: "Internal server error",
-      details: getErrorMessage(error),
+      details: getClientSafeErrorMessage(error),
     });
   }
 }
@@ -501,11 +502,11 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     } catch (error) {
       if (isDatabaseConnectionError(error)) {
         logDatabaseUnavailable("create action", error);
-        const cause = getDatabaseUnavailableCause(error);
+        const cause = getClientSafeDatabaseUnavailableCause(error);
 
         return res.status(503).json({
           error: "Database unavailable",
-          details: getDatabaseUnavailableDetails(),
+          details: getClientSafeDatabaseUnavailableDetails(),
           ...(cause ? { cause } : {}),
         });
       }
@@ -514,13 +515,10 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
       return res.status(500).json({
         error: "Failed to create experience",
-        details: getInternalServerDetails(
+        details: getClientSafeErrorMessage(
           error,
           "Unable to create the experience right now.",
         ),
-        ...(getInternalServerStack(error)
-          ? { stack: getInternalServerStack(error) }
-          : {}),
       });
     }
   }

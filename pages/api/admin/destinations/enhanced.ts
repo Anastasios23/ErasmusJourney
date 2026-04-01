@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]";
 import { prisma } from "../../../../lib/prisma";
 import { ContentManagementService } from "../../../../src/services/contentManagementService";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 export default async function handler(
   req: NextApiRequest,
@@ -196,7 +197,10 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     console.error("Error fetching enhanced destinations:", error);
     res.status(500).json({
       error: "Internal server error",
-      message: error instanceof Error ? error.message : "Unknown error",
+      message: getClientSafeErrorMessage(
+        error,
+        "Unable to load destinations right now.",
+      ),
     });
   }
 }
@@ -243,7 +247,10 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
       } catch (error) {
         return res.status(400).json({
           error: "Failed to create destination",
-          message: error instanceof Error ? error.message : "Unknown error",
+          message: getClientSafeErrorMessage(
+            error,
+            "Unable to create the destination from submissions right now.",
+          ),
         });
       }
     }
@@ -298,7 +305,10 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     console.error("Error creating destination:", error);
     res.status(500).json({
       error: "Internal server error",
-      message: error instanceof Error ? error.message : "Unknown error",
+      message: getClientSafeErrorMessage(
+        error,
+        "Unable to create the destination right now.",
+      ),
     });
   }
 }
@@ -345,7 +355,10 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     console.error("Error updating destination:", error);
     res.status(500).json({
       error: "Internal server error",
-      message: error instanceof Error ? error.message : "Unknown error",
+      message: getClientSafeErrorMessage(
+        error,
+        "Unable to update the destination right now.",
+      ),
     });
   }
 }

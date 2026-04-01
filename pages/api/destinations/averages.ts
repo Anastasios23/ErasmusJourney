@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 // Mock averages data for destinations
 const mockAverages = {
@@ -69,7 +70,10 @@ export default async function handler(
     console.error("Error fetching averages:", error);
     res.status(500).json({
       message: "Failed to fetch averages",
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: getClientSafeErrorMessage(
+        error,
+        "Unable to load destination averages right now.",
+      ),
     });
   }
 }

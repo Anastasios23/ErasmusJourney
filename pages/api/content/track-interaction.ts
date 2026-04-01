@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 export default async function handler(
   req: NextApiRequest,
@@ -27,7 +28,10 @@ export default async function handler(
     console.error("Error tracking content interaction:", error);
     res.status(500).json({
       message: "Failed to track interaction",
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: getClientSafeErrorMessage(
+        error,
+        "Unable to track interaction right now.",
+      ),
     });
   }
 }

@@ -3,6 +3,7 @@ import {
   aggregateCityData,
   getAllCitiesAggregatedData,
 } from "../../../src/services/cityAggregationService";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 export default async function handler(
   req: NextApiRequest,
@@ -81,7 +82,10 @@ export default async function handler(
           return res.status(500).json({
             error: "Database connection error",
             message: "Unable to connect to the database",
-            details: aggregationError.message,
+            details: getClientSafeErrorMessage(
+              aggregationError,
+              "The service cannot reach the database right now. Please try again later.",
+            ),
           });
         }
       }
@@ -95,8 +99,10 @@ export default async function handler(
     res.status(500).json({
       error: "Internal server error",
       message: "Failed to aggregate city data",
-      details: error instanceof Error ? error.message : "Unknown error",
-      stack: process.env.NODE_ENV === "development" && error instanceof Error ? error.stack : undefined,
+      details: getClientSafeErrorMessage(
+        error,
+        "Unable to aggregate city data right now.",
+      ),
     });
   }
 }

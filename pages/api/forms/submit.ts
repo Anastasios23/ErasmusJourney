@@ -4,6 +4,7 @@ import { authOptions } from "../auth/[...nextauth]";
 import { prisma } from "../../../lib/prisma";
 import { z } from "zod";
 import { validateFormData } from "../../../src/lib/formSchemas";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 // Define the correct types based on your Prisma schema
 type FormType =
@@ -406,14 +407,10 @@ export default async function handler(
 
     res.status(500).json({
       error: "Internal server error",
-      message: errorMessage, // Send the actual error message for debugging
-      details:
-        process.env.NODE_ENV === "development"
-          ? {
-              stack: errorStack,
-              timestamp: new Date().toISOString(),
-            }
-          : undefined,
+      message: getClientSafeErrorMessage(
+        error,
+        "Unable to submit the form right now.",
+      ),
     });
   }
 }

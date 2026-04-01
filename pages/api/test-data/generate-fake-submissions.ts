@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/prisma";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 // Sample destination data with realistic information
 const SAMPLE_DESTINATIONS = [
@@ -267,7 +268,10 @@ export default async function handler(
     console.error("Error creating fake submissions:", error);
     res.status(500).json({
       message: "Internal server error",
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: getClientSafeErrorMessage(
+        error,
+        "Unable to create fake submissions right now.",
+      ),
     });
   }
 }

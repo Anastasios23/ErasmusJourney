@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "./auth/[...nextauth]";
 import { prisma } from "../../lib/prisma";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 export default async function handler(
   req: NextApiRequest,
@@ -118,7 +119,7 @@ export default async function handler(
     res.status(500).json({
       status: "error",
       message: "Failed to check user status",
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: getClientSafeErrorMessage(error),
       timestamp: new Date().toISOString(),
     });
   }

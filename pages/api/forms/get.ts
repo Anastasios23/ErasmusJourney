@@ -2,8 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerAuthSession, isAdmin } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 import {
-  getDatabaseUnavailableCause,
-  getDatabaseUnavailableDetails,
+  getClientSafeDatabaseUnavailableCause,
+  getClientSafeDatabaseUnavailableDetails,
   isDatabaseConnectionError,
 } from "../../../lib/databaseErrors";
 
@@ -87,11 +87,11 @@ export default async function handler(
     console.error("Error fetching submissions:", error);
 
     if (isDatabaseConnectionError(error)) {
-      const cause = getDatabaseUnavailableCause(error);
+      const cause = getClientSafeDatabaseUnavailableCause(error);
 
       return res.status(503).json({
         message: "Database unavailable",
-        details: getDatabaseUnavailableDetails(),
+        details: getClientSafeDatabaseUnavailableDetails(),
         ...(cause ? { cause } : {}),
       });
     }

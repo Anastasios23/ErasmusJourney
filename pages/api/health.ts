@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "./auth/[...nextauth]";
 import { prisma } from "../../lib/prisma";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 interface HealthCheckResponse {
   status: "healthy" | "unhealthy";
@@ -83,7 +84,7 @@ export default async function handler(
       database: {
         connected: false,
         latency,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: getClientSafeErrorMessage(error, "Service unavailable"),
       },
     });
   }

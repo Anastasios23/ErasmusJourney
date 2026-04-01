@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../lib/prisma";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 export default async function handler(
   req: NextApiRequest,
@@ -84,8 +85,10 @@ export default async function handler(
     console.error("Simple destinations API error:", error);
     res.status(500).json({
       message: "Internal server error",
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
+      error: getClientSafeErrorMessage(
+        error,
+        "Unable to fetch destinations right now.",
+      ),
     });
   }
 }

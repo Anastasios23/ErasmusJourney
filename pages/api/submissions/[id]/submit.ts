@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]";
 import { prisma } from "../../../../lib/prisma";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 /**
  * Submit Submission for Review
@@ -107,7 +108,10 @@ export default async function handler(
     console.error("Submit API Error:", error);
     return res.status(500).json({
       error: "Internal server error",
-      details: error instanceof Error ? error.message : "Unknown error",
+      details: getClientSafeErrorMessage(
+        error,
+        "Unable to submit this entry right now.",
+      ),
     });
   }
 }

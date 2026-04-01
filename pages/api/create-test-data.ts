@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../lib/prisma";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 export default async function handler(
   req: NextApiRequest,
@@ -160,7 +161,10 @@ export default async function handler(
     console.error("Error creating test data:", error);
     res.status(500).json({
       error: "Failed to create test data",
-      details: error instanceof Error ? error.message : "Unknown error",
+      details: getClientSafeErrorMessage(
+        error,
+        "Unable to create test data right now.",
+      ),
     });
   }
 }

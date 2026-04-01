@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../lib/prisma";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 export default async function handler(
   req: NextApiRequest,
@@ -46,7 +47,7 @@ export default async function handler(
     console.error("Health check failed:", error);
     res.status(500).json({
       status: "unhealthy",
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: getClientSafeErrorMessage(error, "Service unavailable"),
       timestamp: new Date().toISOString(),
     });
   }

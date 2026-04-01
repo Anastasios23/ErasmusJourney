@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import DestinationDataService from "../../../src/services/destinationDataService";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 export default async function handler(
   req: NextApiRequest,
@@ -38,7 +39,10 @@ export default async function handler(
     return res.status(500).json({
       success: false,
       message: "Failed to fetch destinations",
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: getClientSafeErrorMessage(
+        error,
+        "Unable to fetch destinations right now.",
+      ),
     });
   }
 }

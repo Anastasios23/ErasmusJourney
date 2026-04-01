@@ -4,6 +4,7 @@ import { authOptions } from "../../lib/auth";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 export const config = {
   api: {
@@ -91,7 +92,10 @@ export default async function handler(
     console.error("Upload error:", error);
     return res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : "Failed to upload image",
+      error: getClientSafeErrorMessage(
+        error,
+        "Failed to upload image right now.",
+      ),
     });
   }
 }

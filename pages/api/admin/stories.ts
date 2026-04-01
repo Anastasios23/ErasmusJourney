@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/prisma";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 export default async function handler(
   req: NextApiRequest,
@@ -83,7 +84,10 @@ async function handleGetStories(req: NextApiRequest, res: NextApiResponse) {
     console.error("Error fetching admin stories:", error);
     res.status(500).json({
       error: "Failed to fetch stories",
-      details: error instanceof Error ? error.message : "Unknown error",
+      details: getClientSafeErrorMessage(
+        error,
+        "Unable to fetch stories right now.",
+      ),
     });
   }
 }

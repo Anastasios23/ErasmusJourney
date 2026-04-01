@@ -48,6 +48,16 @@ export function getDatabaseUnavailableCause(
   return getErrorMessage(error);
 }
 
+export function getClientSafeDatabaseUnavailableDetails(): string {
+  return "The service cannot reach the database right now. Please try again later.";
+}
+
+export function getClientSafeDatabaseUnavailableCause(
+  _error: unknown,
+): string | undefined {
+  return undefined;
+}
+
 export function getInternalServerDetails(
   error: unknown,
   fallback = "Please try again later.",
@@ -67,4 +77,17 @@ export function getInternalServerStack(
   }
 
   return error.stack;
+}
+
+export function getClientSafeErrorMessage(
+  _error: unknown,
+  fallback = "Please try again later.",
+): string {
+  return fallback;
+}
+
+export function getClientSafeErrorStack(
+  _error: unknown,
+): string | undefined {
+  return undefined;
 }

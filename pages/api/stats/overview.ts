@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/prisma";
 import { enforceApprovedOnly } from "../../../lib/middleware/statusFilter";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 /**
  * Global Statistics Overview API
@@ -415,7 +416,7 @@ export default async function handler(
     console.error("Global Stats API Error:", error);
     return res.status(500).json({
       error: "Internal server error",
-      details: error instanceof Error ? error.message : "Unknown error",
+      details: getClientSafeErrorMessage(error),
     });
   }
 }

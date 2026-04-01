@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  getClientSafeDatabaseUnavailableCause,
+  getClientSafeDatabaseUnavailableDetails,
+  getClientSafeErrorMessage,
+  getClientSafeErrorStack,
   getDatabaseUnavailableCause,
   getDatabaseUnavailableDetails,
   getErrorMessage,
@@ -73,5 +77,23 @@ describe("database error helpers", () => {
     } finally {
       process.env.NODE_ENV = previousNodeEnv;
     }
+  });
+
+  it("always returns sanitized client-facing error data", () => {
+    expect(getClientSafeDatabaseUnavailableDetails()).toBe(
+      "The service cannot reach the database right now. Please try again later.",
+    );
+    expect(
+      getClientSafeDatabaseUnavailableCause(new Error("sensitive database cause")),
+    ).toBe(undefined);
+    expect(
+      getClientSafeErrorMessage(
+        new Error("Prisma schema details should stay server-side"),
+        "Unable to complete the request right now.",
+      ),
+    ).toBe("Unable to complete the request right now.");
+    expect(
+      getClientSafeErrorStack(new Error("stack traces should stay server-side")),
+    ).toBe(undefined);
   });
 });

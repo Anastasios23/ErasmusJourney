@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/prisma";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 interface StoryAnalysis {
   sentiment: "positive" | "neutral" | "negative";
@@ -101,7 +102,10 @@ export default async function handler(
     console.error("Error analyzing story:", error);
     res.status(500).json({
       error: "Failed to analyze story",
-      details: error instanceof Error ? error.message : "Unknown error",
+      details: getClientSafeErrorMessage(
+        error,
+        "Unable to analyze the story right now.",
+      ),
     });
   }
 }

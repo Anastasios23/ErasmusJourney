@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/prisma";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 // Test student profiles with comprehensive data
 const testStudents = [
@@ -431,7 +432,10 @@ export default async function handler(
     console.error("Error generating test data:", error);
     res.status(500).json({
       error: "Failed to generate test data",
-      details: error instanceof Error ? error.message : "Unknown error",
+      details: getClientSafeErrorMessage(
+        error,
+        "Unable to generate test data right now.",
+      ),
     });
   }
 }

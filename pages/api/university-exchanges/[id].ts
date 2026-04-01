@@ -4,6 +4,7 @@ import {
   getRecognitionTypeLabel,
   sanitizeCourseMappingsData,
 } from "../../../src/lib/courseMatching";
+import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 const prisma = new PrismaClient();
 
@@ -316,7 +317,10 @@ export default async function handler(
     console.error("Error fetching university details:", error);
     res.status(500).json({
       message: "Internal server error",
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: getClientSafeErrorMessage(
+        error,
+        "Unable to load university details right now.",
+      ),
     });
   }
 }
