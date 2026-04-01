@@ -6,11 +6,18 @@ import {
   getClientSafeDatabaseUnavailableDetails,
   isDatabaseConnectionError,
 } from "../../../lib/databaseErrors";
+import {
+  ensureRequestId,
+  logApiError,
+  withRequestId,
+} from "../../../lib/apiRequestContext";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  ensureRequestId(req, res);
+
   if (req.method !== "GET") {
     return res.status(405).json({ message: "Method not allowed" });
   }
@@ -84,18 +91,22 @@ export default async function handler(
 
     res.status(200).json({ submissions: transformedSubmissions });
   } catch (error) {
-    console.error("Error fetching submissions:", error);
+    logApiError(req, res, "Error fetching submissions", error);
 
     if (isDatabaseConnectionError(error)) {
       const cause = getClientSafeDatabaseUnavailableCause(error);
 
-      return res.status(503).json({
-        message: "Database unavailable",
-        details: getClientSafeDatabaseUnavailableDetails(),
-        ...(cause ? { cause } : {}),
-      });
+      return res.status(503).json(
+        withRequestId(req, res, {
+          message: "Database unavailable",
+          details: getClientSafeDatabaseUnavailableDetails(),
+          ...(cause ? { cause } : {}),
+        }),
+      );
     }
 
-    res.status(500).json({ message: "Internal server error" });
+    res
+      .status(500)
+      .json(withRequestId(req, res, { message: "Internal server error" }));
   }
 }

@@ -4,11 +4,18 @@ import { authOptions } from "../../auth/[...nextauth]";
 import { prisma } from "../../../../lib/prisma";
 import { ContentManagementService } from "../../../../src/services/contentManagementService";
 import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
+import {
+  ensureRequestId,
+  logApiError,
+  withRequestId,
+} from "../../../../lib/apiRequestContext";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  ensureRequestId(req, res);
+
   // AUTHENTICATION DISABLED - Comment out to re-enable
   // const session = await getServerSession(req, res, authOptions);
 
@@ -194,14 +201,16 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
       },
     });
   } catch (error) {
-    console.error("Error fetching enhanced destinations:", error);
-    res.status(500).json({
-      error: "Internal server error",
-      message: getClientSafeErrorMessage(
-        error,
-        "Unable to load destinations right now.",
-      ),
-    });
+    logApiError(req, res, "Error fetching enhanced destinations", error);
+    res.status(500).json(
+      withRequestId(req, res, {
+        error: "Internal server error",
+        message: getClientSafeErrorMessage(
+          error,
+          "Unable to load destinations right now.",
+        ),
+      }),
+    );
   }
 }
 
@@ -245,13 +254,22 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
           destination,
         });
       } catch (error) {
-        return res.status(400).json({
-          error: "Failed to create destination",
-          message: getClientSafeErrorMessage(
-            error,
-            "Unable to create the destination from submissions right now.",
-          ),
-        });
+        logApiError(
+          req,
+          res,
+          "Error creating destination from submissions",
+          error,
+          { action, city, country },
+        );
+        return res.status(400).json(
+          withRequestId(req, res, {
+            error: "Failed to create destination",
+            message: getClientSafeErrorMessage(
+              error,
+              "Unable to create the destination from submissions right now.",
+            ),
+          }),
+        );
       }
     }
 
@@ -302,14 +320,16 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
       message: "Action must be 'create_from_submissions' or 'create_manual'",
     });
   } catch (error) {
-    console.error("Error creating destination:", error);
-    res.status(500).json({
-      error: "Internal server error",
-      message: getClientSafeErrorMessage(
-        error,
-        "Unable to create the destination right now.",
-      ),
-    });
+    logApiError(req, res, "Error creating destination", error);
+    res.status(500).json(
+      withRequestId(req, res, {
+        error: "Internal server error",
+        message: getClientSafeErrorMessage(
+          error,
+          "Unable to create the destination right now.",
+        ),
+      }),
+    );
   }
 }
 
@@ -352,13 +372,15 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       destination,
     });
   } catch (error) {
-    console.error("Error updating destination:", error);
-    res.status(500).json({
-      error: "Internal server error",
-      message: getClientSafeErrorMessage(
-        error,
-        "Unable to update the destination right now.",
-      ),
-    });
+    logApiError(req, res, "Error updating destination", error);
+    res.status(500).json(
+      withRequestId(req, res, {
+        error: "Internal server error",
+        message: getClientSafeErrorMessage(
+          error,
+          "Unable to update the destination right now.",
+        ),
+      }),
+    );
   }
 }

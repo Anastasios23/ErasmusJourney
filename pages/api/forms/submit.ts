@@ -5,6 +5,11 @@ import { prisma } from "../../../lib/prisma";
 import { z } from "zod";
 import { validateFormData } from "../../../src/lib/formSchemas";
 import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
+import {
+  ensureRequestId,
+  logApiError,
+  withRequestId,
+} from "../../../lib/apiRequestContext";
 
 // Define the correct types based on your Prisma schema
 type FormType =
@@ -156,6 +161,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  ensureRequestId(req, res);
+
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
   }
@@ -382,8 +389,6 @@ export default async function handler(
       },
     });
   } catch (error) {
-    console.error("Error submitting form:", error);
-
     if (error instanceof z.ZodError) {
       return res.status(400).json({
         error: "Validation failed",
@@ -392,25 +397,24 @@ export default async function handler(
       });
     }
 
-    // Enhanced error reporting for debugging
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error occurred";
-    const errorStack = error instanceof Error ? error.stack : undefined;
-
-    console.error("Form submission error details:", {
-      message: errorMessage,
-      stack: errorStack,
-      requestBody: req.body,
-      userAgent: req.headers["user-agent"],
-      timestamp: new Date().toISOString(),
+    logApiError(req, res, "Error submitting form", error, {
+      formType:
+        req.body &&
+        typeof req.body === "object" &&
+        "type" in req.body &&
+        typeof req.body.type === "string"
+          ? req.body.type
+          : undefined,
     });
 
-    res.status(500).json({
-      error: "Internal server error",
-      message: getClientSafeErrorMessage(
-        error,
-        "Unable to submit the form right now.",
-      ),
-    });
+    res.status(500).json(
+      withRequestId(req, res, {
+        error: "Internal server error",
+        message: getClientSafeErrorMessage(
+          error,
+          "Unable to submit the form right now.",
+        ),
+      }),
+    );
   }
 }

@@ -22,17 +22,28 @@ import handler from "../../pages/api/destinations/[slug]";
 function createMockReq(options: {
   method: string;
   query?: Record<string, unknown>;
+  headers?: Record<string, string>;
 }) {
   return {
     method: options.method,
     query: options.query || {},
+    headers: options.headers || {},
+    url: `/api/destinations/${options.query?.slug ?? ""}`,
   };
 }
 
 function createMockRes() {
+  const headers = new Map<string, string>();
   const res = {
     statusCode: 200,
     jsonPayload: undefined as unknown,
+    setHeader(name: string, value: string) {
+      headers.set(name.toLowerCase(), value);
+      return this;
+    },
+    getHeader(name: string) {
+      return headers.get(name.toLowerCase());
+    },
     status(code: number) {
       this.statusCode = code;
       return this;
@@ -76,7 +87,11 @@ describe("destination slug route", () => {
     expect(res.jsonPayload).toEqual({
       error: "Failed to fetch destination details",
       message: "Unable to load destination details right now.",
+      requestId: expect.any(String),
     });
+    expect(res.getHeader("x-request-id")).toBe(
+      (res.jsonPayload as { requestId: string }).requestId,
+    );
     expect(JSON.stringify(res.jsonPayload)).not.toContain("Prisma");
     expect(JSON.stringify(res.jsonPayload)).not.toContain("adminOverrides");
     expect(JSON.stringify(res.jsonPayload)).not.toContain(

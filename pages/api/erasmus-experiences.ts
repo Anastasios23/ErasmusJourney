@@ -38,6 +38,7 @@ import {
   getErrorMessage,
   isDatabaseConnectionError,
 } from "../../lib/databaseErrors";
+import { ensureRequestId, withRequestId } from "../../lib/apiRequestContext";
 import { serializeErasmusExperienceForClient } from "../../src/server/serializeErasmusExperience";
 
 class Step1ValidationError extends Error {
@@ -117,18 +118,27 @@ function getRequestFailureContext(req: NextApiRequest): string {
 function logRequestFailure(
   message: string,
   error: unknown,
+  requestId?: string,
   context?: Record<string, unknown>,
 ) {
-  if (context) {
-    console.error(`[erasmus-experiences] ${message}`, context, error);
-    return;
-  }
-
-  console.error(`[erasmus-experiences] ${message}`, error);
+  console.error(`[erasmus-experiences] ${message}`, {
+    ...(requestId ? { requestId } : {}),
+    ...(context ? { context } : {}),
+    errorName: error instanceof Error ? error.name : "UnknownError",
+    errorMessage: getErrorMessage(error),
+    ...(process.env.NODE_ENV === "development" && error instanceof Error
+      ? { stack: error.stack }
+      : {}),
+  });
 }
 
-function logDatabaseUnavailable(context: string, error: unknown) {
+function logDatabaseUnavailable(
+  context: string,
+  error: unknown,
+  requestId?: string,
+) {
   console.error(`[erasmus-experiences] Database unavailable during ${context}`, {
+    ...(requestId ? { requestId } : {}),
     cause: getDatabaseUnavailableCause(error) || "unknown",
     error: getErrorMessage(error),
   });
@@ -286,6 +296,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  const requestId = ensureRequestId(req, res);
   const { method } = req;
 
   try {
@@ -304,22 +315,26 @@ export default async function handler(
     const failureContext = getRequestFailureContext(req);
 
     if (isDatabaseConnectionError(error)) {
-      logDatabaseUnavailable(failureContext, error);
+      logDatabaseUnavailable(failureContext, error, requestId);
       const cause = getClientSafeDatabaseUnavailableCause(error);
 
-      return res.status(503).json({
-        error: "Database unavailable",
-        details: getClientSafeDatabaseUnavailableDetails(),
-        ...(cause ? { cause } : {}),
-      });
+      return res.status(503).json(
+        withRequestId(req, res, {
+          error: "Database unavailable",
+          details: getClientSafeDatabaseUnavailableDetails(),
+          ...(cause ? { cause } : {}),
+        }),
+      );
     }
 
-    logRequestFailure(`${failureContext} failed`, error);
+    logRequestFailure(`${failureContext} failed`, error, requestId);
 
-    return res.status(500).json({
-      error: "Internal server error",
-      details: getClientSafeErrorMessage(error),
-    });
+    return res.status(500).json(
+      withRequestId(req, res, {
+        error: "Internal server error",
+        details: getClientSafeErrorMessage(error),
+      }),
+    );
   }
 }
 
@@ -377,6 +392,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
+  const requestId = ensureRequestId(req, res);
   const { action } = req.body;
 
   if (action === "create") {
@@ -501,25 +517,29 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
       return res.status(201).json(newExperience);
     } catch (error) {
       if (isDatabaseConnectionError(error)) {
-        logDatabaseUnavailable("create action", error);
+        logDatabaseUnavailable("create action", error, requestId);
         const cause = getClientSafeDatabaseUnavailableCause(error);
 
-        return res.status(503).json({
-          error: "Database unavailable",
-          details: getClientSafeDatabaseUnavailableDetails(),
-          ...(cause ? { cause } : {}),
-        });
+        return res.status(503).json(
+          withRequestId(req, res, {
+            error: "Database unavailable",
+            details: getClientSafeDatabaseUnavailableDetails(),
+            ...(cause ? { cause } : {}),
+          }),
+        );
       }
 
-      logRequestFailure("create action failed", error);
+      logRequestFailure("create action failed", error, requestId);
 
-      return res.status(500).json({
-        error: "Failed to create experience",
-        details: getClientSafeErrorMessage(
-          error,
-          "Unable to create the experience right now.",
-        ),
-      });
+      return res.status(500).json(
+        withRequestId(req, res, {
+          error: "Failed to create experience",
+          details: getClientSafeErrorMessage(
+            error,
+            "Unable to create the experience right now.",
+          ),
+        }),
+      );
     }
   }
 
@@ -527,6 +547,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function handlePut(req: NextApiRequest, res: NextApiResponse) {
+  const requestId = ensureRequestId(req, res);
   const { id, action, ...updateData } = req.body;
 
   if (!id) {
@@ -856,9 +877,14 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
         (updatedExperience as any).hostCity,
         (updatedExperience as any).hostCountry,
       ).catch((err) =>
-        logRequestFailure("failed to update city statistics after submit", err, {
-          experienceId: (updatedExperience as any).id,
-        }),
+        logRequestFailure(
+          "failed to update city statistics after submit",
+          err,
+          requestId,
+          {
+            experienceId: (updatedExperience as any).id,
+          },
+        ),
       );
     }
 

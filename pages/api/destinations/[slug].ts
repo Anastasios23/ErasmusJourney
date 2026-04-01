@@ -1,6 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/prisma";
 import { getEnhancedCityData } from "../../../src/services/cityAggregationService";
+import {
+  ensureRequestId,
+  logApiError,
+  withRequestId,
+} from "../../../lib/apiRequestContext";
 
 // Interface for destination with aggregated data (matching frontend expectations)
 interface DestinationWithDetails {
@@ -48,6 +53,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  ensureRequestId(req, res);
+
   if (req.method !== "GET") {
     return res.status(405).json({ message: "Method not allowed" });
   }
@@ -172,10 +179,14 @@ export default async function handler(
     return res.status(200).json(result);
 
   } catch (error) {
-    console.error("Error fetching destination details:", { slug }, error);
-    return res.status(500).json({
-      error: "Failed to fetch destination details",
-      message: "Unable to load destination details right now.",
+    logApiError(req, res, "Error fetching destination details", error, {
+      slug,
     });
+    return res.status(500).json(
+      withRequestId(req, res, {
+        error: "Failed to fetch destination details",
+        message: "Unable to load destination details right now.",
+      }),
+    );
   }
 }
