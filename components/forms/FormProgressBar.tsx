@@ -1,18 +1,23 @@
 import React from "react";
-import Link from "next/link";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
+
+import { cn } from "@/lib/utils";
 
 interface Step {
   number: number;
   name: string;
-  href: string;
+  href?: string;
+  isClickable?: boolean;
+  isLocked?: boolean;
+  lockedReason?: string;
 }
 
 interface FormProgressBarProps {
   steps: Step[];
   currentStep: number;
   completedSteps: number[];
+  onStepClick?: (stepNumber: number) => void;
 }
 
 const stepIcons = [
@@ -27,6 +32,7 @@ export function FormProgressBar({
   steps,
   currentStep,
   completedSteps,
+  onStepClick,
 }: FormProgressBarProps) {
   const progressPercentage = ((currentStep - 1) / (steps.length - 1)) * 100;
   const totalCompleted = completedSteps.length;
@@ -79,77 +85,86 @@ export function FormProgressBar({
           {steps.map((step, index) => {
             const isCompleted = completedSteps.includes(step.number);
             const isCurrent = currentStep === step.number;
+            const isLocked = Boolean(step.isLocked);
             const isAccessible =
-              isCompleted ||
-              isCurrent ||
-              completedSteps.includes(step.number - 1) ||
-              step.number === 1;
+              !isLocked &&
+              (step.isClickable ??
+                (isCompleted ||
+                  isCurrent ||
+                  completedSteps.includes(step.number - 1) ||
+                  step.number === 1));
+            const isClickable = isAccessible && typeof onStepClick === "function";
 
             const stepIcon = stepIcons[index] || "solar:user-circle-linear";
 
-            const StepContent = (
-              <motion.div
-                whileHover={isAccessible ? { scale: 1.05 } : {}}
-                whileTap={isAccessible ? { scale: 0.95 } : {}}
-                className="flex flex-col items-center group cursor-pointer"
-              >
-                {/* Circle with Icon */}
-                <div
-                  className={`
-                    relative w-10 h-10 rounded-full flex items-center justify-center
-                    transition-all duration-300 z-10 border-2
-                    ${
-                      isCompleted
-                        ? "bg-gradient-to-br from-blue-500 to-indigo-500 border-transparent text-white shadow-lg shadow-blue-500/30"
-                        : isCurrent
-                          ? "bg-white dark:bg-slate-900 border-blue-500 text-blue-600 dark:text-blue-400 shadow-lg ring-4 ring-blue-100 dark:ring-blue-900/30"
-                          : isAccessible
-                            ? "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 group-hover:border-blue-400 group-hover:text-blue-500"
-                            : "bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-300 dark:text-slate-700"
+            return (
+              <div key={step.number} className="flex-1 flex justify-center">
+                <motion.button
+                  type="button"
+                  whileHover={isClickable ? { scale: 1.05 } : undefined}
+                  whileTap={isClickable ? { scale: 0.95 } : undefined}
+                  onClick={() => {
+                    if (isClickable) {
+                      onStepClick(step.number);
                     }
-                  `}
+                  }}
+                  disabled={!isClickable}
+                  title={isLocked ? step.lockedReason : undefined}
+                  className={cn(
+                    "group flex flex-col items-center text-center transition-opacity",
+                    isClickable ? "cursor-pointer" : "cursor-default",
+                    isLocked && "opacity-70",
+                  )}
                 >
-                  {isCompleted ? (
-                    <Icon icon="solar:check-read-linear" className="h-5 w-5" />
-                  ) : (
-                    <Icon icon={stepIcon} className="h-5 w-5" />
-                  )}
+                  <div
+                    className={cn(
+                      "relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300",
+                      isCompleted
+                        ? "border-transparent bg-gradient-to-br from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/30"
+                        : isCurrent
+                          ? "border-blue-500 bg-white text-blue-600 shadow-lg ring-4 ring-blue-100 dark:bg-slate-900 dark:text-blue-400 dark:ring-blue-900/30"
+                          : isLocked
+                            ? "border-slate-200 bg-slate-50 text-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-600"
+                            : "border-slate-200 bg-white text-slate-400 group-hover:border-blue-400 group-hover:text-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-500",
+                    )}
+                  >
+                    {isCompleted ? (
+                      <Icon icon="solar:check-read-linear" className="h-5 w-5" />
+                    ) : isLocked ? (
+                      <Icon
+                        icon="solar:lock-keyhole-linear"
+                        className="h-5 w-5"
+                      />
+                    ) : (
+                      <Icon icon={stepIcon} className="h-5 w-5" />
+                    )}
 
-                  {/* Pulse Animation for Current Step */}
-                  {isCurrent && (
-                    <span className="absolute -inset-1 border-2 border-blue-500/30 rounded-full animate-pulse" />
-                  )}
-                </div>
+                    {isCurrent && (
+                      <span className="absolute -inset-1 animate-pulse rounded-full border-2 border-blue-500/30" />
+                    )}
+                  </div>
 
-                {/* Label */}
-                <span
-                  className={`
-                    mt-3 text-xs font-bold tracking-tight transition-colors duration-300
-                    ${
+                  <span
+                    className={cn(
+                      "mt-3 text-xs font-bold tracking-tight transition-colors duration-300",
                       isCurrent
                         ? "text-blue-600 dark:text-blue-400"
                         : isCompleted
                           ? "text-slate-700 dark:text-slate-300"
-                          : "text-slate-400 dark:text-slate-600"
-                    }
-                  `}
-                >
-                  {step.name}
-                </span>
-              </motion.div>
-            );
+                          : isLocked
+                            ? "text-slate-400 dark:text-slate-600"
+                            : "text-slate-500 dark:text-slate-400",
+                    )}
+                  >
+                    {step.name}
+                  </span>
 
-            return (
-              <div key={step.number} className="flex-1 flex justify-center">
-                {isAccessible ? (
-                  <Link href={step.href} className="no-underline">
-                    {StepContent}
-                  </Link>
-                ) : (
-                  <div className="cursor-not-allowed opacity-60">
-                    {StepContent}
-                  </div>
-                )}
+                  {isLocked && step.lockedReason && (
+                    <span className="mt-1 max-w-[7rem] text-[10px] leading-4 text-slate-400 dark:text-slate-500">
+                      {step.lockedReason}
+                    </span>
+                  )}
+                </motion.button>
               </div>
             );
           })}

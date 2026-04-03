@@ -1,8 +1,26 @@
 import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { StepNavigation } from "@/components/forms/StepNavigation";
 import { EnhancedTextarea } from "@/components/ui/enhanced-textarea";
 import { Label } from "@/components/ui/label";
 import { PhotoUpload } from "@/components/ui/photo-upload";
-import { Star, ThumbsUp, ThumbsDown, Lightbulb, Camera } from "lucide-react";
+import { Star, ThumbsUp, ThumbsDown, Lightbulb } from "lucide-react";
+import { sanitizeBasicInformationData } from "@/lib/basicInformation";
+import {
+  getAccommodationTypeLabel,
+  getBillsIncludedLabel,
+  sanitizeAccommodationStepData,
+} from "@/lib/accommodation";
+import { sanitizeCourseMappingsData } from "@/lib/courseMatching";
+import {
+  calculateLivingExpensesTotal,
+  sanitizeLivingExpensesStepData,
+} from "@/lib/livingExpenses";
+import {
+  type ShareExperienceSaveState,
+  formatValidationSummaryItem,
+  scrollToFirstValidationError,
+} from "@/lib/shareExperienceUi";
 
 interface ExperienceData {
   overallRating: number;
@@ -16,10 +34,20 @@ interface ExperienceData {
 
 interface ExperienceStepProps {
   data: any;
-  onComplete: (data: any) => void;
-  onSave: (data: any) => void;
+  onComplete: (data: any) => void | Promise<void>;
+  onSave: (data: any) => void | Promise<void>;
+  onPrevious?: () => void;
+  onGoToStep?: (stepNumber: number) => void;
   isSubmitting?: boolean;
+  saveState?: ShareExperienceSaveState;
+  onRequiredCountChange?: (count: number) => void;
 }
+
+const EXPERIENCE_FIELD_LABELS: Record<string, string> = {
+  overallRating: "Overall rating",
+  bestExperience: "Best experience",
+  generalTips: "Top tips",
+};
 
 function createExperienceFormData(value?: Partial<ExperienceData> | null) {
   return {
@@ -38,17 +66,53 @@ export default function ExperienceStep({
   data,
   onComplete,
   onSave,
+  onPrevious,
+  onGoToStep,
   isSubmitting = false,
+  saveState = "idle",
+  onRequiredCountChange,
 }: ExperienceStepProps) {
   const [formData, setFormData] = useState<ExperienceData>(() =>
     createExperienceFormData(data?.experience),
   );
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [hasAttemptedContinue, setHasAttemptedContinue] = useState(false);
 
   useEffect(() => {
     setFormData(createExperienceFormData(data?.experience));
   }, [data?.experience]);
+
+  const basicInfo = sanitizeBasicInformationData(data?.basicInfo);
+  const courseMappings = sanitizeCourseMappingsData(data?.courses);
+  const accommodation = sanitizeAccommodationStepData(data?.accommodation);
+  const livingExpenses = sanitizeLivingExpensesStepData(data?.livingExpenses, {
+    fallbackRent:
+      typeof accommodation.monthlyRent === "number"
+        ? accommodation.monthlyRent
+        : null,
+  });
+  const totalLivingExpenses = calculateLivingExpensesTotal(livingExpenses);
+
+  const missingRequiredCount =
+    (formData.overallRating ? 0 : 1) +
+    (formData.bestExperience.trim() ? 0 : 1) +
+    (formData.generalTips.trim() ? 0 : 1);
+
+  const validationSummary = hasAttemptedContinue
+    ? ["overallRating", "bestExperience", "generalTips"]
+        .filter((field) => errors[field])
+        .map((field) =>
+          formatValidationSummaryItem(
+            EXPERIENCE_FIELD_LABELS[field] || field,
+            errors[field],
+          ),
+        )
+    : [];
+
+  useEffect(() => {
+    onRequiredCountChange?.(missingRequiredCount);
+  }, [missingRequiredCount, onRequiredCountChange]);
 
   const handleInputChange = (field: keyof ExperienceData, value: any) => {
     const newData = { ...formData, [field]: value };
@@ -72,17 +136,87 @@ export default function ExperienceStep({
   };
 
   const handleComplete = () => {
+    setHasAttemptedContinue(true);
+
     if (validate()) {
-      onComplete({ experience: formData });
+      setHasAttemptedContinue(false);
+      void onComplete({ experience: formData });
     } else {
-      const firstError = document.querySelector(".text-red-500");
-      firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
+      scrollToFirstValidationError();
     }
   };
 
   const handleSave = () => {
-    onSave({ experience: formData });
+    void onSave({ experience: formData });
   };
+
+  const livingExpenseSummaryParts = [
+    totalLivingExpenses > 0
+      ? `Total ${totalLivingExpenses.toFixed(0)} ${livingExpenses.currency} / month`
+      : null,
+    typeof livingExpenses.food === "number"
+      ? `Food ${livingExpenses.food}`
+      : null,
+    typeof livingExpenses.transport === "number"
+      ? `Transport ${livingExpenses.transport}`
+      : null,
+    typeof livingExpenses.social === "number"
+      ? `Social ${livingExpenses.social}`
+      : null,
+  ].filter(Boolean);
+
+  const reviewItems = [
+    {
+      label: "Home university / department",
+      summary: [basicInfo.homeUniversity, basicInfo.homeDepartment]
+        .filter(Boolean)
+        .join(" | "),
+      stepNumber: 1,
+    },
+    {
+      label: "Host university / city / country",
+      summary: [
+        basicInfo.hostUniversity,
+        basicInfo.hostCity,
+        basicInfo.hostCountry,
+      ]
+        .filter(Boolean)
+        .join(" | "),
+      stepNumber: 1,
+    },
+    {
+      label: "Course mappings",
+      summary:
+        courseMappings.length > 0
+          ? `${courseMappings.length} mapping${
+              courseMappings.length === 1 ? "" : "s"
+            } added`
+          : "No course mappings saved yet",
+      stepNumber: 2,
+    },
+    {
+      label: "Accommodation summary",
+      summary: [
+        accommodation.accommodationType
+          ? getAccommodationTypeLabel(accommodation.accommodationType)
+          : null,
+        typeof accommodation.monthlyRent === "number"
+          ? `${accommodation.monthlyRent} ${accommodation.currency} / month`
+          : null,
+        accommodation.billsIncluded
+          ? `Bills: ${getBillsIncludedLabel(accommodation.billsIncluded)}`
+          : null,
+      ]
+        .filter(Boolean)
+        .join(" | "),
+      stepNumber: 3,
+    },
+    {
+      label: "Living expenses summary",
+      summary: livingExpenseSummaryParts.join(" | "),
+      stepNumber: 4,
+    },
+  ];
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -251,24 +385,58 @@ export default function ExperienceStep({
         />
       </div>
 
-      <div className="flex justify-between items-center pt-6 border-t border-gray-100">
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={isSubmitting}
-          className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
-        >
-          Save Draft
-        </button>
-        <button
-          type="button"
-          onClick={handleComplete}
-          disabled={isSubmitting}
-          className="px-8 py-2.5 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-        >
-          {isSubmitting ? "Submitting..." : "Submit Experience"}
-        </button>
+      <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
+        <div className="mb-5">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+            Review before you submit
+          </h3>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            Double-check the details below. Edit any step before you submit your
+            single Erasmus experience.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          {reviewItems.map((item) => (
+            <div
+              key={item.label}
+              className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 md:flex-row md:items-center md:justify-between dark:border-slate-800 dark:bg-slate-950/80"
+            >
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                  {item.label}
+                </p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  {item.summary || "No saved details yet"}
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => onGoToStep?.(item.stepNumber)}
+              >
+                Edit
+              </Button>
+            </div>
+          ))}
+        </div>
       </div>
+
+      <StepNavigation
+        currentStep={5}
+        totalSteps={5}
+        onPrevious={onPrevious}
+        onSaveDraft={handleSave}
+        onSubmit={handleComplete}
+        isLastStep
+        isSubmitting={isSubmitting}
+        showPrevious={Boolean(onPrevious)}
+        helperText="Submit only after the review matches the experience you want to share."
+        missingRequiredCount={missingRequiredCount}
+        validationSummary={validationSummary}
+        saveState={saveState}
+      />
     </div>
   );
 }

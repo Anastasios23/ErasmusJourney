@@ -11,7 +11,7 @@ import { Card, CardContent } from "../src/components/ui/card";
 import { Alert, AlertDescription } from "../src/components/ui/alert";
 import { FormProvider } from "../components/forms/FormProvider";
 import { FormProgressBar } from "../components/forms/FormProgressBar";
-import { StepNavigation } from "../components/forms/StepNavigation";
+import { StepStatusBar } from "../components/forms/StepStatusBar";
 import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
 import { useFormProgress } from "../src/context/FormProgressContext";
 import {
@@ -23,7 +23,6 @@ import {
   sanitizeLivingExpensesStepData,
 } from "../src/lib/livingExpenses";
 import { toast } from "../src/hooks/use-toast";
-import { clampShareExperienceStep } from "../src/lib/shareExperienceStepAccess";
 import { cn } from "../src/lib/utils";
 import { buildLoginRedirectUrl } from "../src/lib/authRedirect";
 
@@ -36,14 +35,14 @@ import ExperienceStep from "../components/forms/steps/ExperienceStep";
 
 // Import validation schemas and helpers
 import {
-  validateStep,
-  getStepSchema,
-  basicInformationStepSchema,
-  courseMatchingStepSchema,
-  accommodationStepSchema,
-  livingExpensesStepSchema,
-  experienceStepSchema,
-} from "../src/lib/schemas";
+  clampShareExperienceStep,
+  getNextAccessibleShareExperienceStep,
+} from "../src/lib/shareExperienceStepAccess";
+import {
+  type ShareExperienceSaveState,
+  formatShareExperienceSavedTime,
+  getShareExperienceSaveStateMeta,
+} from "../src/lib/shareExperienceUi";
 
 const FORM_STEPS = [
   {
@@ -127,7 +126,6 @@ export default function ShareExperience() {
 
   // Form progress context
   const {
-    currentStepNumber,
     completedStepNumbers,
     setCurrentStep,
     markStepCompleted,
@@ -148,8 +146,11 @@ export default function ShareExperience() {
   const [currentStep, setLocalCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [saveState, setSaveState] =
+    useState<ShareExperienceSaveState>("idle");
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [showSavedIndicator, setShowSavedIndicator] = useState(false);
+  const [currentStepMissingRequiredCount, setCurrentStepMissingRequiredCount] =
+    useState(0);
   const [formData, setFormData] = useState({
     basicInfo: {},
     courses: [],
@@ -204,6 +205,14 @@ export default function ShareExperience() {
 
     pendingResolvedStepRef.current = initialStep;
     setLocalCurrentStep(initialStep);
+    if (experienceData.lastSavedAt) {
+      const parsedLastSaved = new Date(experienceData.lastSavedAt);
+
+      if (!Number.isNaN(parsedLastSaved.getTime())) {
+        setLastSaved(parsedLastSaved);
+        setSaveState("saved");
+      }
+    }
   }, [experienceLoading, experienceData?.id, router.asPath, router.query.step]);
 
   useEffect(() => {
@@ -304,6 +313,35 @@ export default function ShareExperience() {
     formDataRef.current = formData;
   }, [formData]);
 
+  useEffect(() => {
+    setCurrentStepMissingRequiredCount(0);
+  }, [currentStep]);
+
+  const persistProgress = useCallback(
+    async (payload: Record<string, unknown>) => {
+      setSaveState("saving");
+
+      try {
+        const success = await saveProgress(payload);
+
+        if (!success) {
+          setSaveState("error");
+          return false;
+        }
+
+        const savedAt = new Date();
+        setLastSaved(savedAt);
+        setSaveState("saved");
+        return true;
+      } catch (error) {
+        console.error("Save failed:", error);
+        setSaveState("error");
+        return false;
+      }
+    },
+    [saveProgress],
+  );
+
   // Handle form data changes
   const handleFormDataChange = useCallback(
     async (stepDataPatch: any) => {
@@ -315,19 +353,9 @@ export default function ShareExperience() {
       formDataRef.current = mergedData;
       setFormData(mergedData);
 
-      // Auto-save
-      try {
-        const success = await saveProgress(mergedData);
-        if (success) {
-          setLastSaved(new Date());
-          setShowSavedIndicator(true);
-          setTimeout(() => setShowSavedIndicator(false), 2000);
-        }
-      } catch (error) {
-        console.error("Auto-save failed:", error);
-      }
+      await persistProgress(mergedData);
     },
-    [saveProgress],
+    [persistProgress],
   );
 
   // Handle step completion
@@ -383,11 +411,15 @@ export default function ShareExperience() {
           ...new Set([...completedStepNumbers, stepNumber]),
         ];
 
-        await saveProgress({
+        const success = await persistProgress({
           ...updatedFormData,
           currentStep: Math.min(stepNumber + 1, 5),
           completedSteps: updatedCompletedSteps,
         });
+
+        if (!success) {
+          throw new Error("Failed to save progress");
+        }
 
         // Mark step as completed in context
         markStepCompleted(getStepName(stepNumber));
@@ -413,7 +445,7 @@ export default function ShareExperience() {
     [
       isSubmitting,
       completedStepNumbers,
-      saveProgress,
+      persistProgress,
       submitExperience,
       markStepCompleted,
       getStepName,
@@ -430,7 +462,10 @@ export default function ShareExperience() {
   // Navigate to specific step
   const handleStepClick = useCallback(
     (stepNumber: number) => {
-      const allowedStep = clampShareExperienceStep(stepNumber, formDataRef.current);
+      const allowedStep = clampShareExperienceStep(
+        stepNumber,
+        formDataRef.current,
+      );
 
       if (allowedStep === stepNumber) {
         setLocalCurrentStep(stepNumber);
@@ -438,6 +473,29 @@ export default function ShareExperience() {
     },
     [],
   );
+
+  const currentStepConfig = FORM_STEPS[currentStep - 1];
+  const nextAccessibleStep = getNextAccessibleShareExperienceStep(formData);
+  const progressSteps = FORM_STEPS.map((step) => {
+    const isLocked = step.number > nextAccessibleStep;
+
+    return {
+      ...step,
+      isClickable: step.number <= nextAccessibleStep,
+      isLocked,
+      lockedReason: isLocked
+        ? `Complete ${FORM_STEPS[nextAccessibleStep - 1].name} first.`
+        : undefined,
+    };
+  });
+  const saveStateMeta = getShareExperienceSaveStateMeta(saveState);
+  const savedTimeLabel = formatShareExperienceSavedTime(lastSaved);
+  const persistentSaveStatusLabel =
+    saveState === "saving"
+      ? "Saving..."
+      : saveState === "error"
+        ? "Save failed"
+        : `Saved at ${savedTimeLabel ?? "--:--"}`;
 
   // Loading state
   if (sessionStatus === "loading" || experienceLoading) {
@@ -518,7 +576,9 @@ export default function ShareExperience() {
       data: formData,
       onComplete: (data: any) => handleStepComplete(currentStep, data),
       onSave: handleFormDataChange,
-      isSubmitting,
+      onPrevious: handlePreviousStep,
+      saveState,
+      onRequiredCountChange: setCurrentStepMissingRequiredCount,
     };
 
     switch (currentStep) {
@@ -531,7 +591,13 @@ export default function ShareExperience() {
       case 4:
         return <LivingExpensesStep {...stepProps} />;
       case 5:
-        return <ExperienceStep {...stepProps} />;
+        return (
+          <ExperienceStep
+            {...stepProps}
+            isSubmitting={isSubmitting}
+            onGoToStep={handleStepClick}
+          />
+        );
       default:
         return <BasicInformationStep {...stepProps} />;
     }
@@ -572,31 +638,41 @@ export default function ShareExperience() {
             </Alert>
           )}
 
-          {/* Save Indicator */}
-          <AnimatePresence>
-            {showSavedIndicator && (
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="fixed top-20 right-4 z-50"
-              >
-                <div className="flex items-center gap-2 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400 px-4 py-2 rounded-lg shadow-lg">
-                  <Icon
-                    icon="solar:check-circle-bold-duotone"
-                    className="h-4 w-4"
-                  />
-                  <span className="text-sm font-medium">Saved</span>
-                </div>
-              </motion.div>
+          <div
+            className={cn(
+              "mb-4 flex items-center gap-3 rounded-2xl border px-4 py-3 shadow-sm",
+              saveStateMeta.badgeClassName,
             )}
-          </AnimatePresence>
+          >
+            <Icon
+              icon={saveStateMeta.icon}
+              className={cn(
+                "h-4 w-4",
+                saveState === "saving" && "animate-spin",
+              )}
+            />
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em]">
+                Draft status
+              </p>
+              <p className="text-sm font-medium">{persistentSaveStatusLabel}</p>
+            </div>
+          </div>
+
+          <StepStatusBar
+            currentStep={currentStep}
+            totalSteps={5}
+            stepTitle={currentStepConfig.name}
+            saveState={saveState}
+            missingRequiredCount={currentStepMissingRequiredCount}
+          />
 
           {/* Progress Bar */}
           <FormProgressBar
-            steps={FORM_STEPS}
+            steps={progressSteps}
             currentStep={currentStep}
             completedSteps={completedStepNumbers}
+            onStepClick={handleStepClick}
           />
 
           {/* Main Form Content */}
@@ -631,14 +707,14 @@ export default function ShareExperience() {
                     </div>
                     <div>
                       <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                        {FORM_STEPS[currentStep - 1].name}
+                        {currentStepConfig.name}
                       </h2>
                       <p className="text-sm text-slate-500 dark:text-slate-400">
-                        {FORM_STEPS[currentStep - 1].description}
+                        {currentStepConfig.description}
                       </p>
                     </div>
                     <div className="ml-auto text-sm text-slate-400 dark:text-slate-500">
-                      Est. {FORM_STEPS[currentStep - 1].estimatedTime}
+                      Est. {currentStepConfig.estimatedTime}
                     </div>
                   </div>
                 </div>
@@ -655,26 +731,9 @@ export default function ShareExperience() {
                     {renderStepContent()}
                   </motion.div>
                 </AnimatePresence>
-
-                {/* Navigation */}
-                <StepNavigation
-                  currentStep={currentStep}
-                  totalSteps={5}
-                  onPrevious={handlePreviousStep}
-                  isLastStep={currentStep === 5}
-                  isSubmitting={isSubmitting}
-                  showPrevious={currentStep > 1}
-                />
               </CardContent>
             </Card>
           </FormProvider>
-
-          {/* Last Saved Indicator */}
-          {lastSaved && (
-            <div className="mt-4 text-center text-sm text-slate-500 dark:text-slate-400">
-              Last saved: {lastSaved.toLocaleTimeString()}
-            </div>
-          )}
         </div>
       </main>
     </>

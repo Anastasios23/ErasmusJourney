@@ -12,7 +12,7 @@ const mockRouterReplace = vi.fn();
 const mockRouterPush = vi.fn();
 const mockSetCurrentStep = vi.fn();
 const mockMarkStepCompleted = vi.fn();
-let lastStepNavigationProps: Record<string, unknown> | null = null;
+let lastFormProgressBarProps: Record<string, unknown> | null = null;
 let mockSessionStatus: "authenticated" | "unauthenticated" | "loading" =
   "authenticated";
 let mockSessionData: any = {
@@ -103,14 +103,14 @@ vi.mock("../../components/forms/FormProvider", () => ({
 }));
 
 vi.mock("../../components/forms/FormProgressBar", () => ({
-  FormProgressBar: () => <div data-testid="form-progress-bar" />,
+  FormProgressBar: (props: Record<string, unknown>) => {
+    lastFormProgressBarProps = props;
+    return <div data-testid="form-progress-bar" />;
+  },
 }));
 
-vi.mock("../../components/forms/StepNavigation", () => ({
-  StepNavigation: (props: Record<string, unknown>) => {
-    lastStepNavigationProps = props;
-    return <div data-testid="step-navigation" />;
-  },
+vi.mock("../../components/forms/StepStatusBar", () => ({
+  StepStatusBar: () => <div data-testid="step-status-bar" />,
 }));
 
 vi.mock("../../src/components/ui/button", () => ({
@@ -212,7 +212,7 @@ describe("ShareExperience page", () => {
     mockRouterPush.mockReset();
     mockSetCurrentStep.mockReset();
     mockMarkStepCompleted.mockReset();
-    lastStepNavigationProps = null;
+    lastFormProgressBarProps = null;
 
     mockSaveProgress.mockResolvedValue(true);
     mockSubmitExperience.mockResolvedValue(true);
@@ -317,13 +317,24 @@ describe("ShareExperience page", () => {
     });
   });
 
-  it("does not pass a duplicate save draft action into step navigation", () => {
+  it("routes guarded navigation through the progress bar and removes the page footer", () => {
     render(<ShareExperience />);
 
-    expect(screen.getByTestId("step-navigation")).toBeInTheDocument();
-    expect(lastStepNavigationProps).not.toBeNull();
-    expect(lastStepNavigationProps).not.toHaveProperty("onSaveDraft");
-    expect(lastStepNavigationProps).not.toHaveProperty("showSaveDraft");
+    expect(screen.queryByTestId("step-navigation")).not.toBeInTheDocument();
+    expect(screen.getByTestId("step-status-bar")).toBeInTheDocument();
+    expect(lastFormProgressBarProps).not.toBeNull();
+    expect(lastFormProgressBarProps).toMatchObject({
+      currentStep: 1,
+      completedSteps: [],
+    });
+    expect(lastFormProgressBarProps).toHaveProperty("onStepClick");
+    expect(
+      (lastFormProgressBarProps?.steps as Array<Record<string, unknown>>)[1],
+    ).toMatchObject({
+      number: 2,
+      isLocked: true,
+      lockedReason: "Complete Basic Information first.",
+    });
   });
 
   it("clamps an inaccessible deep link back to step 1", async () => {

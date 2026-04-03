@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { EnhancedInput } from "@/components/ui/enhanced-input";
+import { StepNavigation } from "@/components/forms/StepNavigation";
 import {
   EnhancedSelect,
   EnhancedSelectContent,
@@ -11,6 +12,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { getCyprusUniversityByEmail } from "../../../lib/authUtils";
 import {
+  BASIC_INFORMATION_REQUIRED_FIELDS,
   BASIC_INFO_LEVEL_OPTIONS,
   BASIC_INFO_PERIOD_OPTIONS,
   type BasicInformationData,
@@ -25,12 +27,30 @@ import {
 } from "@/lib/basicInformationOptions";
 import { CYPRUS_UNIVERSITIES } from "@/data/universityAgreements";
 import { normalizeDepartmentList } from "@/lib/departmentNormalization";
+import {
+  type ShareExperienceSaveState,
+  formatValidationSummaryItem,
+  scrollToFirstValidationError,
+} from "@/lib/shareExperienceUi";
 
 interface BasicInformationStepProps {
   data: any;
-  onComplete: (data: any) => void;
-  onSave: (data: any) => void;
+  onComplete: (data: any) => void | Promise<void>;
+  onSave: (data: any) => void | Promise<void>;
+  onPrevious?: () => void;
+  saveState?: ShareExperienceSaveState;
+  onRequiredCountChange?: (count: number) => void;
 }
+
+const BASIC_INFO_FIELD_LABELS: Record<string, string> = {
+  homeUniversity: "Home university",
+  homeDepartment: "Home department",
+  levelOfStudy: "Level of study",
+  hostUniversity: "Host university",
+  exchangeAcademicYear: "Exchange academic year",
+  exchangePeriod: "Exchange period",
+  exchangeEndDate: "Exchange end date",
+};
 
 function createSelectedHostOption(
   formData: BasicInformationData,
@@ -61,6 +81,9 @@ export default function BasicInformationStep({
   data,
   onComplete,
   onSave,
+  onPrevious,
+  saveState = "idle",
+  onRequiredCountChange,
 }: BasicInformationStepProps) {
   const { data: session } = useSession();
   const derivedHomeUniversity = useMemo(
@@ -84,6 +107,7 @@ export default function BasicInformationStep({
     sanitizeBasicInformationData(data?.basicInfo),
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [hasAttemptedContinue, setHasAttemptedContinue] = useState(false);
   const [departmentOptions, setDepartmentOptions] = useState<string[]>([]);
   const [hostUniversityOptions, setHostUniversityOptions] = useState<
     HostUniversityOption[]
@@ -325,6 +349,60 @@ export default function BasicInformationStep({
     hostUniversityOptions,
   ]);
 
+  const cleanedFormData = useMemo(
+    () =>
+      sanitizeBasicInformationData({
+        ...formData,
+        homeUniversity: isHomeUniversityLocked
+          ? derivedHomeUniversity?.name || formData.homeUniversity
+          : formData.homeUniversity,
+        homeUniversityCode: isHomeUniversityLocked
+          ? derivedHomeUniversity?.code || formData.homeUniversityCode
+          : formData.homeUniversityCode,
+      }),
+    [
+      derivedHomeUniversity?.code,
+      derivedHomeUniversity?.name,
+      formData,
+      isHomeUniversityLocked,
+    ],
+  );
+
+  const missingRequiredCount = useMemo(
+    () =>
+      BASIC_INFORMATION_REQUIRED_FIELDS.filter(
+        (field) => !cleanedFormData[field],
+      ).length,
+    [cleanedFormData],
+  );
+
+  const validationSummary = useMemo(() => {
+    if (!hasAttemptedContinue) {
+      return [];
+    }
+
+    return [
+      "homeUniversity",
+      "homeDepartment",
+      "levelOfStudy",
+      "hostUniversity",
+      "exchangeAcademicYear",
+      "exchangePeriod",
+      "exchangeEndDate",
+    ]
+      .filter((field) => errors[field])
+      .map((field) =>
+        formatValidationSummaryItem(
+          BASIC_INFO_FIELD_LABELS[field] || field,
+          errors[field],
+        ),
+      );
+  }, [errors, hasAttemptedContinue]);
+
+  useEffect(() => {
+    onRequiredCountChange?.(missingRequiredCount);
+  }, [missingRequiredCount, onRequiredCountChange]);
+
   const persistBasicInfo = (nextData: BasicInformationData) => {
     setFormData(nextData);
   };
@@ -441,39 +519,20 @@ export default function BasicInformationStep({
   };
 
   const handleContinue = () => {
-    const cleanedData = sanitizeBasicInformationData({
-      ...formData,
-      homeUniversity: isHomeUniversityLocked
-        ? derivedHomeUniversity?.name || formData.homeUniversity
-        : formData.homeUniversity,
-      homeUniversityCode: isHomeUniversityLocked
-        ? derivedHomeUniversity?.code || formData.homeUniversityCode
-        : formData.homeUniversityCode,
-    });
+    setHasAttemptedContinue(true);
+    setFormData(cleanedFormData);
 
-    setFormData(cleanedData);
-
-    if (validateForm(cleanedData)) {
-      onComplete({ basicInfo: cleanedData });
+    if (validateForm(cleanedFormData)) {
+      setHasAttemptedContinue(false);
+      void onComplete({ basicInfo: cleanedFormData });
     } else {
-      const firstError = document.querySelector(".text-red-500");
-      firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
+      scrollToFirstValidationError();
     }
   };
 
   const handleSave = () => {
-    const cleanedData = sanitizeBasicInformationData({
-      ...formData,
-      homeUniversity: isHomeUniversityLocked
-        ? derivedHomeUniversity?.name || formData.homeUniversity
-        : formData.homeUniversity,
-      homeUniversityCode: isHomeUniversityLocked
-        ? derivedHomeUniversity?.code || formData.homeUniversityCode
-        : formData.homeUniversityCode,
-    });
-
-    setFormData(cleanedData);
-    onSave({ basicInfo: cleanedData });
+    setFormData(cleanedFormData);
+    void onSave({ basicInfo: cleanedFormData });
   };
 
   return (
@@ -801,20 +860,19 @@ export default function BasicInformationStep({
         </div>
       </div>
 
-      <div className="flex justify-between items-center pt-6 border-t border-gray-100">
-        <button
-          onClick={handleSave}
-          className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
-        >
-          Save Draft
-        </button>
-        <button
-          onClick={handleContinue}
-          className="px-8 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          Continue to Courses
-        </button>
-      </div>
+      <StepNavigation
+        currentStep={1}
+        totalSteps={5}
+        onPrevious={onPrevious}
+        onSaveDraft={handleSave}
+        onNext={handleContinue}
+        isLastStep={false}
+        showPrevious={false}
+        helperText="Confirm the required Erasmus context here to unlock the next step."
+        missingRequiredCount={missingRequiredCount}
+        validationSummary={validationSummary}
+        saveState={saveState}
+      />
     </div>
   );
 }

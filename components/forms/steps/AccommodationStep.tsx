@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 
 import { EnhancedInput } from "@/components/ui/enhanced-input";
+import { StepNavigation } from "@/components/forms/StepNavigation";
 import {
   EnhancedSelect,
   EnhancedSelectContent,
@@ -21,17 +22,48 @@ import {
   sanitizeAccommodationStepData,
 } from "@/lib/accommodation";
 import { accommodationStepSchema } from "@/lib/schemas";
+import {
+  type ShareExperienceSaveState,
+  formatValidationSummaryItem,
+  scrollToFirstValidationError,
+} from "@/lib/shareExperienceUi";
 
 interface AccommodationStepProps {
   data: any;
-  onComplete: (data: any) => void;
-  onSave: (data: any) => void;
+  onComplete: (data: any) => void | Promise<void>;
+  onSave: (data: any) => void | Promise<void>;
+  onPrevious?: () => void;
+  saveState?: ShareExperienceSaveState;
+  onRequiredCountChange?: (count: number) => void;
 }
+
+const ACCOMMODATION_FIELD_LABELS: Record<string, string> = {
+  accommodationType: "Accommodation type",
+  monthlyRent: "Monthly rent",
+  billsIncluded: "Bills included",
+  accommodationRating: "Accommodation rating",
+  wouldRecommend: "Would recommend",
+  minutesToUniversity: "Minutes to university",
+  accommodationReview: "Accommodation review",
+};
+
+const ACCOMMODATION_ERROR_ORDER = [
+  "accommodationType",
+  "monthlyRent",
+  "billsIncluded",
+  "accommodationRating",
+  "wouldRecommend",
+  "minutesToUniversity",
+  "accommodationReview",
+] as const;
 
 export default function AccommodationStep({
   data,
   onComplete,
   onSave,
+  onPrevious,
+  saveState = "idle",
+  onRequiredCountChange,
 }: AccommodationStepProps) {
   const [formData, setFormData] = useState<AccommodationStepData>(() =>
     data?.accommodation
@@ -39,6 +71,7 @@ export default function AccommodationStep({
       : createEmptyAccommodationStepData(),
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [hasAttemptedContinue, setHasAttemptedContinue] = useState(false);
 
   useEffect(() => {
     setFormData(
@@ -52,6 +85,26 @@ export default function AccommodationStep({
     const sanitized = sanitizeAccommodationStepData(nextData);
     setFormData(sanitized);
   };
+
+  const missingRequiredCount =
+    (formData.accommodationType ? 0 : 1) +
+    (typeof formData.monthlyRent === "number" ? 0 : 1) +
+    (formData.billsIncluded ? 0 : 1) +
+    (typeof formData.accommodationRating === "number" ? 0 : 1) +
+    (typeof formData.wouldRecommend === "boolean" ? 0 : 1);
+
+  const validationSummary = hasAttemptedContinue
+    ? ACCOMMODATION_ERROR_ORDER.filter((field) => errors[field]).map((field) =>
+        formatValidationSummaryItem(
+          ACCOMMODATION_FIELD_LABELS[field] || field,
+          errors[field],
+        ),
+      )
+    : [];
+
+  useEffect(() => {
+    onRequiredCountChange?.(missingRequiredCount);
+  }, [missingRequiredCount, onRequiredCountChange]);
 
   const handleInputChange = <K extends keyof AccommodationStepData>(
     field: K,
@@ -96,17 +149,18 @@ export default function AccommodationStep({
 
   const handleContinue = () => {
     const sanitized = sanitizeAccommodationStepData(formData);
+    setHasAttemptedContinue(true);
 
     if (validate()) {
-      onComplete({ accommodation: sanitized });
+      setHasAttemptedContinue(false);
+      void onComplete({ accommodation: sanitized });
     } else {
-      const firstError = document.querySelector(".text-red-500");
-      firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
+      scrollToFirstValidationError();
     }
   };
 
   const handleSave = () => {
-    onSave({
+    void onSave({
       accommodation: sanitizeAccommodationStepData(formData),
     });
   };
@@ -371,20 +425,19 @@ export default function AccommodationStep({
         </div>
       </div>
 
-      <div className="flex justify-between items-center pt-6 border-t border-gray-100">
-        <button
-          onClick={handleSave}
-          className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
-        >
-          Save Draft
-        </button>
-        <button
-          onClick={handleContinue}
-          className="px-8 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          Continue to Living Expenses
-        </button>
-      </div>
+      <StepNavigation
+        currentStep={3}
+        totalSteps={5}
+        onPrevious={onPrevious}
+        onSaveDraft={handleSave}
+        onNext={handleContinue}
+        isLastStep={false}
+        showPrevious={Boolean(onPrevious)}
+        helperText="Keep the housing details anonymous and complete the required fields to continue."
+        missingRequiredCount={missingRequiredCount}
+        validationSummary={validationSummary}
+        saveState={saveState}
+      />
     </div>
   );
 }

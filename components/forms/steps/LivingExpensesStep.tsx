@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { EnhancedInput } from "@/components/ui/enhanced-input";
+import { StepNavigation } from "@/components/forms/StepNavigation";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Wallet, ShoppingCart, Bus, Beer, Plane } from "lucide-react";
@@ -8,6 +9,11 @@ import {
   hasRequiredLivingExpenses,
   type LivingExpensesStepData,
 } from "@/lib/livingExpenses";
+import {
+  type ShareExperienceSaveState,
+  formatValidationSummaryItem,
+  scrollToFirstValidationError,
+} from "@/lib/shareExperienceUi";
 
 interface LivingExpensesUiData {
   currency: string;
@@ -21,9 +27,18 @@ interface LivingExpensesUiData {
 
 interface LivingExpensesStepProps {
   data: any;
-  onComplete: (data: any) => void;
-  onSave: (data: any) => void;
+  onComplete: (data: any) => void | Promise<void>;
+  onSave: (data: any) => void | Promise<void>;
+  onPrevious?: () => void;
+  saveState?: ShareExperienceSaveState;
+  onRequiredCountChange?: (count: number) => void;
 }
+
+const LIVING_EXPENSE_FIELD_LABELS: Record<string, string> = {
+  food: "Food expenses",
+  transport: "Transport expenses",
+  social: "Social expenses",
+};
 
 function toUiValue(value: number | null | undefined): string {
   if (value === null || value === undefined) {
@@ -56,6 +71,9 @@ export default function LivingExpensesStep({
   data,
   onComplete,
   onSave,
+  onPrevious,
+  saveState = "idle",
+  onRequiredCountChange,
 }: LivingExpensesStepProps) {
   const fallbackRent =
     typeof data?.accommodation?.monthlyRent === "number"
@@ -68,6 +86,7 @@ export default function LivingExpensesStep({
   );
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [hasAttemptedContinue, setHasAttemptedContinue] = useState(false);
 
   useEffect(() => {
     setFormData(
@@ -89,7 +108,38 @@ export default function LivingExpensesStep({
     const newData = { ...formData, [field]: value };
 
     setFormData(newData);
+
+    if (errors[field]) {
+      setErrors((current) => ({ ...current, [field]: "" }));
+    }
   };
+
+  const canonicalFormData = toCanonicalData(
+    formData,
+    typeof data?.accommodation?.monthlyRent === "number"
+      ? data.accommodation.monthlyRent
+      : null,
+  );
+
+  const missingRequiredCount =
+    (canonicalFormData.food === null ? 1 : 0) +
+    (canonicalFormData.transport === null ? 1 : 0) +
+    (canonicalFormData.social === null ? 1 : 0);
+
+  const validationSummary = hasAttemptedContinue
+    ? ["food", "transport", "social"]
+        .filter((field) => errors[field])
+        .map((field) =>
+          formatValidationSummaryItem(
+            LIVING_EXPENSE_FIELD_LABELS[field] || field,
+            errors[field],
+          ),
+        )
+    : [];
+
+  useEffect(() => {
+    onRequiredCountChange?.(missingRequiredCount);
+  }, [missingRequiredCount, onRequiredCountChange]);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -128,29 +178,21 @@ export default function LivingExpensesStep({
   };
 
   const handleContinue = () => {
+    setHasAttemptedContinue(true);
+
     if (validate()) {
-      onComplete({
-        livingExpenses: toCanonicalData(
-          formData,
-          typeof data?.accommodation?.monthlyRent === "number"
-            ? data.accommodation.monthlyRent
-            : null,
-        ),
+      setHasAttemptedContinue(false);
+      void onComplete({
+        livingExpenses: canonicalFormData,
       });
     } else {
-      const firstError = document.querySelector(".text-red-500");
-      firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
+      scrollToFirstValidationError();
     }
   };
 
   const handleSave = () => {
-    onSave({
-      livingExpenses: toCanonicalData(
-        formData,
-        typeof data?.accommodation?.monthlyRent === "number"
-          ? data.accommodation.monthlyRent
-          : null,
-      ),
+    void onSave({
+      livingExpenses: canonicalFormData,
     });
   };
 
@@ -349,20 +391,19 @@ export default function LivingExpensesStep({
         </div>
       </div>
 
-      <div className="flex justify-between items-center pt-6 border-t border-gray-100">
-        <button
-          onClick={handleSave}
-          className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
-        >
-          Save Draft
-        </button>
-        <button
-          onClick={handleContinue}
-          className="px-8 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          Continue to Experience
-        </button>
-      </div>
+      <StepNavigation
+        currentStep={4}
+        totalSteps={5}
+        onPrevious={onPrevious}
+        onSaveDraft={handleSave}
+        onNext={handleContinue}
+        isLastStep={false}
+        showPrevious={Boolean(onPrevious)}
+        helperText="Use your average monthly estimates for the required budget categories."
+        missingRequiredCount={missingRequiredCount}
+        validationSummary={validationSummary}
+        saveState={saveState}
+      />
     </div>
   );
 }

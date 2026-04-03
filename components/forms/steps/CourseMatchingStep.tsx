@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { EnhancedInput } from "@/components/ui/enhanced-input";
+import { StepNavigation } from "@/components/forms/StepNavigation";
 import {
   EnhancedSelect,
   EnhancedSelectContent,
@@ -25,12 +26,36 @@ import {
   type CourseMappingFormRow,
   toCourseMappingFormRows,
 } from "@/lib/courseMatching";
+import {
+  type ShareExperienceSaveState,
+  formatValidationSummaryItem,
+  scrollToFirstValidationError,
+} from "@/lib/shareExperienceUi";
 
 interface CourseMatchingStepProps {
   data: any;
-  onComplete: (data: any) => void;
-  onSave: (data: any) => void;
+  onComplete: (data: any) => void | Promise<void>;
+  onSave: (data: any) => void | Promise<void>;
+  onPrevious?: () => void;
+  saveState?: ShareExperienceSaveState;
+  onRequiredCountChange?: (count: number) => void;
 }
+
+const COURSE_FIELD_LABELS: Record<string, string> = {
+  homeCourseName: "Home course name",
+  homeECTS: "Home ECTS",
+  hostCourseName: "Host course name",
+  hostECTS: "Host ECTS",
+  recognitionType: "Recognition type",
+};
+
+const COURSE_ERROR_FIELD_ORDER = [
+  "homeCourseName",
+  "homeECTS",
+  "hostCourseName",
+  "hostECTS",
+  "recognitionType",
+] as const;
 
 function hasVisibleContent(mapping: CourseMappingFormRow) {
   return !!(
@@ -54,11 +79,15 @@ export default function CourseMatchingStep({
   data,
   onComplete,
   onSave,
+  onPrevious,
+  saveState = "idle",
+  onRequiredCountChange,
 }: CourseMatchingStepProps) {
   const [mappings, setMappings] = useState<CourseMappingFormRow[]>(() =>
     getInitialMappings(data?.courses),
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [hasAttemptedContinue, setHasAttemptedContinue] = useState(false);
 
   useEffect(() => {
     setMappings(getInitialMappings(data?.courses));
@@ -68,6 +97,106 @@ export default function CourseMatchingStep({
     () => buildCourseMappingsPayload(mappings),
     [mappings],
   );
+
+  const visibleMappings = useMemo(
+    () => mappings.filter(hasVisibleContent),
+    [mappings],
+  );
+
+  const missingRequiredCount = useMemo(() => {
+    if (visibleMappings.length === 0) {
+      return 1;
+    }
+
+    return visibleMappings.reduce((count, mapping) => {
+      return (
+        count +
+        (mapping.homeCourseName.trim() ? 0 : 1) +
+        (mapping.homeECTS.trim() && Number.parseFloat(mapping.homeECTS) > 0
+          ? 0
+          : 1) +
+        (mapping.hostCourseName.trim() ? 0 : 1) +
+        (mapping.hostECTS.trim() && Number.parseFloat(mapping.hostECTS) > 0
+          ? 0
+          : 1) +
+        (mapping.recognitionType ? 0 : 1)
+      );
+    }, 0);
+  }, [visibleMappings]);
+
+  const validationSummary = useMemo(() => {
+    if (!hasAttemptedContinue) {
+      return [];
+    }
+
+    const mappingOrder = new Map(
+      mappings.map((mapping, index) => [mapping.id, index + 1]),
+    );
+
+    return Object.entries(errors)
+      .filter(([, message]) => Boolean(message))
+      .sort(([leftKey], [rightKey]) => {
+        if (leftKey === "general") {
+          return -1;
+        }
+
+        if (rightKey === "general") {
+          return 1;
+        }
+
+        const leftField = COURSE_ERROR_FIELD_ORDER.find((field) =>
+          leftKey.endsWith(`-${field}`),
+        );
+        const rightField = COURSE_ERROR_FIELD_ORDER.find((field) =>
+          rightKey.endsWith(`-${field}`),
+        );
+
+        const leftMappingId = leftField
+          ? leftKey.slice(0, leftKey.length - leftField.length - 1)
+          : leftKey;
+        const rightMappingId = rightField
+          ? rightKey.slice(0, rightKey.length - rightField.length - 1)
+          : rightKey;
+
+        const leftIndex = mappingOrder.get(leftMappingId) ?? Number.MAX_SAFE_INTEGER;
+        const rightIndex =
+          mappingOrder.get(rightMappingId) ?? Number.MAX_SAFE_INTEGER;
+
+        if (leftIndex !== rightIndex) {
+          return leftIndex - rightIndex;
+        }
+
+        return (
+          COURSE_ERROR_FIELD_ORDER.indexOf(leftField || "homeCourseName") -
+          COURSE_ERROR_FIELD_ORDER.indexOf(rightField || "homeCourseName")
+        );
+      })
+      .map(([key, message]) => {
+        if (key === "general") {
+          return message;
+        }
+
+        const fieldKey = COURSE_ERROR_FIELD_ORDER.find((field) =>
+          key.endsWith(`-${field}`),
+        );
+
+        if (!fieldKey) {
+          return message;
+        }
+
+        const mappingId = key.slice(0, key.length - fieldKey.length - 1);
+        const mappingIndex = mappingOrder.get(mappingId);
+
+        return formatValidationSummaryItem(
+          mappingIndex ? `Mapping ${mappingIndex}` : COURSE_FIELD_LABELS[fieldKey],
+          message,
+        );
+      });
+  }, [errors, hasAttemptedContinue, mappings]);
+
+  useEffect(() => {
+    onRequiredCountChange?.(missingRequiredCount);
+  }, [missingRequiredCount, onRequiredCountChange]);
 
   const calculateTotalECTS = (type: "home" | "host") => {
     return sanitizedMappings.reduce((total, mapping) => {
@@ -165,17 +294,19 @@ export default function CourseMatchingStep({
   };
 
   const handleContinue = () => {
+    setHasAttemptedContinue(true);
+
     if (!validate()) {
-      const firstError = document.querySelector(".text-red-500");
-      firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
+      scrollToFirstValidationError();
       return;
     }
 
-    onComplete({ courses: buildCourseMappingsPayload(mappings) });
+    setHasAttemptedContinue(false);
+    void onComplete({ courses: buildCourseMappingsPayload(mappings) });
   };
 
   const handleSave = () => {
-    onSave({ courses: buildCourseMappingsPayload(mappings) });
+    void onSave({ courses: buildCourseMappingsPayload(mappings) });
   };
 
   return (
@@ -476,20 +607,19 @@ export default function CourseMatchingStep({
         </div>
       </div>
 
-      <div className="flex justify-between items-center pt-6 border-t border-gray-100">
-        <button
-          onClick={handleSave}
-          className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
-        >
-          Save Draft
-        </button>
-        <button
-          onClick={handleContinue}
-          className="px-8 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          Continue to Accommodation
-        </button>
-      </div>
+      <StepNavigation
+        currentStep={2}
+        totalSteps={5}
+        onPrevious={onPrevious}
+        onSaveDraft={handleSave}
+        onNext={handleContinue}
+        isLastStep={false}
+        showPrevious={Boolean(onPrevious)}
+        helperText="Add at least one complete course equivalence example to continue."
+        missingRequiredCount={missingRequiredCount}
+        validationSummary={validationSummary}
+        saveState={saveState}
+      />
     </div>
   );
 }
