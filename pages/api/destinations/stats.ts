@@ -1,5 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/prisma";
+import { calculateFormSubmissionLivingExpensesTotal } from "../../../src/lib/formSubmissionLivingExpenses";
+
+const LIVING_EXPENSES_TYPES = ["LIVING_EXPENSES", "living-expenses"];
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,11 +17,15 @@ export default async function handler(
     // Get all living expenses submissions
     const submissions = await prisma.form_submissions.findMany({
       where: {
-        type: "LIVING_EXPENSES",
+        type: {
+          in: LIVING_EXPENSES_TYPES,
+        },
       },
       select: {
         data: true,
         createdAt: true,
+        hostCity: true,
+        hostCountry: true,
       },
     });
 
@@ -36,16 +43,14 @@ export default async function handler(
 
     submissions.forEach((submission) => {
       const data = submission.data as any;
-      const destination = data.destination;
-      const expenses = data.expenses;
+      const destination = data.destination || {
+        city: submission.hostCity,
+        country: submission.hostCountry,
+      };
+      const totalCost = calculateFormSubmissionLivingExpensesTotal(data);
 
-      if (destination?.city && destination?.country && expenses) {
+      if (destination?.city && destination?.country && totalCost > 0) {
         const key = `${destination.city}-${destination.country}`;
-        const totalCost =
-          parseFloat(expenses.accommodation || 0) +
-          parseFloat(expenses.food || 0) +
-          parseFloat(expenses.transport || 0) +
-          parseFloat(expenses.entertainment || 0);
 
         if (!destinationMap.has(key)) {
           destinationMap.set(key, {

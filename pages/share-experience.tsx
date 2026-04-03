@@ -420,32 +420,6 @@ export default function ShareExperience() {
     ],
   );
 
-  // Handle save draft
-  const handleSaveDraft = useCallback(async () => {
-    try {
-      await saveProgress({
-        ...formDataRef.current,
-        currentStep,
-      });
-
-      setLastSaved(new Date());
-      setShowSavedIndicator(true);
-      setTimeout(() => setShowSavedIndicator(false), 2000);
-
-      toast({
-        title: "Draft saved",
-        description: "Your progress has been saved.",
-      });
-    } catch (error) {
-      console.error("Save draft failed:", error);
-      toast({
-        title: "Error",
-        description: "Failed to save draft. Please try again.",
-        variant: "destructive",
-      });
-    }
-  }, [currentStep, saveProgress]);
-
   // Handle previous step
   const handlePreviousStep = useCallback(() => {
     if (currentStep > 1) {
@@ -687,11 +661,9 @@ export default function ShareExperience() {
                   currentStep={currentStep}
                   totalSteps={5}
                   onPrevious={handlePreviousStep}
-                  onSaveDraft={handleSaveDraft}
                   isLastStep={currentStep === 5}
                   isSubmitting={isSubmitting}
                   showPrevious={currentStep > 1}
-                  showSaveDraft={false}
                 />
               </CardContent>
             </Card>

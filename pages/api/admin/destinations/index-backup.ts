@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]";
 import { prisma } from "../../../../lib/prisma";
 import { ContentManagementService } from "../../../../src/services/contentManagementService";
+import { calculateFormSubmissionLivingExpensesTotal } from "../../../../src/lib/formSubmissionLivingExpenses";
 import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
 
 export default async function handler(
@@ -73,12 +74,13 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     const aggregatedDestinations = Object.entries(locationGroups).map(
       ([location, submissions]) => {
         const [city, country] = location.split(", ");
+        const locationUserIds = new Set(submissions.map((submission) => submission.userId));
 
         // Calculate statistics
         const submissionCount = submissions.length;
-        const ratings = submissions
-          .filter((s) => s.data?.ratings)
-          .map((s) => s.data.ratings)
+        const ratings = submissionData
+          .filter((submission) => locationUserIds.has(submission.userId))
+          .map((submission) => submission.data?.ratings)
           .filter(Boolean);
 
         const averageRating =
@@ -89,10 +91,16 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
               ) / ratings.length
             : null;
 
-        const costs = submissions
-          .filter((s) => s.data?.totalMonthlyBudget)
-          .map((s) => s.data.totalMonthlyBudget)
-          .filter(Boolean);
+        const costs = submissionData
+          .filter(
+            (submission) =>
+              submission.type === "living-expenses" &&
+              locationUserIds.has(submission.userId),
+          )
+          .map((submission) =>
+            calculateFormSubmissionLivingExpensesTotal(submission.data),
+          )
+          .filter((cost) => cost > 0);
 
         const averageCost =
           costs.length > 0

@@ -8,6 +8,13 @@ import {
 } from "../../../src/lib/accommodation";
 import { updateCityStatistics } from "../../../src/services/statisticsService";
 import { sanitizeCourseMappingsData } from "../../../src/lib/courseMatching";
+import { buildPublicDestinationSlug } from "../../../src/lib/publicRoutes";
+import {
+  hasLegacyLivingExpensesShape,
+  sanitizeLivingExpensesStepData,
+} from "../../../src/lib/livingExpenses";
+import { refreshPublicDestinationReadModel } from "../../../src/server/publicDestinations";
+import { revalidatePublicDestinationPages } from "../../../src/server/publicDestinationRevalidation";
 
 export default async function handler(
   req: NextApiRequest,
@@ -53,16 +60,23 @@ async function handleGet(res: NextApiResponse, userId: string) {
       });
     }
 
+    const accommodation = sanitizeAccommodationStepData(
+      experience.accommodation as any,
+    );
+
     return res.json({
       currentStep: experience.currentStep,
       completedSteps: JSON.parse(experience.completedSteps || "[]"),
       formData: {
         basicInfo: experience.basicInfo,
         courses: sanitizeCourseMappingsData(experience.courses),
-        accommodation: sanitizeAccommodationStepData(
-          experience.accommodation as any,
+        accommodation,
+        livingExpenses: sanitizeLivingExpensesStepData(
+          experience.livingExpenses as any,
+          {
+            fallbackRent: accommodation.monthlyRent ?? null,
+          },
         ),
-        livingExpenses: experience.livingExpenses,
         experience: experience.experience,
       },
       status: experience.status,
@@ -99,6 +113,15 @@ async function handlePut(
       lastSavedAt: new Date(),
     };
 
+    const existingExperience = await prisma.erasmusExperience.findUnique({
+      where: { userId },
+    });
+
+    const accommodationData =
+      formData?.accommodation !== undefined
+        ? sanitizeAccommodationStepData(formData.accommodation)
+        : sanitizeAccommodationStepData(existingExperience?.accommodation as any);
+
     if (formData) {
       if (formData.basicInfo !== undefined) {
         data.basicInfo = formData.basicInfo;
@@ -117,12 +140,24 @@ async function handlePut(
         data.courses = sanitizeCourseMappingsData(formData.courses);
       }
       if (formData.accommodation !== undefined) {
-        data.accommodation = sanitizeAccommodationStepData(
-          formData.accommodation,
+        data.accommodation = accommodationData;
+      }
+      if (formData.livingExpenses !== undefined) {
+        if (hasLegacyLivingExpensesShape(formData.livingExpenses)) {
+          return res.status(422).json({
+            error: "Invalid living expenses payload",
+            message:
+              "Legacy nested expenses format is not supported. Use canonical fields: currency, rent, food, transport, social, travel, other.",
+          });
+        }
+
+        data.livingExpenses = sanitizeLivingExpensesStepData(
+          formData.livingExpenses,
+          {
+            fallbackRent: accommodationData.monthlyRent ?? null,
+          },
         );
       }
-      if (formData.livingExpenses !== undefined)
-        data.livingExpenses = formData.livingExpenses;
       if (formData.experience !== undefined)
         data.experience = formData.experience;
     }
@@ -203,6 +238,26 @@ async function handlePut(
 
       return experience;
     });
+
+    if (
+      result.status === "APPROVED" &&
+      result.isComplete &&
+      result.hostCity &&
+      result.hostCountry
+    ) {
+      try {
+        await refreshPublicDestinationReadModel();
+        await revalidatePublicDestinationPages(
+          res,
+          buildPublicDestinationSlug(result.hostCity, result.hostCountry),
+        );
+      } catch (refreshError) {
+        console.error(
+          "Failed to refresh public destination read model:",
+          refreshError,
+        );
+      }
+    }
 
     // 3. Update City Statistics (Fire and forget)
     if (isComplete && result.hostCity && result.hostCountry) {

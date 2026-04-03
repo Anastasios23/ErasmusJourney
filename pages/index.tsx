@@ -1,4 +1,4 @@
-import { GetServerSideProps } from "next";
+import type { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
@@ -18,6 +18,7 @@ import {
   loadHomePagePublicData,
   type HomePageFeaturedDestinationData,
 } from "../src/server/homePagePublicData";
+import { PUBLIC_DESTINATION_PAGE_REVALIDATE_SECONDS } from "../src/lib/publicDestinationCache";
 
 // ============================================================================
 // TYPES
@@ -87,29 +88,6 @@ const CITY_IMAGES: Record<string, string> = {
 
 const DEFAULT_DESTINATION_IMAGE =
   "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&h=600&fit=crop";
-
-// ============================================================================
-// SERVER-SIDE CACHING
-// ============================================================================
-// Simple in-memory cache for homepage data to reduce database load
-// Cache expires after 5 minutes
-interface CacheEntry<T> {
-  data: T;
-  timestamp: number;
-}
-
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
-let homepageCache: CacheEntry<HomePageProps> | null = null;
-
-function getCachedData<T>(cache: CacheEntry<T> | null): T | null {
-  if (!cache) return null;
-  if (Date.now() - cache.timestamp > CACHE_TTL) return null;
-  return cache.data;
-}
-
-function setCachedData<T>(data: T): CacheEntry<T> {
-  return { data, timestamp: Date.now() };
-}
 
 // ============================================================================
 // ANIMATED HOOKS
@@ -1456,13 +1434,8 @@ function getFeaturedDestinationImage(city: string): string {
   return CITY_IMAGES[city.toLowerCase()] || DEFAULT_DESTINATION_IMAGE;
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
   try {
-    const cachedData = getCachedData(homepageCache);
-    if (cachedData) {
-      return { props: cachedData };
-    }
-
     const homePagePublicData = await loadHomePagePublicData();
     const props: HomePageProps = {
       publicDataAvailable: homePagePublicData.isAvailable,
@@ -1480,8 +1453,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       ),
     };
 
-    homepageCache = setCachedData(props);
-    return { props };
+    return { props, revalidate: PUBLIC_DESTINATION_PAGE_REVALIDATE_SECONDS };
   } catch (error) {
     console.error("Error fetching homepage data:", error);
 
@@ -1496,6 +1468,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
     return {
       props,
+      revalidate: PUBLIC_DESTINATION_PAGE_REVALIDATE_SECONDS,
     };
   }
 };

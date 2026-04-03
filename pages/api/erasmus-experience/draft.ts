@@ -3,6 +3,10 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
 import { prisma } from "../../../lib/prisma";
 import { sanitizeAccommodationStepData } from "../../../src/lib/accommodation";
+import {
+  hasLegacyLivingExpensesShape,
+  sanitizeLivingExpensesStepData,
+} from "../../../src/lib/livingExpenses";
 
 export default async function handler(
   req: NextApiRequest,
@@ -60,16 +64,22 @@ async function handleGet(
 
     // Parse completedSteps JSON
     const completedSteps = JSON.parse(experience.completedSteps || "[]");
+    const accommodation = sanitizeAccommodationStepData(
+      experience.accommodation as any,
+    );
 
     return res.json({
       currentStep: experience.currentStep,
       completedSteps,
       basicInfo: experience.basicInfo,
       courses: experience.courses,
-      accommodation: sanitizeAccommodationStepData(
-        experience.accommodation as any,
+      accommodation,
+      livingExpenses: sanitizeLivingExpensesStepData(
+        experience.livingExpenses as any,
+        {
+          fallbackRent: accommodation.monthlyRent ?? null,
+        },
       ),
-      livingExpenses: experience.livingExpenses,
       experience: experience.experience,
       status: experience.status,
       isComplete: experience.isComplete,
@@ -110,6 +120,22 @@ async function handlePut(
       });
     }
 
+    const accommodationData =
+      accommodation !== undefined
+        ? sanitizeAccommodationStepData(accommodation)
+        : sanitizeAccommodationStepData(existingExperience?.accommodation as any);
+
+    if (
+      livingExpenses !== undefined &&
+      hasLegacyLivingExpensesShape(livingExpenses)
+    ) {
+      return res.status(422).json({
+        error: "Invalid living expenses payload",
+        message:
+          "Legacy nested expenses format is not supported. Use canonical fields: currency, rent, food, transport, social, travel, other.",
+      });
+    }
+
     const isComplete = completedSteps?.length >= 5; // All 5 steps completed
     const status = isComplete ? "IN_PROGRESS" : "DRAFT"; // IN_PROGRESS means ready for final review/submit
 
@@ -121,10 +147,13 @@ async function handlePut(
       lastSavedAt: new Date(),
       basicInfo: basicInfo || undefined,
       courses: courses || undefined,
-      accommodation: accommodation
-        ? sanitizeAccommodationStepData(accommodation)
-        : undefined,
-      livingExpenses: livingExpenses || undefined,
+      accommodation: accommodation !== undefined ? accommodationData : undefined,
+      livingExpenses:
+        livingExpenses !== undefined
+          ? sanitizeLivingExpensesStepData(livingExpenses, {
+              fallbackRent: accommodationData.monthlyRent ?? null,
+            })
+          : undefined,
       experience: experience || undefined,
     };
 

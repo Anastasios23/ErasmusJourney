@@ -1,5 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/prisma";
+import {
+  calculateFormSubmissionLivingExpensesTotal,
+  sanitizeFormSubmissionLivingExpensesData,
+} from "../../../src/lib/formSubmissionLivingExpenses";
+
+const LIVING_EXPENSES_TYPES = ["LIVING_EXPENSES", "living-expenses"];
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,11 +26,37 @@ export default async function handler(
     // Get living expenses submissions for this destination
     const submissions = await prisma.form_submissions.findMany({
       where: {
-        type: "LIVING_EXPENSES",
-        data: {
-          path: ["destination", "city"],
-          string_contains: city as string,
+        type: {
+          in: LIVING_EXPENSES_TYPES,
         },
+        OR: [
+          {
+            AND: [
+              {
+                data: {
+                  path: ["destination", "city"],
+                  string_contains: city as string,
+                },
+              },
+              {
+                data: {
+                  path: ["destination", "country"],
+                  string_contains: country as string,
+                },
+              },
+            ],
+          },
+          {
+            hostCity: {
+              equals: city as string,
+              mode: "insensitive",
+            },
+            hostCountry: {
+              equals: country as string,
+              mode: "insensitive",
+            },
+          },
+        ],
       },
       select: {
         data: true,
@@ -52,17 +84,19 @@ export default async function handler(
     let foodSum = 0;
     let transportSum = 0;
     let entertainmentSum = 0;
+    let totalMonthlySum = 0;
     let validSubmissions = 0;
 
     submissions.forEach((submission) => {
-      const data = submission.data as any;
-      const expenses = data.expenses;
+      const data = sanitizeFormSubmissionLivingExpensesData(submission.data);
+      const total = calculateFormSubmissionLivingExpensesTotal(data);
 
-      if (expenses) {
-        accommodationSum += parseFloat(expenses.accommodation || 0);
-        foodSum += parseFloat(expenses.food || 0);
-        transportSum += parseFloat(expenses.transport || 0);
-        entertainmentSum += parseFloat(expenses.entertainment || 0);
+      if (total > 0) {
+        accommodationSum += data.rent || 0;
+        foodSum += data.food || 0;
+        transportSum += data.transport || 0;
+        entertainmentSum += data.social || 0;
+        totalMonthlySum += total;
         validSubmissions++;
       }
     });
@@ -87,8 +121,7 @@ export default async function handler(
     const avgFood = Math.round(foodSum / validSubmissions);
     const avgTransport = Math.round(transportSum / validSubmissions);
     const avgEntertainment = Math.round(entertainmentSum / validSubmissions);
-    const totalMonthly =
-      avgAccommodation + avgFood + avgTransport + avgEntertainment;
+    const totalMonthly = Math.round(totalMonthlySum / validSubmissions);
 
     // Get the most recent submission date
     const lastUpdated = submissions.reduce((latest, sub) => {

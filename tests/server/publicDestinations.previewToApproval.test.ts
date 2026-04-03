@@ -1,16 +1,33 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { mockFindMany, mockFindUnique } = vi.hoisted(() => ({
-  mockFindMany: vi.fn(),
-  mockFindUnique: vi.fn(),
+const {
+  mockExperienceFindMany,
+  mockExperienceFindUnique,
+  mockReadModelFindMany,
+  mockReadModelDeleteMany,
+  mockReadModelUpsert,
+  mockTransaction,
+} = vi.hoisted(() => ({
+  mockExperienceFindMany: vi.fn(),
+  mockExperienceFindUnique: vi.fn(),
+  mockReadModelFindMany: vi.fn(),
+  mockReadModelDeleteMany: vi.fn(),
+  mockReadModelUpsert: vi.fn(),
+  mockTransaction: vi.fn(),
 }));
 
 vi.mock("../../lib/prisma", () => ({
   prisma: {
     erasmusExperience: {
-      findMany: mockFindMany,
-      findUnique: mockFindUnique,
+      findMany: mockExperienceFindMany,
+      findUnique: mockExperienceFindUnique,
     },
+    publicDestinationReadModel: {
+      findMany: mockReadModelFindMany,
+      deleteMany: mockReadModelDeleteMany,
+      upsert: mockReadModelUpsert,
+    },
+    $transaction: mockTransaction,
   },
 }));
 
@@ -20,6 +37,9 @@ import {
   getPublicAccommodationInsightsByDestinationSlug,
   getPublicCourseEquivalencesByDestinationSlug,
   getPublicDestinationDetailBySlug,
+  getPublicDestinationList,
+  invalidatePublicDestinationReadModel,
+  refreshPublicDestinationReadModel,
 } from "../../src/server/publicDestinations";
 
 function createExperienceRecord(overrides: Record<string, unknown> = {}) {
@@ -80,10 +100,13 @@ function createExperienceRecord(overrides: Record<string, unknown> = {}) {
 
 describe("public destination preview-to-approval proof", () => {
   let experiences: Array<Record<string, unknown>>;
+  let persistedRows: Array<Record<string, unknown>>;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    invalidatePublicDestinationReadModel();
 
+    persistedRows = [];
     experiences = [
       createExperienceRecord({
         id: "approved-1",
@@ -137,7 +160,7 @@ describe("public destination preview-to-approval proof", () => {
       }),
     ];
 
-    mockFindMany.mockImplementation(async () =>
+    mockExperienceFindMany.mockImplementation(async () =>
       experiences.filter(
         (experience) =>
           experience.status === "APPROVED" &&
@@ -146,8 +169,54 @@ describe("public destination preview-to-approval proof", () => {
       ),
     );
 
-    mockFindUnique.mockImplementation(async ({ where }: { where: { id: string } }) =>
-      experiences.find((experience) => experience.id === where.id) ?? null,
+    mockExperienceFindUnique.mockImplementation(
+      async ({ where }: { where: { id: string } }) =>
+        experiences.find((experience) => experience.id === where.id) ?? null,
+    );
+
+    mockReadModelFindMany.mockImplementation(async () => persistedRows);
+    mockReadModelDeleteMany.mockImplementation(
+      async (args?: { where?: { slug?: { notIn?: string[] } } }) => {
+        const notIn = args?.where?.slug?.notIn;
+
+        if (!notIn) {
+          persistedRows = [];
+          return { count: 0 };
+        }
+
+        persistedRows = persistedRows.filter((row) => notIn.includes(row.slug as string));
+        return { count: 0 };
+      },
+    );
+    mockReadModelUpsert.mockImplementation(
+      async (args: {
+        where: { slug: string };
+        create: Record<string, unknown>;
+        update: Record<string, unknown>;
+      }) => {
+        const slug = args.where.slug;
+        const existingIndex = persistedRows.findIndex((row) => row.slug === slug);
+        const nextRow =
+          existingIndex === -1
+            ? { ...args.create }
+            : { ...persistedRows[existingIndex], ...args.update, slug };
+
+        if (existingIndex === -1) {
+          persistedRows.push(nextRow);
+        } else {
+          persistedRows[existingIndex] = nextRow;
+        }
+
+        return nextRow;
+      },
+    );
+    mockTransaction.mockImplementation(async (callback: any) =>
+      callback({
+        publicDestinationReadModel: {
+          deleteMany: mockReadModelDeleteMany,
+          upsert: mockReadModelUpsert,
+        },
+      }),
     );
   });
 
@@ -163,6 +232,9 @@ describe("public destination preview-to-approval proof", () => {
         ? { ...experience, status: "APPROVED" }
         : experience,
     );
+
+    await refreshPublicDestinationReadModel();
+    invalidatePublicDestinationReadModel();
 
     const [detail, accommodation, courses] = await Promise.all([
       getPublicDestinationDetailBySlug("amsterdam-netherlands"),
@@ -217,6 +289,9 @@ describe("public destination preview-to-approval proof", () => {
       }),
     ];
 
+    await refreshPublicDestinationReadModel();
+    invalidatePublicDestinationReadModel();
+
     const [detail, courses] = await Promise.all([
       getPublicDestinationDetailBySlug("amsterdam-netherlands"),
       getPublicCourseEquivalencesByDestinationSlug("amsterdam-netherlands"),
@@ -230,5 +305,55 @@ describe("public destination preview-to-approval proof", () => {
     expect(courses?.groups[0]?.examples[0]).not.toHaveProperty("notes");
     expect(JSON.parse(JSON.stringify(detail))).toEqual(detail);
     expect(JSON.parse(JSON.stringify(courses))).toEqual(courses);
+  });
+
+  it("serves the persisted read model across list and detail lookups until invalidated", async () => {
+    await refreshPublicDestinationReadModel();
+    invalidatePublicDestinationReadModel();
+
+    await Promise.all([
+      getPublicDestinationList(),
+      getPublicDestinationDetailBySlug("amsterdam-netherlands"),
+      getPublicAccommodationInsightsByDestinationSlug("amsterdam-netherlands"),
+      getPublicCourseEquivalencesByDestinationSlug("amsterdam-netherlands"),
+    ]);
+
+    expect(mockReadModelFindMany).toHaveBeenCalledTimes(1);
+    expect(mockExperienceFindMany).toHaveBeenCalledTimes(1);
+
+    experiences = [];
+
+    invalidatePublicDestinationReadModel();
+
+    const destinations = await getPublicDestinationList();
+
+    expect(destinations).toHaveLength(1);
+    expect(mockReadModelFindMany).toHaveBeenCalledTimes(2);
+    expect(mockExperienceFindMany).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not lazily rebuild the persisted read model on production reads when rows are missing", async () => {
+    const previousNodeEnv = process.env.NODE_ENV;
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+
+    process.env.NODE_ENV = "production";
+    persistedRows = [];
+    invalidatePublicDestinationReadModel();
+
+    try {
+      const destinations = await getPublicDestinationList();
+
+      expect(destinations).toEqual([]);
+      expect(mockReadModelFindMany).toHaveBeenCalledTimes(1);
+      expect(mockExperienceFindMany).not.toHaveBeenCalled();
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          "Persisted public destination read model is empty.",
+        ),
+      );
+    } finally {
+      process.env.NODE_ENV = previousNodeEnv;
+      warnSpy.mockRestore();
+    }
   });
 });

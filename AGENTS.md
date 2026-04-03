@@ -21,6 +21,7 @@ Start PostgreSQL container: `npm run db:docker:up`
 | Push schema changes     | `npm run db:push`        |
 | Create migration        | `npm run db:migrate`     |
 | Seed with proof data    | `npm run db:seed:proof`  |
+| Refresh public read model | `npm run db:refresh-public-destination-read-model` |
 | Full reset and reseed   | `npm run db:reset`       |
 
 **Important**: Always run migrations through Prisma, not by editing SQL directly. The `ensure-permanent-admin` script runs after seeding to guarantee an admin exists.
@@ -64,7 +65,6 @@ For architectural decisions and longer context, see:
 ## Key Scripts & Workflows
 
 - **Public destination smoke tests**: `npm run smoke:public-destinations`
+- **Refresh persisted public destinations**: `npm run db:refresh-public-destination-read-model`
 - **MVP signoff prep**: `npm run mvp:signoff:prep`
-- **Backfill living expenses (dry-run first)**: `npm run db:backfill-living-expenses:dry-run`
-- **Verify data migrations**: `npm run db:verify-living-expenses:canonical`
 - **Promote proof data to approval**: `npm run proof:preview-to-approval`

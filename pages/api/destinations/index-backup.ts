@@ -1,6 +1,26 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/prisma";
 import { getCityInfo } from "../../../src/data/cityInfo";
+import {
+  calculateFormSubmissionLivingExpensesTotal,
+  sanitizeFormSubmissionLivingExpensesData,
+} from "../../../src/lib/formSubmissionLivingExpenses";
+
+function getDominantExpenseCategory(data: unknown): string | null {
+  const expenses = sanitizeFormSubmissionLivingExpensesData(data);
+  const ranked = [
+    ["rent", expenses.rent],
+    ["food", expenses.food],
+    ["transport", expenses.transport],
+    ["social", expenses.social],
+    ["travel", expenses.travel],
+    ["other", expenses.other],
+  ]
+    .filter((entry): entry is [string, number] => typeof entry[1] === "number")
+    .sort((a, b) => b[1] - a[1]);
+
+  return ranked[0]?.[0] ?? null;
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -213,37 +233,29 @@ export default async function handler(
         const key = `${hostCity}-${hostCountry}`;
         const destination = destinationMap.get(key);
 
-        const expenseData = submission.data as {
-          expenses?: Record<string, string>;
-          monthlyIncomeAmount?: string;
-          biggestExpense?: string;
-        };
-
-        if (destination && expenseData.expenses) {
-          const totalExpenses = Object.values(expenseData.expenses).reduce(
-            (sum: number, expense) => {
-              return sum + (parseFloat(expense as string) || 0);
-            },
-            0,
+        if (destination) {
+          const totalExpenses = calculateFormSubmissionLivingExpensesTotal(
+            submission.data,
           );
 
-          destination.expenseSubmissionCount =
-            (destination.expenseSubmissionCount || 0) + 1;
-          destination.avgLivingExpenses =
-            destination.expenseSubmissionCount === 1
-              ? totalExpenses
-              : (destination.avgLivingExpenses *
-                  (destination.expenseSubmissionCount - 1) +
-                  totalExpenses) /
-                destination.expenseSubmissionCount;
+          if (totalExpenses > 0) {
+            destination.expenseSubmissionCount =
+              (destination.expenseSubmissionCount || 0) + 1;
+            destination.avgLivingExpenses =
+              destination.expenseSubmissionCount === 1
+                ? totalExpenses
+                : (destination.avgLivingExpenses *
+                    (destination.expenseSubmissionCount - 1) +
+                    totalExpenses) /
+                  destination.expenseSubmissionCount;
 
-          // Track biggest expenses for insights
-          if (expenseData.biggestExpense) {
-            destination.commonBiggestExpenses =
-              destination.commonBiggestExpenses || {};
-            destination.commonBiggestExpenses[expenseData.biggestExpense] =
-              (destination.commonBiggestExpenses[expenseData.biggestExpense] ||
-                0) + 1;
+            const dominantExpense = getDominantExpenseCategory(submission.data);
+            if (dominantExpense) {
+              destination.commonBiggestExpenses =
+                destination.commonBiggestExpenses || {};
+              destination.commonBiggestExpenses[dominantExpense] =
+                (destination.commonBiggestExpenses[dominantExpense] || 0) + 1;
+            }
           }
         }
       }
@@ -253,9 +265,7 @@ export default async function handler(
     const destinations = Array.from(destinationMap.values())
       .filter((dest) => dest.city && dest.country) // Filter out invalid destinations
       .map((dest) => {
-        const totalMonthlyCost = Math.round(
-          dest.avgRent + dest.avgLivingExpenses,
-        );
+        const totalMonthlyCost = Math.round(dest.avgLivingExpenses || dest.avgRent);
         const mostCommonExpense = dest.commonBiggestExpenses
           ? Object.entries(dest.commonBiggestExpenses).sort(
               ([, a], [, b]) => (b as number) - (a as number),
@@ -336,8 +346,9 @@ export default async function handler(
         });
 
         const cityExpenses = expenseSubmissions.filter((sub) => {
-          const data = sub.data as any;
-          return data.city?.toLowerCase() === city?.toLowerCase();
+          return citySubmissions.some(
+            (basicSubmission) => basicSubmission.userId === sub.userId,
+          );
         });
 
         // Calculate average costs
@@ -352,14 +363,14 @@ export default async function handler(
         const avgExpenses =
           cityExpenses.length > 0
             ? cityExpenses.reduce((sum, sub) => {
-                const expenses = parseFloat(
-                  (sub.data as any).totalMonthlyBudget || "0",
+                const expenses = calculateFormSubmissionLivingExpensesTotal(
+                  sub.data,
                 );
                 return sum + (isNaN(expenses) ? 0 : expenses);
               }, 0) / cityExpenses.length
             : 300; // Default value
 
-        const totalMonthlyCost = Math.round(avgRent + avgExpenses);
+        const totalMonthlyCost = Math.round(avgExpenses || avgRent);
 
         // Calculate average rating from form submissions
         const ratings = citySubmissions

@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { createEmptyLivingExpensesStepData } from "./livingExpenses";
 
 // Legacy schemas (keeping for backward compatibility)
 export const accommodationFormSchema = z.object({
@@ -15,6 +16,15 @@ export const livingExpensesSchema = z.object({
   type: z.literal("living-expenses"),
   title: z.string(),
   data: z.object({
+    currency: z
+      .string()
+      .default(createEmptyLivingExpensesStepData().currency),
+    rent: z.coerce.number().nullable().optional(),
+    food: z.coerce.number().nullable().optional(),
+    transport: z.coerce.number().nullable().optional(),
+    social: z.coerce.number().nullable().optional(),
+    travel: z.coerce.number().nullable().optional(),
+    other: z.coerce.number().nullable().optional(),
     spendingHabit: z.string().optional(),
     budgetTips: z.string().optional(),
     cheapGroceryPlaces: z.string().optional(),
@@ -23,8 +33,7 @@ export const livingExpensesSchema = z.object({
     socialLifeTips: z.string().optional(),
     travelTips: z.string().optional(),
     overallBudgetAdvice: z.string().optional(),
-    monthlyIncomeAmount: z.string().optional(),
-    expenses: z.record(z.string()).optional(),
+    monthlyIncomeAmount: z.coerce.number().nullable().optional(),
   }),
 });
 
@@ -75,36 +84,38 @@ export const basicInformationSchema = z.object({
 
 // Enhanced Living Expenses Schema - Detailed budget and cost information with numeric validation
 export const enhancedLivingExpensesSchema = z.object({
-  // Monthly Expenses (as numbers for calculations)
-  monthlyRent: z.coerce
-    .number()
-    .min(0, "Monthly rent must be positive")
-    .optional(),
-  monthlyFood: z.coerce
-    .number()
-    .min(0, "Food expenses must be positive")
-    .optional(),
-  monthlyTransport: z.coerce
+  // Monthly Expenses (canonical living-expenses contract)
+  currency: z
+    .string()
+    .default(createEmptyLivingExpensesStepData().currency),
+  rent: z.coerce.number().min(0, "Rent must be positive").nullable().optional(),
+  food: z.coerce.number().min(0, "Food expenses must be positive").nullable().optional(),
+  transport: z.coerce
     .number()
     .min(0, "Transport expenses must be positive")
+    .nullable()
     .optional(),
-  monthlyEntertainment: z.coerce
+  social: z.coerce
     .number()
-    .min(0, "Entertainment expenses must be positive")
+    .min(0, "Social expenses must be positive")
+    .nullable()
     .optional(),
-  monthlyUtilities: z.coerce
+  travel: z.coerce
     .number()
-    .min(0, "Utilities must be positive")
+    .min(0, "Travel expenses must be positive")
+    .nullable()
     .optional(),
-  monthlyOther: z.coerce
+  other: z.coerce
     .number()
     .min(0, "Other expenses must be positive")
+    .nullable()
     .optional(),
 
   // Income
   monthlyIncomeAmount: z.coerce
     .number()
     .min(0, "Income must be positive")
+    .nullable()
     .optional(),
 
   // Budget Tips and Advice
@@ -117,9 +128,6 @@ export const enhancedLivingExpensesSchema = z.object({
   travelTips: z.string().optional(),
   overallBudgetAdvice: z.string().optional(),
 
-  // Calculated fields
-  totalMonthlyBudget: z.coerce.number().optional(),
-  expenses: z.record(z.coerce.number()).optional(),
 });
 
 // Enhanced Accommodation Schema - Detailed housing information with numeric validation

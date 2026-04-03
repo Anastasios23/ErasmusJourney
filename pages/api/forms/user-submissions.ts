@@ -3,6 +3,11 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
 import { prisma } from "../../../lib/prisma";
 import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
+import { sanitizeFormSubmissionLivingExpensesData } from "../../../src/lib/formSubmissionLivingExpenses";
+
+function normalizeSubmissionType(type: string): string {
+  return type.toLowerCase().replace(/_/g, "-");
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -36,7 +41,9 @@ export default async function handler(
           {
             id: basicInfoId,
             userId: session.user.id,
-            type: "BASIC_INFO",
+            type: {
+              in: ["BASIC_INFO", "basic-info"],
+            },
           },
           // Submissions linked to this basic info
           {
@@ -71,39 +78,48 @@ export default async function handler(
     const standaloneSubmissions: any[] = [];
 
     submissions.forEach((submission) => {
+      const normalizedType = normalizeSubmissionType(submission.type);
       const basicInfoRef = (submission.data as any)?._basicInfoId;
+      const normalizedSubmission = {
+        ...submission,
+        type: normalizedType,
+        data:
+          normalizedType === "living-expenses"
+            ? sanitizeFormSubmissionLivingExpensesData(submission.data)
+            : submission.data,
+      };
 
-      if (submission.type === "BASIC_INFO") {
+      if (normalizedType === "basic-info") {
         // This is a basic info submission - create a group for it
-        if (!groupedSubmissions[submission.id]) {
-          groupedSubmissions[submission.id] = [];
+        if (!groupedSubmissions[normalizedSubmission.id]) {
+          groupedSubmissions[normalizedSubmission.id] = [];
         }
-        groupedSubmissions[submission.id].unshift(submission); // Put basic info first
+        groupedSubmissions[normalizedSubmission.id].unshift(normalizedSubmission); // Put basic info first
       } else if (basicInfoRef) {
         // This submission is linked to a basic info
         if (!groupedSubmissions[basicInfoRef]) {
           groupedSubmissions[basicInfoRef] = [];
         }
-        groupedSubmissions[basicInfoRef].push(submission);
+        groupedSubmissions[basicInfoRef].push(normalizedSubmission);
       } else {
         // Standalone submission
-        standaloneSubmissions.push(submission);
+        standaloneSubmissions.push(normalizedSubmission);
       }
     });
 
     // Calculate completion status for each group
     const submissionGroups = Object.entries(groupedSubmissions).map(
       ([basicInfoId, submissions]) => {
-        const basicInfo = submissions.find((s) => s.type === "BASIC_INFO");
+        const basicInfo = submissions.find((s) => s.type === "basic-info");
         const linkedSubmissions = submissions.filter(
-          (s) => s.type !== "BASIC_INFO",
+          (s) => s.type !== "basic-info",
         );
 
         const formTypes = [
-          "LIVING_EXPENSES",
-          "ACCOMMODATION",
-          "COURSE_MATCHING",
-          "EXPERIENCE",
+          "living-expenses",
+          "accommodation",
+          "course-matching",
+          "experience",
         ];
         const completedTypes = linkedSubmissions.map((s) => s.type);
         const completionPercentage =

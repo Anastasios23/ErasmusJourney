@@ -68,13 +68,13 @@ export default async function handler(
           title: "Living Expenses",
           status: "PUBLISHED",
           data: {
-            monthlyRent: 450 + (i * 100), // Varying rent: 450, 550, 650
-            monthlyFood: 250 + (i * 50),   // Varying food: 250, 300, 350
-            monthlyTransport: 50 + (i * 20), // Varying transport: 50, 70, 90
-            monthlyEntertainment: 100 + (i * 30), // Varying entertainment: 100, 130, 160
-            monthlyUtilities: 80 + (i * 20), // Varying utilities: 80, 100, 120
-            monthlyOther: 50,
-            totalMonthlyBudget: 980 + (i * 220), // Total will be calculated
+            currency: "EUR",
+            rent: 450 + i * 100, // Varying rent: 450, 550, 650
+            food: 250 + i * 50, // Varying food: 250, 300, 350
+            transport: 50 + i * 20, // Varying transport: 50, 70, 90
+            social: 100 + i * 30, // Varying social spend: 100, 130, 160
+            travel: 50,
+            other: 30 + i * 20, // Utilities and misc. combined
             cheapGroceryPlaces: `Mercadona, Lidl, Local market ${i + 1}`,
             cheapEatingPlaces: `University cafeteria, Kebab place on Main St ${i + 1}`,
             transportationTips: `Get a student travel card for ${city}. Bus system is efficient.`,

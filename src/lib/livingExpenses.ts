@@ -102,6 +102,25 @@ export function hasRequiredLivingExpenses(
   );
 }
 
+export function calculateLivingExpensesTotal(
+  value?: Partial<LivingExpensesStepData> | null,
+): number {
+  if (!value) {
+    return 0;
+  }
+
+  return [
+    value.rent,
+    value.food,
+    value.transport,
+    value.social,
+    value.travel,
+    value.other,
+  ].reduce((sum, amount) => {
+    return typeof amount === "number" ? sum + amount : sum;
+  }, 0);
+}
+
 export function isLivingExpensesStepComplete(
   value?: LivingExpensesInput | null,
 ): boolean {

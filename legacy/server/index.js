@@ -15,6 +15,117 @@ app.use(express.json());
 const dbPath = path.join(__dirname, "erasmus.db");
 const db = new sqlite3.Database(dbPath);
 
+function toOptionalString(value) {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.trim();
+  return normalized || null;
+}
+
+function toNullableNumber(value) {
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function emptyLivingExpensesBreakdown() {
+  return {
+    currency: "EUR",
+    rent: null,
+    food: null,
+    transport: null,
+    social: null,
+    travel: null,
+    other: null,
+  };
+}
+
+function buildCanonicalLivingExpenses(value) {
+  const source =
+    value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  const nested =
+    source.livingExpenses &&
+    typeof source.livingExpenses === "object" &&
+    !Array.isArray(source.livingExpenses)
+      ? source.livingExpenses
+      : {};
+
+  return {
+    currency:
+      toOptionalString(source.currency) ||
+      toOptionalString(nested.currency) ||
+      "EUR",
+    rent: toNullableNumber(source.rent ?? nested.rent),
+    food: toNullableNumber(source.food ?? nested.food),
+    transport: toNullableNumber(source.transport ?? nested.transport),
+    social: toNullableNumber(source.social ?? nested.social),
+    travel: toNullableNumber(source.travel ?? nested.travel),
+    other: toNullableNumber(source.other ?? nested.other),
+  };
+}
+
+function hasCanonicalLivingExpenseValues(livingExpenses) {
+  return ["rent", "food", "transport", "social", "travel", "other"].some(
+    (key) => livingExpenses[key] !== null,
+  );
+}
+
+function parseLegacyLivingExpensesBreakdown(value) {
+  if (typeof value !== "string" || !value.trim()) {
+    return emptyLivingExpensesBreakdown();
+  }
+
+  try {
+    return buildCanonicalLivingExpenses(JSON.parse(value));
+  } catch (error) {
+    return emptyLivingExpensesBreakdown();
+  }
+}
+
+function normalizeLegacyLivingExpensesInput(body) {
+  const source = body && typeof body === "object" ? body : {};
+  const livingExpenses = buildCanonicalLivingExpenses(source);
+
+  return {
+    basicInfoId: source.basicInfoId,
+    livingExpenses,
+    monthlyIncomeAmount: toNullableNumber(source.monthlyIncomeAmount),
+    spendingHabit: toOptionalString(source.spendingHabit),
+    budgetTips: toOptionalString(source.budgetTips),
+    cheapGroceryPlaces: toOptionalString(source.cheapGroceryPlaces),
+    cheapEatingPlaces: toOptionalString(source.cheapEatingPlaces),
+    transportationTips: toOptionalString(source.transportationTips),
+    overallBudgetAdvice:
+      toOptionalString(source.overallBudgetAdvice) ||
+      toOptionalString(source.budgetTips),
+  };
+}
+
+function mapLegacyLivingExpensesRow(row) {
+  if (!row) {
+    return null;
+  }
+
+  return {
+    id: row.id,
+    basicInfoId: row.basic_info_id,
+    livingExpenses: parseLegacyLivingExpensesBreakdown(row.unexpectedCosts),
+    monthlyIncomeAmount: toNullableNumber(row.monthlyIncomeAmount),
+    spendingHabit: toOptionalString(row.moneyManagementHabits),
+    budgetTips: toOptionalString(row.budgetAdvice),
+    cheapGroceryPlaces: toOptionalString(row.cheapGroceryPlaces),
+    cheapEatingPlaces: toOptionalString(row.cheapEatingPlaces),
+    transportationTips: toOptionalString(row.transportationTips),
+    overallBudgetAdvice: toOptionalString(row.budgetAdvice),
+    createdAt: row.created_at,
+  };
+}
+
 // Migration function to hash existing plain text passwords
 async function migratePlainTextPasswords() {
   return new Promise((resolve, reject) => {
@@ -148,7 +259,7 @@ db.serialize(() => {
     FOREIGN KEY (basic_info_id) REFERENCES basic_information(id)
   )`);
 
-  // Living Expenses table
+  // Living expenses table (legacy storage columns; canonicalized at the API boundary)
   db.run(`CREATE TABLE IF NOT EXISTS living_expenses (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     basic_info_id INTEGER,
@@ -549,18 +660,9 @@ app.post("/api/accommodation", (req, res) => {
   stmt.finalize();
 });
 
-// Save living expenses
+// Save canonical living-expenses data
 app.post("/api/living-expenses", (req, res) => {
-  const {
-    basicInfoId,
-    monthlyIncomeAmount,
-    unexpectedCosts,
-    moneyManagementHabits,
-    cheapGroceryPlaces,
-    cheapEatingPlaces,
-    transportationTips,
-    budgetAdvice,
-  } = req.body;
+  const normalized = normalizeLegacyLivingExpensesInput(req.body);
 
   const stmt = db.prepare(`
     INSERT INTO living_expenses
@@ -571,14 +673,16 @@ app.post("/api/living-expenses", (req, res) => {
 
   stmt.run(
     [
-      basicInfoId,
-      monthlyIncomeAmount,
-      unexpectedCosts,
-      moneyManagementHabits,
-      cheapGroceryPlaces,
-      cheapEatingPlaces,
-      transportationTips,
-      budgetAdvice,
+      normalized.basicInfoId,
+      normalized.monthlyIncomeAmount,
+      hasCanonicalLivingExpenseValues(normalized.livingExpenses)
+        ? JSON.stringify(normalized.livingExpenses)
+        : null,
+      normalized.spendingHabit,
+      normalized.cheapGroceryPlaces,
+      normalized.cheapEatingPlaces,
+      normalized.transportationTips,
+      normalized.overallBudgetAdvice,
     ],
     function (err) {
       if (err) {
@@ -676,6 +780,9 @@ app.get("/api/submissions", (req, res) => {
       a.accommodationType,
       a.monthlyRent,
       le.monthlyIncomeAmount,
+      le.unexpectedCosts,
+      le.moneyManagementHabits,
+      le.budgetAdvice,
       hfs.wantToHelp,
       hfs.nickname
     FROM basic_information bi
@@ -691,7 +798,19 @@ app.get("/api/submissions", (req, res) => {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json(rows);
+    res.json(
+      rows.map((row) => {
+        const { unexpectedCosts, moneyManagementHabits, budgetAdvice, ...rest } =
+          row;
+
+        return {
+          ...rest,
+          spendingHabit: toOptionalString(moneyManagementHabits),
+          overallBudgetAdvice: toOptionalString(budgetAdvice),
+          livingExpenses: parseLegacyLivingExpensesBreakdown(unexpectedCosts),
+        };
+      }),
+    );
   });
 });
 
@@ -704,7 +823,7 @@ app.get("/api/submission/:id", (req, res) => {
     courses:
       "SELECT c.* FROM courses c JOIN course_matching cm ON c.course_matching_id = cm.id WHERE cm.basic_info_id = ?",
     accommodation: "SELECT * FROM accommodation WHERE basic_info_id = ?",
-    expenses: "SELECT * FROM living_expenses WHERE basic_info_id = ?",
+    livingExpenses: "SELECT * FROM living_expenses WHERE basic_info_id = ?",
     help: "SELECT * FROM help_future_students WHERE basic_info_id = ?",
   };
 
@@ -730,9 +849,9 @@ app.get("/api/submission/:id", (req, res) => {
       });
     }),
     new Promise((resolve, reject) => {
-      db.get(queries.expenses, [id], (err, row) => {
+      db.get(queries.livingExpenses, [id], (err, row) => {
         if (err) reject(err);
-        else resolve(["expenses", row]);
+        else resolve(["livingExpenses", mapLegacyLivingExpensesRow(row)]);
       });
     }),
     new Promise((resolve, reject) => {

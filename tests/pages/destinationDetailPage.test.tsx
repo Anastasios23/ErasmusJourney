@@ -27,7 +27,7 @@ vi.mock("../../src/server/publicDestinations", () => ({
 }));
 
 import DestinationDetailPage, {
-  getServerSideProps,
+  getStaticProps,
 } from "../../pages/destinations/[slug]";
 
 describe("destination detail page", () => {
@@ -91,7 +91,7 @@ describe("destination detail page", () => {
     mockGetDestinationDetail.mockResolvedValue(null);
     mockGetDestinationList.mockResolvedValue([]);
 
-    const result = await getServerSideProps({
+    const result = await getStaticProps({
       params: { slug: "missing-destination" },
     } as any);
 

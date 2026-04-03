@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import Link from "next/link";
-import type { GetServerSideProps } from "next";
+import type { GetStaticPaths, GetStaticProps } from "next";
 
 import Header from "../../../components/Header";
 import PublicDestinationSignalNotice from "../../../src/components/PublicDestinationSignalNotice";
@@ -19,6 +19,7 @@ import {
   formatPublicDestinationMoney,
   getPublicDestinationCurrencyMeta,
 } from "../../../src/lib/publicDestinationPresentation";
+import { PUBLIC_DESTINATION_PAGE_REVALIDATE_SECONDS } from "../../../src/lib/publicDestinationCache";
 import type { PublicDestinationAccommodationInsights } from "../../../src/types/publicDestinations";
 
 interface DestinationAccommodationPageProps {
@@ -396,7 +397,33 @@ function getAccommodationRecommendationLine(
   return `Only ${recommendationYesCount} of ${recommendationSampleSize} students would recommend their accommodation setup here, so compare the difficulty and snippet sections carefully.`;
 }
 
-export const getServerSideProps: GetServerSideProps<
+export const getStaticPaths: GetStaticPaths = async () => {
+  try {
+    const { getPublicDestinationList } = await import(
+      "../../../src/server/publicDestinations"
+    );
+    const destinations = await getPublicDestinationList();
+
+    return {
+      paths: destinations.map((destination) => ({
+        params: { slug: destination.slug },
+      })),
+      fallback: "blocking",
+    };
+  } catch (error) {
+    console.error(
+      "Failed to build destination accommodation static paths:",
+      error,
+    );
+
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
+};
+
+export const getStaticProps: GetStaticProps<
   DestinationAccommodationPageProps
 > = async (context) => {
   const slug = context.params?.slug;
@@ -438,5 +465,6 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       destination,
     },
+    revalidate: PUBLIC_DESTINATION_PAGE_REVALIDATE_SECONDS,
   };
 };

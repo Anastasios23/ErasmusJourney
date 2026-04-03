@@ -11,6 +11,19 @@ import {
   logApiError,
   withRequestId,
 } from "../../../lib/apiRequestContext";
+import { sanitizeFormSubmissionLivingExpensesData } from "../../../src/lib/formSubmissionLivingExpenses";
+
+function getStoredFormTypeVariants(type: string): string[] {
+  const normalized = type.toLowerCase().replace(/_/g, "-");
+
+  return Array.from(
+    new Set([normalized, normalized.toUpperCase().replace(/-/g, "_")]),
+  );
+}
+
+function isLivingExpensesSubmissionType(type: string): boolean {
+  return getStoredFormTypeVariants("living-expenses").includes(type);
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -50,7 +63,9 @@ export default async function handler(
 
     // Filter by type
     if (type && type !== "all") {
-      whereClause.type = (type as string).toUpperCase().replace("-", "_");
+      whereClause.type = {
+        in: getStoredFormTypeVariants(type as string),
+      };
     }
 
     // Filter by status
@@ -82,7 +97,9 @@ export default async function handler(
       userId: submission.users.email,
       type: submission.type.toLowerCase().replace("_", "-"),
       title: submission.title,
-      data: submission.data,
+      data: isLivingExpensesSubmissionType(submission.type)
+        ? sanitizeFormSubmissionLivingExpensesData(submission.data)
+        : submission.data,
       status: submission.status.toLowerCase(),
       createdAt: submission.createdAt.toISOString(),
       updatedAt: submission.updatedAt.toISOString(),

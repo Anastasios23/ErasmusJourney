@@ -11,15 +11,20 @@ export type FormStatus = "draft" | "submitted" | "published" | "loading";
 
 // Add form data types for validation
 export interface LivingExpensesFormData {
-  spendingHabit: string;
-  budgetTips: string;
-  cheapGroceryPlaces: string;
-  cheapEatingPlaces: string;
-  transportationTips: string;
-  socialLifeTips: string;
-  travelTips: string;
-  overallBudgetAdvice: string;
-  monthlyIncomeAmount: string;
-  expenses: Record<string, string>;
-  // ... other fields
+  currency: string;
+  rent?: number | string | null;
+  food?: number | string | null;
+  transport?: number | string | null;
+  social?: number | string | null;
+  travel?: number | string | null;
+  other?: number | string | null;
+  spendingHabit?: string;
+  budgetTips?: string;
+  cheapGroceryPlaces?: string;
+  cheapEatingPlaces?: string;
+  transportationTips?: string;
+  socialLifeTips?: string;
+  travelTips?: string;
+  overallBudgetAdvice?: string;
+  monthlyIncomeAmount?: number | string | null;
 }

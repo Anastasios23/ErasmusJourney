@@ -4,7 +4,8 @@ import { authOptions } from "../auth/[...nextauth]";
 import { prisma } from "../../../lib/prisma";
 import { z } from "zod";
 import { validateFormData } from "../../../src/lib/formSchemas";
-import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
+import { sanitizeFormSubmissionLivingExpensesData } from "../../../src/lib/formSubmissionLivingExpenses";
+import { getClientSafeErrorMessage } from "../../../lib/databaseErrors";
 import {
   ensureRequestId,
   logApiError,
@@ -56,41 +57,7 @@ const statusMapping: Record<string, SubmissionStatus> = {
 // Helper function to ensure numeric fields are properly converted
 function convertNumericFields(data: any, type: string): any {
   if (type === "living-expenses") {
-    return {
-      ...data,
-      monthlyRent: data.monthlyRent
-        ? parseFloat(data.monthlyRent) || 0
-        : undefined,
-      monthlyFood: data.monthlyFood
-        ? parseFloat(data.monthlyFood) || 0
-        : undefined,
-      monthlyTransport: data.monthlyTransport
-        ? parseFloat(data.monthlyTransport) || 0
-        : undefined,
-      monthlyEntertainment: data.monthlyEntertainment
-        ? parseFloat(data.monthlyEntertainment) || 0
-        : undefined,
-      monthlyUtilities: data.monthlyUtilities
-        ? parseFloat(data.monthlyUtilities) || 0
-        : undefined,
-      monthlyOther: data.monthlyOther
-        ? parseFloat(data.monthlyOther) || 0
-        : undefined,
-      totalMonthlyBudget: data.totalMonthlyBudget
-        ? parseFloat(data.totalMonthlyBudget) || 0
-        : undefined,
-      monthlyIncomeAmount: data.monthlyIncomeAmount
-        ? parseFloat(data.monthlyIncomeAmount) || 0
-        : undefined,
-      expenses: data.expenses
-        ? Object.fromEntries(
-            Object.entries(data.expenses).map(([key, value]) => [
-              key,
-              parseFloat(value as string) || 0,
-            ]),
-          )
-        : undefined,
-    };
+    return sanitizeFormSubmissionLivingExpensesData(data);
   }
 
   if (type === "ACCOMMODATION" || type === "accommodation") {
@@ -278,6 +245,7 @@ export default async function handler(
     // For BASIC_INFO submissions, this will be the foundational submission
     // For other types, link them to the basic info submission
     let linkingData = processedData;
+    let linkedBasicInfoData: Record<string, unknown> | null = null;
 
     if (formType !== "basic-info" && basicInfoId) {
       console.log(
@@ -290,11 +258,17 @@ export default async function handler(
           where: {
             id: basicInfoId,
             userId: session.user.id,
-            type: "basic-info",
+            type: {
+              in: ["basic-info", "BASIC_INFO"],
+            },
           },
         });
 
         if (basicInfoSubmission) {
+          linkedBasicInfoData = (basicInfoSubmission.data as Record<
+            string,
+            unknown
+          > | null) || null;
           linkingData = {
             ...processedData,
             _basicInfoId: basicInfoId, // Store reference in data
@@ -335,10 +309,12 @@ export default async function handler(
     const hostCity =
       (linkingData as any)?.hostCity ||
       (linkingData as any)?.basicInfo?.hostCity ||
+      linkedBasicInfoData?.hostCity ||
       null;
     const hostCountry =
       (linkingData as any)?.hostCountry ||
       (linkingData as any)?.basicInfo?.hostCountry ||
+      linkedBasicInfoData?.hostCountry ||
       null;
 
     if (existingSubmission) {

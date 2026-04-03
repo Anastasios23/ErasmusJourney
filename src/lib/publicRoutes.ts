@@ -10,14 +10,19 @@ interface PublicDestinationRouteOptions {
   subpage?: "accommodation" | "courses";
 }
 
+export function buildPublicDestinationSlug(
+  city: string,
+  country?: string | null,
+): string {
+  return slugifyPublicDestinationValue([city, country].filter(Boolean).join("-"));
+}
+
 export function buildPublicDestinationRoute({
   city,
   country,
   subpage,
 }: PublicDestinationRouteOptions): string {
-  const slug = slugifyPublicDestinationValue(
-    [city, country].filter(Boolean).join("-"),
-  );
+  const slug = buildPublicDestinationSlug(city, country);
   const baseRoute = `${PUBLIC_DESTINATIONS_ROUTE}/${slug}`;
 
   return subpage ? `${baseRoute}/${subpage}` : baseRoute;

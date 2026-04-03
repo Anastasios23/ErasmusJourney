@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import Link from "next/link";
-import type { GetServerSideProps } from "next";
+import type { GetStaticPaths, GetStaticProps } from "next";
 
 import Header from "../../../components/Header";
 import PublicDestinationSignalNotice from "../../../src/components/PublicDestinationSignalNotice";
@@ -15,6 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../src/components/ui/card";
+import { PUBLIC_DESTINATION_PAGE_REVALIDATE_SECONDS } from "../../../src/lib/publicDestinationCache";
 import type {
   PublicDestinationCourseEquivalenceGroup,
   PublicDestinationCourseEquivalences,
@@ -300,7 +301,30 @@ function compareCourseGroups(
   );
 }
 
-export const getServerSideProps: GetServerSideProps<
+export const getStaticPaths: GetStaticPaths = async () => {
+  try {
+    const { getPublicDestinationList } = await import(
+      "../../../src/server/publicDestinations"
+    );
+    const destinations = await getPublicDestinationList();
+
+    return {
+      paths: destinations.map((destination) => ({
+        params: { slug: destination.slug },
+      })),
+      fallback: "blocking",
+    };
+  } catch (error) {
+    console.error("Failed to build destination courses static paths:", error);
+
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
+};
+
+export const getStaticProps: GetStaticProps<
   DestinationCoursesPageProps
 > = async (context) => {
   const slug = context.params?.slug;
@@ -340,5 +364,6 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       destination,
     },
+    revalidate: PUBLIC_DESTINATION_PAGE_REVALIDATE_SECONDS,
   };
 };

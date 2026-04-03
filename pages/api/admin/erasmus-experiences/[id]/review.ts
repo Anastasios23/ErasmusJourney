@@ -3,8 +3,14 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../auth/[...nextauth]";
 import { prisma } from "../../../../../lib/prisma";
 import { buildPreviewUnavailableReason } from "../../../../../src/lib/adminPublicImpactPreview";
-import { sanitizeLivingExpensesStepData } from "../../../../../src/lib/livingExpenses";
-import { getClientSafeErrorMessage } from "@/lib/databaseErrors";
+import { buildPublicDestinationSlug } from "../../../../../src/lib/publicRoutes";
+import {
+  calculateLivingExpensesTotal,
+  sanitizeLivingExpensesStepData,
+} from "../../../../../src/lib/livingExpenses";
+import { getClientSafeErrorMessage } from "../../../../../lib/databaseErrors";
+import { refreshPublicDestinationReadModel } from "../../../../../src/server/publicDestinations";
+import { revalidatePublicDestinationPages } from "../../../../../src/server/publicDestinationRevalidation";
 
 /**
  * Admin Review API Endpoint
@@ -148,6 +154,26 @@ export default async function handler(
       }),
     ]);
 
+    if (action === "APPROVED") {
+      try {
+        await refreshPublicDestinationReadModel();
+        await revalidatePublicDestinationPages(
+          res,
+          experience.hostCity && experience.hostCountry
+            ? buildPublicDestinationSlug(
+                experience.hostCity,
+                experience.hostCountry,
+              )
+            : null,
+        );
+      } catch (refreshError) {
+        console.error(
+          "Error refreshing public destination read model after approval:",
+          refreshError,
+        );
+      }
+    }
+
     // If approved and has required data, trigger stats calculation
     if (
       action === "APPROVED" &&
@@ -225,7 +251,6 @@ async function calculateCityStats(
     // Extract living expenses
     const groceriesCosts: number[] = [];
     const transportationCosts: number[] = [];
-    const eatingOutCosts: number[] = [];
     const socialLifeCosts: number[] = [];
     const totalExpenseValues: number[] = [];
 
@@ -241,7 +266,6 @@ async function calculateCityStats(
           fallbackRent,
         },
       );
-      const rawExpenses = (exp.livingExpenses as any) || {};
 
       if (typeof expenses.food === "number") {
         groceriesCosts.push(expenses.food);
@@ -249,27 +273,11 @@ async function calculateCityStats(
       if (typeof expenses.transport === "number") {
         transportationCosts.push(expenses.transport);
       }
-      const eatingOut =
-        typeof rawExpenses.eatingOut === "number"
-          ? rawExpenses.eatingOut
-          : parseFloat(rawExpenses.eatingOut || "") || null;
-      if (typeof eatingOut === "number") {
-        eatingOutCosts.push(eatingOut);
-      }
       if (typeof expenses.social === "number") {
         socialLifeCosts.push(expenses.social);
       }
 
-      const totalExpense = [
-        expenses.rent,
-        expenses.food,
-        expenses.transport,
-        expenses.social,
-        expenses.travel,
-        expenses.other,
-      ].reduce((sum, value) => {
-        return typeof value === "number" ? sum + value : sum;
-      }, 0);
+      const totalExpense = calculateLivingExpensesTotal(expenses);
 
       if (totalExpense > 0) {
         totalExpenseValues.push(totalExpense);
@@ -280,7 +288,6 @@ async function calculateCityStats(
     const rentStats = calculateStats(accommodationCosts);
     const groceriesStats = calculateStats(groceriesCosts);
     const transportStats = calculateStats(transportationCosts);
-    const eatingOutStats = calculateStats(eatingOutCosts);
     const socialStats = calculateStats(socialLifeCosts);
     const totalExpenseStats = calculateStats(totalExpenseValues);
 
@@ -301,7 +308,7 @@ async function calculateCityStats(
         rentSampleSize: accommodationCosts.length,
         avgGroceriesCents: toCents(groceriesStats.avg),
         avgTransportCents: toCents(transportStats.avg),
-        avgEatingOutCents: toCents(eatingOutStats.avg),
+        avgEatingOutCents: null,
         avgSocialLifeCents: toCents(socialStats.avg),
         avgTotalExpensesCents: toCents(totalExpenseStats.avg),
         expenseSampleSize: totalExpenseValues.length,
@@ -318,7 +325,7 @@ async function calculateCityStats(
         rentSampleSize: accommodationCosts.length,
         avgGroceriesCents: toCents(groceriesStats.avg),
         avgTransportCents: toCents(transportStats.avg),
-        avgEatingOutCents: toCents(eatingOutStats.avg),
+        avgEatingOutCents: null,
         avgSocialLifeCents: toCents(socialStats.avg),
         avgTotalExpensesCents: toCents(totalExpenseStats.avg),
         expenseSampleSize: totalExpenseValues.length,

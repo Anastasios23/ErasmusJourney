@@ -42,24 +42,24 @@ export default async function handler(
     const basicInfo = await prisma.form_submissions.findFirst({
       where: {
         userId: submission.userId,
-        type: "BASIC_INFO",
-        status: "SUBMITTED",
+        type: { in: ["BASIC_INFO", "basic-info"] },
+        status: { in: ["SUBMITTED", "PUBLISHED"] },
       },
     });
 
     const accommodationInfo = await prisma.form_submissions.findFirst({
       where: {
         userId: submission.userId,
-        type: "ACCOMMODATION",
-        status: "SUBMITTED",
+        type: { in: ["ACCOMMODATION", "accommodation"] },
+        status: { in: ["SUBMITTED", "PUBLISHED"] },
       },
     });
 
     const expensesInfo = await prisma.form_submissions.findFirst({
       where: {
         userId: submission.userId,
-        type: "LIVING_EXPENSES",
-        status: "SUBMITTED",
+        type: { in: ["LIVING_EXPENSES", "living-expenses"] },
+        status: { in: ["SUBMITTED", "PUBLISHED"] },
       },
     });
 

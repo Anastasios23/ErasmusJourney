@@ -30,11 +30,16 @@ export default async function handler(
         AVG(
           CAST(
             COALESCE(
-              "livingExpenses"->>'total', 
-              "livingExpenses"->>'totalMonthlyBudget', 
+              "livingExpenses"->>'rent',
+              "accommodation"->>'monthlyRent',
               '0'
             ) AS NUMERIC
           )
+          + CAST(COALESCE("livingExpenses"->>'food', '0') AS NUMERIC)
+          + CAST(COALESCE("livingExpenses"->>'transport', '0') AS NUMERIC)
+          + CAST(COALESCE("livingExpenses"->>'social', '0') AS NUMERIC)
+          + CAST(COALESCE("livingExpenses"->>'travel', '0') AS NUMERIC)
+          + CAST(COALESCE("livingExpenses"->>'other', '0') AS NUMERIC)
         ) as "averageCost"
       FROM erasmus_experiences
       WHERE (status = 'SUBMITTED' OR status = 'APPROVED')

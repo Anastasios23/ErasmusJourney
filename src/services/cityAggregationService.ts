@@ -5,6 +5,10 @@ import {
 } from "../lib/accommodation";
 import { CityAggregatedData } from "../types/cityData";
 import { sanitizeCourseMappingsData } from "../lib/courseMatching";
+import {
+  calculateLivingExpensesTotal,
+  sanitizeLivingExpensesStepData,
+} from "../lib/livingExpenses";
 
 // Enhanced interface for detailed multi-student insights
 export interface EnhancedCityAggregatedData extends CityAggregatedData {
@@ -80,6 +84,19 @@ function calculateAverage(numbers: number[]): number {
   return numbers.reduce((a, b) => a + b, 0) / numbers.length;
 }
 
+function getCanonicalLivingExpenses(experience: {
+  livingExpenses: unknown;
+  accommodation?: unknown;
+}) {
+  const accommodation = sanitizeAccommodationStepData(
+    experience.accommodation as any,
+  );
+
+  return sanitizeLivingExpensesStepData(experience.livingExpenses as any, {
+    fallbackRent: accommodation.monthlyRent ?? null,
+  });
+}
+
 export async function aggregateCityData(city: string, country: string): Promise<CityAggregatedData> {
   // Fetch all completed experiences for this city
   // Filter: Only show SUBMITTED or APPROVED, exclude DRAFT and REJECTED
@@ -148,38 +165,40 @@ export async function aggregateCityData(city: string, country: string): Promise<
   }
 
   // Calculate Living Costs Averages
-  const livingCostsList = experiences.filter((e) => e.livingExpenses);
+  const livingCostsList = experiences
+    .map((experience) => getCanonicalLivingExpenses(experience))
+    .filter((expenses) =>
+      [
+        expenses.rent,
+        expenses.food,
+        expenses.transport,
+        expenses.social,
+        expenses.travel,
+        expenses.other,
+      ].some((value) => value !== null && value !== undefined),
+    );
   const costSubmissions = livingCostsList.length;
 
   const livingCosts = {
-    avgMonthlyRent: calculateAverage(livingCostsList.map((e) => {
-      const data = e.livingExpenses as any;
-      return parseFloat(data?.rent || "0");
-    })),
-    avgMonthlyFood: calculateAverage(livingCostsList.map((e) => {
-      const data = e.livingExpenses as any;
-      return parseFloat(data?.food || "0");
-    })),
-    avgMonthlyTransport: calculateAverage(livingCostsList.map((e) => {
-      const data = e.livingExpenses as any;
-      return parseFloat(data?.transport || "0");
-    })),
-    avgMonthlyEntertainment: calculateAverage(livingCostsList.map((e) => {
-      const data = e.livingExpenses as any;
-      return parseFloat(data?.social || data?.entertainment || "0");
-    })),
-    avgMonthlyUtilities: calculateAverage(livingCostsList.map((e) => {
-      const data = e.livingExpenses as any;
-      return parseFloat(data?.utilities || "0");
-    })),
-    avgMonthlyOther: calculateAverage(livingCostsList.map((e) => {
-      const data = e.livingExpenses as any;
-      return parseFloat(data?.other || "0");
-    })),
-    avgTotalMonthly: calculateAverage(livingCostsList.map((e) => {
-      const data = e.livingExpenses as any;
-      return parseFloat(data?.total || data?.totalMonthlyBudget || "0");
-    })),
+    avgMonthlyRent: calculateAverage(
+      livingCostsList.map((expenses) => expenses.rent ?? 0),
+    ),
+    avgMonthlyFood: calculateAverage(
+      livingCostsList.map((expenses) => expenses.food ?? 0),
+    ),
+    avgMonthlyTransport: calculateAverage(
+      livingCostsList.map((expenses) => expenses.transport ?? 0),
+    ),
+    avgMonthlyEntertainment: calculateAverage(
+      livingCostsList.map((expenses) => expenses.social ?? 0),
+    ),
+    avgMonthlyUtilities: 0,
+    avgMonthlyOther: calculateAverage(
+      livingCostsList.map((expenses) => expenses.other ?? 0),
+    ),
+    avgTotalMonthly: calculateAverage(
+      livingCostsList.map((expenses) => calculateLivingExpensesTotal(expenses)),
+    ),
     costSubmissions,
   };
 
@@ -406,10 +425,10 @@ async function generateStudentProfiles(city: string, country: string) {
   return profiles
     .map((profile, index) => {
       const basicInfo = profile.basicInfo as any || {};
-      const livingData = profile.livingExpenses as any || {};
       const accommodationData = sanitizeAccommodationStepData(
         profile.accommodation as any,
       );
+      const livingData = getCanonicalLivingExpenses(profile);
       const experienceData = profile.experience as any || {};
 
       return {
@@ -418,14 +437,7 @@ async function generateStudentProfiles(city: string, country: string) {
           profile.hostUniversity?.name || basicInfo.hostUniversity || "Unknown",
         studyPeriod: profile.semester || basicInfo.exchangePeriod || "Unknown",
         fieldOfStudy: basicInfo.fieldOfStudy || "Unknown",
-        totalMonthlyCost: parseFloat(livingData.total || livingData.totalMonthlyBudget || "0") || (
-          ((accommodationData.monthlyRent || parseFloat(livingData.rent || "0"))) +
-          (parseFloat(livingData.food || "0")) +
-          (parseFloat(livingData.transport || "0")) +
-          (parseFloat(livingData.social || "0")) +
-          (parseFloat(livingData.travel || "0")) +
-          (parseFloat(livingData.other || "0"))
-        ),
+        totalMonthlyCost: calculateLivingExpensesTotal(livingData),
         overallRating: parseInt(experienceData.overallRating || "0"),
         accommodationType:
           (accommodationData.accommodationType

@@ -1,7 +1,8 @@
 import Head from "next/head";
 import Link from "next/link";
 import React, { useMemo, useState } from "react";
-import type { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
+import type { GetStaticProps } from "next";
 import Header from "../components/Header";
 import Footer from "../src/components/Footer";
 import {
@@ -20,25 +21,28 @@ import {
 } from "../src/components/ui/select";
 import { Input } from "../src/components/ui/input";
 import PublicDestinationSignalNotice from "../src/components/PublicDestinationSignalNotice";
+import { PUBLIC_DESTINATION_PAGE_REVALIDATE_SECONDS } from "../src/lib/publicDestinationCache";
 import { formatPublicDestinationListAmount } from "../src/lib/publicDestinationPresentation";
 import type { PublicDestinationListItem } from "../src/types/publicDestinations";
 
-type DestinationsFocus = "accommodation" | "courses" | null;
-
 interface DestinationsPageProps {
   destinations: PublicDestinationListItem[];
-  focus?: DestinationsFocus;
 }
 
-export default function DestinationsPage({
-  destinations,
-  focus = null,
-}: DestinationsPageProps) {
+type DestinationsFocus = "accommodation" | "courses" | null;
+
+export default function DestinationsPage({ destinations }: DestinationsPageProps) {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [countryFilter, setCountryFilter] = useState<string>("__all");
   const [sortBy, setSortBy] = useState<
     "submission_desc" | "cost_asc" | "city_asc"
   >("submission_desc");
+  const focusParam = router.query.focus;
+  const focus =
+    focusParam === "accommodation" || focusParam === "courses"
+      ? focusParam
+      : null;
 
   const countries = useMemo(
     () =>
@@ -285,25 +289,18 @@ export default function DestinationsPage({
   );
 }
 
-export const getServerSideProps: GetServerSideProps<
-  DestinationsPageProps
-> = async (context) => {
+export const getStaticProps: GetStaticProps<DestinationsPageProps> = async () => {
   const { getPublicDestinationList } = await import(
     "../src/server/publicDestinations"
   );
 
   const destinations = await getPublicDestinationList();
-  const focusParam = context.query.focus;
-  const focus =
-    focusParam === "accommodation" || focusParam === "courses"
-      ? focusParam
-      : null;
 
   return {
     props: {
       destinations,
-      focus,
     },
+    revalidate: PUBLIC_DESTINATION_PAGE_REVALIDATE_SECONDS,
   };
 };
 

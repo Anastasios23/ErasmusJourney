@@ -1,4 +1,8 @@
 import { prisma } from "../../lib/prisma";
+import {
+  calculateFormSubmissionLivingExpensesTotal,
+  sanitizeFormSubmissionLivingExpensesData,
+} from "../lib/formSubmissionLivingExpenses";
 // Define Prisma namespace locally instead of importing it
 namespace Prisma {
   export type DestinationWhereInput = any;
@@ -21,6 +25,10 @@ interface ContentMetrics {
   completeness: number;
   relevance: number;
   userRating: number;
+}
+
+function normalizeSubmissionType(type: string | undefined): string {
+  return typeof type === "string" ? type.toLowerCase().replace(/_/g, "-") : "";
 }
 
 export class ContentManagementService {
@@ -118,16 +126,16 @@ export class ContentManagementService {
     submissions: any[],
   ): Promise<DestinationAggregation> {
     const basicInfoSubmissions = submissions.filter(
-      (s) => s.type === "basic-info",
+      (s) => normalizeSubmissionType(s.type) === "basic-info",
     );
     const accommodationSubmissions = submissions.filter(
-      (s) => s.type === "accommodation",
+      (s) => normalizeSubmissionType(s.type) === "accommodation",
     );
     const livingExpensesSubmissions = submissions.filter(
-      (s) => s.type === "living-expenses",
+      (s) => normalizeSubmissionType(s.type) === "living-expenses",
     );
     const experienceSubmissions = submissions.filter(
-      (s) => s.type === "help-future-students",
+      (s) => normalizeSubmissionType(s.type) === "help-future-students",
     );
 
     // Calculate average rating
@@ -141,8 +149,8 @@ export class ContentManagementService {
 
     // Calculate average cost
     const costs = livingExpensesSubmissions
-      .map((s) => s.data?.totalMonthlyBudget)
-      .filter((c) => c !== null && c !== undefined);
+      .map((s) => calculateFormSubmissionLivingExpensesTotal(s.data))
+      .filter((cost) => cost > 0);
     const averageCost =
       costs.length > 0
         ? costs.reduce((sum, cost) => sum + cost, 0) / costs.length
@@ -155,7 +163,9 @@ export class ContentManagementService {
 
     // Aggregate course data
     const courseData = this.aggregateCourseData(
-      submissions.filter((s) => s.type === "course-matching"),
+      submissions.filter(
+        (s) => normalizeSubmissionType(s.type) === "course-matching",
+      ),
     );
 
     // Aggregate living expenses data
@@ -298,25 +308,26 @@ export class ContentManagementService {
 
     const expenses = {
       rent: [],
-      groceries: [],
+      food: [],
       transport: [],
-      eatingOut: [],
-      bills: [],
+      social: [],
+      travel: [],
       other: [],
       total: [],
     };
 
     submissions.forEach((submission) => {
-      const data = submission.data;
+      const data = sanitizeFormSubmissionLivingExpensesData(submission.data);
+      const total = calculateFormSubmissionLivingExpensesTotal(data);
 
-      if (data.monthlyRent) expenses.rent.push(data.monthlyRent);
-      if (data.monthlyFood) expenses.groceries.push(data.monthlyFood);
-      if (data.monthlyTransport) expenses.transport.push(data.monthlyTransport);
-      if (data.monthlyEntertainment)
-        expenses.eatingOut.push(data.monthlyEntertainment);
-      if (data.monthlyUtilities) expenses.bills.push(data.monthlyUtilities);
-      if (data.monthlyOther) expenses.other.push(data.monthlyOther);
-      if (data.totalMonthlyBudget) expenses.total.push(data.totalMonthlyBudget);
+      if (typeof data.rent === "number") expenses.rent.push(data.rent);
+      if (typeof data.food === "number") expenses.food.push(data.food);
+      if (typeof data.transport === "number")
+        expenses.transport.push(data.transport);
+      if (typeof data.social === "number") expenses.social.push(data.social);
+      if (typeof data.travel === "number") expenses.travel.push(data.travel);
+      if (typeof data.other === "number") expenses.other.push(data.other);
+      if (total > 0) expenses.total.push(total);
     });
 
     const calculateStats = (values: number[]) => {
@@ -333,10 +344,10 @@ export class ContentManagementService {
     return {
       totalSubmissions: submissions.length,
       rent: calculateStats(expenses.rent),
-      groceries: calculateStats(expenses.groceries),
+      food: calculateStats(expenses.food),
       transport: calculateStats(expenses.transport),
-      eatingOut: calculateStats(expenses.eatingOut),
-      bills: calculateStats(expenses.bills),
+      social: calculateStats(expenses.social),
+      travel: calculateStats(expenses.travel),
       other: calculateStats(expenses.other),
       total: calculateStats(expenses.total),
     };
@@ -407,7 +418,7 @@ export class ContentManagementService {
    * Determine contribution type based on submission
    */
   static determineContributionType(submission: any): string {
-    switch (submission.type) {
+    switch (normalizeSubmissionType(submission.type)) {
       case "basic-info":
         return "primary";
       case "help-future-students":
@@ -450,12 +461,12 @@ export class ContentManagementService {
     const requiredFields = {
       "basic-info": ["hostCity", "hostCountry", "hostUniversity"],
       accommodation: ["accommodationType", "monthlyRent"],
-      "living-expenses": ["totalMonthlyBudget"],
+      "living-expenses": ["food", "transport", "social"],
       "course-matching": ["hostCourseCount"],
       "help-future-students": ["overallRating", "advice"],
     };
 
-    const fields = requiredFields[type] || [];
+    const fields = requiredFields[normalizeSubmissionType(type)] || [];
     if (fields.length === 0) return 1.0;
 
     const completedFields = fields.filter((field) => {

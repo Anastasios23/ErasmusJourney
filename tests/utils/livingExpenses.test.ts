@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  calculateLivingExpensesTotal,
   createEmptyLivingExpensesStepData,
   hasRequiredLivingExpenses,
   isLivingExpensesStepComplete,
@@ -101,6 +102,32 @@ describe("living expenses sanitization", () => {
         other: null,
       }),
     ).toBe(false);
+  });
+
+  it("calculates totals from the canonical shape only", () => {
+    expect(
+      calculateLivingExpensesTotal({
+        currency: "EUR",
+        rent: 500,
+        food: 220,
+        transport: 45,
+        social: 100,
+        travel: null,
+        other: 30,
+      }),
+    ).toBe(895);
+
+    expect(
+      calculateLivingExpensesTotal({
+        currency: "EUR",
+        rent: null,
+        food: null,
+        transport: null,
+        social: null,
+        travel: null,
+        other: null,
+      }),
+    ).toBe(0);
   });
 
   it("treats canonical step completion the same way as submit validation", () => {

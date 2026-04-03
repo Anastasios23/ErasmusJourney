@@ -42,7 +42,7 @@ The application uses SQLite for simplicity. The database file (`erasmus.db`) wil
 - `POST /api/basic-information` - Save basic student information
 - `POST /api/course-matching` - Save course matching data
 - `POST /api/accommodation` - Save accommodation information
-- `POST /api/living-expenses` - Save living expenses data
+- `POST /api/living-expenses` - Save canonical living-expenses data
 - `POST /api/help-future-students` - Save mentorship data
 
 #### Data Retrieval
@@ -84,7 +84,7 @@ The database includes the following tables:
 - `course_matching` - Course details and matching data
 - `courses` - Individual course records
 - `accommodation` - Housing information
-- `living_expenses` - Budget and expense data
+- `living_expenses` - Legacy compatibility storage for canonical living-expenses data
 - `help_future_students` - Mentorship and contact details
 
 All tables include timestamps and foreign key relationships for data integrity.

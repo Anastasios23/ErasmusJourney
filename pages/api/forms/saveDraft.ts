@@ -4,6 +4,7 @@ import { authOptions } from "../auth/[...nextauth]";
 import { prisma } from "../../../lib/prisma";
 import { FormType } from "../../../src/types/forms";
 import { livingExpensesSchema } from "../../../src/lib/formSchemas";
+import { sanitizeFormSubmissionLivingExpensesData } from "../../../src/lib/formSubmissionLivingExpenses";
 
 const typeMapping: Record<string, FormType> = {
   "basic-info": "basic-info",
@@ -48,7 +49,12 @@ export default async function handler(
   }
 
   try {
-    const { type, title, data } = req.body;
+    const { type, title } = req.body;
+    let data = req.body?.data;
+
+    if (type === "living-expenses") {
+      data = sanitizeFormSubmissionLivingExpensesData(data);
+    }
 
     const hostCity = data.hostCity || data.basicInfo?.hostCity || null;
     const hostCountry = data.hostCountry || data.basicInfo?.hostCountry || null;
@@ -114,7 +120,11 @@ export default async function handler(
     // Validate living expenses form data specifically
     if (type === "living-expenses") {
       try {
-        livingExpensesSchema.parse(req.body);
+        livingExpensesSchema.parse({
+          type,
+          title,
+          data,
+        });
       } catch (error) {
         return res.status(400).json({
           error: "Validation failed",

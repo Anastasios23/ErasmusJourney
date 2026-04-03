@@ -7,6 +7,8 @@ const {
   mockTransaction,
   mockPreviewBuilder,
   mockPreviewUnavailableReason,
+  mockRefreshPublicDestinationReadModel,
+  mockRevalidatePublicDestinationPages,
 } = vi.hoisted(() => ({
   mockGetServerSession: vi.fn(),
   mockUserFindUnique: vi.fn(),
@@ -14,6 +16,8 @@ const {
   mockTransaction: vi.fn(),
   mockPreviewBuilder: vi.fn(),
   mockPreviewUnavailableReason: vi.fn(),
+  mockRefreshPublicDestinationReadModel: vi.fn(),
+  mockRevalidatePublicDestinationPages: vi.fn(),
 }));
 
 vi.mock("next-auth/next", () => ({
@@ -44,6 +48,11 @@ vi.mock("../../src/server/publicDestinations", () => ({
   getAdminPublicImpactPreviewByExperienceId: mockPreviewBuilder,
   getAdminPublicImpactPreviewUnavailableReasonByExperienceId:
     mockPreviewUnavailableReason,
+  refreshPublicDestinationReadModel: mockRefreshPublicDestinationReadModel,
+}));
+
+vi.mock("../../src/server/publicDestinationRevalidation", () => ({
+  revalidatePublicDestinationPages: mockRevalidatePublicDestinationPages,
 }));
 
 import previewHandler from "../../pages/api/admin/erasmus-experiences/[id]/preview";
@@ -87,6 +96,8 @@ describe("admin public impact preview routes", () => {
     });
     mockUserFindUnique.mockResolvedValue({ role: "ADMIN" });
     mockTransaction.mockResolvedValue([]);
+    mockRefreshPublicDestinationReadModel.mockResolvedValue(undefined);
+    mockRevalidatePublicDestinationPages.mockResolvedValue(undefined);
   });
 
   it("returns preview payload for an admin when a preview can be built", async () => {

@@ -12,6 +12,7 @@ const mockRouterReplace = vi.fn();
 const mockRouterPush = vi.fn();
 const mockSetCurrentStep = vi.fn();
 const mockMarkStepCompleted = vi.fn();
+let lastStepNavigationProps: Record<string, unknown> | null = null;
 let mockSessionStatus: "authenticated" | "unauthenticated" | "loading" =
   "authenticated";
 let mockSessionData: any = {
@@ -106,7 +107,10 @@ vi.mock("../../components/forms/FormProgressBar", () => ({
 }));
 
 vi.mock("../../components/forms/StepNavigation", () => ({
-  StepNavigation: () => <div data-testid="step-navigation" />,
+  StepNavigation: (props: Record<string, unknown>) => {
+    lastStepNavigationProps = props;
+    return <div data-testid="step-navigation" />;
+  },
 }));
 
 vi.mock("../../src/components/ui/button", () => ({
@@ -208,6 +212,7 @@ describe("ShareExperience page", () => {
     mockRouterPush.mockReset();
     mockSetCurrentStep.mockReset();
     mockMarkStepCompleted.mockReset();
+    lastStepNavigationProps = null;
 
     mockSaveProgress.mockResolvedValue(true);
     mockSubmitExperience.mockResolvedValue(true);
@@ -310,6 +315,15 @@ describe("ShareExperience page", () => {
         "/login?callbackUrl=%2Fshare-experience%3Fstep%3D1",
       );
     });
+  });
+
+  it("does not pass a duplicate save draft action into step navigation", () => {
+    render(<ShareExperience />);
+
+    expect(screen.getByTestId("step-navigation")).toBeInTheDocument();
+    expect(lastStepNavigationProps).not.toBeNull();
+    expect(lastStepNavigationProps).not.toHaveProperty("onSaveDraft");
+    expect(lastStepNavigationProps).not.toHaveProperty("showSaveDraft");
   });
 
   it("clamps an inaccessible deep link back to step 1", async () => {

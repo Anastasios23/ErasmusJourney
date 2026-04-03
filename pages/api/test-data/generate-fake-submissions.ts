@@ -116,15 +116,16 @@ const SAMPLE_NAMES = [
   { firstName: "Marios", lastName: "Andreou" },
 ];
 
-// Generate realistic expense breakdown
-function generateExpenses(totalBudget: number) {
+// Generate realistic canonical living-expenses data.
+function generateLivingExpenses(rent: number, nonRentBudget: number) {
   return {
-    groceries: Math.round(totalBudget * 0.25).toString(),
-    transportation: Math.round(totalBudget * 0.15).toString(),
-    eatingOut: Math.round(totalBudget * 0.2).toString(),
-    socialLife: Math.round(totalBudget * 0.15).toString(),
-    travel: Math.round(totalBudget * 0.15).toString(),
-    otherExpenses: Math.round(totalBudget * 0.1).toString(),
+    currency: "EUR",
+    rent: Math.round(rent),
+    food: Math.round(nonRentBudget * 0.35),
+    transport: Math.round(nonRentBudget * 0.15),
+    social: Math.round(nonRentBudget * 0.25),
+    travel: Math.round(nonRentBudget * 0.15),
+    other: Math.round(nonRentBudget * 0.1),
   };
 }
 
@@ -235,13 +236,15 @@ export default async function handler(
             title: "Living Expenses Information",
             status: "SUBMITTED",
             data: {
-              expenses: generateExpenses(expenseVariation),
+              ...generateLivingExpenses(rentVariation, expenseVariation),
               monthlyIncomeAmount: Math.round(
                 rentVariation + expenseVariation + 200,
-              ).toString(),
+              ),
               spendingHabit: ["conservative", "moderate", "liberal"][
                 Math.floor(Math.random() * 3)
               ],
+              budgetTips:
+                "Track recurring costs early so your first month stays realistic.",
               cheapGroceryPlaces: `Local markets and discount stores in ${destination.city}`,
               transportationTips: `Student discounts available for public transport in ${destination.city}`,
               overallBudgetAdvice: `Budget around €${Math.round(rentVariation + expenseVariation)} per month for ${destination.city}`,

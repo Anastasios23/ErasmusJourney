@@ -16,6 +16,7 @@ import {
   sanitizePublicDestinationArea,
   sanitizePublicDestinationNarrative,
 } from "../lib/publicDestinationPresentation";
+import { PUBLIC_DESTINATION_READ_MODEL_TTL_MS } from "../lib/publicDestinationCache";
 import { buildPreviewUnavailableReason } from "../lib/adminPublicImpactPreview";
 import type { AdminPublicImpactPreview } from "../types/adminPublicImpactPreview";
 import type {
@@ -74,6 +75,41 @@ type GroupedDestinationData = {
   courseEquivalences: GroupedCourseEquivalence[];
   practicalTips: string[];
 };
+
+type PublicDestinationReadModel = {
+  destinations: PublicDestinationListItem[];
+  detailsBySlug: Map<string, PublicDestinationDetail>;
+  accommodationBySlug: Map<string, PublicDestinationAccommodationInsights>;
+  courseEquivalencesBySlug: Map<
+    string,
+    PublicDestinationCourseEquivalences
+  >;
+};
+
+type PersistedPublicDestinationReadModelRow = {
+  slug: string;
+  city: string;
+  country: string;
+  hostUniversityCount: number;
+  submissionCount: number;
+  averageRent: number | null;
+  averageMonthlyCost: number | null;
+  detail: unknown;
+  accommodation: unknown;
+  courseEquivalences: unknown;
+};
+
+type PublicDestinationReadModelCacheEntry = {
+  expiresAt: number;
+  value: PublicDestinationReadModel;
+};
+
+let publicDestinationReadModelCache:
+  | PublicDestinationReadModelCacheEntry
+  | null = null;
+let publicDestinationReadModelPromise: Promise<PublicDestinationReadModel> | null =
+  null;
+let publicDestinationRefreshPromise: Promise<void> | null = null;
 
 function toRecord(value: unknown): Partial<Record<string, unknown>> | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -810,63 +846,303 @@ function buildCourseEquivalenceGroups(
     });
 }
 
+function sortGroupedDestinations(
+  grouped: Map<string, GroupedDestinationData>,
+): GroupedDestinationData[] {
+  return Array.from(grouped.values()).sort((left, right) => {
+    if (right.submissionCount !== left.submissionCount) {
+      return right.submissionCount - left.submissionCount;
+    }
+
+    return left.city.localeCompare(right.city);
+  });
+}
+
+function buildPublicDestinationReadModel(
+  experiences: RawExperience[],
+): PublicDestinationReadModel {
+  const grouped = buildGroupedDestinations(experiences);
+  const sortedDestinations = sortGroupedDestinations(grouped);
+  const detailsBySlug = new Map<string, PublicDestinationDetail>();
+  const accommodationBySlug = new Map<
+    string,
+    PublicDestinationAccommodationInsights
+  >();
+  const courseEquivalencesBySlug = new Map<
+    string,
+    PublicDestinationCourseEquivalences
+  >();
+
+  const destinations = sortedDestinations.map((destination) => {
+    detailsBySlug.set(destination.slug, buildDestinationDetail(destination));
+    accommodationBySlug.set(
+      destination.slug,
+      buildAccommodationInsights(destination),
+    );
+    courseEquivalencesBySlug.set(
+      destination.slug,
+      buildCourseEquivalences(destination),
+    );
+
+    return toListItem(destination);
+  });
+
+  return {
+    destinations,
+    detailsBySlug,
+    accommodationBySlug,
+    courseEquivalencesBySlug,
+  };
+}
+
+function createEmptyPublicDestinationReadModel(): PublicDestinationReadModel {
+  return {
+    destinations: [],
+    detailsBySlug: new Map<string, PublicDestinationDetail>(),
+    accommodationBySlug: new Map<
+      string,
+      PublicDestinationAccommodationInsights
+    >(),
+    courseEquivalencesBySlug: new Map<
+      string,
+      PublicDestinationCourseEquivalences
+    >(),
+  };
+}
+
+function buildPersistedPublicDestinationReadModel(
+  rows: PersistedPublicDestinationReadModelRow[],
+): PublicDestinationReadModel {
+  const readModel = createEmptyPublicDestinationReadModel();
+
+  for (const row of rows) {
+    const detail = toRecord(row.detail) as unknown as
+      | PublicDestinationDetail
+      | null;
+    const accommodation = toRecord(
+      row.accommodation,
+    ) as unknown as PublicDestinationAccommodationInsights | null;
+    const courseEquivalences = toRecord(
+      row.courseEquivalences,
+    ) as unknown as PublicDestinationCourseEquivalences | null;
+
+    if (!detail || !accommodation || !courseEquivalences) {
+      continue;
+    }
+
+    readModel.destinations.push({
+      slug: row.slug,
+      city: row.city,
+      country: row.country,
+      hostUniversityCount: row.hostUniversityCount,
+      submissionCount: row.submissionCount,
+      averageRent: row.averageRent,
+      averageMonthlyCost: row.averageMonthlyCost,
+    });
+    readModel.detailsBySlug.set(row.slug, detail);
+    readModel.accommodationBySlug.set(row.slug, accommodation);
+    readModel.courseEquivalencesBySlug.set(row.slug, courseEquivalences);
+  }
+
+  return readModel;
+}
+
+async function loadPersistedPublicDestinationReadModelRows(): Promise<
+  PersistedPublicDestinationReadModelRow[]
+> {
+  return (await prisma.publicDestinationReadModel.findMany({
+    select: {
+      slug: true,
+      city: true,
+      country: true,
+      hostUniversityCount: true,
+      submissionCount: true,
+      averageRent: true,
+      averageMonthlyCost: true,
+      detail: true,
+      accommodation: true,
+      courseEquivalences: true,
+    },
+    orderBy: [{ submissionCount: "desc" }, { city: "asc" }],
+  })) as PersistedPublicDestinationReadModelRow[];
+}
+
+async function persistPublicDestinationReadModel(
+  readModel: PublicDestinationReadModel,
+): Promise<void> {
+  const rows = readModel.destinations.map((destination) => ({
+    slug: destination.slug,
+    city: destination.city,
+    country: destination.country,
+    hostUniversityCount: destination.hostUniversityCount,
+    submissionCount: destination.submissionCount,
+    averageRent: destination.averageRent,
+    averageMonthlyCost: destination.averageMonthlyCost,
+    detail: readModel.detailsBySlug.get(destination.slug)!,
+    accommodation: readModel.accommodationBySlug.get(destination.slug)!,
+    courseEquivalences:
+      readModel.courseEquivalencesBySlug.get(destination.slug)!,
+  }));
+
+  await prisma.$transaction(async (tx) => {
+    if (rows.length === 0) {
+      await tx.publicDestinationReadModel.deleteMany();
+      return;
+    }
+
+    await tx.publicDestinationReadModel.deleteMany({
+      where: {
+        slug: {
+          notIn: rows.map((row) => row.slug),
+        },
+      },
+    });
+
+    for (const row of rows) {
+      await tx.publicDestinationReadModel.upsert({
+        where: { slug: row.slug },
+        create: row,
+        update: {
+          city: row.city,
+          country: row.country,
+          hostUniversityCount: row.hostUniversityCount,
+          submissionCount: row.submissionCount,
+          averageRent: row.averageRent,
+          averageMonthlyCost: row.averageMonthlyCost,
+          detail: row.detail,
+          accommodation: row.accommodation,
+          courseEquivalences: row.courseEquivalences,
+        },
+      });
+    }
+  });
+}
+
+export async function refreshPublicDestinationReadModel(): Promise<void> {
+  if (publicDestinationRefreshPromise) {
+    return publicDestinationRefreshPromise;
+  }
+
+  publicDestinationRefreshPromise = loadApprovedExperiences()
+    .then(async (experiences) => {
+      const readModel = buildPublicDestinationReadModel(experiences);
+      await persistPublicDestinationReadModel(readModel);
+      publicDestinationReadModelCache = {
+        expiresAt: Date.now() + PUBLIC_DESTINATION_READ_MODEL_TTL_MS,
+        value: readModel,
+      };
+      publicDestinationReadModelPromise = null;
+    })
+    .finally(() => {
+      publicDestinationRefreshPromise = null;
+    });
+
+  return publicDestinationRefreshPromise;
+}
+
+function shouldLazyBootstrapPublicDestinationReadModel(): boolean {
+  return process.env.NODE_ENV !== "production";
+}
+
+async function loadPublicDestinationReadModel(): Promise<PublicDestinationReadModel> {
+  const now = Date.now();
+
+  if (
+    publicDestinationReadModelCache &&
+    publicDestinationReadModelCache.expiresAt > now
+  ) {
+    return publicDestinationReadModelCache.value;
+  }
+
+  if (publicDestinationReadModelPromise) {
+    return publicDestinationReadModelPromise;
+  }
+
+  const staleReadModel = publicDestinationReadModelCache?.value ?? null;
+
+  const value = loadPersistedPublicDestinationReadModelRows()
+    .then(async (rows) => {
+      if (rows.length === 0) {
+        if (shouldLazyBootstrapPublicDestinationReadModel()) {
+          await refreshPublicDestinationReadModel();
+          return (
+            publicDestinationReadModelCache?.value ??
+            createEmptyPublicDestinationReadModel()
+          );
+        }
+
+        console.warn(
+          "Persisted public destination read model is empty. This is expected when no approved public experiences exist. If approved experiences should already be public in this environment, run `npm run db:refresh-public-destination-read-model` during setup or deploy.",
+        );
+
+        const emptyReadModel = createEmptyPublicDestinationReadModel();
+        publicDestinationReadModelCache = {
+          expiresAt: Date.now() + PUBLIC_DESTINATION_READ_MODEL_TTL_MS,
+          value: emptyReadModel,
+        };
+        return emptyReadModel;
+      }
+
+      const readModel = buildPersistedPublicDestinationReadModel(rows);
+      publicDestinationReadModelCache = {
+        expiresAt: Date.now() + PUBLIC_DESTINATION_READ_MODEL_TTL_MS,
+        value: readModel,
+      };
+      return readModel;
+    })
+    .catch((error) => {
+      if (staleReadModel) {
+        console.error(
+          "Failed to refresh public destination read model, serving stale snapshot:",
+          error,
+        );
+        return staleReadModel;
+      }
+
+      throw error;
+    })
+    .finally(() => {
+      if (publicDestinationReadModelPromise === value) {
+        publicDestinationReadModelPromise = null;
+      }
+    });
+
+  publicDestinationReadModelPromise = value;
+
+  return value;
+}
+
+export function invalidatePublicDestinationReadModel(): void {
+  publicDestinationReadModelCache = null;
+  publicDestinationReadModelPromise = null;
+}
+
 export async function getPublicDestinationList(): Promise<
   PublicDestinationListItem[]
 > {
-  const experiences = await loadApprovedExperiences();
-  const grouped = buildGroupedDestinations(experiences);
-
-  return Array.from(grouped.values())
-    .map(toListItem)
-    .sort((left, right) => {
-      if (right.submissionCount !== left.submissionCount) {
-        return right.submissionCount - left.submissionCount;
-      }
-
-      return left.city.localeCompare(right.city);
-    });
+  const readModel = await loadPublicDestinationReadModel();
+  return readModel.destinations;
 }
 
 export async function getPublicDestinationDetailBySlug(
   slug: string,
 ): Promise<PublicDestinationDetail | null> {
-  const experiences = await loadApprovedExperiences();
-  const grouped = buildGroupedDestinations(experiences);
-  const destination = findDestinationBySlug(grouped, slug);
-
-  if (!destination) {
-    return null;
-  }
-
-  return buildDestinationDetail(destination);
+  const readModel = await loadPublicDestinationReadModel();
+  return readModel.detailsBySlug.get(slug) ?? null;
 }
 
 export async function getPublicAccommodationInsightsByDestinationSlug(
   slug: string,
 ): Promise<PublicDestinationAccommodationInsights | null> {
-  const experiences = await loadApprovedExperiences();
-  const grouped = buildGroupedDestinations(experiences);
-  const destination = findDestinationBySlug(grouped, slug);
-
-  if (!destination) {
-    return null;
-  }
-
-  return buildAccommodationInsights(destination);
+  const readModel = await loadPublicDestinationReadModel();
+  return readModel.accommodationBySlug.get(slug) ?? null;
 }
 
 export async function getPublicCourseEquivalencesByDestinationSlug(
   slug: string,
 ): Promise<PublicDestinationCourseEquivalences | null> {
-  const experiences = await loadApprovedExperiences();
-  const grouped = buildGroupedDestinations(experiences);
-  const destination = findDestinationBySlug(grouped, slug);
-
-  if (!destination) {
-    return null;
-  }
-
-  return buildCourseEquivalences(destination);
+  const readModel = await loadPublicDestinationReadModel();
+  return readModel.courseEquivalencesBySlug.get(slug) ?? null;
 }
 
 export async function getAdminPublicImpactPreviewByExperienceId(

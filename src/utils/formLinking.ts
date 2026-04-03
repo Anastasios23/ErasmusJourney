@@ -149,13 +149,12 @@ export function generateLinkedFormUrl(
 export function validateNumericFields(data: any, formType: string): boolean {
   const numericFields: Record<string, string[]> = {
     LIVING_EXPENSES: [
-      "monthlyRent",
-      "monthlyFood",
-      "monthlyTransport",
-      "monthlyEntertainment",
-      "monthlyUtilities",
-      "monthlyOther",
-      "totalMonthlyBudget",
+      "rent",
+      "food",
+      "transport",
+      "social",
+      "travel",
+      "other",
       "monthlyIncomeAmount",
     ],
     ACCOMMODATION: ["monthlyRent", "avgUtilityCost", "accommodationRating"],

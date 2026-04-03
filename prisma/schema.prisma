@@ -298,6 +298,25 @@ model CityStatistics {
   @@map("city_statistics")
 }
 
+model PublicDestinationReadModel {
+  slug               String @id
+  city               String
+  country            String
+  hostUniversityCount Int
+  submissionCount    Int
+  averageRent        Float?
+  averageMonthlyCost Float?
+  detail             Json
+  accommodation      Json
+  courseEquivalences Json
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([country, city])
+  @@index([submissionCount, city])
+  @@map("public_destination_read_models")
+}
+
 model faculties {
   id           String        @id
   name         String

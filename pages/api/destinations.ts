@@ -1,5 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../lib/prisma";
+import { calculateFormSubmissionLivingExpensesTotal } from "../../src/lib/formSubmissionLivingExpenses";
+
+const LIVING_EXPENSES_TYPES = ["LIVING_EXPENSES", "living-expenses"];
+
+function isLivingExpensesSubmissionType(type: string): boolean {
+  return LIVING_EXPENSES_TYPES.includes(type);
+}
 
 // Public interface for destinations (without admin-only fields)
 interface PublicDestination {
@@ -122,6 +129,8 @@ export default async function handler(
       select: {
         data: true,
         type: true,
+        hostCity: true,
+        hostCountry: true,
       },
     });
 
@@ -132,8 +141,9 @@ export default async function handler(
     adminDestinations.forEach((dest) => {
       const citySubmissions = formSubmissions.filter((sub) => {
         const data = sub.data as any;
-        const submissionCity = data.hostCity || data.city;
-        const submissionCountry = data.hostCountry || data.country;
+        const submissionCity = data.hostCity || data.city || sub.hostCity;
+        const submissionCountry =
+          data.hostCountry || data.country || sub.hostCountry;
 
         return (
           submissionCity?.toLowerCase().includes(dest.city.toLowerCase()) ||
@@ -226,8 +236,9 @@ export default async function handler(
 
       const citySubmissions = formSubmissions.filter((sub) => {
         const data = sub.data as any;
-        const submissionCity = data.hostCity || data.city;
-        const submissionCountry = data.hostCountry || data.country;
+        const submissionCity = data.hostCity || data.city || sub.hostCity;
+        const submissionCountry =
+          data.hostCountry || data.country || sub.hostCountry;
 
         return (
           submissionCity?.toLowerCase() === dest.city?.toLowerCase() &&
@@ -247,7 +258,7 @@ export default async function handler(
 
       // Calculate living expenses from submissions (needed for fallback)
       const livingExpensesSubmissions = citySubmissions.filter(
-        (sub) => sub.type === "LIVING_EXPENSES",
+        (sub) => isLivingExpensesSubmissionType(sub.type),
       );
 
       if (stats && stats.avgTotalExpensesCents) {
@@ -256,27 +267,19 @@ export default async function handler(
         if (avgCostPerMonth < 600) costOfLiving = "low";
         else if (avgCostPerMonth > 1200) costOfLiving = "high";
       } else if (livingExpensesSubmissions.length > 0) {
-        // Fallback to old calculation
-        const totalExpenses = livingExpensesSubmissions.map((sub) => {
-          const data = sub.data as any;
-          return (
-            parseFloat(data.rent || 0) +
-            parseFloat(data.groceries || 0) +
-            parseFloat(data.transportation || 0) +
-            parseFloat(data.eatingOut || 0) +
-            parseFloat(data.bills || 0) +
-            parseFloat(data.entertainment || 0) +
-            parseFloat(data.other || 0)
+        const totalExpenses = livingExpensesSubmissions
+          .map((sub) => calculateFormSubmissionLivingExpensesTotal(sub.data))
+          .filter((amount) => amount > 0);
+
+        if (totalExpenses.length > 0) {
+          avgCostPerMonth = Math.round(
+            totalExpenses.reduce((sum, val) => sum + val, 0) /
+              totalExpenses.length,
           );
-        });
 
-        avgCostPerMonth = Math.round(
-          totalExpenses.reduce((sum, val) => sum + val, 0) /
-            totalExpenses.length,
-        );
-
-        if (avgCostPerMonth < 600) costOfLiving = "low";
-        else if (avgCostPerMonth > 1200) costOfLiving = "high";
+          if (avgCostPerMonth < 600) costOfLiving = "low";
+          else if (avgCostPerMonth > 1200) costOfLiving = "high";
+        }
       }
 
       const universities = new Set<string>();

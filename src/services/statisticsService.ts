@@ -1,6 +1,9 @@
 import { prisma } from "../../lib/prisma";
 import { sanitizeAccommodationStepData } from "../lib/accommodation";
-import { sanitizeLivingExpensesStepData } from "../lib/livingExpenses";
+import {
+  calculateLivingExpensesTotal,
+  sanitizeLivingExpensesStepData,
+} from "../lib/livingExpenses";
 
 export async function updateCityStatistics(city: string, country: string) {
   try {
@@ -32,13 +35,11 @@ export async function updateCityStatistics(city: string, country: string) {
 
     let totalGroceries = 0;
     let totalTransport = 0;
-    let totalEatingOut = 0;
     let totalSocial = 0;
     let totalExpenses = 0;
     let expenseCount = 0;
 
     experiences.forEach((exp) => {
-      const rawExpenses = (exp.livingExpenses as any) || {};
       const accommodation = sanitizeAccommodationStepData(
         exp.accommodation as any,
       );
@@ -74,17 +75,14 @@ export async function updateCityStatistics(city: string, country: string) {
       const social = expenses.social || 0;
       const travel = expenses.travel || 0;
       const other = expenses.other || 0;
-      const eatingOut =
-        typeof rawExpenses.eatingOut === "number"
-          ? rawExpenses.eatingOut
-          : parseFloat(rawExpenses.eatingOut || "0") || 0;
-
-      const total = rent + groceries + transport + social + travel + other;
+      const total = calculateLivingExpensesTotal({
+        ...expenses,
+        rent,
+      });
 
       if (total > 0) {
         totalGroceries += groceries;
         totalTransport += transport;
-        totalEatingOut += eatingOut;
         totalSocial += social;
         totalExpenses += total;
         expenseCount++;
@@ -125,10 +123,7 @@ export async function updateCityStatistics(city: string, country: string) {
           expenseCount > 0
             ? Math.round((totalTransport / expenseCount) * 100)
             : undefined,
-        avgEatingOutCents:
-          expenseCount > 0
-            ? Math.round((totalEatingOut / expenseCount) * 100)
-            : undefined,
+        avgEatingOutCents: null,
         avgSocialLifeCents:
           expenseCount > 0
             ? Math.round((totalSocial / expenseCount) * 100)
@@ -159,10 +154,7 @@ export async function updateCityStatistics(city: string, country: string) {
           expenseCount > 0
             ? Math.round((totalTransport / expenseCount) * 100)
             : undefined,
-        avgEatingOutCents:
-          expenseCount > 0
-            ? Math.round((totalEatingOut / expenseCount) * 100)
-            : undefined,
+        avgEatingOutCents: null,
         avgSocialLifeCents:
           expenseCount > 0
             ? Math.round((totalSocial / expenseCount) * 100)

@@ -7,6 +7,7 @@ import {
   getHowFoundAccommodationLabel,
   sanitizeAccommodationStepData,
 } from "../../../src/lib/accommodation";
+import { sanitizeLivingExpensesStepData } from "../../../src/lib/livingExpenses";
 
 interface AdminActionRequest {
   experienceId: string;
@@ -184,17 +185,17 @@ async function generateAccommodationExperience(
   accommodationData: any,
 ) {
   const basicInfo = experience.basicInfo as any;
-  const livingExpenses = experience.livingExpenses as any;
   const accommodation = sanitizeAccommodationStepData(accommodationData);
+  const livingExpenses = sanitizeLivingExpensesStepData(
+    experience.livingExpenses as any,
+  );
 
   // Extract accommodation details
   const accommodationType = accommodation.accommodationType
     ? getAccommodationTypeLabel(accommodation.accommodationType)
     : "Unknown";
   const neighborhood = accommodation.areaOrNeighborhood;
-  const monthlyRent =
-    accommodation.monthlyRent ||
-    livingExpenses?.expenses?.accommodation;
+  const monthlyRent = accommodation.monthlyRent ?? livingExpenses.rent;
   const structuredTips = [
     accommodation.billsIncluded
       ? `Bills included: ${getBillsIncludedLabel(accommodation.billsIncluded)}`
@@ -227,7 +228,7 @@ async function generateAccommodationExperience(
       studentName: experience.user?.firstName || "Anonymous",
       accommodationType,
       neighborhood,
-      monthlyRent: monthlyRent ? parseFloat(String(monthlyRent)) : null,
+      monthlyRent: typeof monthlyRent === "number" ? monthlyRent : null,
       title: `${accommodationType} in ${neighborhood || basicInfo?.hostCity}`,
       description:
         accommodation.accommodationReview || "Anonymous student accommodation snapshot",

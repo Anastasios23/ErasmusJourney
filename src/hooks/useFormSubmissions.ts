@@ -22,8 +22,10 @@ interface FormSubmission {
     | "basic-info"
     | "course-matching"
     | "accommodation"
+    | "living-expenses"
     | "story"
-    | "experience";
+    | "experience"
+    | "help-future-students";
   title: string;
   data: any;
   status: "draft" | "submitted" | "published";
@@ -173,6 +175,7 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
             "basic-info",
             "course-matching",
             "accommodation",
+            "living-expenses",
             "story",
             "experience",
           ];
@@ -222,7 +225,7 @@ export function useFormSubmissions(): UseFormSubmissionsReturn {
     try {
       // Validate data before sending to API
       if (type === "living-expenses") {
-        livingExpensesSchema.parse({ type, title, data });
+        livingExpensesSchema.parse(data);
       }
 
       if (status === "loading") {
