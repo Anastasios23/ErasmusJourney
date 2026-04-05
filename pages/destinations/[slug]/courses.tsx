@@ -4,14 +4,11 @@ import Link from "next/link";
 import type { GetStaticPaths, GetStaticProps } from "next";
 
 import Header from "../../../components/Header";
-import PublicDestinationSignalNotice from "../../../src/components/PublicDestinationSignalNotice";
 import PublicDestinationSubnav from "../../../src/components/PublicDestinationSubnav";
 import Footer from "../../../src/components/Footer";
-import { Badge } from "../../../src/components/ui/badge";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "../../../src/components/ui/card";
@@ -25,13 +22,30 @@ interface DestinationCoursesPageProps {
   destination: PublicDestinationCourseEquivalences;
 }
 
+function SummaryCard({
+  label,
+  value,
+}: {
+  label: string;
+  value: React.ReactNode;
+}) {
+  return (
+    <Card className="border-slate-200 shadow-sm">
+      <CardContent className="pt-5">
+        <p className="text-sm text-slate-500">{label}</p>
+        <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
+          {value}
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function DestinationCoursesPage({
   destination,
 }: DestinationCoursesPageProps) {
   const sortedGroups = [...destination.groups].sort(compareCourseGroups);
-  const hasMappings =
-    destination.totalMappings > 0 && sortedGroups.length > 0;
-  const leadingGroup = sortedGroups[0] ?? null;
+  const hasMappings = destination.totalMappings > 0 && sortedGroups.length > 0;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -45,8 +59,8 @@ export default function DestinationCoursesPage({
 
       <Header />
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 space-y-8">
-        <section className="space-y-3">
+      <main className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+        <section className="space-y-4">
           <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
             <Link href="/destinations" className="underline underline-offset-4">
               Back to destinations
@@ -59,229 +73,135 @@ export default function DestinationCoursesPage({
               Destination overview
             </Link>
           </div>
-          <Badge variant="secondary">Course equivalences</Badge>
-          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
+          <h1 className="max-w-3xl text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
             Course equivalences in {destination.city}, {destination.country}
           </h1>
-          <p className="max-w-3xl text-sm text-slate-600">
-            Approved mappings only. Student identities are not shown, and notes
-            are shortened before publication.
+          <p className="max-w-3xl text-base leading-8 text-slate-600">
+            Approved course examples from Cyprus university students.
           </p>
-          <PublicDestinationSignalNotice
-            submissionCount={destination.submissionCount}
-            hostUniversityCount={destination.hostUniversityCount}
-          />
-          <PublicDestinationSubnav slug={destination.slug} active="courses" />
-          <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
-            <Card>
-              <CardContent className="pt-5">
-                <p className="text-slate-500">Host universities</p>
-                <p className="font-semibold text-slate-900">
-                  {destination.hostUniversityCount}
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-5">
-                <p className="text-slate-500">Approved submissions</p>
-                <p className="font-semibold text-slate-900">
-                  {destination.submissionCount}
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-5">
-                <p className="text-slate-500">Home universities</p>
-                <p className="font-semibold text-slate-900">
-                  {destination.homeUniversityCount}
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-5">
-                <p className="text-slate-500">Course mappings</p>
-                <p className="font-semibold text-slate-900">
-                  {destination.totalMappings}
-                </p>
-              </CardContent>
-            </Card>
+          <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm leading-6 text-slate-600 shadow-sm">
+            Published examples help you plan before formal academic approval.
+            They are useful guidance, not final guarantees.
           </div>
         </section>
 
+        <section className="mt-8 grid gap-4 sm:grid-cols-3">
+          <SummaryCard
+            label="Course mappings"
+            value={destination.totalMappings}
+          />
+          <SummaryCard
+            label="Home universities"
+            value={destination.homeUniversityCount}
+          />
+          <SummaryCard
+            label="Approved submissions"
+            value={destination.submissionCount}
+          />
+        </section>
+
+        <p className="mt-4 text-sm text-slate-500">
+          Examples in this page span {destination.hostUniversityCount} host{" "}
+          {destination.hostUniversityCount === 1
+            ? "university"
+            : "universities"}
+          .
+        </p>
+
+        <div className="mt-8">
+          <PublicDestinationSubnav slug={destination.slug} active="courses" />
+        </div>
+
         {!hasMappings ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>No approved course mappings yet</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-slate-600">
-              Approved submissions exist for this destination, but none of them
-              currently include public course equivalence examples that can be
-              shown here.
+          <Card className="mt-8 border-slate-200 shadow-sm">
+            <CardContent className="py-10 text-center text-slate-600">
+              Approved submissions exist for this destination, but no public
+              course mappings can be shown yet.
             </CardContent>
           </Card>
         ) : (
-          <>
-            <section>
-              <Card>
+          <section className="mt-8 grid grid-cols-1 gap-5">
+            {sortedGroups.map((group) => (
+              <Card
+                key={`${group.homeUniversity}-${group.homeDepartment || "general"}`}
+                className="border-slate-200 shadow-sm"
+              >
                 <CardHeader className="space-y-3">
-                  <CardTitle>How to read these equivalence examples</CardTitle>
-                  <CardDescription className="text-slate-600">
-                    Each card starts from the home university and department, so
-                    you can scan examples that are closest to the curriculum you
-                    already know.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-4 text-sm md:grid-cols-3">
-                  <div className="rounded-xl border border-slate-200 bg-white px-4 py-4 text-slate-700">
-                    <p className="font-medium text-slate-900">
-                      Grouped by home context
-                    </p>
-                    <p className="mt-2">
-                      Cards are grouped by home university and department before
-                      showing published host-side matches.
-                    </p>
-                  </div>
-                  <div className="rounded-xl border border-slate-200 bg-white px-4 py-4 text-slate-700">
-                    <p className="font-medium text-slate-900">
-                      Counted by approved examples
-                    </p>
-                    <p className="mt-2">
-                      Mapping counts show how many approved public examples are
-                      available in each group.
-                    </p>
-                  </div>
-                  <div className="rounded-xl border border-slate-200 bg-white px-4 py-4 text-slate-700">
-                    <p className="font-medium text-slate-900">
-                      Useful for planning, not guarantees
-                    </p>
-                    <p className="mt-2">
-                      These examples help you prepare before formal academic
-                      approval. They do not replace your department&apos;s final
-                      decision.
-                    </p>
-                  </div>
-                </CardContent>
-                {leadingGroup ? (
-                  <CardContent className="pt-0 text-sm text-slate-600">
-                    Largest current example set:{" "}
-                    <span className="font-medium text-slate-900">
-                      {leadingGroup.homeUniversity}
-                      {leadingGroup.homeDepartment
-                        ? ` (${leadingGroup.homeDepartment})`
-                        : ""}
-                    </span>
+                  <CardTitle className="text-2xl text-slate-950">
+                    {group.homeUniversity}
+                  </CardTitle>
+                  <p className="text-sm leading-6 text-slate-600">
+                    {group.homeDepartment
+                      ? `${group.homeDepartment}.`
+                      : "Mixed department examples."}{" "}
+                    {group.mappingCount} published{" "}
+                    {group.mappingCount === 1 ? "mapping" : "mappings"} across{" "}
+                    {group.hostUniversities.length} host{" "}
+                    {group.hostUniversities.length === 1
+                      ? "university"
+                      : "universities"}
                     .
-                  </CardContent>
-                ) : null}
-              </Card>
-            </section>
+                  </p>
+                  {group.hostUniversities.length > 0 ? (
+                    <p className="text-sm text-slate-500">
+                      Host universities: {group.hostUniversities.join(", ")}
+                    </p>
+                  ) : null}
+                </CardHeader>
 
-            <section className="grid grid-cols-1 gap-5 xl:grid-cols-2">
-              {sortedGroups.map((group) => (
-                <Card
-                  key={`${group.homeUniversity}-${group.homeDepartment || "general"}`}
-                >
-                  <CardHeader className="space-y-4">
-                    <div className="space-y-3">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <CardTitle className="text-xl">
-                          {group.homeUniversity}
-                        </CardTitle>
-                        {group.homeDepartment ? (
-                          <Badge variant="outline">{group.homeDepartment}</Badge>
-                        ) : (
-                          <Badge variant="secondary">
-                            General department mix
-                          </Badge>
-                        )}
-                      </div>
-                      <CardDescription className="text-slate-600">
-                        Start here if you want published examples from students
-                        coming from {group.homeUniversity}
-                        {group.homeDepartment
-                          ? `, ${group.homeDepartment}`
-                          : ""}.
-                      </CardDescription>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline">
-                        {group.mappingCount} published{" "}
-                        {group.mappingCount === 1 ? "mapping" : "mappings"}
-                      </Badge>
-                      <Badge variant="outline">
-                        {group.hostUniversities.length} host{" "}
-                        {group.hostUniversities.length === 1
-                          ? "university"
-                          : "universities"}
-                      </Badge>
-                    </div>
-
-                    {group.hostUniversities.length > 0 ? (
-                      <p className="text-sm text-slate-600">
-                        Seen at{" "}
-                        <span className="font-medium text-slate-900">
-                          {group.hostUniversities.join(", ")}
-                        </span>
-                      </p>
-                    ) : null}
-                  </CardHeader>
-
-                  <CardContent>
-                    <ul className="space-y-4">
-                      {group.examples.map((example, index) => (
-                        <li
-                          key={[
-                            example.homeCourseName,
-                            example.hostCourseName,
-                            example.hostUniversity || "",
-                            index,
-                          ].join("|")}
-                          className="rounded-xl border border-slate-200 bg-white px-4 py-4"
-                        >
-                          <div className="grid gap-3 sm:grid-cols-2">
-                            <div className="space-y-1">
-                              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                                Home course
-                              </p>
-                              <p className="text-sm font-medium text-slate-900">
-                                {example.homeCourseName}
-                              </p>
-                            </div>
-                            <div className="space-y-1">
-                              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                                Matched host course
-                              </p>
-                              <p className="text-sm font-medium text-slate-900">
-                                {example.hostCourseName}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {example.hostUniversity ? (
-                              <Badge variant="secondary">
-                                {example.hostUniversity}
-                              </Badge>
-                            ) : null}
-                            <Badge variant="outline">
-                              Recognition: {example.recognitionType}
-                            </Badge>
-                          </div>
-
-                          {example.notes ? (
-                            <p className="mt-3 text-sm text-slate-600">
-                              Student note: {example.notes}
+                <CardContent>
+                  <ul className="space-y-4">
+                    {group.examples.map((example, index) => (
+                      <li
+                        key={[
+                          example.homeCourseName,
+                          example.hostCourseName,
+                          example.hostUniversity || "",
+                          index,
+                        ].join("|")}
+                        className="rounded-xl bg-slate-50 px-4 py-4"
+                      >
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                              Home course
                             </p>
-                          ) : null}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              ))}
-            </section>
-          </>
+                            <p className="mt-2 text-sm font-medium text-slate-950">
+                              {example.homeCourseName}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                              Matched host course
+                            </p>
+                            <p className="mt-2 text-sm font-medium text-slate-950">
+                              {example.hostCourseName}
+                            </p>
+                          </div>
+                        </div>
+
+                        <p className="mt-4 text-sm text-slate-600">
+                          Recognition:{" "}
+                          <span className="font-medium text-slate-900">
+                            {example.recognitionType}
+                          </span>
+                          {example.hostUniversity
+                            ? ` | Host university: ${example.hostUniversity}`
+                            : ""}
+                        </p>
+
+                        {example.notes ? (
+                          <p className="mt-2 text-sm leading-6 text-slate-600">
+                            Student note: {example.notes}
+                          </p>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ))}
+          </section>
         )}
       </main>
 
