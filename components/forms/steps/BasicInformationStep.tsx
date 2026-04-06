@@ -536,45 +536,34 @@ export default function BasicInformationStep({
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
-        <p className="text-sm text-blue-900">
-          Step 1 now collects only Erasmus eligibility and destination context.
-          Your identity and email stay in your authenticated account, not inside
-          this submission.
-        </p>
-      </div>
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <p className="text-sm text-gray-600">
+        Use this step to confirm your home university, host university, and
+        exchange period.
+      </p>
 
-      <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-8 w-1 bg-indigo-600 rounded-full"></div>
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900">
-              Academic Context
-            </h3>
-            <p className="text-sm text-gray-500">
-              Confirm your home institution and the academic profile used to
-              match Erasmus agreements.
-            </p>
-          </div>
+      {hasAttemptedContinue && validationSummary.length > 0 ? (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          Please complete {validationSummary.length} required{" "}
+          {validationSummary.length === 1 ? "field" : "fields"}.
         </div>
+      ) : null}
+
+      <section className="rounded-lg border border-gray-200 bg-white p-5">
+        <h3 className="text-lg font-semibold text-gray-900">Your Erasmus setup</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-2 space-y-2">
             <Label htmlFor="homeUniversity">Home University</Label>
             {isHomeUniversityLocked ? (
-              <EnhancedInput
-                id="homeUniversity"
-                value={derivedHomeUniversity?.name || formData.homeUniversity}
-                disabled
-                readOnly
-                error={errors.homeUniversity}
-                helperText={
-                  derivedHomeUniversity?.domain
-                    ? `Locked from your authenticated university email (${derivedHomeUniversity.domain}).`
-                    : "Locked from your authenticated university email."
-                }
-              />
+              <div className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2">
+                <p className="text-sm font-medium text-gray-900">
+                  {derivedHomeUniversity?.name || formData.homeUniversity}
+                </p>
+                <p className="mt-1 text-xs text-gray-500">
+                  Locked from your university email
+                </p>
+              </div>
             ) : (
               <EnhancedSelect
                 value={selectedHomeUniversityCode}
@@ -629,10 +618,16 @@ export default function BasicInformationStep({
                 </EnhancedSelectContent>
               </EnhancedSelect>
             )}
+            {errors.homeUniversity ? (
+              <p className="text-sm text-red-600">{errors.homeUniversity}</p>
+            ) : null}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="homeDepartment">Home Department *</Label>
+            {departmentsLoading ? (
+              <p className="text-sm text-gray-500">Loading departments</p>
+            ) : null}
             {departmentOptions.length > 0 ? (
               <EnhancedSelect
                 value={formData.homeDepartment}
@@ -641,13 +636,7 @@ export default function BasicInformationStep({
                 }
               >
                 <EnhancedSelectTrigger error={errors.homeDepartment}>
-                  <EnhancedSelectValue
-                    placeholder={
-                      departmentsLoading
-                        ? "Loading departments..."
-                        : "Select your department"
-                    }
-                  />
+                  <EnhancedSelectValue placeholder="Select your department" />
                 </EnhancedSelectTrigger>
                 <EnhancedSelectContent>
                   {departmentOptions.map((department) => (
@@ -658,6 +647,10 @@ export default function BasicInformationStep({
                 </EnhancedSelectContent>
               </EnhancedSelect>
             ) : (
+              <>
+                <p className="text-xs text-gray-500">
+                  Department not listed? Enter it manually
+                </p>
               <EnhancedInput
                 id="homeDepartment"
                 placeholder="e.g. Computer Science"
@@ -666,8 +659,8 @@ export default function BasicInformationStep({
                   handleInputChange("homeDepartment", event.target.value)
                 }
                 error={errors.homeDepartment}
-                helperText="Used to filter your eligible partner universities."
               />
+              </>
             )}
           </div>
 
@@ -691,28 +684,11 @@ export default function BasicInformationStep({
               </EnhancedSelectContent>
             </EnhancedSelect>
           </div>
-        </div>
-      </div>
 
-      <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-8 w-1 bg-teal-600 rounded-full"></div>
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900">
-              Erasmus Destination
-            </h3>
-            <p className="text-sm text-gray-500">
-              Select the host institution available for your home department and
-              study level.
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-2 space-y-2">
             <Label>Host University *</Label>
             <EnhancedSelect
-              value={selectedHostOption?.value}
+              value={selectedHostOption?.value || ""}
               onValueChange={handleHostUniversityChange}
               disabled={
                 !formData.homeDepartment ||
@@ -724,9 +700,9 @@ export default function BasicInformationStep({
                 <EnhancedSelectValue
                   placeholder={
                     !formData.homeDepartment || !formData.levelOfStudy
-                      ? "Select department and level first"
+                      ? "Select your host university"
                       : hostOptionsLoading
-                        ? "Loading host universities..."
+                        ? "Loading eligible host universities"
                         : hostUniversityOptions.length === 0
                           ? "No partner universities found for this combination"
                           : "Select your host university"
@@ -741,45 +717,32 @@ export default function BasicInformationStep({
                 ))}
               </EnhancedSelectContent>
             </EnhancedSelect>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="hostCity">Host City</Label>
-            <EnhancedInput
-              id="hostCity"
-              value={formData.hostCity}
-              readOnly
-              disabled
-              helperText="Derived from the selected host university."
-            />
-          </div>
+            {!formData.homeDepartment || !formData.levelOfStudy ? (
+              <p className="text-xs text-gray-500">
+                Select your department and study level first
+              </p>
+            ) : hostOptionsLoading ? (
+              <p className="text-xs text-gray-500">
+                Loading eligible host universities
+              </p>
+            ) : hostUniversityOptions.length === 0 ? (
+              <p className="text-xs text-gray-500">
+                No partner universities found for this combination
+              </p>
+            ) : null}
 
-          <div className="space-y-2">
-            <Label htmlFor="hostCountry">Host Country</Label>
-            <EnhancedInput
-              id="hostCountry"
-              value={formData.hostCountry}
-              readOnly
-              disabled
-              helperText="Derived from the selected host university."
-            />
+            {formData.hostUniversity && (formData.hostCity || formData.hostCountry) ? (
+              <p className="text-sm text-gray-600">
+                City: {formData.hostCity || "-"} | Country: {formData.hostCountry || "-"}
+              </p>
+            ) : null}
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-8 w-1 bg-amber-500 rounded-full"></div>
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900">
-              Exchange Plan
-            </h3>
-            <p className="text-sm text-gray-500">
-              Capture the academic year, period, and optional timing details for
-              your exchange.
-            </p>
-          </div>
-        </div>
+      <section className="rounded-lg border border-gray-200 bg-white p-5">
+        <h3 className="text-lg font-semibold text-gray-900">Exchange details</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
@@ -794,7 +757,7 @@ export default function BasicInformationStep({
                 handleInputChange("exchangeAcademicYear", event.target.value)
               }
               error={errors.exchangeAcademicYear}
-              helperText="Use the academic year of your Erasmus mobility."
+              helperText="Use format: 2026/2027"
             />
           </div>
 
@@ -821,7 +784,7 @@ export default function BasicInformationStep({
 
           <div className="space-y-2">
             <Label htmlFor="languageOfInstruction">
-              Language of Instruction
+              Language of Instruction (optional)
             </Label>
             <EnhancedInput
               id="languageOfInstruction"
@@ -858,7 +821,7 @@ export default function BasicInformationStep({
             />
           </div>
         </div>
-      </div>
+      </section>
 
       <StepNavigation
         currentStep={1}
@@ -868,7 +831,7 @@ export default function BasicInformationStep({
         onNext={handleContinue}
         isLastStep={false}
         showPrevious={false}
-        helperText="Confirm the required Erasmus context here to unlock the next step."
+        helperText="Complete the required fields to continue"
         missingRequiredCount={missingRequiredCount}
         validationSummary={validationSummary}
         saveState={saveState}
