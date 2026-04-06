@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import type { GetStaticPaths, GetStaticProps } from "next";
@@ -6,12 +6,7 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import Header from "../../../components/Header";
 import PublicDestinationSubnav from "../../../src/components/PublicDestinationSubnav";
 import Footer from "../../../src/components/Footer";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../../src/components/ui/card";
+import { Button } from "../../../src/components/ui/button";
 import {
   formatPublicDestinationMoney,
   getPublicDestinationCurrencyMeta,
@@ -23,7 +18,7 @@ interface DestinationAccommodationPageProps {
   destination: PublicDestinationAccommodationInsights;
 }
 
-function SummaryCard({
+function StatCard({
   label,
   value,
 }: {
@@ -31,18 +26,16 @@ function SummaryCard({
   value: React.ReactNode;
 }) {
   return (
-    <Card className="border-slate-200 shadow-sm">
-      <CardContent className="pt-5">
-        <p className="text-sm text-slate-500">{label}</p>
-        <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
-          {value}
-        </p>
-      </CardContent>
-    </Card>
+    <div className="rounded-lg border border-gray-200 bg-white px-5 py-4 shadow-sm">
+      <p className="text-sm text-gray-500">{label}</p>
+      <p className="mt-2 text-2xl font-semibold tracking-tight text-gray-950">
+        {value}
+      </p>
+    </div>
   );
 }
 
-function PreviewItem({
+function SummaryItem({
   label,
   value,
 }: {
@@ -50,9 +43,11 @@ function PreviewItem({
   value: React.ReactNode;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 rounded-xl bg-slate-50 px-4 py-3 text-sm">
-      <span className="text-slate-600">{label}</span>
-      <span className="text-right font-medium text-slate-950">{value}</span>
+    <div className="flex items-start justify-between gap-3 py-3">
+      <span className="text-sm text-gray-600">{label}</span>
+      <span className="text-right text-sm font-medium text-gray-950">
+        {value}
+      </span>
     </div>
   );
 }
@@ -61,6 +56,8 @@ export default function DestinationAccommodationPage({
   destination,
 }: DestinationAccommodationPageProps) {
   const currencyMeta = getPublicDestinationCurrencyMeta(destination.currency);
+  const [showAllSnippets, setShowAllSnippets] = useState(false);
+
   const hasAccommodationData =
     destination.sampleSize > 0 ||
     destination.types.length > 0 ||
@@ -68,24 +65,35 @@ export default function DestinationAccommodationPage({
     destination.commonAreas.length > 0 ||
     destination.reviewSnippets.length > 0 ||
     destination.recommendationSampleSize > 0;
+
   const sortedTypes = [...destination.types].sort(
     (left, right) =>
       right.count - left.count || left.type.localeCompare(right.type),
   );
+
   const sortedDifficulty = [...destination.difficulty].sort(
     (left, right) =>
       right.count - left.count || left.level.localeCompare(right.level),
   );
+
   const sortedAreas = [...destination.commonAreas].sort(
     (left, right) =>
       right.count - left.count || left.name.localeCompare(right.name),
   );
+
   const topType = sortedTypes[0] ?? null;
   const topDifficulty = sortedDifficulty[0] ?? null;
   const topArea = sortedAreas[0] ?? null;
 
+  const visibleSnippets = showAllSnippets
+    ? destination.reviewSnippets
+    : destination.reviewSnippets.slice(0, 3);
+
+  const hasMoreSnippets =
+    destination.reviewSnippets.length > 3 && !showAllSnippets;
+
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-white">
       <Head>
         <title>{`Accommodation in ${destination.city}, ${destination.country} | Erasmus Journey`}</title>
         <meta
@@ -96,9 +104,10 @@ export default function DestinationAccommodationPage({
 
       <Header />
 
-      <main className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-        <section className="space-y-4">
-          <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
+      <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+        {/* Hero Section */}
+        <section className="mb-8 space-y-4">
+          <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
             <Link href="/destinations" className="underline underline-offset-4">
               Back to destinations
             </Link>
@@ -110,97 +119,95 @@ export default function DestinationAccommodationPage({
               Destination overview
             </Link>
           </div>
-          <h1 className="max-w-3xl text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-            Accommodation in {destination.city}, {destination.country}
-          </h1>
-          <p className="max-w-3xl text-base leading-8 text-slate-600">
-            Approved and anonymized housing insights from Cyprus university
-            students.
-          </p>
-          <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm leading-6 text-slate-600 shadow-sm">
-            Student-reported accommodation averages from approved submissions.
-            Addresses and identity details are removed before publication.
+
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight text-gray-950 sm:text-4xl">
+              Accommodation in {destination.city}, {destination.country}
+            </h1>
+            <p className="mt-3 text-sm text-gray-600">
+              Approved and anonymized student housing insights for{" "}
+              {destination.city}, {destination.country}.
+            </p>
           </div>
-          {currencyMeta.isMixed ? (
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-900 shadow-sm">
-              Some rent reports use more than one currency. Treat costs as
-              directional rather than exact.
-            </div>
-          ) : null}
-        </section>
 
-        <section className="mt-8 grid gap-4 sm:grid-cols-3">
-          <SummaryCard
-            label="Avg rent"
-            value={formatPublicDestinationMoney(
-              destination.averageRent,
-              destination.currency,
+          <div className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700">
+            Student submissions are anonymized. Housing types and costs are based
+            on published responses.
+            {currencyMeta.isMixed && (
+              <> Reported in mixed currencies. Use amounts as guidance, not exact
+              comparisons.</>
             )}
-          />
-          <SummaryCard
-            label="Accommodation entries"
-            value={destination.sampleSize}
-          />
-          <SummaryCard
-            label="Recommendation rate"
-            value={
-              destination.recommendationRate === null
-                ? "N/A"
-                : `${destination.recommendationRate}%`
-            }
-          />
+          </div>
+
+          <div className="mt-8">
+            <PublicDestinationSubnav
+              slug={destination.slug}
+              active="accommodation"
+            />
+          </div>
         </section>
-
-        <p className="mt-4 text-sm text-slate-500">
-          Based on {destination.submissionCount} approved{" "}
-          {destination.submissionCount === 1 ? "submission" : "submissions"}{" "}
-          across {destination.hostUniversityCount} host{" "}
-          {destination.hostUniversityCount === 1
-            ? "university"
-            : "universities"}
-          .
-        </p>
-
-        <div className="mt-8">
-          <PublicDestinationSubnav
-            slug={destination.slug}
-            active="accommodation"
-          />
-        </div>
 
         {!hasAccommodationData ? (
-          <Card className="mt-8 border-slate-200 shadow-sm">
-            <CardContent className="py-10 text-center text-slate-600">
-              Approved submissions exist for this destination, but no public
-              accommodation insights can be shown yet.
-            </CardContent>
-          </Card>
+          <div className="rounded-lg border border-gray-200 bg-white px-6 py-10 text-center text-gray-600 sm:px-8">
+            Approved submissions exist for this destination, but no public
+            accommodation insights can be shown yet.
+          </div>
         ) : (
           <>
-            <section className="mt-8 grid gap-5 lg:grid-cols-2">
-              <Card className="border-slate-200 shadow-sm">
-                <CardHeader className="space-y-3">
-                  <CardTitle className="text-2xl text-slate-950">
-                    Housing overview
-                  </CardTitle>
-                  <p className="text-sm leading-6 text-slate-600">
-                    The main housing signals students report before you look at
-                    the full detail.
-                  </p>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <PreviewItem
-                    label="Avg rent"
+            {/* Top Stats */}
+            <section className="mb-8 grid gap-4 sm:grid-cols-3">
+              <StatCard
+                label="Average rent"
+                value={formatPublicDestinationMoney(
+                  destination.averageRent,
+                  destination.currency,
+                )}
+              />
+              <StatCard
+                label="Recommendation rate"
+                value={
+                  destination.recommendationRate === null
+                    ? "N/A"
+                    : `${destination.recommendationRate}%`
+                }
+              />
+              <StatCard
+                label="Housing entries"
+                value={destination.sampleSize}
+              />
+            </section>
+
+            {/* Housing at a Glance */}
+            <section className="mb-8 grid gap-6 lg:grid-cols-2">
+              <div className="rounded-lg border border-gray-200 bg-white p-6">
+                <h2 className="mb-6 text-lg font-semibold text-gray-950">
+                  Housing at a glance
+                </h2>
+                <div className="space-y-0.5 border-t border-gray-200">
+                  <SummaryItem
+                    label="Average rent"
                     value={formatPublicDestinationMoney(
                       destination.averageRent,
                       destination.currency,
                     )}
                   />
-                  <PreviewItem
+                  <div className="border-t border-gray-200 py-3">
+                    <p className="text-sm text-gray-600">
+                      {getAccommodationRecommendationText(
+                        destination.recommendationRate,
+                      )}
+                    </p>
+                    {destination.recommendationRate !== null && (
+                      <p className="mt-1 text-sm font-medium text-gray-950">
+                        {destination.recommendationRate}% recommend
+                      </p>
+                    )}
+                  </div>
+                  <SummaryItem
                     label="Most common housing type"
                     value={topType ? topType.type : "Not enough data yet"}
                   />
-                  <PreviewItem
+                  <SummaryItem
                     label="Most common difficulty"
                     value={
                       topDifficulty
@@ -208,123 +215,164 @@ export default function DestinationAccommodationPage({
                         : "Not enough data yet"
                     }
                   />
-                  <PreviewItem
+                  <SummaryItem
                     label="Most mentioned area"
                     value={topArea ? topArea.name : "Not enough data yet"}
                   />
-                  <div className="rounded-xl bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-700">
-                    {getAccommodationRecommendationLine(
-                      destination.recommendationYesCount,
-                      destination.recommendationSampleSize,
-                      destination.recommendationRate,
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
-              <Card className="border-slate-200 shadow-sm">
-                <CardHeader className="space-y-3">
-                  <CardTitle className="text-2xl text-slate-950">
-                    Accommodation types
-                  </CardTitle>
-                  <p className="text-sm leading-6 text-slate-600">
-                    Reported housing types with average rents where available.
+              <div className="rounded-lg border border-gray-200 bg-white p-6">
+                <h2 className="mb-6 text-lg font-semibold text-gray-950">
+                  Housing types
+                </h2>
+                {sortedTypes.length === 0 ? (
+                  <p className="text-sm text-gray-500">
+                    No accommodation type data yet.
                   </p>
-                </CardHeader>
-                <CardContent>
-                  {sortedTypes.length === 0 ? (
-                    <p className="text-sm text-slate-500">
-                      No accommodation type data yet.
-                    </p>
-                  ) : (
-                    <ul className="space-y-3">
-                      {sortedTypes.map((item) => (
+                ) : (
+                  <ul className="space-y-3">
+                    {sortedTypes.map((item, index) => {
+                      const percentage =
+                        destination.sampleSize > 0
+                          ? Math.round(
+                              (item.count / destination.sampleSize) * 100,
+                            )
+                          : 0;
+                      return (
                         <li
                           key={item.type}
-                          className="flex items-center justify-between gap-4 rounded-xl bg-slate-50 px-4 py-3 text-sm"
+                          className="rounded-lg border border-gray-100 bg-gray-50 p-3"
                         >
-                          <div>
-                            <p className="font-medium text-slate-950">
+                          <div className="flex items-baseline justify-between gap-3 mb-2">
+                            <span className="font-medium text-gray-950">
                               {item.type}
-                            </p>
-                            <p className="text-slate-500">
-                              {item.count}{" "}
-                              {item.count === 1 ? "report" : "reports"}
-                            </p>
+                            </span>
+                            <span className="text-sm text-gray-500">
+                              {percentage}%
+                            </span>
                           </div>
-                          <p className="font-medium text-slate-950">
+                          <div className="mb-2 h-1.5 rounded-full bg-gray-200">
+                            <div
+                              className="h-full rounded-full bg-gray-400"
+                              style={{ width: `${percentage}%` }}
+                            />
+                          </div>
+                          <p className="text-xs text-gray-600">
+                            {item.count}{" "}
+                            {item.count === 1 ? "report" : "reports"} •{" "}
                             {formatPublicDestinationMoney(
                               item.averageRent,
                               destination.currency,
-                            )}
+                            )}{" "}
+                            avg
                           </p>
                         </li>
-                      ))}
-                    </ul>
-                  )}
-                </CardContent>
-              </Card>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
             </section>
 
-            <section className="mt-8 grid gap-5 lg:grid-cols-2">
-              <Card className="border-slate-200 shadow-sm">
-                <CardHeader className="space-y-3">
-                  <CardTitle className="text-2xl text-slate-950">
-                    Areas students mention
-                  </CardTitle>
-                  <p className="text-sm leading-6 text-slate-600">
-                    Generalized area names only. Exact addresses are never
-                    shown.
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  {sortedAreas.length === 0 ? (
-                    <p className="text-sm text-slate-500">
-                      No neighborhood data yet.
-                    </p>
-                  ) : (
-                    <div className="flex flex-wrap gap-2">
-                      {sortedAreas.map((area) => (
-                        <span
-                          key={area.name}
-                          className="rounded-full bg-slate-100 px-3 py-1.5 text-sm text-slate-700"
-                        >
-                          {area.name} ({area.count})
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+            {/* How Hard It Is to Find Housing */}
+            {sortedDifficulty.length > 0 && (
+              <section className="mb-8 rounded-lg border border-gray-200 bg-white p-6">
+                <h2 className="mb-6 text-lg font-semibold text-gray-950">
+                  How hard is it to find housing
+                </h2>
+                <div className="space-y-4">
+                  {sortedDifficulty.map((item) => {
+                    const percentage =
+                      destination.sampleSize > 0
+                        ? Math.round((item.count / destination.sampleSize) * 100)
+                        : 0;
+                    return (
+                      <div key={item.level}>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-gray-950">
+                            {item.level}
+                          </span>
+                          <span className="text-sm text-gray-600">
+                            {item.count}{" "}
+                            {item.count === 1 ? "student" : "students"}
+                          </span>
+                        </div>
+                        <div className="h-2 rounded-full bg-gray-200">
+                          <div
+                            className="h-full rounded-full bg-gray-400"
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
 
-              <Card className="border-slate-200 shadow-sm">
-                <CardHeader className="space-y-3">
-                  <CardTitle className="text-2xl text-slate-950">
-                    Student comments
-                  </CardTitle>
-                  <p className="text-sm leading-6 text-slate-600">
-                    Shortened and filtered comments from approved submissions.
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  {destination.reviewSnippets.length === 0 ? (
-                    <p className="text-sm text-slate-500">
-                      No public review snippets yet.
-                    </p>
-                  ) : (
-                    <ul className="space-y-3">
-                      {destination.reviewSnippets.map((snippet, index) => (
-                        <li
-                          key={`${snippet.slice(0, 24)}-${index}`}
-                          className="rounded-xl bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-700"
-                        >
-                          {snippet}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </CardContent>
-              </Card>
+            {/* Common Areas */}
+            {sortedAreas.length > 0 && (
+              <section className="mb-8 rounded-lg border border-gray-200 bg-white p-6">
+                <h2 className="mb-6 text-lg font-semibold text-gray-950">
+                  Common areas students mention
+                </h2>
+                <p className="mb-4 text-xs text-gray-500">
+                  Generalized area mentions only. Exact addresses are never
+                  shown.
+                </p>
+                <ul className="space-y-2">
+                  {sortedAreas.slice(0, 6).map((area) => (
+                    <li key={area.name} className="flex justify-between text-sm">
+                      <span className="text-gray-950">{area.name}</span>
+                      <span className="text-gray-500">{area.count}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {/* Student Housing Comments */}
+            {visibleSnippets.length > 0 && (
+              <section className="mb-12 rounded-lg border border-gray-200 bg-white p-6">
+                <h2 className="mb-6 text-lg font-semibold text-gray-950">
+                  Student housing comments
+                </h2>
+                <ul className="space-y-3">
+                  {visibleSnippets.map((snippet, index) => (
+                    <li
+                      key={`${snippet.slice(0, 24)}-${index}`}
+                      className="rounded-lg border border-gray-100 bg-gray-50 p-3 text-sm leading-6 text-gray-700"
+                    >
+                      "{snippet}"
+                    </li>
+                  ))}
+                </ul>
+                {hasMoreSnippets && (
+                  <button
+                    onClick={() => setShowAllSnippets(true)}
+                    className="mt-4 text-sm font-medium text-gray-600 underline underline-offset-2 hover:text-gray-950"
+                  >
+                    Show more comments ({destination.reviewSnippets.length - 3}{" "}
+                    more)
+                  </button>
+                )}
+              </section>
+            )}
+
+            {/* Bottom CTA */}
+            <section className="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center">
+              <h3 className="mb-2 text-lg font-semibold text-gray-950">
+                Want to see if the academics also fit?
+              </h3>
+              <p className="mb-4 text-sm text-gray-600">
+                Explore course matches and academic fit for this destination.
+              </p>
+              <Link href={`/destinations/${destination.slug}/courses`}>
+                <Button className="bg-gray-900 text-white hover:bg-gray-800">
+                  View course examples
+                </Button>
+              </Link>
             </section>
           </>
         )}
@@ -335,16 +383,22 @@ export default function DestinationAccommodationPage({
   );
 }
 
-function getAccommodationRecommendationLine(
-  recommendationYesCount: number,
-  recommendationSampleSize: number,
+function getAccommodationRecommendationText(
   recommendationRate: number | null,
 ): string {
-  if (recommendationSampleSize === 0 || recommendationRate === null) {
-    return "No public recommendation responses are available yet.";
+  if (recommendationRate === null) {
+    return "Not enough recommendation data yet";
   }
 
-  return `${recommendationYesCount} of ${recommendationSampleSize} students would recommend their accommodation setup here.`;
+  if (recommendationRate >= 70) {
+    return "Mostly recommended by students";
+  }
+
+  if (recommendationRate >= 40) {
+    return "Mixed student recommendations";
+  }
+
+  return "Use caution — recommendation rate is low";
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {

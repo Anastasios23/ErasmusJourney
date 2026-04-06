@@ -1,5 +1,8 @@
 {
   "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "ignoreDeprecations": "5.0"
+  },
   "include": [
     "next-env.d.ts",
     "pages/**/*.ts",
@@ -13,10 +16,5 @@
     "tests/**/*.ts",
     "tests/**/*.tsx"
   ],
-  "exclude": [
-    "node_modules",
-    ".next",
-    "legacy",
-    "scripts"
-  ]
+  "exclude": ["node_modules", ".next", "legacy", "scripts"]
 }
