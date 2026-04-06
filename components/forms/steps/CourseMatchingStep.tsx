@@ -152,7 +152,8 @@ export default function CourseMatchingStep({
           ? rightKey.slice(0, rightKey.length - rightField.length - 1)
           : rightKey;
 
-        const leftIndex = mappingOrder.get(leftMappingId) ?? Number.MAX_SAFE_INTEGER;
+        const leftIndex =
+          mappingOrder.get(leftMappingId) ?? Number.MAX_SAFE_INTEGER;
         const rightIndex =
           mappingOrder.get(rightMappingId) ?? Number.MAX_SAFE_INTEGER;
 
@@ -182,7 +183,9 @@ export default function CourseMatchingStep({
         const mappingIndex = mappingOrder.get(mappingId);
 
         return formatValidationSummaryItem(
-          mappingIndex ? `Mapping ${mappingIndex}` : COURSE_FIELD_LABELS[fieldKey],
+          mappingIndex
+            ? `Mapping ${mappingIndex}`
+            : COURSE_FIELD_LABELS[fieldKey],
           message,
         );
       });
@@ -312,7 +315,10 @@ export default function CourseMatchingStep({
 
         <div className="mt-5 space-y-4">
           {mappings.map((mapping, index) => (
-            <Card key={mapping.id} className="border border-gray-200 bg-white shadow-sm">
+            <Card
+              key={mapping.id}
+              className="border border-gray-200 bg-white shadow-sm"
+            >
               <CardContent className="p-4 space-y-5">
                 <div className="flex items-center justify-between">
                   <h4 className="text-sm font-semibold text-gray-900">
@@ -333,7 +339,9 @@ export default function CourseMatchingStep({
 
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
                   <div className="space-y-3">
-                    <h5 className="text-sm font-medium text-gray-900">Home course</h5>
+                    <h5 className="text-sm font-medium text-gray-900">
+                      Home course
+                    </h5>
 
                     <div className="space-y-2">
                       <Label
@@ -408,7 +416,9 @@ export default function CourseMatchingStep({
                   </div>
 
                   <div className="space-y-3">
-                    <h5 className="text-sm font-medium text-gray-900">Host course</h5>
+                    <h5 className="text-sm font-medium text-gray-900">
+                      Host course
+                    </h5>
 
                     <div className="space-y-2">
                       <Label
@@ -460,25 +470,25 @@ export default function CourseMatchingStep({
                     </div>
 
                     <div className="space-y-2">
-                        <Label
-                          htmlFor={`host-code-${mapping.id}`}
-                          className="text-xs text-gray-500"
-                        >
-                          Course code (optional)
-                        </Label>
-                        <EnhancedInput
-                          id={`host-code-${mapping.id}`}
-                          placeholder="INF-201"
-                          value={mapping.hostCourseCode}
-                          onChange={(event) =>
-                            updateMapping(
-                              mapping.id,
-                              "hostCourseCode",
-                              event.target.value,
-                            )
-                          }
-                          className="h-9"
-                        />
+                      <Label
+                        htmlFor={`host-code-${mapping.id}`}
+                        className="text-xs text-gray-500"
+                      >
+                        Course code (optional)
+                      </Label>
+                      <EnhancedInput
+                        id={`host-code-${mapping.id}`}
+                        placeholder="INF-201"
+                        value={mapping.hostCourseCode}
+                        onChange={(event) =>
+                          updateMapping(
+                            mapping.id,
+                            "hostCourseCode",
+                            event.target.value,
+                          )
+                        }
+                        className="h-9"
+                      />
                     </div>
                   </div>
                 </div>
