@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -127,8 +133,7 @@ export default function ShareExperience() {
   const [currentStep, setLocalCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [saveState, setSaveState] =
-    useState<ShareExperienceSaveState>("idle");
+  const [saveState, setSaveState] = useState<ShareExperienceSaveState>("idle");
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [currentStepMissingRequiredCount, setCurrentStepMissingRequiredCount] =
     useState(0);
@@ -432,7 +437,10 @@ export default function ShareExperience() {
   }, [currentStep]);
 
   const handleStepClick = useCallback((stepNumber: number) => {
-    const allowedStep = clampShareExperienceStep(stepNumber, formDataRef.current);
+    const allowedStep = clampShareExperienceStep(
+      stepNumber,
+      formDataRef.current,
+    );
 
     if (allowedStep === stepNumber) {
       setLocalCurrentStep(stepNumber);
@@ -454,7 +462,8 @@ export default function ShareExperience() {
     };
   });
 
-  const progressPercentage = ((currentStep - 1) / (FORM_STEPS.length - 1)) * 100;
+  const progressPercentage =
+    ((currentStep - 1) / (FORM_STEPS.length - 1)) * 100;
   const savedTimeLabel = formatShareExperienceSavedTime(lastSaved);
 
   const draftStatus = useMemo(() => {
@@ -592,7 +601,9 @@ export default function ShareExperience() {
                 icon="solar:danger-triangle-bold-duotone"
                 className="h-4 w-4"
               />
-              <AlertDescription>{submitError || experienceError}</AlertDescription>
+              <AlertDescription>
+                {submitError || experienceError}
+              </AlertDescription>
             </Alert>
           )}
 
@@ -601,10 +612,12 @@ export default function ShareExperience() {
               Share your Erasmus experience
             </h1>
             <p className="mt-2 text-sm text-gray-600">
-              Help future students with practical destination, housing, and course information.
+              Help future students with practical destination, housing, and
+              course information.
             </p>
             <p className="mt-2 text-sm text-gray-500">
-              Your draft saves automatically while you work. Takes about 10-15 minutes.
+              Your draft saves automatically while you work. Takes about 10-15
+              minutes.
             </p>
           </section>
 
@@ -619,17 +632,28 @@ export default function ShareExperience() {
                 </p>
                 {currentStepMissingRequiredCount > 0 ? (
                   <p className="text-xs text-gray-500 mt-0.5">
-                    {currentStepMissingRequiredCount} required {currentStepMissingRequiredCount === 1 ? "field" : "fields"} left
+                    {currentStepMissingRequiredCount} required{" "}
+                    {currentStepMissingRequiredCount === 1 ? "field" : "fields"}{" "}
+                    left
                   </p>
                 ) : null}
               </div>
 
               <div className="flex items-center gap-2 text-sm text-gray-700">
-                <span className={cn("h-2 w-2 rounded-full", draftStatus.dotClass)} />
-                <Icon icon={draftStatus.icon} className={draftStatus.iconClass} />
+                <span
+                  className={cn("h-2 w-2 rounded-full", draftStatus.dotClass)}
+                />
+                <Icon
+                  icon={draftStatus.icon}
+                  className={draftStatus.iconClass}
+                />
                 <span className="font-medium">{draftStatus.label}</span>
-                {saveState !== "saving" && saveState !== "error" && savedTimeLabel ? (
-                  <span className="text-gray-500">Saved at {savedTimeLabel}</span>
+                {saveState !== "saving" &&
+                saveState !== "error" &&
+                savedTimeLabel ? (
+                  <span className="text-gray-500">
+                    Saved at {savedTimeLabel}
+                  </span>
                 ) : null}
               </div>
             </div>
@@ -673,9 +697,15 @@ export default function ShareExperience() {
                   >
                     <span className="mb-1 flex items-center gap-1">
                       {isCompleted ? (
-                        <Icon icon="solar:check-circle-linear" className="h-3.5 w-3.5" />
+                        <Icon
+                          icon="solar:check-circle-linear"
+                          className="h-3.5 w-3.5"
+                        />
                       ) : isLocked ? (
-                        <Icon icon="solar:lock-keyhole-linear" className="h-3.5 w-3.5" />
+                        <Icon
+                          icon="solar:lock-keyhole-linear"
+                          className="h-3.5 w-3.5"
+                        />
                       ) : (
                         <span className="inline-flex h-3.5 w-3.5 items-center justify-center rounded-full border border-current text-[10px] font-semibold">
                           {step.number}
