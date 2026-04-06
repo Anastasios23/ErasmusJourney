@@ -550,7 +550,9 @@ export default function BasicInformationStep({
       ) : null}
 
       <section className="rounded-lg border border-gray-200 bg-white p-5">
-        <h3 className="text-lg font-semibold text-gray-900">Your Erasmus setup</h3>
+        <h3 className="text-lg font-semibold text-gray-900">
+          Your Erasmus setup
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-2 space-y-2">
@@ -651,15 +653,15 @@ export default function BasicInformationStep({
                 <p className="text-xs text-gray-500">
                   Department not listed? Enter it manually
                 </p>
-              <EnhancedInput
-                id="homeDepartment"
-                placeholder="e.g. Computer Science"
-                value={formData.homeDepartment}
-                onChange={(event) =>
-                  handleInputChange("homeDepartment", event.target.value)
-                }
-                error={errors.homeDepartment}
-              />
+                <EnhancedInput
+                  id="homeDepartment"
+                  placeholder="e.g. Computer Science"
+                  value={formData.homeDepartment}
+                  onChange={(event) =>
+                    handleInputChange("homeDepartment", event.target.value)
+                  }
+                  error={errors.homeDepartment}
+                />
               </>
             )}
           </div>
@@ -732,9 +734,11 @@ export default function BasicInformationStep({
               </p>
             ) : null}
 
-            {formData.hostUniversity && (formData.hostCity || formData.hostCountry) ? (
+            {formData.hostUniversity &&
+            (formData.hostCity || formData.hostCountry) ? (
               <p className="text-sm text-gray-600">
-                City: {formData.hostCity || "-"} | Country: {formData.hostCountry || "-"}
+                City: {formData.hostCity || "-"} | Country:{" "}
+                {formData.hostCountry || "-"}
               </p>
             ) : null}
           </div>
@@ -742,7 +746,9 @@ export default function BasicInformationStep({
       </section>
 
       <section className="rounded-lg border border-gray-200 bg-white p-5">
-        <h3 className="text-lg font-semibold text-gray-900">Exchange details</h3>
+        <h3 className="text-lg font-semibold text-gray-900">
+          Exchange details
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
