@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { EnhancedInput } from "@/components/ui/enhanced-input";
-import { StepNavigation } from "@/components/forms/StepNavigation";
+import { StepNavigation } from "../StepNavigation";
 import {
   EnhancedSelect,
   EnhancedSelectContent,
@@ -837,7 +837,6 @@ export default function BasicInformationStep({
         onNext={handleContinue}
         isLastStep={false}
         showPrevious={false}
-        helperText="Complete the required fields to continue"
         missingRequiredCount={missingRequiredCount}
         validationSummary={validationSummary}
         saveState={saveState}

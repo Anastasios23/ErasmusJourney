@@ -3,7 +3,6 @@ import React, {
   useEffect,
   useCallback,
   useRef,
-  useMemo,
 } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -15,6 +14,7 @@ import { Button } from "../src/components/ui/button";
 import { Card, CardContent } from "../src/components/ui/card";
 import { Alert, AlertDescription } from "../src/components/ui/alert";
 import { FormProvider } from "../components/forms/FormProvider";
+import { FormProgressBar } from "../components/forms/FormProgressBar";
 import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
 import { useFormProgress } from "../src/context/FormProgressContext";
 import {
@@ -26,7 +26,6 @@ import {
   sanitizeLivingExpensesStepData,
 } from "../src/lib/livingExpenses";
 import { toast } from "../src/hooks/use-toast";
-import { cn } from "../src/lib/utils";
 import { buildLoginRedirectUrl } from "../src/lib/authRedirect";
 
 import BasicInformationStep from "../components/forms/steps/BasicInformationStep";
@@ -41,39 +40,33 @@ import {
 } from "../src/lib/shareExperienceStepAccess";
 import {
   type ShareExperienceSaveState,
-  formatShareExperienceSavedTime,
 } from "../src/lib/shareExperienceUi";
 
 const FORM_STEPS = [
   {
     number: 1,
-    name: "Basic Information",
+    name: "Basics",
     href: "#basic-info",
-    description: "Add your exchange details and study context.",
   },
   {
     number: 2,
-    name: "Course Matching",
+    name: "Courses",
     href: "#course-matching",
-    description: "Share course equivalences and recognition outcomes.",
   },
   {
     number: 3,
-    name: "Accommodation",
+    name: "Housing",
     href: "#accommodation",
-    description: "Add the housing details students need first.",
   },
   {
     number: 4,
-    name: "Living Expenses",
+    name: "Budget",
     href: "#living-expenses",
-    description: "Record practical monthly budget and cost guidance.",
   },
   {
     number: 5,
-    name: "Final Review",
+    name: "Submit",
     href: "#experience",
-    description: "Review and submit practical insights for future students.",
   },
 ];
 
@@ -134,9 +127,7 @@ export default function ShareExperience() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<ShareExperienceSaveState>("idle");
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [currentStepMissingRequiredCount, setCurrentStepMissingRequiredCount] =
-    useState(0);
+  const [, setCurrentStepMissingRequiredCount] = useState(0);
   const [formData, setFormData] = useState({
     basicInfo: {},
     courses: [],
@@ -191,12 +182,7 @@ export default function ShareExperience() {
     setLocalCurrentStep(initialStep);
 
     if (experienceData.lastSavedAt) {
-      const parsedLastSaved = new Date(experienceData.lastSavedAt);
-
-      if (!Number.isNaN(parsedLastSaved.getTime())) {
-        setLastSaved(parsedLastSaved);
-        setSaveState("saved");
-      }
+      setSaveState("saved");
     }
   }, [experienceLoading, experienceData?.id, router.asPath, router.query.step]);
 
@@ -314,8 +300,6 @@ export default function ShareExperience() {
           return false;
         }
 
-        const savedAt = new Date();
-        setLastSaved(savedAt);
         setSaveState("saved");
         return true;
       } catch (error) {
@@ -447,7 +431,6 @@ export default function ShareExperience() {
     }
   }, []);
 
-  const currentStepConfig = FORM_STEPS[currentStep - 1];
   const nextAccessibleStep = getNextAccessibleShareExperienceStep(formData);
   const progressSteps = FORM_STEPS.map((step) => {
     const isLocked = step.number > nextAccessibleStep;
@@ -461,37 +444,6 @@ export default function ShareExperience() {
         : undefined,
     };
   });
-
-  const progressPercentage =
-    ((currentStep - 1) / (FORM_STEPS.length - 1)) * 100;
-  const savedTimeLabel = formatShareExperienceSavedTime(lastSaved);
-
-  const draftStatus = useMemo(() => {
-    if (saveState === "saving") {
-      return {
-        label: "Saving...",
-        icon: "solar:refresh-linear",
-        iconClass: "h-4 w-4 animate-spin text-amber-600",
-        dotClass: "bg-amber-500",
-      };
-    }
-
-    if (saveState === "error") {
-      return {
-        label: "Save failed",
-        icon: "solar:danger-circle-linear",
-        iconClass: "h-4 w-4 text-red-600",
-        dotClass: "bg-red-500",
-      };
-    }
-
-    return {
-      label: "Saved",
-      icon: "solar:check-circle-linear",
-      iconClass: "h-4 w-4 text-emerald-600",
-      dotClass: "bg-emerald-500",
-    };
-  }, [saveState]);
 
   if (sessionStatus === "loading" || experienceLoading) {
     return (
@@ -612,113 +564,16 @@ export default function ShareExperience() {
               Share your Erasmus experience
             </h1>
             <p className="mt-2 text-sm text-gray-600">
-              Help future students with practical destination, housing, and
-              course information.
-            </p>
-            <p className="mt-2 text-sm text-gray-500">
-              Your draft saves automatically while you work. Takes about 10-15
-              minutes.
+              Share practical details future Erasmus students can use.
             </p>
           </section>
 
-          <section className="mb-4 rounded-lg border border-gray-200 bg-white px-4 py-3">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-                  Step {currentStep} of {FORM_STEPS.length}
-                </p>
-                <p className="text-sm font-semibold text-gray-900">
-                  {currentStepConfig.name}
-                </p>
-                {currentStepMissingRequiredCount > 0 ? (
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    {currentStepMissingRequiredCount} required{" "}
-                    {currentStepMissingRequiredCount === 1 ? "field" : "fields"}{" "}
-                    left
-                  </p>
-                ) : null}
-              </div>
-
-              <div className="flex items-center gap-2 text-sm text-gray-700">
-                <span
-                  className={cn("h-2 w-2 rounded-full", draftStatus.dotClass)}
-                />
-                <Icon
-                  icon={draftStatus.icon}
-                  className={draftStatus.iconClass}
-                />
-                <span className="font-medium">{draftStatus.label}</span>
-                {saveState !== "saving" &&
-                saveState !== "error" &&
-                savedTimeLabel ? (
-                  <span className="text-gray-500">
-                    Saved at {savedTimeLabel}
-                  </span>
-                ) : null}
-              </div>
-            </div>
-          </section>
-
-          <section className="mb-6 rounded-lg border border-gray-200 bg-white p-4">
-            <div className="h-1.5 rounded-full bg-gray-200">
-              <div
-                className="h-full rounded-full bg-gray-900 transition-all duration-200"
-                style={{ width: `${progressPercentage}%` }}
-              />
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-5">
-              {progressSteps.map((step) => {
-                const isCompleted = completedStepNumbers.includes(step.number);
-                const isCurrent = currentStep === step.number;
-                const isLocked = Boolean(step.isLocked);
-                const isClickable = Boolean(step.isClickable);
-
-                return (
-                  <button
-                    key={step.number}
-                    type="button"
-                    disabled={!isClickable}
-                    onClick={() => {
-                      if (isClickable) {
-                        handleStepClick(step.number);
-                      }
-                    }}
-                    className={cn(
-                      "rounded-md border px-2 py-2 text-left text-xs transition-colors",
-                      isCurrent
-                        ? "border-gray-900 bg-gray-100 text-gray-900"
-                        : isCompleted
-                          ? "border-gray-300 bg-white text-gray-800"
-                          : isLocked
-                            ? "border-gray-200 bg-gray-50 text-gray-400"
-                            : "border-gray-200 bg-white text-gray-700 hover:bg-gray-100",
-                      !isClickable && "cursor-not-allowed",
-                    )}
-                  >
-                    <span className="mb-1 flex items-center gap-1">
-                      {isCompleted ? (
-                        <Icon
-                          icon="solar:check-circle-linear"
-                          className="h-3.5 w-3.5"
-                        />
-                      ) : isLocked ? (
-                        <Icon
-                          icon="solar:lock-keyhole-linear"
-                          className="h-3.5 w-3.5"
-                        />
-                      ) : (
-                        <span className="inline-flex h-3.5 w-3.5 items-center justify-center rounded-full border border-current text-[10px] font-semibold">
-                          {step.number}
-                        </span>
-                      )}
-                      <span className="font-medium">Step {step.number}</span>
-                    </span>
-                    <span className="block truncate">{step.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </section>
+          <FormProgressBar
+            steps={progressSteps}
+            currentStep={currentStep}
+            completedSteps={completedStepNumbers}
+            onStepClick={handleStepClick}
+          />
 
           <FormProvider
             formData={formData}
@@ -727,15 +582,6 @@ export default function ShareExperience() {
           >
             <Card className="border border-gray-200 bg-white shadow-sm">
               <CardContent className="p-5 sm:p-6">
-                <div className="mb-6 border-b border-gray-100 pb-4">
-                  <h2 className="text-xl font-semibold text-gray-900">
-                    {currentStepConfig.name}
-                  </h2>
-                  <p className="mt-1 text-sm text-gray-600">
-                    {currentStepConfig.description}
-                  </p>
-                </div>
-
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentStep}

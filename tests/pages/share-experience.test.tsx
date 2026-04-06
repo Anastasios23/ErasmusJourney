@@ -109,10 +109,6 @@ vi.mock("../../components/forms/FormProgressBar", () => ({
   },
 }));
 
-vi.mock("../../components/forms/StepStatusBar", () => ({
-  StepStatusBar: () => <div data-testid="step-status-bar" />,
-}));
-
 vi.mock("../../src/components/ui/button", () => ({
   Button: ({
     children,
@@ -321,7 +317,8 @@ describe("ShareExperience page", () => {
     render(<ShareExperience />);
 
     expect(screen.queryByTestId("step-navigation")).not.toBeInTheDocument();
-    expect(screen.getByTestId("step-status-bar")).toBeInTheDocument();
+    expect(screen.queryByTestId("step-status-bar")).not.toBeInTheDocument();
+    expect(screen.getByTestId("form-progress-bar")).toBeInTheDocument();
     expect(lastFormProgressBarProps).not.toBeNull();
     expect(lastFormProgressBarProps).toMatchObject({
       currentStep: 1,
@@ -333,7 +330,7 @@ describe("ShareExperience page", () => {
     ).toMatchObject({
       number: 2,
       isLocked: true,
-      lockedReason: "Complete Basic Information first.",
+      lockedReason: "Complete Basics first.",
     });
   });
 

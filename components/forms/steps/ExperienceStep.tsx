@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Star } from "lucide-react";
+
+import { StepNavigation } from "../StepNavigation";
 import { Button } from "@/components/ui/button";
-import { StepNavigation } from "@/components/forms/StepNavigation";
+import { PhotoUpload } from "@/components/ui/photo-upload";
 import { EnhancedTextarea } from "@/components/ui/enhanced-textarea";
 import { Label } from "@/components/ui/label";
-import { PhotoUpload } from "@/components/ui/photo-upload";
-import { Star, ThumbsUp, ThumbsDown, Lightbulb } from "lucide-react";
-import { sanitizeBasicInformationData } from "@/lib/basicInformation";
 import {
   getAccommodationTypeLabel,
   getBillsIncludedLabel,
   sanitizeAccommodationStepData,
 } from "@/lib/accommodation";
+import { sanitizeBasicInformationData } from "@/lib/basicInformation";
 import { sanitizeCourseMappingsData } from "@/lib/courseMatching";
 import {
   calculateLivingExpensesTotal,
@@ -45,8 +46,8 @@ interface ExperienceStepProps {
 
 const EXPERIENCE_FIELD_LABELS: Record<string, string> = {
   overallRating: "Overall rating",
-  bestExperience: "Best experience",
-  generalTips: "Top tips",
+  bestExperience: "Best part of your Erasmus",
+  generalTips: "Top tips for future students",
 };
 
 function createExperienceFormData(value?: Partial<ExperienceData> | null) {
@@ -75,7 +76,6 @@ export default function ExperienceStep({
   const [formData, setFormData] = useState<ExperienceData>(() =>
     createExperienceFormData(data?.experience),
   );
-
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [hasAttemptedContinue, setHasAttemptedContinue] = useState(false);
 
@@ -115,8 +115,8 @@ export default function ExperienceStep({
   }, [missingRequiredCount, onRequiredCountChange]);
 
   const handleInputChange = (field: keyof ExperienceData, value: any) => {
-    const newData = { ...formData, [field]: value };
-    setFormData(newData);
+    const nextData = { ...formData, [field]: value };
+    setFormData(nextData);
 
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
@@ -124,15 +124,22 @@ export default function ExperienceStep({
   };
 
   const validate = () => {
-    const newErrors: Record<string, string> = {};
+    const nextErrors: Record<string, string> = {};
 
-    if (!formData.overallRating)
-      newErrors.overallRating = "Please rate your overall experience";
-    if (!formData.bestExperience) newErrors.bestExperience = "Required";
-    if (!formData.generalTips) newErrors.generalTips = "Required";
+    if (!formData.overallRating) {
+      nextErrors.overallRating = "Please rate your overall experience";
+    }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    if (!formData.bestExperience.trim()) {
+      nextErrors.bestExperience = "Required";
+    }
+
+    if (!formData.generalTips.trim()) {
+      nextErrors.generalTips = "Required";
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
   };
 
   const handleComplete = () => {
@@ -191,7 +198,7 @@ export default function ExperienceStep({
           ? `${courseMappings.length} mapping${
               courseMappings.length === 1 ? "" : "s"
             } added`
-          : "No course mappings saved yet",
+          : "No saved details yet",
       stepNumber: 2,
     },
     {
@@ -219,33 +226,31 @@ export default function ExperienceStep({
   ];
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-8 w-1 bg-purple-500 rounded-full"></div>
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900">
-              Overall Experience
-            </h3>
-            <p className="text-sm text-gray-500">
-              Reflect on your Erasmus journey as a whole.
-            </p>
-          </div>
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <section className="rounded-lg border border-gray-200 bg-white p-5">
+        <div className="space-y-1.5">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Final reflections
+          </h3>
+          <p className="text-sm text-gray-600">
+            Share the most useful parts of your Erasmus experience.
+          </p>
         </div>
 
-        <div className="space-y-6">
+        <div className="mt-6 space-y-6">
           <div className="space-y-2">
-            <Label>How would you rate your Erasmus experience overall? *</Label>
+            <Label>Overall rating *</Label>
             <div className="flex gap-2">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
                   type="button"
+                  aria-label={`Rate your Erasmus experience ${star} star${star === 1 ? "" : "s"}`}
                   onClick={() => handleInputChange("overallRating", star)}
-                  className="focus:outline-none transition-transform hover:scale-110"
+                  className="focus:outline-none transition-transform hover:scale-105"
                 >
                   <Star
-                    className={`w-10 h-10 ${
+                    className={`h-9 w-9 ${
                       star <= formData.overallRating
                         ? "fill-yellow-400 text-yellow-400"
                         : "text-gray-300 hover:text-yellow-200"
@@ -255,158 +260,122 @@ export default function ExperienceStep({
               ))}
             </div>
             {errors.overallRating && (
-              <p className="text-sm text-red-500 mt-1">
-                {errors.overallRating}
-              </p>
+              <p className="text-sm text-red-500">{errors.overallRating}</p>
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-green-600 mb-1">
-                <ThumbsUp className="w-4 h-4" />
-                <Label htmlFor="best" className="text-green-700">
-                  Best Experience *
-                </Label>
-              </div>
-              <EnhancedTextarea
-                id="best"
-                placeholder="What was the highlight of your exchange?"
-                value={formData.bestExperience}
-                onChange={(e) =>
-                  handleInputChange("bestExperience", e.target.value)
-                }
-                rows={4}
-                error={errors.bestExperience}
-                className="bg-green-50/30 border-green-100 focus:border-green-300 focus:ring-green-200"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-red-600 mb-1">
-                <ThumbsDown className="w-4 h-4" />
-                <Label htmlFor="worst" className="text-red-700">
-                  Challenges Faced
-                </Label>
-              </div>
-              <EnhancedTextarea
-                id="worst"
-                placeholder="What difficulties did you encounter? How did you overcome them?"
-                value={formData.worstExperience}
-                onChange={(e) =>
-                  handleInputChange("worstExperience", e.target.value)
-                }
-                rows={4}
-                className="bg-red-50/30 border-red-100 focus:border-red-300 focus:ring-red-200"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-8 w-1 bg-blue-500 rounded-full"></div>
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900">
-              Tips & Advice
-            </h3>
-            <p className="text-sm text-gray-500">
-              Help future students prepare for their journey.
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-6">
           <div className="space-y-2">
-            <div className="flex items-center gap-2 mb-1">
-              <Lightbulb className="w-4 h-4 text-yellow-500" />
-              <Label htmlFor="tips">Top Tips for Future Students *</Label>
-            </div>
+            <Label htmlFor="bestExperience">Best part of your Erasmus *</Label>
             <EnhancedTextarea
-              id="tips"
-              placeholder="Share your top 3 tips for someone going to this university/city..."
+              id="bestExperience"
+              placeholder="What stood out most during your exchange?"
+              value={formData.bestExperience}
+              onChange={(event) =>
+                handleInputChange("bestExperience", event.target.value)
+              }
+              rows={4}
+              error={errors.bestExperience}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="generalTips">Top tips for future students *</Label>
+            <EnhancedTextarea
+              id="generalTips"
+              placeholder="What should future students know before they go?"
               value={formData.generalTips}
-              onChange={(e) => handleInputChange("generalTips", e.target.value)}
+              onChange={(event) =>
+                handleInputChange("generalTips", event.target.value)
+              }
               rows={4}
               error={errors.generalTips}
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="academic">Academic Advice</Label>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="challenges">Challenges (optional)</Label>
               <EnhancedTextarea
-                id="academic"
-                placeholder="Tips on courses, exams, professors, or studying..."
+                id="challenges"
+                placeholder="Any difficulties you faced and how you handled them"
+                value={formData.worstExperience}
+                onChange={(event) =>
+                  handleInputChange("worstExperience", event.target.value)
+                }
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="academicAdvice">Academic advice (optional)</Label>
+              <EnhancedTextarea
+                id="academicAdvice"
+                placeholder="Courses, exams, professors, or study tips"
                 value={formData.academicAdvice}
-                onChange={(e) =>
-                  handleInputChange("academicAdvice", e.target.value)
+                onChange={(event) =>
+                  handleInputChange("academicAdvice", event.target.value)
                 }
                 rows={3}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="social">Social Life Advice</Label>
+              <Label htmlFor="socialAdvice">Social advice (optional)</Label>
               <EnhancedTextarea
-                id="social"
-                placeholder="Tips on meeting people, nightlife, clubs, or events..."
+                id="socialAdvice"
+                placeholder="Meeting people, events, clubs, or daily life"
                 value={formData.socialAdvice}
-                onChange={(e) =>
-                  handleInputChange("socialAdvice", e.target.value)
+                onChange={(event) =>
+                  handleInputChange("socialAdvice", event.target.value)
                 }
                 rows={3}
               />
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Photo Upload */}
-      <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-8 w-1 bg-pink-500 rounded-full"></div>
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900">
-              Share Your Photos
-            </h3>
-            <p className="text-sm text-gray-500">
-              Upload photos from your Erasmus journey to inspire future
-              students.
-            </p>
-          </div>
-        </div>
-
-        <PhotoUpload
-          photos={formData.photos || []}
-          onPhotosChange={(photos) => handleInputChange("photos", photos)}
-          maxPhotos={5}
-        />
-      </div>
-
-      <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
-        <div className="mb-5">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-            Review before you submit
+      <section className="rounded-lg border border-gray-200 bg-white p-5">
+        <div className="space-y-1.5">
+          <h3 className="text-base font-semibold text-gray-900">
+            Photos (optional)
           </h3>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Double-check the details below. Edit any step before you submit your
-            single Erasmus experience.
+          <p className="text-sm text-gray-600">
+            Upload up to 5 photos if you want to include them.
           </p>
         </div>
 
-        <div className="space-y-4">
+        <div className="mt-4">
+          <PhotoUpload
+            photos={formData.photos || []}
+            onPhotosChange={(photos) => handleInputChange("photos", photos)}
+            maxPhotos={5}
+            compact
+          />
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-gray-200 bg-white p-5">
+        <div className="space-y-1.5">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Review your submission
+          </h3>
+          <p className="text-sm text-gray-600">
+            Edit steps 1 to 4 if anything needs updating before you submit.
+          </p>
+        </div>
+
+        <div className="mt-5 space-y-3">
           {reviewItems.map((item) => (
             <div
               key={item.label}
-              className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 md:flex-row md:items-center md:justify-between dark:border-slate-800 dark:bg-slate-950/80"
+              className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3 md:flex-row md:items-center md:justify-between"
             >
               <div className="space-y-1">
-                <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                <p className="text-sm font-medium text-gray-900">
                   {item.label}
                 </p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-sm text-gray-500">
                   {item.summary || "No saved details yet"}
                 </p>
               </div>
@@ -421,7 +390,7 @@ export default function ExperienceStep({
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
       <StepNavigation
         currentStep={5}
@@ -432,7 +401,6 @@ export default function ExperienceStep({
         isLastStep
         isSubmitting={isSubmitting}
         showPrevious={Boolean(onPrevious)}
-        helperText="Submit only after the review matches the experience you want to share."
         missingRequiredCount={missingRequiredCount}
         validationSummary={validationSummary}
         saveState={saveState}

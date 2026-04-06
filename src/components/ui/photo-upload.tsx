@@ -1,5 +1,6 @@
-import React, { useState, useCallback, useRef } from "react";
-import { Camera, X, Loader2, Plus } from "lucide-react";
+import React, { useCallback, useRef, useState } from "react";
+import { Camera, Loader2, Plus, X } from "lucide-react";
+
 import { cn } from "../../lib/utils";
 
 interface PhotoUploadProps {
@@ -7,6 +8,7 @@ interface PhotoUploadProps {
   onPhotosChange: (photos: string[]) => void;
   maxPhotos?: number;
   className?: string;
+  compact?: boolean;
 }
 
 export function PhotoUpload({
@@ -14,6 +16,7 @@ export function PhotoUpload({
   onPhotosChange,
   maxPhotos = 5,
   className,
+  compact = false,
 }: PhotoUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -182,9 +185,9 @@ export function PhotoUpload({
               />
               <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
                 <button
+                  type="button"
                   onClick={() => removePhoto(index)}
                   className="rounded-full bg-red-500 p-2 text-white shadow-lg transition-transform hover:scale-110 hover:bg-red-600"
-                  type="button"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -224,14 +227,22 @@ export function PhotoUpload({
           onDragOver={handleDrag}
           onDrop={handleDrop}
           className={cn(
-            "relative block cursor-pointer rounded-2xl border-2 border-dashed p-8 text-center transition-all duration-300",
+            "relative block cursor-pointer border-2 border-dashed transition-all duration-300",
+            compact ? "rounded-xl p-6 text-left" : "rounded-2xl p-8 text-center",
             dragActive
               ? "border-violet-500 bg-violet-50 dark:bg-violet-900/20"
               : "border-gray-300 hover:border-violet-400 dark:border-gray-600 dark:hover:border-violet-500",
             isUploading && "pointer-events-none opacity-50",
           )}
         >
-          <div className="flex flex-col items-center gap-4">
+          <div
+            className={cn(
+              "flex gap-4",
+              compact
+                ? "flex-col sm:flex-row sm:items-center sm:justify-between"
+                : "flex-col items-center",
+            )}
+          >
             <div
               className={cn(
                 "rounded-full p-4 transition-colors",
@@ -241,31 +252,57 @@ export function PhotoUpload({
               )}
             >
               {isUploading ? (
-                <Loader2 className="h-10 w-10 animate-spin text-violet-500" />
+                <Loader2
+                  className={cn(
+                    "animate-spin text-violet-500",
+                    compact ? "h-8 w-8" : "h-10 w-10",
+                  )}
+                />
               ) : (
                 <Camera
                   className={cn(
-                    "h-10 w-10 transition-colors",
+                    "transition-colors",
+                    compact ? "h-8 w-8" : "h-10 w-10",
                     dragActive ? "text-violet-500" : "text-gray-400",
                   )}
                 />
               )}
             </div>
 
-            <div className="space-y-2">
-              <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Share Your Erasmus Memories
-              </h4>
-              <p className="max-w-sm text-sm text-gray-500 dark:text-gray-400">
-                Drag and drop photos here, or click to browse. Share moments
-                from your trip to help future students!
-              </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500">
-                PNG, JPG, GIF up to 5MB • Max {maxPhotos} photos
-              </p>
+            <div className={cn("space-y-2", compact && "sm:flex-1")}>
+              {compact ? (
+                <>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    Upload up to {maxPhotos} photos
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    PNG, JPG, GIF up to 5MB each.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Share Your Erasmus Memories
+                  </h4>
+                  <p className="max-w-sm text-sm text-gray-500 dark:text-gray-400">
+                    Drag and drop photos here, or click to browse. Share
+                    moments from your trip to help future students!
+                  </p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500">
+                    PNG, JPG, GIF up to 5MB • Max {maxPhotos} photos
+                  </p>
+                </>
+              )}
             </div>
 
-            <span className="inline-flex h-10 items-center justify-center rounded-md bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-2 text-sm font-medium text-white shadow-lg transition-colors hover:from-violet-700 hover:to-fuchsia-700">
+            <span
+              className={cn(
+                "inline-flex h-10 items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors",
+                compact
+                  ? "border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:hover:bg-gray-800"
+                  : "bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white shadow-lg hover:from-violet-700 hover:to-fuchsia-700",
+              )}
+            >
               {isUploading ? "Uploading..." : "Select Photos"}
             </span>
           </div>
@@ -278,7 +315,12 @@ export function PhotoUpload({
         </div>
       )}
 
-      <p className="text-center text-xs text-gray-400">
+      <p
+        className={cn(
+          "text-xs text-gray-400",
+          compact ? "text-left" : "text-center",
+        )}
+      >
         {photos.length} of {maxPhotos} photos uploaded
       </p>
     </div>

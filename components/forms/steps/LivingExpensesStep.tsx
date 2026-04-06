@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+
+import { StepNavigation } from "../StepNavigation";
 import { EnhancedInput } from "@/components/ui/enhanced-input";
-import { StepNavigation } from "@/components/forms/StepNavigation";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Wallet, ShoppingCart, Bus, Beer, Plane } from "lucide-react";
 import {
-  sanitizeLivingExpensesStepData,
+  calculateLivingExpensesTotal,
   hasRequiredLivingExpenses,
+  sanitizeLivingExpensesStepData,
   type LivingExpensesStepData,
 } from "@/lib/livingExpenses";
 import {
@@ -35,9 +35,9 @@ interface LivingExpensesStepProps {
 }
 
 const LIVING_EXPENSE_FIELD_LABELS: Record<string, string> = {
-  food: "Food expenses",
-  transport: "Transport expenses",
-  social: "Social expenses",
+  food: "Food",
+  transport: "Transport",
+  social: "Social",
 };
 
 function toUiValue(value: number | null | undefined): string {
@@ -67,6 +67,42 @@ function toCanonicalData(
   return sanitizeLivingExpensesStepData(uiData, { fallbackRent });
 }
 
+interface ExpenseFieldProps {
+  id: keyof LivingExpensesUiData;
+  label: string;
+  hint?: string;
+  value: string;
+  error?: string;
+  ariaLabel?: string;
+  onChange: (value: string) => void;
+}
+
+function ExpenseField({
+  id,
+  label,
+  hint,
+  value,
+  error,
+  ariaLabel,
+  onChange,
+}: ExpenseFieldProps) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      {hint ? <p className="text-sm text-gray-500">{hint}</p> : null}
+      <EnhancedInput
+        id={id}
+        type="number"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        error={error}
+        placeholder="0"
+        aria-label={ariaLabel}
+      />
+    </div>
+  );
+}
+
 export default function LivingExpensesStep({
   data,
   onComplete,
@@ -84,7 +120,6 @@ export default function LivingExpensesStep({
       sanitizeLivingExpensesStepData(data?.livingExpenses, { fallbackRent }),
     ),
   );
-
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [hasAttemptedContinue, setHasAttemptedContinue] = useState(false);
 
@@ -105,9 +140,8 @@ export default function LivingExpensesStep({
     field: keyof LivingExpensesUiData,
     value: string,
   ) => {
-    const newData = { ...formData, [field]: value };
-
-    setFormData(newData);
+    const nextData = { ...formData, [field]: value };
+    setFormData(nextData);
 
     if (errors[field]) {
       setErrors((current) => ({ ...current, [field]: "" }));
@@ -142,7 +176,7 @@ export default function LivingExpensesStep({
   }, [missingRequiredCount, onRequiredCountChange]);
 
   const validate = () => {
-    const newErrors: Record<string, string> = {};
+    const nextErrors: Record<string, string> = {};
 
     const canonicalData = toCanonicalData(
       formData,
@@ -151,30 +185,12 @@ export default function LivingExpensesStep({
         : null,
     );
 
-    if (canonicalData.food === null) newErrors.food = "Required";
-    if (canonicalData.transport === null) newErrors.transport = "Required";
-    if (canonicalData.social === null) newErrors.social = "Required";
+    if (canonicalData.food === null) nextErrors.food = "Required";
+    if (canonicalData.transport === null) nextErrors.transport = "Required";
+    if (canonicalData.social === null) nextErrors.social = "Required";
 
-    setErrors(newErrors);
+    setErrors(nextErrors);
     return hasRequiredLivingExpenses(canonicalData);
-  };
-
-  const calculateTotal = () => {
-    const canonicalData = toCanonicalData(
-      formData,
-      typeof data?.accommodation?.monthlyRent === "number"
-        ? data.accommodation.monthlyRent
-        : null,
-    );
-
-    return (
-      (canonicalData.rent || 0) +
-      (canonicalData.food || 0) +
-      (canonicalData.transport || 0) +
-      (canonicalData.social || 0) +
-      (canonicalData.travel || 0) +
-      (canonicalData.other || 0)
-    );
   };
 
   const handleContinue = () => {
@@ -196,200 +212,113 @@ export default function LivingExpensesStep({
     });
   };
 
+  const totalLivingExpenses = calculateLivingExpensesTotal(canonicalFormData);
+  const accommodationHint =
+    fallbackRent !== null
+      ? "Prefilled from your accommodation step. You can adjust this if needed."
+      : "Add this if you want to include your accommodation cost.";
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="h-8 w-1 bg-green-500 rounded-full"></div>
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900">
-                Monthly Living Expenses
-              </h3>
-              <p className="text-sm text-gray-500">
-                Estimate your average monthly spending to help others budget.
-              </p>
-            </div>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-gray-500">Total Monthly Estimate</p>
-            <p className="text-2xl font-bold text-green-600">
-              {calculateTotal().toFixed(0)} {formData.currency}
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <section className="rounded-lg border border-gray-200 bg-white p-5">
+        <div className="space-y-3">
+          <div className="space-y-1.5">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Monthly living expenses
+            </h3>
+            <p className="text-sm text-gray-600">
+              Add your average monthly spending during Erasmus.
             </p>
           </div>
+
+          <div className="inline-flex rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600">
+            Estimated monthly total:
+            <span className="ml-2 font-semibold text-gray-900">
+              {totalLivingExpenses.toFixed(0)} {formData.currency}
+            </span>
+          </div>
         </div>
 
-        <div className="space-y-8">
-          {/* Rent (Read-only or Editable) */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-            <div className="md:col-span-4 flex items-center gap-2">
-              <div className="p-2 bg-orange-50 rounded-lg text-orange-600">
-                <Wallet className="w-5 h-5" />
-              </div>
-              <div>
-                <Label htmlFor="rent" className="text-base">
-                  Accommodation
-                </Label>
-                <p className="text-xs text-gray-500">Rent & Utilities</p>
-              </div>
+        <div className="mt-6 space-y-8">
+          <div className="space-y-4">
+            <div className="space-y-1">
+              <h4 className="text-sm font-medium text-gray-900">
+                Required monthly costs
+              </h4>
+              <p className="text-sm text-gray-500">
+                Add the main costs future students need to compare first.
+              </p>
             </div>
-            <div className="md:col-span-8">
-              <EnhancedInput
-                id="rent"
-                type="number"
-                value={formData.rent}
-                onChange={(e) => handleInputChange("rent", e.target.value)}
-                className="max-w-[200px]"
-                placeholder="0"
-              />
-            </div>
-          </div>
 
-          {/* Food */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-            <div className="md:col-span-4 flex items-center gap-2">
-              <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
-                <ShoppingCart className="w-5 h-5" />
-              </div>
-              <div>
-                <Label htmlFor="food" className="text-base">
-                  Groceries & Food
-                </Label>
-                <p className="text-xs text-gray-500">Supermarket, eating out</p>
-              </div>
-            </div>
-            <div className="md:col-span-8 flex items-center gap-4">
-              <Slider
-                value={[parseFloat(formData.food) || 0]}
-                max={1000}
-                step={10}
-                onValueChange={(vals) =>
-                  handleInputChange("food", vals[0].toString())
-                }
-                className="flex-1"
-              />
-              <EnhancedInput
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <ExpenseField
                 id="food"
-                type="number"
+                label="Food *"
+                hint="Groceries and eating out"
                 value={formData.food}
-                onChange={(e) => handleInputChange("food", e.target.value)}
                 error={errors.food}
-                className="w-24"
-                placeholder="0"
+                ariaLabel="Groceries & Food"
+                onChange={(value) => handleInputChange("food", value)}
               />
-            </div>
-          </div>
-
-          {/* Transport */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-            <div className="md:col-span-4 flex items-center gap-2">
-              <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600">
-                <Bus className="w-5 h-5" />
-              </div>
-              <div>
-                <Label htmlFor="transport" className="text-base">
-                  Transportation
-                </Label>
-                <p className="text-xs text-gray-500">
-                  Public transport, bike, taxi
-                </p>
-              </div>
-            </div>
-            <div className="md:col-span-8 flex items-center gap-4">
-              <Slider
-                value={[parseFloat(formData.transport) || 0]}
-                max={500}
-                step={5}
-                onValueChange={(vals) =>
-                  handleInputChange("transport", vals[0].toString())
-                }
-                className="flex-1"
-              />
-              <EnhancedInput
+              <ExpenseField
                 id="transport"
-                type="number"
+                label="Transport *"
+                hint="Public transport or commuting"
                 value={formData.transport}
-                onChange={(e) => handleInputChange("transport", e.target.value)}
                 error={errors.transport}
-                className="w-24"
-                placeholder="0"
+                ariaLabel="Transportation"
+                onChange={(value) => handleInputChange("transport", value)}
               />
-            </div>
-          </div>
-
-          {/* Social */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-            <div className="md:col-span-4 flex items-center gap-2">
-              <div className="p-2 bg-pink-50 rounded-lg text-pink-600">
-                <Beer className="w-5 h-5" />
-              </div>
-              <div>
-                <Label htmlFor="social" className="text-base">
-                  Social & Leisure
-                </Label>
-                <p className="text-xs text-gray-500">Parties, gym, hobbies</p>
-              </div>
-            </div>
-            <div className="md:col-span-8 flex items-center gap-4">
-              <Slider
-                value={[parseFloat(formData.social) || 0]}
-                max={1000}
-                step={10}
-                onValueChange={(vals) =>
-                  handleInputChange("social", vals[0].toString())
-                }
-                className="flex-1"
-              />
-              <EnhancedInput
+              <ExpenseField
                 id="social"
-                type="number"
+                label="Social *"
+                hint="Going out, gym, hobbies"
                 value={formData.social}
-                onChange={(e) => handleInputChange("social", e.target.value)}
                 error={errors.social}
-                className="w-24"
-                placeholder="0"
+                ariaLabel="Social & Leisure"
+                onChange={(value) => handleInputChange("social", value)}
               />
             </div>
           </div>
 
-          {/* Travel */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-            <div className="md:col-span-4 flex items-center gap-2">
-              <div className="p-2 bg-teal-50 rounded-lg text-teal-600">
-                <Plane className="w-5 h-5" />
-              </div>
-              <div>
-                <Label htmlFor="travel" className="text-base">
-                  Travel
-                </Label>
-                <p className="text-xs text-gray-500">
-                  Trips to other cities/countries
-                </p>
-              </div>
+          <div className="space-y-4 border-t border-gray-100 pt-6">
+            <div className="space-y-1">
+              <h4 className="text-sm font-medium text-gray-900">
+                Additional costs
+              </h4>
+              <p className="text-sm text-gray-500">
+                Add anything else that helped shape your monthly budget.
+              </p>
             </div>
-            <div className="md:col-span-8 flex items-center gap-4">
-              <Slider
-                value={[parseFloat(formData.travel) || 0]}
-                max={1000}
-                step={10}
-                onValueChange={(vals) =>
-                  handleInputChange("travel", vals[0].toString())
-                }
-                className="flex-1"
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <ExpenseField
+                id="rent"
+                label="Accommodation"
+                hint={accommodationHint}
+                value={formData.rent}
+                onChange={(value) => handleInputChange("rent", value)}
               />
-              <EnhancedInput
+              <ExpenseField
                 id="travel"
-                type="number"
+                label="Travel (optional)"
+                hint="Optional trips during Erasmus"
                 value={formData.travel}
-                onChange={(e) => handleInputChange("travel", e.target.value)}
                 error={errors.travel}
-                className="w-24"
-                placeholder="0"
+                onChange={(value) => handleInputChange("travel", value)}
+              />
+              <ExpenseField
+                id="other"
+                label="Other (optional)"
+                hint="Phone, supplies, health, or other monthly costs"
+                value={formData.other}
+                error={errors.other}
+                onChange={(value) => handleInputChange("other", value)}
               />
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <StepNavigation
         currentStep={4}
@@ -399,7 +328,6 @@ export default function LivingExpensesStep({
         onNext={handleContinue}
         isLastStep={false}
         showPrevious={Boolean(onPrevious)}
-        helperText="Use your average monthly estimates for the required budget categories."
         missingRequiredCount={missingRequiredCount}
         validationSummary={validationSummary}
         saveState={saveState}

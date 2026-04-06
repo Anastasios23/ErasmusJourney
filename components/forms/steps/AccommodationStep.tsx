@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 
-import { EnhancedInput } from "@/components/ui/enhanced-input";
-import { StepNavigation } from "@/components/forms/StepNavigation";
+import { StepNavigation } from "../StepNavigation";
 import {
   EnhancedSelect,
   EnhancedSelectContent,
@@ -10,6 +9,7 @@ import {
   EnhancedSelectTrigger,
   EnhancedSelectValue,
 } from "@/components/ui/enhanced-select";
+import { EnhancedInput } from "@/components/ui/enhanced-input";
 import { EnhancedTextarea } from "@/components/ui/enhanced-textarea";
 import { Label } from "@/components/ui/label";
 import {
@@ -41,9 +41,12 @@ const ACCOMMODATION_FIELD_LABELS: Record<string, string> = {
   accommodationType: "Accommodation type",
   monthlyRent: "Monthly rent",
   billsIncluded: "Bills included",
-  accommodationRating: "Accommodation rating",
   wouldRecommend: "Would recommend",
+  accommodationRating: "Accommodation rating",
+  areaOrNeighborhood: "Area or neighborhood",
   minutesToUniversity: "Minutes to university",
+  howFoundAccommodation: "How did you find it?",
+  difficultyFindingAccommodation: "Difficulty finding accommodation",
   accommodationReview: "Accommodation review",
 };
 
@@ -51,9 +54,12 @@ const ACCOMMODATION_ERROR_ORDER = [
   "accommodationType",
   "monthlyRent",
   "billsIncluded",
-  "accommodationRating",
   "wouldRecommend",
+  "accommodationRating",
+  "areaOrNeighborhood",
   "minutesToUniversity",
+  "howFoundAccommodation",
+  "difficultyFindingAccommodation",
   "accommodationReview",
 ] as const;
 
@@ -90,8 +96,8 @@ export default function AccommodationStep({
     (formData.accommodationType ? 0 : 1) +
     (typeof formData.monthlyRent === "number" ? 0 : 1) +
     (formData.billsIncluded ? 0 : 1) +
-    (typeof formData.accommodationRating === "number" ? 0 : 1) +
-    (typeof formData.wouldRecommend === "boolean" ? 0 : 1);
+    (typeof formData.wouldRecommend === "boolean" ? 0 : 1) +
+    (typeof formData.accommodationRating === "number" ? 0 : 1);
 
   const validationSummary = hasAttemptedContinue
     ? ACCOMMODATION_ERROR_ORDER.filter((field) => errors[field]).map((field) =>
@@ -166,32 +172,21 @@ export default function AccommodationStep({
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="bg-orange-50 border border-orange-100 rounded-xl p-4">
-        <p className="text-sm text-orange-950">
-          Step 3 now stores only anonymous, structured housing signals. Share a
-          general area if useful, but do not include an exact address or any
-          landlord contact details.
-        </p>
-      </div>
-
-      <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-8 w-1 bg-orange-500 rounded-full"></div>
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900">
-              Housing Snapshot
-            </h3>
-            <p className="text-sm text-gray-500">
-              Capture the structured housing details that future students can
-              compare safely across cities and neighborhoods.
-            </p>
-          </div>
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <section className="rounded-lg border border-gray-200 bg-white p-5">
+        <div className="space-y-1.5">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Accommodation details
+          </h3>
+          <p className="text-sm text-gray-600">
+            Share only general housing details. Do not include exact addresses
+            or contact details.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="space-y-2">
-            <Label>Accommodation Type *</Label>
+            <Label>Accommodation type *</Label>
             <EnhancedSelect
               value={formData.accommodationType}
               onValueChange={(value) =>
@@ -210,14 +205,12 @@ export default function AccommodationStep({
               </EnhancedSelectContent>
             </EnhancedSelect>
             {errors.accommodationType && (
-              <p className="text-sm text-red-500 mt-1">
-                {errors.accommodationType}
-              </p>
+              <p className="text-sm text-red-500">{errors.accommodationType}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="monthlyRent">Monthly Rent *</Label>
+            <Label htmlFor="monthlyRent">Monthly rent *</Label>
             <div className="flex gap-2">
               <EnhancedInput
                 id="monthlyRent"
@@ -248,10 +241,15 @@ export default function AccommodationStep({
                 </EnhancedSelect>
               </div>
             </div>
+            {!errors.monthlyRent && (
+              <p className="text-sm text-gray-500">
+                Use the amount you paid per month.
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label>Bills Included *</Label>
+            <Label>Bills included *</Label>
             <EnhancedSelect
               value={formData.billsIncluded}
               onValueChange={(value) =>
@@ -269,10 +267,13 @@ export default function AccommodationStep({
                 ))}
               </EnhancedSelectContent>
             </EnhancedSelect>
+            {errors.billsIncluded && (
+              <p className="text-sm text-red-500">{errors.billsIncluded}</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label>Would Recommend? *</Label>
+            <Label>Would recommend? *</Label>
             <EnhancedSelect
               value={
                 typeof formData.wouldRecommend === "boolean"
@@ -293,10 +294,43 @@ export default function AccommodationStep({
                 <EnhancedSelectItem value="no">No</EnhancedSelectItem>
               </EnhancedSelectContent>
             </EnhancedSelect>
+            {errors.wouldRecommend && (
+              <p className="text-sm text-red-500">{errors.wouldRecommend}</p>
+            )}
+          </div>
+
+          <div className="space-y-2 md:col-span-2">
+            <Label>Accommodation rating *</Label>
+            <div className="flex gap-2">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  aria-label={`Rate accommodation ${star} star${star === 1 ? "" : "s"}`}
+                  onClick={() => handleInputChange("accommodationRating", star)}
+                  className="focus:outline-none transition-transform hover:scale-105"
+                >
+                  <Star
+                    className={`h-8 w-8 ${
+                      star <= (formData.accommodationRating || 0)
+                        ? "fill-yellow-400 text-yellow-400"
+                        : "text-gray-300 hover:text-yellow-200"
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+            {errors.accommodationRating && (
+              <p className="text-sm text-red-500">
+                {errors.accommodationRating}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="areaOrNeighborhood">Area or Neighborhood</Label>
+            <Label htmlFor="areaOrNeighborhood">
+              Area or neighborhood (optional)
+            </Label>
             <EnhancedInput
               id="areaOrNeighborhood"
               placeholder="e.g. Gracia, city center, near campus"
@@ -304,12 +338,15 @@ export default function AccommodationStep({
               onChange={(event) =>
                 handleInputChange("areaOrNeighborhood", event.target.value)
               }
-              helperText="Keep this general. Do not enter a full address."
+              error={errors.areaOrNeighborhood}
+              helperText="Keep this general, not exact."
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="minutesToUniversity">Minutes to University</Label>
+            <Label htmlFor="minutesToUniversity">
+              Minutes to university (optional)
+            </Label>
             <EnhancedInput
               id="minutesToUniversity"
               type="number"
@@ -322,19 +359,19 @@ export default function AccommodationStep({
                 )
               }
               error={errors.minutesToUniversity}
-              helperText="Approximate one-way travel time in minutes."
+              helperText="Approximate one-way time in minutes."
             />
           </div>
 
           <div className="space-y-2">
-            <Label>How Did You Find It?</Label>
+            <Label>How did you find it? (optional)</Label>
             <EnhancedSelect
               value={formData.howFoundAccommodation}
               onValueChange={(value) =>
                 handleInputChange("howFoundAccommodation", value as any)
               }
             >
-              <EnhancedSelectTrigger>
+              <EnhancedSelectTrigger error={errors.howFoundAccommodation}>
                 <EnhancedSelectValue placeholder="Optional" />
               </EnhancedSelectTrigger>
               <EnhancedSelectContent>
@@ -345,10 +382,15 @@ export default function AccommodationStep({
                 ))}
               </EnhancedSelectContent>
             </EnhancedSelect>
+            {errors.howFoundAccommodation && (
+              <p className="text-sm text-red-500">
+                {errors.howFoundAccommodation}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label>Difficulty Finding Accommodation</Label>
+            <Label>Difficulty finding accommodation (optional)</Label>
             <EnhancedSelect
               value={formData.difficultyFindingAccommodation}
               onValueChange={(value) =>
@@ -358,7 +400,9 @@ export default function AccommodationStep({
                 )
               }
             >
-              <EnhancedSelectTrigger>
+              <EnhancedSelectTrigger
+                error={errors.difficultyFindingAccommodation}
+              >
                 <EnhancedSelectValue placeholder="Optional" />
               </EnhancedSelectTrigger>
               <EnhancedSelectContent>
@@ -369,61 +413,30 @@ export default function AccommodationStep({
                 ))}
               </EnhancedSelectContent>
             </EnhancedSelect>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-8 w-1 bg-yellow-500 rounded-full"></div>
-          <h3 className="text-xl font-semibold text-gray-900">
-            Recommendation Snapshot
-          </h3>
-        </div>
-
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <Label>Accommodation Rating *</Label>
-            <div className="flex gap-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  type="button"
-                  onClick={() => handleInputChange("accommodationRating", star)}
-                  className="focus:outline-none transition-transform hover:scale-110"
-                >
-                  <Star
-                    className={`w-8 h-8 ${
-                      star <= (formData.accommodationRating || 0)
-                        ? "fill-yellow-400 text-yellow-400"
-                        : "text-gray-300 hover:text-yellow-200"
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
-            {errors.accommodationRating && (
-              <p className="text-sm text-red-500 mt-1">
-                {errors.accommodationRating}
+            {errors.difficultyFindingAccommodation && (
+              <p className="text-sm text-red-500">
+                {errors.difficultyFindingAccommodation}
               </p>
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="accommodationReview">Accommodation Review</Label>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="accommodationReview">
+              Accommodation review (optional)
+            </Label>
             <EnhancedTextarea
               id="accommodationReview"
-              placeholder="Optional: share a short anonymous summary of the space, location, or booking experience."
+              placeholder="Short anonymous summary of the accommodation or area"
               value={formData.accommodationReview || ""}
               onChange={(event) =>
                 handleInputChange("accommodationReview", event.target.value)
               }
-              rows={5}
+              rows={4}
               error={errors.accommodationReview}
             />
           </div>
         </div>
-      </div>
+      </section>
 
       <StepNavigation
         currentStep={3}
@@ -433,7 +446,6 @@ export default function AccommodationStep({
         onNext={handleContinue}
         isLastStep={false}
         showPrevious={Boolean(onPrevious)}
-        helperText="Keep the housing details anonymous and complete the required fields to continue."
         missingRequiredCount={missingRequiredCount}
         validationSummary={validationSummary}
         saveState={saveState}
