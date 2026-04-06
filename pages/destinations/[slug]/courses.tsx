@@ -27,7 +27,9 @@ function ExpandableNote({ note }: { note: string }) {
         className="flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-slate-900"
       >
         <Icon
-          icon={isExpanded ? "solar:chevron-up-bold" : "solar:chevron-down-bold"}
+          icon={
+            isExpanded ? "solar:chevron-up-bold" : "solar:chevron-down-bold"
+          }
           className="w-4 h-4"
         />
         {isExpanded ? "Hide" : "Show"} student note
@@ -48,14 +50,15 @@ export default function DestinationCoursesPage({
 
   // Get unique universities and departments for filters
   const uniqueUniversities = Array.from(
-    new Set(destination.groups.map((g) => g.homeUniversity))
+    new Set(destination.groups.map((g) => g.homeUniversity)),
   ).sort();
 
   const uniqueDepartments = Array.from(
     new Set(
-      destination.groups
-        .flatMap((g) => (g.homeDepartment ? [g.homeDepartment] : []))
-    )
+      destination.groups.flatMap((g) =>
+        g.homeDepartment ? [g.homeDepartment] : [],
+      ),
+    ),
   ).sort();
 
   // Filter and sort groups
@@ -77,7 +80,7 @@ export default function DestinationCoursesPage({
                 .includes(courseNameSearch.toLowerCase()) ||
               ex.hostCourseName
                 .toLowerCase()
-                .includes(courseNameSearch.toLowerCase())
+                .includes(courseNameSearch.toLowerCase()),
           );
 
       return universityMatch && departmentMatch && courseMatch;
@@ -94,9 +97,15 @@ export default function DestinationCoursesPage({
       // Then sort by mapping count
       return b.mappingCount - a.mappingCount;
     });
-  }, [destination.groups, homeUniversityFilter, departmentFilter, courseNameSearch]);
+  }, [
+    destination.groups,
+    homeUniversityFilter,
+    departmentFilter,
+    courseNameSearch,
+  ]);
 
-  const hasMappings = destination.totalMappings > 0 && filteredAndSortedGroups.length > 0;
+  const hasMappings =
+    destination.totalMappings > 0 && filteredAndSortedGroups.length > 0;
   const topUniversities = uniqueUniversities.slice(0, 3);
 
   return (
@@ -323,7 +332,9 @@ export default function DestinationCoursesPage({
                       </div>
 
                       <div className="mt-3 flex items-center gap-2 text-sm text-gray-700">
-                        <span className="font-medium">{example.recognitionType}</span>
+                        <span className="font-medium">
+                          {example.recognitionType}
+                        </span>
                         {example.hostUniversity && (
                           <>
                             <span className="text-gray-400">•</span>
@@ -334,9 +345,7 @@ export default function DestinationCoursesPage({
                         )}
                       </div>
 
-                      {example.notes && (
-                        <ExpandableNote note={example.notes} />
-                      )}
+                      {example.notes && <ExpandableNote note={example.notes} />}
                     </div>
                   ))}
                 </div>
