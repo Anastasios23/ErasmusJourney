@@ -23,25 +23,25 @@ test("step 5 photo picker opens and uploads a selected image", async ({
   await fillRequiredBasicInformation(page, state);
   await clickAction(
     page,
-    page.getByRole("button", { name: /continue to courses/i }),
+    page.getByRole("button", { name: /^continue$/i }),
   );
 
   await fillRequiredCourseMapping(page);
   await clickAction(
     page,
-    page.getByRole("button", { name: /continue to accommodation/i }),
+    page.getByRole("button", { name: /^continue$/i }),
   );
 
   await fillRequiredAccommodation(page);
   await clickAction(
     page,
-    page.getByRole("button", { name: /continue to living expenses/i }),
+    page.getByRole("button", { name: /^continue$/i }),
   );
 
   await fillRequiredLivingExpenses(page);
   await clickAction(
     page,
-    page.getByRole("button", { name: /continue to experience/i }),
+    page.getByRole("button", { name: /^continue$/i }),
   );
 
   const pickerTrigger = page.getByRole("button", { name: "Select photos" });

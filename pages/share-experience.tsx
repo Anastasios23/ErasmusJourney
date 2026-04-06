@@ -203,6 +203,9 @@ export default function ShareExperience() {
       return;
     }
 
+    // Only react to query changes here. Including currentStep causes local
+    // step advances to be pulled back to the stale query step before the URL
+    // update completes.
     const allowedStep = clampShareExperienceStep(
       requestedStep,
       formDataRef.current,
@@ -219,7 +222,6 @@ export default function ShareExperience() {
     router.asPath,
     router.isReady,
     router.query.step,
-    currentStep,
   ]);
 
   useEffect(() => {

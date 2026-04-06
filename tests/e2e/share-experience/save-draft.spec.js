@@ -38,7 +38,7 @@ test("save draft sends one write for one click on every step", async ({
 
   await clickAction(
     page,
-    page.getByRole("button", { name: /continue to courses/i }),
+    page.getByRole("button", { name: /^continue$/i }),
   );
 
   await expect(page).toHaveURL(/\/share-experience\?step=2$/);
@@ -61,7 +61,7 @@ test("save draft sends one write for one click on every step", async ({
 
   await clickAction(
     page,
-    page.getByRole("button", { name: /continue to accommodation/i }),
+    page.getByRole("button", { name: /^continue$/i }),
   );
 
   await expect(page).toHaveURL(/\/share-experience\?step=3$/);
@@ -82,7 +82,7 @@ test("save draft sends one write for one click on every step", async ({
 
   await clickAction(
     page,
-    page.getByRole("button", { name: /continue to living expenses/i }),
+    page.getByRole("button", { name: /^continue$/i }),
   );
 
   await expect(page).toHaveURL(/\/share-experience\?step=4$/);
@@ -104,7 +104,7 @@ test("save draft sends one write for one click on every step", async ({
 
   await clickAction(
     page,
-    page.getByRole("button", { name: /continue to experience/i }),
+    page.getByRole("button", { name: /^continue$/i }),
   );
 
   await expect(page).toHaveURL(/\/share-experience\?step=5$/);

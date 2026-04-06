@@ -159,9 +159,11 @@ vi.mock("../../components/forms/steps/BasicInformationStep", () => ({
   default: ({
     data,
     onSave,
+    onComplete,
   }: {
     data: any;
     onSave: (value: any) => Promise<void>;
+    onComplete: (value: any) => Promise<void>;
   }) => (
     <div>
       <div data-testid="basic-year">
@@ -177,6 +179,15 @@ vi.mock("../../components/forms/steps/BasicInformationStep", () => ({
         }
       >
         Trigger Step Save
+      </button>
+      <button
+        onClick={() =>
+          void onComplete({
+            basicInfo: completeBasicInfo,
+          })
+        }
+      >
+        Complete Step 1
       </button>
     </div>
   ),
@@ -393,6 +404,36 @@ describe("ShareExperience page", () => {
       expect.objectContaining({
         query: expect.objectContaining({ step: "1" }),
       }),
+      undefined,
+      { shallow: true },
+    );
+  });
+
+  it("advances to step 2 after step 1 completion without snapping back to the old query step", async () => {
+    render(<ShareExperience />);
+
+    fireEvent.click(screen.getByRole("button", { name: /complete step 1/i }));
+
+    await waitFor(() => {
+      expect(mockSaveProgress).toHaveBeenCalledWith(
+        expect.objectContaining({
+          basicInfo: completeBasicInfo,
+          currentStep: 2,
+          completedSteps: [1],
+        }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Course Matching Step")).toBeInTheDocument();
+    });
+
+    expect(mockMarkStepCompleted).toHaveBeenCalledWith("basic-info");
+    expect(mockRouterReplace).toHaveBeenCalledWith(
+      {
+        pathname: "/share-experience",
+        query: { step: "2" },
+      },
       undefined,
       { shallow: true },
     );

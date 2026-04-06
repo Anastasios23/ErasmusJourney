@@ -21,9 +21,9 @@ test("step 1 loads departments and agreements once per dependency change without
 
   await page.goto("/share-experience?step=1");
 
-  await expect(
-    page.getByRole("heading", { name: "Basic Information", exact: true }),
-  ).toBeVisible({ timeout: 20_000 });
+  await expect(page.locator("#exchangeAcademicYear")).toBeVisible({
+    timeout: 20_000,
+  });
 
   await chooseComboboxOption(
     page,

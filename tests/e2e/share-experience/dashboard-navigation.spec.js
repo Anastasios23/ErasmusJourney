@@ -49,9 +49,7 @@ test("dashboard course matching link opens step 2 only when step 1 is complete",
   await courseMatchingLink.click();
 
   await expect(page).toHaveURL(/\/share-experience\?step=2$/);
-  await expect(
-    page.getByRole("heading", { name: "Course Matching" }).first(),
-  ).toBeVisible();
+  await expect(page.getByText("Course matches")).toBeVisible();
   expect(state.departmentRequests).toHaveLength(0);
   expect(state.agreementRequests).toHaveLength(0);
 });

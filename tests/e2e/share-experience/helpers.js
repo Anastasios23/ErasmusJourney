@@ -217,8 +217,8 @@ export async function waitForStableCount(page, getCount, expectedCount) {
 
 export async function chooseComboboxOption(page, combobox, optionLabel) {
   await page.waitForTimeout(250);
-  await combobox.click({ force: true });
-  await page.getByRole("option", { name: optionLabel }).click({ force: true });
+  await combobox.click();
+  await page.getByRole("option", { name: optionLabel }).click();
   await expect(combobox).toContainText(optionLabel);
 }
 
@@ -228,9 +228,6 @@ export async function clickAction(page, locator) {
 }
 
 export async function fillRequiredBasicInformation(page, state) {
-  await expect(
-    page.getByRole("heading", { name: "Basic Information", exact: true }),
-  ).toBeVisible({ timeout: INITIAL_PAGE_TIMEOUT });
   await expect(page.locator("#exchangeAcademicYear")).toBeVisible({
     timeout: INITIAL_PAGE_TIMEOUT,
   });
@@ -273,8 +270,9 @@ export async function fillRequiredBasicInformation(page, state) {
     page.locator("label", { hasText: "Exchange Period" }).locator("..").locator("button").first(),
     "Fall",
   );
-  await expect(page.locator("#hostCity")).toHaveValue("Amsterdam");
-  await expect(page.locator("#hostCountry")).toHaveValue("Netherlands");
+  await expect(
+    page.getByText("City: Amsterdam | Country: Netherlands"),
+  ).toBeVisible();
 }
 
 export async function fillRequiredCourseMapping(page) {
@@ -299,41 +297,15 @@ export async function fillRequiredAccommodation(page) {
   await expect(page.locator("#monthlyRent")).toBeVisible({
     timeout: INITIAL_PAGE_TIMEOUT,
   });
+  const accommodationComboboxes = page.locator("main [role='combobox']");
 
-  await chooseComboboxOption(
-    page,
-    page
-      .locator("label", { hasText: "Accommodation Type" })
-      .locator("..")
-      .locator("button")
-      .first(),
-    "Shared apartment",
-  );
+  await chooseComboboxOption(page, accommodationComboboxes.nth(0), "Shared apartment");
   await page.locator("#monthlyRent").fill("450");
-  await chooseComboboxOption(
-    page,
-    page
-      .locator("label", { hasText: "Bills Included" })
-      .locator("..")
-      .locator("button")
-      .first(),
-    "Yes",
-  );
-  await chooseComboboxOption(
-    page,
-    page
-      .locator("label", { hasText: "Would Recommend" })
-      .locator("..")
-      .locator("button")
-      .first(),
-    "Yes",
-  );
+  await chooseComboboxOption(page, accommodationComboboxes.nth(2), "Yes");
+  await chooseComboboxOption(page, accommodationComboboxes.nth(3), "Yes");
   await page.locator("#areaOrNeighborhood").fill("Near campus");
   await page
-    .getByText("Accommodation Rating *")
-    .locator("..")
-    .getByRole("button")
-    .nth(3)
+    .getByRole("button", { name: "Rate accommodation 4 stars" })
     .click();
 }
 
@@ -347,17 +319,18 @@ export async function fillRequiredLivingExpenses(page) {
 }
 
 export async function fillRequiredExperience(page) {
-  await expect(page.locator("#tips")).toBeVisible({
+  await expect(page.locator("#generalTips")).toBeVisible({
     timeout: INITIAL_PAGE_TIMEOUT,
   });
   await page
-    .getByText("How would you rate your Erasmus experience overall? *")
-    .locator("..")
-    .getByRole("button")
-    .nth(4)
+    .getByRole("button", {
+      name: "Rate your Erasmus experience 5 stars",
+    })
     .click();
-  await page.locator("#best").fill("Meeting people from across Europe.");
   await page
-    .locator("#tips")
+    .locator("#bestExperience")
+    .fill("Meeting people from across Europe.");
+  await page
+    .locator("#generalTips")
     .fill("Pack early, budget realistically, and ask questions quickly.");
 }
