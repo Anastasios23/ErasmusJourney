@@ -1,17 +1,14 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
 import Header from "../components/Header";
-import { HeroSection } from "@/components/ui/hero-section";
 import { Button } from "../src/components/ui/button";
 import { Card, CardContent } from "../src/components/ui/card";
 import { Alert, AlertDescription } from "../src/components/ui/alert";
 import { FormProvider } from "../components/forms/FormProvider";
-import { FormProgressBar } from "../components/forms/FormProgressBar";
-import { StepStatusBar } from "../components/forms/StepStatusBar";
 import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
 import { useFormProgress } from "../src/context/FormProgressContext";
 import {
@@ -26,14 +23,12 @@ import { toast } from "../src/hooks/use-toast";
 import { cn } from "../src/lib/utils";
 import { buildLoginRedirectUrl } from "../src/lib/authRedirect";
 
-// Import step components
 import BasicInformationStep from "../components/forms/steps/BasicInformationStep";
 import CourseMatchingStep from "../components/forms/steps/CourseMatchingStep";
 import AccommodationStep from "../components/forms/steps/AccommodationStep";
 import LivingExpensesStep from "../components/forms/steps/LivingExpensesStep";
 import ExperienceStep from "../components/forms/steps/ExperienceStep";
 
-// Import validation schemas and helpers
 import {
   clampShareExperienceStep,
   getNextAccessibleShareExperienceStep,
@@ -41,7 +36,6 @@ import {
 import {
   type ShareExperienceSaveState,
   formatShareExperienceSavedTime,
-  getShareExperienceSaveStateMeta,
 } from "../src/lib/shareExperienceUi";
 
 const FORM_STEPS = [
@@ -49,41 +43,31 @@ const FORM_STEPS = [
     number: 1,
     name: "Basic Information",
     href: "#basic-info",
-    icon: "solar:user-circle-linear",
-    description: "Your academic and exchange details",
-    estimatedTime: "5 min",
+    description: "Add your exchange details and study context.",
   },
   {
     number: 2,
     name: "Course Matching",
     href: "#course-matching",
-    icon: "solar:notebook-linear",
-    description: "Academic courses and equivalences",
-    estimatedTime: "10 min",
+    description: "Share course equivalences and recognition outcomes.",
   },
   {
     number: 3,
     name: "Accommodation",
     href: "#accommodation",
-    icon: "solar:home-2-linear",
-    description: "Housing details and recommendations",
-    estimatedTime: "8 min",
+    description: "Add the housing details students need first.",
   },
   {
     number: 4,
     name: "Living Expenses",
     href: "#living-expenses",
-    icon: "solar:wallet-linear",
-    description: "Budget and cost information",
-    estimatedTime: "7 min",
+    description: "Record practical monthly budget and cost guidance.",
   },
   {
     number: 5,
-    name: "Share Experience",
+    name: "Final Review",
     href: "#experience",
-    icon: "solar:heart-linear",
-    description: "Help future Erasmus students",
-    estimatedTime: "15 min",
+    description: "Review and submit practical insights for future students.",
   },
 ];
 
@@ -124,7 +108,6 @@ export default function ShareExperience() {
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
 
-  // Form progress context
   const {
     completedStepNumbers,
     setCurrentStep,
@@ -132,7 +115,6 @@ export default function ShareExperience() {
     getStepName,
   } = useFormProgress();
 
-  // Experience hook for data persistence
   const {
     data: experienceData,
     loading: experienceLoading,
@@ -142,7 +124,6 @@ export default function ShareExperience() {
     refreshData: refreshExperience,
   } = useErasmusExperience();
 
-  // Local state
   const [currentStep, setLocalCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -162,7 +143,6 @@ export default function ShareExperience() {
   const hydratedExperienceIdRef = useRef<string | null>(null);
   const pendingResolvedStepRef = useRef<number | null>(null);
 
-  // Redirect to login if not authenticated
   useEffect(() => {
     if (sessionStatus === "unauthenticated") {
       void router.replace(
@@ -171,7 +151,6 @@ export default function ShareExperience() {
     }
   }, [sessionStatus, router]);
 
-  // Load saved experience data
   useEffect(() => {
     if (experienceLoading || !experienceData?.id) {
       return;
@@ -205,6 +184,7 @@ export default function ShareExperience() {
 
     pendingResolvedStepRef.current = initialStep;
     setLocalCurrentStep(initialStep);
+
     if (experienceData.lastSavedAt) {
       const parsedLastSaved = new Date(experienceData.lastSavedAt);
 
@@ -248,6 +228,7 @@ export default function ShareExperience() {
     router.asPath,
     router.isReady,
     router.query.step,
+    currentStep,
   ]);
 
   useEffect(() => {
@@ -301,7 +282,6 @@ export default function ShareExperience() {
     router.replace,
   ]);
 
-  // Sync local step with context
   useEffect(() => {
     const stepName = getStepName(currentStep);
     if (stepName) {
@@ -342,7 +322,6 @@ export default function ShareExperience() {
     [saveProgress],
   );
 
-  // Handle form data changes
   const handleFormDataChange = useCallback(
     async (stepDataPatch: any) => {
       const mergedData = {
@@ -358,10 +337,8 @@ export default function ShareExperience() {
     [persistProgress],
   );
 
-  // Handle step completion
   const handleStepComplete = useCallback(
     async (stepNumber: number, stepData: any) => {
-      // Merge step data
       const updatedFormData = { ...formDataRef.current, ...stepData };
       formDataRef.current = updatedFormData;
       setFormData(updatedFormData);
@@ -379,9 +356,8 @@ export default function ShareExperience() {
 
           if (success) {
             toast({
-              title: "Success!",
-              description:
-                "Your Erasmus experience has been submitted successfully.",
+              title: "Success",
+              description: "Your Erasmus experience has been submitted.",
             });
           } else {
             throw new Error("Submission failed");
@@ -405,7 +381,6 @@ export default function ShareExperience() {
         return;
       }
 
-      // Save progress with step completion
       try {
         const updatedCompletedSteps = [
           ...new Set([...completedStepNumbers, stepNumber]),
@@ -421,10 +396,8 @@ export default function ShareExperience() {
           throw new Error("Failed to save progress");
         }
 
-        // Mark step as completed in context
         markStepCompleted(getStepName(stepNumber));
 
-        // Move to next step
         if (stepNumber < 5) {
           setLocalCurrentStep(stepNumber + 1);
         }
@@ -452,27 +425,19 @@ export default function ShareExperience() {
     ],
   );
 
-  // Handle previous step
   const handlePreviousStep = useCallback(() => {
     if (currentStep > 1) {
       setLocalCurrentStep(currentStep - 1);
     }
   }, [currentStep]);
 
-  // Navigate to specific step
-  const handleStepClick = useCallback(
-    (stepNumber: number) => {
-      const allowedStep = clampShareExperienceStep(
-        stepNumber,
-        formDataRef.current,
-      );
+  const handleStepClick = useCallback((stepNumber: number) => {
+    const allowedStep = clampShareExperienceStep(stepNumber, formDataRef.current);
 
-      if (allowedStep === stepNumber) {
-        setLocalCurrentStep(stepNumber);
-      }
-    },
-    [],
-  );
+    if (allowedStep === stepNumber) {
+      setLocalCurrentStep(stepNumber);
+    }
+  }, []);
 
   const currentStepConfig = FORM_STEPS[currentStep - 1];
   const nextAccessibleStep = getNextAccessibleShareExperienceStep(formData);
@@ -488,89 +453,93 @@ export default function ShareExperience() {
         : undefined,
     };
   });
-  const saveStateMeta = getShareExperienceSaveStateMeta(saveState);
-  const savedTimeLabel = formatShareExperienceSavedTime(lastSaved);
-  const persistentSaveStatusLabel =
-    saveState === "saving"
-      ? "Saving..."
-      : saveState === "error"
-        ? "Save failed"
-        : `Saved at ${savedTimeLabel ?? "--:--"}`;
 
-  // Loading state
+  const progressPercentage = ((currentStep - 1) / (FORM_STEPS.length - 1)) * 100;
+  const savedTimeLabel = formatShareExperienceSavedTime(lastSaved);
+
+  const draftStatus = useMemo(() => {
+    if (saveState === "saving") {
+      return {
+        label: "Saving...",
+        icon: "solar:refresh-linear",
+        iconClass: "h-4 w-4 animate-spin text-amber-600",
+        dotClass: "bg-amber-500",
+      };
+    }
+
+    if (saveState === "error") {
+      return {
+        label: "Save failed",
+        icon: "solar:danger-circle-linear",
+        iconClass: "h-4 w-4 text-red-600",
+        dotClass: "bg-red-500",
+      };
+    }
+
+    return {
+      label: "Saved",
+      icon: "solar:check-circle-linear",
+      iconClass: "h-4 w-4 text-emerald-600",
+      dotClass: "bg-emerald-500",
+    };
+  }, [saveState]);
+
   if (sessionStatus === "loading" || experienceLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-4">
           <Icon
             icon="solar:refresh-circle-bold-duotone"
-            className="h-8 w-8 animate-spin text-blue-600"
+            className="h-8 w-8 animate-spin text-gray-700"
           />
-          <p className="text-slate-600 dark:text-slate-400">
-            Loading your experience...
-          </p>
+          <p className="text-gray-600">Loading your draft...</p>
         </div>
       </div>
     );
   }
 
-  // Unauthenticated state
   if (sessionStatus === "unauthenticated") {
-    return null; // Will redirect
+    return null;
   }
 
   if (experienceError && !experienceData) {
     return (
       <>
         <Head>
-          <title>Share Your Erasmus Experience | Erasmus Journey</title>
+          <title>Share your Erasmus experience | Erasmus Journey</title>
           <meta
             name="description"
-            content="Share your Erasmus experience to help future students"
+            content="Share practical information from your Erasmus experience."
           />
         </Head>
 
         <Header />
 
-        <HeroSection
-          title="Share Your Experience"
-          subtitle="Help future Erasmus students by sharing your journey"
-          icon="solar:document-add-linear"
-          size="sm"
-        />
+        <main className="min-h-screen bg-gray-50 py-8">
+          <div className="mx-auto max-w-3xl px-4">
+            <Alert variant="destructive" className="mb-5">
+              <Icon
+                icon="solar:danger-triangle-bold-duotone"
+                className="h-4 w-4"
+              />
+              <AlertDescription>{experienceError}</AlertDescription>
+            </Alert>
 
-        <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950 py-8">
-          <div className="container max-w-3xl mx-auto px-4">
-            <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-              <CardContent className="p-6 md:p-8">
-                <Alert variant="destructive" className="mb-6">
-                  <Icon
-                    icon="solar:danger-triangle-bold-duotone"
-                    className="h-4 w-4"
-                  />
-                  <AlertDescription>{experienceError}</AlertDescription>
-                </Alert>
-
-                <div className="flex flex-wrap gap-3">
-                  <Button onClick={() => void refreshExperience()}>
-                    Retry connection
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => void router.push("/dashboard")}
-                  >
-                    Back to dashboard
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="flex flex-wrap gap-3">
+              <Button onClick={() => void refreshExperience()}>Retry</Button>
+              <Button
+                variant="outline"
+                onClick={() => void router.push("/dashboard")}
+              >
+                Back to dashboard
+              </Button>
+            </div>
           </div>
         </main>
       </>
     );
   }
 
-  // Render step content
   const renderStepContent = () => {
     const stepProps = {
       data: formData,
@@ -606,127 +575,144 @@ export default function ShareExperience() {
   return (
     <>
       <Head>
-        <title>Share Your Erasmus Experience | Erasmus Journey</title>
+        <title>Share your Erasmus experience | Erasmus Journey</title>
         <meta
           name="description"
-          content="Share your Erasmus experience to help future students"
+          content="Share practical information from your Erasmus experience."
         />
       </Head>
 
       <Header />
 
-      {/* Hero Section */}
-      <HeroSection
-        title="Share Your Experience"
-        subtitle="Help future Erasmus students by sharing your journey"
-        icon="solar:document-add-linear"
-        size="sm"
-      />
-
-      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950 py-8">
-        <div className="container max-w-5xl mx-auto px-4">
-          {/* Error Alert */}
+      <main className="min-h-screen bg-gray-50 py-8">
+        <div className="mx-auto max-w-4xl px-4">
           {(submitError || experienceError) && (
-            <Alert variant="destructive" className="mb-6">
+            <Alert variant="destructive" className="mb-5">
               <Icon
                 icon="solar:danger-triangle-bold-duotone"
                 className="h-4 w-4"
               />
-              <AlertDescription>
-                {submitError || experienceError}
-              </AlertDescription>
+              <AlertDescription>{submitError || experienceError}</AlertDescription>
             </Alert>
           )}
 
-          <div
-            className={cn(
-              "mb-4 flex items-center gap-3 rounded-2xl border px-4 py-3 shadow-sm",
-              saveStateMeta.badgeClassName,
-            )}
-          >
-            <Icon
-              icon={saveStateMeta.icon}
-              className={cn(
-                "h-4 w-4",
-                saveState === "saving" && "animate-spin",
-              )}
-            />
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em]">
-                Draft status
-              </p>
-              <p className="text-sm font-medium">{persistentSaveStatusLabel}</p>
+          <section className="mb-6">
+            <h1 className="text-2xl font-semibold text-gray-950 sm:text-3xl">
+              Share your Erasmus experience
+            </h1>
+            <p className="mt-2 text-sm text-gray-600">
+              Help future students with practical destination, housing, and course information.
+            </p>
+            <p className="mt-2 text-sm text-gray-500">
+              Your draft saves automatically while you work. Takes about 10-15 minutes.
+            </p>
+          </section>
+
+          <section className="mb-4 rounded-lg border border-gray-200 bg-white px-4 py-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Step {currentStep} of {FORM_STEPS.length}
+                </p>
+                <p className="text-sm font-semibold text-gray-900">
+                  {currentStepConfig.name}
+                </p>
+                {currentStepMissingRequiredCount > 0 ? (
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {currentStepMissingRequiredCount} required {currentStepMissingRequiredCount === 1 ? "field" : "fields"} left
+                  </p>
+                ) : null}
+              </div>
+
+              <div className="flex items-center gap-2 text-sm text-gray-700">
+                <span className={cn("h-2 w-2 rounded-full", draftStatus.dotClass)} />
+                <Icon icon={draftStatus.icon} className={draftStatus.iconClass} />
+                <span className="font-medium">{draftStatus.label}</span>
+                {saveState !== "saving" && saveState !== "error" && savedTimeLabel ? (
+                  <span className="text-gray-500">Saved at {savedTimeLabel}</span>
+                ) : null}
+              </div>
             </div>
-          </div>
+          </section>
 
-          <StepStatusBar
-            currentStep={currentStep}
-            totalSteps={5}
-            stepTitle={currentStepConfig.name}
-            saveState={saveState}
-            missingRequiredCount={currentStepMissingRequiredCount}
-          />
+          <section className="mb-6 rounded-lg border border-gray-200 bg-white p-4">
+            <div className="h-1.5 rounded-full bg-gray-200">
+              <div
+                className="h-full rounded-full bg-gray-900 transition-all duration-200"
+                style={{ width: `${progressPercentage}%` }}
+              />
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-5">
+              {progressSteps.map((step) => {
+                const isCompleted = completedStepNumbers.includes(step.number);
+                const isCurrent = currentStep === step.number;
+                const isLocked = Boolean(step.isLocked);
+                const isClickable = Boolean(step.isClickable);
 
-          {/* Progress Bar */}
-          <FormProgressBar
-            steps={progressSteps}
-            currentStep={currentStep}
-            completedSteps={completedStepNumbers}
-            onStepClick={handleStepClick}
-          />
+                return (
+                  <button
+                    key={step.number}
+                    type="button"
+                    disabled={!isClickable}
+                    onClick={() => {
+                      if (isClickable) {
+                        handleStepClick(step.number);
+                      }
+                    }}
+                    className={cn(
+                      "rounded-md border px-2 py-2 text-left text-xs transition-colors",
+                      isCurrent
+                        ? "border-gray-900 bg-gray-100 text-gray-900"
+                        : isCompleted
+                          ? "border-gray-300 bg-white text-gray-800"
+                          : isLocked
+                            ? "border-gray-200 bg-gray-50 text-gray-400"
+                            : "border-gray-200 bg-white text-gray-700 hover:bg-gray-100",
+                      !isClickable && "cursor-not-allowed",
+                    )}
+                  >
+                    <span className="mb-1 flex items-center gap-1">
+                      {isCompleted ? (
+                        <Icon icon="solar:check-circle-linear" className="h-3.5 w-3.5" />
+                      ) : isLocked ? (
+                        <Icon icon="solar:lock-keyhole-linear" className="h-3.5 w-3.5" />
+                      ) : (
+                        <span className="inline-flex h-3.5 w-3.5 items-center justify-center rounded-full border border-current text-[10px] font-semibold">
+                          {step.number}
+                        </span>
+                      )}
+                      <span className="font-medium">Step {step.number}</span>
+                    </span>
+                    <span className="block truncate">{step.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
 
-          {/* Main Form Content */}
           <FormProvider
             formData={formData}
             onSave={handleFormDataChange}
             currentStep={currentStep}
           >
-            <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-              <CardContent className="p-6 md:p-8">
-                {/* Step Header */}
-                <div className="mb-8">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div
-                      className={cn(
-                        "p-2 rounded-lg",
-                        currentStep === 1
-                          ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600"
-                          : currentStep === 2
-                            ? "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600"
-                            : currentStep === 3
-                              ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600"
-                              : currentStep === 4
-                                ? "bg-green-100 dark:bg-green-900/30 text-green-600"
-                                : "bg-purple-100 dark:bg-purple-900/30 text-purple-600",
-                      )}
-                    >
-                      <Icon
-                        icon={FORM_STEPS[currentStep - 1].icon}
-                        className="h-5 w-5"
-                      />
-                    </div>
-                    <div>
-                      <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                        {currentStepConfig.name}
-                      </h2>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">
-                        {currentStepConfig.description}
-                      </p>
-                    </div>
-                    <div className="ml-auto text-sm text-slate-400 dark:text-slate-500">
-                      Est. {currentStepConfig.estimatedTime}
-                    </div>
-                  </div>
+            <Card className="border border-gray-200 bg-white shadow-sm">
+              <CardContent className="p-5 sm:p-6">
+                <div className="mb-6 border-b border-gray-100 pb-4">
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    {currentStepConfig.name}
+                  </h2>
+                  <p className="mt-1 text-sm text-gray-600">
+                    {currentStepConfig.description}
+                  </p>
                 </div>
 
-                {/* Step Content with Animation */}
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentStep}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.16 }}
                   >
                     {renderStepContent()}
                   </motion.div>
