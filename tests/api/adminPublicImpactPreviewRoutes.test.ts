@@ -107,6 +107,7 @@ function createSubmittedExperience(
     hostCountry: "Netherlands",
     semester: "2026/2027 Fall",
     adminNotes: null,
+    publicWordingOverrides: null,
     basicInfo: {
       homeUniversity: "University of Cyprus",
       hostUniversity: "University of Amsterdam",
@@ -174,6 +175,10 @@ describe("admin public impact preview routes", () => {
       id: "experience-base",
       status: data.status || "SUBMITTED",
       adminNotes: data.adminNotes || null,
+      publicWordingOverrides:
+        data.publicWordingOverrides === undefined
+          ? null
+          : data.publicWordingOverrides,
       reviewFeedback: data.reviewFeedback || null,
     }));
     mockReviewActionCreate.mockImplementation(
@@ -351,6 +356,7 @@ describe("admin public impact preview routes", () => {
         id: "experience-base",
         status: "APPROVED",
         adminNotes: null,
+        publicWordingOverrides: null,
         reviewFeedback: null,
       },
       reviewAction: {
@@ -395,10 +401,16 @@ describe("admin public impact preview routes", () => {
       expect.objectContaining({
         where: { id: "experience-7" },
         data: expect.objectContaining({
-          adminNotes: expect.stringContaining("Cleaner public tip."),
+          publicWordingOverrides: {
+            generalTips: "Cleaner public tip.",
+            courseNotes: {
+              "course-1": "Cleaner public course note.",
+            },
+          },
         }),
       }),
     );
+    expect(mockExperienceUpdate.mock.calls[0]?.[0]?.data?.adminNotes).toBeUndefined();
     expect(mockReviewActionCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -412,7 +424,13 @@ describe("admin public impact preview routes", () => {
       experience: {
         id: "experience-base",
         status: "SUBMITTED",
-        adminNotes: expect.stringContaining("Cleaner public tip."),
+        adminNotes: null,
+        publicWordingOverrides: {
+          generalTips: "Cleaner public tip.",
+          courseNotes: {
+            "course-1": "Cleaner public course note.",
+          },
+        },
         reviewFeedback: null,
       },
       reviewAction: {
@@ -465,6 +483,7 @@ describe("admin public impact preview routes", () => {
         id: "experience-base",
         status: "REVISION_NEEDED",
         adminNotes: null,
+        publicWordingOverrides: null,
         reviewFeedback:
           "Please remove the identifying housing details and clarify the advice.",
       },

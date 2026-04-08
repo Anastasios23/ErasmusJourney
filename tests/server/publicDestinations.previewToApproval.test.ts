@@ -98,6 +98,7 @@ function createExperienceRecord(overrides: Record<string, unknown> = {}) {
       bestExperience: "Weekend trips with other Erasmus students.",
     },
     adminNotes: null,
+    publicWordingOverrides: null,
     ...overrides,
   };
 }
@@ -407,15 +408,13 @@ describe("public destination preview-to-approval proof", () => {
     experiences = [
       createExperienceRecord({
         id: "approved-moderated-wording",
-        adminNotes: JSON.stringify({
-          publicWordingEdits: {
-            accommodationReview: "Edited public housing note.",
-            generalTips: "Edited public general tip.",
-            courseNotes: {
-              "course-1": "Edited public course note.",
-            },
+        publicWordingOverrides: {
+          accommodationReview: "Edited public housing note.",
+          generalTips: "Edited public general tip.",
+          courseNotes: {
+            "course-1": "Edited public course note.",
           },
-        }),
+        },
       }),
     ];
 
@@ -435,6 +434,30 @@ describe("public destination preview-to-approval proof", () => {
     );
     expect(courses?.groups[0]?.examples[0]?.notes).toBe(
       "Edited public course note.",
+    );
+  });
+
+  it("ignores adminNotes JSON when no canonical public wording overrides exist", async () => {
+    experiences = [
+      createExperienceRecord({
+        id: "approved-legacy-admin-notes",
+        adminNotes: JSON.stringify({
+          publicWordingEdits: {
+            generalTips: "Legacy JSON should not leak to public output.",
+          },
+        }),
+        publicWordingOverrides: null,
+      }),
+    ];
+
+    await refreshPublicDestinationReadModel();
+    invalidatePublicDestinationReadModel();
+
+    const detail = await getPublicDestinationDetailBySlug("amsterdam-netherlands");
+
+    expect(detail?.practicalTips).toContain("Start house hunting early.");
+    expect(detail?.practicalTips).not.toContain(
+      "Legacy JSON should not leak to public output.",
     );
   });
 

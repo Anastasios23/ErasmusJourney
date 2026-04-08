@@ -222,12 +222,13 @@ model ErasmusExperience {
   homeUniversityId String?
 
   // NEW: Admin review
-  adminNotes     String?
-  adminApproved  Boolean   @default(false)
-  reviewedAt     DateTime?
-  reviewedBy     String?
-  reviewFeedback String?
-  revisionCount  Int       @default(0)
+  adminNotes             String?
+  publicWordingOverrides Json?
+  adminApproved          Boolean   @default(false)
+  reviewedAt             DateTime?
+  reviewedBy             String?
+  reviewFeedback         String?
+  revisionCount          Int       @default(0)
 
   // Timestamps
   createdAt DateTime @default(now())

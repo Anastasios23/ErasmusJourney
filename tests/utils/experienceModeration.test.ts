@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import {
   buildStoredPublicWordingEdits,
   getPublicWordingEditorState,
-  serializeExperienceModerationMetadata,
   summarizePublicWordingChanges,
 } from "../../src/lib/experienceModeration";
 
@@ -28,21 +27,19 @@ const baseSource = {
       notes: "Original course note.",
     },
   ],
-  adminNotes: null,
+  publicWordingOverrides: null,
 };
 
 describe("experienceModeration helpers", () => {
   it("hydrates editor state from stored wording overrides", () => {
     const state = getPublicWordingEditorState({
       ...baseSource,
-      adminNotes: JSON.stringify({
-        publicWordingEdits: {
-          generalTips: "Moderated public tip.",
-          courseNotes: {
-            "course-1": "Moderated public course note.",
-          },
+      publicWordingOverrides: {
+        generalTips: "Moderated public tip.",
+        courseNotes: {
+          "course-1": "Moderated public course note.",
         },
-      }),
+      },
     });
 
     expect(state.generalTips).toBe("Moderated public tip.");
@@ -74,22 +71,18 @@ describe("experienceModeration helpers", () => {
     });
   });
 
-  it("serializes wording overrides without discarding legacy admin notes", () => {
-    const serialized = serializeExperienceModerationMetadata(
-      "Legacy moderation note",
-      {
-        generalTips: "Moderated public tip.",
-      },
-    );
-
-    expect(serialized).toBe(
-      JSON.stringify({
-        legacyAdminNotes: "Legacy moderation note",
+  it("ignores adminNotes-shaped JSON because wording overrides no longer live there", () => {
+    const state = getPublicWordingEditorState({
+      ...baseSource,
+      adminNotes: JSON.stringify({
         publicWordingEdits: {
-          generalTips: "Moderated public tip.",
+          generalTips: "Wrong storage path.",
         },
       }),
-    );
+      publicWordingOverrides: null,
+    } as any);
+
+    expect(state.generalTips).toBe("Original general tip.");
   });
 
   it("summarizes updated and cleared wording fields for the audit trail", () => {

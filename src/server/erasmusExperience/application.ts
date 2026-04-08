@@ -47,6 +47,7 @@ type ExperienceRecord = {
   hostUniversityId: string | null;
   homeUniversityId: string | null;
   adminNotes: string | null;
+  publicWordingOverrides: unknown;
   adminApproved: boolean;
   reviewedAt: Date | null;
   reviewedBy: string | null;

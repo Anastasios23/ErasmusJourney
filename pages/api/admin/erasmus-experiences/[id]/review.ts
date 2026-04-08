@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
+import * as PrismaClientPackage from "@prisma/client";
 import { authOptions } from "../../../auth/[...nextauth]";
 import { prisma } from "../../../../../lib/prisma";
 import { buildPreviewUnavailableReason } from "../../../../../src/lib/adminPublicImpactPreview";
@@ -7,8 +8,8 @@ import { sanitizeBasicInformationData } from "../../../../../src/lib/basicInform
 import {
   buildStoredPublicWordingEdits,
   getPublicWordingEditorState,
+  hasPublicWordingEdits,
   normalizeReviewAction,
-  serializeExperienceModerationMetadata,
   summarizePublicWordingChanges,
   type CanonicalReviewAction,
   type PublicWordingEditorState,
@@ -23,6 +24,8 @@ import { getClientSafeErrorMessage } from "../../../../../lib/databaseErrors";
 import { sendRequestChangesEmail } from "../../../../../src/server/moderationEmails";
 import { refreshPublicDestinationReadModel } from "../../../../../src/server/publicDestinations";
 import { revalidatePublicDestinationPages } from "../../../../../src/server/publicDestinationRevalidation";
+
+const PRISMA_DB_NULL = (PrismaClientPackage as any).Prisma?.DbNull;
 
 /**
  * Admin Review API Endpoint
@@ -177,10 +180,21 @@ export default async function handler(
     }
 
     if (hasWordingChanges && nextWordingState) {
-      updateData.adminNotes = serializeExperienceModerationMetadata(
-        experience.adminNotes,
-        buildStoredPublicWordingEdits(experience, nextWordingState),
+      const storedWordingEdits = buildStoredPublicWordingEdits(
+        experience,
+        nextWordingState,
       );
+      if (hasPublicWordingEdits(storedWordingEdits)) {
+        updateData.publicWordingOverrides = storedWordingEdits;
+      } else {
+        if (!PRISMA_DB_NULL) {
+          throw new Error(
+            "Prisma DbNull sentinel is unavailable for clearing public wording overrides.",
+          );
+        }
+
+        updateData.publicWordingOverrides = PRISMA_DB_NULL;
+      }
     }
 
     switch (normalizedAction) {

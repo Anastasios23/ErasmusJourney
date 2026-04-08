@@ -13,10 +13,6 @@ export const CANONICAL_REVIEW_ACTIONS = [
 
 export type CanonicalReviewAction = (typeof CANONICAL_REVIEW_ACTIONS)[number];
 
-export type LegacyCompatibleReviewAction =
-  | CanonicalReviewAction
-  | "REVISION_REQUESTED";
-
 export interface ExperiencePublicWordingEdits {
   accommodationReview?: string | null;
   generalTips?: string | null;
@@ -26,16 +22,11 @@ export interface ExperiencePublicWordingEdits {
   courseNotes?: Record<string, string | null>;
 }
 
-interface StoredExperienceModerationMetadata {
-  legacyAdminNotes?: string;
-  publicWordingEdits?: ExperiencePublicWordingEdits;
-}
-
 export interface ExperiencePublicWordingSource {
   accommodation?: unknown;
   experience?: unknown;
   courses?: unknown;
-  adminNotes?: string | null;
+  publicWordingOverrides?: unknown;
 }
 
 export interface PublicWordingEditorCourseNote {
@@ -82,7 +73,7 @@ function isStoredCourseNotes(
   );
 }
 
-function normalizeStoredWordingEdits(
+export function normalizePublicWordingOverrides(
   value: unknown,
 ): ExperiencePublicWordingEdits {
   const source = toRecord(value);
@@ -133,6 +124,24 @@ function normalizeStoredWordingEdits(
   };
 }
 
+export function getExperiencePublicWordingEdits(
+  publicWordingOverrides: unknown,
+): ExperiencePublicWordingEdits {
+  return normalizePublicWordingOverrides(publicWordingOverrides);
+}
+
+export function hasPublicWordingEdits(
+  value: ExperiencePublicWordingEdits,
+): boolean {
+  return Object.entries(value).some(([field, fieldValue]) => {
+    if (field === "courseNotes") {
+      return Boolean(fieldValue && Object.keys(fieldValue).length > 0);
+    }
+
+    return fieldValue !== undefined;
+  });
+}
+
 export function normalizeReviewAction(
   action: string | null | undefined,
 ): CanonicalReviewAction | null {
@@ -147,42 +156,6 @@ export function normalizeReviewAction(
     default:
       return null;
   }
-}
-
-export function parseExperienceModerationMetadata(
-  adminNotes: string | null | undefined,
-): StoredExperienceModerationMetadata {
-  const normalizedAdminNotes = normalizeOptionalString(adminNotes);
-
-  if (!normalizedAdminNotes) {
-    return {};
-  }
-
-  try {
-    const parsed = JSON.parse(normalizedAdminNotes) as unknown;
-    const record = toRecord(parsed);
-
-    if (!record) {
-      return {
-        legacyAdminNotes: normalizedAdminNotes,
-      };
-    }
-
-    return {
-      legacyAdminNotes: normalizeOptionalString(record.legacyAdminNotes) || undefined,
-      publicWordingEdits: normalizeStoredWordingEdits(record.publicWordingEdits),
-    };
-  } catch {
-    return {
-      legacyAdminNotes: normalizedAdminNotes,
-    };
-  }
-}
-
-export function getExperiencePublicWordingEdits(
-  adminNotes: string | null | undefined,
-): ExperiencePublicWordingEdits {
-  return parseExperienceModerationMetadata(adminNotes).publicWordingEdits || {};
 }
 
 function getSourceCourseNotes(source: ExperiencePublicWordingSource) {
@@ -202,7 +175,9 @@ export function getPublicWordingEditorState(
     toRecord(source.accommodation),
   );
   const experience = toRecord(source.experience) || {};
-  const wordingEdits = getExperiencePublicWordingEdits(source.adminNotes);
+  const wordingEdits = getExperiencePublicWordingEdits(
+    source.publicWordingOverrides,
+  );
 
   return {
     accommodationReview:
@@ -236,7 +211,8 @@ export function getPublicWordingEditorState(
       value:
         wordingEdits.courseNotes?.[courseNote.id] === null
           ? ""
-          : wordingEdits.courseNotes?.[courseNote.id] ?? courseNote.originalValue,
+          : wordingEdits.courseNotes?.[courseNote.id] ??
+            courseNote.originalValue,
     })),
   };
 }
@@ -261,7 +237,6 @@ export function buildStoredPublicWordingEdits(
   );
   const experience = toRecord(source.experience) || {};
   const sourceCourseNotes = getSourceCourseNotes(source);
-
   const nextEdits: ExperiencePublicWordingEdits = {};
 
   const narrativeFields: Array<
@@ -310,8 +285,8 @@ export function buildStoredPublicWordingEdits(
     sourceCourseNotes
       .map((courseNote) => {
         const nextValue =
-          nextState.courseNotes.find((item) => item.id === courseNote.id)?.value ??
-          courseNote.originalValue;
+          nextState.courseNotes.find((item) => item.id === courseNote.id)
+            ?.value ?? courseNote.originalValue;
         const override = buildStoredNarrativeOverride(
           courseNote.originalValue,
           normalizeOptionalString(nextValue),
@@ -322,7 +297,8 @@ export function buildStoredPublicWordingEdits(
       .filter(
         (
           entry,
-        ): entry is [string, string | null] => Array.isArray(entry) && entry.length === 2,
+        ): entry is [string, string | null] =>
+          Array.isArray(entry) && entry.length === 2,
       ),
   );
 
@@ -331,33 +307,6 @@ export function buildStoredPublicWordingEdits(
   }
 
   return nextEdits;
-}
-
-export function serializeExperienceModerationMetadata(
-  adminNotes: string | null | undefined,
-  publicWordingEdits: ExperiencePublicWordingEdits,
-): string | null {
-  const existingMetadata = parseExperienceModerationMetadata(adminNotes);
-  const hasPublicWordingEdits = Object.entries(publicWordingEdits).some(
-    ([field, value]) => {
-      if (field === "courseNotes") {
-        return Boolean(value && Object.keys(value).length > 0);
-      }
-
-      return value !== undefined;
-    },
-  );
-
-  if (!existingMetadata.legacyAdminNotes && !hasPublicWordingEdits) {
-    return null;
-  }
-
-  return JSON.stringify({
-    ...(existingMetadata.legacyAdminNotes
-      ? { legacyAdminNotes: existingMetadata.legacyAdminNotes }
-      : {}),
-    ...(hasPublicWordingEdits ? { publicWordingEdits } : {}),
-  });
 }
 
 export function summarizePublicWordingChanges(

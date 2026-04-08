@@ -52,6 +52,7 @@ interface Experience extends AdminReviewSubmissionLike {
   submittedAt: string | null;
   reviewFeedback: string | null;
   adminNotes: string | null;
+  publicWordingOverrides: unknown | null;
   basicInfo: any;
   courses: any;
   accommodation: any;

@@ -34,7 +34,7 @@ type RawExperience = {
   hostCity: string | null;
   hostCountry: string | null;
   hostUniversityId: string | null;
-  adminNotes: string | null;
+  publicWordingOverrides: unknown;
   submittedAt: Date | null;
   updatedAt: Date;
   hostUniversity: { name: string } | null;
@@ -302,7 +302,7 @@ async function loadApprovedExperiences(): Promise<RawExperience[]> {
       hostCity: true,
       hostCountry: true,
       hostUniversityId: true,
-      adminNotes: true,
+      publicWordingOverrides: true,
       submittedAt: true,
       updatedAt: true,
       hostUniversity: {
@@ -328,7 +328,7 @@ async function loadExperienceById(id: string): Promise<RawExperience | null> {
       hostCity: true,
       hostCountry: true,
       hostUniversityId: true,
-      adminNotes: true,
+      publicWordingOverrides: true,
       submittedAt: true,
       updatedAt: true,
       hostUniversity: {
@@ -405,7 +405,7 @@ function buildGroupedDestinations(
       toRecord(experience.basicInfo),
     );
     const publicWordingEdits = getExperiencePublicWordingEdits(
-      experience.adminNotes,
+      experience.publicWordingOverrides,
     );
     const accommodation = sanitizeAccommodationStepData(
       toRecord(experience.accommodation),
@@ -733,7 +733,7 @@ function buildPendingAccommodationContribution(
   experience: RawExperience,
 ): AdminPublicImpactPreview["accommodation"]["contribution"] {
   const publicWordingEdits = getExperiencePublicWordingEdits(
-    experience.adminNotes,
+    experience.publicWordingOverrides,
   );
   const accommodation = sanitizeAccommodationStepData(
     toRecord(experience.accommodation),
@@ -783,7 +783,7 @@ function buildPendingCourseContributionExamples(
 ): AdminPublicImpactPreview["courses"]["contributionExamples"] {
   const basicInfo = sanitizeBasicInformationData(toRecord(experience.basicInfo));
   const publicWordingEdits = getExperiencePublicWordingEdits(
-    experience.adminNotes,
+    experience.publicWordingOverrides,
   );
   const homeUniversity =
     normalizeLabel(basicInfo.homeUniversity, 140) ||
