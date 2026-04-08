@@ -69,11 +69,13 @@ pages/
 
 ## Data Flow
 
-1. Signed-in students create and update a draft through `/share-experience` and `pages/api/erasmus-experiences.ts`.
+1. Signed-in Cyprus students create a single `ErasmusExperience` through `/share-experience` and `pages/api/erasmus-experiences.ts`.
 2. The API sanitizes step data into canonical `basicInfo`, `courses`, `accommodation`, `livingExpenses`, and `experience` payloads before persistence.
-3. Admin preview and review flows validate publishability before approval, including required public destination fields such as `hostCity` and `hostCountry`.
-4. Approved submissions are aggregated through `src/server/publicDestinations`.
-5. Public destination pages read only approved, publishable data.
+3. Server-side submission guards lock student edits after submission unless the admin review flow returns the record for revision.
+4. Server-side eligibility validation enforces the agreements dataset scope for supported Cyprus universities, departments, and exchange paths.
+5. Admin moderation records `ReviewAction` audit entries and only approved, complete experiences are allowed into the public publication path.
+6. `src/server/publicDestinations` aggregates only approved, publishable experiences into `public_destination_read_models`, including sample-size and freshness metadata.
+7. Public destination pages read only the persisted public read model plus approved anonymous peer examples, with limited-data messaging where evidence is sparse.
 
 ## Getting Started
 
@@ -81,11 +83,14 @@ pages/
 npm install
 cp .env.example .env.local
 # Edit .env.local with your database URL and auth secrets
-npm run db:push
+npm run db:migrate
+npm run db:seed
 npm run dev
 ```
 
 Use `npm run dev:fresh` when you want to clear stale `.next` artifacts before starting the app.
+
+`npm run db:push` remains available for throwaway local inspection only. It is not the canonical schema-change or deployment path.
 
 ## Local Postgres With Docker Compose
 
@@ -104,7 +109,8 @@ DATABASE_URL="postgresql://erasmus:erasmus123@localhost:5432/erasmusjourney"
 After the container is healthy:
 
 ```bash
-npm run db:push
+npm run db:migrate
+npm run db:seed
 ```
 
 If you are starting from a fresh local database and want the public smoke/proof checks to run against non-empty approved data, seed the focused proof dataset once:
@@ -118,6 +124,8 @@ Useful local commands:
 - `npm run db:docker:down`
 - `npm run db:docker:logs`
 - `npm run db:docker:ps`
+- `npm run db:deploy`
+- `npm run db:reset`
 
 Equivalent raw Docker Compose commands still work if you prefer them:
 
@@ -145,6 +153,13 @@ NEXTAUTH_URL="http://localhost:3000"
 - `npm run proof:preview-to-approval`
 
 Fresh local database note: if your database has schema but no approved submissions yet, run `npm run db:seed:proof` before the public smoke/proof commands.
+
+## Canonical Prisma Workflow
+
+- Commit every durable schema change as a Prisma migration under `prisma/migrations/`.
+- Use `npm run db:migrate` in local development to apply existing migrations and create new ones when the schema changes.
+- Use `npm run db:deploy` in production-like environments to apply committed migrations without creating new ones.
+- Treat `npm run db:push` as local-only escape hatch tooling. If Prisma reports migration drift, repair migration history before continuing feature work.
 
 If you want shortcut commands for release-style verification:
 

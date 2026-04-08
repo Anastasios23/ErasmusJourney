@@ -14,17 +14,27 @@ Start PostgreSQL container: `npm run db:docker:up`
 
 ## Database Management
 
-| Task                    | Command                  |
-| ----------------------- | ------------------------ |
-| Start Docker PostgreSQL | `npm run db:docker:up`   |
-| Stop database           | `npm run db:docker:down` |
-| Push schema changes     | `npm run db:push`        |
-| Create migration        | `npm run db:migrate`     |
-| Seed with proof data    | `npm run db:seed:proof`  |
-| Refresh public read model | `npm run db:refresh-public-destination-read-model` |
-| Full reset and reseed   | `npm run db:reset`       |
+| Task                         | Command                                  |
+| ---------------------------- | ---------------------------------------- |
+| Start Docker PostgreSQL      | `npm run db:docker:up`                   |
+| Stop database                | `npm run db:docker:down`                 |
+| Apply/create dev migrations  | `npm run db:migrate`                     |
+| Deploy committed migrations  | `npm run db:deploy`                      |
+| Minimal local seed           | `npm run db:seed`                        |
+| Seed with proof data         | `npm run db:seed:proof`                  |
+| Refresh public read model    | `npm run db:refresh-public-destination-read-model` |
+| Full reset and reseed        | `npm run db:reset`                       |
+| Non-canonical local sync     | `npm run db:push`                        |
 
-**Important**: Always run migrations through Prisma, not by editing SQL directly. The `ensure-permanent-admin` script runs after seeding to guarantee an admin exists.
+**Important**:
+
+- Always run committed schema changes through Prisma Migrate, not by editing SQL directly.
+- `npm run db:migrate` is the canonical local workflow for schema changes and applying committed migrations.
+- `npm run db:deploy` is the canonical production or CI workflow for applying committed migrations.
+- `npm run db:push` is local-only escape hatch tooling. Do not use it to land schema changes, prepare deploys, or repair drift.
+- If Prisma reports drift or an existing schema with missing migration history, stop feature work and repair migration history before continuing.
+- The `ensure-permanent-admin` script runs during `npm run db:seed` so a local admin always exists.
+- Use `npm run db:seed:proof` only when you need approved proof data for public-destination smoke checks.
 
 ## Repository Guidance
 
@@ -52,6 +62,15 @@ Start PostgreSQL container: `npm run db:docker:up`
 - E2e tests focus on critical flows: share-experience, public destinations
 - Use `SMOKE_BASE_URL` env var to override test server URL if needed
 - Example: `SMOKE_BASE_URL=http://localhost:3001 npm run e2e:smoke`
+
+### Canonical Prisma Workflow
+
+- Drift repair or baseline work must leave `prisma/migrations/` with one authoritative active history.
+- Archive or remove contradictory migration chains before creating a new baseline. Do not leave multiple active stories under `prisma/migrations/`.
+- After any migration repair, verify both:
+  - existing local databases can be reconciled with `prisma migrate resolve` when appropriate
+  - a fresh local database can be rebuilt with `npm run db:reset`
+- Public-destination freshness belongs in the canonical `public_destination_read_models` migration path, not in `db push`-only schema state.
 
 ## Deep Dives
 
