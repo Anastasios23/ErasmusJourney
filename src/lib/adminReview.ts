@@ -133,7 +133,7 @@ export function getRevisionStatusMeta(
 ): ModerationBadgeMeta {
   if (revisionCount > 0) {
     return {
-      label: `Needs revision (${revisionCount})`,
+      label: `Changes requested (${revisionCount})`,
       variant: "warning",
     };
   }
@@ -225,6 +225,7 @@ export function getSubmissionModerationSummary(
     livingExpenses.food === null ? "Food" : null,
     livingExpenses.transport === null ? "Transport" : null,
     livingExpenses.social === null ? "Social" : null,
+    livingExpenses.other === null ? "Other" : null,
   ].filter((value): value is string => Boolean(value));
 
   const courseMissingFields =
@@ -293,10 +294,16 @@ export function getSubmissionModerationSummary(
         }`;
 
   const budgetSummaryParts = [
+    typeof accommodation.monthlyRent === "number"
+      ? `Minimum signal: rent ${accommodation.monthlyRent} ${accommodation.currency} / month`
+      : "Minimum signal missing: monthly rent",
     `Food ${formatMoney(livingExpenses.food, livingExpenses.currency)}`,
     `Transport ${formatMoney(livingExpenses.transport, livingExpenses.currency)}`,
     `Social ${formatMoney(livingExpenses.social, livingExpenses.currency)}`,
-    totalBudget > 0 ? `Total ${totalBudget.toFixed(0)} ${livingExpenses.currency}` : null,
+    `Other ${formatMoney(livingExpenses.other, livingExpenses.currency)}`,
+    totalBudget > 0
+      ? `Expanded monthly total ${totalBudget.toFixed(0)} ${livingExpenses.currency}`
+      : null,
   ].filter(Boolean);
 
   const tipsSummary =
@@ -316,7 +323,8 @@ export function getSubmissionModerationSummary(
     accommodationSummary:
       accommodationSummaryParts.join(" | ") || "Accommodation summary incomplete",
     budgetSummary:
-      budgetSummaryParts.join(" | ") || "Budget summary incomplete",
+      budgetSummaryParts.join(" | ") ||
+      "Living-cost summary incomplete beyond rent",
     tipsSummary,
     coreDestinationMissingFields: coreMissingFields,
     accommodationMissingFields,

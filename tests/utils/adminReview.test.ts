@@ -72,6 +72,9 @@ describe("adminReview helpers", () => {
     ]);
     expect(summary.courseSummary).toBe("1/1 complete mapping");
     expect(summary.accommodationSummary).toContain("Shared apartment");
+    expect(summary.budgetSummary).toContain(
+      "Minimum signal: rent 450 EUR / month",
+    );
     expect(summary.budgetSummary).toContain("Food 250 EUR");
   });
 
@@ -173,6 +176,7 @@ describe("adminReview helpers", () => {
       "Food",
       "Transport",
       "Social",
+      "Other",
     ]);
   });
 });

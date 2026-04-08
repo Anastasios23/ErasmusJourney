@@ -131,6 +131,11 @@ export default function DestinationDetailPage({
                 destination.latestReportSubmittedAt,
               )}
             </span>
+            <span className="block pt-1">
+              Monthly rent is the minimum living-cost signal. Food, transport,
+              social, travel, and other reported costs deepen the estimate when
+              students provide them.
+            </span>
           </div>
           {currencyMeta.isMixed ? (
             <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-900 shadow-sm">

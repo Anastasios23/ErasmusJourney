@@ -3,6 +3,16 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../auth/[...nextauth]";
 import { prisma } from "../../../../../lib/prisma";
 import { buildPreviewUnavailableReason } from "../../../../../src/lib/adminPublicImpactPreview";
+import { sanitizeBasicInformationData } from "../../../../../src/lib/basicInformation";
+import {
+  buildStoredPublicWordingEdits,
+  getPublicWordingEditorState,
+  normalizeReviewAction,
+  serializeExperienceModerationMetadata,
+  summarizePublicWordingChanges,
+  type CanonicalReviewAction,
+  type PublicWordingEditorState,
+} from "../../../../../src/lib/experienceModeration";
 import { isExperienceReviewableStatus } from "../../../../../src/lib/experienceWorkflow";
 import { buildPublicDestinationSlug } from "../../../../../src/lib/publicRoutes";
 import {
@@ -10,6 +20,7 @@ import {
   sanitizeLivingExpensesStepData,
 } from "../../../../../src/lib/livingExpenses";
 import { getClientSafeErrorMessage } from "../../../../../lib/databaseErrors";
+import { sendRequestChangesEmail } from "../../../../../src/server/moderationEmails";
 import { refreshPublicDestinationReadModel } from "../../../../../src/server/publicDestinations";
 import { revalidatePublicDestinationPages } from "../../../../../src/server/publicDestinationRevalidation";
 
@@ -20,7 +31,8 @@ import { revalidatePublicDestinationPages } from "../../../../../src/server/publ
  * Actions:
  * - APPROVED: Approve submission, trigger stats calculation
  * - REJECTED: Reject submission with feedback
- * - REVISION_REQUESTED: Request revisions from student (max 1 revision)
+ * - REQUEST_CHANGES: Return submission to editable revision state and notify student
+ * - WORDING_EDITED: Save public wording-only overrides without changing status
  */
 export default async function handler(
   req: NextApiRequest,
@@ -50,25 +62,36 @@ export default async function handler(
     }
 
     const { id } = req.query;
-    const { action, feedback } = req.body;
+    const { action, feedback, wordingEdits } =
+      req.body && typeof req.body === "object"
+        ? (req.body as Record<string, unknown>)
+        : { action: null, feedback: "", wordingEdits: null };
+    const normalizedAction =
+      typeof action === "string" ? normalizeReviewAction(action) : null;
 
     if (!id || typeof id !== "string") {
       return res.status(400).json({ error: "Experience ID required" });
     }
 
-    if (
-      !action ||
-      !["APPROVED", "REJECTED", "REVISION_REQUESTED"].includes(action)
-    ) {
+    if (!normalizedAction) {
       return res.status(400).json({
         error:
-          "Valid action required: APPROVED, REJECTED, or REVISION_REQUESTED",
+          "Valid action required: APPROVED, REJECTED, REQUEST_CHANGES, or WORDING_EDITED",
       });
     }
 
     // Fetch the experience
     const experience = await prisma.erasmusExperience.findUnique({
       where: { id },
+      include: {
+        users: {
+          select: {
+            email: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
     });
 
     if (!experience) {
@@ -84,13 +107,13 @@ export default async function handler(
     }
 
     // Check revision limit
-    if (action === "REVISION_REQUESTED" && experience.revisionCount >= 1) {
+    if (normalizedAction === "REQUEST_CHANGES" && experience.revisionCount >= 1) {
       return res.status(400).json({
         error: "Maximum revision limit reached. Please approve or reject.",
       });
     }
 
-    if (action === "APPROVED") {
+    if (normalizedAction === "APPROVED") {
       const unavailableReason = buildPreviewUnavailableReason(experience);
 
       if (unavailableReason) {
@@ -102,67 +125,137 @@ export default async function handler(
       }
     }
 
-    // Prepare update data
-    const updateData: any = {
+    const currentWordingState = getPublicWordingEditorState(experience);
+    const normalizedFeedback =
+      typeof feedback === "string" ? feedback.trim() : "";
+    const nextWordingState = buildRequestedWordingState(
+      currentWordingState,
+      wordingEdits,
+    );
+    const wordingChanges = nextWordingState
+      ? summarizePublicWordingChanges(experience, nextWordingState)
+      : [];
+    const hasWordingChanges = wordingChanges.length > 0;
+
+    if (normalizedAction === "WORDING_EDITED" && !hasWordingChanges) {
+      return res.status(400).json({
+        error: "At least one wording change is required before saving edits.",
+      });
+    }
+
+    if (
+      (normalizedAction === "REJECTED" || normalizedAction === "REQUEST_CHANGES") &&
+      typeof feedback !== "string"
+    ) {
+      return res.status(400).json({
+        error:
+          normalizedAction === "REJECTED"
+            ? "Feedback required for rejection"
+            : "Feedback required when requesting changes",
+      });
+    }
+
+    if (
+      (normalizedAction === "REJECTED" || normalizedAction === "REQUEST_CHANGES") &&
+      !normalizedFeedback
+    ) {
+      return res.status(400).json({
+        error:
+          normalizedAction === "REJECTED"
+            ? "Feedback required for rejection"
+            : "Feedback required when requesting changes",
+      });
+    }
+
+    const updateData: Record<string, unknown> = {
       reviewedAt: new Date(),
       reviewedBy: (session.user as any).id,
-      reviewFeedback: feedback || null,
     };
 
-    switch (action) {
+    if (normalizedAction !== "WORDING_EDITED") {
+      updateData.reviewFeedback = normalizedFeedback || null;
+    }
+
+    if (hasWordingChanges && nextWordingState) {
+      updateData.adminNotes = serializeExperienceModerationMetadata(
+        experience.adminNotes,
+        buildStoredPublicWordingEdits(experience, nextWordingState),
+      );
+    }
+
+    switch (normalizedAction) {
       case "APPROVED":
         updateData.status = "APPROVED";
         updateData.adminApproved = true;
         updateData.isPublic = true;
         updateData.publishedAt = new Date();
         break;
-
       case "REJECTED":
         updateData.status = "REJECTED";
         updateData.adminApproved = false;
         updateData.isPublic = false;
         updateData.publishedAt = null;
-        if (!feedback) {
-          return res.status(400).json({
-            error: "Feedback required for rejection",
-          });
-        }
         break;
-
-      case "REVISION_REQUESTED":
+      case "REQUEST_CHANGES":
         updateData.status = "REVISION_NEEDED";
         updateData.revisionCount = experience.revisionCount + 1;
         updateData.adminApproved = false;
         updateData.isPublic = false;
         updateData.publishedAt = null;
-        if (!feedback) {
-          return res.status(400).json({
-            error: "Feedback required for revision request",
-          });
-        }
+        break;
+      case "WORDING_EDITED":
+        break;
+      default:
         break;
     }
 
-    // Update experience in a transaction
-    const [updatedExperience, reviewAction] = await prisma.$transaction([
-      // Update experience
-      prisma.erasmusExperience.update({
-        where: { id },
-        data: updateData,
-      }),
+    const { updatedExperience, reviewActions } = await prisma.$transaction(
+      async (tx) => {
+        const updatedRecord = await tx.erasmusExperience.update({
+          where: { id },
+          data: updateData,
+        });
 
-      // Create review action audit log
-      prisma.reviewAction.create({
-        data: {
-          experienceId: id,
-          adminId: (session.user as any).id,
-          action: action as "APPROVED" | "REJECTED" | "REVISION_REQUESTED",
-          feedback: feedback || null,
-        },
-      }),
-    ]);
+        const createdReviewActions: Array<{
+          id: string;
+          action: string;
+          feedback: string | null;
+        }> = [];
 
-    if (action === "APPROVED") {
+        if (hasWordingChanges) {
+          createdReviewActions.push(
+            await tx.reviewAction.create({
+              data: {
+                experienceId: id,
+                adminId: (session.user as any).id,
+                action: "WORDING_EDITED",
+                feedback: formatWordingEditAuditFeedback(wordingChanges),
+              },
+            }),
+          );
+        }
+
+        if (normalizedAction !== "WORDING_EDITED") {
+          createdReviewActions.push(
+            await tx.reviewAction.create({
+              data: {
+                experienceId: id,
+                adminId: (session.user as any).id,
+                action: normalizedAction,
+                feedback: normalizedFeedback || null,
+              },
+            }),
+          );
+        }
+
+        return {
+          updatedExperience: updatedRecord,
+          reviewActions: createdReviewActions,
+        };
+      },
+    );
+
+    if (normalizedAction === "APPROVED") {
       try {
         await refreshPublicDestinationReadModel();
         await revalidatePublicDestinationPages(
@@ -184,7 +277,7 @@ export default async function handler(
 
     // If approved and has required data, trigger stats calculation
     if (
-      action === "APPROVED" &&
+      normalizedAction === "APPROVED" &&
       experience.hostCity &&
       experience.hostCountry &&
       experience.semester
@@ -198,11 +291,33 @@ export default async function handler(
       });
     }
 
+    const notification =
+      normalizedAction === "REQUEST_CHANGES"
+        ? await sendRequestChangesEmail({
+            studentEmail: experience.users?.email || "",
+            studentName: [experience.users?.firstName, experience.users?.lastName]
+              .filter(Boolean)
+              .join(" ")
+              .trim(),
+            reviewFeedback: normalizedFeedback,
+            hostCity: experience.hostCity,
+            hostCountry: experience.hostCountry,
+            hostUniversity:
+              sanitizeBasicInformationData(experience.basicInfo).hostUniversity ||
+              null,
+          })
+        : null;
+
     return res.status(200).json({
       success: true,
       experience: updatedExperience,
-      reviewAction,
-      message: getSuccessMessage(action),
+      reviewAction: reviewActions[reviewActions.length - 1] ?? null,
+      reviewActions,
+      ...(notification ? { notification } : {}),
+      message: getSuccessMessage(normalizedAction, {
+        wordingEditsSaved: hasWordingChanges,
+        notification,
+      }),
     });
   } catch (error) {
     console.error("Error reviewing experience:", error);
@@ -214,6 +329,63 @@ export default async function handler(
       ),
     });
   }
+}
+
+function buildRequestedWordingState(
+  currentState: PublicWordingEditorState,
+  input: unknown,
+): PublicWordingEditorState | null {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    return null;
+  }
+
+  const source = input as Record<string, unknown>;
+  const courseNotesInput =
+    source.courseNotes && typeof source.courseNotes === "object"
+      ? (source.courseNotes as Record<string, unknown>)
+      : {};
+
+  return {
+    accommodationReview:
+      typeof source.accommodationReview === "string"
+        ? source.accommodationReview
+        : currentState.accommodationReview,
+    generalTips:
+      typeof source.generalTips === "string"
+        ? source.generalTips
+        : currentState.generalTips,
+    academicAdvice:
+      typeof source.academicAdvice === "string"
+        ? source.academicAdvice
+        : currentState.academicAdvice,
+    socialAdvice:
+      typeof source.socialAdvice === "string"
+        ? source.socialAdvice
+        : currentState.socialAdvice,
+    bestExperience:
+      typeof source.bestExperience === "string"
+        ? source.bestExperience
+        : currentState.bestExperience,
+    courseNotes: currentState.courseNotes.map((courseNote) => ({
+      ...courseNote,
+      value:
+        typeof courseNotesInput[courseNote.id] === "string"
+          ? (courseNotesInput[courseNote.id] as string)
+          : courseNote.value,
+    })),
+  };
+}
+
+function formatWordingEditAuditFeedback(
+  wordingChanges: Array<{ label: string; mode: "updated" | "cleared" }>,
+): string {
+  return wordingChanges
+    .map((change) =>
+      change.mode === "cleared"
+        ? `Cleared ${change.label}`
+        : `Updated ${change.label}`,
+    )
+    .join("; ");
 }
 
 /**
@@ -409,14 +581,38 @@ function toCents(value: number | null) {
 /**
  * Get success message based on action
  */
-function getSuccessMessage(action: string): string {
+function getSuccessMessage(
+  action: CanonicalReviewAction,
+  options?: {
+    wordingEditsSaved?: boolean;
+    notification?: { status: "sent" | "skipped" | "failed"; reason?: string } | null;
+  },
+): string {
+  const wordingSuffix = options?.wordingEditsSaved
+    ? " Wording-only public edits were saved with an audit trail."
+    : "";
+
   switch (action) {
     case "APPROVED":
-      return "Experience approved successfully! Statistics have been updated.";
+      return `Experience approved successfully. Public aggregates were refreshed.${wordingSuffix}`;
     case "REJECTED":
-      return "Experience rejected. Student has been notified.";
-    case "REVISION_REQUESTED":
-      return "Revision requested. Student can resubmit after making changes.";
+      return `Experience rejected.${wordingSuffix}`;
+    case "REQUEST_CHANGES":
+      if (options?.notification?.status === "sent") {
+        return `Changes requested. Submission returned to editable revision state and the student was emailed.${wordingSuffix}`;
+      }
+
+      if (options?.notification?.status === "failed") {
+        return `Changes requested. Submission returned to editable revision state, but the email notification failed: ${options.notification.reason}.${wordingSuffix}`;
+      }
+
+      if (options?.notification?.status === "skipped") {
+        return `Changes requested. Submission returned to editable revision state, but no email was sent: ${options.notification.reason}.${wordingSuffix}`;
+      }
+
+      return `Changes requested. Submission returned to editable revision state.${wordingSuffix}`;
+    case "WORDING_EDITED":
+      return "Public wording edits saved. Student source data remains unchanged.";
     default:
       return "Review completed successfully.";
   }

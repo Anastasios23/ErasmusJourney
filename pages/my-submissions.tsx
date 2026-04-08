@@ -202,7 +202,7 @@ export default function MySubmissions() {
         icon: "solar:clock-circle-linear",
       },
       REVISION_NEEDED: {
-        label: "Revision Needed",
+        label: "Changes Requested",
         className:
           "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
         icon: "solar:danger-triangle-linear",
@@ -498,7 +498,7 @@ export default function MySubmissions() {
                         <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
                         <SelectItem value="SUBMITTED">Under Review</SelectItem>
                         <SelectItem value="REVISION_NEEDED">
-                          Revision Needed
+                          Changes Requested
                         </SelectItem>
                         <SelectItem value="APPROVED">Approved</SelectItem>
                         <SelectItem value="REJECTED">Rejected</SelectItem>
@@ -720,13 +720,14 @@ export default function MySubmissions() {
                                   </p>
                                   {submission.status === "REVISION_NEEDED" && (
                                     <div className="mt-2 text-xs text-orange-700">
-                                      💡 Click "Make Revisions" to edit your
+                                      Review the requested changes and reopen
+                                      your editable draft to update
                                       submission and resubmit.
                                       {submission.revisionCount >= 1 && (
                                         <span className="block mt-1 font-semibold">
-                                          ⚠️ This is your final revision - next
-                                          submission will be approved or
-                                          rejected.
+                                          This is your final returned draft.
+                                          The next moderation decision will be
+                                          approve or reject.
                                         </span>
                                       )}
                                     </div>
@@ -751,7 +752,7 @@ export default function MySubmissions() {
                                     className="h-4 w-4 mr-2"
                                   />
                                   {submission.status === "REVISION_NEEDED"
-                                    ? "Make Revisions"
+                                    ? "Respond to Changes"
                                     : "Continue Editing"}
                                 </Button>
                               </Link>
@@ -775,7 +776,7 @@ export default function MySubmissions() {
                             )}
                             {submission.revisionCount > 0 && (
                               <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">
-                                Revision {submission.revisionCount}/1
+                                Change request {submission.revisionCount}/1
                               </Badge>
                             )}
                           </div>

@@ -36,6 +36,10 @@ import {
   type AdminReviewSubmissionLike,
 } from "../../src/lib/adminReview";
 import { buildLoginRedirectUrl } from "../../src/lib/authRedirect";
+import {
+  getPublicWordingEditorState,
+  type PublicWordingEditorState,
+} from "../../src/lib/experienceModeration";
 import type {
   AdminPublicImpactPreview,
   AdminPublicImpactPreviewUnavailable,
@@ -47,6 +51,7 @@ interface Experience extends AdminReviewSubmissionLike {
   revisionCount: number;
   submittedAt: string | null;
   reviewFeedback: string | null;
+  adminNotes: string | null;
   basicInfo: any;
   courses: any;
   accommodation: any;
@@ -65,6 +70,10 @@ interface Experience extends AdminReviewSubmissionLike {
 
 type QueueFilter = "all" | "ready" | "blocked" | "needs_revision";
 type SortOrder = "newest" | "oldest";
+type NarrativeWordingField = Exclude<
+  keyof PublicWordingEditorState,
+  "courseNotes"
+>;
 
 const FEEDBACK_PRESETS = [
   {
@@ -101,7 +110,7 @@ function getFilterLabel(filter: QueueFilter): string {
     case "blocked":
       return "Blocked";
     case "needs_revision":
-      return "Needs revision";
+      return "Changes requested";
     case "all":
     default:
       return "All submissions";
@@ -119,6 +128,65 @@ function sortSubmissions(entries: Experience[], sortOrder: SortOrder) {
   });
 }
 
+function createEmptyWordingEdits(): PublicWordingEditorState {
+  return {
+    accommodationReview: "",
+    generalTips: "",
+    academicAdvice: "",
+    socialAdvice: "",
+    bestExperience: "",
+    courseNotes: [],
+  };
+}
+
+function buildWordingEditsPayload(wordingEdits: PublicWordingEditorState) {
+  return {
+    accommodationReview: wordingEdits.accommodationReview,
+    generalTips: wordingEdits.generalTips,
+    academicAdvice: wordingEdits.academicAdvice,
+    socialAdvice: wordingEdits.socialAdvice,
+    bestExperience: wordingEdits.bestExperience,
+    courseNotes: Object.fromEntries(
+      wordingEdits.courseNotes.map((courseNote) => [
+        courseNote.id,
+        courseNote.value,
+      ]),
+    ),
+  };
+}
+
+const PUBLIC_WORDING_FIELDS: Array<{
+  label: string;
+  field: NarrativeWordingField;
+  placeholder: string;
+}> = [
+  {
+    label: "Accommodation review",
+    field: "accommodationReview",
+    placeholder: "Optional public-facing housing comment.",
+  },
+  {
+    label: "General tips",
+    field: "generalTips",
+    placeholder: "Optional destination-level practical tip.",
+  },
+  {
+    label: "Academic advice",
+    field: "academicAdvice",
+    placeholder: "Optional course and workload guidance.",
+  },
+  {
+    label: "Social advice",
+    field: "socialAdvice",
+    placeholder: "Optional social and settling-in guidance.",
+  },
+  {
+    label: "Best experience",
+    field: "bestExperience",
+    placeholder: "Optional highlight shown in public practical tips.",
+  },
+];
+
 export default function ReviewSubmissions() {
   const { status } = useSession();
   const router = useRouter();
@@ -129,8 +197,11 @@ export default function ReviewSubmissions() {
   const [loading, setLoading] = useState(true);
   const [reviewing, setReviewing] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [wordingEdits, setWordingEdits] =
+    useState<PublicWordingEditorState>(createEmptyWordingEdits);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
   const [queueFilter, setQueueFilter] = useState<QueueFilter>("all");
   const [sortOrder, setSortOrder] = useState<SortOrder>("newest");
 
@@ -148,7 +219,7 @@ export default function ReviewSubmissions() {
     }
   }, [status]);
 
-  const fetchSubmissions = async () => {
+  const fetchSubmissions = async (): Promise<Experience[]> => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -157,43 +228,51 @@ export default function ReviewSubmissions() {
 
       if (!response.ok) {
         setError("Failed to load submissions");
-        return;
+        return [];
       }
 
-      setSubmissions(await response.json());
+      const nextSubmissions = (await response.json()) as Experience[];
+      setSubmissions(nextSubmissions);
+      return nextSubmissions;
     } catch (fetchError) {
       console.error("Error fetching submissions:", fetchError);
       setError("Failed to load submissions");
+      return [];
     } finally {
       setLoading(false);
     }
   };
 
   const handleReview = async (
-    action: "APPROVED" | "REJECTED" | "REVISION_REQUESTED",
+    action: "APPROVED" | "REJECTED" | "REQUEST_CHANGES" | "WORDING_EDITED",
   ) => {
     if (!selectedSubmission) {
       return;
     }
 
     if (
-      (action === "REJECTED" || action === "REVISION_REQUESTED") &&
+      (action === "REJECTED" || action === "REQUEST_CHANGES") &&
       !feedback.trim()
     ) {
-      setError("Feedback is required for rejection or revision requests");
+      setError("Feedback is required for rejection or change requests");
       return;
     }
 
     try {
       setReviewing(true);
       setError(null);
+      setWarning(null);
 
       const response = await fetch(
         `/api/admin/erasmus-experiences/${selectedSubmission.id}/review`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action, feedback }),
+          body: JSON.stringify({
+            action,
+            feedback,
+            wordingEdits: buildWordingEditsPayload(wordingEdits),
+          }),
         },
       );
 
@@ -204,10 +283,36 @@ export default function ReviewSubmissions() {
       }
 
       const result = await response.json();
-      setSuccess(result.message);
-      setFeedback("");
-      setSelectedSubmission(null);
-      await fetchSubmissions();
+      const nextSubmissions = await fetchSubmissions();
+
+      if (
+        result.notification &&
+        result.notification.status &&
+        result.notification.status !== "sent"
+      ) {
+        setWarning(result.message);
+        setSuccess(null);
+      } else {
+        setSuccess(result.message);
+        setWarning(null);
+      }
+
+      if (action === "WORDING_EDITED") {
+        const refreshedSelection =
+          nextSubmissions.find(
+            (submission) => submission.id === selectedSubmission.id,
+          ) || null;
+        setSelectedSubmission(refreshedSelection);
+        if (refreshedSelection) {
+          setWordingEdits(getPublicWordingEditorState(refreshedSelection));
+          setFeedback(refreshedSelection.reviewFeedback || feedback);
+        }
+      } else {
+        setFeedback("");
+        setWordingEdits(createEmptyWordingEdits());
+        setSelectedSubmission(null);
+      }
+
       setTimeout(() => setSuccess(null), 3000);
     } catch (reviewError) {
       console.error("Error reviewing submission:", reviewError);
@@ -228,6 +333,16 @@ export default function ReviewSubmissions() {
       }
       return `${trimmed}\n\n${presetText}`;
     });
+  };
+
+  const updateNarrativeWordingField = (
+    field: NarrativeWordingField,
+    value: string,
+  ) => {
+    setWordingEdits((current) => ({
+      ...current,
+      [field]: value,
+    }));
   };
 
   const queueCounts = useMemo(
@@ -309,8 +424,9 @@ export default function ReviewSubmissions() {
               Review Submissions
             </h1>
             <p className="max-w-3xl text-gray-600">
-              Review publishability, see what each submission adds publicly,
-              and decide whether to approve, revise, or reject.
+              Review publishability, adjust public wording without changing the
+              student source, and decide whether to approve, request changes,
+              or reject.
             </p>
           </section>
 
@@ -326,6 +442,15 @@ export default function ReviewSubmissions() {
               <CheckCircle className="h-4 w-4 text-green-600" />
               <AlertDescription className="text-green-800">
                 {success}
+              </AlertDescription>
+            </Alert>
+          ) : null}
+
+          {warning ? (
+            <Alert className="mb-4 border-amber-200 bg-amber-50">
+              <AlertCircle className="h-4 w-4 text-amber-700" />
+              <AlertDescription className="text-amber-900">
+                {warning}
               </AlertDescription>
             </Alert>
           ) : null}
@@ -347,7 +472,9 @@ export default function ReviewSubmissions() {
                     onClick={() => {
                       setSelectedSubmission(null);
                       setFeedback("");
+                      setWordingEdits(createEmptyWordingEdits());
                       setError(null);
+                      setWarning(null);
                     }}
                   >
                     <ArrowLeft className="mr-2 h-4 w-4" />
@@ -472,7 +599,7 @@ export default function ReviewSubmissions() {
                     {[
                       ["Courses", selectedSummary?.courseSummary],
                       ["Accommodation", selectedSummary?.accommodationSummary],
-                      ["Budget", selectedSummary?.budgetSummary],
+                      ["Living costs", selectedSummary?.budgetSummary],
                       ["Tips", selectedSummary?.tipsSummary],
                     ].map(([label, value]) => (
                       <Card
@@ -488,6 +615,90 @@ export default function ReviewSubmissions() {
                       </Card>
                     ))}
                   </div>
+
+                  <Card className="border border-gray-200 shadow-none">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base">
+                        Public wording edits
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <p className="text-sm text-gray-600">
+                        These overrides affect only public phrasing. Student
+                        source data stays unchanged, and every save is logged in
+                        the moderation audit trail.
+                      </p>
+
+                      <div className="grid gap-4 md:grid-cols-2">
+                        {PUBLIC_WORDING_FIELDS.map((fieldConfig) => (
+                          <div key={fieldConfig.field} className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-900">
+                              {fieldConfig.label}
+                            </label>
+                            <Textarea
+                              value={wordingEdits[fieldConfig.field]}
+                              onChange={(event) =>
+                                updateNarrativeWordingField(
+                                  fieldConfig.field,
+                                  event.target.value,
+                                )
+                              }
+                              placeholder={fieldConfig.placeholder}
+                              rows={4}
+                              className="w-full"
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      {wordingEdits.courseNotes.length > 0 ? (
+                        <div className="space-y-3">
+                          <p className="text-sm font-medium text-gray-900">
+                            Course note wording
+                          </p>
+                          <div className="space-y-4">
+                            {wordingEdits.courseNotes.map((courseNote) => (
+                              <div key={courseNote.id} className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-700">
+                                  {courseNote.label}
+                                </label>
+                                <Textarea
+                                  value={courseNote.value}
+                                  onChange={(event) =>
+                                    setWordingEdits((current) => ({
+                                      ...current,
+                                      courseNotes: current.courseNotes.map((item) =>
+                                        item.id === courseNote.id
+                                          ? {
+                                              ...item,
+                                              value: event.target.value,
+                                            }
+                                          : item,
+                                      ),
+                                    }))
+                                  }
+                                  placeholder="Optional public-facing course note."
+                                  rows={3}
+                                  className="w-full"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ) : null}
+
+                      <div className="flex flex-wrap gap-3">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => handleReview("WORDING_EDITED")}
+                          disabled={reviewing}
+                        >
+                          Save wording edits
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
 
                   <Card className="border border-gray-200 shadow-none">
                     <CardHeader className="pb-3">
@@ -520,7 +731,7 @@ export default function ReviewSubmissions() {
                         <Textarea
                           value={feedback}
                           onChange={(event) => setFeedback(event.target.value)}
-                          placeholder="Add concise moderation notes or revision guidance."
+                          placeholder="Add concise moderation notes or requested-change guidance."
                           rows={5}
                           className="w-full"
                         />
@@ -537,12 +748,12 @@ export default function ReviewSubmissions() {
                         </Button>
                         {selectedSubmission.revisionCount < 1 ? (
                           <Button
-                            onClick={() => handleReview("REVISION_REQUESTED")}
+                            onClick={() => handleReview("REQUEST_CHANGES")}
                             disabled={reviewing}
                             variant="outline"
                           >
                             <AlertCircle className="mr-2 h-4 w-4" />
-                            Request revision
+                            Request changes
                           </Button>
                         ) : null}
                         <Button
@@ -566,7 +777,7 @@ export default function ReviewSubmissions() {
                   ["Pending", queueCounts.all],
                   ["Ready", queueCounts.ready],
                   ["Blocked", queueCounts.blocked],
-                  ["Needs revision", queueCounts.needs_revision],
+                  ["Changes requested", queueCounts.needs_revision],
                 ].map(([label, value]) => (
                   <Card key={label} className="border border-gray-200 shadow-none">
                     <CardContent className="space-y-1 p-4">
@@ -654,7 +865,11 @@ export default function ReviewSubmissions() {
                           onClick={() => {
                             setSelectedSubmission(submission);
                             setFeedback(submission.reviewFeedback || "");
+                            setWordingEdits(
+                              getPublicWordingEditorState(submission),
+                            );
                             setError(null);
+                            setWarning(null);
                           }}
                         >
                           Review
@@ -664,10 +879,13 @@ export default function ReviewSubmissions() {
 
                       <div className="grid gap-3 text-sm md:grid-cols-2 xl:grid-cols-5">
                         {[
-                          ["Public sections", summary.publishableSections.join(", ") || "None yet"],
+                          [
+                            "Public sections",
+                            summary.publishableSections.join(", ") || "None yet",
+                          ],
                           ["Courses", summary.courseSummary],
                           ["Accommodation", summary.accommodationSummary],
-                          ["Budget", summary.budgetSummary],
+                          ["Living costs", summary.budgetSummary],
                           ["Tips", summary.tipsSummary],
                         ].map(([label, value]) => (
                           <div

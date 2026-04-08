@@ -151,8 +151,9 @@ export default function DestinationsPage({
             universities.
           </p>
           <p className="max-w-3xl text-sm leading-7 text-slate-500">
-            Budget figures are student-reported averages and may reflect local
-            or mixed currencies.
+            Monthly rent is the minimum cost signal. Food, transport, social,
+            travel, and other student-reported costs expand the monthly
+            estimate when available, and mixed currencies remain directional.
           </p>
           <p className="max-w-3xl text-sm leading-7 text-slate-500">
             Trust signals include sample size and the latest approved report

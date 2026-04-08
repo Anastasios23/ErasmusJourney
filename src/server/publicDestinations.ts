@@ -18,6 +18,7 @@ import {
 } from "../lib/publicDestinationPresentation";
 import { PUBLIC_DESTINATION_READ_MODEL_TTL_MS } from "../lib/publicDestinationCache";
 import { buildPreviewUnavailableReason } from "../lib/adminPublicImpactPreview";
+import { getExperiencePublicWordingEdits } from "../lib/experienceModeration";
 import type { AdminPublicImpactPreview } from "../types/adminPublicImpactPreview";
 import type {
   PublicDestinationAccommodationInsights,
@@ -33,6 +34,7 @@ type RawExperience = {
   hostCity: string | null;
   hostCountry: string | null;
   hostUniversityId: string | null;
+  adminNotes: string | null;
   submittedAt: Date | null;
   updatedAt: Date;
   hostUniversity: { name: string } | null;
@@ -272,6 +274,21 @@ function normalizeLabel(value: unknown, maxLength = 140): string {
   return normalizePublicDestinationText(value, { maxLength }) || "";
 }
 
+function getEffectivePublicWording(
+  overrideValue: string | null | undefined,
+  rawValue: unknown,
+): string {
+  if (overrideValue === null) {
+    return "";
+  }
+
+  if (typeof overrideValue === "string") {
+    return overrideValue;
+  }
+
+  return typeof rawValue === "string" ? rawValue : "";
+}
+
 async function loadApprovedExperiences(): Promise<RawExperience[]> {
   return prisma.erasmusExperience.findMany({
     where: {
@@ -285,6 +302,7 @@ async function loadApprovedExperiences(): Promise<RawExperience[]> {
       hostCity: true,
       hostCountry: true,
       hostUniversityId: true,
+      adminNotes: true,
       submittedAt: true,
       updatedAt: true,
       hostUniversity: {
@@ -310,6 +328,7 @@ async function loadExperienceById(id: string): Promise<RawExperience | null> {
       hostCity: true,
       hostCountry: true,
       hostUniversityId: true,
+      adminNotes: true,
       submittedAt: true,
       updatedAt: true,
       hostUniversity: {
@@ -384,6 +403,9 @@ function buildGroupedDestinations(
 
     const basicInfo = sanitizeBasicInformationData(
       toRecord(experience.basicInfo),
+    );
+    const publicWordingEdits = getExperiencePublicWordingEdits(
+      experience.adminNotes,
     );
     const accommodation = sanitizeAccommodationStepData(
       toRecord(experience.accommodation),
@@ -473,7 +495,10 @@ function buildGroupedDestinations(
     }
 
     const reviewSnippet = sanitizePublicDestinationNarrative(
-      accommodation.accommodationReview,
+      getEffectivePublicWording(
+        publicWordingEdits.accommodationReview,
+        accommodation.accommodationReview,
+      ),
       { maxLength: 180 },
     );
     if (reviewSnippet) {
@@ -504,26 +529,57 @@ function buildGroupedDestinations(
         homeCourseName,
         hostCourseName,
         recognitionType: recognitionLabel(mapping.recognitionType),
-        notes: sanitizePublicDestinationNarrative(mapping.notes, {
-          maxLength: 220,
-        }) || undefined,
+        notes:
+          sanitizePublicDestinationNarrative(
+            getEffectivePublicWording(
+              publicWordingEdits.courseNotes?.[mapping.id],
+              mapping.notes,
+            ),
+            {
+              maxLength: 220,
+            },
+          ) || undefined,
       });
     }
 
     const experienceData = toRecord(experience.experience);
     const tips = [
-      sanitizePublicDestinationNarrative(experienceData?.generalTips, {
-        maxLength: 220,
-      }),
-      sanitizePublicDestinationNarrative(experienceData?.academicAdvice, {
-        maxLength: 220,
-      }),
-      sanitizePublicDestinationNarrative(experienceData?.socialAdvice, {
-        maxLength: 220,
-      }),
-      sanitizePublicDestinationNarrative(experienceData?.bestExperience, {
-        maxLength: 220,
-      }),
+      sanitizePublicDestinationNarrative(
+        getEffectivePublicWording(
+          publicWordingEdits.generalTips,
+          experienceData?.generalTips,
+        ),
+        {
+          maxLength: 220,
+        },
+      ),
+      sanitizePublicDestinationNarrative(
+        getEffectivePublicWording(
+          publicWordingEdits.academicAdvice,
+          experienceData?.academicAdvice,
+        ),
+        {
+          maxLength: 220,
+        },
+      ),
+      sanitizePublicDestinationNarrative(
+        getEffectivePublicWording(
+          publicWordingEdits.socialAdvice,
+          experienceData?.socialAdvice,
+        ),
+        {
+          maxLength: 220,
+        },
+      ),
+      sanitizePublicDestinationNarrative(
+        getEffectivePublicWording(
+          publicWordingEdits.bestExperience,
+          experienceData?.bestExperience,
+        ),
+        {
+          maxLength: 220,
+        },
+      ),
     ].filter((tip): tip is string => Boolean(tip));
 
     destination.practicalTips.push(...tips);
@@ -676,6 +732,9 @@ function buildCourseEquivalences(
 function buildPendingAccommodationContribution(
   experience: RawExperience,
 ): AdminPublicImpactPreview["accommodation"]["contribution"] {
+  const publicWordingEdits = getExperiencePublicWordingEdits(
+    experience.adminNotes,
+  );
   const accommodation = sanitizeAccommodationStepData(
     toRecord(experience.accommodation),
   );
@@ -690,7 +749,10 @@ function buildPendingAccommodationContribution(
       )
     : undefined;
   const reviewSnippet = sanitizePublicDestinationNarrative(
-    accommodation.accommodationReview,
+    getEffectivePublicWording(
+      publicWordingEdits.accommodationReview,
+      accommodation.accommodationReview,
+    ),
     { maxLength: 180 },
   );
 
@@ -720,6 +782,9 @@ function buildPendingCourseContributionExamples(
   experience: RawExperience,
 ): AdminPublicImpactPreview["courses"]["contributionExamples"] {
   const basicInfo = sanitizeBasicInformationData(toRecord(experience.basicInfo));
+  const publicWordingEdits = getExperiencePublicWordingEdits(
+    experience.adminNotes,
+  );
   const homeUniversity =
     normalizeLabel(basicInfo.homeUniversity, 140) ||
     "Unspecified home university";
@@ -751,9 +816,15 @@ function buildPendingCourseContributionExamples(
       hostCourseName,
       recognitionType: recognitionLabel(mapping.recognitionType),
       notes:
-        sanitizePublicDestinationNarrative(mapping.notes, {
-          maxLength: 220,
-        }) || undefined,
+        sanitizePublicDestinationNarrative(
+          getEffectivePublicWording(
+            publicWordingEdits.courseNotes?.[mapping.id],
+            mapping.notes,
+          ),
+          {
+            maxLength: 220,
+          },
+        ) || undefined,
     });
 
     if (examples.length >= 6) {
@@ -1038,6 +1109,7 @@ async function persistPublicDestinationReadModel(
           country: row.country,
           hostUniversityCount: row.hostUniversityCount,
           submissionCount: row.submissionCount,
+          latestReportSubmittedAt: row.latestReportSubmittedAt,
           averageRent: row.averageRent,
           averageMonthlyCost: row.averageMonthlyCost,
           detail: row.detail,

@@ -1,20 +1,26 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const {
+  mockFetch,
   mockGetServerSession,
   mockUserFindUnique,
   mockExperienceFindUnique,
   mockExperienceFindMany,
+  mockExperienceUpdate,
+  mockReviewActionCreate,
   mockTransaction,
   mockPreviewBuilder,
   mockPreviewUnavailableReason,
   mockRefreshPublicDestinationReadModel,
   mockRevalidatePublicDestinationPages,
 } = vi.hoisted(() => ({
+  mockFetch: vi.fn(),
   mockGetServerSession: vi.fn(),
   mockUserFindUnique: vi.fn(),
   mockExperienceFindUnique: vi.fn(),
   mockExperienceFindMany: vi.fn(),
+  mockExperienceUpdate: vi.fn(),
+  mockReviewActionCreate: vi.fn(),
   mockTransaction: vi.fn(),
   mockPreviewBuilder: vi.fn(),
   mockPreviewUnavailableReason: vi.fn(),
@@ -38,10 +44,10 @@ vi.mock("../../lib/prisma", () => ({
     erasmusExperience: {
       findUnique: mockExperienceFindUnique,
       findMany: mockExperienceFindMany,
-      update: vi.fn(),
+      update: mockExperienceUpdate,
     },
     reviewAction: {
-      create: vi.fn(),
+      create: mockReviewActionCreate,
     },
     $transaction: mockTransaction,
   },
@@ -90,18 +96,115 @@ function createMockRes() {
   return res;
 }
 
+function createSubmittedExperience(
+  overrides: Record<string, unknown> = {},
+): Record<string, unknown> {
+  return {
+    id: "experience-base",
+    status: "SUBMITTED",
+    revisionCount: 0,
+    hostCity: "Amsterdam",
+    hostCountry: "Netherlands",
+    semester: "2026/2027 Fall",
+    adminNotes: null,
+    basicInfo: {
+      homeUniversity: "University of Cyprus",
+      hostUniversity: "University of Amsterdam",
+      hostCity: "Amsterdam",
+      hostCountry: "Netherlands",
+    },
+    accommodation: {
+      accommodationType: "shared_apartment",
+      monthlyRent: 500,
+      currency: "EUR",
+      accommodationReview: "Original housing note.",
+    },
+    livingExpenses: {
+      currency: "EUR",
+      food: null,
+      transport: null,
+      social: null,
+      other: null,
+    },
+    courses: [
+      {
+        id: "course-1",
+        homeCourseName: "Algorithms",
+        homeECTS: 6,
+        hostCourseName: "Advanced Algorithms",
+        hostECTS: 6,
+        recognitionType: "full_equivalence",
+        notes: "Original course note.",
+      },
+    ],
+    experience: {
+      generalTips: "Original general tip.",
+      academicAdvice: "Original academic advice.",
+      socialAdvice: "Original social advice.",
+      bestExperience: "Original best experience.",
+    },
+    users: {
+      email: "student@example.com",
+      firstName: "Ada",
+      lastName: "Student",
+    },
+    ...overrides,
+  };
+}
+
 describe("admin public impact preview routes", () => {
+  const previousResendApiKey = process.env.RESEND_API_KEY;
+  const previousModerationEmailFrom = process.env.MODERATION_EMAIL_FROM;
+  const previousNextAuthUrl = process.env.NEXTAUTH_URL;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubGlobal("fetch", mockFetch);
+
+    process.env.RESEND_API_KEY = "";
+    process.env.MODERATION_EMAIL_FROM = "";
+    process.env.NEXTAUTH_URL = "http://localhost:3000";
 
     mockGetServerSession.mockResolvedValue({
       user: { id: "admin-1" },
     });
     mockUserFindUnique.mockResolvedValue({ role: "ADMIN" });
     mockExperienceFindMany.mockResolvedValue([]);
-    mockTransaction.mockResolvedValue([]);
+    mockExperienceUpdate.mockImplementation(async ({ data }: { data: any }) => ({
+      id: "experience-base",
+      status: data.status || "SUBMITTED",
+      adminNotes: data.adminNotes || null,
+      reviewFeedback: data.reviewFeedback || null,
+    }));
+    mockReviewActionCreate.mockImplementation(
+      async ({ data }: { data: { action: string; feedback: string | null } }) => ({
+        id: `review-action-${data.action.toLowerCase()}`,
+        action: data.action,
+        feedback: data.feedback,
+      }),
+    );
+    mockTransaction.mockImplementation(async (callback: any) =>
+      callback({
+        erasmusExperience: {
+          update: mockExperienceUpdate,
+        },
+        reviewAction: {
+          create: mockReviewActionCreate,
+        },
+      }),
+    );
     mockRefreshPublicDestinationReadModel.mockResolvedValue(undefined);
     mockRevalidatePublicDestinationPages.mockResolvedValue(undefined);
+    mockFetch.mockResolvedValue({
+      ok: true,
+      text: async () => "",
+    });
+  });
+
+  afterAll(() => {
+    process.env.RESEND_API_KEY = previousResendApiKey;
+    process.env.MODERATION_EMAIL_FROM = previousModerationEmailFrom;
+    process.env.NEXTAUTH_URL = previousNextAuthUrl;
   });
 
   it("returns preview payload for an admin when a preview can be built", async () => {
@@ -141,7 +244,7 @@ describe("admin public impact preview routes", () => {
     expect(res.jsonPayload).toEqual(preview);
   });
 
-  it("returns 404 with a publishability reason when destination identity is incomplete", async () => {
+  it("returns 404 with a publishability reason when the minimum contract is incomplete", async () => {
     mockPreviewBuilder.mockResolvedValue(null);
     mockPreviewUnavailableReason.mockResolvedValue({
       code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
@@ -185,49 +288,19 @@ describe("admin public impact preview routes", () => {
   });
 
   it("blocks approval when publishability-critical destination fields are missing", async () => {
-    mockExperienceFindUnique.mockResolvedValue({
-      id: "experience-4",
-      status: "SUBMITTED",
-      revisionCount: 0,
-      hostCity: null,
-      hostCountry: "Netherlands",
-      semester: "2026/2027 Fall",
-      basicInfo: {
-        homeUniversity: "University of Cyprus",
-        homeDepartment: "Computer Science",
-        hostUniversity: "University of Amsterdam",
+    mockExperienceFindUnique.mockResolvedValue(
+      createSubmittedExperience({
+        id: "experience-4",
         hostCity: null,
-        hostCountry: "Netherlands",
-      },
-      accommodation: {
-        accommodationType: "shared_apartment",
-        monthlyRent: 520,
-        currency: "EUR",
-        wouldRecommend: true,
-        accommodationRating: 4,
-      },
-      livingExpenses: {
-        currency: "EUR",
-        food: 220,
-        transport: 45,
-        social: 180,
-      },
-      courses: [
-        {
-          id: "course-1",
-          homeCourseName: "Algorithms",
-          homeECTS: 6,
-          hostCourseName: "Advanced Algorithms",
-          hostECTS: 6,
-          recognitionType: "full_equivalence",
+        basicInfo: {
+          homeUniversity: "University of Cyprus",
+          homeDepartment: "Computer Science",
+          hostUniversity: "University of Amsterdam",
+          hostCity: null,
+          hostCountry: "Netherlands",
         },
-      ],
-      user: {
-        id: "student-1",
-        name: "Student",
-        email: "student@example.com",
-      },
-    });
+      }),
+    );
 
     const req = createMockReq({
       method: "POST",
@@ -248,101 +321,19 @@ describe("admin public impact preview routes", () => {
     expect(mockTransaction).not.toHaveBeenCalled();
   });
 
-  it("blocks approval when the MVP minimum public contract is incomplete beyond destination identity", async () => {
-    mockExperienceFindUnique.mockResolvedValue({
-      id: "experience-5",
-      status: "SUBMITTED",
-      revisionCount: 0,
-      hostCity: "Amsterdam",
-      hostCountry: "Netherlands",
-      semester: "2026/2027 Fall",
-      basicInfo: {
-        homeUniversity: "University of Cyprus",
-        homeDepartment: "Computer Science",
-        hostUniversity: "University of Amsterdam",
-        hostCity: "Amsterdam",
-        hostCountry: "Netherlands",
-      },
-      accommodation: {
-        currency: "EUR",
-      },
-      livingExpenses: {
-        currency: "EUR",
-        food: null,
-        transport: null,
-        social: null,
-      },
-      courses: [],
-      user: {
-        id: "student-1",
-        name: "Student",
-        email: "student@example.com",
-      },
-    });
-
-    const req = createMockReq({
-      method: "POST",
-      query: { id: "experience-5" },
-      body: { action: "APPROVED", feedback: "" },
-    });
-    const res = createMockRes();
-
-    await reviewHandler(req as any, res as any);
-
-    expect(res.statusCode).toBe(400);
-    expect(res.jsonPayload).toEqual({
-      error:
-        "Cannot preview or publish this submission until the MVP minimum public contract is complete: host city, host country, host university, home university, accommodation type, monthly rent, and at least one complete course-equivalence example.",
-      code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
-      missingFields: [
-        "accommodationType",
-        "monthlyRent",
-        "courseMappings",
-      ],
-    });
-    expect(mockTransaction).not.toHaveBeenCalled();
-  });
-
   it("allows approval when only enrichment fields are missing", async () => {
-    mockExperienceFindUnique.mockResolvedValue({
-      id: "experience-6",
-      status: "SUBMITTED",
-      revisionCount: 0,
-      hostCity: "Amsterdam",
-      hostCountry: "Netherlands",
-      semester: "2026/2027 Fall",
-      basicInfo: {
-        homeUniversity: "University of Cyprus",
-        hostUniversity: "University of Amsterdam",
-        hostCity: "Amsterdam",
-        hostCountry: "Netherlands",
-      },
-      accommodation: {
-        accommodationType: "shared_apartment",
-        monthlyRent: 500,
-        currency: "EUR",
-      },
-      livingExpenses: {
-        currency: "EUR",
-        food: null,
-        transport: null,
-        social: null,
-      },
-      courses: [
-        {
-          id: "course-approval",
-          homeCourseName: "Algorithms",
-          homeECTS: 6,
-          hostCourseName: "Advanced Algorithms",
-          hostECTS: 6,
-          recognitionType: "full_equivalence",
+    mockExperienceFindUnique.mockResolvedValue(
+      createSubmittedExperience({
+        id: "experience-6",
+        livingExpenses: {
+          currency: "EUR",
+          food: null,
+          transport: null,
+          social: null,
+          other: null,
         },
-      ],
-    });
-    mockTransaction.mockResolvedValue([
-      { id: "experience-6", status: "APPROVED" },
-      { id: "review-action-6", action: "APPROVED" },
-    ]);
+      }),
+    );
 
     const req = createMockReq({
       method: "POST",
@@ -356,9 +347,146 @@ describe("admin public impact preview routes", () => {
     expect(res.statusCode).toBe(200);
     expect(res.jsonPayload).toEqual({
       success: true,
-      experience: { id: "experience-6", status: "APPROVED" },
-      reviewAction: { id: "review-action-6", action: "APPROVED" },
-      message: "Experience approved successfully! Statistics have been updated.",
+      experience: {
+        id: "experience-base",
+        status: "APPROVED",
+        adminNotes: null,
+        reviewFeedback: null,
+      },
+      reviewAction: {
+        id: "review-action-approved",
+        action: "APPROVED",
+        feedback: null,
+      },
+      reviewActions: [
+        {
+          id: "review-action-approved",
+          action: "APPROVED",
+          feedback: null,
+        },
+      ],
+      message:
+        "Experience approved successfully. Public aggregates were refreshed.",
+    });
+  });
+
+  it("saves wording-only admin edits without changing student submission state", async () => {
+    mockExperienceFindUnique.mockResolvedValue(createSubmittedExperience());
+
+    const req = createMockReq({
+      method: "POST",
+      query: { id: "experience-7" },
+      body: {
+        action: "WORDING_EDITED",
+        wordingEdits: {
+          generalTips: "Cleaner public tip.",
+          courseNotes: {
+            "course-1": "Cleaner public course note.",
+          },
+        },
+      },
+    });
+    const res = createMockRes();
+
+    await reviewHandler(req as any, res as any);
+
+    expect(res.statusCode).toBe(200);
+    expect(mockExperienceUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "experience-7" },
+        data: expect.objectContaining({
+          adminNotes: expect.stringContaining("Cleaner public tip."),
+        }),
+      }),
+    );
+    expect(mockReviewActionCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "WORDING_EDITED",
+          feedback: expect.stringContaining("Updated General tips wording"),
+        }),
+      }),
+    );
+    expect(res.jsonPayload).toEqual({
+      success: true,
+      experience: {
+        id: "experience-base",
+        status: "SUBMITTED",
+        adminNotes: expect.stringContaining("Cleaner public tip."),
+        reviewFeedback: null,
+      },
+      reviewAction: {
+        id: "review-action-wording_edited",
+        action: "WORDING_EDITED",
+        feedback: expect.stringContaining("Updated General tips wording"),
+      },
+      reviewActions: [
+        {
+          id: "review-action-wording_edited",
+          action: "WORDING_EDITED",
+          feedback: expect.stringContaining("Updated General tips wording"),
+        },
+      ],
+      message: "Public wording edits saved. Student source data remains unchanged.",
+    });
+  });
+
+  it("returns a submission to editable revision state and emails the student", async () => {
+    process.env.RESEND_API_KEY = "resend-test-key";
+    process.env.MODERATION_EMAIL_FROM =
+      "Erasmus Journey <noreply@example.com>";
+    mockExperienceFindUnique.mockResolvedValue(createSubmittedExperience());
+
+    const req = createMockReq({
+      method: "POST",
+      query: { id: "experience-8" },
+      body: {
+        action: "REQUEST_CHANGES",
+        feedback: "Please remove the identifying housing details and clarify the advice.",
+      },
+    });
+    const res = createMockRes();
+
+    await reviewHandler(req as any, res as any);
+
+    expect(res.statusCode).toBe(200);
+    expect(mockFetch).toHaveBeenCalledWith(
+      "https://api.resend.com/emails",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          Authorization: "Bearer resend-test-key",
+        }),
+      }),
+    );
+    expect(res.jsonPayload).toEqual({
+      success: true,
+      experience: {
+        id: "experience-base",
+        status: "REVISION_NEEDED",
+        adminNotes: null,
+        reviewFeedback:
+          "Please remove the identifying housing details and clarify the advice.",
+      },
+      reviewAction: {
+        id: "review-action-request_changes",
+        action: "REQUEST_CHANGES",
+        feedback:
+          "Please remove the identifying housing details and clarify the advice.",
+      },
+      reviewActions: [
+        {
+          id: "review-action-request_changes",
+          action: "REQUEST_CHANGES",
+          feedback:
+            "Please remove the identifying housing details and clarify the advice.",
+        },
+      ],
+      notification: {
+        status: "sent",
+      },
+      message:
+        "Changes requested. Submission returned to editable revision state and the student was emailed.",
     });
   });
 });

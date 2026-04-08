@@ -97,6 +97,7 @@ function createExperienceRecord(overrides: Record<string, unknown> = {}) {
       socialAdvice: "Join ESN events in the first week.",
       bestExperience: "Weekend trips with other Erasmus students.",
     },
+    adminNotes: null,
     ...overrides,
   };
 }
@@ -400,6 +401,41 @@ describe("public destination preview-to-approval proof", () => {
     expect(courses?.groups[0]?.examples[0]).not.toHaveProperty("notes");
     expect(JSON.parse(JSON.stringify(detail))).toEqual(detail);
     expect(JSON.parse(JSON.stringify(courses))).toEqual(courses);
+  });
+
+  it("applies audited wording overrides to public destination output", async () => {
+    experiences = [
+      createExperienceRecord({
+        id: "approved-moderated-wording",
+        adminNotes: JSON.stringify({
+          publicWordingEdits: {
+            accommodationReview: "Edited public housing note.",
+            generalTips: "Edited public general tip.",
+            courseNotes: {
+              "course-1": "Edited public course note.",
+            },
+          },
+        }),
+      }),
+    ];
+
+    await refreshPublicDestinationReadModel();
+    invalidatePublicDestinationReadModel();
+
+    const [detail, accommodation, courses] = await Promise.all([
+      getPublicDestinationDetailBySlug("amsterdam-netherlands"),
+      getPublicAccommodationInsightsByDestinationSlug("amsterdam-netherlands"),
+      getPublicCourseEquivalencesByDestinationSlug("amsterdam-netherlands"),
+    ]);
+
+    expect(detail?.practicalTips).toContain("Edited public general tip.");
+    expect(detail?.practicalTips).not.toContain("Start house hunting early.");
+    expect(accommodation?.reviewSnippets).toContain(
+      "Edited public housing note.",
+    );
+    expect(courses?.groups[0]?.examples[0]?.notes).toBe(
+      "Edited public course note.",
+    );
   });
 
   it("serves the persisted read model across list and detail lookups until invalidated", async () => {

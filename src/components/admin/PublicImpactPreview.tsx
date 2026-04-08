@@ -101,6 +101,13 @@ export default function PublicImpactPreview({
             )}
           />
         </CardContent>
+        <CardContent className="pt-0">
+          <p className="text-sm text-slate-600">
+            Monthly rent is the minimum cost signal. Food, transport, social,
+            travel, and other living-cost fields expand monthly totals only
+            when the submission includes them.
+          </p>
+        </CardContent>
       </Card>
 
       <Card>

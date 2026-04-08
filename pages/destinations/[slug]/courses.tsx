@@ -365,7 +365,8 @@ export default function DestinationCoursesPage({
         {hasMappings && (
           <section className="mt-12 border-t border-gray-200 pt-8 text-center">
             <p className="mb-4 text-gray-600">
-              Next, check housing and budget details for {destination.city}.
+              Next, check housing and living-cost details for{" "}
+              {destination.city}.
             </p>
             <Link href={`/destinations/${destination.slug}/accommodation`}>
               <Button className="bg-blue-600 hover:bg-blue-700 text-white">
