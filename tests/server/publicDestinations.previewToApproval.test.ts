@@ -67,6 +67,7 @@ function createExperienceRecord(overrides: Record<string, unknown> = {}) {
       currency: "EUR",
       areaOrNeighborhood: "De Pijp",
       difficultyFindingAccommodation: "moderate",
+      accommodationRating: 4,
       wouldRecommend: true,
       accommodationReview: "Good transport links and easy bike commute.",
     },
@@ -123,6 +124,7 @@ describe("public destination preview-to-approval proof", () => {
           currency: "EUR",
           areaOrNeighborhood: "Oud-West",
           difficultyFindingAccommodation: "difficult",
+          accommodationRating: 3,
           wouldRecommend: false,
           accommodationReview:
             "More expensive, but close to lectures and grocery stores.",
@@ -260,10 +262,56 @@ describe("public destination preview-to-approval proof", () => {
 
     expect(preview).toBeNull();
     expect(unavailableReason).toEqual({
-      code: "INCOMPLETE_DESTINATION_IDENTITY",
+      code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
       message:
-        "Cannot preview or publish this submission to public destination pages until the destination city and country are complete.",
+        "Cannot preview or publish this submission until the minimum public contract is complete: destination identity, accommodation reality, living costs, and at least one complete course-equivalence example.",
       missingFields: ["hostCity"],
+    });
+  });
+
+  it("blocks preview when the minimum public contract is incomplete beyond destination identity", async () => {
+    experiences = [
+      createExperienceRecord({
+        id: "submitted-incomplete-contract",
+        status: "SUBMITTED",
+        accommodation: {
+          currency: "EUR",
+        },
+        livingExpenses: {
+          currency: "EUR",
+          food: null,
+          transport: null,
+          social: null,
+          travel: null,
+          other: null,
+        },
+        courses: [],
+      }),
+    ];
+
+    const preview = await getAdminPublicImpactPreviewByExperienceId(
+      "submitted-incomplete-contract",
+    );
+    const unavailableReason =
+      await getAdminPublicImpactPreviewUnavailableReasonByExperienceId(
+        "submitted-incomplete-contract",
+      );
+
+    expect(preview).toBeNull();
+    expect(unavailableReason).toEqual({
+      code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
+      message:
+        "Cannot preview or publish this submission until the minimum public contract is complete: destination identity, accommodation reality, living costs, and at least one complete course-equivalence example.",
+      missingFields: [
+        "accommodationType",
+        "monthlyRent",
+        "wouldRecommend",
+        "accommodationRating",
+        "food",
+        "transport",
+        "social",
+        "courseMappings",
+      ],
     });
   });
 

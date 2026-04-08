@@ -66,6 +66,18 @@ const CORE_DESTINATION_FIELD_LABELS: Record<string, string> = {
   hostCountry: "Host country",
 };
 
+const PUBLIC_CONTRACT_FIELD_LABELS: Record<string, string> = {
+  ...CORE_DESTINATION_FIELD_LABELS,
+  accommodationType: "Accommodation type",
+  monthlyRent: "Monthly rent",
+  wouldRecommend: "Would recommend",
+  accommodationRating: "Accommodation rating",
+  food: "Food",
+  transport: "Transport",
+  social: "Social",
+  courseMappings: "At least 1 complete course mapping",
+};
+
 function truncateText(value: string, maxLength = 140): string {
   const normalized = value.replace(/\s+/g, " ").trim();
   if (!normalized) {
@@ -127,7 +139,7 @@ export function getApprovalReadiness(
   const coreMissingFields = getCoreDestinationMissingFields(submission);
   const previewMissingFields =
     submission.publicImpactPreviewUnavailableReason?.missingFields?.map(
-      (field) => CORE_DESTINATION_FIELD_LABELS[field] || field,
+      (field) => PUBLIC_CONTRACT_FIELD_LABELS[field] || field,
     ) || [];
   const missingFields = Array.from(
     new Set([...coreMissingFields, ...previewMissingFields]),
@@ -139,7 +151,7 @@ export function getApprovalReadiness(
       label: "Blocked",
       variant: "error",
       description:
-        "Complete the core destination identity before approving this submission.",
+        "Complete the minimum public contract before approving this submission.",
       missingFields,
     };
   }
@@ -148,7 +160,7 @@ export function getApprovalReadiness(
     status: "ready",
     label: "Ready",
     variant: "success",
-    description: "Core destination identity is complete and can publish safely.",
+    description: "Minimum public contract is complete and can publish safely.",
     missingFields: [],
   };
 }

@@ -87,4 +87,46 @@ describe("adminReview helpers", () => {
       }),
     ).toBe("needs_revision");
   });
+
+  it("blocks approval readiness when the minimum public contract is incomplete", () => {
+    const readiness = getApprovalReadiness({
+      basicInfo: {
+        homeUniversity: "University of Cyprus",
+        homeDepartment: "Computer Science",
+        hostUniversity: "University of Amsterdam",
+        hostCity: "Amsterdam",
+        hostCountry: "Netherlands",
+      },
+      publicImpactPreviewUnavailableReason: {
+        code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
+        message:
+          "Cannot preview or publish this submission until the minimum public contract is complete: destination identity, accommodation reality, living costs, and at least one complete course-equivalence example.",
+        missingFields: [
+          "accommodationType",
+          "monthlyRent",
+          "wouldRecommend",
+          "accommodationRating",
+          "food",
+          "transport",
+          "social",
+          "courseMappings",
+        ],
+      },
+    });
+
+    expect(readiness.status).toBe("blocked");
+    expect(readiness.description).toBe(
+      "Complete the minimum public contract before approving this submission.",
+    );
+    expect(readiness.missingFields).toEqual([
+      "Accommodation type",
+      "Monthly rent",
+      "Would recommend",
+      "Accommodation rating",
+      "Food",
+      "Transport",
+      "Social",
+      "At least 1 complete course mapping",
+    ]);
+  });
 });

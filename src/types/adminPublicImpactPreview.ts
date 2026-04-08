@@ -4,10 +4,23 @@ import type {
   PublicDestinationDetail,
 } from "./publicDestinations";
 
-export type AdminPublicImpactMissingField = "hostCity" | "hostCountry";
+export type AdminPublicImpactMissingField =
+  | "homeUniversity"
+  | "homeDepartment"
+  | "hostUniversity"
+  | "hostCity"
+  | "hostCountry"
+  | "accommodationType"
+  | "monthlyRent"
+  | "wouldRecommend"
+  | "accommodationRating"
+  | "food"
+  | "transport"
+  | "social"
+  | "courseMappings";
 
 export interface AdminPublicImpactPreviewUnavailable {
-  code: "INCOMPLETE_DESTINATION_IDENTITY";
+  code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT";
   message: string;
   missingFields: AdminPublicImpactMissingField[];
 }

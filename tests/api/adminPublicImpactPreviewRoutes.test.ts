@@ -140,9 +140,9 @@ describe("admin public impact preview routes", () => {
   it("returns 404 with a publishability reason when destination identity is incomplete", async () => {
     mockPreviewBuilder.mockResolvedValue(null);
     mockPreviewUnavailableReason.mockResolvedValue({
-      code: "INCOMPLETE_DESTINATION_IDENTITY",
+      code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
       message:
-        "Cannot preview or publish this submission to public destination pages until the destination city and country are complete.",
+        "Cannot preview or publish this submission until the minimum public contract is complete: destination identity, accommodation reality, living costs, and at least one complete course-equivalence example.",
       missingFields: ["hostCity", "hostCountry"],
     });
 
@@ -157,8 +157,8 @@ describe("admin public impact preview routes", () => {
     expect(res.statusCode).toBe(404);
     expect(res.jsonPayload).toEqual({
       error:
-        "Cannot preview or publish this submission to public destination pages until the destination city and country are complete.",
-      code: "INCOMPLETE_DESTINATION_IDENTITY",
+        "Cannot preview or publish this submission until the minimum public contract is complete: destination identity, accommodation reality, living costs, and at least one complete course-equivalence example.",
+      code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
       missingFields: ["hostCity", "hostCountry"],
     });
   });
@@ -188,6 +188,36 @@ describe("admin public impact preview routes", () => {
       hostCity: null,
       hostCountry: "Netherlands",
       semester: "2026/2027 Fall",
+      basicInfo: {
+        homeUniversity: "University of Cyprus",
+        homeDepartment: "Computer Science",
+        hostUniversity: "University of Amsterdam",
+        hostCity: null,
+        hostCountry: "Netherlands",
+      },
+      accommodation: {
+        accommodationType: "shared_apartment",
+        monthlyRent: 520,
+        currency: "EUR",
+        wouldRecommend: true,
+        accommodationRating: 4,
+      },
+      livingExpenses: {
+        currency: "EUR",
+        food: 220,
+        transport: 45,
+        social: 180,
+      },
+      courses: [
+        {
+          id: "course-1",
+          homeCourseName: "Algorithms",
+          homeECTS: 6,
+          hostCourseName: "Advanced Algorithms",
+          hostECTS: 6,
+          recognitionType: "full_equivalence",
+        },
+      ],
       user: {
         id: "student-1",
         name: "Student",
@@ -207,9 +237,69 @@ describe("admin public impact preview routes", () => {
     expect(res.statusCode).toBe(400);
     expect(res.jsonPayload).toEqual({
       error:
-        "Cannot preview or publish this submission to public destination pages until the destination city and country are complete.",
-      code: "INCOMPLETE_DESTINATION_IDENTITY",
+        "Cannot preview or publish this submission until the minimum public contract is complete: destination identity, accommodation reality, living costs, and at least one complete course-equivalence example.",
+      code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
       missingFields: ["hostCity"],
+    });
+    expect(mockTransaction).not.toHaveBeenCalled();
+  });
+
+  it("blocks approval when the minimum public contract is incomplete beyond destination identity", async () => {
+    mockExperienceFindUnique.mockResolvedValue({
+      id: "experience-5",
+      status: "SUBMITTED",
+      revisionCount: 0,
+      hostCity: "Amsterdam",
+      hostCountry: "Netherlands",
+      semester: "2026/2027 Fall",
+      basicInfo: {
+        homeUniversity: "University of Cyprus",
+        homeDepartment: "Computer Science",
+        hostUniversity: "University of Amsterdam",
+        hostCity: "Amsterdam",
+        hostCountry: "Netherlands",
+      },
+      accommodation: {
+        currency: "EUR",
+      },
+      livingExpenses: {
+        currency: "EUR",
+        food: null,
+        transport: null,
+        social: null,
+      },
+      courses: [],
+      user: {
+        id: "student-1",
+        name: "Student",
+        email: "student@example.com",
+      },
+    });
+
+    const req = createMockReq({
+      method: "POST",
+      query: { id: "experience-5" },
+      body: { action: "APPROVED", feedback: "" },
+    });
+    const res = createMockRes();
+
+    await reviewHandler(req as any, res as any);
+
+    expect(res.statusCode).toBe(400);
+    expect(res.jsonPayload).toEqual({
+      error:
+        "Cannot preview or publish this submission until the minimum public contract is complete: destination identity, accommodation reality, living costs, and at least one complete course-equivalence example.",
+      code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
+      missingFields: [
+        "accommodationType",
+        "monthlyRent",
+        "wouldRecommend",
+        "accommodationRating",
+        "food",
+        "transport",
+        "social",
+        "courseMappings",
+      ],
     });
     expect(mockTransaction).not.toHaveBeenCalled();
   });
