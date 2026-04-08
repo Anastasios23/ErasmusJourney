@@ -77,6 +77,25 @@ export function formatPublicDestinationListAmount(
   return Math.round(value).toLocaleString();
 }
 
+export function formatPublicDestinationFreshness(
+  value: string | null,
+): string {
+  if (!value) {
+    return "Unknown";
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return "Unknown";
+  }
+
+  return parsed.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
 export function getPublicDestinationSignalSummary(
   submissionCount: number,
   hostUniversityCount = 0,

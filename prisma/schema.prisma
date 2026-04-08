@@ -304,6 +304,7 @@ model PublicDestinationReadModel {
   country            String
   hostUniversityCount Int
   submissionCount    Int
+  latestReportSubmittedAt DateTime?
   averageRent        Float?
   averageMonthlyCost Float?
   detail             Json

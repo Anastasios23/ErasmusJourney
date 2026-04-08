@@ -21,6 +21,7 @@ import {
 import { Input } from "../src/components/ui/input";
 import { PUBLIC_DESTINATION_PAGE_REVALIDATE_SECONDS } from "../src/lib/publicDestinationCache";
 import {
+  formatPublicDestinationFreshness,
   formatPublicDestinationListAmount,
   getPublicDestinationSignalSummary,
 } from "../src/lib/publicDestinationPresentation";
@@ -53,6 +54,12 @@ function DestinationListCard({
           </p>
           <p className="text-sm leading-6 text-slate-500">
             {getDestinationSignalLine(signal.tone)}
+          </p>
+          <p className="text-xs text-slate-500">
+            Latest approved report:{" "}
+            {formatPublicDestinationFreshness(
+              destination.latestReportSubmittedAt,
+            )}
           </p>
         </CardHeader>
 
@@ -146,6 +153,10 @@ export default function DestinationsPage({
           <p className="max-w-3xl text-sm leading-7 text-slate-500">
             Budget figures are student-reported averages and may reflect local
             or mixed currencies.
+          </p>
+          <p className="max-w-3xl text-sm leading-7 text-slate-500">
+            Trust signals include sample size and the latest approved report
+            date for each destination.
           </p>
         </section>
 

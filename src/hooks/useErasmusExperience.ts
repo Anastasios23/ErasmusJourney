@@ -37,7 +37,13 @@ interface ErasmusExperienceData {
   accommodation: any;
   livingExpenses: any;
   experience: any;
-  status: "DRAFT" | "IN_PROGRESS" | "COMPLETED" | "SUBMITTED";
+  status:
+    | "DRAFT"
+    | "IN_PROGRESS"
+    | "SUBMITTED"
+    | "APPROVED"
+    | "REJECTED"
+    | "REVISION_NEEDED";
   isComplete: boolean;
   hasSubmitted: boolean;
   lastSavedAt?: string;
@@ -190,7 +196,10 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
             experience: experience.experience || {},
             status: experience.status as any,
             isComplete: experience.isComplete || false,
-            hasSubmitted: experience.status === "SUBMITTED",
+            hasSubmitted:
+              experience.status === "SUBMITTED" ||
+              experience.status === "APPROVED" ||
+              experience.status === "REJECTED",
             lastSavedAt: experience.lastSavedAt,
             submittedAt: experience.submittedAt,
           };

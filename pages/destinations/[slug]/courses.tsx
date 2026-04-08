@@ -8,6 +8,7 @@ import PublicDestinationSubnav from "../../../src/components/PublicDestinationSu
 import Footer from "../../../src/components/Footer";
 import { Button } from "../../../src/components/ui/button";
 import { Icon } from "@iconify/react";
+import { formatPublicDestinationFreshness } from "../../../src/lib/publicDestinationPresentation";
 import { PUBLIC_DESTINATION_PAGE_REVALIDATE_SECONDS } from "../../../src/lib/publicDestinationCache";
 import type {
   PublicDestinationCourseEquivalenceGroup,
@@ -145,6 +146,12 @@ export default function DestinationCoursesPage({
           <p className="text-sm text-gray-600 mb-4">
             Published examples help plan before formal academic approval. Useful
             guidance, not final guarantees.
+          </p>
+          <p className="text-sm text-gray-600 mb-4">
+            Latest approved report:{" "}
+            {formatPublicDestinationFreshness(
+              destination.latestReportSubmittedAt,
+            )}
           </p>
 
           {topUniversities.length > 0 && (

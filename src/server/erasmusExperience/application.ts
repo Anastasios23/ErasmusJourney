@@ -23,6 +23,7 @@ import {
   refreshPublicDestinationReadModelIfNeeded,
   triggerStatsRefresh,
 } from "./persistence";
+import { isStudentEditableExperienceStatus } from "../../lib/experienceWorkflow";
 
 type ExperienceRecord = {
   id: string;
@@ -56,6 +57,19 @@ type ExperienceRecord = {
 };
 
 type ExperienceUpdateData = Record<string, unknown>;
+
+function assertEditableExperienceStatus(experience: ExperienceRecord): void {
+  if (isStudentEditableExperienceStatus(experience.status)) {
+    return;
+  }
+
+  throw new ErasmusExperienceHttpError(409, {
+    error: "Submission locked",
+    message:
+      "Students cannot edit this submission in its current state. Editing is only available for drafts or admin-returned revisions.",
+    status: experience.status,
+  });
+}
 
 export interface AuthenticatedExperienceUser {
   id: string;
@@ -384,25 +398,7 @@ export async function createDraft(
   ) as ExperienceRecord | null;
 
   if (existingExperience) {
-    const experience = await retryDatabaseOperation(() =>
-      prisma.erasmusExperience.update({
-        where: { id: existingExperience.id },
-        data: {
-          status: "DRAFT",
-          isComplete: false,
-          submittedAt: null,
-          basicInfo: {},
-          courses: [],
-          accommodation: createEmptyAccommodationStepData(),
-          livingExpenses: createEmptyLivingExpensesStepData(),
-          experience: {},
-          lastSavedAt: new Date(),
-          updatedAt: new Date(),
-        },
-      }),
-    ) as ExperienceRecord;
-
-    return { experience, created: false };
+    return { experience: existingExperience, created: false };
   }
 
   const experience = await retryDatabaseOperation(() =>
@@ -437,6 +433,7 @@ export async function saveDraft(
     experienceId,
     user.id,
   );
+  assertEditableExperienceStatus(existingExperience);
 
   const updateFields: ExperienceUpdateData = {
     lastSavedAt: new Date(),
@@ -500,6 +497,7 @@ export async function submitExperience(
     experienceId,
     user.id,
   );
+  assertEditableExperienceStatus(existingExperience);
 
   const submissionData: ExperienceUpdateData = {
     status: "SUBMITTED",

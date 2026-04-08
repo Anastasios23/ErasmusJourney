@@ -4,6 +4,7 @@ export interface PublicDestinationListItem {
   country: string;
   hostUniversityCount: number;
   submissionCount: number;
+  latestReportSubmittedAt: string | null;
   averageRent: number | null;
   averageMonthlyCost: number | null;
 }
@@ -56,6 +57,7 @@ export interface PublicDestinationAccommodationInsights {
   country: string;
   hostUniversityCount: number;
   submissionCount: number;
+  latestReportSubmittedAt: string | null;
   currency: string;
   sampleSize: number;
   rentSampleSize: number;
@@ -91,6 +93,7 @@ export interface PublicDestinationCourseEquivalences {
   country: string;
   hostUniversityCount: number;
   submissionCount: number;
+  latestReportSubmittedAt: string | null;
   homeUniversityCount: number;
   totalMappings: number;
   groups: PublicDestinationCourseEquivalenceGroup[];
@@ -102,6 +105,7 @@ export interface PublicDestinationDetail {
   country: string;
   hostUniversityCount: number;
   submissionCount: number;
+  latestReportSubmittedAt: string | null;
   averageRent: number | null;
   averageMonthlyCost: number | null;
   accommodationSummary: PublicDestinationAccommodationSummary;

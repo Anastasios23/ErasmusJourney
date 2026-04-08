@@ -28,13 +28,19 @@ export function isErasmusExperienceHttpError(
 export class Step1ValidationError extends ErasmusExperienceHttpError {
   validationCode:
     | "MISSING_HOME_UNIVERSITY_CODE"
-    | "INVALID_HOME_UNIVERSITY_CODE";
+    | "INVALID_HOME_UNIVERSITY_CODE"
+    | "INVALID_HOME_DEPARTMENT"
+    | "INVALID_HOST_SELECTION"
+    | "INELIGIBLE_EXCHANGE_PATH";
 
   constructor(
     statusCode: number,
     validationCode:
       | "MISSING_HOME_UNIVERSITY_CODE"
-      | "INVALID_HOME_UNIVERSITY_CODE",
+      | "INVALID_HOME_UNIVERSITY_CODE"
+      | "INVALID_HOME_DEPARTMENT"
+      | "INVALID_HOST_SELECTION"
+      | "INELIGIBLE_EXCHANGE_PATH",
     message: string,
   ) {
     super(

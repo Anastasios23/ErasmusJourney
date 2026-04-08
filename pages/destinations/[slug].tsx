@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "../../src/components/ui/card";
 import {
+  formatPublicDestinationFreshness,
   formatPublicDestinationMoney,
   getPublicDestinationCurrencyMeta,
 } from "../../src/lib/publicDestinationPresentation";
@@ -124,6 +125,12 @@ export default function DestinationDetailPage({
             Student-reported averages and experiences from{" "}
             {destination.submissionCount} approved {submissionLabel}. Helpful
             for planning, not exact guarantees.
+            <span className="block pt-1">
+              Latest approved report:{" "}
+              {formatPublicDestinationFreshness(
+                destination.latestReportSubmittedAt,
+              )}
+            </span>
           </div>
           {currencyMeta.isMixed ? (
             <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-900 shadow-sm">

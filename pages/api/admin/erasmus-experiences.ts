@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
 import { prisma } from "../../../lib/prisma";
+import { respondWithCanonicalRouteDisabled } from "../../../src/lib/canonicalRoute";
 import {
   getAdminPublicImpactPreviewByExperienceId,
   getAdminPublicImpactPreviewUnavailableReasonByExperienceId,
@@ -29,8 +30,13 @@ export default async function handler(
     case "GET":
       return handleGet(req, res);
     case "PUT":
-      return handlePut(req, res);
+      return respondWithCanonicalRouteDisabled(res, {
+        canonicalPath: "/api/admin/erasmus-experiences/[id]/review",
+        details:
+          "This bulk admin mutation route was disabled because it bypassed the canonical ErasmusExperience review workflow. Use the per-submission review endpoint instead.",
+      });
     default:
+      res.setHeader("Allow", ["GET"]);
       return res.status(405).json({ error: "Method not allowed" });
   }
 }
@@ -122,52 +128,3 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-async function handlePut(req: NextApiRequest, res: NextApiResponse) {
-  try {
-    const { experienceId, action, adminNotes } = req.body;
-
-    if (!experienceId || !action) {
-      return res
-        .status(400)
-        .json({ error: "experienceId and action are required" });
-    }
-
-    let updateData: any = {
-      adminNotes: adminNotes || undefined,
-    };
-
-    switch (action) {
-      case "approve":
-        updateData.adminApproved = true;
-        updateData.isPublic = true;
-        updateData.status = "PUBLISHED";
-        updateData.publishedAt = new Date();
-        break;
-      case "reject":
-        updateData.adminApproved = false;
-        updateData.isPublic = false;
-        updateData.status = "COMPLETED"; // Keep as completed but not approved
-        break;
-      case "unpublish":
-        updateData.isPublic = false;
-        updateData.status = "COMPLETED";
-        break;
-      default:
-        return res.status(400).json({ error: "Invalid action" });
-    }
-
-    const updatedExperience = await prisma.erasmusExperience.update({
-      where: { id: experienceId },
-      data: updateData,
-    });
-
-    return res.json({
-      success: true,
-      experience: updatedExperience,
-      message: `Experience ${action}ed successfully`,
-    });
-  } catch (error) {
-    console.error("Error updating erasmus experience:", error);
-    return res.status(500).json({ error: "Internal server error" });
-  }
-}

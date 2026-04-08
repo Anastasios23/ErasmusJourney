@@ -8,6 +8,7 @@ import PublicDestinationSubnav from "../../../src/components/PublicDestinationSu
 import Footer from "../../../src/components/Footer";
 import { Button } from "../../../src/components/ui/button";
 import {
+  formatPublicDestinationFreshness,
   formatPublicDestinationMoney,
   getPublicDestinationCurrencyMeta,
 } from "../../../src/lib/publicDestinationPresentation";
@@ -133,6 +134,12 @@ export default function DestinationAccommodationPage({
           <div className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700">
             Student submissions are anonymized. Housing types and costs are based
             on published responses.
+            <span className="block pt-1">
+              Latest approved report:{" "}
+              {formatPublicDestinationFreshness(
+                destination.latestReportSubmittedAt,
+              )}
+            </span>
             {currencyMeta.isMixed && (
               <> Reported in mixed currencies. Use amounts as guidance, not exact
               comparisons.</>

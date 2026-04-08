@@ -49,6 +49,8 @@ function createExperienceRecord(overrides: Record<string, unknown> = {}) {
     hostCity: "Amsterdam",
     hostCountry: "Netherlands",
     hostUniversityId: "uva",
+    submittedAt: new Date("2026-01-12T00:00:00.000Z"),
+    updatedAt: new Date("2026-01-12T00:00:00.000Z"),
     hostUniversity: {
       name: "University of Amsterdam",
     },
@@ -330,6 +332,34 @@ describe("public destination preview-to-approval proof", () => {
     expect(destinations).toHaveLength(1);
     expect(mockReadModelFindMany).toHaveBeenCalledTimes(2);
     expect(mockExperienceFindMany).toHaveBeenCalledTimes(1);
+  });
+
+  it("propagates freshness metadata from the latest approved report into list and detail payloads", async () => {
+    experiences = [
+      createExperienceRecord({
+        id: "approved-older",
+        submittedAt: new Date("2026-01-05T00:00:00.000Z"),
+        updatedAt: new Date("2026-01-05T00:00:00.000Z"),
+      }),
+      createExperienceRecord({
+        id: "approved-newer",
+        submittedAt: new Date("2026-02-18T00:00:00.000Z"),
+        updatedAt: new Date("2026-02-18T00:00:00.000Z"),
+      }),
+    ];
+
+    await refreshPublicDestinationReadModel();
+    invalidatePublicDestinationReadModel();
+
+    const [destinations, detail] = await Promise.all([
+      getPublicDestinationList(),
+      getPublicDestinationDetailBySlug("amsterdam-netherlands"),
+    ]);
+
+    expect(destinations[0]?.latestReportSubmittedAt).toBe(
+      "2026-02-18T00:00:00.000Z",
+    );
+    expect(detail?.latestReportSubmittedAt).toBe("2026-02-18T00:00:00.000Z");
   });
 
   it("does not lazily rebuild the persisted read model on production reads when rows are missing", async () => {

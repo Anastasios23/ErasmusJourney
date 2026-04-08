@@ -39,6 +39,10 @@ import {
   getNextAccessibleShareExperienceStep,
 } from "../src/lib/shareExperienceStepAccess";
 import {
+  getStudentLockedExperienceMessage,
+  isStudentLockedExperienceStatus,
+} from "../src/lib/experienceWorkflow";
+import {
   type ShareExperienceSaveState,
 } from "../src/lib/shareExperienceUi";
 
@@ -490,6 +494,59 @@ export default function ShareExperience() {
 
             <div className="flex flex-wrap gap-3">
               <Button onClick={() => void refreshExperience()}>Retry</Button>
+              <Button
+                variant="outline"
+                onClick={() => void router.push("/dashboard")}
+              >
+                Back to dashboard
+              </Button>
+            </div>
+          </div>
+        </main>
+      </>
+    );
+  }
+
+  const isEditLocked = isStudentLockedExperienceStatus(experienceData?.status);
+
+  if (isEditLocked) {
+    return (
+      <>
+        <Head>
+          <title>Share your Erasmus experience | Erasmus Journey</title>
+          <meta
+            name="description"
+            content="Share practical information from your Erasmus experience."
+          />
+        </Head>
+
+        <Header />
+
+        <main className="min-h-screen bg-gray-50 py-8">
+          <div className="mx-auto max-w-3xl px-4">
+            <section className="mb-6">
+              <h1 className="text-2xl font-semibold text-gray-950 sm:text-3xl">
+                Share your Erasmus experience
+              </h1>
+              <p className="mt-2 text-sm text-gray-600">
+                Your submission is available in My Submissions.
+              </p>
+            </section>
+
+            <Alert className="mb-5">
+              <Icon
+                icon="solar:lock-keyhole-bold-duotone"
+                className="h-4 w-4"
+              />
+              <AlertDescription>
+                {getStudentLockedExperienceMessage(experienceData?.status)}
+              </AlertDescription>
+            </Alert>
+
+            <div className="flex flex-wrap gap-3">
+              <Button onClick={() => void router.push("/my-submissions")}>
+                Go to My Submissions
+              </Button>
               <Button
                 variant="outline"
                 onClick={() => void router.push("/dashboard")}

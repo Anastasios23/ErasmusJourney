@@ -21,6 +21,10 @@ function normalizeValue(value?: string | null): string {
   return (value || "").trim().toLowerCase();
 }
 
+function sameNormalizedValue(left?: string | null, right?: string | null) {
+  return normalizeValue(left) === normalizeValue(right);
+}
+
 function toAcademicLevel(level?: BasicInfoLevel | "") {
   switch (level) {
     case "Bachelor":
@@ -108,6 +112,23 @@ export function getFallbackHomeDepartments(
   return normalizeDepartmentList(university.departments);
 }
 
+export function getCanonicalHomeDepartmentOption(input: {
+  homeUniversityCode?: string;
+  homeDepartment?: string;
+}): string | null {
+  const homeDepartmentKey = getDepartmentMatchKey(input.homeDepartment);
+
+  if (!homeDepartmentKey) {
+    return null;
+  }
+
+  return (
+    getFallbackHomeDepartments(input.homeUniversityCode).find(
+      (department) => getDepartmentMatchKey(department) === homeDepartmentKey,
+    ) || null
+  );
+}
+
 export function getFallbackHostUniversityOptions(input: {
   homeUniversityCode?: string;
   homeDepartment?: string;
@@ -149,4 +170,28 @@ export function getFallbackHostUniversityOptions(input: {
   );
 
   return mergeHostUniversityOptions(options);
+}
+
+export function findEligibleHostUniversityOption(input: {
+  homeUniversityCode?: string;
+  homeDepartment?: string;
+  levelOfStudy?: BasicInfoLevel | "";
+  hostUniversity?: string;
+  hostCity?: string;
+  hostCountry?: string;
+}): HostUniversityOption | null {
+  const options = getFallbackHostUniversityOptions({
+    homeUniversityCode: input.homeUniversityCode,
+    homeDepartment: input.homeDepartment,
+    levelOfStudy: input.levelOfStudy,
+  });
+
+  return (
+    options.find(
+      (option) =>
+        sameNormalizedValue(option.hostUniversity, input.hostUniversity) &&
+        sameNormalizedValue(option.hostCity, input.hostCity) &&
+        sameNormalizedValue(option.hostCountry, input.hostCountry),
+    ) || null
+  );
 }

@@ -5,6 +5,10 @@ import {
   buildExperienceSemester,
   sanitizeBasicInformationData,
 } from "../../lib/basicInformation";
+import {
+  findEligibleHostUniversityOption,
+  getCanonicalHomeDepartmentOption,
+} from "../../lib/basicInformationOptions";
 import { Step1ValidationError } from "./errors";
 
 function normalizeKey(value?: string | null): string {
@@ -152,15 +156,78 @@ export async function buildBasicInfoPersistenceData(
     ),
   ]);
 
+  const canonicalHomeDepartment = mergedBasicInfo.homeDepartment
+    ? getCanonicalHomeDepartmentOption({
+        homeUniversityCode: canonicalHomeUniversityCode,
+        homeDepartment: mergedBasicInfo.homeDepartment,
+      })
+    : null;
+
+  if (mergedBasicInfo.homeDepartment && !canonicalHomeDepartment) {
+    throw new Step1ValidationError(
+      422,
+      "INVALID_HOME_DEPARTMENT",
+      "The selected home department is outside the official Erasmus Journey agreements dataset scope.",
+    );
+  }
+
+  const hasAnyHostSelection = [
+    mergedBasicInfo.hostUniversity,
+    mergedBasicInfo.hostCity,
+    mergedBasicInfo.hostCountry,
+  ].some((value) => Boolean(value));
+
+  if (
+    hasAnyHostSelection &&
+    (!mergedBasicInfo.homeDepartment || !mergedBasicInfo.levelOfStudy)
+  ) {
+    throw new Step1ValidationError(
+      422,
+      "INVALID_HOST_SELECTION",
+      "Host university selection requires a valid home department and study level from the agreements dataset.",
+    );
+  }
+
+  const eligibleHostUniversity = hasAnyHostSelection
+    ? findEligibleHostUniversityOption({
+        homeUniversityCode: canonicalHomeUniversityCode,
+        homeDepartment: canonicalHomeDepartment || mergedBasicInfo.homeDepartment,
+        levelOfStudy: mergedBasicInfo.levelOfStudy,
+        hostUniversity: mergedBasicInfo.hostUniversity,
+        hostCity: mergedBasicInfo.hostCity,
+        hostCountry: mergedBasicInfo.hostCountry,
+      })
+    : null;
+
+  if (hasAnyHostSelection && !eligibleHostUniversity) {
+    throw new Step1ValidationError(
+      422,
+      "INELIGIBLE_EXCHANGE_PATH",
+      "The selected university, department, and exchange path are not eligible in the official Erasmus Journey agreements dataset.",
+    );
+  }
+
   const persistedBasicInfo = sanitizeBasicInformationData({
     ...mergedBasicInfo,
     homeUniversity: homeUniversity?.name || canonicalHomeUniversityName,
     homeUniversityCode: canonicalHomeUniversityCode,
+    homeDepartment: canonicalHomeDepartment || mergedBasicInfo.homeDepartment,
     hostUniversity:
-      mergedBasicInfo.hostUniversity || hostUniversity?.name || "",
+      eligibleHostUniversity?.hostUniversity ||
+      mergedBasicInfo.hostUniversity ||
+      hostUniversity?.name ||
+      "",
     hostUniversityId: hostUniversity?.id || "",
-    hostCity: mergedBasicInfo.hostCity || hostUniversity?.city || "",
-    hostCountry: mergedBasicInfo.hostCountry || hostUniversity?.country || "",
+    hostCity:
+      eligibleHostUniversity?.hostCity ||
+      mergedBasicInfo.hostCity ||
+      hostUniversity?.city ||
+      "",
+    hostCountry:
+      eligibleHostUniversity?.hostCountry ||
+      mergedBasicInfo.hostCountry ||
+      hostUniversity?.country ||
+      "",
   });
 
   return {

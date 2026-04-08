@@ -33,6 +33,8 @@ type RawExperience = {
   hostCity: string | null;
   hostCountry: string | null;
   hostUniversityId: string | null;
+  submittedAt: Date | null;
+  updatedAt: Date;
   hostUniversity: { name: string } | null;
   basicInfo: unknown;
   accommodation: unknown;
@@ -57,6 +59,7 @@ type GroupedDestinationData = {
   country: string;
   universities: Set<string>;
   submissionCount: number;
+  latestReportSubmittedAt: Date | null;
   rents: number[];
   monthlyCosts: number[];
   livingFood: number[];
@@ -92,6 +95,7 @@ type PersistedPublicDestinationReadModelRow = {
   country: string;
   hostUniversityCount: number;
   submissionCount: number;
+  latestReportSubmittedAt: Date | null;
   averageRent: number | null;
   averageMonthlyCost: number | null;
   detail: unknown;
@@ -157,6 +161,10 @@ function percentage(part: number, total: number): number | null {
   }
 
   return Number(((part / total) * 100).toFixed(0));
+}
+
+function toIsoDate(value: Date | null): string | null {
+  return value instanceof Date ? value.toISOString() : null;
 }
 
 function pushIfNumber(
@@ -277,6 +285,8 @@ async function loadApprovedExperiences(): Promise<RawExperience[]> {
       hostCity: true,
       hostCountry: true,
       hostUniversityId: true,
+      submittedAt: true,
+      updatedAt: true,
       hostUniversity: {
         select: {
           name: true,
@@ -300,6 +310,8 @@ async function loadExperienceById(id: string): Promise<RawExperience | null> {
       hostCity: true,
       hostCountry: true,
       hostUniversityId: true,
+      submittedAt: true,
+      updatedAt: true,
       hostUniversity: {
         select: {
           name: true,
@@ -337,6 +349,7 @@ function buildGroupedDestinations(
         country,
         universities: new Set<string>(),
         submissionCount: 0,
+        latestReportSubmittedAt: null,
         rents: [],
         monthlyCosts: [],
         livingFood: [],
@@ -359,6 +372,15 @@ function buildGroupedDestinations(
 
     const destination = grouped.get(key)!;
     destination.submissionCount += 1;
+    const freshnessCandidate = experience.submittedAt ?? experience.updatedAt;
+    if (
+      freshnessCandidate &&
+      (!destination.latestReportSubmittedAt ||
+        freshnessCandidate.getTime() >
+          destination.latestReportSubmittedAt.getTime())
+    ) {
+      destination.latestReportSubmittedAt = freshnessCandidate;
+    }
 
     const basicInfo = sanitizeBasicInformationData(
       toRecord(experience.basicInfo),
@@ -529,6 +551,7 @@ function toListItem(
     country: destination.country,
     hostUniversityCount: destination.universities.size,
     submissionCount: destination.submissionCount,
+    latestReportSubmittedAt: toIsoDate(destination.latestReportSubmittedAt),
     averageRent: average(destination.rents),
     averageMonthlyCost: average(destination.monthlyCosts),
   };
@@ -548,6 +571,7 @@ function buildDestinationDetail(
     country: destination.country,
     hostUniversityCount: destination.universities.size,
     submissionCount: destination.submissionCount,
+    latestReportSubmittedAt: toIsoDate(destination.latestReportSubmittedAt),
     averageRent: average(destination.rents),
     averageMonthlyCost: average(destination.monthlyCosts),
     accommodationSummary: {
@@ -591,6 +615,7 @@ function buildAccommodationInsights(
     country: destination.country,
     hostUniversityCount: destination.universities.size,
     submissionCount: destination.submissionCount,
+    latestReportSubmittedAt: toIsoDate(destination.latestReportSubmittedAt),
     currency: deriveCurrency(destination.currencies),
     sampleSize: destination.accommodationSubmissionCount,
     rentSampleSize: destination.rents.length,
@@ -641,6 +666,7 @@ function buildCourseEquivalences(
     country: destination.country,
     hostUniversityCount: destination.universities.size,
     submissionCount: destination.submissionCount,
+    latestReportSubmittedAt: toIsoDate(destination.latestReportSubmittedAt),
     homeUniversityCount: homeUniversities.size,
     totalMappings: destination.courseEquivalences.length,
     groups,
@@ -936,6 +962,7 @@ function buildPersistedPublicDestinationReadModel(
       country: row.country,
       hostUniversityCount: row.hostUniversityCount,
       submissionCount: row.submissionCount,
+      latestReportSubmittedAt: toIsoDate(row.latestReportSubmittedAt),
       averageRent: row.averageRent,
       averageMonthlyCost: row.averageMonthlyCost,
     });
@@ -957,6 +984,7 @@ async function loadPersistedPublicDestinationReadModelRows(): Promise<
       country: true,
       hostUniversityCount: true,
       submissionCount: true,
+      latestReportSubmittedAt: true,
       averageRent: true,
       averageMonthlyCost: true,
       detail: true,
@@ -976,6 +1004,9 @@ async function persistPublicDestinationReadModel(
     country: destination.country,
     hostUniversityCount: destination.hostUniversityCount,
     submissionCount: destination.submissionCount,
+    latestReportSubmittedAt: destination.latestReportSubmittedAt
+      ? new Date(destination.latestReportSubmittedAt)
+      : null,
     averageRent: destination.averageRent,
     averageMonthlyCost: destination.averageMonthlyCost,
     detail: readModel.detailsBySlug.get(destination.slug)!,

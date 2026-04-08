@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../auth/[...nextauth]";
 import { prisma } from "../../../../../lib/prisma";
 import { buildPreviewUnavailableReason } from "../../../../../src/lib/adminPublicImpactPreview";
+import { isExperienceReviewableStatus } from "../../../../../src/lib/experienceWorkflow";
 import { buildPublicDestinationSlug } from "../../../../../src/lib/publicRoutes";
 import {
   calculateLivingExpensesTotal,
@@ -74,9 +75,12 @@ export default async function handler(
       return res.status(404).json({ error: "Experience not found" });
     }
 
-    // Check if already reviewed
-    if (experience.status === "APPROVED") {
-      return res.status(400).json({ error: "Experience already approved" });
+    if (!isExperienceReviewableStatus(experience.status)) {
+      return res.status(409).json({
+        error:
+          "Only submissions currently in SUBMITTED status can be reviewed through the canonical moderation workflow.",
+        status: experience.status,
+      });
     }
 
     // Check revision limit
@@ -105,17 +109,19 @@ export default async function handler(
       reviewFeedback: feedback || null,
     };
 
-    let newStatus = experience.status;
-
     switch (action) {
       case "APPROVED":
-        newStatus = "APPROVED";
         updateData.status = "APPROVED";
+        updateData.adminApproved = true;
+        updateData.isPublic = true;
+        updateData.publishedAt = new Date();
         break;
 
       case "REJECTED":
-        newStatus = "REJECTED";
         updateData.status = "REJECTED";
+        updateData.adminApproved = false;
+        updateData.isPublic = false;
+        updateData.publishedAt = null;
         if (!feedback) {
           return res.status(400).json({
             error: "Feedback required for rejection",
@@ -124,9 +130,11 @@ export default async function handler(
         break;
 
       case "REVISION_REQUESTED":
-        newStatus = "REVISION_NEEDED";
         updateData.status = "REVISION_NEEDED";
         updateData.revisionCount = experience.revisionCount + 1;
+        updateData.adminApproved = false;
+        updateData.isPublic = false;
+        updateData.publishedAt = null;
         if (!feedback) {
           return res.status(400).json({
             error: "Feedback required for revision request",
