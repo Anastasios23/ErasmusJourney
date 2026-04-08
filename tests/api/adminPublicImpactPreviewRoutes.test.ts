@@ -4,6 +4,7 @@ const {
   mockGetServerSession,
   mockUserFindUnique,
   mockExperienceFindUnique,
+  mockExperienceFindMany,
   mockTransaction,
   mockPreviewBuilder,
   mockPreviewUnavailableReason,
@@ -13,6 +14,7 @@ const {
   mockGetServerSession: vi.fn(),
   mockUserFindUnique: vi.fn(),
   mockExperienceFindUnique: vi.fn(),
+  mockExperienceFindMany: vi.fn(),
   mockTransaction: vi.fn(),
   mockPreviewBuilder: vi.fn(),
   mockPreviewUnavailableReason: vi.fn(),
@@ -35,6 +37,7 @@ vi.mock("../../lib/prisma", () => ({
     },
     erasmusExperience: {
       findUnique: mockExperienceFindUnique,
+      findMany: mockExperienceFindMany,
       update: vi.fn(),
     },
     reviewAction: {
@@ -95,6 +98,7 @@ describe("admin public impact preview routes", () => {
       user: { id: "admin-1" },
     });
     mockUserFindUnique.mockResolvedValue({ role: "ADMIN" });
+    mockExperienceFindMany.mockResolvedValue([]);
     mockTransaction.mockResolvedValue([]);
     mockRefreshPublicDestinationReadModel.mockResolvedValue(undefined);
     mockRevalidatePublicDestinationPages.mockResolvedValue(undefined);
@@ -142,7 +146,7 @@ describe("admin public impact preview routes", () => {
     mockPreviewUnavailableReason.mockResolvedValue({
       code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
       message:
-        "Cannot preview or publish this submission until the minimum public contract is complete: destination identity, accommodation reality, living costs, and at least one complete course-equivalence example.",
+        "Cannot preview or publish this submission until the MVP minimum public contract is complete: host city, host country, host university, home university, accommodation type, monthly rent, and at least one complete course-equivalence example.",
       missingFields: ["hostCity", "hostCountry"],
     });
 
@@ -157,7 +161,7 @@ describe("admin public impact preview routes", () => {
     expect(res.statusCode).toBe(404);
     expect(res.jsonPayload).toEqual({
       error:
-        "Cannot preview or publish this submission until the minimum public contract is complete: destination identity, accommodation reality, living costs, and at least one complete course-equivalence example.",
+        "Cannot preview or publish this submission until the MVP minimum public contract is complete: host city, host country, host university, home university, accommodation type, monthly rent, and at least one complete course-equivalence example.",
       code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
       missingFields: ["hostCity", "hostCountry"],
     });
@@ -237,14 +241,14 @@ describe("admin public impact preview routes", () => {
     expect(res.statusCode).toBe(400);
     expect(res.jsonPayload).toEqual({
       error:
-        "Cannot preview or publish this submission until the minimum public contract is complete: destination identity, accommodation reality, living costs, and at least one complete course-equivalence example.",
+        "Cannot preview or publish this submission until the MVP minimum public contract is complete: host city, host country, host university, home university, accommodation type, monthly rent, and at least one complete course-equivalence example.",
       code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
       missingFields: ["hostCity"],
     });
     expect(mockTransaction).not.toHaveBeenCalled();
   });
 
-  it("blocks approval when the minimum public contract is incomplete beyond destination identity", async () => {
+  it("blocks approval when the MVP minimum public contract is incomplete beyond destination identity", async () => {
     mockExperienceFindUnique.mockResolvedValue({
       id: "experience-5",
       status: "SUBMITTED",
@@ -288,19 +292,73 @@ describe("admin public impact preview routes", () => {
     expect(res.statusCode).toBe(400);
     expect(res.jsonPayload).toEqual({
       error:
-        "Cannot preview or publish this submission until the minimum public contract is complete: destination identity, accommodation reality, living costs, and at least one complete course-equivalence example.",
+        "Cannot preview or publish this submission until the MVP minimum public contract is complete: host city, host country, host university, home university, accommodation type, monthly rent, and at least one complete course-equivalence example.",
       code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
       missingFields: [
         "accommodationType",
         "monthlyRent",
-        "wouldRecommend",
-        "accommodationRating",
-        "food",
-        "transport",
-        "social",
         "courseMappings",
       ],
     });
     expect(mockTransaction).not.toHaveBeenCalled();
+  });
+
+  it("allows approval when only enrichment fields are missing", async () => {
+    mockExperienceFindUnique.mockResolvedValue({
+      id: "experience-6",
+      status: "SUBMITTED",
+      revisionCount: 0,
+      hostCity: "Amsterdam",
+      hostCountry: "Netherlands",
+      semester: "2026/2027 Fall",
+      basicInfo: {
+        homeUniversity: "University of Cyprus",
+        hostUniversity: "University of Amsterdam",
+        hostCity: "Amsterdam",
+        hostCountry: "Netherlands",
+      },
+      accommodation: {
+        accommodationType: "shared_apartment",
+        monthlyRent: 500,
+        currency: "EUR",
+      },
+      livingExpenses: {
+        currency: "EUR",
+        food: null,
+        transport: null,
+        social: null,
+      },
+      courses: [
+        {
+          id: "course-approval",
+          homeCourseName: "Algorithms",
+          homeECTS: 6,
+          hostCourseName: "Advanced Algorithms",
+          hostECTS: 6,
+          recognitionType: "full_equivalence",
+        },
+      ],
+    });
+    mockTransaction.mockResolvedValue([
+      { id: "experience-6", status: "APPROVED" },
+      { id: "review-action-6", action: "APPROVED" },
+    ]);
+
+    const req = createMockReq({
+      method: "POST",
+      query: { id: "experience-6" },
+      body: { action: "APPROVED", feedback: "" },
+    });
+    const res = createMockRes();
+
+    await reviewHandler(req as any, res as any);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.jsonPayload).toEqual({
+      success: true,
+      experience: { id: "experience-6", status: "APPROVED" },
+      reviewAction: { id: "review-action-6", action: "APPROVED" },
+      message: "Experience approved successfully! Statistics have been updated.",
+    });
   });
 });

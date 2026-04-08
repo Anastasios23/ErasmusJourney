@@ -7,7 +7,7 @@ import {
 } from "../../src/lib/adminReview";
 
 describe("adminReview helpers", () => {
-  it("blocks approval when core destination identity is incomplete", () => {
+  it("blocks approval when the MVP minimum public contract is incomplete", () => {
     const readiness = getApprovalReadiness({
       basicInfo: {
         homeUniversity: "University of Cyprus",
@@ -18,9 +18,11 @@ describe("adminReview helpers", () => {
     expect(readiness.status).toBe("blocked");
     expect(readiness.missingFields).toEqual(
       expect.arrayContaining([
-        "Home department",
         "Host city",
         "Host country",
+        "Accommodation type",
+        "Monthly rent",
+        "At least 1 complete course mapping",
       ]),
     );
   });
@@ -88,45 +90,89 @@ describe("adminReview helpers", () => {
     ).toBe("needs_revision");
   });
 
-  it("blocks approval readiness when the minimum public contract is incomplete", () => {
+  it("allows approval readiness when only enrichment fields are missing", () => {
     const readiness = getApprovalReadiness({
       basicInfo: {
         homeUniversity: "University of Cyprus",
-        homeDepartment: "Computer Science",
         hostUniversity: "University of Amsterdam",
         hostCity: "Amsterdam",
         hostCountry: "Netherlands",
       },
-      publicImpactPreviewUnavailableReason: {
-        code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
-        message:
-          "Cannot preview or publish this submission until the minimum public contract is complete: destination identity, accommodation reality, living costs, and at least one complete course-equivalence example.",
-        missingFields: [
-          "accommodationType",
-          "monthlyRent",
-          "wouldRecommend",
-          "accommodationRating",
-          "food",
-          "transport",
-          "social",
-          "courseMappings",
-        ],
+      accommodation: {
+        accommodationType: "shared_apartment",
+        monthlyRent: 450,
+        currency: "EUR",
       },
+      livingExpenses: {
+        currency: "EUR",
+        food: null,
+        transport: null,
+        social: null,
+      },
+      courses: [
+        {
+          id: "course-1",
+          homeCourseName: "Algorithms",
+          homeECTS: 6,
+          hostCourseName: "Advanced Algorithms",
+          hostECTS: 6,
+          recognitionType: "full_equivalence",
+        },
+      ],
     });
 
-    expect(readiness.status).toBe("blocked");
+    expect(readiness.status).toBe("ready");
     expect(readiness.description).toBe(
-      "Complete the minimum public contract before approving this submission.",
+      "MVP minimum public contract is complete. Remaining gaps are enrichment only.",
     );
-    expect(readiness.missingFields).toEqual([
-      "Accommodation type",
-      "Monthly rent",
+    expect(readiness.missingFields).toEqual([]);
+  });
+
+  it("keeps section enrichment gaps visible without blocking approval", () => {
+    const summary = getSubmissionModerationSummary({
+      basicInfo: {
+        homeUniversity: "University of Cyprus",
+        hostUniversity: "University of Amsterdam",
+        hostCity: "Amsterdam",
+        hostCountry: "Netherlands",
+      },
+      accommodation: {
+        accommodationType: "shared_apartment",
+        monthlyRent: 450,
+        currency: "EUR",
+      },
+      livingExpenses: {
+        currency: "EUR",
+        food: null,
+        transport: null,
+        social: null,
+      },
+      courses: [
+        {
+          id: "course-1",
+          homeCourseName: "Algorithms",
+          homeECTS: 6,
+          hostCourseName: "Advanced Algorithms",
+          hostECTS: 6,
+          recognitionType: "full_equivalence",
+        },
+      ],
+    });
+
+    expect(summary.publishableSections).toEqual([
+      "Destination",
+      "Accommodation",
+      "Courses",
+    ]);
+    expect(summary.accommodationMissingFields).toEqual([
       "Would recommend",
       "Accommodation rating",
+    ]);
+    expect(summary.courseMissingFields).toEqual(["Home department"]);
+    expect(summary.budgetMissingFields).toEqual([
       "Food",
       "Transport",
       "Social",
-      "At least 1 complete course mapping",
     ]);
   });
 });

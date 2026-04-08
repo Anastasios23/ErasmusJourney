@@ -73,9 +73,10 @@ pages/
 2. The API sanitizes step data into canonical `basicInfo`, `courses`, `accommodation`, `livingExpenses`, and `experience` payloads before persistence.
 3. Server-side submission guards lock student edits after submission unless the admin review flow returns the record for revision.
 4. Server-side eligibility validation enforces the agreements dataset scope for supported Cyprus universities, departments, and exchange paths.
-5. Admin moderation records `ReviewAction` audit entries, and approval requires the full minimum public contract: destination identity, accommodation reality, living-cost visibility, and at least one complete peer course-equivalence example.
-6. `src/server/publicDestinations` aggregates only approved, publishable experiences into `public_destination_read_models`, including sample-size and freshness metadata.
-7. Public destination pages read only the persisted public read model plus approved anonymous peer examples, with limited-data messaging where evidence is sparse.
+5. Admin moderation records `ReviewAction` audit entries, and approval requires the MVP minimum public contract: host city, host country, host university, home university, accommodation type, monthly rent, and at least one complete peer course-equivalence example.
+6. Home department, recommendation flags, accommodation ratings, and itemized living-cost fields deepen section coverage but do not block publication.
+7. `src/server/publicDestinations` aggregates only approved, publishable experiences into `public_destination_read_models`, including sample-size and freshness metadata.
+8. Public destination pages read only the persisted public read model plus approved anonymous peer examples, with limited-data messaging where evidence is sparse.
 
 ## Getting Started
 

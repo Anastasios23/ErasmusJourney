@@ -264,12 +264,12 @@ describe("public destination preview-to-approval proof", () => {
     expect(unavailableReason).toEqual({
       code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
       message:
-        "Cannot preview or publish this submission until the minimum public contract is complete: destination identity, accommodation reality, living costs, and at least one complete course-equivalence example.",
+        "Cannot preview or publish this submission until the MVP minimum public contract is complete: host city, host country, host university, home university, accommodation type, monthly rent, and at least one complete course-equivalence example.",
       missingFields: ["hostCity"],
     });
   });
 
-  it("blocks preview when the minimum public contract is incomplete beyond destination identity", async () => {
+  it("blocks preview when the MVP minimum public contract is incomplete", async () => {
     experiences = [
       createExperienceRecord({
         id: "submitted-incomplete-contract",
@@ -301,18 +301,63 @@ describe("public destination preview-to-approval proof", () => {
     expect(unavailableReason).toEqual({
       code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
       message:
-        "Cannot preview or publish this submission until the minimum public contract is complete: destination identity, accommodation reality, living costs, and at least one complete course-equivalence example.",
+        "Cannot preview or publish this submission until the MVP minimum public contract is complete: host city, host country, host university, home university, accommodation type, monthly rent, and at least one complete course-equivalence example.",
       missingFields: [
         "accommodationType",
         "monthlyRent",
-        "wouldRecommend",
-        "accommodationRating",
-        "food",
-        "transport",
-        "social",
         "courseMappings",
       ],
     });
+  });
+
+  it("allows preview when only enrichment fields are missing", async () => {
+    experiences = [
+      createExperienceRecord({
+        id: "submitted-minimum-only",
+        status: "SUBMITTED",
+        basicInfo: {
+          homeUniversity: "University of Cyprus",
+          hostUniversity: "University of Amsterdam",
+          hostCity: "Amsterdam",
+          hostCountry: "Netherlands",
+        },
+        accommodation: {
+          accommodationType: "shared_apartment",
+          monthlyRent: 500,
+          currency: "EUR",
+        },
+        livingExpenses: {
+          currency: "EUR",
+          food: null,
+          transport: null,
+          social: null,
+          travel: null,
+          other: null,
+        },
+        courses: [
+          {
+            id: "course-minimum",
+            homeCourseName: "Algorithms",
+            homeECTS: 6,
+            hostCourseName: "Advanced Algorithms",
+            hostECTS: 6,
+            recognitionType: "full_equivalence",
+          },
+        ],
+      }),
+    ];
+
+    const preview = await getAdminPublicImpactPreviewByExperienceId(
+      "submitted-minimum-only",
+    );
+    const unavailableReason =
+      await getAdminPublicImpactPreviewUnavailableReasonByExperienceId(
+        "submitted-minimum-only",
+      );
+
+    expect(preview).not.toBeNull();
+    expect(preview?.slug).toBe("amsterdam-netherlands");
+    expect(unavailableReason).toBeNull();
   });
 
   it("omits undefined optional course fields from public destination payloads", async () => {

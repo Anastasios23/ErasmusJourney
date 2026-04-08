@@ -6,17 +6,11 @@ import type {
 
 export type AdminPublicImpactMissingField =
   | "homeUniversity"
-  | "homeDepartment"
   | "hostUniversity"
   | "hostCity"
   | "hostCountry"
   | "accommodationType"
   | "monthlyRent"
-  | "wouldRecommend"
-  | "accommodationRating"
-  | "food"
-  | "transport"
-  | "social"
   | "courseMappings";
 
 export interface AdminPublicImpactPreviewUnavailable {

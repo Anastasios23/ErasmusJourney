@@ -664,7 +664,7 @@ export default function ReviewSubmissions() {
 
                       <div className="grid gap-3 text-sm md:grid-cols-2 xl:grid-cols-5">
                         {[
-                          ["What this adds", summary.publishableSections.join(", ") || "None yet"],
+                          ["Public sections", summary.publishableSections.join(", ") || "None yet"],
                           ["Courses", summary.courseSummary],
                           ["Accommodation", summary.accommodationSummary],
                           ["Budget", summary.budgetSummary],

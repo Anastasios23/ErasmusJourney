@@ -12,6 +12,7 @@ import {
   sanitizeLivingExpensesStepData,
 } from "./livingExpenses";
 import type { AdminPublicImpactPreviewUnavailable } from "../types/adminPublicImpactPreview";
+import { getMissingMinimumPublicContractFields } from "./adminPublicImpactPreview";
 
 type BadgeVariant = "secondary" | "success" | "warning" | "error" | "info";
 
@@ -60,7 +61,6 @@ export interface SubmissionModerationSummary {
 
 const CORE_DESTINATION_FIELD_LABELS: Record<string, string> = {
   homeUniversity: "Home university",
-  homeDepartment: "Home department",
   hostUniversity: "Host university",
   hostCity: "Host city",
   hostCountry: "Host country",
@@ -70,11 +70,6 @@ const PUBLIC_CONTRACT_FIELD_LABELS: Record<string, string> = {
   ...CORE_DESTINATION_FIELD_LABELS,
   accommodationType: "Accommodation type",
   monthlyRent: "Monthly rent",
-  wouldRecommend: "Would recommend",
-  accommodationRating: "Accommodation rating",
-  food: "Food",
-  transport: "Transport",
-  social: "Social",
   courseMappings: "At least 1 complete course mapping",
 };
 
@@ -95,15 +90,31 @@ function formatMoney(value: number | null | undefined, currency: string): string
   return typeof value === "number" ? `${value} ${currency}` : "N/A";
 }
 
+function hasOwnField(source: object, field: string): boolean {
+  return Object.prototype.hasOwnProperty.call(source, field);
+}
+
 function getNormalizedBasicInfo(submission: AdminReviewSubmissionLike) {
+  const submissionRecord = submission as Record<string, unknown>;
+  const explicitHostCity = hasOwnField(submissionRecord, "hostCity")
+    ? submission.hostCity
+    : undefined;
+  const explicitHostCountry = hasOwnField(submissionRecord, "hostCountry")
+    ? submission.hostCountry
+    : undefined;
+
   return sanitizeBasicInformationData({
     ...(submission.basicInfo as Record<string, unknown> | null | undefined),
     hostCity:
-      (submission.basicInfo as Record<string, unknown> | null | undefined)
-        ?.hostCity || submission.hostCity,
+      explicitHostCity !== undefined
+        ? explicitHostCity
+        : (submission.basicInfo as Record<string, unknown> | null | undefined)
+            ?.hostCity,
     hostCountry:
-      (submission.basicInfo as Record<string, unknown> | null | undefined)
-        ?.hostCountry || submission.hostCountry,
+      explicitHostCountry !== undefined
+        ? explicitHostCountry
+        : (submission.basicInfo as Record<string, unknown> | null | undefined)
+            ?.hostCountry,
   });
 }
 
@@ -136,13 +147,15 @@ export function getRevisionStatusMeta(
 export function getApprovalReadiness(
   submission: AdminReviewSubmissionLike,
 ): ApprovalReadiness {
-  const coreMissingFields = getCoreDestinationMissingFields(submission);
-  const previewMissingFields =
-    submission.publicImpactPreviewUnavailableReason?.missingFields?.map(
-      (field) => PUBLIC_CONTRACT_FIELD_LABELS[field] || field,
-    ) || [];
+  const minimumPublicContractMissingFields =
+    submission.publicImpactPreviewUnavailableReason?.missingFields ||
+    getMissingMinimumPublicContractFields(submission);
   const missingFields = Array.from(
-    new Set([...coreMissingFields, ...previewMissingFields]),
+    new Set(
+      minimumPublicContractMissingFields.map(
+        (field) => PUBLIC_CONTRACT_FIELD_LABELS[field] || field,
+      ),
+    ),
   );
 
   if (missingFields.length > 0) {
@@ -151,7 +164,7 @@ export function getApprovalReadiness(
       label: "Blocked",
       variant: "error",
       description:
-        "Complete the minimum public contract before approving this submission.",
+        "Complete the MVP minimum public contract before approving this submission.",
       missingFields,
     };
   }
@@ -160,7 +173,8 @@ export function getApprovalReadiness(
     status: "ready",
     label: "Ready",
     variant: "success",
-    description: "Minimum public contract is complete and can publish safely.",
+    description:
+      "MVP minimum public contract is complete. Remaining gaps are enrichment only.",
     missingFields: [],
   };
 }
@@ -214,7 +228,26 @@ export function getSubmissionModerationSummary(
   ].filter((value): value is string => Boolean(value));
 
   const courseMissingFields =
-    completeCourseMappings.length > 0 ? [] : ["At least 1 complete course mapping"];
+    [
+      completeCourseMappings.length > 0
+        ? null
+        : "At least 1 complete course mapping",
+      basicInfo.homeDepartment ? null : "Home department",
+    ].filter((value): value is string => Boolean(value));
+
+  const accommodationBlockerMissingFields = accommodationMissingFields.filter(
+    (field) => field === "Accommodation type" || field === "Monthly rent",
+  );
+  const courseBlockerMissingFields = courseMissingFields.filter(
+    (field) => field === "At least 1 complete course mapping",
+  );
+  const hasBudgetSignal = [
+    livingExpenses.food,
+    livingExpenses.transport,
+    livingExpenses.social,
+    livingExpenses.travel,
+    livingExpenses.other,
+  ].some((value) => typeof value === "number");
 
   const publishableSections: string[] = [];
   const coreMissingFields = getCoreDestinationMissingFields(submission);
@@ -222,13 +255,16 @@ export function getSubmissionModerationSummary(
   if (coreMissingFields.length === 0) {
     publishableSections.push("Destination");
   }
-  if (coreMissingFields.length === 0 && accommodationMissingFields.length === 0) {
+  if (
+    coreMissingFields.length === 0 &&
+    accommodationBlockerMissingFields.length === 0
+  ) {
     publishableSections.push("Accommodation");
   }
-  if (coreMissingFields.length === 0 && courseMissingFields.length === 0) {
+  if (coreMissingFields.length === 0 && courseBlockerMissingFields.length === 0) {
     publishableSections.push("Courses");
   }
-  if (coreMissingFields.length === 0 && budgetMissingFields.length === 0) {
+  if (coreMissingFields.length === 0 && hasBudgetSignal) {
     publishableSections.push("Budget");
   }
 

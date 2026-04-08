@@ -8,7 +8,6 @@ import {
   isCourseMappingComplete,
   sanitizeCourseMappingsData,
 } from "./courseMatching";
-import { sanitizeLivingExpensesStepData } from "./livingExpenses";
 
 interface DestinationIdentitySource {
   basicInfo?: unknown;
@@ -60,27 +59,12 @@ export function getMissingMinimumPublicContractFields(
       ? (source.accommodation as Record<string, unknown>)
       : null) || undefined,
   );
-  const livingExpenses = sanitizeLivingExpensesStepData(
-    (typeof source.livingExpenses === "object" && source.livingExpenses
-      ? (source.livingExpenses as Record<string, unknown>)
-      : null) || undefined,
-    {
-      fallbackRent:
-        typeof accommodation.monthlyRent === "number"
-          ? accommodation.monthlyRent
-          : null,
-    },
-  );
   const hasCompleteCourseMapping = sanitizeCourseMappingsData(
     source.courses,
   ).some(isCourseMappingComplete);
 
   if (isBlank(basicInfo.homeUniversity)) {
     missingFields.push("homeUniversity");
-  }
-
-  if (isBlank(basicInfo.homeDepartment)) {
-    missingFields.push("homeDepartment");
   }
 
   if (isBlank(basicInfo.hostUniversity)) {
@@ -91,6 +75,9 @@ export function getMissingMinimumPublicContractFields(
     missingFields.push("hostCity");
   }
 
+  // Public destination slugs and persisted read-model rows are keyed by
+  // city+country, so country stays in the MVP minimum contract to avoid
+  // collisions between cities that share the same name across countries.
   if (isBlank(basicInfo.hostCountry)) {
     missingFields.push("hostCountry");
   }
@@ -101,26 +88,6 @@ export function getMissingMinimumPublicContractFields(
 
   if (typeof accommodation.monthlyRent !== "number") {
     missingFields.push("monthlyRent");
-  }
-
-  if (typeof accommodation.wouldRecommend !== "boolean") {
-    missingFields.push("wouldRecommend");
-  }
-
-  if (typeof accommodation.accommodationRating !== "number") {
-    missingFields.push("accommodationRating");
-  }
-
-  if (livingExpenses.food === null) {
-    missingFields.push("food");
-  }
-
-  if (livingExpenses.transport === null) {
-    missingFields.push("transport");
-  }
-
-  if (livingExpenses.social === null) {
-    missingFields.push("social");
   }
 
   if (!hasCompleteCourseMapping) {
@@ -142,7 +109,7 @@ export function buildPreviewUnavailableReason(
   return {
     code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
     message:
-      "Cannot preview or publish this submission until the minimum public contract is complete: destination identity, accommodation reality, living costs, and at least one complete course-equivalence example.",
+      "Cannot preview or publish this submission until the MVP minimum public contract is complete: host city, host country, host university, home university, accommodation type, monthly rent, and at least one complete course-equivalence example.",
     missingFields,
   };
 }
