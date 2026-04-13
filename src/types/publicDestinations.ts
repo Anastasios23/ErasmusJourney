@@ -5,6 +5,7 @@ export interface PublicDestinationListItem {
   hostUniversityCount: number;
   submissionCount: number;
   latestReportSubmittedAt: string | null;
+  isLimitedData: boolean;
   averageRent: number | null;
   averageMonthlyCost: number | null;
 }
@@ -22,6 +23,7 @@ export interface PublicDestinationDifficultyInsight {
 
 export interface PublicDestinationAccommodationSummary {
   sampleSize: number;
+  isLimitedData: boolean;
   averageRent: number | null;
   types: PublicDestinationAccommodationTypeInsight[];
   difficulty: PublicDestinationDifficultyInsight[];
@@ -30,6 +32,7 @@ export interface PublicDestinationAccommodationSummary {
 export interface PublicDestinationCostSummary {
   currency: string;
   sampleSize: number;
+  isLimitedData: boolean;
   averageRent: number | null;
   averageFood: number | null;
   averageTransport: number | null;
@@ -58,6 +61,7 @@ export interface PublicDestinationAccommodationInsights {
   hostUniversityCount: number;
   submissionCount: number;
   latestReportSubmittedAt: string | null;
+  isLimitedData: boolean;
   currency: string;
   sampleSize: number;
   rentSampleSize: number;
@@ -94,6 +98,7 @@ export interface PublicDestinationCourseEquivalences {
   hostUniversityCount: number;
   submissionCount: number;
   latestReportSubmittedAt: string | null;
+  isLimitedData: boolean;
   homeUniversityCount: number;
   totalMappings: number;
   groups: PublicDestinationCourseEquivalenceGroup[];
@@ -106,10 +111,13 @@ export interface PublicDestinationDetail {
   hostUniversityCount: number;
   submissionCount: number;
   latestReportSubmittedAt: string | null;
+  isLimitedData: boolean;
   averageRent: number | null;
   averageMonthlyCost: number | null;
   accommodationSummary: PublicDestinationAccommodationSummary;
   costSummary: PublicDestinationCostSummary;
+  courseSampleSize: number;
+  courseIsLimitedData: boolean;
   courseEquivalenceExamples: PublicDestinationCourseExample[];
   practicalTips: string[];
 }

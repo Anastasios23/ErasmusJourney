@@ -131,6 +131,9 @@ let publicDestinationReadModelPromise: Promise<PublicDestinationReadModel> | nul
   null;
 let publicDestinationRefreshPromise: Promise<void> | null = null;
 
+const CITY_SPARSE_DATA_THRESHOLD = 5;
+const AGGREGATE_SPARSE_DATA_THRESHOLD = 3;
+
 const RAW_EXPERIENCE_SELECT = {
   id: true,
   hostCity: true,
@@ -210,6 +213,24 @@ function pushIfNumber(
   if (typeof value === "number" && Number.isFinite(value)) {
     target.push(value);
   }
+}
+
+function sumCounts(values: Map<string, number>): number {
+  return Array.from(values.values()).reduce((sum, value) => sum + value, 0);
+}
+
+function isLimitedCityData(submissionCount: number): boolean {
+  return submissionCount < CITY_SPARSE_DATA_THRESHOLD;
+}
+
+function canShowAggregate(
+  submissionCount: number,
+  aggregateSampleSize: number,
+): boolean {
+  return (
+    !isLimitedCityData(submissionCount) &&
+    aggregateSampleSize >= AGGREGATE_SPARSE_DATA_THRESHOLD
+  );
 }
 
 function dedupeCaseInsensitive(values: string[]): string[] {
@@ -638,6 +659,8 @@ function selectDestinationRecords(
 function toListItem(
   destination: GroupedDestinationData,
 ): PublicDestinationListItem {
+  const isLimitedData = isLimitedCityData(destination.submissionCount);
+
   return {
     slug: destination.slug,
     city: destination.city,
@@ -645,14 +668,34 @@ function toListItem(
     hostUniversityCount: destination.universities.size,
     submissionCount: destination.submissionCount,
     latestReportSubmittedAt: toIsoDate(destination.latestReportSubmittedAt),
-    averageRent: average(destination.rents),
-    averageMonthlyCost: average(destination.monthlyCosts),
+    isLimitedData,
+    averageRent: canShowAggregate(destination.submissionCount, destination.rents.length)
+      ? average(destination.rents)
+      : null,
+    averageMonthlyCost: canShowAggregate(
+      destination.submissionCount,
+      destination.monthlyCosts.length,
+    )
+      ? average(destination.monthlyCosts)
+      : null,
   };
 }
 
 function buildDestinationDetail(
   destination: GroupedDestinationData,
 ): PublicDestinationDetail {
+  const isLimitedData = isLimitedCityData(destination.submissionCount);
+  const canShowCostSummary = canShowAggregate(
+    destination.submissionCount,
+    destination.monthlyCosts.length,
+  );
+  const canShowAccommodationSummary = canShowAggregate(
+    destination.submissionCount,
+    destination.accommodationSubmissionCount,
+  );
+  const courseSampleSize = destination.courseEquivalences.length;
+  const courseIsLimitedData =
+    isLimitedData || courseSampleSize < AGGREGATE_SPARSE_DATA_THRESHOLD;
   const uniqueTips = dedupeCaseInsensitive(destination.practicalTips).slice(
     0,
     8,
@@ -665,33 +708,48 @@ function buildDestinationDetail(
     hostUniversityCount: destination.universities.size,
     submissionCount: destination.submissionCount,
     latestReportSubmittedAt: toIsoDate(destination.latestReportSubmittedAt),
-    averageRent: average(destination.rents),
-    averageMonthlyCost: average(destination.monthlyCosts),
+    isLimitedData,
+    averageRent: canShowCostSummary ? average(destination.rents) : null,
+    averageMonthlyCost: canShowCostSummary
+      ? average(destination.monthlyCosts)
+      : null,
     accommodationSummary: {
-      sampleSize: destination.rents.length,
-      averageRent: average(destination.rents),
-      types: Array.from(destination.accommodationType.entries())
-        .map(([type, value]) => ({
-          type,
-          count: value.count,
-          averageRent: average(value.rents),
-        }))
-        .sort((left, right) => right.count - left.count),
-      difficulty: Array.from(destination.accommodationDifficulty.entries())
-        .map(([level, count]) => ({ level, count }))
-        .sort((left, right) => right.count - left.count),
+      sampleSize: destination.accommodationSubmissionCount,
+      isLimitedData: !canShowAccommodationSummary,
+      averageRent: canShowAccommodationSummary ? average(destination.rents) : null,
+      types: canShowAccommodationSummary
+        ? Array.from(destination.accommodationType.entries())
+            .map(([type, value]) => ({
+              type,
+              count: value.count,
+              averageRent: average(value.rents),
+            }))
+            .sort((left, right) => right.count - left.count)
+        : [],
+      difficulty: canShowAccommodationSummary
+        ? Array.from(destination.accommodationDifficulty.entries())
+            .map(([level, count]) => ({ level, count }))
+            .sort((left, right) => right.count - left.count)
+        : [],
     },
     costSummary: {
       currency: deriveCurrency(destination.currencies),
       sampleSize: destination.monthlyCosts.length,
-      averageRent: average(destination.rents),
-      averageFood: average(destination.livingFood),
-      averageTransport: average(destination.livingTransport),
-      averageSocial: average(destination.livingSocial),
-      averageTravel: average(destination.livingTravel),
-      averageOther: average(destination.livingOther),
-      averageMonthlyCost: average(destination.monthlyCosts),
+      isLimitedData: !canShowCostSummary,
+      averageRent: canShowCostSummary ? average(destination.rents) : null,
+      averageFood: canShowCostSummary ? average(destination.livingFood) : null,
+      averageTransport: canShowCostSummary
+        ? average(destination.livingTransport)
+        : null,
+      averageSocial: canShowCostSummary ? average(destination.livingSocial) : null,
+      averageTravel: canShowCostSummary ? average(destination.livingTravel) : null,
+      averageOther: canShowCostSummary ? average(destination.livingOther) : null,
+      averageMonthlyCost: canShowCostSummary
+        ? average(destination.monthlyCosts)
+        : null,
     },
+    courseSampleSize,
+    courseIsLimitedData,
     courseEquivalenceExamples: buildUniqueCourseExamples(
       destination.courseEquivalences,
     ),
@@ -702,6 +760,41 @@ function buildDestinationDetail(
 function buildAccommodationInsights(
   destination: GroupedDestinationData,
 ): PublicDestinationAccommodationInsights {
+  const isLimitedData =
+    isLimitedCityData(destination.submissionCount) ||
+    destination.accommodationSubmissionCount < AGGREGATE_SPARSE_DATA_THRESHOLD;
+  const canShowRentAggregate = canShowAggregate(
+    destination.submissionCount,
+    destination.rents.length,
+  );
+  const canShowRecommendationAggregate = canShowAggregate(
+    destination.submissionCount,
+    destination.accommodationRecommendationTotal,
+  );
+  const typeSampleSize = Array.from(destination.accommodationType.values()).reduce(
+    (sum, value) => sum + value.count,
+    0,
+  );
+  const difficultySampleSize = sumCounts(destination.accommodationDifficulty);
+  const areaSampleSize = sumCounts(destination.accommodationAreas);
+  const reviewSnippetSampleSize = destination.accommodationReviewSnippets.length;
+  const canShowTypeAggregate = canShowAggregate(
+    destination.submissionCount,
+    typeSampleSize,
+  );
+  const canShowDifficultyAggregate = canShowAggregate(
+    destination.submissionCount,
+    difficultySampleSize,
+  );
+  const canShowAreaAggregate = canShowAggregate(
+    destination.submissionCount,
+    areaSampleSize,
+  );
+  const canShowReviewSnippets = canShowAggregate(
+    destination.submissionCount,
+    reviewSnippetSampleSize,
+  );
+
   return {
     slug: destination.slug,
     city: destination.city,
@@ -709,39 +802,48 @@ function buildAccommodationInsights(
     hostUniversityCount: destination.universities.size,
     submissionCount: destination.submissionCount,
     latestReportSubmittedAt: toIsoDate(destination.latestReportSubmittedAt),
+    isLimitedData,
     currency: deriveCurrency(destination.currencies),
     sampleSize: destination.accommodationSubmissionCount,
     rentSampleSize: destination.rents.length,
-    averageRent: average(destination.rents),
-    recommendationRate: percentage(
-      destination.accommodationRecommendationYesCount,
-      destination.accommodationRecommendationTotal,
-    ),
+    averageRent: canShowRentAggregate ? average(destination.rents) : null,
+    recommendationRate: canShowRecommendationAggregate
+      ? percentage(
+          destination.accommodationRecommendationYesCount,
+          destination.accommodationRecommendationTotal,
+        )
+      : null,
     recommendationSampleSize: destination.accommodationRecommendationTotal,
     recommendationYesCount: destination.accommodationRecommendationYesCount,
-    types: Array.from(destination.accommodationType.entries())
-      .map(([type, value]) => ({
-        type,
-        count: value.count,
-        averageRent: average(value.rents),
-      }))
-      .sort((left, right) => right.count - left.count),
-    difficulty: Array.from(destination.accommodationDifficulty.entries())
-      .map(([level, count]) => ({ level, count }))
-      .sort((left, right) => right.count - left.count),
-    commonAreas: Array.from(destination.accommodationAreas.entries())
-      .map(([name, count]) => ({ name, count }))
-      .sort((left, right) => {
-        if (right.count !== left.count) {
-          return right.count - left.count;
-        }
+    types: canShowTypeAggregate
+      ? Array.from(destination.accommodationType.entries())
+          .map(([type, value]) => ({
+            type,
+            count: value.count,
+            averageRent: average(value.rents),
+          }))
+          .sort((left, right) => right.count - left.count)
+      : [],
+    difficulty: canShowDifficultyAggregate
+      ? Array.from(destination.accommodationDifficulty.entries())
+          .map(([level, count]) => ({ level, count }))
+          .sort((left, right) => right.count - left.count)
+      : [],
+    commonAreas: canShowAreaAggregate
+      ? Array.from(destination.accommodationAreas.entries())
+          .map(([name, count]) => ({ name, count }))
+          .sort((left, right) => {
+            if (right.count !== left.count) {
+              return right.count - left.count;
+            }
 
-        return left.name.localeCompare(right.name);
-      })
-      .slice(0, 8),
-    reviewSnippets: dedupeCaseInsensitive(
-      destination.accommodationReviewSnippets,
-    ).slice(0, 6),
+            return left.name.localeCompare(right.name);
+          })
+          .slice(0, 8)
+      : [],
+    reviewSnippets: canShowReviewSnippets
+      ? dedupeCaseInsensitive(destination.accommodationReviewSnippets).slice(0, 6)
+      : [],
   };
 }
 
@@ -752,6 +854,7 @@ function buildCourseEquivalences(
   const homeUniversities = new Set(
     groups.map((group) => group.homeUniversity.toLowerCase()),
   );
+  const totalMappings = destination.courseEquivalences.length;
 
   return {
     slug: destination.slug,
@@ -760,8 +863,11 @@ function buildCourseEquivalences(
     hostUniversityCount: destination.universities.size,
     submissionCount: destination.submissionCount,
     latestReportSubmittedAt: toIsoDate(destination.latestReportSubmittedAt),
+    isLimitedData:
+      isLimitedCityData(destination.submissionCount) ||
+      totalMappings < AGGREGATE_SPARSE_DATA_THRESHOLD,
     homeUniversityCount: homeUniversities.size,
-    totalMappings: destination.courseEquivalences.length,
+    totalMappings,
     groups,
   };
 }
@@ -1101,6 +1207,7 @@ function buildPersistedPublicDestinationReadModel(
       hostUniversityCount: row.hostUniversityCount,
       submissionCount: row.submissionCount,
       latestReportSubmittedAt: toIsoDate(row.latestReportSubmittedAt),
+      isLimitedData: isLimitedCityData(row.submissionCount),
       averageRent: row.averageRent,
       averageMonthlyCost: row.averageMonthlyCost,
     });

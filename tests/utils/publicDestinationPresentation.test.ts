@@ -34,20 +34,20 @@ describe("public destination presentation helpers", () => {
 
   it("classifies destination signal strength from approved submission counts", () => {
     expect(getPublicDestinationSignalSummary(2, 1)).toEqual({
-      label: "Early signal",
+      label: "Limited data",
       tone: "warning",
       evidenceLine: "Based on 2 approved submissions across 1 host university.",
       description:
-        "Useful for an initial snapshot, but costs, housing, and course examples should be treated as directional guidance.",
+        "Fewer than 5 approved submissions are available for this city, so averages and summary claims stay hidden until the sample grows.",
     });
 
-    expect(getPublicDestinationSignalSummary(4, 2)).toEqual({
+    expect(getPublicDestinationSignalSummary(5, 2)).toEqual({
       label: "Growing sample",
       tone: "info",
       evidenceLine:
-        "Based on 4 approved submissions across 2 host universities.",
+        "Based on 5 approved submissions across 2 host universities.",
       description:
-        "Patterns are starting to repeat, but this is still a limited sample for detailed comparisons.",
+        "Enough approved submissions are available to start comparing recurring city-level patterns, while still treating results as directional.",
     });
 
     expect(getPublicDestinationSignalSummary(7, 3)).toEqual({

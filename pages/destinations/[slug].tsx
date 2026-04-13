@@ -6,6 +6,7 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import Header from "../../components/Header";
 import Footer from "../../src/components/Footer";
 import PublicDestinationSubnav from "../../src/components/PublicDestinationSubnav";
+import PublicDestinationSignalNotice from "../../src/components/PublicDestinationSignalNotice";
 import {
   Card,
   CardContent,
@@ -122,20 +123,26 @@ export default function DestinationDetailPage({
             Based on approved student submissions from Cyprus universities.
           </p>
           <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm leading-6 text-slate-600 shadow-sm">
-            Student-reported averages and experiences from{" "}
-            {destination.submissionCount} approved {submissionLabel}. Helpful
-            for planning, not exact guarantees.
+            Approved student signals from {destination.submissionCount}{" "}
+            {submissionLabel}. Helpful for planning, not exact guarantees.
             <span className="block pt-1">
               Latest approved report:{" "}
               {formatPublicDestinationFreshness(
                 destination.latestReportSubmittedAt,
               )}
             </span>
-            <span className="block pt-1">
-              Monthly rent is the minimum living-cost signal. Food, transport,
-              social, travel, and other reported costs deepen the estimate when
-              students provide them.
-            </span>
+            {destination.isLimitedData ? (
+              <span className="block pt-1">
+                Limited data. City-level averages and summary claims stay
+                hidden until at least 5 approved submissions are available.
+              </span>
+            ) : (
+              <span className="block pt-1">
+                Monthly rent is the minimum living-cost signal. Food,
+                transport, social, travel, and other reported costs deepen the
+                estimate when students provide them.
+              </span>
+            )}
           </div>
           {currencyMeta.isMixed ? (
             <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-900 shadow-sm">
@@ -143,6 +150,10 @@ export default function DestinationDetailPage({
               directional rather than exact.
             </div>
           ) : null}
+          <PublicDestinationSignalNotice
+            submissionCount={destination.submissionCount}
+            hostUniversityCount={destination.hostUniversityCount}
+          />
         </section>
 
         <section className="mt-8 grid gap-4 sm:grid-cols-3">
@@ -195,7 +206,9 @@ export default function DestinationDetailPage({
               <PreviewItem
                 label="Most common housing type"
                 value={
-                  topAccommodationType
+                  destination.accommodationSummary.isLimitedData
+                    ? "Limited data"
+                    : topAccommodationType
                     ? topAccommodationType.type
                     : "Not enough data yet"
                 }
@@ -203,7 +216,9 @@ export default function DestinationDetailPage({
               <PreviewItem
                 label="Most common difficulty"
                 value={
-                  topAccommodationDifficulty
+                  destination.accommodationSummary.isLimitedData
+                    ? "Limited data"
+                    : topAccommodationDifficulty
                     ? topAccommodationDifficulty.level
                     : "Not enough data yet"
                 }
@@ -231,13 +246,19 @@ export default function DestinationDetailPage({
             </CardHeader>
             <CardContent className="space-y-3">
               <PreviewItem
-                label="Course examples"
-                value={destination.courseEquivalenceExamples.length}
+                label="Approved course examples"
+                value={destination.courseSampleSize}
               />
               <PreviewItem
                 label="Practical tips"
                 value={destination.practicalTips.length}
               />
+              {destination.courseIsLimitedData ? (
+                <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
+                  Limited data. Cross-course summary claims stay hidden until at
+                  least 3 approved course examples exist for this destination.
+                </div>
+              ) : null}
               <div className="rounded-xl bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-700">
                 <p className="font-medium text-slate-950">Preview</p>
                 <p className="mt-1">{coursePreviewLine}</p>

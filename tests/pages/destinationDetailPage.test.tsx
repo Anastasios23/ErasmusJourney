@@ -44,47 +44,55 @@ describe("destination detail page", () => {
           country: "Netherlands",
           hostUniversityCount: 2,
           submissionCount: 4,
-          averageRent: 650,
-          averageMonthlyCost: 1150,
+          latestReportSubmittedAt: "2026-02-18T00:00:00.000Z",
+          isLimitedData: true,
+          averageRent: null,
+          averageMonthlyCost: null,
           accommodationSummary: {
             sampleSize: 3,
-            averageRent: 650,
+            isLimitedData: true,
+            averageRent: null,
             types: [],
             difficulty: [],
           },
           costSummary: {
             currency: "EUR",
             sampleSize: 4,
-            averageRent: 650,
-            averageFood: 180,
-            averageTransport: 70,
-            averageSocial: 140,
-            averageTravel: 50,
-            averageOther: 60,
-            averageMonthlyCost: 1150,
+            isLimitedData: true,
+            averageRent: null,
+            averageFood: null,
+            averageTransport: null,
+            averageSocial: null,
+            averageTravel: null,
+            averageOther: null,
+            averageMonthlyCost: null,
           },
+          courseSampleSize: 2,
+          courseIsLimitedData: true,
           courseEquivalenceExamples: [],
           practicalTips: [],
         }}
       />,
     );
 
-    expect(screen.getByText("Growing sample")).toBeInTheDocument();
+    expect(screen.getAllByText("Limited data").length).toBeGreaterThan(0);
     expect(
       screen.getByText(
         "Based on 4 approved submissions across 2 host universities.",
       ),
     ).toBeInTheDocument();
-    expect(screen.getByText("Start with housing and budget")).toBeInTheDocument();
     expect(
-      screen.getByText("Start with academics and practical tips"),
+      screen.getByText(
+        /city-level averages and summary claims stay hidden until at least 5 approved submissions are available/i,
+      ),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "Open accommodation insights" }),
+      screen.getByRole("link", { name: "View housing insights" }),
     ).toHaveAttribute("href", "/destinations/amsterdam-netherlands/accommodation");
     expect(
-      screen.getByRole("link", { name: "Open course equivalence page" }),
+      screen.getByRole("link", { name: "View course equivalences" }),
     ).toHaveAttribute("href", "/destinations/amsterdam-netherlands/courses");
+    expect(screen.getAllByText("N/A").length).toBeGreaterThan(0);
   });
 
   it("returns notFound for an invalid destination slug", async () => {

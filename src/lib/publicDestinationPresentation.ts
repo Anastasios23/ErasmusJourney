@@ -118,23 +118,23 @@ export function getPublicDestinationSignalSummary(
       ? "No approved submissions are aggregated here yet."
       : `Based on ${normalizedSubmissionCount} approved ${submissionLabel}${hostUniversityLine}.`;
 
-  if (normalizedSubmissionCount <= 2) {
+  if (normalizedSubmissionCount < 5) {
     return {
-      label: "Early signal",
+      label: "Limited data",
       tone: "warning",
       evidenceLine,
       description:
-        "Useful for an initial snapshot, but costs, housing, and course examples should be treated as directional guidance.",
+        "Fewer than 5 approved submissions are available for this city, so averages and summary claims stay hidden until the sample grows.",
     };
   }
 
-  if (normalizedSubmissionCount <= 5) {
+  if (normalizedSubmissionCount < 7) {
     return {
       label: "Growing sample",
       tone: "info",
       evidenceLine,
       description:
-        "Patterns are starting to repeat, but this is still a limited sample for detailed comparisons.",
+        "Enough approved submissions are available to start comparing recurring city-level patterns, while still treating results as directional.",
     };
   }
 

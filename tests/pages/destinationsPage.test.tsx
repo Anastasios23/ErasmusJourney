@@ -22,8 +22,9 @@ function createDestination(overrides: Record<string, unknown> = {}) {
     city: "Amsterdam",
     country: "Netherlands",
     hostUniversityCount: 2,
-    submissionCount: 4,
+    submissionCount: 7,
     latestReportSubmittedAt: "2026-02-18T00:00:00.000Z",
+    isLimitedData: false,
     averageRent: 650,
     averageMonthlyCost: 1150,
     ...overrides,
@@ -43,6 +44,7 @@ describe("destinations page", () => {
             hostUniversityCount: 1,
             submissionCount: 2,
             latestReportSubmittedAt: "2026-01-09T00:00:00.000Z",
+            isLimitedData: true,
             averageRent: 700,
             averageMonthlyCost: 1300,
           }),
@@ -61,12 +63,17 @@ describe("destinations page", () => {
     );
     expect(
       within(amsterdamCard as HTMLElement).getByText(
-        "Based on 4 approved submissions",
+        "Based on 7 approved submissions",
       ),
     ).toBeInTheDocument();
     expect(
       within(amsterdamCard as HTMLElement).getByText(
-        "A useful amount of student data is available.",
+        "Stronger signal",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(amsterdamCard as HTMLElement).getByText(
+        "Enough approved reports are available to compare recurring patterns more confidently, while still allowing for personal variation.",
       ),
     ).toBeInTheDocument();
     expect(
@@ -96,6 +103,7 @@ describe("destinations page", () => {
             hostUniversityCount: 1,
             submissionCount: 2,
             latestReportSubmittedAt: "2026-01-09T00:00:00.000Z",
+            isLimitedData: true,
             averageRent: 700,
             averageMonthlyCost: 1300,
           }),
@@ -133,6 +141,7 @@ describe("destinations page", () => {
             hostUniversityCount: 1,
             submissionCount: 2,
             latestReportSubmittedAt: "2026-01-09T00:00:00.000Z",
+            isLimitedData: true,
             averageRent: 700,
             averageMonthlyCost: 1300,
           }),
@@ -172,6 +181,7 @@ describe("destinations page", () => {
             hostUniversityCount: 1,
             submissionCount: 2,
             latestReportSubmittedAt: "2026-01-09T00:00:00.000Z",
+            isLimitedData: true,
             averageRent: 700,
             averageMonthlyCost: 1300,
           }),

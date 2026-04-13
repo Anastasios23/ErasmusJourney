@@ -52,8 +52,9 @@ function DestinationListCard({
             Based on {destination.submissionCount} approved{" "}
             {destination.submissionCount === 1 ? "submission" : "submissions"}
           </p>
+          <p className="text-sm font-semibold text-slate-900">{signal.label}</p>
           <p className="text-sm leading-6 text-slate-500">
-            {getDestinationSignalLine(signal.tone)}
+            {signal.description}
           </p>
           <p className="text-xs text-slate-500">
             Latest approved report:{" "}
@@ -245,15 +246,3 @@ export const getStaticProps: GetStaticProps<
     revalidate: PUBLIC_DESTINATION_PAGE_REVALIDATE_SECONDS,
   };
 };
-
-function getDestinationSignalLine(tone: "warning" | "info" | "success") {
-  if (tone === "warning") {
-    return "Limited data. Use this as guidance.";
-  }
-
-  if (tone === "info") {
-    return "A useful amount of student data is available.";
-  }
-
-  return "Good amount of student data.";
-}

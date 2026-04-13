@@ -44,6 +44,8 @@ describe("destination accommodation page", () => {
           country: "Netherlands",
           hostUniversityCount: 1,
           submissionCount: 2,
+          latestReportSubmittedAt: "2026-02-18T00:00:00.000Z",
+          isLimitedData: true,
           currency: "EUR",
           sampleSize: 0,
           rentSampleSize: 0,
@@ -60,14 +62,16 @@ describe("destination accommodation page", () => {
     );
 
     expect(
-      screen.getByText("No approved accommodation insights yet"),
+      screen.getByText(
+        "Approved submissions exist for this destination, but no public accommodation insights can be shown yet.",
+      ),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        /none of them currently include public accommodation data/i,
+        /housing averages, recommendation rates, and repeated-area summaries stay hidden/i,
       ),
     ).toBeInTheDocument();
-    expect(screen.getByText("Early signal")).toBeInTheDocument();
+    expect(screen.getAllByText("Limited data").length).toBeGreaterThan(0);
     expect(
       screen.getByText(
         "Based on 2 approved submissions across 1 host university.",
@@ -83,7 +87,9 @@ describe("destination accommodation page", () => {
           city: "Amsterdam",
           country: "Netherlands",
           hostUniversityCount: 2,
-          submissionCount: 4,
+          submissionCount: 5,
+          latestReportSubmittedAt: "2026-02-18T00:00:00.000Z",
+          isLimitedData: false,
           currency: "EUR",
           sampleSize: 4,
           rentSampleSize: 3,
@@ -108,22 +114,17 @@ describe("destination accommodation page", () => {
       />,
     );
 
-    expect(screen.getByText("Housing snapshot")).toBeInTheDocument();
+    expect(screen.getByText("Housing at a glance")).toBeInTheDocument();
     expect(
       screen.getByText(
-        /use these signals to compare the typical housing experience/i,
+        /approved and anonymized student housing insights/i,
       ),
     ).toBeInTheDocument();
+    expect(screen.getAllByText("Shared flat").length).toBeGreaterThan(0);
     expect(
-      screen.getByText("Average rent is based on 3 reports."),
+      screen.getByText(/2 reports.*640 EUR avg/i),
     ).toBeInTheDocument();
-    expect(
-      screen.getByText(/most reported housing type:/i),
-    ).toBeInTheDocument();
-    expect(screen.getByText("2 reports | 50%")).toBeInTheDocument();
-    expect(
-      screen.getByText(/generalized area mentions most often point to de pijp/i),
-    ).toBeInTheDocument();
+    expect(screen.getAllByText("De Pijp").length).toBeGreaterThan(0);
   });
 
   it("returns notFound for an invalid accommodation slug", async () => {

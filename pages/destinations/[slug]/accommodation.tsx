@@ -6,6 +6,7 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import Header from "../../../components/Header";
 import PublicDestinationSubnav from "../../../src/components/PublicDestinationSubnav";
 import Footer from "../../../src/components/Footer";
+import PublicDestinationSignalNotice from "../../../src/components/PublicDestinationSignalNotice";
 import { Button } from "../../../src/components/ui/button";
 import {
   formatPublicDestinationFreshness,
@@ -146,6 +147,20 @@ export default function DestinationAccommodationPage({
             )}
           </div>
 
+          <PublicDestinationSignalNotice
+            submissionCount={destination.submissionCount}
+            hostUniversityCount={destination.hostUniversityCount}
+          />
+
+          {destination.isLimitedData ? (
+            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              Limited data. Housing averages, recommendation rates, and
+              repeated-area summaries stay hidden until this city reaches 5
+              approved submissions and each housing aggregate has at least 3
+              records behind it.
+            </div>
+          ) : null}
+
           <div className="mt-8">
             <PublicDestinationSubnav
               slug={destination.slug}
@@ -200,31 +215,48 @@ export default function DestinationAccommodationPage({
                   />
                   <div className="border-t border-gray-200 py-3">
                     <p className="text-sm text-gray-600">
-                      {getAccommodationRecommendationText(
-                        destination.recommendationRate,
-                      )}
+                      {destination.isLimitedData
+                        ? "Limited data"
+                        : getAccommodationRecommendationText(
+                            destination.recommendationRate,
+                          )}
                     </p>
-                    {destination.recommendationRate !== null && (
+                    {!destination.isLimitedData &&
+                    destination.recommendationRate !== null ? (
                       <p className="mt-1 text-sm font-medium text-gray-950">
                         {destination.recommendationRate}% recommend
                       </p>
-                    )}
+                    ) : null}
                   </div>
                   <SummaryItem
                     label="Most common housing type"
-                    value={topType ? topType.type : "Not enough data yet"}
+                    value={
+                      destination.isLimitedData
+                        ? "Limited data"
+                        : topType
+                          ? topType.type
+                          : "Not enough data yet"
+                    }
                   />
                   <SummaryItem
                     label="Most common difficulty"
                     value={
-                      topDifficulty
+                      destination.isLimitedData
+                        ? "Limited data"
+                        : topDifficulty
                         ? topDifficulty.level
                         : "Not enough data yet"
                     }
                   />
                   <SummaryItem
                     label="Most mentioned area"
-                    value={topArea ? topArea.name : "Not enough data yet"}
+                    value={
+                      destination.isLimitedData
+                        ? "Limited data"
+                        : topArea
+                          ? topArea.name
+                          : "Not enough data yet"
+                    }
                   />
                 </div>
               </div>

@@ -44,6 +44,8 @@ describe("destination courses page", () => {
           country: "Netherlands",
           hostUniversityCount: 1,
           submissionCount: 2,
+          latestReportSubmittedAt: "2026-02-18T00:00:00.000Z",
+          isLimitedData: true,
           homeUniversityCount: 0,
           totalMappings: 0,
           groups: [],
@@ -52,14 +54,14 @@ describe("destination courses page", () => {
     );
 
     expect(
-      screen.getByText("No approved course mappings yet"),
+      screen.getByText("No course examples available yet."),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        /none of them currently include public course equivalence examples/i,
+        /cross-university summary claims stay hidden until this destination has at least 5 approved submissions and 3 approved course examples/i,
       ),
     ).toBeInTheDocument();
-    expect(screen.getByText("Early signal")).toBeInTheDocument();
+    expect(screen.getAllByText("Limited data").length).toBeGreaterThan(0);
     expect(
       screen.getByText(
         "Based on 2 approved submissions across 1 host university.",
@@ -75,7 +77,9 @@ describe("destination courses page", () => {
           city: "Amsterdam",
           country: "Netherlands",
           hostUniversityCount: 2,
-          submissionCount: 4,
+          submissionCount: 5,
+          latestReportSubmittedAt: "2026-02-18T00:00:00.000Z",
+          isLimitedData: false,
           homeUniversityCount: 2,
           totalMappings: 4,
           groups: [
@@ -115,22 +119,20 @@ describe("destination courses page", () => {
     );
 
     expect(
-      screen.getByText("How to read these equivalence examples"),
+      screen.getByText("Course examples in Amsterdam"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(
-        /each card starts from the home university and department/i,
-      ),
+      screen.getByText(/grouped by home university and department/i),
     ).toBeInTheDocument();
     expect(screen.getAllByText("Home course").length).toBeGreaterThan(0);
     expect(
-      screen.getAllByText("Matched host course").length,
+      screen.getAllByText("Host course").length,
     ).toBeGreaterThan(0);
-    expect(screen.getByText("3 published mappings")).toBeInTheDocument();
-    expect(screen.getByText("2 host universities")).toBeInTheDocument();
+    expect(screen.getByText("Published mappings")).toBeInTheDocument();
+    expect(screen.getByText("Home universities")).toBeInTheDocument();
 
     const headings = screen
-      .getAllByRole("heading", { level: 3 })
+      .getAllByRole("heading", { level: 2 })
       .map((element) => element.textContent);
     expect(headings.indexOf("University of Cyprus")).toBeLessThan(
       headings.indexOf("University of Nicosia"),

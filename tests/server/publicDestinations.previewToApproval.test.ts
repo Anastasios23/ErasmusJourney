@@ -399,12 +399,139 @@ describe("public destination preview-to-approval proof", () => {
     expect(publicBefore).not.toBeNull();
     expect(preview).not.toBeNull();
     expect(publicBefore?.submissionCount).toBe(1);
-    expect(publicBefore?.averageRent).toBe(480);
+    expect(publicBefore?.isLimitedData).toBe(true);
+    expect(publicBefore?.averageRent).toBeNull();
     expect(preview?.destination.before?.submissionCount).toBe(1);
     expect(preview?.destination.after.submissionCount).toBe(2);
-    expect(preview?.destination.after.averageRent).toBe(550);
+    expect(preview?.destination.after.isLimitedData).toBe(true);
+    expect(preview?.destination.after.averageRent).toBeNull();
     expect(publicAfterPreview).toEqual(publicBefore);
     expect(publicAfterPreview).not.toEqual(preview?.destination.after);
+  });
+
+  it("hides sparse averages and summary aggregates until thresholds are met", async () => {
+    experiences = [
+      createExperienceRecord({
+        id: "approved-1",
+        status: EXPERIENCE_STATUS.APPROVED,
+      }),
+      createExperienceRecord({
+        id: "approved-2",
+        status: EXPERIENCE_STATUS.APPROVED,
+        accommodation: {
+          accommodationType: "private_apartment",
+          monthlyRent: 620,
+          currency: "EUR",
+          areaOrNeighborhood: "Oud-West",
+          difficultyFindingAccommodation: "difficult",
+          wouldRecommend: false,
+          accommodationReview: "Quiet area with longer commute.",
+        },
+        livingExpenses: {
+          rent: 620,
+          food: 260,
+          transport: 55,
+          social: 210,
+          travel: 40,
+          other: 35,
+          currency: "EUR",
+        },
+      }),
+      createExperienceRecord({
+        id: "approved-3",
+        status: EXPERIENCE_STATUS.APPROVED,
+        accommodation: {
+          accommodationType: "student_residence",
+          monthlyRent: 560,
+          currency: "EUR",
+          areaOrNeighborhood: "Centrum",
+          difficultyFindingAccommodation: "easy",
+          wouldRecommend: true,
+          accommodationReview: "Managed housing with clear rules.",
+        },
+        livingExpenses: {
+          rent: 560,
+          food: 230,
+          transport: 50,
+          social: 170,
+          travel: 35,
+          other: 30,
+          currency: "EUR",
+        },
+        courses: [
+          {
+            id: "course-3",
+            homeCourseName: "Databases",
+            hostCourseName: "Data Platforms",
+            homeECTS: 6,
+            hostECTS: 6,
+            recognitionType: "department_elective",
+            notes: "Useful systems perspective.",
+          },
+        ],
+      }),
+      createExperienceRecord({
+        id: "approved-4",
+        status: EXPERIENCE_STATUS.APPROVED,
+        accommodation: {
+          accommodationType: "shared_apartment",
+          monthlyRent: 590,
+          currency: "EUR",
+          areaOrNeighborhood: "Oost",
+          difficultyFindingAccommodation: "moderate",
+          wouldRecommend: true,
+          accommodationReview: "Balanced cost and location.",
+        },
+        livingExpenses: {
+          rent: 590,
+          food: 240,
+          transport: 45,
+          social: 180,
+          travel: 55,
+          other: 20,
+          currency: "EUR",
+        },
+        courses: [
+          {
+            id: "course-4",
+            homeCourseName: "Operating Systems",
+            hostCourseName: "Distributed Systems",
+            homeECTS: 6,
+            hostECTS: 6,
+            recognitionType: "full_equivalence",
+            notes: "Practical labs.",
+          },
+        ],
+      }),
+    ];
+
+    await refreshPublicDestinationReadModel();
+    invalidatePublicDestinationReadModel();
+
+    const [listItem, detail, accommodation, courses] = await Promise.all([
+      getPublicDestinationList().then((destinations) => destinations[0] ?? null),
+      getPublicDestinationDetailBySlug("amsterdam-netherlands"),
+      getPublicAccommodationInsightsByDestinationSlug("amsterdam-netherlands"),
+      getPublicCourseEquivalencesByDestinationSlug("amsterdam-netherlands"),
+    ]);
+
+    expect(listItem?.isLimitedData).toBe(true);
+    expect(listItem?.averageRent).toBeNull();
+    expect(listItem?.averageMonthlyCost).toBeNull();
+    expect(detail?.isLimitedData).toBe(true);
+    expect(detail?.costSummary.isLimitedData).toBe(true);
+    expect(detail?.averageRent).toBeNull();
+    expect(detail?.averageMonthlyCost).toBeNull();
+    expect(detail?.accommodationSummary.isLimitedData).toBe(true);
+    expect(accommodation?.isLimitedData).toBe(true);
+    expect(accommodation?.averageRent).toBeNull();
+    expect(accommodation?.recommendationRate).toBeNull();
+    expect(accommodation?.types).toEqual([]);
+    expect(accommodation?.difficulty).toEqual([]);
+    expect(accommodation?.commonAreas).toEqual([]);
+    expect(accommodation?.reviewSnippets).toEqual([]);
+    expect(courses?.isLimitedData).toBe(true);
+    expect(detail?.courseIsLimitedData).toBe(true);
   });
 
   it("reports an explicit unavailable reason when destination identity is incomplete", async () => {
@@ -583,9 +710,7 @@ describe("public destination preview-to-approval proof", () => {
 
     expect(detail?.practicalTips).toContain("Edited public general tip.");
     expect(detail?.practicalTips).not.toContain("Start house hunting early.");
-    expect(accommodation?.reviewSnippets).toContain(
-      "Edited public housing note.",
-    );
+    expect(accommodation?.reviewSnippets).toEqual([]);
     expect(courses?.groups[0]?.examples[0]?.notes).toBe(
       "Edited public course note.",
     );

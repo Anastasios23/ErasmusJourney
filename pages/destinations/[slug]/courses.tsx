@@ -6,6 +6,7 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import Header from "../../../components/Header";
 import PublicDestinationSubnav from "../../../src/components/PublicDestinationSubnav";
 import Footer from "../../../src/components/Footer";
+import PublicDestinationSignalNotice from "../../../src/components/PublicDestinationSignalNotice";
 import { Button } from "../../../src/components/ui/button";
 import { Icon } from "@iconify/react";
 import { formatPublicDestinationFreshness } from "../../../src/lib/publicDestinationPresentation";
@@ -154,7 +155,20 @@ export default function DestinationCoursesPage({
             )}
           </p>
 
-          {topUniversities.length > 0 && (
+          <PublicDestinationSignalNotice
+            submissionCount={destination.submissionCount}
+            hostUniversityCount={destination.hostUniversityCount}
+          />
+
+          {destination.isLimitedData ? (
+            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              Limited data. Cross-university summary claims stay hidden until
+              this destination has at least 5 approved submissions and 3
+              approved course examples.
+            </div>
+          ) : null}
+
+          {!destination.isLimitedData && topUniversities.length > 0 && (
             <p className="text-sm text-gray-600">
               <span className="font-medium">Best for students from:</span>{" "}
               {topUniversities.join(", ")}
@@ -173,13 +187,13 @@ export default function DestinationCoursesPage({
           <div className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
             <p className="text-xs text-gray-600">Home universities</p>
             <p className="mt-1 text-2xl font-semibold text-gray-900">
-              {destination.homeUniversityCount}
+              {destination.isLimitedData ? "Limited data" : destination.homeUniversityCount}
             </p>
           </div>
           <div className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
             <p className="text-xs text-gray-600">Host universities</p>
             <p className="mt-1 text-2xl font-semibold text-gray-900">
-              {destination.hostUniversityCount}
+              {destination.isLimitedData ? "Limited data" : destination.hostUniversityCount}
             </p>
           </div>
         </section>
@@ -292,18 +306,22 @@ export default function DestinationCoursesPage({
                         </p>
                       </div>
                     )}
-                    <div>
-                      <p className="text-xs text-gray-500">Examples</p>
-                      <p className="font-medium text-gray-900">
-                        {group.mappingCount}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Host universities</p>
-                      <p className="font-medium text-gray-900">
-                        {group.hostUniversities.length}
-                      </p>
-                    </div>
+                    {!destination.isLimitedData ? (
+                      <>
+                        <div>
+                          <p className="text-xs text-gray-500">Examples</p>
+                          <p className="font-medium text-gray-900">
+                            {group.mappingCount}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500">Host universities</p>
+                          <p className="font-medium text-gray-900">
+                            {group.hostUniversities.length}
+                          </p>
+                        </div>
+                      </>
+                    ) : null}
                   </div>
                 </div>
 
