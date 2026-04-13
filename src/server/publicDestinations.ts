@@ -111,12 +111,45 @@ type PublicDestinationReadModelCacheEntry = {
   value: PublicDestinationReadModel;
 };
 
+type DestinationIdentity = {
+  slug: string;
+  city: string;
+  country: string;
+};
+
+type PublicDestinationCityView = {
+  listItem: PublicDestinationListItem;
+  detail: PublicDestinationDetail;
+  accommodation: PublicDestinationAccommodationInsights;
+  courseEquivalences: PublicDestinationCourseEquivalences;
+};
+
 let publicDestinationReadModelCache:
   | PublicDestinationReadModelCacheEntry
   | null = null;
 let publicDestinationReadModelPromise: Promise<PublicDestinationReadModel> | null =
   null;
 let publicDestinationRefreshPromise: Promise<void> | null = null;
+
+const RAW_EXPERIENCE_SELECT = {
+  id: true,
+  hostCity: true,
+  hostCountry: true,
+  hostUniversityId: true,
+  publicWordingOverrides: true,
+  submittedAt: true,
+  updatedAt: true,
+  hostUniversity: {
+    select: {
+      name: true,
+    },
+  },
+  basicInfo: true,
+  accommodation: true,
+  livingExpenses: true,
+  courses: true,
+  experience: true,
+} as const;
 
 function toRecord(value: unknown): Partial<Record<string, unknown>> | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -290,6 +323,24 @@ function getEffectivePublicWording(
   return typeof rawValue === "string" ? rawValue : "";
 }
 
+function getDestinationIdentity(
+  cityValue: string | null | undefined,
+  countryValue: string | null | undefined,
+): DestinationIdentity | null {
+  const city = typeof cityValue === "string" ? cityValue.trim() : "";
+  const country = typeof countryValue === "string" ? countryValue.trim() : "";
+
+  if (!city || !country) {
+    return null;
+  }
+
+  return {
+    slug: destinationSlug(city, country),
+    city,
+    country,
+  };
+}
+
 async function loadApprovedExperiences(): Promise<RawExperience[]> {
   return prisma.erasmusExperience.findMany({
     where: {
@@ -298,25 +349,7 @@ async function loadApprovedExperiences(): Promise<RawExperience[]> {
       hostCity: { not: null },
       hostCountry: { not: null },
     },
-    select: {
-      id: true,
-      hostCity: true,
-      hostCountry: true,
-      hostUniversityId: true,
-      publicWordingOverrides: true,
-      submittedAt: true,
-      updatedAt: true,
-      hostUniversity: {
-        select: {
-          name: true,
-        },
-      },
-      basicInfo: true,
-      accommodation: true,
-      livingExpenses: true,
-      courses: true,
-      experience: true,
-    },
+    select: RAW_EXPERIENCE_SELECT,
     orderBy: { updatedAt: "desc" },
   });
 }
@@ -324,25 +357,7 @@ async function loadApprovedExperiences(): Promise<RawExperience[]> {
 async function loadExperienceById(id: string): Promise<RawExperience | null> {
   return prisma.erasmusExperience.findUnique({
     where: { id },
-    select: {
-      id: true,
-      hostCity: true,
-      hostCountry: true,
-      hostUniversityId: true,
-      publicWordingOverrides: true,
-      submittedAt: true,
-      updatedAt: true,
-      hostUniversity: {
-        select: {
-          name: true,
-        },
-      },
-      basicInfo: true,
-      accommodation: true,
-      livingExpenses: true,
-      courses: true,
-      experience: true,
-    },
+    select: RAW_EXPERIENCE_SELECT,
   });
 }
 
@@ -599,6 +614,27 @@ function findDestinationBySlug(
   );
 }
 
+function isSameDestination(
+  experience: RawExperience,
+  destination: DestinationIdentity,
+): boolean {
+  return (
+    experience.hostCity?.trim().toLowerCase() ===
+      destination.city.toLowerCase() &&
+    experience.hostCountry?.trim().toLowerCase() ===
+      destination.country.toLowerCase()
+  );
+}
+
+function selectDestinationRecords(
+  experiences: RawExperience[],
+  destination: DestinationIdentity,
+): RawExperience[] {
+  return experiences.filter((experience) =>
+    isSameDestination(experience, destination),
+  );
+}
+
 function toListItem(
   destination: GroupedDestinationData,
 ): PublicDestinationListItem {
@@ -728,6 +764,37 @@ function buildCourseEquivalences(
     totalMappings: destination.courseEquivalences.length,
     groups,
   };
+}
+
+function buildCityPublicViewFromGroupedDestination(
+  destination: GroupedDestinationData,
+): PublicDestinationCityView {
+  const detail = buildDestinationDetail(destination);
+  const accommodation = buildAccommodationInsights(destination);
+  const courseEquivalences = buildCourseEquivalences(destination);
+
+  return {
+    listItem: toListItem(destination),
+    detail,
+    accommodation,
+    courseEquivalences,
+  };
+}
+
+function buildCityPublicView(
+  experiences: RawExperience[],
+  destination: DestinationIdentity,
+): PublicDestinationCityView | null {
+  const grouped = buildGroupedDestinations(
+    selectDestinationRecords(experiences, destination),
+  );
+  const groupedDestination = findDestinationBySlug(grouped, destination.slug);
+
+  if (!groupedDestination) {
+    return null;
+  }
+
+  return buildCityPublicViewFromGroupedDestination(groupedDestination);
 }
 
 function buildPendingAccommodationContribution(
@@ -972,17 +1039,16 @@ function buildPublicDestinationReadModel(
   >();
 
   const destinations = sortedDestinations.map((destination) => {
-    detailsBySlug.set(destination.slug, buildDestinationDetail(destination));
-    accommodationBySlug.set(
-      destination.slug,
-      buildAccommodationInsights(destination),
-    );
+    const cityView = buildCityPublicViewFromGroupedDestination(destination);
+
+    detailsBySlug.set(destination.slug, cityView.detail);
+    accommodationBySlug.set(destination.slug, cityView.accommodation);
     courseEquivalencesBySlug.set(
       destination.slug,
-      buildCourseEquivalences(destination),
+      cityView.courseEquivalences,
     );
 
-    return toListItem(destination);
+    return cityView.listItem;
   });
 
   return {
@@ -1265,21 +1331,26 @@ export async function getAdminPublicImpactPreviewByExperienceId(
     return null;
   }
 
-  const city = previewExperience.hostCity!.trim();
-  const country = previewExperience.hostCountry!.trim();
+  const destination = getDestinationIdentity(
+    previewExperience.hostCity,
+    previewExperience.hostCountry,
+  );
 
-  const slug = destinationSlug(city, country);
-  const currentGrouped = buildGroupedDestinations(approvedExperiences);
-  const currentDestination = findDestinationBySlug(currentGrouped, slug);
+  if (!destination) {
+    return null;
+  }
+
   const previewAlreadyApproved = approvedExperiences.some(
     (experience) => experience.id === previewExperience.id,
   );
-  const projectedGrouped = buildGroupedDestinations(
-    previewAlreadyApproved
-      ? approvedExperiences
-      : [...approvedExperiences, previewExperience],
+  const currentDestination = buildCityPublicView(approvedExperiences, destination);
+  const projectedExperiences = previewAlreadyApproved
+    ? approvedExperiences
+    : [...approvedExperiences, previewExperience];
+  const projectedDestination = buildCityPublicView(
+    projectedExperiences,
+    destination,
   );
-  const projectedDestination = findDestinationBySlug(projectedGrouped, slug);
 
   if (!projectedDestination) {
     return null;
@@ -1289,26 +1360,22 @@ export async function getAdminPublicImpactPreviewByExperienceId(
     buildPendingCourseContributionExamples(previewExperience);
 
   return {
-    slug,
-    city: projectedDestination.city,
-    country: projectedDestination.country,
+    slug: destination.slug,
+    city: projectedDestination.detail.city,
+    country: projectedDestination.detail.country,
     destination: {
       isNewDestination: !currentDestination,
-      before: currentDestination ? buildDestinationDetail(currentDestination) : null,
-      after: buildDestinationDetail(projectedDestination),
+      before: currentDestination?.detail ?? null,
+      after: projectedDestination.detail,
     },
     accommodation: {
-      before: currentDestination
-        ? buildAccommodationInsights(currentDestination)
-        : null,
-      after: buildAccommodationInsights(projectedDestination),
+      before: currentDestination?.accommodation ?? null,
+      after: projectedDestination.accommodation,
       contribution: buildPendingAccommodationContribution(previewExperience),
     },
     courses: {
-      before: currentDestination
-        ? buildCourseEquivalences(currentDestination)
-        : null,
-      after: buildCourseEquivalences(projectedDestination),
+      before: currentDestination?.courseEquivalences ?? null,
+      after: projectedDestination.courseEquivalences,
       contributionCount: courseContributionExamples.length,
       contributionExamples: courseContributionExamples,
     },

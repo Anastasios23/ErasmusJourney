@@ -53,6 +53,7 @@ export default function PublicImpactPreview({
         <CardHeader className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             <CardTitle>Projected public destination impact</CardTitle>
+            <Badge variant="info">Preview includes current submission</Badge>
             <Badge variant={preview.destination.isNewDestination ? "info" : "secondary"}>
               {preview.destination.isNewDestination
                 ? "New public destination"

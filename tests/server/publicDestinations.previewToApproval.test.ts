@@ -351,6 +351,62 @@ describe("public destination preview-to-approval proof", () => {
     ]);
   });
 
+  it("includes the current validated pending submission in admin preview without changing the live public page", async () => {
+    experiences = [
+      createExperienceRecord({
+        id: "approved-amsterdam",
+        status: EXPERIENCE_STATUS.APPROVED,
+      }),
+      createExperienceRecord({
+        id: "submitted-preview-only",
+        status: EXPERIENCE_STATUS.SUBMITTED,
+        accommodation: {
+          accommodationType: "private_apartment",
+          monthlyRent: 620,
+          currency: "EUR",
+          areaOrNeighborhood: "Oud-West",
+          difficultyFindingAccommodation: "difficult",
+          accommodationRating: 3,
+          wouldRecommend: false,
+          accommodationReview:
+            "More expensive, but close to lectures and grocery stores.",
+        },
+        livingExpenses: {
+          rent: 620,
+          food: 260,
+          transport: 55,
+          social: 210,
+          travel: 40,
+          other: 35,
+          currency: "EUR",
+        },
+      }),
+    ];
+
+    await refreshPublicDestinationReadModel();
+    invalidatePublicDestinationReadModel();
+
+    const publicBefore = await getPublicDestinationDetailBySlug(
+      "amsterdam-netherlands",
+    );
+    const preview = await getAdminPublicImpactPreviewByExperienceId(
+      "submitted-preview-only",
+    );
+    const publicAfterPreview = await getPublicDestinationDetailBySlug(
+      "amsterdam-netherlands",
+    );
+
+    expect(publicBefore).not.toBeNull();
+    expect(preview).not.toBeNull();
+    expect(publicBefore?.submissionCount).toBe(1);
+    expect(publicBefore?.averageRent).toBe(480);
+    expect(preview?.destination.before?.submissionCount).toBe(1);
+    expect(preview?.destination.after.submissionCount).toBe(2);
+    expect(preview?.destination.after.averageRent).toBe(550);
+    expect(publicAfterPreview).toEqual(publicBefore);
+    expect(publicAfterPreview).not.toEqual(preview?.destination.after);
+  });
+
   it("reports an explicit unavailable reason when destination identity is incomplete", async () => {
     const preview = await getAdminPublicImpactPreviewByExperienceId(
       "submitted-missing-destination",

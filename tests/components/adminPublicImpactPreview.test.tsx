@@ -47,6 +47,9 @@ describe("PublicImpactPreview", () => {
       screen.getByText(/Public routes after approval:/i),
     ).toBeInTheDocument();
     expect(
+      screen.getByText("Preview includes current submission"),
+    ).toBeInTheDocument();
+    expect(
       screen.getByText("/destinations/barcelona-spain/accommodation"),
     ).toBeInTheDocument();
     expect(screen.getAllByText("N/A").length).toBeGreaterThan(0);
