@@ -1,4 +1,9 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  EXPERIENCE_STATUS,
+  REVIEW_ACTION,
+  type ReviewActionType,
+} from "../../src/lib/canonicalWorkflow";
 
 const {
   mockFetch,
@@ -101,7 +106,7 @@ function createSubmittedExperience(
 ): Record<string, unknown> {
   return {
     id: "experience-base",
-    status: "SUBMITTED",
+    status: EXPERIENCE_STATUS.SUBMITTED,
     revisionCount: 0,
     hostCity: "Amsterdam",
     hostCountry: "Netherlands",
@@ -171,18 +176,24 @@ describe("admin public impact preview routes", () => {
     });
     mockUserFindUnique.mockResolvedValue({ role: "ADMIN" });
     mockExperienceFindMany.mockResolvedValue([]);
-    mockExperienceUpdate.mockImplementation(async ({ data }: { data: any }) => ({
-      id: "experience-base",
-      status: data.status || "SUBMITTED",
-      adminNotes: data.adminNotes || null,
-      publicWordingOverrides:
-        data.publicWordingOverrides === undefined
-          ? null
-          : data.publicWordingOverrides,
-      reviewFeedback: data.reviewFeedback || null,
-    }));
+    mockExperienceUpdate.mockImplementation(
+      async ({ data }: { data: any }) => ({
+        id: "experience-base",
+        status: data.status || EXPERIENCE_STATUS.SUBMITTED,
+        adminNotes: data.adminNotes || null,
+        publicWordingOverrides:
+          data.publicWordingOverrides === undefined
+            ? null
+            : data.publicWordingOverrides,
+        reviewFeedback: data.reviewFeedback || null,
+      }),
+    );
     mockReviewActionCreate.mockImplementation(
-      async ({ data }: { data: { action: string; feedback: string | null } }) => ({
+      async ({
+        data,
+      }: {
+        data: { action: ReviewActionType; feedback: string | null };
+      }) => ({
         id: `review-action-${data.action.toLowerCase()}`,
         action: data.action,
         feedback: data.feedback,
@@ -249,6 +260,24 @@ describe("admin public impact preview routes", () => {
     expect(res.jsonPayload).toEqual(preview);
   });
 
+  it("returns 401 for unauthenticated preview access", async () => {
+    mockGetServerSession.mockResolvedValue(null);
+
+    const req = createMockReq({
+      method: "GET",
+      query: { id: "experience-unauth-preview" },
+    });
+    const res = createMockRes();
+
+    await previewHandler(req as any, res as any);
+
+    expect(res.statusCode).toBe(401);
+    expect(res.jsonPayload).toEqual({ error: "Unauthorized" });
+    expect(mockUserFindUnique).not.toHaveBeenCalled();
+    expect(mockPreviewBuilder).not.toHaveBeenCalled();
+    expect(mockPreviewUnavailableReason).not.toHaveBeenCalled();
+  });
+
   it("returns 404 with a publishability reason when the minimum contract is incomplete", async () => {
     mockPreviewBuilder.mockResolvedValue(null);
     mockPreviewUnavailableReason.mockResolvedValue({
@@ -290,6 +319,55 @@ describe("admin public impact preview routes", () => {
     expect(res.jsonPayload).toEqual({
       error: "Forbidden: Admin access required",
     });
+    expect(mockPreviewBuilder).not.toHaveBeenCalled();
+    expect(mockPreviewUnavailableReason).not.toHaveBeenCalled();
+  });
+
+  it("returns 403 for non-admin review access", async () => {
+    mockUserFindUnique.mockResolvedValue({ role: "STUDENT" });
+
+    const req = createMockReq({
+      method: "POST",
+      query: { id: "experience-3b" },
+      body: { action: REVIEW_ACTION.REJECTED, feedback: "Not publishable." },
+    });
+    const res = createMockRes();
+
+    await reviewHandler(req as any, res as any);
+
+    expect(res.statusCode).toBe(403);
+    expect(res.jsonPayload).toEqual({
+      error: "Forbidden: Admin access required",
+    });
+    expect(mockExperienceFindUnique).not.toHaveBeenCalled();
+    expect(mockTransaction).not.toHaveBeenCalled();
+    expect(mockExperienceUpdate).not.toHaveBeenCalled();
+    expect(mockReviewActionCreate).not.toHaveBeenCalled();
+    expect(mockRefreshPublicDestinationReadModel).not.toHaveBeenCalled();
+    expect(mockRevalidatePublicDestinationPages).not.toHaveBeenCalled();
+  });
+
+  it("returns 401 for unauthenticated review access without mutating state", async () => {
+    mockGetServerSession.mockResolvedValue(null);
+
+    const req = createMockReq({
+      method: "POST",
+      query: { id: "experience-unauth-review" },
+      body: { action: REVIEW_ACTION.APPROVED, feedback: "" },
+    });
+    const res = createMockRes();
+
+    await reviewHandler(req as any, res as any);
+
+    expect(res.statusCode).toBe(401);
+    expect(res.jsonPayload).toEqual({ error: "Unauthorized" });
+    expect(mockUserFindUnique).not.toHaveBeenCalled();
+    expect(mockExperienceFindUnique).not.toHaveBeenCalled();
+    expect(mockTransaction).not.toHaveBeenCalled();
+    expect(mockExperienceUpdate).not.toHaveBeenCalled();
+    expect(mockReviewActionCreate).not.toHaveBeenCalled();
+    expect(mockRefreshPublicDestinationReadModel).not.toHaveBeenCalled();
+    expect(mockRevalidatePublicDestinationPages).not.toHaveBeenCalled();
   });
 
   it("blocks approval when publishability-critical destination fields are missing", async () => {
@@ -310,7 +388,7 @@ describe("admin public impact preview routes", () => {
     const req = createMockReq({
       method: "POST",
       query: { id: "experience-4" },
-      body: { action: "APPROVED", feedback: "" },
+      body: { action: REVIEW_ACTION.APPROVED, feedback: "" },
     });
     const res = createMockRes();
 
@@ -324,9 +402,110 @@ describe("admin public impact preview routes", () => {
       missingFields: ["hostCity"],
     });
     expect(mockTransaction).not.toHaveBeenCalled();
+    expect(mockRefreshPublicDestinationReadModel).not.toHaveBeenCalled();
+    expect(mockRevalidatePublicDestinationPages).not.toHaveBeenCalled();
   });
 
-  it("allows approval when only enrichment fields are missing", async () => {
+  it("requires feedback when requesting changes", async () => {
+    mockExperienceFindUnique.mockResolvedValue(
+      createSubmittedExperience({
+        id: "experience-feedback-request-changes",
+      }),
+    );
+
+    const req = createMockReq({
+      method: "POST",
+      query: { id: "experience-feedback-request-changes" },
+      body: { action: REVIEW_ACTION.REQUEST_CHANGES, feedback: "   " },
+    });
+    const res = createMockRes();
+
+    await reviewHandler(req as any, res as any);
+
+    expect(res.statusCode).toBe(400);
+    expect(res.jsonPayload).toEqual({
+      error: "Feedback required when requesting changes",
+    });
+    expect(mockTransaction).not.toHaveBeenCalled();
+  });
+
+  it("requires feedback for rejection", async () => {
+    mockExperienceFindUnique.mockResolvedValue(
+      createSubmittedExperience({
+        id: "experience-feedback-rejected",
+      }),
+    );
+
+    const req = createMockReq({
+      method: "POST",
+      query: { id: "experience-feedback-rejected" },
+      body: { action: REVIEW_ACTION.REJECTED, feedback: "" },
+    });
+    const res = createMockRes();
+
+    await reviewHandler(req as any, res as any);
+
+    expect(res.statusCode).toBe(400);
+    expect(res.jsonPayload).toEqual({
+      error: "Feedback required for rejection",
+    });
+    expect(mockTransaction).not.toHaveBeenCalled();
+  });
+
+  it("allows review only from SUBMITTED status", async () => {
+    mockExperienceFindUnique.mockResolvedValue(
+      createSubmittedExperience({
+        id: "experience-approved-already",
+        status: EXPERIENCE_STATUS.APPROVED,
+      }),
+    );
+
+    const req = createMockReq({
+      method: "POST",
+      query: { id: "experience-approved-already" },
+      body: { action: REVIEW_ACTION.REJECTED, feedback: "Already reviewed." },
+    });
+    const res = createMockRes();
+
+    await reviewHandler(req as any, res as any);
+
+    expect(res.statusCode).toBe(409);
+    expect(res.jsonPayload).toEqual({
+      error:
+        "Only submissions currently in SUBMITTED status can be reviewed through the canonical moderation workflow.",
+      status: EXPERIENCE_STATUS.APPROVED,
+    });
+    expect(mockTransaction).not.toHaveBeenCalled();
+  });
+
+  it("allows only one revision request", async () => {
+    mockExperienceFindUnique.mockResolvedValue(
+      createSubmittedExperience({
+        id: "experience-revision-limit",
+        revisionCount: 1,
+      }),
+    );
+
+    const req = createMockReq({
+      method: "POST",
+      query: { id: "experience-revision-limit" },
+      body: {
+        action: REVIEW_ACTION.REQUEST_CHANGES,
+        feedback: "Please revise the destination details.",
+      },
+    });
+    const res = createMockRes();
+
+    await reviewHandler(req as any, res as any);
+
+    expect(res.statusCode).toBe(400);
+    expect(res.jsonPayload).toEqual({
+      error: "Maximum revision limit reached. Please approve or reject.",
+    });
+    expect(mockTransaction).not.toHaveBeenCalled();
+  });
+
+  it("approves a publishable submission and triggers public publishing side effects", async () => {
     mockExperienceFindUnique.mockResolvedValue(
       createSubmittedExperience({
         id: "experience-6",
@@ -343,31 +522,62 @@ describe("admin public impact preview routes", () => {
     const req = createMockReq({
       method: "POST",
       query: { id: "experience-6" },
-      body: { action: "APPROVED", feedback: "" },
+      body: { action: REVIEW_ACTION.APPROVED, feedback: "" },
     });
     const res = createMockRes();
 
     await reviewHandler(req as any, res as any);
 
+    const approvalUpdate = mockExperienceUpdate.mock.calls[0]?.[0];
+
     expect(res.statusCode).toBe(200);
+    expect(approvalUpdate).toEqual(
+      expect.objectContaining({
+        where: { id: "experience-6" },
+        data: expect.objectContaining({
+          status: EXPERIENCE_STATUS.APPROVED,
+          adminApproved: true,
+          isPublic: true,
+          reviewFeedback: null,
+          reviewedBy: "admin-1",
+        }),
+      }),
+    );
+    expect(approvalUpdate?.data?.publishedAt).toBeInstanceOf(Date);
+    expect(approvalUpdate?.data?.reviewedAt).toBeInstanceOf(Date);
+    expect(mockReviewActionCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: {
+          experienceId: "experience-6",
+          adminId: "admin-1",
+          action: REVIEW_ACTION.APPROVED,
+          feedback: null,
+        },
+      }),
+    );
+    expect(mockRefreshPublicDestinationReadModel).toHaveBeenCalledTimes(1);
+    expect(mockRevalidatePublicDestinationPages).toHaveBeenCalledWith(
+      res,
+      "amsterdam-netherlands",
+    );
     expect(res.jsonPayload).toEqual({
       success: true,
       experience: {
         id: "experience-base",
-        status: "APPROVED",
+        status: EXPERIENCE_STATUS.APPROVED,
         adminNotes: null,
         publicWordingOverrides: null,
         reviewFeedback: null,
       },
       reviewAction: {
         id: "review-action-approved",
-        action: "APPROVED",
+        action: REVIEW_ACTION.APPROVED,
         feedback: null,
       },
       reviewActions: [
         {
           id: "review-action-approved",
-          action: "APPROVED",
+          action: REVIEW_ACTION.APPROVED,
           feedback: null,
         },
       ],
@@ -383,7 +593,7 @@ describe("admin public impact preview routes", () => {
       method: "POST",
       query: { id: "experience-7" },
       body: {
-        action: "WORDING_EDITED",
+        action: REVIEW_ACTION.WORDING_EDITED,
         wordingEdits: {
           generalTips: "Cleaner public tip.",
           courseNotes: {
@@ -410,11 +620,13 @@ describe("admin public impact preview routes", () => {
         }),
       }),
     );
-    expect(mockExperienceUpdate.mock.calls[0]?.[0]?.data?.adminNotes).toBeUndefined();
+    expect(
+      mockExperienceUpdate.mock.calls[0]?.[0]?.data?.adminNotes,
+    ).toBeUndefined();
     expect(mockReviewActionCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
-          action: "WORDING_EDITED",
+          action: REVIEW_ACTION.WORDING_EDITED,
           feedback: expect.stringContaining("Updated General tips wording"),
         }),
       }),
@@ -423,7 +635,7 @@ describe("admin public impact preview routes", () => {
       success: true,
       experience: {
         id: "experience-base",
-        status: "SUBMITTED",
+        status: EXPERIENCE_STATUS.SUBMITTED,
         adminNotes: null,
         publicWordingOverrides: {
           generalTips: "Cleaner public tip.",
@@ -435,39 +647,71 @@ describe("admin public impact preview routes", () => {
       },
       reviewAction: {
         id: "review-action-wording_edited",
-        action: "WORDING_EDITED",
+        action: REVIEW_ACTION.WORDING_EDITED,
         feedback: expect.stringContaining("Updated General tips wording"),
       },
       reviewActions: [
         {
           id: "review-action-wording_edited",
-          action: "WORDING_EDITED",
+          action: REVIEW_ACTION.WORDING_EDITED,
           feedback: expect.stringContaining("Updated General tips wording"),
         },
       ],
-      message: "Public wording edits saved. Student source data remains unchanged.",
+      message:
+        "Public wording edits saved. Student source data remains unchanged.",
     });
   });
 
   it("returns a submission to editable revision state and emails the student", async () => {
     process.env.RESEND_API_KEY = "resend-test-key";
-    process.env.MODERATION_EMAIL_FROM =
-      "Erasmus Journey <noreply@example.com>";
+    process.env.MODERATION_EMAIL_FROM = "Erasmus Journey <noreply@example.com>";
     mockExperienceFindUnique.mockResolvedValue(createSubmittedExperience());
 
     const req = createMockReq({
       method: "POST",
       query: { id: "experience-8" },
       body: {
-        action: "REQUEST_CHANGES",
-        feedback: "Please remove the identifying housing details and clarify the advice.",
+        action: REVIEW_ACTION.REQUEST_CHANGES,
+        feedback:
+          "Please remove the identifying housing details and clarify the advice.",
       },
     });
     const res = createMockRes();
 
     await reviewHandler(req as any, res as any);
 
+    const revisionUpdate = mockExperienceUpdate.mock.calls[0]?.[0];
+
     expect(res.statusCode).toBe(200);
+    expect(revisionUpdate).toEqual(
+      expect.objectContaining({
+        where: { id: "experience-8" },
+        data: expect.objectContaining({
+          status: EXPERIENCE_STATUS.REVISION_NEEDED,
+          revisionCount: 1,
+          adminApproved: false,
+          isPublic: false,
+          publishedAt: null,
+          reviewFeedback:
+            "Please remove the identifying housing details and clarify the advice.",
+          reviewedBy: "admin-1",
+        }),
+      }),
+    );
+    expect(revisionUpdate?.data?.reviewedAt).toBeInstanceOf(Date);
+    expect(mockReviewActionCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: {
+          experienceId: "experience-8",
+          adminId: "admin-1",
+          action: REVIEW_ACTION.REQUEST_CHANGES,
+          feedback:
+            "Please remove the identifying housing details and clarify the advice.",
+        },
+      }),
+    );
+    expect(mockRefreshPublicDestinationReadModel).not.toHaveBeenCalled();
+    expect(mockRevalidatePublicDestinationPages).not.toHaveBeenCalled();
     expect(mockFetch).toHaveBeenCalledWith(
       "https://api.resend.com/emails",
       expect.objectContaining({
@@ -481,7 +725,7 @@ describe("admin public impact preview routes", () => {
       success: true,
       experience: {
         id: "experience-base",
-        status: "REVISION_NEEDED",
+        status: EXPERIENCE_STATUS.REVISION_NEEDED,
         adminNotes: null,
         publicWordingOverrides: null,
         reviewFeedback:
@@ -489,14 +733,14 @@ describe("admin public impact preview routes", () => {
       },
       reviewAction: {
         id: "review-action-request_changes",
-        action: "REQUEST_CHANGES",
+        action: REVIEW_ACTION.REQUEST_CHANGES,
         feedback:
           "Please remove the identifying housing details and clarify the advice.",
       },
       reviewActions: [
         {
           id: "review-action-request_changes",
-          action: "REQUEST_CHANGES",
+          action: REVIEW_ACTION.REQUEST_CHANGES,
           feedback:
             "Please remove the identifying housing details and clarify the advice.",
         },
@@ -506,6 +750,81 @@ describe("admin public impact preview routes", () => {
       },
       message:
         "Changes requested. Submission returned to editable revision state and the student was emailed.",
+    });
+  });
+
+  it("keeps rejected submissions non-public", async () => {
+    mockExperienceFindUnique.mockResolvedValue(
+      createSubmittedExperience({
+        id: "experience-9",
+      }),
+    );
+
+    const req = createMockReq({
+      method: "POST",
+      query: { id: "experience-9" },
+      body: {
+        action: REVIEW_ACTION.REJECTED,
+        feedback: "Contains identifying information and cannot be published.",
+      },
+    });
+    const res = createMockRes();
+
+    await reviewHandler(req as any, res as any);
+
+    const rejectionUpdate = mockExperienceUpdate.mock.calls[0]?.[0];
+
+    expect(res.statusCode).toBe(200);
+    expect(rejectionUpdate).toEqual(
+      expect.objectContaining({
+        where: { id: "experience-9" },
+        data: expect.objectContaining({
+          status: EXPERIENCE_STATUS.REJECTED,
+          adminApproved: false,
+          isPublic: false,
+          publishedAt: null,
+          reviewFeedback:
+            "Contains identifying information and cannot be published.",
+          reviewedBy: "admin-1",
+        }),
+      }),
+    );
+    expect(rejectionUpdate?.data?.reviewedAt).toBeInstanceOf(Date);
+    expect(mockReviewActionCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: {
+          experienceId: "experience-9",
+          adminId: "admin-1",
+          action: REVIEW_ACTION.REJECTED,
+          feedback: "Contains identifying information and cannot be published.",
+        },
+      }),
+    );
+    expect(mockRefreshPublicDestinationReadModel).not.toHaveBeenCalled();
+    expect(mockRevalidatePublicDestinationPages).not.toHaveBeenCalled();
+    expect(res.jsonPayload).toEqual({
+      success: true,
+      experience: {
+        id: "experience-base",
+        status: EXPERIENCE_STATUS.REJECTED,
+        adminNotes: null,
+        publicWordingOverrides: null,
+        reviewFeedback:
+          "Contains identifying information and cannot be published.",
+      },
+      reviewAction: {
+        id: "review-action-rejected",
+        action: REVIEW_ACTION.REJECTED,
+        feedback: "Contains identifying information and cannot be published.",
+      },
+      reviewActions: [
+        {
+          id: "review-action-rejected",
+          action: REVIEW_ACTION.REJECTED,
+          feedback: "Contains identifying information and cannot be published.",
+        },
+      ],
+      message: "Experience rejected.",
     });
   });
 });

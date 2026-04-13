@@ -23,6 +23,10 @@ import {
   refreshPublicDestinationReadModelIfNeeded,
   triggerStatsRefresh,
 } from "./persistence";
+import {
+  EXPERIENCE_STATUS,
+  type ErasmusExperienceStatus,
+} from "../../lib/canonicalWorkflow";
 import { isStudentEditableExperienceStatus } from "../../lib/experienceWorkflow";
 
 type ExperienceRecord = {
@@ -36,7 +40,7 @@ type ExperienceRecord = {
   accommodation: unknown;
   livingExpenses: unknown;
   experience: unknown;
-  status: string;
+  status: ErasmusExperienceStatus;
   isPublic: boolean;
   lastSavedAt: Date;
   submittedAt: Date | null;
@@ -407,7 +411,7 @@ export async function createDraft(
       data: {
         id: randomUUID(),
         userId: user.id,
-        status: "DRAFT",
+        status: EXPERIENCE_STATUS.DRAFT,
         semester: null,
         updatedAt: new Date(),
         basicInfo: {},
@@ -501,7 +505,7 @@ export async function submitExperience(
   assertEditableExperienceStatus(existingExperience);
 
   const submissionData: ExperienceUpdateData = {
-    status: "SUBMITTED",
+    status: EXPERIENCE_STATUS.SUBMITTED,
     submittedAt: new Date(),
     isComplete: true,
     courses: sanitizeCourseMappingsData(

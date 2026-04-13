@@ -1,9 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
-import * as PrismaClientPackage from "@prisma/client";
 import { authOptions } from "../../../auth/[...nextauth]";
 import { prisma } from "../../../../../lib/prisma";
 import { buildPreviewUnavailableReason } from "../../../../../src/lib/adminPublicImpactPreview";
+import {
+  EXPERIENCE_STATUS,
+  REVIEW_ACTION,
+  type ReviewActionType,
+} from "../../../../../src/lib/canonicalWorkflow";
 import { sanitizeBasicInformationData } from "../../../../../src/lib/basicInformation";
 import {
   buildStoredPublicWordingEdits,
@@ -25,7 +29,7 @@ import { sendRequestChangesEmail } from "../../../../../src/server/moderationEma
 import { refreshPublicDestinationReadModel } from "../../../../../src/server/publicDestinations";
 import { revalidatePublicDestinationPages } from "../../../../../src/server/publicDestinationRevalidation";
 
-const PRISMA_DB_NULL = (PrismaClientPackage as any).Prisma?.DbNull;
+const PRISMA_DB_NULL = (require("@prisma/client") as any).Prisma.DbNull;
 
 /**
  * Admin Review API Endpoint
@@ -110,13 +114,16 @@ export default async function handler(
     }
 
     // Check revision limit
-    if (normalizedAction === "REQUEST_CHANGES" && experience.revisionCount >= 1) {
+    if (
+      normalizedAction === REVIEW_ACTION.REQUEST_CHANGES &&
+      experience.revisionCount >= 1
+    ) {
       return res.status(400).json({
         error: "Maximum revision limit reached. Please approve or reject.",
       });
     }
 
-    if (normalizedAction === "APPROVED") {
+    if (normalizedAction === REVIEW_ACTION.APPROVED) {
       const unavailableReason = buildPreviewUnavailableReason(experience);
 
       if (unavailableReason) {
@@ -140,42 +147,51 @@ export default async function handler(
       : [];
     const hasWordingChanges = wordingChanges.length > 0;
 
-    if (normalizedAction === "WORDING_EDITED" && !hasWordingChanges) {
+    if (
+      normalizedAction === REVIEW_ACTION.WORDING_EDITED &&
+      !hasWordingChanges
+    ) {
       return res.status(400).json({
         error: "At least one wording change is required before saving edits.",
       });
     }
 
     if (
-      (normalizedAction === "REJECTED" || normalizedAction === "REQUEST_CHANGES") &&
+      (
+        normalizedAction === REVIEW_ACTION.REJECTED ||
+        normalizedAction === REVIEW_ACTION.REQUEST_CHANGES
+      ) &&
       typeof feedback !== "string"
     ) {
       return res.status(400).json({
         error:
-          normalizedAction === "REJECTED"
+          normalizedAction === REVIEW_ACTION.REJECTED
             ? "Feedback required for rejection"
             : "Feedback required when requesting changes",
       });
     }
 
     if (
-      (normalizedAction === "REJECTED" || normalizedAction === "REQUEST_CHANGES") &&
+      (
+        normalizedAction === REVIEW_ACTION.REJECTED ||
+        normalizedAction === REVIEW_ACTION.REQUEST_CHANGES
+      ) &&
       !normalizedFeedback
     ) {
       return res.status(400).json({
         error:
-          normalizedAction === "REJECTED"
+          normalizedAction === REVIEW_ACTION.REJECTED
             ? "Feedback required for rejection"
             : "Feedback required when requesting changes",
       });
     }
 
-    const updateData: Record<string, unknown> = {
+    const updateData: Record<string, any> = {
       reviewedAt: new Date(),
       reviewedBy: (session.user as any).id,
     };
 
-    if (normalizedAction !== "WORDING_EDITED") {
+    if (normalizedAction !== REVIEW_ACTION.WORDING_EDITED) {
       updateData.reviewFeedback = normalizedFeedback || null;
     }
 
@@ -187,37 +203,31 @@ export default async function handler(
       if (hasPublicWordingEdits(storedWordingEdits)) {
         updateData.publicWordingOverrides = storedWordingEdits;
       } else {
-        if (!PRISMA_DB_NULL) {
-          throw new Error(
-            "Prisma DbNull sentinel is unavailable for clearing public wording overrides.",
-          );
-        }
-
         updateData.publicWordingOverrides = PRISMA_DB_NULL;
       }
     }
 
     switch (normalizedAction) {
-      case "APPROVED":
-        updateData.status = "APPROVED";
+      case REVIEW_ACTION.APPROVED:
+        updateData.status = EXPERIENCE_STATUS.APPROVED;
         updateData.adminApproved = true;
         updateData.isPublic = true;
         updateData.publishedAt = new Date();
         break;
-      case "REJECTED":
-        updateData.status = "REJECTED";
+      case REVIEW_ACTION.REJECTED:
+        updateData.status = EXPERIENCE_STATUS.REJECTED;
         updateData.adminApproved = false;
         updateData.isPublic = false;
         updateData.publishedAt = null;
         break;
-      case "REQUEST_CHANGES":
-        updateData.status = "REVISION_NEEDED";
+      case REVIEW_ACTION.REQUEST_CHANGES:
+        updateData.status = EXPERIENCE_STATUS.REVISION_NEEDED;
         updateData.revisionCount = experience.revisionCount + 1;
         updateData.adminApproved = false;
         updateData.isPublic = false;
         updateData.publishedAt = null;
         break;
-      case "WORDING_EDITED":
+      case REVIEW_ACTION.WORDING_EDITED:
         break;
       default:
         break;
@@ -232,7 +242,7 @@ export default async function handler(
 
         const createdReviewActions: Array<{
           id: string;
-          action: string;
+          action: ReviewActionType;
           feedback: string | null;
         }> = [];
 
@@ -242,14 +252,14 @@ export default async function handler(
               data: {
                 experienceId: id,
                 adminId: (session.user as any).id,
-                action: "WORDING_EDITED",
+                action: REVIEW_ACTION.WORDING_EDITED,
                 feedback: formatWordingEditAuditFeedback(wordingChanges),
               },
             }),
           );
         }
 
-        if (normalizedAction !== "WORDING_EDITED") {
+        if (normalizedAction !== REVIEW_ACTION.WORDING_EDITED) {
           createdReviewActions.push(
             await tx.reviewAction.create({
               data: {
@@ -269,7 +279,7 @@ export default async function handler(
       },
     );
 
-    if (normalizedAction === "APPROVED") {
+    if (normalizedAction === REVIEW_ACTION.APPROVED) {
       try {
         await refreshPublicDestinationReadModel();
         await revalidatePublicDestinationPages(
@@ -291,7 +301,7 @@ export default async function handler(
 
     // If approved and has required data, trigger stats calculation
     if (
-      normalizedAction === "APPROVED" &&
+      normalizedAction === REVIEW_ACTION.APPROVED &&
       experience.hostCity &&
       experience.hostCountry &&
       experience.semester
@@ -306,7 +316,7 @@ export default async function handler(
     }
 
     const notification =
-      normalizedAction === "REQUEST_CHANGES"
+      normalizedAction === REVIEW_ACTION.REQUEST_CHANGES
         ? await sendRequestChangesEmail({
             studentEmail: experience.users?.email || "",
             studentName: [experience.users?.firstName, experience.users?.lastName]
@@ -418,7 +428,7 @@ async function calculateCityStats(
         hostCity: city,
         hostCountry: country,
         semester: semester,
-        status: "APPROVED",
+        status: EXPERIENCE_STATUS.APPROVED,
       },
     });
 
@@ -607,11 +617,11 @@ function getSuccessMessage(
     : "";
 
   switch (action) {
-    case "APPROVED":
+    case REVIEW_ACTION.APPROVED:
       return `Experience approved successfully. Public aggregates were refreshed.${wordingSuffix}`;
-    case "REJECTED":
+    case REVIEW_ACTION.REJECTED:
       return `Experience rejected.${wordingSuffix}`;
-    case "REQUEST_CHANGES":
+    case REVIEW_ACTION.REQUEST_CHANGES:
       if (options?.notification?.status === "sent") {
         return `Changes requested. Submission returned to editable revision state and the student was emailed.${wordingSuffix}`;
       }
@@ -625,7 +635,7 @@ function getSuccessMessage(
       }
 
       return `Changes requested. Submission returned to editable revision state.${wordingSuffix}`;
-    case "WORDING_EDITED":
+    case REVIEW_ACTION.WORDING_EDITED:
       return "Public wording edits saved. Student source data remains unchanged.";
     default:
       return "Review completed successfully.";

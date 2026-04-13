@@ -2,6 +2,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
 import { prisma } from "../../../lib/prisma";
+import {
+  EXPERIENCE_STATUS,
+  normalizeExperienceStatusInput,
+} from "../../../src/lib/canonicalWorkflow";
 import { respondWithCanonicalRouteDisabled } from "../../../src/lib/canonicalRoute";
 import {
   getAdminPublicImpactPreviewByExperienceId,
@@ -52,7 +56,13 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
 
     // Filter by status if provided
     if (status && typeof status === "string") {
-      where.status = status;
+      const normalizedStatus = normalizeExperienceStatusInput(status);
+
+      if (!normalizedStatus) {
+        return res.status(400).json({ error: "Invalid canonical status filter" });
+      }
+
+      where.status = normalizedStatus;
     }
 
     // Fetch experiences
@@ -94,7 +104,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
         let publicImpactPreview = null;
         let publicImpactPreviewUnavailableReason = null;
 
-        if (experience.status === "SUBMITTED") {
+        if (experience.status === EXPERIENCE_STATUS.SUBMITTED) {
           publicImpactPreview =
             await getAdminPublicImpactPreviewByExperienceId(experience.id);
 

@@ -18,6 +18,7 @@ import {
 } from "../lib/publicDestinationPresentation";
 import { PUBLIC_DESTINATION_READ_MODEL_TTL_MS } from "../lib/publicDestinationCache";
 import { buildPreviewUnavailableReason } from "../lib/adminPublicImpactPreview";
+import { EXPERIENCE_STATUS } from "../lib/canonicalWorkflow";
 import { getExperiencePublicWordingEdits } from "../lib/experienceModeration";
 import type { AdminPublicImpactPreview } from "../types/adminPublicImpactPreview";
 import type {
@@ -292,7 +293,7 @@ function getEffectivePublicWording(
 async function loadApprovedExperiences(): Promise<RawExperience[]> {
   return prisma.erasmusExperience.findMany({
     where: {
-      status: "APPROVED",
+      status: EXPERIENCE_STATUS.APPROVED,
       isComplete: true,
       hostCity: { not: null },
       hostCountry: { not: null },

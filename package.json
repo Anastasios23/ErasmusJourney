@@ -18,6 +18,7 @@
     "e2e:smoke:share-experience": "set PLAYWRIGHT_SERVER_MODE=dev&& playwright test tests/e2e/share-experience --project=chromium",
     "e2e:smoke:share-experience:redirect": "playwright test tests/e2e/auth/unauthenticated-redirect.spec.js --project=chromium",
     "e2e:smoke:share-experience:prod": "npm run build:next-only && playwright test tests/e2e/share-experience --project=chromium",
+    "e2e:student-flow": "set PLAYWRIGHT_SERVER_MODE=dev&& set NEXTAUTH_URL=http://127.0.0.1:3101&& playwright test tests/e2e/share-experience/student-flow.spec.js --project=chromium",
     "format.fix": "prettier --write .",
     "typecheck": "npm run typecheck:next-only",
     "typecheck:next-only": "tsc --project tsconfig.next-only.json --noEmit",

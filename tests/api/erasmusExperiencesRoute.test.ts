@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { EXPERIENCE_STATUS } from "../../src/lib/canonicalWorkflow";
 
 const {
   mockGetServerSession,
@@ -141,6 +142,44 @@ describe("erasmus experiences route", () => {
 
     expect(res.statusCode).toBe(401);
     expect(res.jsonPayload).toEqual({ error: "Authentication required" });
+    expect(mockListExperiencesForUser).not.toHaveBeenCalled();
+    expect(mockGetExperienceByIdForUser).not.toHaveBeenCalled();
+  });
+
+  it("returns 401 for unauthenticated POST create requests without creating a draft", async () => {
+    mockGetServerSession.mockResolvedValue(null);
+
+    const req = createMockReq({
+      method: "POST",
+      body: { action: "create" },
+    });
+    const res = createMockRes();
+
+    await handler(req as any, res as any);
+
+    expect(res.statusCode).toBe(401);
+    expect(res.jsonPayload).toEqual({ error: "Authentication required" });
+    expect(mockCreateDraft).not.toHaveBeenCalled();
+  });
+
+  it("returns 401 for unauthenticated PUT requests without mutating experience state", async () => {
+    mockGetServerSession.mockResolvedValue(null);
+
+    const req = createMockReq({
+      method: "PUT",
+      body: {
+        id: "exp-1",
+        currentStep: 3,
+      },
+    });
+    const res = createMockRes();
+
+    await handler(req as any, res as any);
+
+    expect(res.statusCode).toBe(401);
+    expect(res.jsonPayload).toEqual({ error: "Authentication required" });
+    expect(mockSaveDraft).not.toHaveBeenCalled();
+    expect(mockSubmitExperience).not.toHaveBeenCalled();
   });
 
   it("creates a draft through the application service and serializes the response", async () => {
@@ -154,7 +193,7 @@ describe("erasmus experiences route", () => {
     });
     mockCreateDraft.mockResolvedValue({
       created: true,
-      experience: { id: "exp-1", status: "DRAFT" },
+      experience: { id: "exp-1", status: EXPERIENCE_STATUS.DRAFT },
     });
 
     const req = createMockReq({
@@ -174,7 +213,7 @@ describe("erasmus experiences route", () => {
     expect(res.statusCode).toBe(201);
     expect(res.jsonPayload).toEqual({
       id: "exp-1",
-      status: "DRAFT",
+      status: EXPERIENCE_STATUS.DRAFT,
       serialized: true,
     });
   });
@@ -190,7 +229,7 @@ describe("erasmus experiences route", () => {
     });
     mockSubmitExperience.mockResolvedValue({
       id: "exp-1",
-      status: "SUBMITTED",
+      status: EXPERIENCE_STATUS.SUBMITTED,
     });
 
     const req = createMockReq({
@@ -223,7 +262,7 @@ describe("erasmus experiences route", () => {
     expect(res.statusCode).toBe(200);
     expect(res.jsonPayload).toEqual({
       id: "exp-1",
-      status: "SUBMITTED",
+      status: EXPERIENCE_STATUS.SUBMITTED,
       serialized: true,
     });
   });

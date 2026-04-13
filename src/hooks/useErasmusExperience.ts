@@ -11,6 +11,10 @@ import {
   createEmptyLivingExpensesStepData,
   sanitizeLivingExpensesStepData,
 } from "../lib/livingExpenses";
+import {
+  EXPERIENCE_STATUS,
+  type ErasmusExperienceStatus,
+} from "../lib/canonicalWorkflow";
 
 interface ExperienceLoadResult {
   data: ErasmusExperienceData | null;
@@ -37,13 +41,7 @@ interface ErasmusExperienceData {
   accommodation: any;
   livingExpenses: any;
   experience: any;
-  status:
-    | "DRAFT"
-    | "IN_PROGRESS"
-    | "SUBMITTED"
-    | "APPROVED"
-    | "REJECTED"
-    | "REVISION_NEEDED";
+  status: ErasmusExperienceStatus;
   isComplete: boolean;
   hasSubmitted: boolean;
   lastSavedAt?: string;
@@ -194,12 +192,12 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
               experience.livingExpenses,
             ),
             experience: experience.experience || {},
-            status: experience.status as any,
+            status: experience.status as ErasmusExperienceStatus,
             isComplete: experience.isComplete || false,
             hasSubmitted:
-              experience.status === "SUBMITTED" ||
-              experience.status === "APPROVED" ||
-              experience.status === "REJECTED",
+              experience.status === EXPERIENCE_STATUS.SUBMITTED ||
+              experience.status === EXPERIENCE_STATUS.APPROVED ||
+              experience.status === EXPERIENCE_STATUS.REJECTED,
             lastSavedAt: experience.lastSavedAt,
             submittedAt: experience.submittedAt,
           };
@@ -229,7 +227,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
             accommodation: createEmptyAccommodationStepData(),
             livingExpenses: createEmptyLivingExpensesStepData(),
             experience: {},
-            status: "DRAFT",
+            status: EXPERIENCE_STATUS.DRAFT,
             isComplete: false,
             hasSubmitted: false,
           };
@@ -409,7 +407,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
           // Update local state
           const nextData: ErasmusExperienceData = {
             ...data,
-            status: "SUBMITTED",
+            status: EXPERIENCE_STATUS.SUBMITTED,
             isComplete: true,
             hasSubmitted: true,
             submittedAt: result.submittedAt,
@@ -499,7 +497,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
         accommodation: createEmptyAccommodationStepData(),
         livingExpenses: createEmptyLivingExpensesStepData(),
         experience: null,
-        status: "DRAFT",
+        status: EXPERIENCE_STATUS.DRAFT,
         isComplete: false,
         hasSubmitted: false,
       };

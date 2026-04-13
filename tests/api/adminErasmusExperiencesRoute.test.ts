@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { EXPERIENCE_STATUS } from "../../src/lib/canonicalWorkflow";
 
 const {
   mockGetServerSession,
@@ -67,18 +68,36 @@ describe("admin erasmus experiences route", () => {
     mockPreviewUnavailableReason.mockResolvedValue(null);
   });
 
-  it("returns 403 for non-admin sessions", async () => {
-    mockGetServerSession.mockResolvedValue({
-      user: { id: "student-1", role: "USER" },
-    });
+  it("returns 403 for unauthenticated sessions without hitting admin data sources", async () => {
+    mockGetServerSession.mockResolvedValue(null);
 
-    const req = createMockReq({ status: "SUBMITTED" });
+    const req = createMockReq({ status: EXPERIENCE_STATUS.SUBMITTED });
     const res = createMockRes();
 
     await handler(req as any, res as any);
 
     expect(res.statusCode).toBe(403);
     expect(res.jsonPayload).toEqual({ error: "Admin access required" });
+    expect(mockFindMany).not.toHaveBeenCalled();
+    expect(mockPreviewBuilder).not.toHaveBeenCalled();
+    expect(mockPreviewUnavailableReason).not.toHaveBeenCalled();
+  });
+
+  it("returns 403 for non-admin sessions", async () => {
+    mockGetServerSession.mockResolvedValue({
+      user: { id: "student-1", role: "USER" },
+    });
+
+    const req = createMockReq({ status: EXPERIENCE_STATUS.SUBMITTED });
+    const res = createMockRes();
+
+    await handler(req as any, res as any);
+
+    expect(res.statusCode).toBe(403);
+    expect(res.jsonPayload).toEqual({ error: "Admin access required" });
+    expect(mockFindMany).not.toHaveBeenCalled();
+    expect(mockPreviewBuilder).not.toHaveBeenCalled();
+    expect(mockPreviewUnavailableReason).not.toHaveBeenCalled();
   });
 
   it("maps the Prisma users relation into the admin page user contract", async () => {
@@ -88,7 +107,7 @@ describe("admin erasmus experiences route", () => {
     mockFindMany.mockResolvedValue([
       {
         id: "experience-1",
-        status: "SUBMITTED",
+        status: EXPERIENCE_STATUS.SUBMITTED,
         hostCity: "Barcelona",
         hostCountry: "Spain",
         users: {
@@ -121,7 +140,7 @@ describe("admin erasmus experiences route", () => {
       },
     });
 
-    const req = createMockReq({ status: "SUBMITTED" });
+    const req = createMockReq({ status: EXPERIENCE_STATUS.SUBMITTED });
     const res = createMockRes();
 
     await handler(req as any, res as any);
@@ -130,7 +149,7 @@ describe("admin erasmus experiences route", () => {
       expect.objectContaining({
         where: {
           isComplete: true,
-          status: "SUBMITTED",
+          status: EXPERIENCE_STATUS.SUBMITTED,
         },
         include: expect.objectContaining({
           users: expect.any(Object),
@@ -155,5 +174,41 @@ describe("admin erasmus experiences route", () => {
         publicImpactPreviewUnavailableReason: null,
       }),
     ]);
+  });
+
+  it("normalizes legacy canonical status filters at the API boundary", async () => {
+    mockGetServerSession.mockResolvedValue({
+      user: { id: "admin-1", role: "ADMIN" },
+    });
+    mockFindMany.mockResolvedValue([]);
+
+    const req = createMockReq({ status: "PENDING" });
+    const res = createMockRes();
+
+    await handler(req as any, res as any);
+
+    expect(res.statusCode).toBe(200);
+    expect(mockFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          status: EXPERIENCE_STATUS.SUBMITTED,
+        }),
+      }),
+    );
+  });
+
+  it("rejects unknown canonical status filters", async () => {
+    mockGetServerSession.mockResolvedValue({
+      user: { id: "admin-1", role: "ADMIN" },
+    });
+
+    const req = createMockReq({ status: "ARCHIVED" });
+    const res = createMockRes();
+
+    await handler(req as any, res as any);
+
+    expect(res.statusCode).toBe(400);
+    expect(res.jsonPayload).toEqual({ error: "Invalid canonical status filter" });
+    expect(mockFindMany).not.toHaveBeenCalled();
   });
 });

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
@@ -40,6 +40,11 @@ import {
   getPublicWordingEditorState,
   type PublicWordingEditorState,
 } from "../../src/lib/experienceModeration";
+import {
+  REVIEW_ACTION,
+  type ErasmusExperienceStatus,
+  type ReviewActionType,
+} from "../../src/lib/canonicalWorkflow";
 import type {
   AdminPublicImpactPreview,
   AdminPublicImpactPreviewUnavailable,
@@ -47,7 +52,7 @@ import type {
 
 interface Experience extends AdminReviewSubmissionLike {
   id: string;
-  status: string;
+  status: ErasmusExperienceStatus;
   revisionCount: number;
   submittedAt: string | null;
   reviewFeedback: string | null;
@@ -245,14 +250,17 @@ export default function ReviewSubmissions() {
   };
 
   const handleReview = async (
-    action: "APPROVED" | "REJECTED" | "REQUEST_CHANGES" | "WORDING_EDITED",
+    action: ReviewActionType,
   ) => {
     if (!selectedSubmission) {
       return;
     }
 
     if (
-      (action === "REJECTED" || action === "REQUEST_CHANGES") &&
+      (
+        action === REVIEW_ACTION.REJECTED ||
+        action === REVIEW_ACTION.REQUEST_CHANGES
+      ) &&
       !feedback.trim()
     ) {
       setError("Feedback is required for rejection or change requests");
@@ -298,7 +306,7 @@ export default function ReviewSubmissions() {
         setWarning(null);
       }
 
-      if (action === "WORDING_EDITED") {
+      if (action === REVIEW_ACTION.WORDING_EDITED) {
         const refreshedSelection =
           nextSubmissions.find(
             (submission) => submission.id === selectedSubmission.id,
@@ -692,7 +700,7 @@ export default function ReviewSubmissions() {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => handleReview("WORDING_EDITED")}
+                          onClick={() => handleReview(REVIEW_ACTION.WORDING_EDITED)}
                           disabled={reviewing}
                         >
                           Save wording edits
@@ -740,7 +748,7 @@ export default function ReviewSubmissions() {
 
                       <div className="flex flex-wrap gap-3">
                         <Button
-                          onClick={() => handleReview("APPROVED")}
+                          onClick={() => handleReview(REVIEW_ACTION.APPROVED)}
                           disabled={reviewing || selectedReadiness?.status === "blocked"}
                           className="bg-green-600 hover:bg-green-700"
                         >
@@ -749,7 +757,9 @@ export default function ReviewSubmissions() {
                         </Button>
                         {selectedSubmission.revisionCount < 1 ? (
                           <Button
-                            onClick={() => handleReview("REQUEST_CHANGES")}
+                            onClick={() =>
+                              handleReview(REVIEW_ACTION.REQUEST_CHANGES)
+                            }
                             disabled={reviewing}
                             variant="outline"
                           >
@@ -758,7 +768,7 @@ export default function ReviewSubmissions() {
                           </Button>
                         ) : null}
                         <Button
-                          onClick={() => handleReview("REJECTED")}
+                          onClick={() => handleReview(REVIEW_ACTION.REJECTED)}
                           disabled={reviewing}
                           variant="destructive"
                         >

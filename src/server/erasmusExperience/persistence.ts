@@ -1,5 +1,9 @@
 import { prisma } from "../../../lib/prisma";
 import {
+  EXPERIENCE_STATUS,
+  type ErasmusExperienceStatus,
+} from "../../lib/canonicalWorkflow";
+import {
   getAccommodationTypeLabel,
   getBillsIncludedLabel,
   getDifficultyFindingAccommodationLabel,
@@ -17,7 +21,7 @@ type TransactionClient = Pick<
 
 type PersistedExperience = {
   id: string;
-  status?: string | null;
+  status?: ErasmusExperienceStatus | null;
   isComplete?: boolean | null;
   hostCity?: string | null;
   hostCountry?: string | null;
@@ -141,7 +145,7 @@ export async function refreshPublicDestinationReadModelIfNeeded(
   experience: PersistedExperience,
 ) : Promise<void> {
   if (
-    experience.status === "APPROVED" &&
+    experience.status === EXPERIENCE_STATUS.APPROVED &&
     experience.isComplete &&
     experience.hostCity &&
     experience.hostCountry

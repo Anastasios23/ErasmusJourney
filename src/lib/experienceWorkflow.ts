@@ -1,11 +1,15 @@
-const STUDENT_EDITABLE_EXPERIENCE_STATUSES = new Set([
-  "DRAFT",
-  "IN_PROGRESS",
-  "REVISION_NEEDED",
+import {
+  EXPERIENCE_STATUS,
+  type ErasmusExperienceStatus,
+} from "./canonicalWorkflow";
+
+const STUDENT_EDITABLE_EXPERIENCE_STATUSES = new Set<ErasmusExperienceStatus>([
+  EXPERIENCE_STATUS.DRAFT,
+  EXPERIENCE_STATUS.REVISION_NEEDED,
 ]);
 
 export function isStudentEditableExperienceStatus(
-  status: string | null | undefined,
+  status: ErasmusExperienceStatus | null | undefined,
 ): boolean {
   return typeof status === "string"
     ? STUDENT_EDITABLE_EXPERIENCE_STATUSES.has(status)
@@ -13,26 +17,26 @@ export function isStudentEditableExperienceStatus(
 }
 
 export function isStudentLockedExperienceStatus(
-  status: string | null | undefined,
+  status: ErasmusExperienceStatus | null | undefined,
 ): boolean {
   return typeof status === "string" && !isStudentEditableExperienceStatus(status);
 }
 
 export function isExperienceReviewableStatus(
-  status: string | null | undefined,
+  status: ErasmusExperienceStatus | null | undefined,
 ): boolean {
-  return status === "SUBMITTED";
+  return status === EXPERIENCE_STATUS.SUBMITTED;
 }
 
 export function getStudentLockedExperienceMessage(
-  status: string | null | undefined,
+  status: ErasmusExperienceStatus | null | undefined,
 ): string {
   switch (status) {
-    case "SUBMITTED":
+    case EXPERIENCE_STATUS.SUBMITTED:
       return "This submission is locked while it is under review.";
-    case "APPROVED":
+    case EXPERIENCE_STATUS.APPROVED:
       return "This submission is locked because it has already been approved.";
-    case "REJECTED":
+    case EXPERIENCE_STATUS.REJECTED:
       return "This submission is locked because it has already been rejected.";
     default:
       return "This submission is locked.";

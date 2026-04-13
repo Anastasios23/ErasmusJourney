@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { EXPERIENCE_STATUS } from "../../src/lib/canonicalWorkflow";
 
 const {
   mockUserFindUnique,
@@ -65,7 +66,7 @@ function createExperience(overrides: Record<string, unknown> = {}) {
     accommodation: {},
     livingExpenses: {},
     experience: {},
-    status: "DRAFT",
+    status: EXPERIENCE_STATUS.DRAFT,
     isPublic: false,
     lastSavedAt: new Date("2026-01-01T00:00:00.000Z"),
     submittedAt: null,
@@ -97,7 +98,7 @@ describe("erasmusExperience application guards", () => {
 
   it("returns the existing experience unchanged instead of resetting it on createDraft", async () => {
     const existingExperience = createExperience({
-      status: "SUBMITTED",
+      status: EXPERIENCE_STATUS.SUBMITTED,
       isComplete: true,
     });
 
@@ -121,7 +122,7 @@ describe("erasmusExperience application guards", () => {
   it("blocks draft saves once a submission is under review", async () => {
     mockExperienceFindUnique.mockResolvedValue(
       createExperience({
-        status: "SUBMITTED",
+        status: EXPERIENCE_STATUS.SUBMITTED,
         isComplete: true,
       }),
     );
@@ -136,7 +137,7 @@ describe("erasmusExperience application guards", () => {
       statusCode: 409,
       body: expect.objectContaining({
         error: "Submission locked",
-        status: "SUBMITTED",
+        status: EXPERIENCE_STATUS.SUBMITTED,
       }),
     });
 
@@ -146,7 +147,7 @@ describe("erasmusExperience application guards", () => {
   it("blocks resubmission once an experience is already approved", async () => {
     mockExperienceFindUnique.mockResolvedValue(
       createExperience({
-        status: "APPROVED",
+        status: EXPERIENCE_STATUS.APPROVED,
         isComplete: true,
       }),
     );
@@ -161,7 +162,7 @@ describe("erasmusExperience application guards", () => {
       statusCode: 409,
       body: expect.objectContaining({
         error: "Submission locked",
-        status: "APPROVED",
+        status: EXPERIENCE_STATUS.APPROVED,
       }),
     });
 

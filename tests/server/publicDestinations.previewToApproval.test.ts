@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { EXPERIENCE_STATUS } from "../../src/lib/canonicalWorkflow";
 
 const {
   mockExperienceFindMany,
@@ -45,7 +46,8 @@ import {
 function createExperienceRecord(overrides: Record<string, unknown> = {}) {
   return {
     id: "experience-base",
-    status: "APPROVED",
+    status: EXPERIENCE_STATUS.APPROVED,
+    isComplete: true,
     hostCity: "Amsterdam",
     hostCountry: "Netherlands",
     hostUniversityId: "uva",
@@ -115,11 +117,11 @@ describe("public destination preview-to-approval proof", () => {
     experiences = [
       createExperienceRecord({
         id: "approved-1",
-        status: "APPROVED",
+        status: EXPERIENCE_STATUS.APPROVED,
       }),
       createExperienceRecord({
         id: "submitted-1",
-        status: "SUBMITTED",
+        status: EXPERIENCE_STATUS.SUBMITTED,
         accommodation: {
           accommodationType: "private_apartment",
           monthlyRent: 620,
@@ -160,7 +162,7 @@ describe("public destination preview-to-approval proof", () => {
       }),
       createExperienceRecord({
         id: "submitted-missing-destination",
-        status: "SUBMITTED",
+        status: EXPERIENCE_STATUS.SUBMITTED,
         hostCity: null,
         hostCountry: "Netherlands",
       }),
@@ -169,7 +171,8 @@ describe("public destination preview-to-approval proof", () => {
     mockExperienceFindMany.mockImplementation(async () =>
       experiences.filter(
         (experience) =>
-          experience.status === "APPROVED" &&
+          experience.status === EXPERIENCE_STATUS.APPROVED &&
+          experience.isComplete !== false &&
           typeof experience.hostCity === "string" &&
           typeof experience.hostCountry === "string",
       ),
@@ -235,7 +238,7 @@ describe("public destination preview-to-approval proof", () => {
 
     experiences = experiences.map((experience) =>
       experience.id === "submitted-1"
-        ? { ...experience, status: "APPROVED" }
+        ? { ...experience, status: EXPERIENCE_STATUS.APPROVED }
         : experience,
     );
 
@@ -251,6 +254,101 @@ describe("public destination preview-to-approval proof", () => {
     expect(detail).toEqual(preview?.destination.after);
     expect(accommodation).toEqual(preview?.accommodation.after);
     expect(courses).toEqual(preview?.courses.after);
+  });
+
+  it("persists only approved destinations in public_destination_read_models", async () => {
+    experiences = [
+      createExperienceRecord({
+        id: "approved-amsterdam",
+        status: EXPERIENCE_STATUS.APPROVED,
+        hostCity: "Amsterdam",
+        hostCountry: "Netherlands",
+      }),
+      createExperienceRecord({
+        id: "rejected-amsterdam",
+        status: EXPERIENCE_STATUS.REJECTED,
+        hostCity: "Amsterdam",
+        hostCountry: "Netherlands",
+      }),
+      createExperienceRecord({
+        id: "revision-needed-berlin",
+        status: EXPERIENCE_STATUS.REVISION_NEEDED,
+        hostCity: "Berlin",
+        hostCountry: "Germany",
+      }),
+      createExperienceRecord({
+        id: "approved-prague",
+        status: EXPERIENCE_STATUS.APPROVED,
+        hostCity: "Prague",
+        hostCountry: "Czech Republic",
+      }),
+    ];
+
+    await refreshPublicDestinationReadModel();
+    invalidatePublicDestinationReadModel();
+
+    const destinations = await getPublicDestinationList();
+
+    expect(destinations).toHaveLength(2);
+    expect(destinations.map((destination) => destination.slug)).toEqual([
+      "amsterdam-netherlands",
+      "prague-czech-republic",
+    ]);
+    expect(destinations[0]).toMatchObject({
+      slug: "amsterdam-netherlands",
+      submissionCount: 1,
+    });
+    expect(persistedRows.map((row) => row.slug)).toEqual([
+      "amsterdam-netherlands",
+      "prague-czech-republic",
+    ]);
+  });
+
+  it("keeps newly approved submissions hidden until the read-model refresh path runs", async () => {
+    experiences = [
+      createExperienceRecord({
+        id: "approved-amsterdam",
+        status: EXPERIENCE_STATUS.APPROVED,
+        hostCity: "Amsterdam",
+        hostCountry: "Netherlands",
+      }),
+      createExperienceRecord({
+        id: "submitted-prague",
+        status: EXPERIENCE_STATUS.SUBMITTED,
+        hostCity: "Prague",
+        hostCountry: "Czech Republic",
+      }),
+    ];
+
+    await refreshPublicDestinationReadModel();
+    invalidatePublicDestinationReadModel();
+
+    expect(
+      (await getPublicDestinationList()).map((destination) => destination.slug),
+    ).toEqual(["amsterdam-netherlands"]);
+
+    experiences = experiences.map((experience) =>
+      experience.id === "submitted-prague"
+        ? { ...experience, status: EXPERIENCE_STATUS.APPROVED }
+        : experience,
+    );
+
+    invalidatePublicDestinationReadModel();
+
+    expect(
+      (await getPublicDestinationList()).map((destination) => destination.slug),
+    ).toEqual(["amsterdam-netherlands"]);
+
+    await refreshPublicDestinationReadModel();
+    invalidatePublicDestinationReadModel();
+
+    expect(
+      (await getPublicDestinationList()).map((destination) => destination.slug),
+    ).toEqual(["amsterdam-netherlands", "prague-czech-republic"]);
+    expect(persistedRows.map((row) => row.slug)).toEqual([
+      "amsterdam-netherlands",
+      "prague-czech-republic",
+    ]);
   });
 
   it("reports an explicit unavailable reason when destination identity is incomplete", async () => {
@@ -275,7 +373,7 @@ describe("public destination preview-to-approval proof", () => {
     experiences = [
       createExperienceRecord({
         id: "submitted-incomplete-contract",
-        status: "SUBMITTED",
+        status: EXPERIENCE_STATUS.SUBMITTED,
         accommodation: {
           currency: "EUR",
         },
@@ -316,7 +414,7 @@ describe("public destination preview-to-approval proof", () => {
     experiences = [
       createExperienceRecord({
         id: "submitted-minimum-only",
-        status: "SUBMITTED",
+        status: EXPERIENCE_STATUS.SUBMITTED,
         basicInfo: {
           homeUniversity: "University of Cyprus",
           hostUniversity: "University of Amsterdam",

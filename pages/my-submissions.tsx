@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -31,11 +31,17 @@ import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import { HeroSection } from "@/components/ui/hero-section";
 import { buildLoginRedirectUrl } from "../src/lib/authRedirect";
+import {
+  EXPERIENCE_STATUS,
+  type ErasmusExperienceStatus,
+} from "../src/lib/canonicalWorkflow";
+
+type SubmissionStatusFilter = ErasmusExperienceStatus | "ALL";
 
 interface Submission {
   id: string;
   submissionType: string;
-  status: string;
+  status: ErasmusExperienceStatus;
   title: string | null;
   hostCity: string | null;
   hostCountry: string | null;
@@ -57,11 +63,17 @@ interface Submission {
 
 interface SubmissionStats {
   total: number;
-  byStatus: Record<string, number>;
+  byStatus: Partial<Record<ErasmusExperienceStatus, number>>;
   byType: Record<string, number>;
   recentCount: number;
   avgResponseTime: number | null;
 }
+
+type StatusBadgeConfig = {
+  label: string;
+  className: string;
+  icon: string;
+};
 
 export default function MySubmissions() {
   const router = useRouter();
@@ -73,7 +85,7 @@ export default function MySubmissions() {
   const [error, setError] = useState<string | null>(null);
 
   // Filters
-  const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  const [statusFilter, setStatusFilter] = useState<SubmissionStatusFilter>("ALL");
   const [typeFilter, setTypeFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("updatedAt");
@@ -114,10 +126,10 @@ export default function MySubmissions() {
       const data = await response.json();
 
       // Transform to match the Submission interface
-      const transformedSubmissions = data.map((exp: any) => ({
+      const transformedSubmissions: Submission[] = data.map((exp: any) => ({
         id: exp.id,
         submissionType: "FULL_EXPERIENCE",
-        status: exp.status || "DRAFT",
+        status: (exp.status ?? EXPERIENCE_STATUS.DRAFT) as ErasmusExperienceStatus,
         title:
           exp.basicInfo?.hostUniversity
             ? `Experience at ${exp.basicInfo.hostUniversity}`
@@ -135,7 +147,7 @@ export default function MySubmissions() {
         submittedAt: exp.submittedAt,
         createdAt: exp.createdAt,
         updatedAt: exp.updatedAt || exp.lastSavedAt,
-        isPublic: exp.status === "APPROVED",
+        isPublic: exp.status === EXPERIENCE_STATUS.APPROVED,
         isFeatured: false,
         qualityScore: null,
         revisionCount: exp.revisionCount || 0,
@@ -148,7 +160,9 @@ export default function MySubmissions() {
 
       // Calculate stats
       if (transformedSubmissions.length > 0) {
-        const byStatus = transformedSubmissions.reduce((acc: any, sub: any) => {
+        const byStatus = transformedSubmissions.reduce<
+          Partial<Record<ErasmusExperienceStatus, number>>
+        >((acc, sub) => {
           acc[sub.status] = (acc[sub.status] || 0) + 1;
           return acc;
         }, {});
@@ -172,62 +186,41 @@ export default function MySubmissions() {
   };
 
   // Get status badge
-  const getStatusBadge = (status: string) => {
-    const config: Record<
-      string,
-      { label: string; className: string; icon: string }
-    > = {
-      DRAFT: {
+  const getStatusBadge = (status: ErasmusExperienceStatus) => {
+    const config: Record<ErasmusExperienceStatus, StatusBadgeConfig> = {
+      [EXPERIENCE_STATUS.DRAFT]: {
         label: "Draft",
         className:
           "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
         icon: "solar:pen-new-square-linear",
       },
-      IN_PROGRESS: {
-        label: "In Progress",
-        className:
-          "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
-        icon: "solar:pen-new-square-linear",
-      },
-      SUBMITTED: {
+      [EXPERIENCE_STATUS.SUBMITTED]: {
         label: "Under Review",
         className:
           "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
         icon: "solar:clock-circle-linear",
       },
-      PENDING: {
-        label: "Under Review",
-        className:
-          "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
-        icon: "solar:clock-circle-linear",
-      },
-      REVISION_NEEDED: {
+      [EXPERIENCE_STATUS.REVISION_NEEDED]: {
         label: "Changes Requested",
         className:
           "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
         icon: "solar:danger-triangle-linear",
       },
-      APPROVED: {
+      [EXPERIENCE_STATUS.APPROVED]: {
         label: "Approved",
         className:
           "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
         icon: "solar:check-circle-linear",
       },
-      REJECTED: {
+      [EXPERIENCE_STATUS.REJECTED]: {
         label: "Rejected",
         className:
           "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
         icon: "solar:close-circle-linear",
       },
-      ARCHIVED: {
-        label: "Archived",
-        className:
-          "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400",
-        icon: "solar:archive-linear",
-      },
     };
 
-    const { label, className, icon } = config[status] || config.DRAFT;
+    const { label, className, icon } = config[status];
 
     return (
       <Badge className={className}>
@@ -393,7 +386,7 @@ export default function MySubmissions() {
                           Approved
                         </p>
                         <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                          {stats.byStatus.APPROVED || 0}
+                          {stats.byStatus[EXPERIENCE_STATUS.APPROVED] || 0}
                         </p>
                       </div>
                       <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl">
@@ -414,8 +407,7 @@ export default function MySubmissions() {
                           Under Review
                         </p>
                         <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
-                          {(stats.byStatus.SUBMITTED || 0) +
-                            (stats.byStatus.PENDING || 0)}
+                          {stats.byStatus[EXPERIENCE_STATUS.SUBMITTED] || 0}
                         </p>
                       </div>
                       <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
@@ -485,7 +477,7 @@ export default function MySubmissions() {
                     <Select
                       value={statusFilter}
                       onValueChange={(value) => {
-                        setStatusFilter(value);
+                        setStatusFilter(value as SubmissionStatusFilter);
                         setPage(1);
                       }}
                     >
@@ -494,14 +486,19 @@ export default function MySubmissions() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="ALL">All Statuses</SelectItem>
-                        <SelectItem value="DRAFT">Draft</SelectItem>
-                        <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-                        <SelectItem value="SUBMITTED">Under Review</SelectItem>
-                        <SelectItem value="REVISION_NEEDED">
+                        <SelectItem value={EXPERIENCE_STATUS.DRAFT}>Draft</SelectItem>
+                        <SelectItem value={EXPERIENCE_STATUS.SUBMITTED}>
+                          Under Review
+                        </SelectItem>
+                        <SelectItem value={EXPERIENCE_STATUS.REVISION_NEEDED}>
                           Changes Requested
                         </SelectItem>
-                        <SelectItem value="APPROVED">Approved</SelectItem>
-                        <SelectItem value="REJECTED">Rejected</SelectItem>
+                        <SelectItem value={EXPERIENCE_STATUS.APPROVED}>
+                          Approved
+                        </SelectItem>
+                        <SelectItem value={EXPERIENCE_STATUS.REJECTED}>
+                          Rejected
+                        </SelectItem>
                       </SelectContent>
                     </Select>
 
@@ -699,18 +696,18 @@ export default function MySubmissions() {
                               {submission.reviewFeedback && (
                                 <div
                                   className={`mt-3 p-3 border rounded-lg ${
-                                    submission.status === "REVISION_NEEDED"
+                                    submission.status === EXPERIENCE_STATUS.REVISION_NEEDED
                                       ? "bg-orange-50 border-orange-200"
-                                      : submission.status === "REJECTED"
+                                      : submission.status === EXPERIENCE_STATUS.REJECTED
                                         ? "bg-red-50 border-red-200"
                                         : "bg-yellow-50 border-yellow-200"
                                   }`}
                                 >
                                   <p
                                     className={`text-sm ${
-                                      submission.status === "REVISION_NEEDED"
+                                      submission.status === EXPERIENCE_STATUS.REVISION_NEEDED
                                         ? "text-orange-800"
-                                        : submission.status === "REJECTED"
+                                        : submission.status === EXPERIENCE_STATUS.REJECTED
                                           ? "text-red-800"
                                           : "text-yellow-800"
                                     }`}
@@ -718,7 +715,7 @@ export default function MySubmissions() {
                                     <strong>Admin Feedback:</strong>{" "}
                                     {submission.reviewFeedback}
                                   </p>
-                                  {submission.status === "REVISION_NEEDED" && (
+                                  {submission.status === EXPERIENCE_STATUS.REVISION_NEEDED && (
                                     <div className="mt-2 text-xs text-orange-700">
                                       Review the requested changes and reopen
                                       your editable draft to update
@@ -739,9 +736,8 @@ export default function MySubmissions() {
 
                           {/* Actions */}
                           <div className="flex items-center gap-2 ml-4">
-                            {(submission.status === "DRAFT" ||
-                              submission.status === "IN_PROGRESS" ||
-                              submission.status === "REVISION_NEEDED") && (
+                            {(submission.status === EXPERIENCE_STATUS.DRAFT ||
+                              submission.status === EXPERIENCE_STATUS.REVISION_NEEDED) && (
                               <Link href="/share-experience">
                                 <Button
                                   size="sm"
@@ -751,13 +747,13 @@ export default function MySubmissions() {
                                     icon="solar:pen-new-square-linear"
                                     className="h-4 w-4 mr-2"
                                   />
-                                  {submission.status === "REVISION_NEEDED"
+                                  {submission.status === EXPERIENCE_STATUS.REVISION_NEEDED
                                     ? "Respond to Changes"
                                     : "Continue Editing"}
                                 </Button>
                               </Link>
                             )}
-                            {submission.status === "APPROVED" && (
+                            {submission.status === EXPERIENCE_STATUS.APPROVED && (
                               <Link
                                 href={`/destinations/${encodeURIComponent((submission as any).city?.toLowerCase().replace(/\s+/g, "-") || "explore")}`}
                               >

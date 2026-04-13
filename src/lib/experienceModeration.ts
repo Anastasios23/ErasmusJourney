@@ -1,17 +1,17 @@
 import { sanitizeAccommodationStepData } from "./accommodation";
 import {
+  REVIEW_ACTION,
+  REVIEW_ACTION_VALUES,
+  type ReviewActionType,
+} from "./canonicalWorkflow";
+import {
   isCourseMappingComplete,
   sanitizeCourseMappingsData,
 } from "./courseMatching";
 
-export const CANONICAL_REVIEW_ACTIONS = [
-  "APPROVED",
-  "REJECTED",
-  "REQUEST_CHANGES",
-  "WORDING_EDITED",
-] as const;
+export const CANONICAL_REVIEW_ACTIONS = REVIEW_ACTION_VALUES;
 
-export type CanonicalReviewAction = (typeof CANONICAL_REVIEW_ACTIONS)[number];
+export type CanonicalReviewAction = ReviewActionType;
 
 export interface ExperiencePublicWordingEdits {
   accommodationReview?: string | null;
@@ -146,13 +146,13 @@ export function normalizeReviewAction(
   action: string | null | undefined,
 ): CanonicalReviewAction | null {
   switch (action) {
-    case "APPROVED":
-    case "REJECTED":
-    case "REQUEST_CHANGES":
-    case "WORDING_EDITED":
+    case REVIEW_ACTION.APPROVED:
+    case REVIEW_ACTION.REJECTED:
+    case REVIEW_ACTION.REQUEST_CHANGES:
+    case REVIEW_ACTION.WORDING_EDITED:
       return action;
     case "REVISION_REQUESTED":
-      return "REQUEST_CHANGES";
+      return REVIEW_ACTION.REQUEST_CHANGES;
     default:
       return null;
   }
@@ -363,4 +363,3 @@ export function summarizePublicWordingChanges(
 
   return summaries;
 }
-

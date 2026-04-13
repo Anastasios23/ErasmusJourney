@@ -193,6 +193,14 @@ model destinations {
   @@unique([city, country])
 }
 
+enum ErasmusExperienceStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  REVISION_NEEDED
+}
+
 model ErasmusExperience {
   id             String  @id
   userId         String  @unique
@@ -208,7 +216,7 @@ model ErasmusExperience {
   experience     Json?
 
   // Submission workflow
-  status      String    @default("DRAFT") // DRAFT | SUBMITTED | APPROVED | REJECTED | REVISION_NEEDED
+  status      ErasmusExperienceStatus @default(DRAFT)
   isPublic    Boolean   @default(false)
   lastSavedAt DateTime  @default(now())
   submittedAt DateTime?
@@ -251,6 +259,13 @@ model ErasmusExperience {
   @@map("erasmus_experiences")
 }
 
+enum ReviewActionType {
+  APPROVED
+  REJECTED
+  REQUEST_CHANGES
+  WORDING_EDITED
+}
+
 // NEW: Admin review audit log
 model ReviewAction {
   id           String              @id @default(cuid())
@@ -258,7 +273,7 @@ model ReviewAction {
   experience   ErasmusExperience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
   adminId      String
   admin        users               @relation("ReviewActions", fields: [adminId], references: [id])
-  action       String // "APPROVED" | "REJECTED" | "REVISION_REQUESTED"
+  action       ReviewActionType
   feedback     String?
   createdAt    DateTime            @default(now())
 
