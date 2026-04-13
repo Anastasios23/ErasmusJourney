@@ -1,41 +1,14 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
-import { prisma } from "../../../lib/prisma";
+import type { NextApiRequest, NextApiResponse } from "next";
+
+import { respondWithCanonicalRouteDisabled } from "../../../src/lib/canonicalRoute";
 
 export default async function handler(
-  req: NextApiRequest,
+  _req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  // AUTHENTICATION DISABLED - Comment out to re-enable
-  // Check if user is admin
-  // const session = await getSession({ req });
-  // if (!session?.user || session.user.role !== "ADMIN") {
-  //   return res.status(403).json({ error: "Unauthorized" });
-  // }
-
-  if (req.method === "GET") {
-    try {
-      // For now, return empty array until we have the model working
-      const exchanges: any[] = [];
-      return res.status(200).json(exchanges);
-    } catch (error) {
-      console.error("Error fetching university exchanges:", error);
-      return res.status(500).json({ error: "Failed to fetch exchanges" });
-    }
-  }
-
-  if (req.method === "POST") {
-    try {
-      // For now, just return success until we have the model working
-      const exchangeData = req.body;
-      return res
-        .status(201)
-        .json({ message: "Exchange created successfully", data: exchangeData });
-    } catch (error) {
-      console.error("Error creating university exchange:", error);
-      return res.status(500).json({ error: "Failed to create exchange" });
-    }
-  }
-
-  return res.status(405).json({ error: "Method not allowed" });
+  return respondWithCanonicalRouteDisabled(res, {
+    canonicalPath: "/api/admin/erasmus-experiences",
+    details:
+      "This legacy admin university exchanges route was disabled because peer-course moderation now belongs to the canonical ErasmusExperience workflow.",
+  });
 }

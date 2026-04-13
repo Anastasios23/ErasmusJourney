@@ -88,7 +88,7 @@ export default async function handler(
       instructions: [
         "Go to http://localhost:3000/login",
         "Use the credentials provided to log in",
-        "Access admin pages at /admin/destinations, /admin/university-exchanges, /admin/student-accommodations",
+        "Use /admin/review-submissions to moderate submissions before they appear on public destination pages",
       ],
     });
   } catch (error) {

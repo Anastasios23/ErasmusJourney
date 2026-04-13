@@ -303,7 +303,7 @@ export function QuickStartGuide({
         },
         {
           text: "Check university partnerships",
-          href: "/university-exchanges",
+          href: PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE,
           icon: BookOpen,
         },
         {
@@ -340,7 +340,7 @@ export function QuickStartGuide({
         },
         {
           text: "Compare universities",
-          href: "/university-exchanges",
+          href: PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE,
           icon: BookOpen,
         },
         {

@@ -152,9 +152,8 @@ export default async function handler(
         accommodation: accommodationSubmission.id,
       },
       testInstructions: {
-        destinations: "/admin/destinations",
-        universities: "/admin/university-exchanges",
-        accommodations: "/admin/student-accommodations",
+        moderation: "/admin/review-submissions",
+        publicDestinations: "/destinations",
       },
     });
   } catch (error) {

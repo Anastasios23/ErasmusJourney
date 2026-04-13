@@ -193,7 +193,7 @@ export default async function handler(
       message: `Successfully created ${count} test submissions for ${city}, ${country}`,
       submissions,
       aggregatedData,
-      testEndpoint: `/api/destinations/city-aggregated?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`,
+      testEndpoint: `/api/public/destinations/${city.toLowerCase().replace(/\s+/g, "-")}-${country.toLowerCase().replace(/\s+/g, "-")}`,
     });
   } catch (error) {
     console.error("Error generating test data:", error);
