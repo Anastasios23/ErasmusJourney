@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import legacyAdminApproveHandler from "../../pages/api/admin/approve-experience";
 import adminSubmissionHandler from "../../pages/api/admin/submissions/index";
 import legacyExperienceHandler from "../../pages/api/erasmus-experience/submit";
 import userSubmissionsHandler from "../../pages/api/user/submissions";
@@ -50,6 +51,20 @@ describe("stale canonical-conflicting routes", () => {
       expect.objectContaining({
         error: "Deprecated route",
         canonicalPath: "/api/admin/erasmus-experiences",
+      }),
+    );
+  });
+
+  it("returns 410 for the stale admin approve-experience route", async () => {
+    const res = createMockRes();
+
+    await legacyAdminApproveHandler(createMockReq("POST") as any, res as any);
+
+    expect(res.statusCode).toBe(410);
+    expect(res.jsonPayload).toEqual(
+      expect.objectContaining({
+        error: "Deprecated route",
+        canonicalPath: "/api/admin/erasmus-experiences/[id]/review",
       }),
     );
   });
