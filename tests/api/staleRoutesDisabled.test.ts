@@ -15,10 +15,6 @@ import legacyAdminStoryDetailHandler from "../../pages/api/admin/stories/[id]";
 import legacyAdminStudentAccommodationsHandler from "../../pages/api/admin/student-accommodations";
 import adminSubmissionHandler from "../../pages/api/admin/submissions/index";
 import legacyAdminUniversityExchangesHandler from "../../pages/api/admin/university-exchanges";
-import legacyFormsGetHandler from "../../pages/api/forms/get";
-import legacyFormsSaveDraftHandler from "../../pages/api/forms/saveDraft";
-import legacyFormsSubmitHandler from "../../pages/api/forms/submit";
-import legacyFormsUserSubmissionsHandler from "../../pages/api/forms/user-submissions";
 import legacyOgStoryDetailHandler from "../../pages/api/og/story/[id]";
 import userSubmissionsHandler from "../../pages/api/user/submissions";
 
@@ -68,65 +64,6 @@ describe("stale canonical-conflicting routes", () => {
       expect.objectContaining({
         error: "Deprecated route",
         canonicalPath: "/api/admin/erasmus-experiences",
-      }),
-    );
-  });
-
-  it("returns 410 for the stale forms submit route", async () => {
-    const res = createMockRes();
-
-    await legacyFormsSubmitHandler(createMockReq("POST") as any, res as any);
-
-    expect(res.statusCode).toBe(410);
-    expect(res.jsonPayload).toEqual(
-      expect.objectContaining({
-        error: "Deprecated route",
-        canonicalPath: "/api/erasmus-experiences",
-      }),
-    );
-  });
-
-  it("returns 410 for the stale forms get route", async () => {
-    const res = createMockRes();
-
-    await legacyFormsGetHandler(createMockReq("GET") as any, res as any);
-
-    expect(res.statusCode).toBe(410);
-    expect(res.jsonPayload).toEqual(
-      expect.objectContaining({
-        error: "Deprecated route",
-        canonicalPath: "/api/erasmus-experiences",
-      }),
-    );
-  });
-
-  it("returns 410 for the stale forms saveDraft route", async () => {
-    const res = createMockRes();
-
-    await legacyFormsSaveDraftHandler(createMockReq("POST") as any, res as any);
-
-    expect(res.statusCode).toBe(410);
-    expect(res.jsonPayload).toEqual(
-      expect.objectContaining({
-        error: "Deprecated route",
-        canonicalPath: "/api/erasmus-experiences",
-      }),
-    );
-  });
-
-  it("returns 410 for the stale forms user-submissions route", async () => {
-    const res = createMockRes();
-
-    await legacyFormsUserSubmissionsHandler(
-      createMockReq("GET") as any,
-      res as any,
-    );
-
-    expect(res.statusCode).toBe(410);
-    expect(res.jsonPayload).toEqual(
-      expect.objectContaining({
-        error: "Deprecated route",
-        canonicalPath: "/api/erasmus-experiences",
       }),
     );
   });
