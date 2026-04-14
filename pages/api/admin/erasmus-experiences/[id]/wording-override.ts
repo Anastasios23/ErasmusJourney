@@ -4,7 +4,10 @@ import { getServerSession } from "next-auth/next";
 import { getClientSafeErrorMessage } from "../../../../../lib/databaseErrors";
 import { prisma } from "../../../../../lib/prisma";
 import { authOptions } from "../../../auth/[...nextauth]";
-import { REVIEW_ACTION, EXPERIENCE_STATUS } from "../../../../../src/lib/canonicalWorkflow";
+import {
+  REVIEW_ACTION,
+  EXPERIENCE_STATUS,
+} from "../../../../../src/lib/canonicalWorkflow";
 import { sanitizeAccommodationStepData } from "../../../../../src/lib/accommodation";
 import { sanitizeCourseMappingsData } from "../../../../../src/lib/courseMatching";
 import {
@@ -69,7 +72,9 @@ export default async function handler(
     });
 
     if (user?.role !== "ADMIN") {
-      return res.status(403).json({ error: "Forbidden: Admin access required" });
+      return res
+        .status(403)
+        .json({ error: "Forbidden: Admin access required" });
     }
 
     const { id } = req.query;
@@ -110,7 +115,9 @@ export default async function handler(
     const overrides = toRecord(payload.overrides) || {};
 
     const experienceData = toRecord(experience.experience) || {};
-    const originalExperienceSummary = asTrimmedString(experienceData.bestExperience);
+    const originalExperienceSummary = asTrimmedString(
+      experienceData.bestExperience,
+    );
 
     const accommodation = sanitizeAccommodationStepData(
       toRecord(experience.accommodation),
@@ -175,8 +182,8 @@ export default async function handler(
 
           return [courseId, normalizedValue || null] as const;
         })
-        .filter((entry): entry is [string, string | null] =>
-          entry[1] !== undefined,
+        .filter(
+          (entry): entry is [string, string | null] => entry[1] !== undefined,
         ),
     );
 
@@ -225,7 +232,10 @@ export default async function handler(
       await revalidatePublicDestinationPages(
         res,
         experience.hostCity && experience.hostCountry
-          ? buildPublicDestinationSlug(experience.hostCity, experience.hostCountry)
+          ? buildPublicDestinationSlug(
+              experience.hostCity,
+              experience.hostCountry,
+            )
           : null,
       );
     } catch (refreshError) {

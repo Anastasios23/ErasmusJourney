@@ -126,19 +126,23 @@ describe("admin wording override route", () => {
       publicWordingOverrides: null,
     });
 
-    mockExperienceUpdate.mockImplementation(async ({ data }: { data: any }) => ({
-      id: "experience-approved-1",
-      status: "APPROVED",
-      publicWordingOverrides: data.publicWordingOverrides,
-      reviewedAt: data.reviewedAt,
-      reviewedBy: data.reviewedBy,
-    }));
+    mockExperienceUpdate.mockImplementation(
+      async ({ data }: { data: any }) => ({
+        id: "experience-approved-1",
+        status: "APPROVED",
+        publicWordingOverrides: data.publicWordingOverrides,
+        reviewedAt: data.reviewedAt,
+        reviewedBy: data.reviewedBy,
+      }),
+    );
 
-    mockReviewActionCreate.mockImplementation(async ({ data }: { data: any }) => ({
-      id: "review-action-wording_edited",
-      action: data.action,
-      feedback: data.feedback,
-    }));
+    mockReviewActionCreate.mockImplementation(
+      async ({ data }: { data: any }) => ({
+        id: "review-action-wording_edited",
+        action: data.action,
+        feedback: data.feedback,
+      }),
+    );
 
     mockTransaction.mockImplementation(async (callback: any) =>
       callback({

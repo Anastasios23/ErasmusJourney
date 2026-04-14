@@ -243,112 +243,117 @@ describe("admin review submissions page", () => {
   });
 
   it("unpublishes an approved submission through the canonical PATCH review action", async () => {
-    mockFetch.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
-      const url = String(input);
+    mockFetch.mockImplementation(
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input);
 
-      if (url.includes("/api/admin/erasmus-experiences?status=SUBMITTED")) {
-        return {
-          ok: true,
-          json: async () => [],
-        };
-      }
+        if (url.includes("/api/admin/erasmus-experiences?status=SUBMITTED")) {
+          return {
+            ok: true,
+            json: async () => [],
+          };
+        }
 
-      if (url.includes("/api/admin/erasmus-experiences?status=APPROVED")) {
-        return {
-          ok: true,
-          json: async () => [
-            {
-              id: "experience-approved-1",
-              status: "APPROVED",
-              revisionCount: 0,
-              submittedAt: "2026-02-03T00:00:00.000Z",
-              reviewFeedback: null,
-              adminNotes: null,
-              publicWordingOverrides: null,
-              basicInfo: {
-                homeUniversity: "University of Cyprus",
-                hostUniversity: "University of Amsterdam",
+        if (url.includes("/api/admin/erasmus-experiences?status=APPROVED")) {
+          return {
+            ok: true,
+            json: async () => [
+              {
+                id: "experience-approved-1",
+                status: "APPROVED",
+                revisionCount: 0,
+                submittedAt: "2026-02-03T00:00:00.000Z",
+                reviewFeedback: null,
+                adminNotes: null,
+                publicWordingOverrides: null,
+                basicInfo: {
+                  homeUniversity: "University of Cyprus",
+                  hostUniversity: "University of Amsterdam",
+                  hostCity: "Amsterdam",
+                  hostCountry: "Netherlands",
+                },
+                courses: [
+                  {
+                    id: "course-1",
+                    homeCourseName: "Algorithms",
+                    homeECTS: 6,
+                    hostCourseName: "Advanced Algorithms",
+                    hostECTS: 6,
+                    recognitionType: "full_equivalence",
+                    notes: "Student original course note.",
+                  },
+                ],
+                accommodation: {
+                  accommodationType: "shared_apartment",
+                  monthlyRent: 500,
+                  billsIncluded: "yes",
+                  accommodationRating: 4,
+                  wouldRecommend: true,
+                  accommodationReview:
+                    "Student original accommodation comment.",
+                },
+                livingExpenses: {
+                  currency: "EUR",
+                  food: 200,
+                  transport: 90,
+                  social: 130,
+                },
+                experience: {
+                  bestExperience: "Student original experience summary.",
+                  generalTips: "Pack for the rain.",
+                },
                 hostCity: "Amsterdam",
                 hostCountry: "Netherlands",
-              },
-              courses: [
-                {
-                  id: "course-1",
-                  homeCourseName: "Algorithms",
-                  homeECTS: 6,
-                  hostCourseName: "Advanced Algorithms",
-                  hostECTS: 6,
-                  recognitionType: "full_equivalence",
-                  notes: "Student original course note.",
+                user: {
+                  id: "student-1",
+                  name: "Ada Student",
+                  email: "ada@example.com",
                 },
-              ],
-              accommodation: {
-                accommodationType: "shared_apartment",
-                monthlyRent: 500,
-                billsIncluded: "yes",
-                accommodationRating: 4,
-                wouldRecommend: true,
-                accommodationReview: "Student original accommodation comment.",
+                publicImpactPreview: null,
+                publicImpactPreviewUnavailableReason: null,
               },
-              livingExpenses: {
-                currency: "EUR",
-                food: 200,
-                transport: 90,
-                social: 130,
-              },
-              experience: {
-                bestExperience: "Student original experience summary.",
-                generalTips: "Pack for the rain.",
-              },
-              hostCity: "Amsterdam",
-              hostCountry: "Netherlands",
-              user: {
-                id: "student-1",
-                name: "Ada Student",
-                email: "ada@example.com",
-              },
-              publicImpactPreview: null,
-              publicImpactPreviewUnavailableReason: null,
-            },
-          ],
-        };
-      }
+            ],
+          };
+        }
 
-      if (url.includes("/api/admin/destinations/live")) {
+        if (url.includes("/api/admin/destinations/live")) {
+          return {
+            ok: true,
+            json: async () => [
+              {
+                slug: "amsterdam-netherlands",
+                city: "Amsterdam",
+                country: "Netherlands",
+                submissionCount: 2,
+                averageRent: 550,
+                updatedAt: "2026-04-14T11:00:00.000Z",
+              },
+            ],
+          };
+        }
+
+        if (
+          url.includes(
+            "/api/admin/erasmus-experiences/experience-approved-1/review",
+          ) &&
+          init?.method === "PATCH"
+        ) {
+          return {
+            ok: true,
+            json: async () => ({
+              success: true,
+              message:
+                "Submission unpublished and returned to moderation queue. Public aggregates were refreshed.",
+            }),
+          };
+        }
+
         return {
-          ok: true,
-          json: async () => [
-            {
-              slug: "amsterdam-netherlands",
-              city: "Amsterdam",
-              country: "Netherlands",
-              submissionCount: 2,
-              averageRent: 550,
-              updatedAt: "2026-04-14T11:00:00.000Z",
-            },
-          ],
+          ok: false,
+          json: async () => ({ error: "Unexpected request" }),
         };
-      }
-
-      if (
-        url.includes("/api/admin/erasmus-experiences/experience-approved-1/review") &&
-        init?.method === "PATCH"
-      ) {
-        return {
-          ok: true,
-          json: async () => ({
-            success: true,
-            message:
-              "Submission unpublished and returned to moderation queue. Public aggregates were refreshed.",
-          }),
-        };
-      }
-
-      return {
-        ok: false,
-        json: async () => ({ error: "Unexpected request" }),
-      };
-    });
+      },
+    );
 
     render(<ReviewSubmissions />);
 

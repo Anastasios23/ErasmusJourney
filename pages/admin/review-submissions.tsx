@@ -259,7 +259,8 @@ function buildApprovedWordingEditState(
   );
 
   const originalSummary = getOriginalExperienceSummary(submission);
-  const originalAccommodationComment = getOriginalAccommodationComment(submission);
+  const originalAccommodationComment =
+    getOriginalAccommodationComment(submission);
   const courseNoteRows = getCourseNoteRows(submission);
 
   return {
@@ -295,9 +296,9 @@ export default function ReviewSubmissions() {
   const [selectedSubmission, setSelectedSubmission] =
     useState<Experience | null>(null);
   const [activeView, setActiveView] = useState<AdminView>("moderation");
-  const [liveDestinations, setLiveDestinations] = useState<LiveDestinationRow[]>(
-    [],
-  );
+  const [liveDestinations, setLiveDestinations] = useState<
+    LiveDestinationRow[]
+  >([]);
   const [editingApprovedSubmissionId, setEditingApprovedSubmissionId] =
     useState<string | null>(null);
   const [approvedWordingEdits, setApprovedWordingEdits] =
@@ -761,87 +762,257 @@ export default function ReviewSubmissions() {
 
           {activeView === "moderation" ? (
             selectedSubmission ? (
-            <div className="space-y-6">
-              <Card>
-                <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="space-y-2">
-                    <CardTitle>Moderation review</CardTitle>
-                    <p className="text-sm text-gray-600">
-                      Is this publishable, what does it add, what is missing,
-                      and what should happen next?
-                    </p>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedSubmission(null);
-                      setFeedback("");
-                      setWordingEdits(createEmptyWordingEdits());
-                      setError(null);
-                      setWarning(null);
-                    }}
-                  >
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back to queue
-                  </Button>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid gap-4 lg:grid-cols-[1.7fr_1fr]">
-                    <Card className="border border-gray-200 shadow-none">
-                      <CardContent className="grid gap-4 p-5 md:grid-cols-2">
-                        <div>
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <User className="h-4 w-4" />
-                            Student
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="space-y-2">
+                      <CardTitle>Moderation review</CardTitle>
+                      <p className="text-sm text-gray-600">
+                        Is this publishable, what does it add, what is missing,
+                        and what should happen next?
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedSubmission(null);
+                        setFeedback("");
+                        setWordingEdits(createEmptyWordingEdits());
+                        setError(null);
+                        setWarning(null);
+                      }}
+                    >
+                      <ArrowLeft className="mr-2 h-4 w-4" />
+                      Back to queue
+                    </Button>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid gap-4 lg:grid-cols-[1.7fr_1fr]">
+                      <Card className="border border-gray-200 shadow-none">
+                        <CardContent className="grid gap-4 p-5 md:grid-cols-2">
+                          <div>
+                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                              <User className="h-4 w-4" />
+                              Student
+                            </div>
+                            <p className="mt-1 font-medium text-gray-900">
+                              {selectedSubmission.user?.name || "Anonymous"}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {selectedSubmission.user?.email || "No email"}
+                            </p>
                           </div>
-                          <p className="mt-1 font-medium text-gray-900">
-                            {selectedSubmission.user?.name || "Anonymous"}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {selectedSubmission.user?.email || "No email"}
-                          </p>
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <Calendar className="h-4 w-4" />
-                            Submitted
+                          <div>
+                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                              <Calendar className="h-4 w-4" />
+                              Submitted
+                            </div>
+                            <p className="mt-1 font-medium text-gray-900">
+                              {formatSubmissionTimestamp(
+                                selectedSubmission.submittedAt,
+                              )}
+                            </p>
                           </div>
-                          <p className="mt-1 font-medium text-gray-900">
-                            {formatSubmissionTimestamp(
-                              selectedSubmission.submittedAt,
-                            )}
-                          </p>
-                        </div>
-                        <div className="md:col-span-2">
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <MapPin className="h-4 w-4" />
-                            Destination identity
+                          <div className="md:col-span-2">
+                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                              <MapPin className="h-4 w-4" />
+                              Destination identity
+                            </div>
+                            <p className="mt-1 font-medium text-gray-900">
+                              {selectedSummary?.destinationIdentity}
+                            </p>
                           </div>
-                          <p className="mt-1 font-medium text-gray-900">
-                            {selectedSummary?.destinationIdentity}
-                          </p>
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <Clock className="h-4 w-4" />
-                            Revision status
+                          <div>
+                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                              <Clock className="h-4 w-4" />
+                              Revision status
+                            </div>
+                            {selectedRevision ? (
+                              <Badge variant={selectedRevision.variant}>
+                                {selectedRevision.label}
+                              </Badge>
+                            ) : null}
                           </div>
-                          {selectedRevision ? (
-                            <Badge variant={selectedRevision.variant}>
-                              {selectedRevision.label}
-                            </Badge>
+                          <div>
+                            <div className="text-sm text-gray-500">
+                              Public sections
+                            </div>
+                            <p className="mt-1 font-medium text-gray-900">
+                              {selectedSummary?.publishableSections.length
+                                ? selectedSummary.publishableSections.join(", ")
+                                : "None yet"}
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="border border-gray-200 shadow-none">
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-base">
+                            Approval readiness
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          {selectedReadiness ? (
+                            <>
+                              <Badge variant={selectedReadiness.variant}>
+                                {selectedReadiness.label}
+                              </Badge>
+                              <p className="text-sm text-gray-600">
+                                {selectedReadiness.description}
+                              </p>
+                              <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm">
+                                <p className="font-medium text-gray-900">
+                                  Missing fields
+                                </p>
+                                <p className="mt-2 text-gray-600">
+                                  {selectedReadiness.missingFields.length
+                                    ? selectedReadiness.missingFields.join(", ")
+                                    : "None"}
+                                </p>
+                              </div>
+                            </>
                           ) : null}
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    <div className="space-y-3">
+                      <h2 className="text-lg font-semibold text-gray-900">
+                        Public impact preview
+                      </h2>
+                      {selectedSubmission.publicImpactPreviewUnavailableReason ? (
+                        <Alert>
+                          <AlertCircle className="h-4 w-4" />
+                          <AlertDescription>
+                            {
+                              selectedSubmission
+                                .publicImpactPreviewUnavailableReason.message
+                            }
+                          </AlertDescription>
+                        </Alert>
+                      ) : selectedSubmission.publicImpactPreview ? (
+                        <PublicImpactPreview
+                          preview={selectedSubmission.publicImpactPreview}
+                        />
+                      ) : (
+                        <Card>
+                          <CardContent className="py-6 text-sm text-gray-600">
+                            Public impact preview unavailable for this
+                            submission.
+                          </CardContent>
+                        </Card>
+                      )}
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                      {[
+                        ["Courses", selectedSummary?.courseSummary],
+                        [
+                          "Accommodation",
+                          selectedSummary?.accommodationSummary,
+                        ],
+                        ["Living costs", selectedSummary?.budgetSummary],
+                        ["Tips", selectedSummary?.tipsSummary],
+                      ].map(([label, value]) => (
+                        <Card
+                          key={label}
+                          className="border border-gray-200 shadow-none"
+                        >
+                          <CardContent className="space-y-2 p-4">
+                            <p className="text-sm font-medium text-gray-900">
+                              {label}
+                            </p>
+                            <p className="text-sm text-gray-600">{value}</p>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+
+                    <Card className="border border-gray-200 shadow-none">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-base">
+                          Public wording edits
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <p className="text-sm text-gray-600">
+                          These overrides affect only public phrasing. Student
+                          source data stays unchanged, and every save is logged
+                          in the moderation audit trail.
+                        </p>
+
+                        <div className="grid gap-4 md:grid-cols-2">
+                          {PUBLIC_WORDING_FIELDS.map((fieldConfig) => (
+                            <div key={fieldConfig.field} className="space-y-2">
+                              <label className="block text-sm font-medium text-gray-900">
+                                {fieldConfig.label}
+                              </label>
+                              <Textarea
+                                value={wordingEdits[fieldConfig.field]}
+                                onChange={(event) =>
+                                  updateNarrativeWordingField(
+                                    fieldConfig.field,
+                                    event.target.value,
+                                  )
+                                }
+                                placeholder={fieldConfig.placeholder}
+                                rows={4}
+                                className="w-full"
+                              />
+                            </div>
+                          ))}
                         </div>
-                        <div>
-                          <div className="text-sm text-gray-500">
-                            Public sections
+
+                        {wordingEdits.courseNotes.length > 0 ? (
+                          <div className="space-y-3">
+                            <p className="text-sm font-medium text-gray-900">
+                              Course note wording
+                            </p>
+                            <div className="space-y-4">
+                              {wordingEdits.courseNotes.map((courseNote) => (
+                                <div key={courseNote.id} className="space-y-2">
+                                  <label className="block text-sm font-medium text-gray-700">
+                                    {courseNote.label}
+                                  </label>
+                                  <Textarea
+                                    value={courseNote.value}
+                                    onChange={(event) =>
+                                      setWordingEdits((current) => ({
+                                        ...current,
+                                        courseNotes: current.courseNotes.map(
+                                          (item) =>
+                                            item.id === courseNote.id
+                                              ? {
+                                                  ...item,
+                                                  value: event.target.value,
+                                                }
+                                              : item,
+                                        ),
+                                      }))
+                                    }
+                                    placeholder="Optional public-facing course note."
+                                    rows={3}
+                                    className="w-full"
+                                  />
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                          <p className="mt-1 font-medium text-gray-900">
-                            {selectedSummary?.publishableSections.length
-                              ? selectedSummary.publishableSections.join(", ")
-                              : "None yet"}
-                          </p>
+                        ) : null}
+
+                        <div className="flex flex-wrap gap-3">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() =>
+                              handleReview(REVIEW_ACTION.WORDING_EDITED)
+                            }
+                            disabled={reviewing}
+                          >
+                            Save wording edits
+                          </Button>
                         </div>
                       </CardContent>
                     </Card>
@@ -849,599 +1020,462 @@ export default function ReviewSubmissions() {
                     <Card className="border border-gray-200 shadow-none">
                       <CardHeader className="pb-3">
                         <CardTitle className="text-base">
-                          Approval readiness
+                          Review decision
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        {selectedReadiness ? (
-                          <>
-                            <Badge variant={selectedReadiness.variant}>
-                              {selectedReadiness.label}
-                            </Badge>
-                            <p className="text-sm text-gray-600">
-                              {selectedReadiness.description}
-                            </p>
-                            <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm">
-                              <p className="font-medium text-gray-900">
-                                Missing fields
-                              </p>
-                              <p className="mt-2 text-gray-600">
-                                {selectedReadiness.missingFields.length
-                                  ? selectedReadiness.missingFields.join(", ")
-                                  : "None"}
-                              </p>
-                            </div>
-                          </>
-                        ) : null}
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  <div className="space-y-3">
-                    <h2 className="text-lg font-semibold text-gray-900">
-                      Public impact preview
-                    </h2>
-                    {selectedSubmission.publicImpactPreviewUnavailableReason ? (
-                      <Alert>
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertDescription>
-                          {
-                            selectedSubmission
-                              .publicImpactPreviewUnavailableReason.message
-                          }
-                        </AlertDescription>
-                      </Alert>
-                    ) : selectedSubmission.publicImpactPreview ? (
-                      <PublicImpactPreview
-                        preview={selectedSubmission.publicImpactPreview}
-                      />
-                    ) : (
-                      <Card>
-                        <CardContent className="py-6 text-sm text-gray-600">
-                          Public impact preview unavailable for this submission.
-                        </CardContent>
-                      </Card>
-                    )}
-                  </div>
-
-                  <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                    {[
-                      ["Courses", selectedSummary?.courseSummary],
-                      ["Accommodation", selectedSummary?.accommodationSummary],
-                      ["Living costs", selectedSummary?.budgetSummary],
-                      ["Tips", selectedSummary?.tipsSummary],
-                    ].map(([label, value]) => (
-                      <Card
-                        key={label}
-                        className="border border-gray-200 shadow-none"
-                      >
-                        <CardContent className="space-y-2 p-4">
+                        <div className="space-y-2">
                           <p className="text-sm font-medium text-gray-900">
-                            {label}
+                            Quick feedback presets
                           </p>
-                          <p className="text-sm text-gray-600">{value}</p>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-
-                  <Card className="border border-gray-200 shadow-none">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-base">
-                        Public wording edits
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <p className="text-sm text-gray-600">
-                        These overrides affect only public phrasing. Student
-                        source data stays unchanged, and every save is logged in
-                        the moderation audit trail.
-                      </p>
-
-                      <div className="grid gap-4 md:grid-cols-2">
-                        {PUBLIC_WORDING_FIELDS.map((fieldConfig) => (
-                          <div key={fieldConfig.field} className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-900">
-                              {fieldConfig.label}
-                            </label>
-                            <Textarea
-                              value={wordingEdits[fieldConfig.field]}
-                              onChange={(event) =>
-                                updateNarrativeWordingField(
-                                  fieldConfig.field,
-                                  event.target.value,
-                                )
-                              }
-                              placeholder={fieldConfig.placeholder}
-                              rows={4}
-                              className="w-full"
-                            />
-                          </div>
-                        ))}
-                      </div>
-
-                      {wordingEdits.courseNotes.length > 0 ? (
-                        <div className="space-y-3">
-                          <p className="text-sm font-medium text-gray-900">
-                            Course note wording
-                          </p>
-                          <div className="space-y-4">
-                            {wordingEdits.courseNotes.map((courseNote) => (
-                              <div key={courseNote.id} className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-700">
-                                  {courseNote.label}
-                                </label>
-                                <Textarea
-                                  value={courseNote.value}
-                                  onChange={(event) =>
-                                    setWordingEdits((current) => ({
-                                      ...current,
-                                      courseNotes: current.courseNotes.map(
-                                        (item) =>
-                                          item.id === courseNote.id
-                                            ? {
-                                                ...item,
-                                                value: event.target.value,
-                                              }
-                                            : item,
-                                      ),
-                                    }))
-                                  }
-                                  placeholder="Optional public-facing course note."
-                                  rows={3}
-                                  className="w-full"
-                                />
-                              </div>
+                          <div className="flex flex-wrap gap-2">
+                            {FEEDBACK_PRESETS.map((preset) => (
+                              <Button
+                                key={preset.label}
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => applyFeedbackPreset(preset.text)}
+                              >
+                                {preset.label}
+                              </Button>
                             ))}
                           </div>
                         </div>
-                      ) : null}
 
-                      <div className="flex flex-wrap gap-3">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() =>
-                            handleReview(REVIEW_ACTION.WORDING_EDITED)
-                          }
-                          disabled={reviewing}
-                        >
-                          Save wording edits
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border border-gray-200 shadow-none">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-base">
-                        Review decision
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="space-y-2">
-                        <p className="text-sm font-medium text-gray-900">
-                          Quick feedback presets
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {FEEDBACK_PRESETS.map((preset) => (
-                            <Button
-                              key={preset.label}
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => applyFeedbackPreset(preset.text)}
-                            >
-                              {preset.label}
-                            </Button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-900">
-                          Reviewer feedback
-                        </label>
-                        <Textarea
-                          value={feedback}
-                          onChange={(event) => setFeedback(event.target.value)}
-                          placeholder="Add concise moderation notes or requested-change guidance."
-                          rows={5}
-                          className="w-full"
-                        />
-                      </div>
-
-                      <div className="flex flex-wrap gap-3">
-                        <Button
-                          onClick={() => handleReview(REVIEW_ACTION.APPROVED)}
-                          disabled={
-                            reviewing || selectedReadiness?.status === "blocked"
-                          }
-                          className="bg-green-600 hover:bg-green-700"
-                        >
-                          <CheckCircle className="mr-2 h-4 w-4" />
-                          Approve
-                        </Button>
-                        {selectedSubmission.revisionCount < 1 ? (
-                          <Button
-                            onClick={() =>
-                              handleReview(REVIEW_ACTION.REQUEST_CHANGES)
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-900">
+                            Reviewer feedback
+                          </label>
+                          <Textarea
+                            value={feedback}
+                            onChange={(event) =>
+                              setFeedback(event.target.value)
                             }
-                            disabled={reviewing}
-                            variant="outline"
-                          >
-                            <AlertCircle className="mr-2 h-4 w-4" />
-                            Request changes
-                          </Button>
-                        ) : null}
-                        <Button
-                          onClick={() => handleReview(REVIEW_ACTION.REJECTED)}
-                          disabled={reviewing}
-                          variant="destructive"
-                        >
-                          <XCircle className="mr-2 h-4 w-4" />
-                          Reject
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </CardContent>
-              </Card>
-            </div>
-          ) : (
-            <div className="space-y-5">
-              <div className="grid gap-4 md:grid-cols-4">
-                {[
-                  ["Pending", queueCounts.all],
-                  ["Ready", queueCounts.ready],
-                  ["Blocked", queueCounts.blocked],
-                  ["Changes requested", queueCounts.needs_revision],
-                ].map(([label, value]) => (
-                  <Card
-                    key={label}
-                    className="border border-gray-200 shadow-none"
-                  >
-                    <CardContent className="space-y-1 p-4">
-                      <p className="text-sm text-gray-500">{label}</p>
-                      <p className="text-2xl font-semibold text-gray-900">
-                        {value}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                            placeholder="Add concise moderation notes or requested-change guidance."
+                            rows={5}
+                            className="w-full"
+                          />
+                        </div>
 
-              <Card>
-                <CardContent className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between">
-                  <div className="flex flex-wrap gap-2">
-                    {(
-                      [
-                        "all",
-                        "ready",
-                        "blocked",
-                        "needs_revision",
-                      ] as QueueFilter[]
-                    ).map((filter) => (
+                        <div className="flex flex-wrap gap-3">
+                          <Button
+                            onClick={() => handleReview(REVIEW_ACTION.APPROVED)}
+                            disabled={
+                              reviewing ||
+                              selectedReadiness?.status === "blocked"
+                            }
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            <CheckCircle className="mr-2 h-4 w-4" />
+                            Approve
+                          </Button>
+                          {selectedSubmission.revisionCount < 1 ? (
+                            <Button
+                              onClick={() =>
+                                handleReview(REVIEW_ACTION.REQUEST_CHANGES)
+                              }
+                              disabled={reviewing}
+                              variant="outline"
+                            >
+                              <AlertCircle className="mr-2 h-4 w-4" />
+                              Request changes
+                            </Button>
+                          ) : null}
+                          <Button
+                            onClick={() => handleReview(REVIEW_ACTION.REJECTED)}
+                            disabled={reviewing}
+                            variant="destructive"
+                          >
+                            <XCircle className="mr-2 h-4 w-4" />
+                            Reject
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </CardContent>
+                </Card>
+              </div>
+            ) : (
+              <div className="space-y-5">
+                <div className="grid gap-4 md:grid-cols-4">
+                  {[
+                    ["Pending", queueCounts.all],
+                    ["Ready", queueCounts.ready],
+                    ["Blocked", queueCounts.blocked],
+                    ["Changes requested", queueCounts.needs_revision],
+                  ].map(([label, value]) => (
+                    <Card
+                      key={label}
+                      className="border border-gray-200 shadow-none"
+                    >
+                      <CardContent className="space-y-1 p-4">
+                        <p className="text-sm text-gray-500">{label}</p>
+                        <p className="text-2xl font-semibold text-gray-900">
+                          {value}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                <Card>
+                  <CardContent className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="flex flex-wrap gap-2">
+                      {(
+                        [
+                          "all",
+                          "ready",
+                          "blocked",
+                          "needs_revision",
+                        ] as QueueFilter[]
+                      ).map((filter) => (
+                        <Button
+                          key={filter}
+                          type="button"
+                          size="sm"
+                          variant={
+                            queueFilter === filter ? "default" : "outline"
+                          }
+                          onClick={() => setQueueFilter(filter)}
+                        >
+                          {getFilterLabel(filter)}
+                        </Button>
+                      ))}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
                       <Button
-                        key={filter}
                         type="button"
                         size="sm"
-                        variant={queueFilter === filter ? "default" : "outline"}
-                        onClick={() => setQueueFilter(filter)}
+                        variant={sortOrder === "newest" ? "default" : "outline"}
+                        onClick={() => setSortOrder("newest")}
                       >
-                        {getFilterLabel(filter)}
+                        Newest first
                       </Button>
-                    ))}
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant={sortOrder === "newest" ? "default" : "outline"}
-                      onClick={() => setSortOrder("newest")}
-                    >
-                      Newest first
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant={sortOrder === "oldest" ? "default" : "outline"}
-                      onClick={() => setSortOrder("oldest")}
-                    >
-                      Oldest first
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={sortOrder === "oldest" ? "default" : "outline"}
+                        onClick={() => setSortOrder("oldest")}
+                      >
+                        Oldest first
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
 
-              {filteredSubmissions.map((submission) => {
-                const readiness = getApprovalReadiness(submission);
-                const revision = getRevisionStatusMeta(
-                  submission.revisionCount,
-                );
-                const summary = getSubmissionModerationSummary(submission);
+                {filteredSubmissions.map((submission) => {
+                  const readiness = getApprovalReadiness(submission);
+                  const revision = getRevisionStatusMeta(
+                    submission.revisionCount,
+                  );
+                  const summary = getSubmissionModerationSummary(submission);
 
-                return (
-                  <Card key={submission.id} className="border border-gray-200">
-                    <CardContent className="space-y-4 p-5">
-                      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                        <div className="space-y-3">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <h2 className="text-lg font-semibold text-gray-900">
-                              {submission.user?.name || "Anonymous"}
-                            </h2>
-                            <Badge variant={revision.variant}>
-                              {revision.label}
-                            </Badge>
-                            <Badge variant={readiness.variant}>
-                              {readiness.label}
-                            </Badge>
-                          </div>
-                          <div className="grid gap-2 text-sm text-gray-600 md:grid-cols-3">
-                            <div className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4" />
-                              {summary.destinationIdentity}
+                  return (
+                    <Card
+                      key={submission.id}
+                      className="border border-gray-200"
+                    >
+                      <CardContent className="space-y-4 p-5">
+                        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                          <div className="space-y-3">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h2 className="text-lg font-semibold text-gray-900">
+                                {submission.user?.name || "Anonymous"}
+                              </h2>
+                              <Badge variant={revision.variant}>
+                                {revision.label}
+                              </Badge>
+                              <Badge variant={readiness.variant}>
+                                {readiness.label}
+                              </Badge>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4" />
-                              {formatSubmissionTimestamp(
-                                submission.submittedAt,
-                              )}
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <User className="h-4 w-4" />
-                              {submission.user?.email || "No email"}
+                            <div className="grid gap-2 text-sm text-gray-600 md:grid-cols-3">
+                              <div className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" />
+                                {summary.destinationIdentity}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4" />
+                                {formatSubmissionTimestamp(
+                                  submission.submittedAt,
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <User className="h-4 w-4" />
+                                {submission.user?.email || "No email"}
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedSubmission(submission);
-                            setFeedback(submission.reviewFeedback || "");
-                            setWordingEdits(
-                              getPublicWordingEditorState(submission),
-                            );
-                            setError(null);
-                            setWarning(null);
-                          }}
-                        >
-                          Review
-                          <ChevronRight className="ml-2 h-4 w-4" />
-                        </Button>
-                      </div>
-
-                      <div className="grid gap-3 text-sm md:grid-cols-2 xl:grid-cols-5">
-                        {[
-                          [
-                            "Public sections",
-                            summary.publishableSections.join(", ") ||
-                              "None yet",
-                          ],
-                          ["Courses", summary.courseSummary],
-                          ["Accommodation", summary.accommodationSummary],
-                          ["Living costs", summary.budgetSummary],
-                          ["Tips", summary.tipsSummary],
-                        ].map(([label, value]) => (
-                          <div
-                            key={label}
-                            className="rounded-lg border border-gray-200 bg-gray-50 p-3"
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedSubmission(submission);
+                              setFeedback(submission.reviewFeedback || "");
+                              setWordingEdits(
+                                getPublicWordingEditorState(submission),
+                              );
+                              setError(null);
+                              setWarning(null);
+                            }}
                           >
-                            <p className="font-medium text-gray-900">{label}</p>
-                            <p className="mt-1 text-gray-600">{value}</p>
-                          </div>
-                        ))}
-                      </div>
-
-                      {readiness.missingFields.length > 0 ? (
-                        <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                          Missing fields: {readiness.missingFields.join(", ")}
+                            Review
+                            <ChevronRight className="ml-2 h-4 w-4" />
+                          </Button>
                         </div>
-                      ) : null}
-                    </CardContent>
-                  </Card>
-                );
-              })}
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Approved Submissions</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {approvedSubmissions.length === 0 ? (
-                    <p className="text-sm text-gray-600">
-                      No approved submissions available.
-                    </p>
-                  ) : (
-                    approvedSubmissions.map((submission) => {
-                      const isEditing =
-                        editingApprovedSubmissionId === submission.id &&
-                        approvedWordingEdits !== null;
-                      const isProcessingCurrent =
-                        processingApprovedSubmissionId === submission.id;
-                      const originalCourseNotes = getCourseNoteRows(submission);
-
-                      return (
-                        <Card
-                          key={submission.id}
-                          className="border border-gray-200 shadow-none"
-                        >
-                          <CardContent className="space-y-4 p-4">
-                            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                              <div className="space-y-2">
-                                <div className="flex flex-wrap items-center gap-2">
-                                  <p className="text-base font-semibold text-gray-900">
-                                    {submission.user?.name || "Anonymous"}
-                                  </p>
-                                  <Badge variant="default">Approved</Badge>
-                                </div>
-                                <div className="grid gap-2 text-sm text-gray-600 md:grid-cols-3">
-                                  <div className="flex items-center gap-2">
-                                    <MapPin className="h-4 w-4" />
-                                    {submission.hostCity && submission.hostCountry
-                                      ? `${submission.hostCity}, ${submission.hostCountry}`
-                                      : "No destination"}
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <Calendar className="h-4 w-4" />
-                                    {formatSubmissionTimestamp(
-                                      submission.submittedAt,
-                                    )}
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <User className="h-4 w-4" />
-                                    {submission.user?.email || "No email"}
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="flex flex-wrap gap-2">
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  onClick={() => beginApprovedWordingEdit(submission)}
-                                  disabled={isProcessingCurrent}
-                                >
-                                  <Pencil className="mr-2 h-4 w-4" />
-                                  Edit wording
-                                </Button>
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  onClick={() =>
-                                    handleUnpublishApprovedSubmission(submission)
-                                  }
-                                  disabled={isProcessingCurrent}
-                                >
-                                  <Undo2 className="mr-2 h-4 w-4" />
-                                  Unpublish
-                                </Button>
-                              </div>
+                        <div className="grid gap-3 text-sm md:grid-cols-2 xl:grid-cols-5">
+                          {[
+                            [
+                              "Public sections",
+                              summary.publishableSections.join(", ") ||
+                                "None yet",
+                            ],
+                            ["Courses", summary.courseSummary],
+                            ["Accommodation", summary.accommodationSummary],
+                            ["Living costs", summary.budgetSummary],
+                            ["Tips", summary.tipsSummary],
+                          ].map(([label, value]) => (
+                            <div
+                              key={label}
+                              className="rounded-lg border border-gray-200 bg-gray-50 p-3"
+                            >
+                              <p className="font-medium text-gray-900">
+                                {label}
+                              </p>
+                              <p className="mt-1 text-gray-600">{value}</p>
                             </div>
+                          ))}
+                        </div>
 
-                            {isEditing ? (
-                              <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
+                        {readiness.missingFields.length > 0 ? (
+                          <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                            Missing fields: {readiness.missingFields.join(", ")}
+                          </div>
+                        ) : null}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Approved Submissions</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {approvedSubmissions.length === 0 ? (
+                      <p className="text-sm text-gray-600">
+                        No approved submissions available.
+                      </p>
+                    ) : (
+                      approvedSubmissions.map((submission) => {
+                        const isEditing =
+                          editingApprovedSubmissionId === submission.id &&
+                          approvedWordingEdits !== null;
+                        const isProcessingCurrent =
+                          processingApprovedSubmissionId === submission.id;
+                        const originalCourseNotes =
+                          getCourseNoteRows(submission);
+
+                        return (
+                          <Card
+                            key={submission.id}
+                            className="border border-gray-200 shadow-none"
+                          >
+                            <CardContent className="space-y-4 p-4">
+                              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                                 <div className="space-y-2">
-                                  <p className="text-sm font-medium text-gray-900">
-                                    Experience summary
-                                  </p>
-                                  <p className="rounded-md border border-gray-200 bg-white p-3 text-sm text-gray-700">
-                                    {getOriginalExperienceSummary(submission) ||
-                                      "No student summary available."}
-                                  </p>
-                                  <Textarea
-                                    value={approvedWordingEdits.experienceSummary}
-                                    onChange={(event) =>
-                                      setApprovedWordingEdits((current) =>
-                                        current
-                                          ? {
-                                              ...current,
-                                              experienceSummary:
-                                                event.target.value,
-                                            }
-                                          : current,
-                                      )
-                                    }
-                                    placeholder="Override public experience summary"
-                                    rows={3}
-                                  />
-                                </div>
-
-                                <div className="space-y-2">
-                                  <p className="text-sm font-medium text-gray-900">
-                                    Accommodation comment
-                                  </p>
-                                  <p className="rounded-md border border-gray-200 bg-white p-3 text-sm text-gray-700">
-                                    {getOriginalAccommodationComment(submission) ||
-                                      "No student accommodation comment available."}
-                                  </p>
-                                  <Textarea
-                                    value={approvedWordingEdits.accommodationComment}
-                                    onChange={(event) =>
-                                      setApprovedWordingEdits((current) =>
-                                        current
-                                          ? {
-                                              ...current,
-                                              accommodationComment:
-                                                event.target.value,
-                                            }
-                                          : current,
-                                      )
-                                    }
-                                    placeholder="Override public accommodation comment"
-                                    rows={3}
-                                  />
-                                </div>
-
-                                <div className="space-y-3">
-                                  <p className="text-sm font-medium text-gray-900">
-                                    Course notes
-                                  </p>
-                                  {originalCourseNotes.length === 0 ? (
-                                    <p className="text-sm text-gray-600">
-                                      No course notes available for this submission.
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <p className="text-base font-semibold text-gray-900">
+                                      {submission.user?.name || "Anonymous"}
                                     </p>
-                                  ) : (
-                                    originalCourseNotes.map((courseNote) => (
-                                      <div key={courseNote.id} className="space-y-2">
-                                        <p className="text-sm font-medium text-gray-700">
-                                          {courseNote.label}
-                                        </p>
-                                        <p className="rounded-md border border-gray-200 bg-white p-3 text-sm text-gray-700">
-                                          {courseNote.originalValue ||
-                                            "No student course note provided."}
-                                        </p>
-                                        <Textarea
-                                          value={
-                                            approvedWordingEdits.courseNotes[
-                                              courseNote.id
-                                            ] || ""
-                                          }
-                                          onChange={(event) =>
-                                            handleApprovedCourseNoteChange(
-                                              courseNote.id,
-                                              event.target.value,
-                                            )
-                                          }
-                                          placeholder="Override public course note"
-                                          rows={3}
-                                        />
-                                      </div>
-                                    ))
-                                  )}
+                                    <Badge variant="default">Approved</Badge>
+                                  </div>
+                                  <div className="grid gap-2 text-sm text-gray-600 md:grid-cols-3">
+                                    <div className="flex items-center gap-2">
+                                      <MapPin className="h-4 w-4" />
+                                      {submission.hostCity &&
+                                      submission.hostCountry
+                                        ? `${submission.hostCity}, ${submission.hostCountry}`
+                                        : "No destination"}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <Calendar className="h-4 w-4" />
+                                      {formatSubmissionTimestamp(
+                                        submission.submittedAt,
+                                      )}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <User className="h-4 w-4" />
+                                      {submission.user?.email || "No email"}
+                                    </div>
+                                  </div>
                                 </div>
 
                                 <div className="flex flex-wrap gap-2">
                                   <Button
                                     type="button"
+                                    variant="outline"
                                     onClick={() =>
-                                      handleSaveApprovedWordingOverrides(submission)
+                                      beginApprovedWordingEdit(submission)
                                     }
                                     disabled={isProcessingCurrent}
                                   >
-                                    Save wording
+                                    <Pencil className="mr-2 h-4 w-4" />
+                                    Edit wording
                                   </Button>
                                   <Button
                                     type="button"
                                     variant="outline"
-                                    onClick={cancelApprovedWordingEdit}
+                                    onClick={() =>
+                                      handleUnpublishApprovedSubmission(
+                                        submission,
+                                      )
+                                    }
                                     disabled={isProcessingCurrent}
                                   >
-                                    Cancel
+                                    <Undo2 className="mr-2 h-4 w-4" />
+                                    Unpublish
                                   </Button>
                                 </div>
                               </div>
-                            ) : null}
-                          </CardContent>
-                        </Card>
-                      );
-                    })
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+
+                              {isEditing ? (
+                                <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
+                                  <div className="space-y-2">
+                                    <p className="text-sm font-medium text-gray-900">
+                                      Experience summary
+                                    </p>
+                                    <p className="rounded-md border border-gray-200 bg-white p-3 text-sm text-gray-700">
+                                      {getOriginalExperienceSummary(
+                                        submission,
+                                      ) || "No student summary available."}
+                                    </p>
+                                    <Textarea
+                                      value={
+                                        approvedWordingEdits.experienceSummary
+                                      }
+                                      onChange={(event) =>
+                                        setApprovedWordingEdits((current) =>
+                                          current
+                                            ? {
+                                                ...current,
+                                                experienceSummary:
+                                                  event.target.value,
+                                              }
+                                            : current,
+                                        )
+                                      }
+                                      placeholder="Override public experience summary"
+                                      rows={3}
+                                    />
+                                  </div>
+
+                                  <div className="space-y-2">
+                                    <p className="text-sm font-medium text-gray-900">
+                                      Accommodation comment
+                                    </p>
+                                    <p className="rounded-md border border-gray-200 bg-white p-3 text-sm text-gray-700">
+                                      {getOriginalAccommodationComment(
+                                        submission,
+                                      ) ||
+                                        "No student accommodation comment available."}
+                                    </p>
+                                    <Textarea
+                                      value={
+                                        approvedWordingEdits.accommodationComment
+                                      }
+                                      onChange={(event) =>
+                                        setApprovedWordingEdits((current) =>
+                                          current
+                                            ? {
+                                                ...current,
+                                                accommodationComment:
+                                                  event.target.value,
+                                              }
+                                            : current,
+                                        )
+                                      }
+                                      placeholder="Override public accommodation comment"
+                                      rows={3}
+                                    />
+                                  </div>
+
+                                  <div className="space-y-3">
+                                    <p className="text-sm font-medium text-gray-900">
+                                      Course notes
+                                    </p>
+                                    {originalCourseNotes.length === 0 ? (
+                                      <p className="text-sm text-gray-600">
+                                        No course notes available for this
+                                        submission.
+                                      </p>
+                                    ) : (
+                                      originalCourseNotes.map((courseNote) => (
+                                        <div
+                                          key={courseNote.id}
+                                          className="space-y-2"
+                                        >
+                                          <p className="text-sm font-medium text-gray-700">
+                                            {courseNote.label}
+                                          </p>
+                                          <p className="rounded-md border border-gray-200 bg-white p-3 text-sm text-gray-700">
+                                            {courseNote.originalValue ||
+                                              "No student course note provided."}
+                                          </p>
+                                          <Textarea
+                                            value={
+                                              approvedWordingEdits.courseNotes[
+                                                courseNote.id
+                                              ] || ""
+                                            }
+                                            onChange={(event) =>
+                                              handleApprovedCourseNoteChange(
+                                                courseNote.id,
+                                                event.target.value,
+                                              )
+                                            }
+                                            placeholder="Override public course note"
+                                            rows={3}
+                                          />
+                                        </div>
+                                      ))
+                                    )}
+                                  </div>
+
+                                  <div className="flex flex-wrap gap-2">
+                                    <Button
+                                      type="button"
+                                      onClick={() =>
+                                        handleSaveApprovedWordingOverrides(
+                                          submission,
+                                        )
+                                      }
+                                      disabled={isProcessingCurrent}
+                                    >
+                                      Save wording
+                                    </Button>
+                                    <Button
+                                      type="button"
+                                      variant="outline"
+                                      onClick={cancelApprovedWordingEdit}
+                                      disabled={isProcessingCurrent}
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </div>
+                                </div>
+                              ) : null}
+                            </CardContent>
+                          </Card>
+                        );
+                      })
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             )
           ) : (
             <Card>
