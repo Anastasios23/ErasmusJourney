@@ -40,6 +40,10 @@ function calculateMonthlyTotal(values: Array<number | null>): number | null {
   return numericValues.reduce((sum, value) => sum + value, 0);
 }
 
+function isLimitedCityData(submissionCount: number): boolean {
+  return submissionCount < 5;
+}
+
 async function main(): Promise<void> {
   console.log("Running approved-to-public business proof checks...");
 
@@ -107,6 +111,12 @@ async function main(): Promise<void> {
     `Detail submissionCount mismatch: expected ${sourceExperiences.length}, got ${detail.submissionCount}`,
   );
 
+  const expectedLimitedData = isLimitedCityData(sourceExperiences.length);
+  assert(
+    detail.isLimitedData === expectedLimitedData,
+    `Limited-data flag mismatch: expected ${expectedLimitedData}, got ${detail.isLimitedData}`,
+  );
+
   const computedRentValues: number[] = [];
   const computedMonthlyTotals: number[] = [];
   let sourceCourseMappings = 0;
@@ -167,7 +177,16 @@ async function main(): Promise<void> {
     `Cost sample size mismatch: expected ${computedMonthlyTotals.length}, got ${detail.costSummary.sampleSize}`,
   );
 
-  if (sourceAccommodationTypes > 0) {
+  if (detail.accommodationSummary.isLimitedData) {
+    assert(
+      detail.accommodationSummary.types.length === 0,
+      "Accommodation aggregate types must be hidden while limited-data guard is active.",
+    );
+    assert(
+      detail.accommodationSummary.averageRent === null,
+      "Accommodation average rent must be hidden while limited-data guard is active.",
+    );
+  } else if (sourceAccommodationTypes > 0) {
     assert(
       detail.accommodationSummary.types.length > 0,
       "Expected accommodation type insights to be populated from approved data.",

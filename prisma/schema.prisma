@@ -46,44 +46,38 @@ model VerificationToken {
 }
 
 model agreements {
-  id                                                        String         @id
+  id                                                        String       @id
   homeUniversityId                                          String
   homeDepartmentId                                          String
   partnerUniversityId                                       String
   partnerCity                                               String
   partnerCountry                                            String
-  agreementType                                             String         @default("BOTH")
+  agreementType                                             String       @default("BOTH")
   notes                                                     String?
-  isActive                                                  Boolean        @default(true)
+  isActive                                                  Boolean      @default(true)
   startDate                                                 DateTime?
   endDate                                                   DateTime?
-  createdAt                                                 DateTime       @default(now())
+  createdAt                                                 DateTime     @default(now())
   updatedAt                                                 DateTime
-  departments                                               departments    @relation(fields: [homeDepartmentId], references: [id])
-  universities_agreements_homeUniversityIdTouniversities    universities   @relation("agreements_homeUniversityIdTouniversities", fields: [homeUniversityId], references: [id])
-  universities_agreements_partnerUniversityIdTouniversities universities   @relation("agreements_partnerUniversityIdTouniversities", fields: [partnerUniversityId], references: [id])
-  applications                                              applications[]
+  departments                                               departments  @relation(fields: [homeDepartmentId], references: [id])
+  universities_agreements_homeUniversityIdTouniversities    universities @relation("agreements_homeUniversityIdTouniversities", fields: [homeUniversityId], references: [id])
+  universities_agreements_partnerUniversityIdTouniversities universities @relation("agreements_partnerUniversityIdTouniversities", fields: [partnerUniversityId], references: [id])
 }
 
 model applications {
-  id               String       @id
+  id               String   @id
   userId           String
   homeUniversityId String
   programId        String
-  agreementId      String
-  status           String       @default("DRAFT")
+  status           String   @default("DRAFT")
   semester         String?
   academicYear     String?
   duration         String?
   motivation       String?
   languageSkills   Json?
   grades           Json?
-  createdAt        DateTime     @default(now())
+  createdAt        DateTime @default(now())
   updatedAt        DateTime
-  agreements       agreements   @relation(fields: [agreementId], references: [id])
-  universities     universities @relation(fields: [homeUniversityId], references: [id])
-  programs         programs     @relation(fields: [programId], references: [id])
-  users            users        @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([status])
@@ -99,7 +93,6 @@ model departments {
   updatedAt   DateTime
   agreements  agreements[]
   faculties   faculties    @relation(fields: [facultyId], references: [id], onDelete: Cascade)
-  programs    programs[]
 }
 
 enum ErasmusExperienceStatus {
@@ -223,7 +216,7 @@ model faculties {
 }
 
 model programs {
-  id           String         @id
+  id           String   @id
   name         String
   level        String
   duration     String
@@ -231,15 +224,13 @@ model programs {
   ects         Int?
   description  String?
   departmentId String
-  createdAt    DateTime       @default(now())
+  createdAt    DateTime @default(now())
   updatedAt    DateTime
-  applications applications[]
-  departments  departments    @relation(fields: [departmentId], references: [id], onDelete: Cascade)
 }
 
 model universities {
-  id                                                      String         @id
-  code                                                    String         @unique
+  id                                                      String       @id
+  code                                                    String       @unique
   name                                                    String
   shortName                                               String
   type                                                    String
@@ -248,11 +239,10 @@ model universities {
   website                                                 String?
   description                                             String?
   imageUrl                                                String?
-  createdAt                                               DateTime       @default(now())
+  createdAt                                               DateTime     @default(now())
   updatedAt                                               DateTime
-  agreements_agreements_homeUniversityIdTouniversities    agreements[]   @relation("agreements_homeUniversityIdTouniversities")
-  agreements_agreements_partnerUniversityIdTouniversities agreements[]   @relation("agreements_partnerUniversityIdTouniversities")
-  applications                                            applications[]
+  agreements_agreements_homeUniversityIdTouniversities    agreements[] @relation("agreements_homeUniversityIdTouniversities")
+  agreements_agreements_partnerUniversityIdTouniversities agreements[] @relation("agreements_partnerUniversityIdTouniversities")
   faculties                                               faculties[]
 
   // NEW: Erasmus experience relations
@@ -280,7 +270,6 @@ model users {
   homeCountry         String?
   Account             Account[]
   Session             Session[]
-  applications        applications[]
   erasmus_experiences ErasmusExperience?
 
   // NEW: Admin review actions
