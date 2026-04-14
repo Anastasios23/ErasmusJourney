@@ -8,6 +8,23 @@ import {
   publishErasmusProgressSync,
 } from "../../src/lib/erasmusProgressSync";
 
+const mockSession = vi.hoisted(() => ({
+  status: "authenticated" as "authenticated" | "loading" | "unauthenticated",
+  data: {
+    user: {
+      id: "student-1",
+      email: "student@example.com",
+    },
+  } as any,
+}));
+
+vi.mock("next-auth/react", () => ({
+  useSession: () => ({
+    data: mockSession.data,
+    status: mockSession.status,
+  }),
+}));
+
 function createResponse(body: unknown) {
   return {
     ok: true,
@@ -34,6 +51,13 @@ describe("useErasmusProgress", () => {
 
   beforeEach(() => {
     vi.restoreAllMocks();
+    mockSession.status = "authenticated";
+    mockSession.data = {
+      user: {
+        id: "student-1",
+        email: "student@example.com",
+      },
+    };
   });
 
   afterEach(() => {
@@ -239,5 +263,21 @@ describe("useErasmusProgress", () => {
       expect(screen.getByTestId("progress")).toHaveTextContent("100");
       expect(screen.getByTestId("current-step")).toHaveTextContent("5");
     });
+  });
+
+  it("does not fetch progress for unauthenticated users", async () => {
+    mockSession.status = "unauthenticated";
+    mockSession.data = null;
+    global.fetch = vi.fn() as typeof fetch;
+
+    render(<ProgressHarness />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("loading")).toHaveTextContent("no");
+      expect(screen.getByTestId("completed-count")).toHaveTextContent("0");
+      expect(screen.getByTestId("progress")).toHaveTextContent("0");
+    });
+
+    expect(global.fetch).not.toHaveBeenCalled();
   });
 });

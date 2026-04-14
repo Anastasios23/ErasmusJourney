@@ -1,16 +1,19 @@
 import { useMemo } from "react";
 import { useRouter } from "next/router";
-import { useFormSubmissions } from "./useFormSubmissions";
-
-interface NavigationSubmissionSummary {
-  type: string;
-  status: string;
-}
+import {
+  useErasmusProgress,
+  type StepCompletion,
+} from "./useErasmusProgress";
 
 interface SmartNavigationInput {
   pathname: string;
   step: string | string[] | undefined;
-  submissions?: NavigationSubmissionSummary[];
+  progress?: {
+    hasExperience: boolean;
+    currentStep: number;
+    isComplete: boolean;
+    completedSteps: StepCompletion;
+  };
 }
 
 export interface SmartNavigationStep {
@@ -23,6 +26,34 @@ export interface SmartNavigationStep {
   nextRecommended: boolean;
   urgency: "low" | "medium" | "high";
   estimatedTime: string;
+}
+
+const EMPTY_STEP_COMPLETION: StepCompletion = {
+  basicInfo: false,
+  courses: false,
+  accommodation: false,
+  livingExpenses: false,
+  experience: false,
+};
+
+function isStepCompleted(
+  stepId: SmartNavigationStep["id"],
+  completedSteps: StepCompletion,
+): boolean {
+  switch (stepId) {
+    case "basic-info":
+      return completedSteps.basicInfo;
+    case "course-matching":
+      return completedSteps.courses;
+    case "accommodation":
+      return completedSteps.accommodation;
+    case "living-expenses":
+      return completedSteps.livingExpenses;
+    case "experience":
+      return completedSteps.experience;
+    default:
+      return false;
+  }
 }
 
 function getCurrentUnifiedFormStep(
@@ -88,27 +119,22 @@ const STEP_DEFINITIONS = [
 export function buildSmartNavigation({
   pathname,
   step,
-  submissions,
+  progress,
 }: SmartNavigationInput) {
   const currentUnifiedFormStep = getCurrentUnifiedFormStep(pathname, step);
+  const completedStepState = progress?.completedSteps ?? EMPTY_STEP_COMPLETION;
+  const hasExperience = progress?.hasExperience ?? false;
+  const isComplete = progress?.isComplete ?? false;
+  const nextRecommendedStep =
+    hasExperience && !isComplete ? progress?.currentStep ?? null : null;
 
   const steps: SmartNavigationStep[] = STEP_DEFINITIONS.map((entry, index) => {
-    const submission = submissions?.find((item) => item.type === entry.id);
-    const isCompleted = Boolean(submission && submission.status !== "draft");
+    const isCompleted = isComplete || isStepCompleted(entry.id, completedStepState);
     const isCurrent =
       pathname === "/share-experience" &&
       currentUnifiedFormStep === entry.stepNumber;
 
-    const previousStepsCompleted =
-      index === 0 ||
-      STEP_DEFINITIONS.slice(0, index).every((previousEntry) => {
-        const previousSubmission = submissions?.find(
-          (item) => item.type === previousEntry.id,
-        );
-        return Boolean(previousSubmission && previousSubmission.status !== "draft");
-      });
-
-    const nextRecommended = !isCompleted && previousStepsCompleted;
+    const nextRecommended = nextRecommendedStep === entry.stepNumber;
 
     let urgency: "low" | "medium" | "high" = "low";
     if (nextRecommended) {
@@ -168,16 +194,33 @@ export function buildSmartNavigation({
 
 export function useSmartNavigation() {
   const router = useRouter();
-  const { submissions } = useFormSubmissions();
+  const { completedSteps, currentStep, experienceData, loading } =
+    useErasmusProgress();
+  const progress = useMemo(() => {
+    if (loading) {
+      return undefined;
+    }
+
+    return {
+      hasExperience: Boolean(experienceData),
+      currentStep,
+      isComplete:
+        experienceData?.status === "SUBMITTED" ||
+        experienceData?.status === "APPROVED" ||
+        experienceData?.isComplete === true ||
+        experienceData?.hasSubmitted === true,
+      completedSteps,
+    };
+  }, [completedSteps, currentStep, experienceData, loading]);
 
   return useMemo(
     () =>
       buildSmartNavigation({
         pathname: router.pathname,
         step: router.query.step,
-        submissions,
+        progress,
       }),
-    [router.pathname, router.query.step, submissions],
+    [router.pathname, router.query.step, progress],
   );
 }
 

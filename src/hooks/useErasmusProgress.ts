@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useSession } from "next-auth/react";
 import { isAccommodationStepComplete } from "../lib/accommodation";
 import { isBasicInformationComplete } from "../lib/basicInformation";
 import { hasCompleteCourseMatchingData } from "../lib/courseMatching";
@@ -35,12 +36,24 @@ export interface ErasmusProgress {
  * Checks which JSON fields are populated in erasmus_experiences table
  */
 export function useErasmusProgress(): ErasmusProgress {
+  const { data: session, status: sessionStatus } = useSession();
   const [experienceData, setExperienceData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchProgress = useCallback(async (options?: { silent?: boolean }) => {
     const silent = options?.silent === true;
+
+    if (sessionStatus === "loading") {
+      return;
+    }
+
+    if (!session?.user?.id) {
+      setExperienceData(null);
+      setError(null);
+      setLoading(false);
+      return;
+    }
 
     try {
       if (!silent) {
@@ -73,11 +86,16 @@ export function useErasmusProgress(): ErasmusProgress {
         setLoading(false);
       }
     }
-  }, []);
+  }, [session?.user?.id, sessionStatus]);
 
   useEffect(() => {
+    if (sessionStatus === "loading") {
+      setLoading(true);
+      return;
+    }
+
     void fetchProgress();
-  }, [fetchProgress]);
+  }, [fetchProgress, sessionStatus]);
 
   useEffect(() => {
     if (typeof window === "undefined") {

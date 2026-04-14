@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -15,8 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Icon } from "@iconify/react";
 import NotificationDropdown from "@/components/NotificationDropdown";
-import { useFormSubmissions } from "@/hooks/useFormSubmissions";
-import { buildSmartNavigation } from "@/hooks/useSmartNavigation";
+import { useSmartNavigation } from "@/hooks/useSmartNavigation";
 import { cn } from "@/lib/utils";
 
 export default function Header() {
@@ -25,16 +24,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  const { submissions } = useFormSubmissions();
-  const { analytics } = useMemo(
-    () =>
-      buildSmartNavigation({
-        pathname: router.pathname,
-        step: router.query.step,
-        submissions,
-      }),
-    [router.pathname, router.query.step, submissions],
-  );
+  const { analytics } = useSmartNavigation();
 
   // Track scroll position for header background change
   useEffect(() => {
