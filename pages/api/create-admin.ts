@@ -7,6 +7,10 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  if (process.env.ADMIN_BOOTSTRAP_SECRET !== req.headers["x-bootstrap-secret"]) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
