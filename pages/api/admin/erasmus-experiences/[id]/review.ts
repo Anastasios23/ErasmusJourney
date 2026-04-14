@@ -6,7 +6,6 @@ import { buildPreviewUnavailableReason } from "../../../../../src/lib/adminPubli
 import {
   EXPERIENCE_STATUS,
   REVIEW_ACTION,
-  type ReviewActionType,
 } from "../../../../../src/lib/canonicalWorkflow";
 import { sanitizeBasicInformationData } from "../../../../../src/lib/basicInformation";
 import {
@@ -29,10 +28,11 @@ const PRISMA_DB_NULL = (require("@prisma/client") as any).Prisma.DbNull;
 
 /**
  * Admin Review API Endpoint
- * POST /api/admin/erasmus-experiences/[id]/review
+ * POST|PATCH /api/admin/erasmus-experiences/[id]/review
  *
  * Actions:
  * - APPROVED: Approve submission and refresh canonical public destination aggregates
+ * - UNPUBLISH: Return an approved submission to moderation queue and refresh canonical public destination aggregates
  * - REJECTED: Reject submission with feedback
  * - REQUEST_CHANGES: Return submission to editable revision state and notify student
  * - WORDING_EDITED: Save public wording-only overrides without changing status
@@ -41,7 +41,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  if (req.method !== "POST") {
+  if (req.method !== "POST" && req.method !== "PATCH") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
@@ -69,17 +69,22 @@ export default async function handler(
       req.body && typeof req.body === "object"
         ? (req.body as Record<string, unknown>)
         : { action: null, feedback: "", wordingEdits: null };
-    const normalizedAction =
-      typeof action === "string" ? normalizeReviewAction(action) : null;
+    const rawAction = typeof action === "string" ? action.trim() : "";
+    const isUnpublishAction = rawAction === "UNPUBLISH";
+    const normalizedAction = isUnpublishAction
+      ? null
+      : normalizeReviewAction(rawAction);
+    const requestAction: CanonicalReviewAction | "UNPUBLISH" | null =
+      isUnpublishAction ? "UNPUBLISH" : normalizedAction;
 
     if (!id || typeof id !== "string") {
       return res.status(400).json({ error: "Experience ID required" });
     }
 
-    if (!normalizedAction) {
+    if (!requestAction) {
       return res.status(400).json({
         error:
-          "Valid action required: APPROVED, REJECTED, REQUEST_CHANGES, or WORDING_EDITED",
+          "Valid action required: APPROVED, REJECTED, REQUEST_CHANGES, WORDING_EDITED, or UNPUBLISH",
       });
     }
 
@@ -101,7 +106,21 @@ export default async function handler(
       return res.status(404).json({ error: "Experience not found" });
     }
 
-    if (!isExperienceReviewableStatus(experience.status)) {
+    if (
+      requestAction === "UNPUBLISH" &&
+      experience.status !== EXPERIENCE_STATUS.APPROVED
+    ) {
+      return res.status(409).json({
+        error:
+          "Only approved submissions can be unpublished through the canonical moderation workflow.",
+        status: experience.status,
+      });
+    }
+
+    if (
+      requestAction !== "UNPUBLISH" &&
+      !isExperienceReviewableStatus(experience.status)
+    ) {
       return res.status(409).json({
         error:
           "Only submissions currently in SUBMITTED status can be reviewed through the canonical moderation workflow.",
@@ -111,7 +130,7 @@ export default async function handler(
 
     // Check revision limit
     if (
-      normalizedAction === REVIEW_ACTION.REQUEST_CHANGES &&
+      requestAction === REVIEW_ACTION.REQUEST_CHANGES &&
       experience.revisionCount >= 1
     ) {
       return res.status(400).json({
@@ -119,7 +138,7 @@ export default async function handler(
       });
     }
 
-    if (normalizedAction === REVIEW_ACTION.APPROVED) {
+    if (requestAction === REVIEW_ACTION.APPROVED) {
       const unavailableReason = buildPreviewUnavailableReason(experience);
 
       if (unavailableReason) {
@@ -143,36 +162,33 @@ export default async function handler(
       : [];
     const hasWordingChanges = wordingChanges.length > 0;
 
-    if (
-      normalizedAction === REVIEW_ACTION.WORDING_EDITED &&
-      !hasWordingChanges
-    ) {
+    if (requestAction === REVIEW_ACTION.WORDING_EDITED && !hasWordingChanges) {
       return res.status(400).json({
         error: "At least one wording change is required before saving edits.",
       });
     }
 
     if (
-      (normalizedAction === REVIEW_ACTION.REJECTED ||
-        normalizedAction === REVIEW_ACTION.REQUEST_CHANGES) &&
+      (requestAction === REVIEW_ACTION.REJECTED ||
+        requestAction === REVIEW_ACTION.REQUEST_CHANGES) &&
       typeof feedback !== "string"
     ) {
       return res.status(400).json({
         error:
-          normalizedAction === REVIEW_ACTION.REJECTED
+          requestAction === REVIEW_ACTION.REJECTED
             ? "Feedback required for rejection"
             : "Feedback required when requesting changes",
       });
     }
 
     if (
-      (normalizedAction === REVIEW_ACTION.REJECTED ||
-        normalizedAction === REVIEW_ACTION.REQUEST_CHANGES) &&
+      (requestAction === REVIEW_ACTION.REJECTED ||
+        requestAction === REVIEW_ACTION.REQUEST_CHANGES) &&
       !normalizedFeedback
     ) {
       return res.status(400).json({
         error:
-          normalizedAction === REVIEW_ACTION.REJECTED
+          requestAction === REVIEW_ACTION.REJECTED
             ? "Feedback required for rejection"
             : "Feedback required when requesting changes",
       });
@@ -183,7 +199,10 @@ export default async function handler(
       reviewedBy: (session.user as any).id,
     };
 
-    if (normalizedAction !== REVIEW_ACTION.WORDING_EDITED) {
+    if (
+      requestAction !== REVIEW_ACTION.WORDING_EDITED &&
+      requestAction !== "UNPUBLISH"
+    ) {
       updateData.reviewFeedback = normalizedFeedback || null;
     }
 
@@ -199,12 +218,18 @@ export default async function handler(
       }
     }
 
-    switch (normalizedAction) {
+    switch (requestAction) {
       case REVIEW_ACTION.APPROVED:
         updateData.status = EXPERIENCE_STATUS.APPROVED;
         updateData.adminApproved = true;
         updateData.isPublic = true;
         updateData.publishedAt = new Date();
+        break;
+      case "UNPUBLISH":
+        updateData.status = EXPERIENCE_STATUS.SUBMITTED;
+        updateData.adminApproved = false;
+        updateData.isPublic = false;
+        updateData.publishedAt = null;
         break;
       case REVIEW_ACTION.REJECTED:
         updateData.status = EXPERIENCE_STATUS.REJECTED;
@@ -234,7 +259,7 @@ export default async function handler(
 
         const createdReviewActions: Array<{
           id: string;
-          action: ReviewActionType;
+          action: string;
           feedback: string | null;
         }> = [];
 
@@ -251,13 +276,26 @@ export default async function handler(
           );
         }
 
-        if (normalizedAction !== REVIEW_ACTION.WORDING_EDITED) {
+        if (requestAction === "UNPUBLISH") {
           createdReviewActions.push(
             await tx.reviewAction.create({
               data: {
                 experienceId: id,
                 adminId: (session.user as any).id,
-                action: normalizedAction,
+                action: "UNPUBLISHED",
+                feedback:
+                  normalizedFeedback ||
+                  "Submission unpublished and returned to moderation queue.",
+              },
+            }),
+          );
+        } else if (requestAction !== REVIEW_ACTION.WORDING_EDITED) {
+          createdReviewActions.push(
+            await tx.reviewAction.create({
+              data: {
+                experienceId: id,
+                adminId: (session.user as any).id,
+                action: requestAction,
                 feedback: normalizedFeedback || null,
               },
             }),
@@ -271,7 +309,10 @@ export default async function handler(
       },
     );
 
-    if (normalizedAction === REVIEW_ACTION.APPROVED) {
+    if (
+      requestAction === REVIEW_ACTION.APPROVED ||
+      requestAction === "UNPUBLISH"
+    ) {
       try {
         await refreshPublicDestinationReadModel();
         await revalidatePublicDestinationPages(
@@ -285,7 +326,9 @@ export default async function handler(
         );
       } catch (refreshError) {
         console.error(
-          "Error refreshing public destination read model after approval:",
+          requestAction === "UNPUBLISH"
+            ? "Error refreshing public destination read model after unpublish:"
+            : "Error refreshing public destination read model after approval:",
           refreshError,
         );
       }
@@ -295,7 +338,7 @@ export default async function handler(
     // Public destination aggregates now come from PublicDestinationReadModel only.
 
     const notification =
-      normalizedAction === REVIEW_ACTION.REQUEST_CHANGES
+      requestAction === REVIEW_ACTION.REQUEST_CHANGES
         ? await sendRequestChangesEmail({
             studentEmail: experience.users?.email || "",
             studentName: [
@@ -320,7 +363,7 @@ export default async function handler(
       reviewAction: reviewActions[reviewActions.length - 1] ?? null,
       reviewActions,
       ...(notification ? { notification } : {}),
-      message: getSuccessMessage(normalizedAction, {
+      message: getSuccessMessage(requestAction, {
         wordingEditsSaved: hasWordingChanges,
         notification,
       }),
@@ -398,7 +441,7 @@ function formatWordingEditAuditFeedback(
  * Get success message based on action
  */
 function getSuccessMessage(
-  action: CanonicalReviewAction,
+  action: CanonicalReviewAction | "UNPUBLISH",
   options?: {
     wordingEditsSaved?: boolean;
     notification?: {
@@ -414,6 +457,8 @@ function getSuccessMessage(
   switch (action) {
     case REVIEW_ACTION.APPROVED:
       return `Experience approved successfully. Public aggregates were refreshed.${wordingSuffix}`;
+    case "UNPUBLISH":
+      return "Submission unpublished and returned to moderation queue. Public aggregates were refreshed.";
     case REVIEW_ACTION.REJECTED:
       return `Experience rejected.${wordingSuffix}`;
     case REVIEW_ACTION.REQUEST_CHANGES:

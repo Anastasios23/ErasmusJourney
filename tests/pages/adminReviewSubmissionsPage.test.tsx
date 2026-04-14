@@ -139,52 +139,77 @@ describe("admin review submissions page", () => {
   });
 
   it("opens a submitted queue item and shows moderation readiness", async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: async () => [
-        {
-          id: "experience-1",
-          status: "SUBMITTED",
-          revisionCount: 0,
-          submittedAt: "2026-02-03T00:00:00.000Z",
-          reviewFeedback: null,
-          adminNotes: null,
-          publicWordingOverrides: null,
-          basicInfo: {
-            homeUniversity: "University of Cyprus",
-            hostUniversity: "University of Amsterdam",
-            hostCity: "Amsterdam",
-            hostCountry: null,
-          },
-          courses: [],
-          accommodation: {},
-          livingExpenses: {
-            currency: "EUR",
-          },
-          experience: {
-            generalTips: "Pack for the rain.",
-          },
-          hostCity: "Amsterdam",
-          hostCountry: null,
-          user: {
-            id: "student-1",
-            name: "Ada Student",
-            email: "ada@example.com",
-          },
-          publicImpactPreview: null,
-          publicImpactPreviewUnavailableReason: {
-            code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
-            message:
-              "Cannot preview or publish this submission until the MVP minimum public contract is complete: host city, host country, host university, home university, accommodation type, monthly rent, and at least one complete course-equivalence example.",
-            missingFields: [
-              "hostCountry",
-              "accommodationType",
-              "monthlyRent",
-              "courseMappings",
-            ],
-          },
-        },
-      ],
+    mockFetch.mockImplementation(async (input: RequestInfo | URL) => {
+      const url = String(input);
+
+      if (url.includes("/api/admin/erasmus-experiences?status=SUBMITTED")) {
+        return {
+          ok: true,
+          json: async () => [
+            {
+              id: "experience-1",
+              status: "SUBMITTED",
+              revisionCount: 0,
+              submittedAt: "2026-02-03T00:00:00.000Z",
+              reviewFeedback: null,
+              adminNotes: null,
+              publicWordingOverrides: null,
+              basicInfo: {
+                homeUniversity: "University of Cyprus",
+                hostUniversity: "University of Amsterdam",
+                hostCity: "Amsterdam",
+                hostCountry: null,
+              },
+              courses: [],
+              accommodation: {},
+              livingExpenses: {
+                currency: "EUR",
+              },
+              experience: {
+                generalTips: "Pack for the rain.",
+              },
+              hostCity: "Amsterdam",
+              hostCountry: null,
+              user: {
+                id: "student-1",
+                name: "Ada Student",
+                email: "ada@example.com",
+              },
+              publicImpactPreview: null,
+              publicImpactPreviewUnavailableReason: {
+                code: "INCOMPLETE_MINIMUM_PUBLIC_CONTRACT",
+                message:
+                  "Cannot preview or publish this submission until the MVP minimum public contract is complete: host city, host country, host university, home university, accommodation type, monthly rent, and at least one complete course-equivalence example.",
+                missingFields: [
+                  "hostCountry",
+                  "accommodationType",
+                  "monthlyRent",
+                  "courseMappings",
+                ],
+              },
+            },
+          ],
+        };
+      }
+
+      if (url.includes("/api/admin/erasmus-experiences?status=APPROVED")) {
+        return {
+          ok: true,
+          json: async () => [],
+        };
+      }
+
+      if (url.includes("/api/admin/destinations/live")) {
+        return {
+          ok: true,
+          json: async () => [],
+        };
+      }
+
+      return {
+        ok: false,
+        json: async () => ({ error: "Unexpected request" }),
+      };
     });
 
     render(<ReviewSubmissions />);
@@ -215,6 +240,182 @@ describe("admin review submissions page", () => {
         "Cannot preview or publish this submission until the MVP minimum public contract is complete: host city, host country, host university, home university, accommodation type, monthly rent, and at least one complete course-equivalence example.",
       ),
     ).toBeInTheDocument();
+  });
+
+  it("unpublishes an approved submission through the canonical PATCH review action", async () => {
+    mockFetch.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+
+      if (url.includes("/api/admin/erasmus-experiences?status=SUBMITTED")) {
+        return {
+          ok: true,
+          json: async () => [],
+        };
+      }
+
+      if (url.includes("/api/admin/erasmus-experiences?status=APPROVED")) {
+        return {
+          ok: true,
+          json: async () => [
+            {
+              id: "experience-approved-1",
+              status: "APPROVED",
+              revisionCount: 0,
+              submittedAt: "2026-02-03T00:00:00.000Z",
+              reviewFeedback: null,
+              adminNotes: null,
+              publicWordingOverrides: null,
+              basicInfo: {
+                homeUniversity: "University of Cyprus",
+                hostUniversity: "University of Amsterdam",
+                hostCity: "Amsterdam",
+                hostCountry: "Netherlands",
+              },
+              courses: [
+                {
+                  id: "course-1",
+                  homeCourseName: "Algorithms",
+                  homeECTS: 6,
+                  hostCourseName: "Advanced Algorithms",
+                  hostECTS: 6,
+                  recognitionType: "full_equivalence",
+                  notes: "Student original course note.",
+                },
+              ],
+              accommodation: {
+                accommodationType: "shared_apartment",
+                monthlyRent: 500,
+                billsIncluded: "yes",
+                accommodationRating: 4,
+                wouldRecommend: true,
+                accommodationReview: "Student original accommodation comment.",
+              },
+              livingExpenses: {
+                currency: "EUR",
+                food: 200,
+                transport: 90,
+                social: 130,
+              },
+              experience: {
+                bestExperience: "Student original experience summary.",
+                generalTips: "Pack for the rain.",
+              },
+              hostCity: "Amsterdam",
+              hostCountry: "Netherlands",
+              user: {
+                id: "student-1",
+                name: "Ada Student",
+                email: "ada@example.com",
+              },
+              publicImpactPreview: null,
+              publicImpactPreviewUnavailableReason: null,
+            },
+          ],
+        };
+      }
+
+      if (url.includes("/api/admin/destinations/live")) {
+        return {
+          ok: true,
+          json: async () => [
+            {
+              slug: "amsterdam-netherlands",
+              city: "Amsterdam",
+              country: "Netherlands",
+              submissionCount: 2,
+              averageRent: 550,
+              updatedAt: "2026-04-14T11:00:00.000Z",
+            },
+          ],
+        };
+      }
+
+      if (
+        url.includes("/api/admin/erasmus-experiences/experience-approved-1/review") &&
+        init?.method === "PATCH"
+      ) {
+        return {
+          ok: true,
+          json: async () => ({
+            success: true,
+            message:
+              "Submission unpublished and returned to moderation queue. Public aggregates were refreshed.",
+          }),
+        };
+      }
+
+      return {
+        ok: false,
+        json: async () => ({ error: "Unexpected request" }),
+      };
+    });
+
+    render(<ReviewSubmissions />);
+
+    expect(await screen.findByText("Approved Submissions")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /unpublish/i }));
+
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalledWith(
+        "/api/admin/erasmus-experiences/experience-approved-1/review",
+        expect.objectContaining({
+          method: "PATCH",
+          body: expect.stringContaining("UNPUBLISH"),
+        }),
+      );
+    });
+  });
+
+  it("shows live destinations table in the live destinations tab", async () => {
+    mockFetch.mockImplementation(async (input: RequestInfo | URL) => {
+      const url = String(input);
+
+      if (url.includes("/api/admin/erasmus-experiences?status=SUBMITTED")) {
+        return {
+          ok: true,
+          json: async () => [],
+        };
+      }
+
+      if (url.includes("/api/admin/erasmus-experiences?status=APPROVED")) {
+        return {
+          ok: true,
+          json: async () => [],
+        };
+      }
+
+      if (url.includes("/api/admin/destinations/live")) {
+        return {
+          ok: true,
+          json: async () => [
+            {
+              slug: "prague-czech-republic",
+              city: "Prague",
+              country: "Czech Republic",
+              submissionCount: 3,
+              averageRent: 480,
+              updatedAt: "2026-04-14T11:00:00.000Z",
+            },
+          ],
+        };
+      }
+
+      return {
+        ok: false,
+        json: async () => ({ error: "Unexpected request" }),
+      };
+    });
+
+    render(<ReviewSubmissions />);
+
+    expect(await screen.findByText("Moderation Queue")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /live destinations/i }));
+
+    expect(await screen.findByText("Prague")).toBeInTheDocument();
+    expect(screen.getByText("Czech Republic")).toBeInTheDocument();
+    expect(screen.getByText("View live")).toBeInTheDocument();
   });
 
   it("blocks non-admin users from loading the admin review page", async () => {

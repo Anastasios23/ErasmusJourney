@@ -2,7 +2,6 @@ import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   EXPERIENCE_STATUS,
   REVIEW_ACTION,
-  type ReviewActionType,
 } from "../../src/lib/canonicalWorkflow";
 
 const {
@@ -192,7 +191,7 @@ describe("admin public impact preview routes", () => {
       async ({
         data,
       }: {
-        data: { action: ReviewActionType; feedback: string | null };
+        data: { action: string; feedback: string | null };
       }) => ({
         id: `review-action-${data.action.toLowerCase()}`,
         action: data.action,
@@ -584,6 +583,65 @@ describe("admin public impact preview routes", () => {
       message:
         "Experience approved successfully. Public aggregates were refreshed.",
     });
+  });
+
+  it("unpublishes an approved submission and returns it to moderation queue", async () => {
+    mockExperienceFindUnique.mockResolvedValue(
+      createSubmittedExperience({
+        id: "experience-unpublish",
+        status: EXPERIENCE_STATUS.APPROVED,
+        adminApproved: true,
+        isPublic: true,
+        publishedAt: new Date("2026-03-01T00:00:00.000Z"),
+      }),
+    );
+
+    const req = createMockReq({
+      method: "PATCH",
+      query: { id: "experience-unpublish" },
+      body: { action: "UNPUBLISH" },
+    });
+    const res = createMockRes();
+
+    await reviewHandler(req as any, res as any);
+
+    const unpublishUpdate = mockExperienceUpdate.mock.calls[0]?.[0];
+
+    expect(res.statusCode).toBe(200);
+    expect(unpublishUpdate).toEqual(
+      expect.objectContaining({
+        where: { id: "experience-unpublish" },
+        data: expect.objectContaining({
+          status: EXPERIENCE_STATUS.SUBMITTED,
+          adminApproved: false,
+          isPublic: false,
+          publishedAt: null,
+          reviewedBy: "admin-1",
+        }),
+      }),
+    );
+    expect(unpublishUpdate?.data?.reviewedAt).toBeInstanceOf(Date);
+    expect(mockReviewActionCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          experienceId: "experience-unpublish",
+          adminId: "admin-1",
+          action: "UNPUBLISHED",
+        }),
+      }),
+    );
+    expect(mockRefreshPublicDestinationReadModel).toHaveBeenCalledTimes(1);
+    expect(mockRevalidatePublicDestinationPages).toHaveBeenCalledWith(
+      res,
+      "amsterdam-netherlands",
+    );
+    expect(res.jsonPayload).toEqual(
+      expect.objectContaining({
+        success: true,
+        message:
+          "Submission unpublished and returned to moderation queue. Public aggregates were refreshed.",
+      }),
+    );
   });
 
   it("saves wording-only admin edits without changing student submission state", async () => {

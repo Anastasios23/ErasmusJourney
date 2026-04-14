@@ -10,7 +10,10 @@ import {
   CheckCircle,
   ChevronRight,
   Clock,
+  Globe,
   MapPin,
+  Pencil,
+  Undo2,
   User,
   XCircle,
 } from "lucide-react";
@@ -36,10 +39,14 @@ import {
   type AdminReviewSubmissionLike,
 } from "../../src/lib/adminReview";
 import { buildLoginRedirectUrl } from "../../src/lib/authRedirect";
+import { sanitizeAccommodationStepData } from "../../src/lib/accommodation";
 import {
   getPublicWordingEditorState,
+  getExperiencePublicWordingEdits,
   type PublicWordingEditorState,
 } from "../../src/lib/experienceModeration";
+import { sanitizeCourseMappingsData } from "../../src/lib/courseMatching";
+import { buildPublicDestinationRoute } from "../../src/lib/publicRoutes";
 import {
   REVIEW_ACTION,
   type ErasmusExperienceStatus,
@@ -76,10 +83,26 @@ interface Experience extends AdminReviewSubmissionLike {
 
 type QueueFilter = "all" | "ready" | "blocked" | "needs_revision";
 type SortOrder = "newest" | "oldest";
+type AdminView = "moderation" | "live_destinations";
 type NarrativeWordingField = Exclude<
   keyof PublicWordingEditorState,
   "courseNotes"
 >;
+
+interface LiveDestinationRow {
+  slug: string;
+  city: string;
+  country: string;
+  submissionCount: number;
+  averageRent: number | null;
+  updatedAt: string;
+}
+
+interface ApprovedWordingEditState {
+  experienceSummary: string;
+  accommodationComment: string;
+  courseNotes: Record<string, string>;
+}
 
 const FEEDBACK_PRESETS = [
   {
@@ -190,12 +213,97 @@ const PUBLIC_WORDING_FIELDS: Array<{
   },
 ];
 
+function toRecord(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+
+  return value as Record<string, unknown>;
+}
+
+function asTrimmedString(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function getOriginalExperienceSummary(submission: Experience): string {
+  const experience = toRecord(submission.experience);
+  return asTrimmedString(experience?.bestExperience);
+}
+
+function getOriginalAccommodationComment(submission: Experience): string {
+  const accommodation = sanitizeAccommodationStepData(
+    toRecord(submission.accommodation),
+  );
+  return asTrimmedString(accommodation.accommodationReview);
+}
+
+function getCourseNoteRows(submission: Experience): Array<{
+  id: string;
+  label: string;
+  originalValue: string;
+}> {
+  return sanitizeCourseMappingsData(submission.courses).map((mapping) => ({
+    id: mapping.id,
+    label: `${mapping.homeCourseName || "Home course"} -> ${
+      mapping.hostCourseName || "Host course"
+    }`,
+    originalValue: asTrimmedString(mapping.notes),
+  }));
+}
+
+function buildApprovedWordingEditState(
+  submission: Experience,
+): ApprovedWordingEditState {
+  const wordingOverrides = getExperiencePublicWordingEdits(
+    submission.publicWordingOverrides,
+  );
+
+  const originalSummary = getOriginalExperienceSummary(submission);
+  const originalAccommodationComment = getOriginalAccommodationComment(submission);
+  const courseNoteRows = getCourseNoteRows(submission);
+
+  return {
+    experienceSummary:
+      wordingOverrides.bestExperience === null
+        ? ""
+        : wordingOverrides.bestExperience || originalSummary,
+    accommodationComment:
+      wordingOverrides.accommodationReview === null
+        ? ""
+        : wordingOverrides.accommodationReview || originalAccommodationComment,
+    courseNotes: Object.fromEntries(
+      courseNoteRows.map((courseNote) => {
+        const overrideValue = wordingOverrides.courseNotes?.[courseNote.id];
+        const value =
+          overrideValue === null
+            ? ""
+            : overrideValue || courseNote.originalValue;
+
+        return [courseNote.id, value];
+      }),
+    ),
+  };
+}
+
 export default function ReviewSubmissions() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [submissions, setSubmissions] = useState<Experience[]>([]);
+  const [approvedSubmissions, setApprovedSubmissions] = useState<Experience[]>(
+    [],
+  );
   const [selectedSubmission, setSelectedSubmission] =
     useState<Experience | null>(null);
+  const [activeView, setActiveView] = useState<AdminView>("moderation");
+  const [liveDestinations, setLiveDestinations] = useState<LiveDestinationRow[]>(
+    [],
+  );
+  const [editingApprovedSubmissionId, setEditingApprovedSubmissionId] =
+    useState<string | null>(null);
+  const [approvedWordingEdits, setApprovedWordingEdits] =
+    useState<ApprovedWordingEditState | null>(null);
+  const [processingApprovedSubmissionId, setProcessingApprovedSubmissionId] =
+    useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [reviewing, setReviewing] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -229,29 +337,67 @@ export default function ReviewSubmissions() {
       status === "authenticated" &&
       (session?.user as any)?.role === "ADMIN"
     ) {
-      void fetchSubmissions();
+      void loadAdminData();
     }
   }, [status, session]);
 
-  const fetchSubmissions = async (): Promise<Experience[]> => {
+  const loadAdminData = async (): Promise<{
+    submitted: Experience[];
+    approved: Experience[];
+    live: LiveDestinationRow[];
+  }> => {
+    const fallback = {
+      submitted: [] as Experience[],
+      approved: [] as Experience[],
+      live: [] as LiveDestinationRow[],
+    };
+
     try {
       setLoading(true);
-      const response = await fetch(
-        "/api/admin/erasmus-experiences?status=SUBMITTED",
-      );
+      const [submittedResponse, approvedResponse, liveResponse] =
+        await Promise.all([
+          fetch("/api/admin/erasmus-experiences?status=SUBMITTED"),
+          fetch("/api/admin/erasmus-experiences?status=APPROVED"),
+          fetch("/api/admin/destinations/live"),
+        ]);
 
-      if (!response.ok) {
+      if (!submittedResponse.ok || !approvedResponse.ok || !liveResponse.ok) {
         setError("Failed to load submissions");
-        return [];
+        return fallback;
       }
 
-      const nextSubmissions = (await response.json()) as Experience[];
-      setSubmissions(nextSubmissions);
-      return nextSubmissions;
+      const [nextSubmittedSubmissions, nextApprovedSubmissions, nextLiveRows] =
+        (await Promise.all([
+          submittedResponse.json(),
+          approvedResponse.json(),
+          liveResponse.json(),
+        ])) as [Experience[], Experience[], LiveDestinationRow[]];
+
+      const sortedLiveRows = [...nextLiveRows].sort((left, right) => {
+        if (right.submissionCount !== left.submissionCount) {
+          return right.submissionCount - left.submissionCount;
+        }
+
+        return (
+          new Date(right.updatedAt).getTime() -
+          new Date(left.updatedAt).getTime()
+        );
+      });
+
+      setSubmissions(nextSubmittedSubmissions);
+      setApprovedSubmissions(nextApprovedSubmissions);
+      setLiveDestinations(sortedLiveRows);
+      setError(null);
+
+      return {
+        submitted: nextSubmittedSubmissions,
+        approved: nextApprovedSubmissions,
+        live: sortedLiveRows,
+      };
     } catch (fetchError) {
-      console.error("Error fetching submissions:", fetchError);
+      console.error("Error fetching admin review data:", fetchError);
       setError("Failed to load submissions");
-      return [];
+      return fallback;
     } finally {
       setLoading(false);
     }
@@ -296,7 +442,7 @@ export default function ReviewSubmissions() {
       }
 
       const result = await response.json();
-      const nextSubmissions = await fetchSubmissions();
+      const { submitted: nextSubmissions } = await loadAdminData();
 
       if (
         result.notification &&
@@ -356,6 +502,122 @@ export default function ReviewSubmissions() {
       ...current,
       [field]: value,
     }));
+  };
+
+  const beginApprovedWordingEdit = (submission: Experience) => {
+    setEditingApprovedSubmissionId(submission.id);
+    setApprovedWordingEdits(buildApprovedWordingEditState(submission));
+    setError(null);
+    setWarning(null);
+    setSuccess(null);
+  };
+
+  const cancelApprovedWordingEdit = () => {
+    setEditingApprovedSubmissionId(null);
+    setApprovedWordingEdits(null);
+  };
+
+  const handleApprovedCourseNoteChange = (courseId: string, value: string) => {
+    setApprovedWordingEdits((current) =>
+      current
+        ? {
+            ...current,
+            courseNotes: {
+              ...current.courseNotes,
+              [courseId]: value,
+            },
+          }
+        : current,
+    );
+  };
+
+  const handleSaveApprovedWordingOverrides = async (submission: Experience) => {
+    if (!approvedWordingEdits) {
+      return;
+    }
+
+    try {
+      setProcessingApprovedSubmissionId(submission.id);
+      setError(null);
+      setWarning(null);
+
+      const response = await fetch(
+        `/api/admin/erasmus-experiences/${submission.id}/wording-override`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            overrides: {
+              experienceSummary: approvedWordingEdits.experienceSummary,
+              accommodationComment: approvedWordingEdits.accommodationComment,
+              courseNotes: approvedWordingEdits.courseNotes,
+            },
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        const payload = await response.json();
+        setError(payload.error || "Failed to save approved wording overrides");
+        return;
+      }
+
+      const result = await response.json();
+      await loadAdminData();
+      setSuccess(
+        result.message || "Approved submission wording overrides saved.",
+      );
+      cancelApprovedWordingEdit();
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (saveError) {
+      console.error("Error saving approved wording overrides:", saveError);
+      setError("Failed to save approved wording overrides");
+    } finally {
+      setProcessingApprovedSubmissionId(null);
+    }
+  };
+
+  const handleUnpublishApprovedSubmission = async (submission: Experience) => {
+    try {
+      setProcessingApprovedSubmissionId(submission.id);
+      setError(null);
+      setWarning(null);
+
+      const response = await fetch(
+        `/api/admin/erasmus-experiences/${submission.id}/review`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "UNPUBLISH",
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        const payload = await response.json();
+        setError(payload.error || "Failed to unpublish submission");
+        return;
+      }
+
+      const result = await response.json();
+      await loadAdminData();
+      setSuccess(
+        result.message ||
+          "Submission unpublished and returned to moderation queue.",
+      );
+
+      if (editingApprovedSubmissionId === submission.id) {
+        cancelApprovedWordingEdit();
+      }
+
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (unpublishError) {
+      console.error("Error unpublishing approved submission:", unpublishError);
+      setError("Failed to unpublish submission");
+    } finally {
+      setProcessingApprovedSubmissionId(null);
+    }
   };
 
   const queueCounts = useMemo(
@@ -470,7 +732,35 @@ export default function ReviewSubmissions() {
             </Alert>
           ) : null}
 
-          {selectedSubmission ? (
+          <div className="mb-5 flex flex-wrap gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant={activeView === "moderation" ? "default" : "outline"}
+              onClick={() => setActiveView("moderation")}
+            >
+              Moderation Queue
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant={
+                activeView === "live_destinations" ? "default" : "outline"
+              }
+              onClick={() => {
+                setActiveView("live_destinations");
+                setSelectedSubmission(null);
+                setFeedback("");
+                setWordingEdits(createEmptyWordingEdits());
+                cancelApprovedWordingEdit();
+              }}
+            >
+              Live Destinations
+            </Button>
+          </div>
+
+          {activeView === "moderation" ? (
+            selectedSubmission ? (
             <div className="space-y-6">
               <Card>
                 <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -954,7 +1244,268 @@ export default function ReviewSubmissions() {
                   </Card>
                 );
               })}
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Approved Submissions</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {approvedSubmissions.length === 0 ? (
+                    <p className="text-sm text-gray-600">
+                      No approved submissions available.
+                    </p>
+                  ) : (
+                    approvedSubmissions.map((submission) => {
+                      const isEditing =
+                        editingApprovedSubmissionId === submission.id &&
+                        approvedWordingEdits !== null;
+                      const isProcessingCurrent =
+                        processingApprovedSubmissionId === submission.id;
+                      const originalCourseNotes = getCourseNoteRows(submission);
+
+                      return (
+                        <Card
+                          key={submission.id}
+                          className="border border-gray-200 shadow-none"
+                        >
+                          <CardContent className="space-y-4 p-4">
+                            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                              <div className="space-y-2">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <p className="text-base font-semibold text-gray-900">
+                                    {submission.user?.name || "Anonymous"}
+                                  </p>
+                                  <Badge variant="default">Approved</Badge>
+                                </div>
+                                <div className="grid gap-2 text-sm text-gray-600 md:grid-cols-3">
+                                  <div className="flex items-center gap-2">
+                                    <MapPin className="h-4 w-4" />
+                                    {submission.hostCity && submission.hostCountry
+                                      ? `${submission.hostCity}, ${submission.hostCountry}`
+                                      : "No destination"}
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <Calendar className="h-4 w-4" />
+                                    {formatSubmissionTimestamp(
+                                      submission.submittedAt,
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <User className="h-4 w-4" />
+                                    {submission.user?.email || "No email"}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex flex-wrap gap-2">
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  onClick={() => beginApprovedWordingEdit(submission)}
+                                  disabled={isProcessingCurrent}
+                                >
+                                  <Pencil className="mr-2 h-4 w-4" />
+                                  Edit wording
+                                </Button>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  onClick={() =>
+                                    handleUnpublishApprovedSubmission(submission)
+                                  }
+                                  disabled={isProcessingCurrent}
+                                >
+                                  <Undo2 className="mr-2 h-4 w-4" />
+                                  Unpublish
+                                </Button>
+                              </div>
+                            </div>
+
+                            {isEditing ? (
+                              <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
+                                <div className="space-y-2">
+                                  <p className="text-sm font-medium text-gray-900">
+                                    Experience summary
+                                  </p>
+                                  <p className="rounded-md border border-gray-200 bg-white p-3 text-sm text-gray-700">
+                                    {getOriginalExperienceSummary(submission) ||
+                                      "No student summary available."}
+                                  </p>
+                                  <Textarea
+                                    value={approvedWordingEdits.experienceSummary}
+                                    onChange={(event) =>
+                                      setApprovedWordingEdits((current) =>
+                                        current
+                                          ? {
+                                              ...current,
+                                              experienceSummary:
+                                                event.target.value,
+                                            }
+                                          : current,
+                                      )
+                                    }
+                                    placeholder="Override public experience summary"
+                                    rows={3}
+                                  />
+                                </div>
+
+                                <div className="space-y-2">
+                                  <p className="text-sm font-medium text-gray-900">
+                                    Accommodation comment
+                                  </p>
+                                  <p className="rounded-md border border-gray-200 bg-white p-3 text-sm text-gray-700">
+                                    {getOriginalAccommodationComment(submission) ||
+                                      "No student accommodation comment available."}
+                                  </p>
+                                  <Textarea
+                                    value={approvedWordingEdits.accommodationComment}
+                                    onChange={(event) =>
+                                      setApprovedWordingEdits((current) =>
+                                        current
+                                          ? {
+                                              ...current,
+                                              accommodationComment:
+                                                event.target.value,
+                                            }
+                                          : current,
+                                      )
+                                    }
+                                    placeholder="Override public accommodation comment"
+                                    rows={3}
+                                  />
+                                </div>
+
+                                <div className="space-y-3">
+                                  <p className="text-sm font-medium text-gray-900">
+                                    Course notes
+                                  </p>
+                                  {originalCourseNotes.length === 0 ? (
+                                    <p className="text-sm text-gray-600">
+                                      No course notes available for this submission.
+                                    </p>
+                                  ) : (
+                                    originalCourseNotes.map((courseNote) => (
+                                      <div key={courseNote.id} className="space-y-2">
+                                        <p className="text-sm font-medium text-gray-700">
+                                          {courseNote.label}
+                                        </p>
+                                        <p className="rounded-md border border-gray-200 bg-white p-3 text-sm text-gray-700">
+                                          {courseNote.originalValue ||
+                                            "No student course note provided."}
+                                        </p>
+                                        <Textarea
+                                          value={
+                                            approvedWordingEdits.courseNotes[
+                                              courseNote.id
+                                            ] || ""
+                                          }
+                                          onChange={(event) =>
+                                            handleApprovedCourseNoteChange(
+                                              courseNote.id,
+                                              event.target.value,
+                                            )
+                                          }
+                                          placeholder="Override public course note"
+                                          rows={3}
+                                        />
+                                      </div>
+                                    ))
+                                  )}
+                                </div>
+
+                                <div className="flex flex-wrap gap-2">
+                                  <Button
+                                    type="button"
+                                    onClick={() =>
+                                      handleSaveApprovedWordingOverrides(submission)
+                                    }
+                                    disabled={isProcessingCurrent}
+                                  >
+                                    Save wording
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={cancelApprovedWordingEdit}
+                                    disabled={isProcessingCurrent}
+                                  >
+                                    Cancel
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : null}
+                          </CardContent>
+                        </Card>
+                      );
+                    })
+                  )}
+                </CardContent>
+              </Card>
             </div>
+            )
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle>Live Destinations</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {liveDestinations.length === 0 ? (
+                  <p className="text-sm text-gray-600">
+                    No live destination rows are currently available.
+                  </p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200 text-sm">
+                      <thead>
+                        <tr className="text-left text-gray-600">
+                          <th className="py-2 pr-4 font-medium">City</th>
+                          <th className="py-2 pr-4 font-medium">Country</th>
+                          <th className="py-2 pr-4 font-medium">
+                            Submission count
+                          </th>
+                          <th className="py-2 pr-4 font-medium">
+                            Average rent
+                          </th>
+                          <th className="py-2 pr-4 font-medium">Updated</th>
+                          <th className="py-2 pr-4 font-medium">Live</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100 text-gray-800">
+                        {liveDestinations.map((destination) => (
+                          <tr key={destination.slug}>
+                            <td className="py-2 pr-4">{destination.city}</td>
+                            <td className="py-2 pr-4">{destination.country}</td>
+                            <td className="py-2 pr-4">
+                              {destination.submissionCount}
+                            </td>
+                            <td className="py-2 pr-4">
+                              {typeof destination.averageRent === "number"
+                                ? `${destination.averageRent.toFixed(2)} EUR`
+                                : "-"}
+                            </td>
+                            <td className="py-2 pr-4">
+                              {formatSubmissionTimestamp(destination.updatedAt)}
+                            </td>
+                            <td className="py-2 pr-4">
+                              <Link
+                                href={buildPublicDestinationRoute({
+                                  city: destination.city,
+                                  country: destination.country,
+                                })}
+                                className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700"
+                              >
+                                <Globe className="h-4 w-4" />
+                                View live
+                              </Link>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           )}
         </main>
       </div>

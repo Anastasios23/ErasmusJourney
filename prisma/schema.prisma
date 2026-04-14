@@ -166,6 +166,7 @@ enum ReviewActionType {
   REJECTED
   REQUEST_CHANGES
   WORDING_EDITED
+  UNPUBLISHED
 }
 
 // NEW: Admin review audit log
