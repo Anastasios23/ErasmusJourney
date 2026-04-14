@@ -535,8 +535,6 @@ describe("admin public impact preview routes", () => {
         where: { id: "experience-6" },
         data: expect.objectContaining({
           status: EXPERIENCE_STATUS.APPROVED,
-          adminApproved: true,
-          isPublic: true,
           reviewFeedback: null,
           reviewedBy: "admin-1",
         }),
@@ -590,8 +588,6 @@ describe("admin public impact preview routes", () => {
       createSubmittedExperience({
         id: "experience-unpublish",
         status: EXPERIENCE_STATUS.APPROVED,
-        adminApproved: true,
-        isPublic: true,
         publishedAt: new Date("2026-03-01T00:00:00.000Z"),
       }),
     );
@@ -613,8 +609,6 @@ describe("admin public impact preview routes", () => {
         where: { id: "experience-unpublish" },
         data: expect.objectContaining({
           status: EXPERIENCE_STATUS.SUBMITTED,
-          adminApproved: false,
-          isPublic: false,
           publishedAt: null,
           reviewedBy: "admin-1",
         }),
@@ -747,8 +741,6 @@ describe("admin public impact preview routes", () => {
         data: expect.objectContaining({
           status: EXPERIENCE_STATUS.REVISION_NEEDED,
           revisionCount: 1,
-          adminApproved: false,
-          isPublic: false,
           publishedAt: null,
           reviewFeedback:
             "Please remove the identifying housing details and clarify the advice.",
@@ -838,8 +830,6 @@ describe("admin public impact preview routes", () => {
         where: { id: "experience-9" },
         data: expect.objectContaining({
           status: EXPERIENCE_STATUS.REJECTED,
-          adminApproved: false,
-          isPublic: false,
           publishedAt: null,
           reviewFeedback:
             "Contains identifying information and cannot be published.",

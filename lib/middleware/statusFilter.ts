@@ -1,7 +1,7 @@
 /**
  * Middleware to enforce status filtering on public queries
  *
- * Ensures ONLY approved and public submissions are visible to end users
+ * Ensures ONLY approved submissions are visible to end users
  */
 
 export type QueryFilter = {
@@ -10,7 +10,7 @@ export type QueryFilter = {
 };
 
 /**
- * Enforces that only APPROVED and isPublic=true items are returned
+ * Enforces that only APPROVED items are returned
  * Use this on ALL public-facing queries
  */
 export function enforceApprovedOnly<T extends QueryFilter>(query: T): T {
@@ -19,7 +19,6 @@ export function enforceApprovedOnly<T extends QueryFilter>(query: T): T {
     where: {
       ...(query.where || {}),
       status: "APPROVED",
-      isPublic: true,
     },
   };
 }

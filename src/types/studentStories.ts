@@ -20,7 +20,6 @@ export interface StudentStoryResponse {
   accommodationTips: string | null;
   budgetTips: BudgetTips | null;
   createdAt: string;
-  isPublic: boolean;
 }
 
 export interface BudgetTips {
@@ -47,8 +46,7 @@ export function isValidStudentStory(data: any): data is StudentStoryResponse {
     typeof data.university === "string" &&
     typeof data.city === "string" &&
     typeof data.country === "string" &&
-    typeof data.createdAt === "string" &&
-    typeof data.isPublic === "boolean"
+    typeof data.createdAt === "string"
   );
 }
 

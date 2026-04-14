@@ -22,29 +22,6 @@ async function backfillStatuses() {
     );
   }
 
-  // Keep public visibility consistent with approval state.
-  await prisma.erasmusExperience.updateMany({
-    where: { status: EXPERIENCE_STATUS.APPROVED },
-    data: { isPublic: true, adminApproved: true },
-  });
-
-  await prisma.erasmusExperience.updateMany({
-    where: {
-      status: {
-        in: [
-          EXPERIENCE_STATUS.DRAFT,
-          EXPERIENCE_STATUS.SUBMITTED,
-          EXPERIENCE_STATUS.REJECTED,
-          EXPERIENCE_STATUS.REVISION_NEEDED,
-        ],
-      },
-    },
-    data: {
-      isPublic: false,
-      adminApproved: false,
-    },
-  });
-
   console.log("Status backfill completed.");
 }
 

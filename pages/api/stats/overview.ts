@@ -113,7 +113,6 @@ export default async function handler(
       prisma.student_submissions.findMany({
         where: {
           status: "APPROVED",
-          isPublic: true,
         },
         select: {
           id: true,

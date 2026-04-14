@@ -41,7 +41,6 @@ type ExperienceRecord = {
   livingExpenses: unknown;
   experience: unknown;
   status: ErasmusExperienceStatus;
-  isPublic: boolean;
   lastSavedAt: Date;
   submittedAt: Date | null;
   publishedAt: Date | null;
@@ -52,7 +51,6 @@ type ExperienceRecord = {
   homeUniversityId: string | null;
   adminNotes: string | null;
   publicWordingOverrides: unknown;
-  adminApproved: boolean;
   reviewedAt: Date | null;
   reviewedBy: string | null;
   reviewFeedback: string | null;

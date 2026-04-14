@@ -105,7 +105,6 @@ export default async function handler(
     const experiences = await prisma.student_submissions.findMany({
       where: {
         status: "APPROVED",
-        isPublic: true,
         submissionType: "FULL_EXPERIENCE",
         hostCity: city,
         ...(country && typeof country === "string"

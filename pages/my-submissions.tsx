@@ -55,7 +55,6 @@ interface Submission {
   submittedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
-  isPublic: boolean;
   isFeatured: boolean;
   qualityScore: number | null;
   revisionCount: number;
@@ -149,7 +148,6 @@ export default function MySubmissions() {
         submittedAt: exp.submittedAt,
         createdAt: exp.createdAt,
         updatedAt: exp.updatedAt || exp.lastSavedAt,
-        isPublic: exp.status === EXPERIENCE_STATUS.APPROVED,
         isFeatured: false,
         qualityScore: null,
         revisionCount: exp.revisionCount || 0,

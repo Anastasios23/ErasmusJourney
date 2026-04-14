@@ -221,27 +221,19 @@ export default async function handler(
     switch (requestAction) {
       case REVIEW_ACTION.APPROVED:
         updateData.status = EXPERIENCE_STATUS.APPROVED;
-        updateData.adminApproved = true;
-        updateData.isPublic = true;
         updateData.publishedAt = new Date();
         break;
       case "UNPUBLISH":
         updateData.status = EXPERIENCE_STATUS.SUBMITTED;
-        updateData.adminApproved = false;
-        updateData.isPublic = false;
         updateData.publishedAt = null;
         break;
       case REVIEW_ACTION.REJECTED:
         updateData.status = EXPERIENCE_STATUS.REJECTED;
-        updateData.adminApproved = false;
-        updateData.isPublic = false;
         updateData.publishedAt = null;
         break;
       case REVIEW_ACTION.REQUEST_CHANGES:
         updateData.status = EXPERIENCE_STATUS.REVISION_NEEDED;
         updateData.revisionCount = experience.revisionCount + 1;
-        updateData.adminApproved = false;
-        updateData.isPublic = false;
         updateData.publishedAt = null;
         break;
       case REVIEW_ACTION.WORDING_EDITED:
