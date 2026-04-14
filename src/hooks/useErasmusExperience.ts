@@ -463,62 +463,13 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
   );
 
   const deleteExperience = useCallback(async (): Promise<boolean> => {
-    if (!session?.user?.id) {
-      setError("Authentication required");
-      return false;
-    }
-
-    if (data?.hasSubmitted) {
-      setError("Submitted experience cannot be deleted");
-      return false;
-    }
-
-    try {
-      setError(null);
-
-      const response = await fetch(
-        `/api/erasmus-experience/draft?userId=${(session as any).user.id}`,
-        {
-          method: "DELETE",
-        },
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to delete experience");
-      }
-
-      // Reset to default data
-      const resetData: ErasmusExperienceData = {
-        currentStep: 1,
-        completedSteps: [],
-        basicInfo: null,
-        courses: null,
-        accommodation: createEmptyAccommodationStepData(),
-        livingExpenses: createEmptyLivingExpensesStepData(),
-        experience: null,
-        status: EXPERIENCE_STATUS.DRAFT,
-        isComplete: false,
-        hasSubmitted: false,
-      };
-
-      setData(resetData);
-      updateExperienceCache(session?.user?.id, resetData);
-      publishErasmusProgressSync({
-        userId: session?.user?.id,
-        experienceId: data?.id,
-        action: "delete",
-      });
-
-      return true;
-    } catch (err) {
-      console.error("Error deleting experience:", err);
-      setError(
-        err instanceof Error ? err.message : "Failed to delete experience",
-      );
-      return false;
-    }
-  }, [(session as any)?.user?.id, data?.hasSubmitted]);
+    console.error(
+      "deleteExperience: /api/erasmus-experience/draft has been removed. " +
+        "Draft deletion is not supported in this version.",
+    );
+    setError("Draft deletion is not currently available.");
+    return false;
+  }, []);
 
   const refreshData = useCallback(async () => {
     await fetchData();
