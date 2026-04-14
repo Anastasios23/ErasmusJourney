@@ -197,7 +197,10 @@ describe("stale canonical-conflicting routes", () => {
   it("returns 410 for the stale admin destinations route", async () => {
     const res = createMockRes();
 
-    await legacyAdminDestinationsHandler(createMockReq("GET") as any, res as any);
+    await legacyAdminDestinationsHandler(
+      createMockReq("GET") as any,
+      res as any,
+    );
 
     expect(res.statusCode).toBe(410);
     expect(res.jsonPayload).toEqual(
@@ -545,7 +548,10 @@ describe("stale canonical-conflicting routes", () => {
   it("returns 410 for the stale destination costs route", async () => {
     const res = createMockRes();
 
-    await legacyDestinationCostsHandler(createMockReq("GET") as any, res as any);
+    await legacyDestinationCostsHandler(
+      createMockReq("GET") as any,
+      res as any,
+    );
 
     expect(res.statusCode).toBe(410);
     expect(res.jsonPayload).toEqual(
@@ -576,7 +582,10 @@ describe("stale canonical-conflicting routes", () => {
   it("returns 410 for the stale destination stats route", async () => {
     const res = createMockRes();
 
-    await legacyDestinationStatsHandler(createMockReq("GET") as any, res as any);
+    await legacyDestinationStatsHandler(
+      createMockReq("GET") as any,
+      res as any,
+    );
 
     expect(res.statusCode).toBe(410);
     expect(res.jsonPayload).toEqual(
@@ -948,20 +957,17 @@ describe("stale canonical-conflicting routes", () => {
       legacyTestDataGenerateFakeSubmissionsHandler,
       "/api/erasmus-experiences",
     ],
-  ])(
-    "returns 410 for %s",
-    async (_label, handler, canonicalPath) => {
-      const res = createMockRes();
+  ])("returns 410 for %s", async (_label, handler, canonicalPath) => {
+    const res = createMockRes();
 
-      await (handler as any)(createMockReq("GET") as any, res as any);
+    await (handler as any)(createMockReq("GET") as any, res as any);
 
-      expect(res.statusCode).toBe(410);
-      expect(res.jsonPayload).toEqual(
-        expect.objectContaining({
-          error: "Deprecated route",
-          canonicalPath,
-        }),
-      );
-    },
-  );
+    expect(res.statusCode).toBe(410);
+    expect(res.jsonPayload).toEqual(
+      expect.objectContaining({
+        error: "Deprecated route",
+        canonicalPath,
+      }),
+    );
+  });
 });

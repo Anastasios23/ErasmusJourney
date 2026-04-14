@@ -23,7 +23,8 @@ export default async function handler(
     console.log(`Found ${experienceCount} Erasmus experiences in database`);
 
     // Canonical public read model health
-    const publicDestinationCount = await prisma.publicDestinationReadModel.count();
+    const publicDestinationCount =
+      await prisma.publicDestinationReadModel.count();
     console.log(
       `Found ${publicDestinationCount} public destination read-model rows in database`,
     );

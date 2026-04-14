@@ -84,7 +84,10 @@ function readString(source: Record<string, any>, keys: string[]): string {
   return "";
 }
 
-function readNumber(source: Record<string, any>, keys: string[]): number | undefined {
+function readNumber(
+  source: Record<string, any>,
+  keys: string[],
+): number | undefined {
   for (const key of keys) {
     const value = source[key];
 
@@ -216,32 +219,55 @@ export async function getCourseMatchingExperiences(): Promise<{
         hostCountry:
           row.hostCountry ||
           readString(courseData, ["hostCountry", "country"]) ||
-          readString(basicData, ["hostCountry", "destinationCountry", "country"]) ||
+          readString(basicData, [
+            "hostCountry",
+            "destinationCountry",
+            "country",
+          ]) ||
           "Unknown",
         levelOfStudy:
           readString(courseData, ["levelOfStudy"]) ||
           readString(basicData, ["levelOfStudy"]) ||
           "Bachelor",
         hostCourseCount:
-          readNumber(courseData, ["hostCourseCount"]) || hostCourses.length || 0,
+          readNumber(courseData, ["hostCourseCount"]) ||
+          hostCourses.length ||
+          0,
         homeCourseCount:
-          readNumber(courseData, ["homeCourseCount"]) || equivalentCourses.length || 0,
-        courseMatchingDifficult: readString(courseData, ["courseMatchingDifficult"]) || "Moderate",
-        courseMatchingChallenges: readString(courseData, ["courseMatchingChallenges"]) || undefined,
-        timeSpentOnMatching: readString(courseData, ["timeSpentOnMatching"]) || undefined,
-        creditsTransferredSuccessfully:
-          readNumber(courseData, ["creditsTransferredSuccessfully"]),
-        totalCreditsAttempted: readNumber(courseData, ["totalCreditsAttempted"]),
+          readNumber(courseData, ["homeCourseCount"]) ||
+          equivalentCourses.length ||
+          0,
+        courseMatchingDifficult:
+          readString(courseData, ["courseMatchingDifficult"]) || "Moderate",
+        courseMatchingChallenges:
+          readString(courseData, ["courseMatchingChallenges"]) || undefined,
+        timeSpentOnMatching:
+          readString(courseData, ["timeSpentOnMatching"]) || undefined,
+        creditsTransferredSuccessfully: readNumber(courseData, [
+          "creditsTransferredSuccessfully",
+        ]),
+        totalCreditsAttempted: readNumber(courseData, [
+          "totalCreditsAttempted",
+        ]),
         recommendCourses: readYesNo(courseData, ["recommendCourses"]),
-        recommendationReason: readString(courseData, ["recommendationReason"]) || undefined,
-        overallAcademicExperience: readNumber(courseData, ["overallAcademicExperience"]),
-        biggestCourseChallenge: readString(courseData, ["biggestCourseChallenge"]) || undefined,
-        academicAdviceForFuture: readString(courseData, ["academicAdviceForFuture"]) || undefined,
+        recommendationReason:
+          readString(courseData, ["recommendationReason"]) || undefined,
+        overallAcademicExperience: readNumber(courseData, [
+          "overallAcademicExperience",
+        ]),
+        biggestCourseChallenge:
+          readString(courseData, ["biggestCourseChallenge"]) || undefined,
+        academicAdviceForFuture:
+          readString(courseData, ["academicAdviceForFuture"]) || undefined,
         teachingQuality: readNumber(courseData, ["teachingQuality"]),
-        languageOfInstruction: readString(courseData, ["languageOfInstruction"]) || undefined,
+        languageOfInstruction:
+          readString(courseData, ["languageOfInstruction"]) || undefined,
         classSize: readString(courseData, ["classSize"]) || undefined,
-        studentSupportServices: readNumber(courseData, ["studentSupportServices"]),
-        courseSelectionTips: readString(courseData, ["courseSelectionTips"]) || undefined,
+        studentSupportServices: readNumber(courseData, [
+          "studentSupportServices",
+        ]),
+        courseSelectionTips:
+          readString(courseData, ["courseSelectionTips"]) || undefined,
         academicPreparationAdvice:
           readString(courseData, ["academicPreparationAdvice"]) || undefined,
         bestCoursesRecommendation:
