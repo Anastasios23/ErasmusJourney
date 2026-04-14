@@ -35,14 +35,6 @@ test.beforeEach(async ({ page }) => {
     });
   });
 
-  await page.route("**/api/forms/get*", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({ submissions: [] }),
-    });
-  });
-
   await page.route("**/api/erasmus-experiences*", async (route) => {
     const method = route.request().method();
 

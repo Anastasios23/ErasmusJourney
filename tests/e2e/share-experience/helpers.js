@@ -69,7 +69,6 @@ function getRequestPayload(request) {
 export async function setupShareExperienceRoutes(page, options = {}) {
   const {
     session = mockSession,
-    formsSubmissions = [],
     initialExperience = createExperienceRecord(),
     departments = ["Computer Science", "Electrical Engineering"],
     agreements = [createAgreement()],
@@ -84,7 +83,6 @@ export async function setupShareExperienceRoutes(page, options = {}) {
     departmentRequests: [],
     agreementRequests: [],
     experienceGetRequests: [],
-    formsRequests: [],
     uploadRequests: [],
     experienceRecord: structuredClone(initialExperience),
   };
@@ -94,15 +92,6 @@ export async function setupShareExperienceRoutes(page, options = {}) {
       status: 200,
       contentType: "application/json",
       body: JSON.stringify(session),
-    });
-  });
-
-  await page.route("**/api/forms/get*", async (route) => {
-    state.formsRequests.push(route.request().url());
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({ submissions: formsSubmissions }),
     });
   });
 
