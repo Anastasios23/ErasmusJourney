@@ -11,7 +11,6 @@ import {
   sanitizeAccommodationStepData,
 } from "../../lib/accommodation";
 import { sanitizeCourseMappingsData } from "../../lib/courseMatching";
-import { updateCityStatistics } from "../../services/statisticsService";
 import { refreshPublicDestinationReadModel } from "../publicDestinations";
 
 type TransactionClient = Pick<
@@ -143,7 +142,7 @@ export async function persistSubmissionArtifacts(
 
 export async function refreshPublicDestinationReadModelIfNeeded(
   experience: PersistedExperience,
-) : Promise<void> {
+): Promise<void> {
   if (
     experience.status === EXPERIENCE_STATUS.APPROVED &&
     experience.isComplete &&
@@ -158,13 +157,7 @@ export function triggerStatsRefresh(
   experience: PersistedExperience,
   onError?: (error: unknown, context: { experienceId: string }) => void,
 ): void {
-  if (!experience.hostCity || !experience.hostCountry) {
-    return;
-  }
-
-  void updateCityStatistics(experience.hostCity, experience.hostCountry).catch(
-    (error) => {
-      onError?.(error, { experienceId: experience.id });
-    },
-  );
+  // CityStatistics was removed from the canonical schema; keep this hook inert.
+  void experience;
+  void onError;
 }

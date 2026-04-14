@@ -157,10 +157,8 @@ export default async function handler(
     }
 
     if (
-      (
-        normalizedAction === REVIEW_ACTION.REJECTED ||
-        normalizedAction === REVIEW_ACTION.REQUEST_CHANGES
-      ) &&
+      (normalizedAction === REVIEW_ACTION.REJECTED ||
+        normalizedAction === REVIEW_ACTION.REQUEST_CHANGES) &&
       typeof feedback !== "string"
     ) {
       return res.status(400).json({
@@ -172,10 +170,8 @@ export default async function handler(
     }
 
     if (
-      (
-        normalizedAction === REVIEW_ACTION.REJECTED ||
-        normalizedAction === REVIEW_ACTION.REQUEST_CHANGES
-      ) &&
+      (normalizedAction === REVIEW_ACTION.REJECTED ||
+        normalizedAction === REVIEW_ACTION.REQUEST_CHANGES) &&
       !normalizedFeedback
     ) {
       return res.status(400).json({
@@ -299,27 +295,17 @@ export default async function handler(
       }
     }
 
-    // If approved and has required data, trigger stats calculation
-    if (
-      normalizedAction === REVIEW_ACTION.APPROVED &&
-      experience.hostCity &&
-      experience.hostCountry &&
-      experience.semester
-    ) {
-      void calculateCityStats(
-        experience.hostCity,
-        experience.hostCountry,
-        experience.semester,
-      ).catch((error) => {
-        console.error("Error triggering stats calculation:", error);
-      });
-    }
+    // CityStatistics was removed from the canonical schema.
+    // Public destination aggregates now come from PublicDestinationReadModel only.
 
     const notification =
       normalizedAction === REVIEW_ACTION.REQUEST_CHANGES
         ? await sendRequestChangesEmail({
             studentEmail: experience.users?.email || "",
-            studentName: [experience.users?.firstName, experience.users?.lastName]
+            studentName: [
+              experience.users?.firstName,
+              experience.users?.lastName,
+            ]
               .filter(Boolean)
               .join(" ")
               .trim(),
@@ -327,8 +313,8 @@ export default async function handler(
             hostCity: experience.hostCity,
             hostCountry: experience.hostCountry,
             hostUniversity:
-              sanitizeBasicInformationData(experience.basicInfo).hostUniversity ||
-              null,
+              sanitizeBasicInformationData(experience.basicInfo)
+                .hostUniversity || null,
           })
         : null;
 
@@ -609,7 +595,10 @@ function getSuccessMessage(
   action: CanonicalReviewAction,
   options?: {
     wordingEditsSaved?: boolean;
-    notification?: { status: "sent" | "skipped" | "failed"; reason?: string } | null;
+    notification?: {
+      status: "sent" | "skipped" | "failed";
+      reason?: string;
+    } | null;
   },
 ): string {
   const wordingSuffix = options?.wordingEditsSaved
