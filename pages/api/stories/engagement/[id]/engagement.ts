@@ -1,69 +1,14 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "../../../../../lib/prisma";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../../auth/[...nextauth]";
+import type { NextApiRequest, NextApiResponse } from "next";
+
+import { respondWithCanonicalRouteDisabled } from "../../../../../src/lib/canonicalRoute";
 
 export default async function handler(
-  req: NextApiRequest,
+  _req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  if (req.method !== "GET") {
-    res.setHeader("Allow", ["GET"]);
-    return res.status(405).json({ error: `Method ${req.method} not allowed` });
-  }
-
-  const { id: storyId } = req.query;
-
-  if (!storyId || typeof storyId !== "string") {
-    return res.status(400).json({ error: "Story ID is required" });
-  }
-
-  const session = await getServerSession(req, res, authOptions);
-  const userEmail = session?.user?.email;
-
-  try {
-    // Check if this is a FormSubmission ID, not a Story ID
-    const formSubmission = await prisma.form_submissions.findUnique({
-      where: { id: storyId },
-    });
-
-    if (!formSubmission) {
-      return res.status(404).json({ error: "Story not found" });
-    }
-
-    let engagement = null;
-
-    // If user is authenticated, get their engagement
-    if (userEmail) {
-      const user = await prisma.user.findUnique({
-        where: { email: userEmail },
-      });
-
-      if (user) {
-        // For now, return default engagement since FormSubmissions don't have engagement tracking
-        engagement = {
-          views: 0,
-          likes: 0,
-          comments: 0,
-          rating: 0,
-          liked: false,
-          bookmarked: false,
-        };
-      }
-    }
-
-    return res.status(200).json({
-      engagement: engagement || {
-        views: 0,
-        likes: 0,
-        comments: 0,
-        rating: 0,
-        liked: false,
-        bookmarked: false,
-      },
-    });
-  } catch (error) {
-    console.error("Error getting engagement:", error);
-    return res.status(500).json({ error: "Internal server error" });
-  }
+  return respondWithCanonicalRouteDisabled(res, {
+    canonicalPath: "/api/public/destinations/[slug]",
+    details:
+      "This legacy story engagement route was disabled because stories APIs are out of MVP scope.",
+  });
 }

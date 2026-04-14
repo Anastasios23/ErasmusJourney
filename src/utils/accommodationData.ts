@@ -1,90 +1,117 @@
 import { prisma } from "../../lib/prisma";
 
+function toNumber(value: unknown): number {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : 0;
+  }
+
+  if (typeof value === "string") {
+    const parsed = Number.parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  return 0;
+}
+
+function toBoolean(value: unknown): boolean {
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    return normalized === "yes" || normalized === "true";
+  }
+
+  return false;
+}
+
+function toStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.filter((item): item is string => typeof item === "string");
+}
+
+function formatStudentName(
+  firstName: string | null | undefined,
+  lastName: string | null | undefined,
+): string {
+  if (!firstName) {
+    return "Anonymous Student";
+  }
+
+  const lastInitial = lastName?.charAt(0);
+  return lastInitial ? `${firstName} ${lastInitial}.` : firstName;
+}
+
 export async function getAccommodationById(id: string) {
   try {
-    // Fetch the accommodation submission from the database
-    const submission = await prisma.form_submissions.findUnique({
-      where: {
-        id: id,
-      },
+    const experience = await prisma.erasmusExperience.findUnique({
+      where: { id },
       include: {
         users: {
-          select: { firstName: true, lastName: true, email: false },
+          select: { firstName: true, lastName: true },
         },
       },
     });
 
-    if (!submission || submission.type !== "ACCOMMODATION") {
+    if (!experience || !experience.accommodation) {
       return null;
     }
 
-    // Get related basic info for this user
-    const basicInfo = await prisma.form_submissions.findFirst({
-      where: {
-        userId: submission.userId,
-        type: "BASIC_INFO",
-        status: "SUBMITTED",
-      },
-    });
+    const accommodationData =
+      (experience.accommodation as Record<string, unknown>) ?? {};
+    const basicInfoData = (experience.basicInfo as Record<string, unknown>) ?? {};
 
-    const accommodationData = submission.data as any;
-    const basicInfoData = basicInfo?.data as any;
-
-    // Format the accommodation data for the page
     return {
-      id: submission.id,
-      studentName: (submission as any).users?.firstName
-        ? `${(submission as any).users.firstName} ${(submission as any).users.lastName?.charAt(0)}.`
-        : "Anonymous Student",
-
-      // Location info
+      id: experience.id,
+      studentName: formatStudentName(
+        experience.users?.firstName,
+        experience.users?.lastName,
+      ),
       city:
-        basicInfoData?.hostCity || accommodationData?.city || "Unknown City",
+        experience.hostCity ||
+        (basicInfoData.hostCity as string) ||
+        (accommodationData.city as string) ||
+        "Unknown City",
       country:
-        basicInfoData?.hostCountry ||
-        accommodationData?.country ||
+        experience.hostCountry ||
+        (basicInfoData.hostCountry as string) ||
+        (accommodationData.country as string) ||
         "Unknown Country",
       university:
-        basicInfoData?.hostUniversity || accommodationData?.university,
-      neighborhood: accommodationData?.neighborhood || "",
-      address:
-        accommodationData?.accommodationAddress ||
-        accommodationData?.address ||
+        (basicInfoData.hostUniversity as string) ||
+        (accommodationData.university as string) ||
+        "Unknown University",
+      neighborhood:
+        (accommodationData.neighborhood as string) ||
+        (accommodationData.area as string) ||
         "",
-
-      // Accommodation details
-      accommodationType: accommodationData?.accommodationType || "Unknown Type",
-      monthlyRent: parseFloat(accommodationData?.monthlyRent) || 0,
-      billsIncluded:
-        accommodationData?.billsIncluded === "Yes" ||
-        accommodationData?.billsIncluded === true,
-      utilityCosts: parseFloat(accommodationData?.avgUtilityCost) || 0,
-
-      // Ratings and evaluation
-      rating: parseFloat(accommodationData?.accommodationRating) || 0,
-      wouldRecommend:
-        accommodationData?.wouldRecommend === "Yes" ||
-        accommodationData?.wouldRecommend === true,
-
-      // Experience details
+      address: "", // Keep private by default
+      accommodationType:
+        (accommodationData.accommodationType as string) || "Unknown Type",
+      monthlyRent: toNumber(accommodationData.monthlyRent),
+      billsIncluded: toBoolean(accommodationData.billsIncluded),
+      utilityCosts: toNumber(accommodationData.avgUtilityCost),
+      rating: toNumber(accommodationData.accommodationRating),
+      wouldRecommend: toBoolean(accommodationData.wouldRecommend),
       description:
-        accommodationData?.additionalNotes || "No additional details provided.",
-      tips: accommodationData?.additionalNotes || "",
-
-      // Contact info (sanitized)
+        (accommodationData.additionalNotes as string) ||
+        "No additional details provided.",
+      tips: (accommodationData.additionalNotes as string) || "",
       contact: {
-        email: null, // Don't expose emails directly
+        email: null,
         allowContact: false,
       },
-
-      // Required fields to match existing interface
-      datePosted: submission.createdAt.toISOString(),
+      datePosted: (experience.submittedAt || experience.createdAt).toISOString(),
       highlights: [],
       facilities: [],
-      nearbyAmenities: accommodationData?.nearbyAmenities || [],
-      transportLinks: accommodationData?.transportLinks || "",
+      nearbyAmenities: toStringArray(accommodationData.nearbyAmenities),
+      transportLinks: (accommodationData.transportLinks as string) || "",
       photos: [],
-      verified: false,
+      verified: experience.status === "APPROVED",
       featured: false,
       roomDetails: {
         bedrooms: 1,
@@ -94,13 +121,11 @@ export async function getAccommodationById(id: string) {
       },
       evaluation: {
         findingDifficulty: 3,
-        wouldRecommend:
-          accommodationData?.wouldRecommend === "Yes" ||
-          accommodationData?.wouldRecommend === true,
-        tips: accommodationData?.additionalNotes || "",
+        wouldRecommend: toBoolean(accommodationData.wouldRecommend),
+        tips: (accommodationData.additionalNotes as string) || "",
       },
       landlord: {
-        name: accommodationData?.landlordName || "N/A",
+        name: "N/A",
         email: "Contact through platform",
         phone: "Contact through platform",
       },
@@ -116,10 +141,9 @@ export async function getRelatedAccommodations(
   limit: number = 3,
 ) {
   try {
-    const relatedSubmissions = await prisma.form_submissions.findMany({
+    const candidates = await prisma.erasmusExperience.findMany({
       where: {
-        type: "ACCOMMODATION",
-        status: "PUBLISHED",
+        status: "APPROVED",
         id: { not: excludeId },
       },
       include: {
@@ -127,38 +151,45 @@ export async function getRelatedAccommodations(
           select: { firstName: true, lastName: true },
         },
       },
-      take: limit,
+      orderBy: {
+        submittedAt: "desc",
+      },
+      take: Math.max(limit * 3, limit),
     });
 
-    return await Promise.all(
-      relatedSubmissions.map(async (sub) => {
-        const relBasicInfo = await prisma.form_submissions.findFirst({
-          where: {
-            userId: sub.userId,
-            type: "BASIC_INFO",
-            status: "SUBMITTED",
-          },
-        });
-
-        const relData = sub.data as any;
-        const relBasicData = relBasicInfo?.data as any;
+    return candidates
+      .filter((experience) => Boolean(experience.accommodation))
+      .slice(0, limit)
+      .map((experience) => {
+        const accommodationData =
+          (experience.accommodation as Record<string, unknown>) ?? {};
+        const basicInfoData =
+          (experience.basicInfo as Record<string, unknown>) ?? {};
 
         return {
-          id: sub.id,
-          studentName: (sub as any).users?.firstName
-            ? `${(sub as any).users.firstName} ${(sub as any).users.lastName?.charAt(0)}.`
-            : "Anonymous Student",
-          city: relBasicData?.hostCity || relData?.city || "Unknown City",
+          id: experience.id,
+          studentName: formatStudentName(
+            experience.users?.firstName,
+            experience.users?.lastName,
+          ),
+          city:
+            experience.hostCity ||
+            (basicInfoData.hostCity as string) ||
+            (accommodationData.city as string) ||
+            "Unknown City",
           country:
-            relBasicData?.hostCountry || relData?.country || "Unknown Country",
-          accommodationType: relData?.accommodationType || "Unknown Type",
-          monthlyRent: parseFloat(relData?.monthlyRent) || 0,
-          rating: parseFloat(relData?.accommodationRating) || 0,
-          billsIncluded: relData?.billsIncluded,
-          createdAt: sub.createdAt.toISOString(),
+            experience.hostCountry ||
+            (basicInfoData.hostCountry as string) ||
+            (accommodationData.country as string) ||
+            "Unknown Country",
+          accommodationType:
+            (accommodationData.accommodationType as string) || "Unknown Type",
+          monthlyRent: toNumber(accommodationData.monthlyRent),
+          rating: toNumber(accommodationData.accommodationRating),
+          billsIncluded: toBoolean(accommodationData.billsIncluded),
+          createdAt: (experience.submittedAt || experience.createdAt).toISOString(),
         };
-      }),
-    );
+      });
   } catch (error) {
     console.error("Error fetching related accommodations:", error);
     return [];

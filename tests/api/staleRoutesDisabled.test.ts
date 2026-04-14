@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import legacyAccommodationRecommendationsHandler from "../../pages/api/accommodation/recommendations";
 import legacyAdminAccommodationSubmissionDetailHandler from "../../pages/api/admin/accommodation-submissions/[id]";
 import legacyAdminAccommodationSubmissionsHandler from "../../pages/api/admin/accommodation-submissions";
 import legacyAdminAccommodationDetailHandler from "../../pages/api/admin/accommodations/[id]";
@@ -21,6 +22,9 @@ import adminSubmissionHandler from "../../pages/api/admin/submissions/index";
 import legacyAdminUniversityExchangesHandler from "../../pages/api/admin/university-exchanges";
 import legacyAdminUniversitySubmissionDetailHandler from "../../pages/api/admin/university-submissions/[id]";
 import legacyAdminUniversitySubmissionsHandler from "../../pages/api/admin/university-submissions";
+import legacyAiAnalyzeStoryHandler from "../../pages/api/ai/analyze-story";
+import legacyAiRecommendationsHandler from "../../pages/api/ai/recommendations";
+import legacyCreateTestDataHandler from "../../pages/api/create-test-data";
 import legacyDestinationAnalyticsHandler from "../../pages/api/destinations/analytics";
 import legacyDestinationAveragesHandler from "../../pages/api/destinations/averages";
 import legacyDestinationCityAggregatedHandler from "../../pages/api/destinations/city-aggregated";
@@ -33,14 +37,35 @@ import legacyDestinationIntegratedHandler from "../../pages/api/destinations/int
 import legacyDestinationIndexBackupHandler from "../../pages/api/destinations/index-backup";
 import legacyDestinationIndexNewHandler from "../../pages/api/destinations/index-new";
 import legacyDestinationStatsHandler from "../../pages/api/destinations/stats";
+import legacyDestinationsSimpleHandler from "../../pages/api/destinations-simple";
 import legacyDestinationsHandler from "../../pages/api/destinations";
 import legacyEnhancedDestinationsHandler from "../../pages/api/enhanced-destinations";
 import legacyExperienceHandler from "../../pages/api/erasmus-experience/submit";
+import legacyFormSubmissionsHandler from "../../pages/api/form-submissions";
 import legacyFormsGetHandler from "../../pages/api/forms/get";
 import legacyFormsSaveDraftHandler from "../../pages/api/forms/saveDraft";
 import legacyFormsSubmitHandler from "../../pages/api/forms/submit";
 import legacyFormsUserSubmissionsHandler from "../../pages/api/forms/user-submissions";
+import legacyMentorshipMembersHandler from "../../pages/api/mentorship/members";
+import legacyOgStoryDetailHandler from "../../pages/api/og/story/[id]";
 import legacyStudentAccommodationsHandler from "../../pages/api/student-accommodations";
+import legacyStudentStoryDetailHandler from "../../pages/api/student-stories/[id]";
+import legacyStudentStoriesIndexHandler from "../../pages/api/student-stories";
+import legacyStoriesIndexHandler from "../../pages/api/stories";
+import legacyStoryDetailPublicHandler from "../../pages/api/stories/[id]";
+import legacyStoryBookmarkHandler from "../../pages/api/stories/[id]/bookmark";
+import legacyStoryEngagementHandler from "../../pages/api/stories/[id]/engagement";
+import legacyStoryLikeHandler from "../../pages/api/stories/[id]/like";
+import legacyStoryViewHandler from "../../pages/api/stories/[id]/view";
+import legacyStoryEngagementBookmarkHandler from "../../pages/api/stories/engagement/[id]/bookmark";
+import legacyStoryEngagementDetailHandler from "../../pages/api/stories/engagement/[id]/engagement";
+import legacyStoryEngagementLikeHandler from "../../pages/api/stories/engagement/[id]/like";
+import legacyStoryEngagementViewHandler from "../../pages/api/stories/engagement/[id]/view";
+import legacyStoriesStatsHandler from "../../pages/api/stories/stats";
+import legacyTestDestinationsHandler from "../../pages/api/test/destinations";
+import legacyTestGenerateCityDataHandler from "../../pages/api/test/generate-city-data";
+import legacyTestGenerateComprehensiveDataHandler from "../../pages/api/test/generate-comprehensive-data";
+import legacyTestDataGenerateFakeSubmissionsHandler from "../../pages/api/test-data/generate-fake-submissions";
 import legacyUniversityExchangeDetailHandler from "../../pages/api/university-exchanges/[id]";
 import legacyUniversityExchangeSubmissionsHandler from "../../pages/api/university-exchanges/[id]/submissions";
 import legacyUniversityExchangesHandler from "../../pages/api/university-exchanges";
@@ -796,4 +821,147 @@ describe("stale canonical-conflicting routes", () => {
       }),
     );
   });
+
+  it.each([
+    [
+      "stale destinations simple route",
+      legacyDestinationsSimpleHandler,
+      "/api/public/destinations",
+    ],
+    [
+      "stale form submissions route",
+      legacyFormSubmissionsHandler,
+      "/api/erasmus-experiences",
+    ],
+    [
+      "stale accommodation recommendations route",
+      legacyAccommodationRecommendationsHandler,
+      "/api/public/destinations/[slug]",
+    ],
+    [
+      "stale AI analyze-story route",
+      legacyAiAnalyzeStoryHandler,
+      "/api/public/destinations/[slug]",
+    ],
+    [
+      "stale AI recommendations route",
+      legacyAiRecommendationsHandler,
+      "/api/public/destinations/[slug]",
+    ],
+    [
+      "stale mentorship members route",
+      legacyMentorshipMembersHandler,
+      "/api/public/destinations",
+    ],
+    [
+      "stale stories index route",
+      legacyStoriesIndexHandler,
+      "/api/public/destinations",
+    ],
+    [
+      "stale stories stats route",
+      legacyStoriesStatsHandler,
+      "/api/public/destinations",
+    ],
+    [
+      "stale stories detail route",
+      legacyStoryDetailPublicHandler,
+      "/api/public/destinations/[slug]",
+    ],
+    [
+      "stale stories bookmark route",
+      legacyStoryBookmarkHandler,
+      "/api/public/destinations/[slug]",
+    ],
+    [
+      "stale stories engagement route",
+      legacyStoryEngagementHandler,
+      "/api/public/destinations/[slug]",
+    ],
+    [
+      "stale stories like route",
+      legacyStoryLikeHandler,
+      "/api/public/destinations/[slug]",
+    ],
+    [
+      "stale stories view route",
+      legacyStoryViewHandler,
+      "/api/public/destinations/[slug]",
+    ],
+    [
+      "stale nested story engagement bookmark route",
+      legacyStoryEngagementBookmarkHandler,
+      "/api/public/destinations/[slug]",
+    ],
+    [
+      "stale nested story engagement route",
+      legacyStoryEngagementDetailHandler,
+      "/api/public/destinations/[slug]",
+    ],
+    [
+      "stale nested story engagement like route",
+      legacyStoryEngagementLikeHandler,
+      "/api/public/destinations/[slug]",
+    ],
+    [
+      "stale nested story engagement view route",
+      legacyStoryEngagementViewHandler,
+      "/api/public/destinations/[slug]",
+    ],
+    [
+      "stale student stories index route",
+      legacyStudentStoriesIndexHandler,
+      "/api/public/destinations",
+    ],
+    [
+      "stale student stories detail route",
+      legacyStudentStoryDetailHandler,
+      "/api/public/destinations/[slug]",
+    ],
+    [
+      "stale og story detail route",
+      legacyOgStoryDetailHandler,
+      "/api/public/destinations/[slug]",
+    ],
+    [
+      "stale create test data route",
+      legacyCreateTestDataHandler,
+      "/api/erasmus-experiences",
+    ],
+    [
+      "stale test destinations route",
+      legacyTestDestinationsHandler,
+      "/api/public/destinations",
+    ],
+    [
+      "stale test generate-city-data route",
+      legacyTestGenerateCityDataHandler,
+      "/api/erasmus-experiences",
+    ],
+    [
+      "stale test generate-comprehensive-data route",
+      legacyTestGenerateComprehensiveDataHandler,
+      "/api/erasmus-experiences",
+    ],
+    [
+      "stale test-data generate-fake-submissions route",
+      legacyTestDataGenerateFakeSubmissionsHandler,
+      "/api/erasmus-experiences",
+    ],
+  ])(
+    "returns 410 for %s",
+    async (_label, handler, canonicalPath) => {
+      const res = createMockRes();
+
+      await (handler as any)(createMockReq("GET") as any, res as any);
+
+      expect(res.statusCode).toBe(410);
+      expect(res.jsonPayload).toEqual(
+        expect.objectContaining({
+          error: "Deprecated route",
+          canonicalPath,
+        }),
+      );
+    },
+  );
 });

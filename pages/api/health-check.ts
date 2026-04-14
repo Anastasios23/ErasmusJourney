@@ -18,18 +18,14 @@ export default async function handler(
     const userCount = await prisma.users.count();
     console.log(`Found ${userCount} users in database`);
 
-    // Test form submissions
-    const submissionCount = await prisma.form_submissions.count();
-    console.log(`Found ${submissionCount} form submissions in database`);
+    // Canonical write model health
+    const experienceCount = await prisma.erasmusExperience.count();
+    console.log(`Found ${experienceCount} Erasmus experiences in database`);
 
-    // Test destinations
-    const destinationCount = await prisma.destinations.count();
-    console.log(`Found ${destinationCount} destinations in database`);
-
-    // Test custom destinations
-    const customDestinationCount = await prisma.custom_destinations.count();
+    // Canonical public read model health
+    const publicDestinationCount = await prisma.publicDestinationReadModel.count();
     console.log(
-      `Found ${customDestinationCount} custom destinations in database`,
+      `Found ${publicDestinationCount} public destination read-model rows in database`,
     );
 
     res.status(200).json({
@@ -37,9 +33,8 @@ export default async function handler(
       database: "connected",
       counts: {
         users: userCount,
-        submissions: submissionCount,
-        destinations: destinationCount,
-        customDestinations: customDestinationCount,
+        erasmusExperiences: experienceCount,
+        publicDestinationReadModel: publicDestinationCount,
       },
       timestamp: new Date().toISOString(),
     });

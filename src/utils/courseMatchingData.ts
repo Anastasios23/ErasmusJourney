@@ -65,144 +65,191 @@ export interface CourseMatchingStats {
   recommendationRate: number;
 }
 
+function asRecord(value: unknown): Record<string, any> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return {};
+  }
+
+  return value as Record<string, any>;
+}
+
+function readString(source: Record<string, any>, keys: string[]): string {
+  for (const key of keys) {
+    const value = source[key];
+    if (typeof value === "string" && value.trim().length > 0) {
+      return value;
+    }
+  }
+
+  return "";
+}
+
+function readNumber(source: Record<string, any>, keys: string[]): number | undefined {
+  for (const key of keys) {
+    const value = source[key];
+
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return value;
+    }
+
+    if (typeof value === "string") {
+      const parsed = Number.parseFloat(value);
+      if (Number.isFinite(parsed)) {
+        return parsed;
+      }
+    }
+  }
+
+  return undefined;
+}
+
+function readYesNo(source: Record<string, any>, keys: string[]): string {
+  for (const key of keys) {
+    const value = source[key];
+
+    if (typeof value === "string") {
+      return value;
+    }
+
+    if (typeof value === "boolean") {
+      return value ? "Yes" : "No";
+    }
+  }
+
+  return "Yes";
+}
+
 /**
- * Fetches course matching experiences from form submissions
+ * Fetches course matching experiences from the canonical ErasmusExperience model.
  */
 export async function getCourseMatchingExperiences(): Promise<{
   experiences: CourseMatchingExperience[];
   stats: CourseMatchingStats;
 }> {
   try {
-    // Get all published course matching submissions
-    const courseMatchingSubmissions = await prisma.form_submissions.findMany({
+    const experienceRows = await prisma.erasmusExperience.findMany({
       where: {
-        type: "COURSE_MATCHING",
-        status: "PUBLISHED",
+        status: "APPROVED",
       },
       include: {
-        users: {
-          include: {
-            form_submissions: {
-              where: {
-                status: "PUBLISHED",
-                type: "BASIC_INFO",
-              },
-            },
-          },
+        hostUniversity: {
+          select: { name: true },
+        },
+        homeUniversity: {
+          select: { name: true },
         },
       },
       orderBy: {
-        createdAt: "desc",
+        submittedAt: "desc",
       },
     });
 
     const experiences: CourseMatchingExperience[] = [];
 
-    for (const submission of courseMatchingSubmissions) {
-      const courseData = submission.data as any;
+    for (const row of experienceRows) {
+      const courseData = asRecord(row.courses);
+      const basicData = asRecord(row.basicInfo);
+      const experienceData = asRecord(row.experience);
 
-      // Get linked basic info for additional student details
-      const basicInfo = submission.users?.form_submissions.find(
-        (s) => s.type === "BASIC_INFO",
-      );
-      const basicData = basicInfo?.data as any;
-
-      // Check if user has linked experience/story submissions
-      const hasLinkedStory =
-        submission.users?.form_submissions.some(
-          (s) => s.type === "EXPERIENCE" || s.type === "STORY",
-        ) || false;
-
-      // Create anonymized student name
-      const studentName = generateAnonymousName(submission.userId);
-
-      // Ensure we have required fields - check for various field names
-      const homeUni =
-        courseData.homeUniversity || courseData.universityInCyprus;
-      const hostUni = courseData.hostUniversity;
-
-      if (!hostUni || !homeUni) {
+      if (Object.keys(courseData).length === 0) {
         continue;
       }
 
+      const studentName = generateAnonymousName(row.userId);
+
+      const homeUni =
+        readString(courseData, ["homeUniversity", "universityInCyprus"]) ||
+        readString(basicData, ["homeUniversity", "universityInCyprus"]) ||
+        row.homeUniversity?.name ||
+        "Unknown";
+
+      const hostUni =
+        readString(courseData, ["hostUniversity"]) ||
+        readString(basicData, ["hostUniversity"]) ||
+        row.hostUniversity?.name ||
+        "Unknown";
+
+      const courseMatches = Array.isArray(courseData.courseMatches)
+        ? courseData.courseMatches
+        : [];
+
+      const hostCourses = Array.isArray(courseData.hostCourses)
+        ? courseData.hostCourses
+        : courseMatches.map((match: any) => ({
+            name: match.hostCourse,
+            code: match.hostCourseCode,
+            ects: match.hostCredits || 0,
+            difficulty: match.difficulty,
+            workload: match.workload,
+            recommendation: match.recommendation,
+          }));
+
+      const equivalentCourses = Array.isArray(courseData.equivalentCourses)
+        ? courseData.equivalentCourses
+        : courseMatches.map((match: any) => ({
+            hostCourseName: match.hostCourse,
+            homeCourseName: match.homeCourse,
+            hostCourseCode: match.hostCourseCode,
+            homeCourseCode: match.homeCourseCode,
+            ects: match.hostCredits || 0,
+            matchQuality: match.grade ? "Good" : "Unknown",
+          }));
+
       const experience: CourseMatchingExperience = {
-        id: submission.id,
+        id: row.id,
         studentName,
-        homeUniversity: homeUni || basicData?.homeUniversity || "Unknown",
+        homeUniversity: homeUni,
         homeDepartment:
-          courseData.homeDepartment ||
-          courseData.studyProgram ||
-          basicData?.homeDepartment ||
+          readString(courseData, ["homeDepartment", "studyProgram"]) ||
+          readString(basicData, ["homeDepartment", "studyProgram"]) ||
           "Unknown",
-        hostUniversity: hostUni || basicData?.hostUniversity || "Unknown",
+        hostUniversity: hostUni,
         hostDepartment:
-          courseData.hostDepartment ||
-          courseData.studyProgram ||
-          basicData?.hostDepartment ||
+          readString(courseData, ["hostDepartment", "studyProgram"]) ||
+          readString(basicData, ["hostDepartment", "studyProgram"]) ||
           "Unknown",
         hostCity:
-          courseData.hostCity ||
-          basicData?.hostCity ||
-          basicData?.destinationCity ||
+          row.hostCity ||
+          readString(courseData, ["hostCity", "city"]) ||
+          readString(basicData, ["hostCity", "destinationCity", "city"]) ||
           "Unknown",
         hostCountry:
-          courseData.hostCountry ||
-          basicData?.hostCountry ||
-          basicData?.destinationCountry ||
+          row.hostCountry ||
+          readString(courseData, ["hostCountry", "country"]) ||
+          readString(basicData, ["hostCountry", "destinationCountry", "country"]) ||
           "Unknown",
         levelOfStudy:
-          courseData.levelOfStudy || basicData?.levelOfStudy || "Bachelor",
+          readString(courseData, ["levelOfStudy"]) ||
+          readString(basicData, ["levelOfStudy"]) ||
+          "Bachelor",
         hostCourseCount:
-          courseData.hostCourseCount || courseData.courseMatches?.length || 0,
+          readNumber(courseData, ["hostCourseCount"]) || hostCourses.length || 0,
         homeCourseCount:
-          courseData.homeCourseCount || courseData.courseMatches?.length || 0,
-        courseMatchingDifficult:
-          courseData.courseMatchingDifficult || "Moderate",
-        courseMatchingChallenges: courseData.courseMatchingChallenges,
-        timeSpentOnMatching: courseData.timeSpentOnMatching,
+          readNumber(courseData, ["homeCourseCount"]) || equivalentCourses.length || 0,
+        courseMatchingDifficult: readString(courseData, ["courseMatchingDifficult"]) || "Moderate",
+        courseMatchingChallenges: readString(courseData, ["courseMatchingChallenges"]) || undefined,
+        timeSpentOnMatching: readString(courseData, ["timeSpentOnMatching"]) || undefined,
         creditsTransferredSuccessfully:
-          courseData.creditsTransferredSuccessfully,
-        totalCreditsAttempted: courseData.totalCreditsAttempted,
-        recommendCourses: courseData.recommendCourses || "Yes",
-        recommendationReason: courseData.recommendationReason,
-        overallAcademicExperience: courseData.overallAcademicExperience,
-        biggestCourseChallenge: courseData.biggestCourseChallenge,
-        academicAdviceForFuture: courseData.academicAdviceForFuture,
-        teachingQuality: courseData.teachingQuality,
-        languageOfInstruction: courseData.languageOfInstruction,
-        classSize: courseData.classSize,
-        studentSupportServices: courseData.studentSupportServices,
-        courseSelectionTips: courseData.courseSelectionTips,
-        academicPreparationAdvice: courseData.academicPreparationAdvice,
-        bestCoursesRecommendation: courseData.bestCoursesRecommendation,
-        coursesToAvoid: courseData.coursesToAvoid,
-        hasLinkedStory,
-        // Map courseMatches to hostCourses if needed
-        hostCourses:
-          courseData.hostCourses ||
-          (courseData.courseMatches
-            ? courseData.courseMatches.map((c: any) => ({
-                name: c.hostCourse,
-                code: c.hostCourseCode,
-                ects: c.hostCredits,
-                difficulty: c.difficulty,
-                workload: c.workload,
-                recommendation: c.recommendation,
-              }))
-            : []),
-        // Map courseMatches to equivalentCourses if needed
-        equivalentCourses:
-          courseData.equivalentCourses ||
-          (courseData.courseMatches
-            ? courseData.courseMatches.map((c: any) => ({
-                hostCourseName: c.hostCourse,
-                homeCourseName: c.homeCourse,
-                hostCourseCode: c.hostCourseCode,
-                homeCourseCode: c.homeCourseCode,
-                ects: c.hostCredits,
-                matchQuality: c.grade ? "Good" : "Unknown",
-              }))
-            : []),
+          readNumber(courseData, ["creditsTransferredSuccessfully"]),
+        totalCreditsAttempted: readNumber(courseData, ["totalCreditsAttempted"]),
+        recommendCourses: readYesNo(courseData, ["recommendCourses"]),
+        recommendationReason: readString(courseData, ["recommendationReason"]) || undefined,
+        overallAcademicExperience: readNumber(courseData, ["overallAcademicExperience"]),
+        biggestCourseChallenge: readString(courseData, ["biggestCourseChallenge"]) || undefined,
+        academicAdviceForFuture: readString(courseData, ["academicAdviceForFuture"]) || undefined,
+        teachingQuality: readNumber(courseData, ["teachingQuality"]),
+        languageOfInstruction: readString(courseData, ["languageOfInstruction"]) || undefined,
+        classSize: readString(courseData, ["classSize"]) || undefined,
+        studentSupportServices: readNumber(courseData, ["studentSupportServices"]),
+        courseSelectionTips: readString(courseData, ["courseSelectionTips"]) || undefined,
+        academicPreparationAdvice:
+          readString(courseData, ["academicPreparationAdvice"]) || undefined,
+        bestCoursesRecommendation:
+          readString(courseData, ["bestCoursesRecommendation"]) || undefined,
+        coursesToAvoid: readString(courseData, ["coursesToAvoid"]) || undefined,
+        hasLinkedStory: Object.keys(experienceData).length > 0,
+        hostCourses,
+        equivalentCourses,
       };
 
       experiences.push(experience);
