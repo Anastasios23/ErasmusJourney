@@ -8,6 +8,14 @@ const removedLegacyModels = [
   "generated_accommodations",
   "generated_course_exchanges",
   "university_exchanges",
+  "destination_submissions",
+  "destinations",
+  "form_submissions",
+  "custom_destinations",
+  "partnership_tracking",
+  "stories",
+  "story_engagements",
+  "CityStatistics",
 ] as const;
 
 describe("legacy destination schema cleanup", () => {

@@ -185,14 +185,6 @@ export default async function handler(
       }),
     );
 
-    // Fetch partnership tracking data
-    const partnershipTracking = await prisma.partnership_tracking.findMany({
-      where: {
-        homeUniversityName: university.name,
-        ...(includeInactive ? {} : { isActive: true }),
-      },
-    });
-
     // Calculate statistics
     const totalExchanges =
       courseSubmissions.length + accommodationSubmissions.length;
@@ -279,17 +271,6 @@ export default async function handler(
     // Enrich agreements with exchange counts
     const agreementsWithStats = await Promise.all(
       agreements.map(async (agreement) => {
-        const partnerTracking = partnershipTracking.find(
-          (pt) =>
-            pt.partnerUniversityName ===
-              agreement
-                .universities_agreements_partnerUniversityIdTouniversities
-                .name &&
-            pt.partnerCity ===
-              agreement
-                .universities_agreements_partnerUniversityIdTouniversities.city,
-        );
-
         return {
           id: agreement.id,
           partnerUniversity: {
@@ -319,8 +300,8 @@ export default async function handler(
             ? agreement.startDate.toISOString()
             : null,
           endDate: agreement.endDate ? agreement.endDate.toISOString() : null,
-          exchangeCount: partnerTracking?.totalSubmissions || 0,
-          averageRating: partnerTracking?.averageRating || null,
+          exchangeCount: 0,
+          averageRating: null,
         };
       }),
     );

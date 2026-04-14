@@ -90,14 +90,6 @@ model applications {
   @@index([homeUniversityId])
 }
 
-model custom_destinations {
-  id            String   @id
-  destinationId String   @unique
-  data          Json
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime
-}
-
 model departments {
   id          String       @id
   name        String
@@ -108,48 +100,6 @@ model departments {
   agreements  agreements[]
   faculties   faculties    @relation(fields: [facultyId], references: [id], onDelete: Cascade)
   programs    programs[]
-}
-
-model destination_submissions {
-  id               String           @id
-  destinationId    String
-  submissionId     String
-  contributionType String
-  weight           Float            @default(1.0)
-  adminApproved    Boolean          @default(false)
-  notes            String?
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime
-  destinations     destinations     @relation(fields: [destinationId], references: [id], onDelete: Cascade)
-  form_submissions form_submissions @relation(fields: [submissionId], references: [id], onDelete: Cascade)
-
-  @@unique([destinationId, submissionId])
-}
-
-model destinations {
-  id                      String                    @id
-  name                    String
-  city                    String
-  country                 String
-  description             String?
-  imageUrl                String?
-  featured                Boolean                   @default(false)
-  status                  String                    @default("published")
-  source                  String                    @default("admin_created")
-  climate                 String?
-  costOfLiving            Json?
-  highlights              String?
-  photos                  Json?
-  generalInfo             Json?
-  aggregatedData          Json?
-  adminOverrides          Json?
-  submissionCount         Int                       @default(0)
-  lastDataUpdate          DateTime                  @default(now())
-  createdAt               DateTime                  @default(now())
-  updatedAt               DateTime
-  destination_submissions destination_submissions[]
-
-  @@unique([city, country])
 }
 
 enum ErasmusExperienceStatus {
@@ -176,8 +126,8 @@ model ErasmusExperience {
 
   // Submission workflow
   status      ErasmusExperienceStatus @default(DRAFT)
-  isPublic    Boolean   @default(false)
-  lastSavedAt DateTime  @default(now())
+  isPublic    Boolean                 @default(false)
+  lastSavedAt DateTime                @default(now())
   submittedAt DateTime?
   publishedAt DateTime?
 
@@ -206,9 +156,9 @@ model ErasmusExperience {
   hostUniversity universities?  @relation("hostExperiences", fields: [hostUniversityId], references: [id])
   homeUniversity universities?  @relation("homeExperiences", fields: [homeUniversityId], references: [id])
   reviewActions  ReviewAction[]
-  
+
   // NEW: Aggregation Relations
-  courseMappings      CourseMapping[]
+  courseMappings       CourseMapping[]
   accommodationReviews AccommodationReview[]
 
   @@unique([userId, semester])
@@ -227,66 +177,34 @@ enum ReviewActionType {
 
 // NEW: Admin review audit log
 model ReviewAction {
-  id           String              @id @default(cuid())
+  id           String            @id @default(cuid())
   experienceId String
   experience   ErasmusExperience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
   adminId      String
-  admin        users               @relation("ReviewActions", fields: [adminId], references: [id])
+  admin        users             @relation("ReviewActions", fields: [adminId], references: [id])
   action       ReviewActionType
   feedback     String?
-  createdAt    DateTime            @default(now())
+  createdAt    DateTime          @default(now())
 
   @@index([experienceId])
   @@index([adminId])
   @@map("review_actions")
 }
 
-// NEW: Pre-calculated city statistics
-model CityStatistics {
-  id       String @id @default(cuid())
-  city     String
-  country  String
-  semester String // "2024-FALL" or "ALL" for all-time
-
-  // Accommodation stats (EUR cents)
-  avgMonthlyRentCents Int?
-  medianRentCents     Int?
-  minRentCents        Int?
-  maxRentCents        Int?
-  rentSampleSize      Int  @default(0)
-
-  // Living expenses stats (EUR cents)
-  avgGroceriesCents     Int?
-  avgTransportCents     Int?
-  avgEatingOutCents     Int?
-  avgSocialLifeCents    Int?
-  avgTotalExpensesCents Int?
-  expenseSampleSize     Int  @default(0)
-
-  // Metadata
-  lastCalculated DateTime @default(now())
-  createdAt      DateTime @default(now())
-
-  @@unique([city, country, semester])
-  @@index([city, country])
-  @@index([semester])
-  @@map("city_statistics")
-}
-
 model PublicDestinationReadModel {
-  slug               String @id
-  city               String
-  country            String
-  hostUniversityCount Int
-  submissionCount    Int
+  slug                    String    @id
+  city                    String
+  country                 String
+  hostUniversityCount     Int
+  submissionCount         Int
   latestReportSubmittedAt DateTime?
-  averageRent        Float?
-  averageMonthlyCost Float?
-  detail             Json
-  accommodation      Json
-  courseEquivalences Json
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  averageRent             Float?
+  averageMonthlyCost      Float?
+  detail                  Json
+  accommodation           Json
+  courseEquivalences      Json
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
 
   @@index([country, city])
   @@index([submissionCount, city])
@@ -304,56 +222,6 @@ model faculties {
   universities universities  @relation(fields: [universityId], references: [id], onDelete: Cascade)
 }
 
-model form_submissions {
-  id                      String                    @id
-  userId                  String
-  type                    String
-  title                   String
-  data                    Json
-  status                  String                    @default("SUBMITTED")
-  adminNotes              String?
-  processed               Boolean                   @default(false)
-  qualityScore            Float?
-  tags                    String?
-  location                String?
-  submissionSource        String                    @default("form")
-  createdAt               DateTime                  @default(now())
-  updatedAt               DateTime
-  hostCity                String?
-  hostCountry             String?
-  destination_submissions destination_submissions[]
-  users                   users                     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([hostCity, hostCountry])
-  @@index([location, status])
-  @@index([type, status])
-}
-
-model partnership_tracking {
-  id                    String    @id
-  homeUniversityName    String
-  partnerUniversityName String
-  partnerCity           String
-  partnerCountry        String
-  agreementType         String?
-  fieldOfStudy          String?
-  isActive              Boolean   @default(true)
-  totalSubmissions      Int       @default(0)
-  averageRating         Float?
-  averageAcademicRating Float?
-  lastSubmissionDate    DateTime?
-  submissionsByYear     Json?
-  ratingTrend           Json?
-  adminNotes            String?
-  needsAttention        Boolean   @default(false)
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime
-
-  @@unique([homeUniversityName, partnerUniversityName, partnerCity])
-  @@index([partnerCountry, partnerCity])
-  @@index([needsAttention, isActive])
-}
-
 model programs {
   id           String         @id
   name         String
@@ -367,52 +235,6 @@ model programs {
   updatedAt    DateTime
   applications applications[]
   departments  departments    @relation(fields: [departmentId], references: [id], onDelete: Cascade)
-}
-
-model stories {
-  id                String              @id
-  title             String
-  content           String
-  excerpt           String?
-  imageUrl          String?
-  isPublic          Boolean             @default(true)
-  isPinned          Boolean             @default(false)
-  authorId          String
-  universityId      String?
-  country           String?
-  city              String?
-  category          String              @default("EXPERIENCE")
-  tags              String?
-  likes             Int                 @default(0)
-  views             Int                 @default(0)
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime
-  users             users               @relation(fields: [authorId], references: [id])
-  universities      universities?       @relation(fields: [universityId], references: [id])
-  story_engagements story_engagements[]
-
-  @@index([city, country])
-  @@index([isPublic, isPinned])
-  @@index([createdAt, isPublic])
-}
-
-model story_engagements {
-  id         String    @id
-  storyId    String
-  userId     String
-  liked      Boolean   @default(false)
-  bookmarked Boolean   @default(false)
-  rating     Int       @default(0)
-  views      Int       @default(0)
-  likes      Int       @default(0)
-  comments   Int       @default(0)
-  lastViewed DateTime?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime
-  stories    stories   @relation(fields: [storyId], references: [id], onDelete: Cascade)
-  users      users     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([storyId, userId])
 }
 
 model universities {
@@ -432,26 +254,25 @@ model universities {
   agreements_agreements_partnerUniversityIdTouniversities agreements[]   @relation("agreements_partnerUniversityIdTouniversities")
   applications                                            applications[]
   faculties                                               faculties[]
-  stories                                                 stories[]
 
   // NEW: Erasmus experience relations
   hostExperiences ErasmusExperience[] @relation("hostExperiences")
   homeExperiences ErasmusExperience[] @relation("homeExperiences")
-  
+
   // NEW: Aggregation Relations
-  courseMappings  CourseMapping[]
+  courseMappings CourseMapping[]
 }
 
 model users {
-  id                  String               @id
+  id                  String             @id
   firstName           String?
   lastName            String?
-  email               String               @unique
+  email               String             @unique
   emailVerified       DateTime?
   image               String?
   password            String?
-  role                String               @default("USER")
-  createdAt           DateTime             @default(now())
+  role                String             @default("USER")
+  createdAt           DateTime           @default(now())
   updatedAt           DateTime
   studentId           String?
   nationality         String?
@@ -461,9 +282,6 @@ model users {
   Session             Session[]
   applications        applications[]
   erasmus_experiences ErasmusExperience?
-  form_submissions    form_submissions[]
-  stories             stories[]
-  story_engagements   story_engagements[]
 
   // NEW: Admin review actions
   reviewActions ReviewAction[] @relation("ReviewActions")
@@ -472,25 +290,25 @@ model users {
 // NEW: Aggregation Models
 
 model CourseMapping {
-  id             String       @id @default(cuid())
-  experienceId   String
-  universityId   String       // Host University ID
-  
+  id           String @id @default(cuid())
+  experienceId String
+  universityId String // Host University ID
+
   homeCourseCode String?
   homeCourseName String
   homeCredits    Float?
-  
+
   hostCourseCode String?
   hostCourseName String
   hostCredits    Float?
-  
-  grade          String?
-  status         String       @default("APPROVED") // APPROVED | REJECTED | PENDING
-  
-  createdAt      DateTime     @default(now())
-  
-  experience     ErasmusExperience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
-  university     universities        @relation(fields: [universityId], references: [id])
+
+  grade  String?
+  status String  @default("APPROVED") // APPROVED | REJECTED | PENDING
+
+  createdAt DateTime @default(now())
+
+  experience ErasmusExperience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  university universities      @relation(fields: [universityId], references: [id])
 
   @@index([universityId])
   @@index([homeCourseName])
@@ -498,28 +316,28 @@ model CourseMapping {
 }
 
 model AccommodationReview {
-  id              String       @id @default(cuid())
+  id              String  @id @default(cuid())
   experienceId    String
-  accommodationId String?      // Optional link to a known accommodation entity
-  
-  name            String       // Name of the place/dorm
-  type            String       // DORM | APARTMENT | SHARED_FLAT | STUDIO
-  address         String?
-  neighborhood    String?
-  
-  pricePerMonth   Float
-  currency        String       @default("EUR")
-  
-  rating          Int          // 1-5
-  cleanliness     Int?         // 1-5
-  location        Int?         // 1-5
-  socialVibe      Int?         // 1-5
-  
-  comment         String?      @db.Text
-  
-  createdAt       DateTime     @default(now())
-  
-  experience      ErasmusExperience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  accommodationId String? // Optional link to a known accommodation entity
+
+  name         String // Name of the place/dorm
+  type         String // DORM | APARTMENT | SHARED_FLAT | STUDIO
+  address      String?
+  neighborhood String?
+
+  pricePerMonth Float
+  currency      String @default("EUR")
+
+  rating      Int // 1-5
+  cleanliness Int? // 1-5
+  location    Int? // 1-5
+  socialVibe  Int? // 1-5
+
+  comment String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  experience ErasmusExperience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
   // accommodation   accommodations?     @relation(fields: [accommodationId], references: [id]) // Uncomment if linking to strict accommodation table
 
   @@index([experienceId])
