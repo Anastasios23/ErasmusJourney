@@ -5,10 +5,6 @@ import "dotenv/config";
 
 const prisma = new PrismaClient();
 
-/**
- * Permanent Admin User Configuration
- * Password is read from DEFAULT_ADMIN_PASSWORD environment variable
- */
 const PERMANENT_ADMIN = {
   email: "admin@erasmusjourney.com",
   password: process.env.DEFAULT_ADMIN_PASSWORD || "ChangeMe123!",
@@ -21,29 +17,26 @@ const PERMANENT_ADMIN = {
 };
 
 async function ensurePermanentAdmin() {
-  console.log("🔐 Ensuring permanent admin user exists...");
+  console.log("Ensuring permanent admin user exists...");
 
   try {
-    // Check if admin user exists (using 'users' model, not 'user')
     let adminUser = await prisma.users.findUnique({
       where: { email: PERMANENT_ADMIN.email },
     });
 
     if (adminUser) {
-      console.log("✅ Admin user already exists!");
+      console.log("Admin user already exists.");
 
-      // Ensure the user has admin role (in case schema changed)
       if (adminUser.role !== "ADMIN") {
-        console.log("🔄 Updating user role to ADMIN...");
+        console.log("Updating user role to ADMIN...");
         adminUser = await prisma.users.update({
           where: { id: adminUser.id },
           data: { role: "ADMIN" },
         });
-        console.log("✅ User role updated!");
+        console.log("User role updated.");
       }
     } else {
-      // Create the admin user
-      console.log("🚀 Creating permanent admin user...");
+      console.log("Creating permanent admin user...");
 
       const hashedPassword = await bcrypt.hash(PERMANENT_ADMIN.password, 12);
 
@@ -64,28 +57,29 @@ async function ensurePermanentAdmin() {
         },
       });
 
-      console.log("✅ Permanent admin user created!");
+      console.log("Permanent admin user created.");
     }
 
     return adminUser;
   } catch (error) {
-    console.error("❌ Error ensuring permanent admin:", error);
+    console.error("Error ensuring permanent admin:", error);
     throw error;
   }
 }
 
 async function displayAdminCredentials() {
-  console.log("\n🔑 ADMIN LOGIN CREDENTIALS");
-  console.log("==========================");
-  console.log(`📧 Email: ${PERMANENT_ADMIN.email}`);
-  console.log(`🔐 Password: ${PERMANENT_ADMIN.password}`);
-  console.log("\n🌐 Admin Access URLs:");
-  console.log("• http://localhost:3000/admin");
-  console.log("• http://localhost:3000/admin/destinations");
-  console.log("\n💡 This admin user will persist across:");
-  console.log("• Database resets (prisma migrate reset)");
-  console.log("• Schema changes (prisma db push)");
-  console.log("• Application rebuilds");
+  console.log("\nADMIN LOGIN CREDENTIALS");
+  console.log("=======================");
+  console.log(`Email: ${PERMANENT_ADMIN.email}`);
+  console.log(`Password: ${PERMANENT_ADMIN.password}`);
+  console.log("\nAdmin access URLs:");
+  console.log("- http://localhost:3000/admin");
+  console.log("- http://localhost:3000/admin/review-submissions");
+  console.log("- http://localhost:3000/destinations");
+  console.log("\nThis admin user will persist across:");
+  console.log("- Database resets (prisma migrate reset)");
+  console.log("- Schema changes (prisma db push)");
+  console.log("- Application rebuilds");
 }
 
 async function main() {
@@ -93,16 +87,15 @@ async function main() {
     await ensurePermanentAdmin();
     await displayAdminCredentials();
 
-    console.log("\n✅ Permanent admin setup complete!");
+    console.log("\nPermanent admin setup complete.");
   } catch (error) {
-    console.error("💥 Failed to setup permanent admin:", error);
+    console.error("Failed to setup permanent admin:", error);
     process.exit(1);
   } finally {
     await prisma.$disconnect();
   }
 }
 
-// Auto-run when called directly
 main();
 
 export { ensurePermanentAdmin, PERMANENT_ADMIN };
