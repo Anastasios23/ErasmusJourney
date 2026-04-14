@@ -20,8 +20,9 @@ export default async function handler(
 
   // Domain Check
   if (!isCyprusUniversityEmail(email)) {
-    return res.status(403).json({ 
-      message: "Registration is restricted to Cyprus university students only (@ucy.ac.cy, @cut.ac.cy, etc.)." 
+    return res.status(403).json({
+      message:
+        "Registration is restricted to Cyprus university students only (@ucy.ac.cy, @cut.ac.cy, etc.).",
     });
   }
 
@@ -42,6 +43,8 @@ export default async function handler(
         lastName,
         email,
         password: hashedPassword,
+        emailVerified: new Date(),
+        role: "USER",
         updatedAt: new Date(),
       },
     });
@@ -50,8 +53,7 @@ export default async function handler(
 
     return res.status(201).json({
       success: true,
-      message:
-        "User created successfully! Please check your email for verification.",
+      message: "User created successfully! Signing you in...",
       user: userWithoutPassword,
     });
   } catch (error) {

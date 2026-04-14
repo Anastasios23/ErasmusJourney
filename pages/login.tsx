@@ -97,7 +97,11 @@ export default function Login() {
       setError(result.error);
       setIsLoading(false);
     } else if (result?.ok) {
-      window.location.href = safeCallbackUrl;
+      const destination = normalizeInternalCallbackPath(
+        result.url || safeCallbackUrl,
+        safeCallbackUrl,
+      );
+      window.location.href = destination;
     } else {
       setError("Login failed. Please try again.");
       setIsLoading(false);

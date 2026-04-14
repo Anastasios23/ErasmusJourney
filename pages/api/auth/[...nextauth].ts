@@ -47,7 +47,9 @@ export const authOptions: NextAuthOptions = {
 
           // Domain Check
           if (!isCyprusUniversityEmail(credentials.email)) {
-            throw new Error("Access restricted to Cyprus university emails only (@ucy.ac.cy, @cut.ac.cy, etc.)");
+            throw new Error(
+              "Access restricted to Cyprus university emails only (@ucy.ac.cy, @cut.ac.cy, etc.)",
+            );
           }
 
           console.log("Attempting login for:", credentials.email);
@@ -57,7 +59,9 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!user || !user.password) {
-            throw new Error("No user found with this email. Please register first.");
+            throw new Error(
+              "No user found with this email. Please register first.",
+            );
           }
 
           console.log("User found, verifying password");
@@ -77,7 +81,9 @@ export const authOptions: NextAuthOptions = {
             id: user.id,
             email: user.email!,
             role: user.role,
-            name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.email!,
+            name:
+              `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+              user.email!,
           };
         } catch (error) {
           console.error("Auth error:", error);
@@ -103,6 +109,7 @@ export const authOptions: NextAuthOptions = {
           // Check if user exists
           const existingUser = await prisma.users.findUnique({
             where: { email: user.email },
+            select: { id: true, role: true },
           });
 
           if (!existingUser) {
@@ -112,20 +119,38 @@ export const authOptions: NextAuthOptions = {
               data: {
                 id: randomUUID(),
                 email: user.email,
-                firstName: (profile as any)?.given_name || user.name?.split(" ")[0] || "",
-                lastName: (profile as any)?.family_name || user.name?.split(" ").slice(1).join(" ") || "",
+                firstName:
+                  (profile as any)?.given_name ||
+                  user.name?.split(" ")[0] ||
+                  "",
+                lastName:
+                  (profile as any)?.family_name ||
+                  user.name?.split(" ").slice(1).join(" ") ||
+                  "",
                 image: user.image,
+                emailVerified: new Date(),
                 updatedAt: new Date(),
                 role: "USER",
               },
             });
+            return true;
           }
+
+          if (existingUser.role === "ADMIN") {
+            return "/admin/review-submissions";
+          }
+
           return true;
         } catch (error) {
           console.error("Error in signIn callback:", error);
           return false;
         }
       }
+
+      if ((user as any).role === "ADMIN") {
+        return "/admin/review-submissions";
+      }
+
       return true;
     },
     async jwt({ token, user, account }) {

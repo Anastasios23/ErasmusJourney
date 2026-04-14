@@ -1,57 +1,51 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-// import { getToken } from "next-auth/jwt";
+import { getToken } from "next-auth/jwt";
 
-// const formSteps = [
-//   "/basic-information",
-//   "/course-matching",
-//   "/accommodation",
-//   "/living-expenses",
-//   "/help-future-students",
-// ];
+const ADMIN_HOME_PATH = "/admin/review-submissions";
+
+function isAdminRoute(pathname: string): boolean {
+  return pathname === "/admin" || pathname.startsWith("/admin/");
+}
 
 export async function middleware(request: NextRequest) {
-  // AUTHENTICATION DISABLED - Comment out to re-enable
-  // const token = await getToken({ req: request });
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-development",
+  });
+  const pathname = request.nextUrl.pathname;
+  const isAdminUser = token?.role === "ADMIN";
 
-  // // Check if it's a form step
-  // const isFormStep = formSteps.some((step) =>
-  //   request.nextUrl.pathname.startsWith(step),
-  // );
+  if (isAdminRoute(pathname)) {
+    if (!token) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set(
+        "callbackUrl",
+        `${pathname}${request.nextUrl.search}`,
+      );
+      return NextResponse.redirect(loginUrl);
+    }
 
-  // if (isFormStep) {
-  //   // If not authenticated, redirect to login
-  //   if (!token) {
-  //     return NextResponse.redirect(new URL("/login", request.url));
-  //   }
+    if (!isAdminUser) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
 
-  //   // Get current step index
-  //   const currentStepIndex = formSteps.findIndex((step) =>
-  //     request.nextUrl.pathname.startsWith(step),
-  //   );
+    if (pathname === "/admin" || pathname === "/admin/dashboard") {
+      return NextResponse.redirect(new URL(ADMIN_HOME_PATH, request.url));
+    }
 
-  //   // If trying to access a step other than first or previous step completed
-  //   if (currentStepIndex > 0) {
-  //     const previousStep = formSteps[currentStepIndex - 1];
-  //     // Check if previous step is completed (you'll need to implement this check)
-  //     // For now, we'll use localStorage/cookies to track progress
-  //     const completedSteps = request.cookies.get("completedSteps")?.value || "";
+    return NextResponse.next();
+  }
 
-  //     if (!completedSteps.includes(previousStep)) {
-  //       return NextResponse.redirect(new URL(previousStep, request.url));
-  //     }
-  //   }
-  // }
+  if (isAdminUser) {
+    return NextResponse.redirect(new URL(ADMIN_HOME_PATH, request.url));
+  }
 
   return NextResponse.next();
 }
 
-// export const config = {
-//   matcher: [
-//     "/basic-information/:path*",
-//     "/course-matching/:path*",
-//     "/accommodation/:path*",
-//     "/living-expenses/:path*",
-//     "/help-future-students/:path*",
-//   ],
-// };
+export const config = {
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\..*).*)",
+  ],
+};

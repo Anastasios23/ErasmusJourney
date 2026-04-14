@@ -84,28 +84,23 @@ type NarrativeWordingField = Exclude<
 const FEEDBACK_PRESETS = [
   {
     label: "Missing destination info",
-    text:
-      "Missing destination info. Add the host university, host city, host country, home university, and home department so this can publish safely.",
+    text: "Missing destination info. Add the host university, host city, host country, home university, and home department so this can publish safely.",
   },
   {
     label: "Housing info too vague",
-    text:
-      "Housing info is still too vague. Keep it anonymous, but add clearer accommodation type, rent, recommendation, and rating details.",
+    text: "Housing info is still too vague. Keep it anonymous, but add clearer accommodation type, rent, recommendation, and rating details.",
   },
   {
     label: "Course mappings incomplete",
-    text:
-      "Course mappings are incomplete. Add at least one clear home-to-host match with ECTS and recognition type.",
+    text: "Course mappings are incomplete. Add at least one clear home-to-host match with ECTS and recognition type.",
   },
   {
     label: "Contains private information",
-    text:
-      "This includes private or identifying information. Remove exact addresses, phone numbers, social handles, or other personal details before resubmitting.",
+    text: "This includes private or identifying information. Remove exact addresses, phone numbers, social handles, or other personal details before resubmitting.",
   },
   {
     label: "Needs more useful advice",
-    text:
-      "The final advice needs to be more useful for future students. Add practical tips or clearer examples from your experience.",
+    text: "The final advice needs to be more useful for future students. Add practical tips or clearer examples from your experience.",
   },
 ] as const;
 
@@ -125,7 +120,9 @@ function getFilterLabel(filter: QueueFilter): string {
 
 function sortSubmissions(entries: Experience[], sortOrder: SortOrder) {
   return [...entries].sort((left, right) => {
-    const leftTime = left.submittedAt ? new Date(left.submittedAt).getTime() : 0;
+    const leftTime = left.submittedAt
+      ? new Date(left.submittedAt).getTime()
+      : 0;
     const rightTime = right.submittedAt
       ? new Date(right.submittedAt).getTime()
       : 0;
@@ -194,17 +191,17 @@ const PUBLIC_WORDING_FIELDS: Array<{
 ];
 
 export default function ReviewSubmissions() {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [submissions, setSubmissions] = useState<Experience[]>([]);
-  const [selectedSubmission, setSelectedSubmission] = useState<Experience | null>(
-    null,
-  );
+  const [selectedSubmission, setSelectedSubmission] =
+    useState<Experience | null>(null);
   const [loading, setLoading] = useState(true);
   const [reviewing, setReviewing] = useState(false);
   const [feedback, setFeedback] = useState("");
-  const [wordingEdits, setWordingEdits] =
-    useState<PublicWordingEditorState>(createEmptyWordingEdits);
+  const [wordingEdits, setWordingEdits] = useState<PublicWordingEditorState>(
+    createEmptyWordingEdits,
+  );
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
@@ -216,14 +213,25 @@ export default function ReviewSubmissions() {
       void router.replace(
         buildLoginRedirectUrl(router.asPath, "/admin/review-submissions"),
       );
+      return;
     }
-  }, [status, router]);
+
+    if (
+      status === "authenticated" &&
+      (session?.user as any)?.role !== "ADMIN"
+    ) {
+      void router.replace("/");
+    }
+  }, [status, session, router]);
 
   useEffect(() => {
-    if (status === "authenticated") {
+    if (
+      status === "authenticated" &&
+      (session?.user as any)?.role === "ADMIN"
+    ) {
       void fetchSubmissions();
     }
-  }, [status]);
+  }, [status, session]);
 
   const fetchSubmissions = async (): Promise<Experience[]> => {
     try {
@@ -249,18 +257,14 @@ export default function ReviewSubmissions() {
     }
   };
 
-  const handleReview = async (
-    action: ReviewActionType,
-  ) => {
+  const handleReview = async (action: ReviewActionType) => {
     if (!selectedSubmission) {
       return;
     }
 
     if (
-      (
-        action === REVIEW_ACTION.REJECTED ||
-        action === REVIEW_ACTION.REQUEST_CHANGES
-      ) &&
+      (action === REVIEW_ACTION.REJECTED ||
+        action === REVIEW_ACTION.REQUEST_CHANGES) &&
       !feedback.trim()
     ) {
       setError("Feedback is required for rejection or change requests");
@@ -373,14 +377,16 @@ export default function ReviewSubmissions() {
       queueFilter === "all"
         ? submissions
         : submissions.filter(
-            (submission) => getSubmissionQueueCategory(submission) === queueFilter,
+            (submission) =>
+              getSubmissionQueueCategory(submission) === queueFilter,
           );
 
     return sortSubmissions(filtered, sortOrder);
   }, [queueFilter, sortOrder, submissions]);
 
   const selectedReadiness = useMemo(
-    () => (selectedSubmission ? getApprovalReadiness(selectedSubmission) : null),
+    () =>
+      selectedSubmission ? getApprovalReadiness(selectedSubmission) : null,
     [selectedSubmission],
   );
   const selectedSummary = useMemo(
@@ -434,8 +440,8 @@ export default function ReviewSubmissions() {
             </h1>
             <p className="max-w-3xl text-gray-600">
               Review publishability, adjust public wording without changing the
-              student source, and decide whether to approve, request changes,
-              or reject.
+              student source, and decide whether to approve, request changes, or
+              reject.
             </p>
           </section>
 
@@ -512,7 +518,9 @@ export default function ReviewSubmissions() {
                             Submitted
                           </div>
                           <p className="mt-1 font-medium text-gray-900">
-                            {formatSubmissionTimestamp(selectedSubmission.submittedAt)}
+                            {formatSubmissionTimestamp(
+                              selectedSubmission.submittedAt,
+                            )}
                           </p>
                         </div>
                         <div className="md:col-span-2">
@@ -536,7 +544,9 @@ export default function ReviewSubmissions() {
                           ) : null}
                         </div>
                         <div>
-                          <div className="text-sm text-gray-500">Public sections</div>
+                          <div className="text-sm text-gray-500">
+                            Public sections
+                          </div>
                           <p className="mt-1 font-medium text-gray-900">
                             {selectedSummary?.publishableSections.length
                               ? selectedSummary.publishableSections.join(", ")
@@ -586,8 +596,8 @@ export default function ReviewSubmissions() {
                         <AlertCircle className="h-4 w-4" />
                         <AlertDescription>
                           {
-                            selectedSubmission.publicImpactPreviewUnavailableReason
-                              .message
+                            selectedSubmission
+                              .publicImpactPreviewUnavailableReason.message
                           }
                         </AlertDescription>
                       </Alert>
@@ -676,13 +686,14 @@ export default function ReviewSubmissions() {
                                   onChange={(event) =>
                                     setWordingEdits((current) => ({
                                       ...current,
-                                      courseNotes: current.courseNotes.map((item) =>
-                                        item.id === courseNote.id
-                                          ? {
-                                              ...item,
-                                              value: event.target.value,
-                                            }
-                                          : item,
+                                      courseNotes: current.courseNotes.map(
+                                        (item) =>
+                                          item.id === courseNote.id
+                                            ? {
+                                                ...item,
+                                                value: event.target.value,
+                                              }
+                                            : item,
                                       ),
                                     }))
                                   }
@@ -700,7 +711,9 @@ export default function ReviewSubmissions() {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => handleReview(REVIEW_ACTION.WORDING_EDITED)}
+                          onClick={() =>
+                            handleReview(REVIEW_ACTION.WORDING_EDITED)
+                          }
                           disabled={reviewing}
                         >
                           Save wording edits
@@ -711,7 +724,9 @@ export default function ReviewSubmissions() {
 
                   <Card className="border border-gray-200 shadow-none">
                     <CardHeader className="pb-3">
-                      <CardTitle className="text-base">Review decision</CardTitle>
+                      <CardTitle className="text-base">
+                        Review decision
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="space-y-2">
@@ -749,7 +764,9 @@ export default function ReviewSubmissions() {
                       <div className="flex flex-wrap gap-3">
                         <Button
                           onClick={() => handleReview(REVIEW_ACTION.APPROVED)}
-                          disabled={reviewing || selectedReadiness?.status === "blocked"}
+                          disabled={
+                            reviewing || selectedReadiness?.status === "blocked"
+                          }
                           className="bg-green-600 hover:bg-green-700"
                         >
                           <CheckCircle className="mr-2 h-4 w-4" />
@@ -790,10 +807,15 @@ export default function ReviewSubmissions() {
                   ["Blocked", queueCounts.blocked],
                   ["Changes requested", queueCounts.needs_revision],
                 ].map(([label, value]) => (
-                  <Card key={label} className="border border-gray-200 shadow-none">
+                  <Card
+                    key={label}
+                    className="border border-gray-200 shadow-none"
+                  >
                     <CardContent className="space-y-1 p-4">
                       <p className="text-sm text-gray-500">{label}</p>
-                      <p className="text-2xl font-semibold text-gray-900">{value}</p>
+                      <p className="text-2xl font-semibold text-gray-900">
+                        {value}
+                      </p>
                     </CardContent>
                   </Card>
                 ))}
@@ -802,19 +824,24 @@ export default function ReviewSubmissions() {
               <Card>
                 <CardContent className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between">
                   <div className="flex flex-wrap gap-2">
-                    {(["all", "ready", "blocked", "needs_revision"] as QueueFilter[]).map(
-                      (filter) => (
-                        <Button
-                          key={filter}
-                          type="button"
-                          size="sm"
-                          variant={queueFilter === filter ? "default" : "outline"}
-                          onClick={() => setQueueFilter(filter)}
-                        >
-                          {getFilterLabel(filter)}
-                        </Button>
-                      ),
-                    )}
+                    {(
+                      [
+                        "all",
+                        "ready",
+                        "blocked",
+                        "needs_revision",
+                      ] as QueueFilter[]
+                    ).map((filter) => (
+                      <Button
+                        key={filter}
+                        type="button"
+                        size="sm"
+                        variant={queueFilter === filter ? "default" : "outline"}
+                        onClick={() => setQueueFilter(filter)}
+                      >
+                        {getFilterLabel(filter)}
+                      </Button>
+                    ))}
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <Button
@@ -839,7 +866,9 @@ export default function ReviewSubmissions() {
 
               {filteredSubmissions.map((submission) => {
                 const readiness = getApprovalReadiness(submission);
-                const revision = getRevisionStatusMeta(submission.revisionCount);
+                const revision = getRevisionStatusMeta(
+                  submission.revisionCount,
+                );
                 const summary = getSubmissionModerationSummary(submission);
 
                 return (
@@ -851,8 +880,12 @@ export default function ReviewSubmissions() {
                             <h2 className="text-lg font-semibold text-gray-900">
                               {submission.user?.name || "Anonymous"}
                             </h2>
-                            <Badge variant={revision.variant}>{revision.label}</Badge>
-                            <Badge variant={readiness.variant}>{readiness.label}</Badge>
+                            <Badge variant={revision.variant}>
+                              {revision.label}
+                            </Badge>
+                            <Badge variant={readiness.variant}>
+                              {readiness.label}
+                            </Badge>
                           </div>
                           <div className="grid gap-2 text-sm text-gray-600 md:grid-cols-3">
                             <div className="flex items-center gap-2">
@@ -861,7 +894,9 @@ export default function ReviewSubmissions() {
                             </div>
                             <div className="flex items-center gap-2">
                               <Calendar className="h-4 w-4" />
-                              {formatSubmissionTimestamp(submission.submittedAt)}
+                              {formatSubmissionTimestamp(
+                                submission.submittedAt,
+                              )}
                             </div>
                             <div className="flex items-center gap-2">
                               <User className="h-4 w-4" />
@@ -892,7 +927,8 @@ export default function ReviewSubmissions() {
                         {[
                           [
                             "Public sections",
-                            summary.publishableSections.join(", ") || "None yet",
+                            summary.publishableSections.join(", ") ||
+                              "None yet",
                           ],
                           ["Courses", summary.courseSummary],
                           ["Accommodation", summary.accommodationSummary],

@@ -35,6 +35,7 @@ import {
   EXPERIENCE_STATUS,
   type ErasmusExperienceStatus,
 } from "../src/lib/canonicalWorkflow";
+import { buildPublicDestinationRoute } from "../src/lib/publicRoutes";
 
 type SubmissionStatusFilter = ErasmusExperienceStatus | "ALL";
 
@@ -85,7 +86,8 @@ export default function MySubmissions() {
   const [error, setError] = useState<string | null>(null);
 
   // Filters
-  const [statusFilter, setStatusFilter] = useState<SubmissionStatusFilter>("ALL");
+  const [statusFilter, setStatusFilter] =
+    useState<SubmissionStatusFilter>("ALL");
   const [typeFilter, setTypeFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("updatedAt");
@@ -129,11 +131,11 @@ export default function MySubmissions() {
       const transformedSubmissions: Submission[] = data.map((exp: any) => ({
         id: exp.id,
         submissionType: "FULL_EXPERIENCE",
-        status: (exp.status ?? EXPERIENCE_STATUS.DRAFT) as ErasmusExperienceStatus,
-        title:
-          exp.basicInfo?.hostUniversity
-            ? `Experience at ${exp.basicInfo.hostUniversity}`
-            : "Erasmus Experience",
+        status: (exp.status ??
+          EXPERIENCE_STATUS.DRAFT) as ErasmusExperienceStatus,
+        title: exp.basicInfo?.hostUniversity
+          ? `Experience at ${exp.basicInfo.hostUniversity}`
+          : "Erasmus Experience",
         hostCity: exp.hostCity,
         hostCountry: exp.hostCountry,
         hostUniversity: exp.basicInfo?.hostUniversity,
@@ -486,7 +488,9 @@ export default function MySubmissions() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="ALL">All Statuses</SelectItem>
-                        <SelectItem value={EXPERIENCE_STATUS.DRAFT}>Draft</SelectItem>
+                        <SelectItem value={EXPERIENCE_STATUS.DRAFT}>
+                          Draft
+                        </SelectItem>
                         <SelectItem value={EXPERIENCE_STATUS.SUBMITTED}>
                           Under Review
                         </SelectItem>
@@ -696,18 +700,22 @@ export default function MySubmissions() {
                               {submission.reviewFeedback && (
                                 <div
                                   className={`mt-3 p-3 border rounded-lg ${
-                                    submission.status === EXPERIENCE_STATUS.REVISION_NEEDED
+                                    submission.status ===
+                                    EXPERIENCE_STATUS.REVISION_NEEDED
                                       ? "bg-orange-50 border-orange-200"
-                                      : submission.status === EXPERIENCE_STATUS.REJECTED
+                                      : submission.status ===
+                                          EXPERIENCE_STATUS.REJECTED
                                         ? "bg-red-50 border-red-200"
                                         : "bg-yellow-50 border-yellow-200"
                                   }`}
                                 >
                                   <p
                                     className={`text-sm ${
-                                      submission.status === EXPERIENCE_STATUS.REVISION_NEEDED
+                                      submission.status ===
+                                      EXPERIENCE_STATUS.REVISION_NEEDED
                                         ? "text-orange-800"
-                                        : submission.status === EXPERIENCE_STATUS.REJECTED
+                                        : submission.status ===
+                                            EXPERIENCE_STATUS.REJECTED
                                           ? "text-red-800"
                                           : "text-yellow-800"
                                     }`}
@@ -715,15 +723,16 @@ export default function MySubmissions() {
                                     <strong>Admin Feedback:</strong>{" "}
                                     {submission.reviewFeedback}
                                   </p>
-                                  {submission.status === EXPERIENCE_STATUS.REVISION_NEEDED && (
+                                  {submission.status ===
+                                    EXPERIENCE_STATUS.REVISION_NEEDED && (
                                     <div className="mt-2 text-xs text-orange-700">
                                       Review the requested changes and reopen
-                                      your editable draft to update
-                                      submission and resubmit.
+                                      your editable draft to update submission
+                                      and resubmit.
                                       {submission.revisionCount >= 1 && (
                                         <span className="block mt-1 font-semibold">
-                                          This is your final returned draft.
-                                          The next moderation decision will be
+                                          This is your final returned draft. The
+                                          next moderation decision will be
                                           approve or reject.
                                         </span>
                                       )}
@@ -737,7 +746,8 @@ export default function MySubmissions() {
                           {/* Actions */}
                           <div className="flex items-center gap-2 ml-4">
                             {(submission.status === EXPERIENCE_STATUS.DRAFT ||
-                              submission.status === EXPERIENCE_STATUS.REVISION_NEEDED) && (
+                              submission.status ===
+                                EXPERIENCE_STATUS.REVISION_NEEDED) && (
                               <Link href="/share-experience">
                                 <Button
                                   size="sm"
@@ -747,15 +757,24 @@ export default function MySubmissions() {
                                     icon="solar:pen-new-square-linear"
                                     className="h-4 w-4 mr-2"
                                   />
-                                  {submission.status === EXPERIENCE_STATUS.REVISION_NEEDED
+                                  {submission.status ===
+                                  EXPERIENCE_STATUS.REVISION_NEEDED
                                     ? "Respond to Changes"
                                     : "Continue Editing"}
                                 </Button>
                               </Link>
                             )}
-                            {submission.status === EXPERIENCE_STATUS.APPROVED && (
+                            {submission.status ===
+                              EXPERIENCE_STATUS.APPROVED && (
                               <Link
-                                href={`/destinations/${encodeURIComponent((submission as any).city?.toLowerCase().replace(/\s+/g, "-") || "explore")}`}
+                                href={
+                                  submission.hostCity && submission.hostCountry
+                                    ? buildPublicDestinationRoute({
+                                        city: submission.hostCity,
+                                        country: submission.hostCountry,
+                                      })
+                                    : "/destinations/explore"
+                                }
                               >
                                 <Button
                                   variant="outline"

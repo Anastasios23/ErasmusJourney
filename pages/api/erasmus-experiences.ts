@@ -72,11 +72,14 @@ function logDatabaseUnavailable(
   error: unknown,
   requestId?: string,
 ) {
-  console.error(`[erasmus-experiences] Database unavailable during ${context}`, {
-    ...(requestId ? { requestId } : {}),
-    cause: getDatabaseUnavailableCause(error) || "unknown",
-    error: getErrorMessage(error),
-  });
+  console.error(
+    `[erasmus-experiences] Database unavailable during ${context}`,
+    {
+      ...(requestId ? { requestId } : {}),
+      cause: getDatabaseUnavailableCause(error) || "unknown",
+      error: getErrorMessage(error),
+    },
+  );
 }
 
 async function getAuthenticatedUser(
@@ -168,11 +171,13 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
 
   const experiences = await listExperiencesForUser(user.id);
 
-  return res.status(200).json(
-    experiences.map((experience) =>
-      serializeErasmusExperienceForClient(experience as any),
-    ),
-  );
+  return res
+    .status(200)
+    .json(
+      experiences.map((experience) =>
+        serializeErasmusExperienceForClient(experience as any),
+      ),
+    );
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
@@ -218,7 +223,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     action === "submit"
       ? await submitExperience(id, user, updateData, (error, context) =>
           logRequestFailure(
-            "failed to update city statistics after submit",
+            "failed to refresh derived aggregates after submit",
             error,
             requestId,
             context,

@@ -73,7 +73,7 @@ export default function Register() {
   const router = useRouter();
   const safeCallbackUrl = normalizeInternalCallbackPath(
     router.query.callbackUrl as string | string[] | undefined,
-    "/dashboard",
+    "/",
   );
 
   const [formData, setFormData] = useState({
@@ -90,7 +90,6 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [emailVerificationSent, setEmailVerificationSent] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
 
   useEffect(() => {
@@ -121,8 +120,28 @@ export default function Register() {
       });
 
       if (result.success) {
-        setSuccessMessage(result.message);
-        setEmailVerificationSent(true);
+        setSuccessMessage(result.message || "Account created successfully.");
+
+        const signInResult = await signIn("credentials", {
+          redirect: false,
+          email: formData.email,
+          password: formData.password,
+          callbackUrl: safeCallbackUrl,
+        });
+
+        if (signInResult?.error) {
+          setError(
+            "Account created, but automatic sign-in failed. Please sign in manually.",
+          );
+          return;
+        }
+
+        const nextPath = normalizeInternalCallbackPath(
+          signInResult?.url || safeCallbackUrl,
+          safeCallbackUrl,
+        );
+        await router.replace(nextPath);
+        return;
       } else {
         setError(result.message || "An unknown error occurred.");
       }
@@ -166,67 +185,6 @@ export default function Register() {
             <p className="text-gray-500 font-medium">
               Checking authentication...
             </p>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  if (emailVerificationSent) {
-    return (
-      <>
-        <Head>
-          <title>Verify Email - Erasmus Journey Platform</title>
-        </Head>
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-4 relative overflow-hidden">
-          <FloatingOrbs />
-          <div className="relative w-full max-w-md z-10">
-            <div className="backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border border-white/20 dark:border-gray-700/30 rounded-3xl shadow-2xl shadow-blue-500/10 overflow-hidden">
-              <div className="relative bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 px-8 py-12 text-center overflow-hidden">
-                <div className="absolute inset-0 opacity-30">
-                  <div className="absolute top-0 left-0 w-40 h-40 bg-white/20 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
-                  <div className="absolute bottom-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl translate-x-1/2 translate-y-1/2" />
-                </div>
-                <div className="relative">
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl mb-4">
-                    <Icon
-                      icon="solar:letter-check-bold-duotone"
-                      className="w-10 h-10 text-white"
-                    />
-                  </div>
-                  <h1 className="text-2xl font-bold text-white mb-2">
-                    Verify Your Email
-                  </h1>
-                  <p className="text-white/80 text-sm">Almost there!</p>
-                </div>
-              </div>
-              <div className="p-8 text-center">
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  We've sent a verification link to{" "}
-                  <span className="font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                    {formData.email}
-                  </span>
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                  Please check your inbox and click the link to complete your
-                  registration.
-                </p>
-                <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200/50 dark:border-amber-700/30 rounded-2xl p-4 mb-6">
-                  <p className="text-sm text-amber-800 dark:text-amber-300">
-                    💡 Didn't receive the email? Check your spam folder or
-                    request a new link.
-                  </p>
-                </div>
-                <Link href="/login">
-                  <Button
-                    variant="outline"
-                    className="w-full rounded-xl border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-                  >
-                    Back to Login
-                  </Button>
-                </Link>
-              </div>
-            </div>
           </div>
         </div>
       </>
@@ -298,7 +256,7 @@ export default function Register() {
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
-                {successMessage && !emailVerificationSent && (
+                {successMessage && (
                   <Alert className="rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300">
                     <Icon
                       icon="solar:check-circle-bold-duotone"

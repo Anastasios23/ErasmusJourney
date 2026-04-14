@@ -20,10 +20,6 @@ import {
 } from "../../../../../src/lib/experienceModeration";
 import { isExperienceReviewableStatus } from "../../../../../src/lib/experienceWorkflow";
 import { buildPublicDestinationSlug } from "../../../../../src/lib/publicRoutes";
-import {
-  calculateLivingExpensesTotal,
-  sanitizeLivingExpensesStepData,
-} from "../../../../../src/lib/livingExpenses";
 import { getClientSafeErrorMessage } from "../../../../../lib/databaseErrors";
 import { sendRequestChangesEmail } from "../../../../../src/server/moderationEmails";
 import { refreshPublicDestinationReadModel } from "../../../../../src/server/publicDestinations";
@@ -36,7 +32,7 @@ const PRISMA_DB_NULL = (require("@prisma/client") as any).Prisma.DbNull;
  * POST /api/admin/erasmus-experiences/[id]/review
  *
  * Actions:
- * - APPROVED: Approve submission, trigger stats calculation
+ * - APPROVED: Approve submission and refresh canonical public destination aggregates
  * - REJECTED: Reject submission with feedback
  * - REQUEST_CHANGES: Return submission to editable revision state and notify student
  * - WORDING_EDITED: Save public wording-only overrides without changing status
@@ -396,196 +392,6 @@ function formatWordingEditAuditFeedback(
         : `Updated ${change.label}`,
     )
     .join("; ");
-}
-
-/**
- * Calculate statistics for a city/country/semester combination
- * This runs asynchronously and doesn't block the response
- */
-async function calculateCityStats(
-  city: string,
-  country: string,
-  semester: string,
-) {
-  try {
-    // Get all APPROVED experiences for this city/country/semester
-    const experiences = await prisma.erasmusExperience.findMany({
-      where: {
-        hostCity: city,
-        hostCountry: country,
-        semester: semester,
-        status: EXPERIENCE_STATUS.APPROVED,
-      },
-    });
-
-    // Need minimum 5 submissions for statistics
-    if (experiences.length < 5) {
-      console.log(
-        `Not enough data for ${city}, ${country} (${semester}): ${experiences.length} submissions`,
-      );
-      return;
-    }
-
-    // Extract accommodation costs
-    const accommodationCosts: number[] = [];
-    experiences.forEach((exp) => {
-      const accommodation = exp.accommodation as any;
-      if (
-        accommodation?.monthlyRent &&
-        !isNaN(parseFloat(accommodation.monthlyRent))
-      ) {
-        accommodationCosts.push(parseFloat(accommodation.monthlyRent));
-      }
-    });
-
-    // Extract living expenses
-    const groceriesCosts: number[] = [];
-    const transportationCosts: number[] = [];
-    const socialLifeCosts: number[] = [];
-    const totalExpenseValues: number[] = [];
-
-    experiences.forEach((exp) => {
-      const accommodation = (exp.accommodation as any) || {};
-      const fallbackRent =
-        typeof accommodation.monthlyRent === "number"
-          ? accommodation.monthlyRent
-          : parseFloat(accommodation.monthlyRent || "") || null;
-      const expenses = sanitizeLivingExpensesStepData(
-        exp.livingExpenses as any,
-        {
-          fallbackRent,
-        },
-      );
-
-      if (typeof expenses.food === "number") {
-        groceriesCosts.push(expenses.food);
-      }
-      if (typeof expenses.transport === "number") {
-        transportationCosts.push(expenses.transport);
-      }
-      if (typeof expenses.social === "number") {
-        socialLifeCosts.push(expenses.social);
-      }
-
-      const totalExpense = calculateLivingExpensesTotal(expenses);
-
-      if (totalExpense > 0) {
-        totalExpenseValues.push(totalExpense);
-      }
-    });
-
-    // Calculate statistics with outlier removal
-    const rentStats = calculateStats(accommodationCosts);
-    const groceriesStats = calculateStats(groceriesCosts);
-    const transportStats = calculateStats(transportationCosts);
-    const socialStats = calculateStats(socialLifeCosts);
-    const totalExpenseStats = calculateStats(totalExpenseValues);
-
-    // Upsert city statistics
-    await prisma.cityStatistics.upsert({
-      where: {
-        city_country_semester: {
-          city,
-          country,
-          semester,
-        },
-      },
-      update: {
-        avgMonthlyRentCents: toCents(rentStats.avg),
-        medianRentCents: toCents(rentStats.median),
-        minRentCents: toCents(rentStats.min),
-        maxRentCents: toCents(rentStats.max),
-        rentSampleSize: accommodationCosts.length,
-        avgGroceriesCents: toCents(groceriesStats.avg),
-        avgTransportCents: toCents(transportStats.avg),
-        avgEatingOutCents: null,
-        avgSocialLifeCents: toCents(socialStats.avg),
-        avgTotalExpensesCents: toCents(totalExpenseStats.avg),
-        expenseSampleSize: totalExpenseValues.length,
-        lastCalculated: new Date(),
-      },
-      create: {
-        city,
-        country,
-        semester,
-        avgMonthlyRentCents: toCents(rentStats.avg),
-        medianRentCents: toCents(rentStats.median),
-        minRentCents: toCents(rentStats.min),
-        maxRentCents: toCents(rentStats.max),
-        rentSampleSize: accommodationCosts.length,
-        avgGroceriesCents: toCents(groceriesStats.avg),
-        avgTransportCents: toCents(transportStats.avg),
-        avgEatingOutCents: null,
-        avgSocialLifeCents: toCents(socialStats.avg),
-        avgTotalExpensesCents: toCents(totalExpenseStats.avg),
-        expenseSampleSize: totalExpenseValues.length,
-      },
-    });
-
-    console.log(
-      `✅ Stats calculated for ${city}, ${country} (${semester}): ${experiences.length} submissions`,
-    );
-  } catch (error) {
-    console.error("Error calculating city stats:", error);
-    throw error;
-  }
-}
-
-/**
- * Calculate statistics with outlier removal (remove top/bottom 5%)
- */
-function calculateStats(values: number[]): {
-  avg: number | null;
-  median: number | null;
-  min: number | null;
-  max: number | null;
-} {
-  if (values.length === 0) {
-    return { avg: null, median: null, min: null, max: null };
-  }
-
-  if (values.length < 10) {
-    // For small datasets, don't remove outliers
-    const avg = values.reduce((a, b) => a + b, 0) / values.length;
-    const sorted = [...values].sort((a, b) => a - b);
-    const middle = Math.floor(sorted.length / 2);
-    const median =
-      sorted.length % 2 !== 0
-        ? sorted[middle]
-        : (sorted[middle - 1] + sorted[middle]) / 2;
-
-    return {
-      avg: Math.round(avg * 100) / 100,
-      median: Math.round(median * 100) / 100,
-      min: Math.min(...values),
-      max: Math.max(...values),
-    };
-  }
-
-  // Sort values
-  const sorted = [...values].sort((a, b) => a - b);
-
-  // Remove top and bottom 5%
-  const removeCount = Math.floor(sorted.length * 0.05);
-  const filtered = sorted.slice(removeCount, sorted.length - removeCount);
-
-  const avg = filtered.reduce((a, b) => a + b, 0) / filtered.length;
-  const middle = Math.floor(filtered.length / 2);
-  const median =
-    filtered.length % 2 !== 0
-      ? filtered[middle]
-      : (filtered[middle - 1] + filtered[middle]) / 2;
-
-  return {
-    avg: Math.round(avg * 100) / 100,
-    median: Math.round(median * 100) / 100,
-    min: Math.min(...filtered),
-    max: Math.max(...filtered),
-  };
-}
-
-function toCents(value: number | null) {
-  return typeof value === "number" ? Math.round(value * 100) : null;
 }
 
 /**
