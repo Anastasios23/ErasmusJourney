@@ -12,6 +12,12 @@ import {
   getAdminPublicImpactPreviewUnavailableReasonByExperienceId,
 } from "../../../src/server/publicDestinations";
 
+// READ-ONLY - this route serves the admin submission list only.
+// All write operations (approve, reject, request changes,
+// unpublish, wording override) belong exclusively to:
+//   /api/admin/erasmus-experiences/[id]/review
+//   /api/admin/erasmus-experiences/[id]/wording-override
+
 function buildDisplayName(user: {
   firstName?: string | null;
   lastName?: string | null;

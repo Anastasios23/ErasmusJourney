@@ -61,6 +61,22 @@ type ExperienceRecord = {
 
 type ExperienceUpdateData = Record<string, unknown>;
 
+type SubmissionCompletenessCandidate = {
+  id: string;
+  hostCity?: string | null;
+  hostUniversityId?: string | null;
+  homeUniversityId?: string | null;
+};
+
+type SubmissionCompletenessReader = {
+  courseMapping: {
+    count: (args: { where: { experienceId: string } }) => Promise<number>;
+  };
+  accommodationReview: {
+    count: (args: { where: { experienceId: string } }) => Promise<number>;
+  };
+};
+
 function assertEditableExperienceStatus(experience: ExperienceRecord): void {
   if (isStudentEditableExperienceStatus(experience.status)) {
     return;
@@ -371,6 +387,53 @@ function validateSubmissionData(
   }
 }
 
+async function assertSubmissionCompleteness(
+  tx: SubmissionCompletenessReader,
+  experience: SubmissionCompletenessCandidate,
+): Promise<void> {
+  const missing: string[] = [];
+
+  if (
+    typeof experience.hostCity !== "string" ||
+    experience.hostCity.trim().length === 0
+  ) {
+    missing.push("Host city");
+  }
+
+  if (!experience.hostUniversityId) {
+    missing.push("Host university");
+  }
+
+  if (!experience.homeUniversityId) {
+    missing.push("Home university");
+  }
+
+  const [courseMappingCount, accommodationReviewCount] = await Promise.all([
+    tx.courseMapping.count({
+      where: { experienceId: experience.id },
+    }),
+    tx.accommodationReview.count({
+      where: { experienceId: experience.id },
+    }),
+  ]);
+
+  if (courseMappingCount === 0) {
+    missing.push("At least one course mapping");
+  }
+
+  if (accommodationReviewCount === 0) {
+    missing.push("At least one accommodation review");
+  }
+
+  if (missing.length > 0) {
+    throw new ErasmusExperienceHttpError(422, {
+      error: "SUBMISSION_INCOMPLETE",
+      message: "Your submission is missing required information.",
+      missing,
+    });
+  }
+}
+
 export async function listExperiencesForUser(
   userId: string,
 ): Promise<ExperienceRecord[]> {
@@ -554,20 +617,33 @@ export async function submitExperience(
 
   const updatedExperience = await retryDatabaseOperation(() =>
     prisma.$transaction(async (tx) => {
+      const submissionCandidate = {
+        id: existingExperience.id,
+        status: EXPERIENCE_STATUS.SUBMITTED,
+        isComplete: true,
+        hostCity:
+          (submissionData.hostCity as string | null | undefined) ??
+          existingExperience.hostCity,
+        hostCountry:
+          (submissionData.hostCountry as string | null | undefined) ??
+          existingExperience.hostCountry,
+        hostUniversityId:
+          (submissionData.hostUniversityId as string | null | undefined) ??
+          existingExperience.hostUniversityId,
+        homeUniversityId:
+          (submissionData.homeUniversityId as string | null | undefined) ??
+          existingExperience.homeUniversityId,
+        courses: submissionData.courses ?? existingExperience.courses,
+        accommodation:
+          submissionData.accommodation ?? existingExperience.accommodation,
+      };
+
+      await persistSubmissionArtifacts(tx, submissionCandidate);
+      await assertSubmissionCompleteness(tx, submissionCandidate);
+
       const experience = await tx.erasmusExperience.update({
         where: { id: experienceId },
         data: submissionData,
-      });
-
-      await persistSubmissionArtifacts(tx, {
-        id: experience.id,
-        status: experience.status,
-        isComplete: experience.isComplete,
-        hostCity: experience.hostCity,
-        hostCountry: experience.hostCountry,
-        hostUniversityId: experience.hostUniversityId,
-        courses: experience.courses,
-        accommodation: experience.accommodation,
       });
 
       return experience;

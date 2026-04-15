@@ -5,6 +5,7 @@ import { prisma } from "../../../../../lib/prisma";
 import { buildPreviewUnavailableReason } from "../../../../../src/lib/adminPublicImpactPreview";
 import {
   EXPERIENCE_STATUS,
+  MAX_REVISION_COUNT,
   REVIEW_ACTION,
 } from "../../../../../src/lib/canonicalWorkflow";
 import { sanitizeBasicInformationData } from "../../../../../src/lib/basicInformation";
@@ -131,7 +132,7 @@ export default async function handler(
     // Check revision limit
     if (
       requestAction === REVIEW_ACTION.REQUEST_CHANGES &&
-      experience.revisionCount >= 1
+      experience.revisionCount >= MAX_REVISION_COUNT
     ) {
       return res.status(400).json({
         error: "Maximum revision limit reached. Please approve or reject.",

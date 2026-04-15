@@ -13,6 +13,8 @@ export const REVIEW_ACTION = {
   WORDING_EDITED: "WORDING_EDITED",
 } as const;
 
+export const MAX_REVISION_COUNT = 1;
+
 export type ErasmusExperienceStatus =
   (typeof EXPERIENCE_STATUS)[keyof typeof EXPERIENCE_STATUS];
 export type ReviewActionType =
