@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 
+import { isCyprusUniversityEmail } from "../../../lib/authUtils";
 import { isDatabaseConnectionError } from "../../../lib/databaseErrors";
 import { prisma } from "../../../lib/prisma";
 import {
@@ -215,6 +216,15 @@ async function ensureUserRecordExists(
     ) as { id: string } | null;
 
     if (!userByEmail) {
+      const email = user.email;
+
+      if (!isCyprusUniversityEmail(email)) {
+        throw new Error(
+          "UNAUTHORIZED_DOMAIN: Only Cyprus university email addresses " +
+            "may create a submission account.",
+        );
+      }
+
       await retryDatabaseOperation(() =>
         prisma.users.create({
           data: {
@@ -556,6 +566,14 @@ export async function submitExperience(
   updateData: ExperienceUpdateData,
   onStatsRefreshError?: (error: unknown, context: { experienceId: string }) => void,
 ): Promise<ExperienceRecord> {
+  if (!isCyprusUniversityEmail(user.email || "")) {
+    throw new ErasmusExperienceHttpError(403, {
+      success: false,
+      error: "UNAUTHORIZED_DOMAIN",
+      message: "Only Cyprus university email addresses may submit.",
+    });
+  }
+
   const normalizedUpdateData = normalizeIncomingUpdateData(updateData);
   assertCanonicalLivingExpensesPayload(normalizedUpdateData);
 

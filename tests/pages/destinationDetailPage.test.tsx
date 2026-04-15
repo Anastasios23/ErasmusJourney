@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const mockGetDestinationDetail = vi.fn();
+const mockGetDestinationReadModel = vi.fn();
 const mockGetDestinationList = vi.fn();
 
 vi.mock("next/head", () => ({
@@ -22,7 +22,7 @@ vi.mock("../../src/components/PublicDestinationSubnav", () => ({
 }));
 
 vi.mock("../../src/server/publicDestinations", () => ({
-  getPublicDestinationDetailBySlug: mockGetDestinationDetail,
+  getPublicDestinationReadModelBySlug: mockGetDestinationReadModel,
   getPublicDestinationList: mockGetDestinationList,
 }));
 
@@ -35,7 +35,7 @@ describe("destination detail page", () => {
     vi.clearAllMocks();
   });
 
-  it("renders the public signal notice for approved destination data", () => {
+  it("renders the public destination read model with sparse-data trust signals", () => {
     render(
       <DestinationDetailPage
         destination={{
@@ -43,60 +43,116 @@ describe("destination detail page", () => {
           city: "Amsterdam",
           country: "Netherlands",
           hostUniversityCount: 2,
-          submissionCount: 4,
+          submissionCount: 2,
           latestReportSubmittedAt: "2026-02-18T00:00:00.000Z",
-          isLimitedData: true,
           averageRent: null,
           averageMonthlyCost: null,
-          accommodationSummary: {
-            sampleSize: 3,
+          detail: {
+            slug: "amsterdam-netherlands",
+            city: "Amsterdam",
+            country: "Netherlands",
+            hostUniversityCount: 2,
+            submissionCount: 2,
+            latestReportSubmittedAt: "2026-02-18T00:00:00.000Z",
             isLimitedData: true,
             averageRent: null,
-            types: [],
-            difficulty: [],
-          },
-          costSummary: {
-            currency: "EUR",
-            sampleSize: 4,
-            isLimitedData: true,
-            averageRent: null,
-            averageFood: null,
-            averageTransport: null,
-            averageSocial: null,
-            averageTravel: null,
-            averageOther: null,
             averageMonthlyCost: null,
+            accommodationSummary: {
+              sampleSize: 2,
+              isLimitedData: true,
+              averageRent: null,
+              types: [],
+              difficulty: [],
+            },
+            costSummary: {
+              currency: "EUR",
+              sampleSize: 2,
+              isLimitedData: true,
+              averageRent: null,
+              averageFood: null,
+              averageTransport: null,
+              averageSocial: null,
+              averageTravel: null,
+              averageOther: null,
+              averageMonthlyCost: null,
+            },
+            courseSampleSize: 2,
+            courseIsLimitedData: true,
+            courseEquivalenceExamples: [],
+            practicalTips: [],
           },
-          courseSampleSize: 2,
-          courseIsLimitedData: true,
-          courseEquivalenceExamples: [],
-          practicalTips: [],
+          accommodation: {
+            slug: "amsterdam-netherlands",
+            city: "Amsterdam",
+            country: "Netherlands",
+            hostUniversityCount: 2,
+            submissionCount: 2,
+            latestReportSubmittedAt: "2026-02-18T00:00:00.000Z",
+            isLimitedData: true,
+            currency: "EUR",
+            sampleSize: 2,
+            rentSampleSize: 2,
+            averageRent: null,
+            recommendationRate: null,
+            recommendationSampleSize: 2,
+            recommendationYesCount: 1,
+            types: [{ type: "Shared flat", count: 2, averageRent: null }],
+            difficulty: [],
+            commonAreas: [{ name: "Centrum", count: 2 }],
+            reviewSnippets: [],
+          },
+          courseEquivalences: {
+            slug: "amsterdam-netherlands",
+            city: "Amsterdam",
+            country: "Netherlands",
+            hostUniversityCount: 2,
+            submissionCount: 2,
+            latestReportSubmittedAt: "2026-02-18T00:00:00.000Z",
+            isLimitedData: true,
+            homeUniversityCount: 1,
+            totalMappings: 1,
+            groups: [
+              {
+                homeUniversity: "University of Cyprus",
+                mappingCount: 1,
+                hostUniversities: ["University of Amsterdam"],
+                examples: [
+                  {
+                    homeCourseName: "Algorithms",
+                    hostCourseName: "Algorithms and Complexity",
+                    credits: 6,
+                    recognitionType: "Full equivalence",
+                  },
+                ],
+              },
+            ],
+          },
         }}
       />,
     );
 
-    expect(screen.getAllByText("Limited data").length).toBeGreaterThan(0);
     expect(
       screen.getByText(
-        "Based on 4 approved submissions across 2 host universities.",
+        "Based on 2 student reports · Last updated February 2026",
       ),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        /city-level averages and summary claims stay hidden until at least 5 approved submissions are available/i,
+        /Limited data — fewer than 3 reports available for this city/i,
       ),
     ).toBeInTheDocument();
+    expect(screen.getAllByText("Not enough data").length).toBeGreaterThan(0);
+    expect(screen.getByText("Shared flat")).toBeInTheDocument();
+    expect(screen.getByText("Centrum (n=2)")).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "View housing insights" }),
-    ).toHaveAttribute("href", "/destinations/amsterdam-netherlands/accommodation");
-    expect(
-      screen.getByRole("link", { name: "View course equivalences" }),
-    ).toHaveAttribute("href", "/destinations/amsterdam-netherlands/courses");
-    expect(screen.getAllByText("N/A").length).toBeGreaterThan(0);
+      screen.getByText(/These are peer examples shared by previous students/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Algorithms")).toBeInTheDocument();
+    expect(screen.getByText("Algorithms and Complexity")).toBeInTheDocument();
   });
 
   it("returns notFound for an invalid destination slug", async () => {
-    mockGetDestinationDetail.mockResolvedValue(null);
+    mockGetDestinationReadModel.mockResolvedValue(null);
     mockGetDestinationList.mockResolvedValue([]);
 
     const result = await getStaticProps({

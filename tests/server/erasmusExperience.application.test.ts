@@ -153,7 +153,7 @@ describe("erasmusExperience application guards", () => {
     await expect(
       submitExperience(
         "exp-1",
-        { id: "user-1", email: "student@example.com" },
+        { id: "user-1", email: "student@ucy.ac.cy" },
         {},
       ),
     ).rejects.toMatchObject({
