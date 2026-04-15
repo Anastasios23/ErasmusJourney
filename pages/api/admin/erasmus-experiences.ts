@@ -12,11 +12,14 @@ import {
   getAdminPublicImpactPreviewUnavailableReasonByExperienceId,
 } from "../../../src/server/publicDestinations";
 
-// READ-ONLY - this route serves the admin submission list only.
-// All write operations (approve, reject, request changes,
-// unpublish, wording override) belong exclusively to:
-//   /api/admin/erasmus-experiences/[id]/review
-//   /api/admin/erasmus-experiences/[id]/wording-override
+// READ-ONLY LIST ENDPOINT
+// This flat file handles GET /api/admin/erasmus-experiences (list/filter).
+// All per-experience write operations live exclusively in the directory:
+//   /api/admin/erasmus-experiences/[id]/review          (approve/reject/unpublish)
+//   /api/admin/erasmus-experiences/[id]/wording-override (wording edits)
+//   /api/admin/erasmus-experiences/[id]/preview         (preview render)
+// Do not add write logic here. Do not delete this file — it is the
+// canonical list endpoint used by the admin review UI.
 
 function buildDisplayName(user: {
   firstName?: string | null;
