@@ -103,10 +103,7 @@ async function getApiErrorMessage(
     const payload = await response.json();
 
     return (
-      payload?.details ||
-      payload?.message ||
-      payload?.error ||
-      fallbackMessage
+      payload?.details || payload?.message || payload?.error || fallbackMessage
     );
   } catch {
     return fallbackMessage;
@@ -270,7 +267,8 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
     async (stepData: Partial<ErasmusExperienceData>): Promise<boolean> => {
       if (!data?.id) {
         const errorMsg =
-          error || "No experience found. Please refresh the page and try again.";
+          error ||
+          "No experience found. Please refresh the page and try again.";
         setError(errorMsg);
         console.error("saveProgress failed: no data.id", { data });
         return false;
@@ -434,6 +432,7 @@ export function useErasmusExperience(): UseErasmusExperienceReturn {
           const errorData = await response.json().catch(() => ({}));
           console.error("❌ API Error Response:", errorData);
           const errorMessage =
+            errorData.message ||
             errorData.details ||
             errorData.error ||
             `Failed to submit experience: ${response.status}`;
