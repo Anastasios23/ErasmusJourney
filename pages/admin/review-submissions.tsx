@@ -444,13 +444,15 @@ export default function ReviewSubmissions() {
 
       const result = await response.json();
       const { submitted: nextSubmissions } = await loadAdminData();
+      const emailStatus = result.emailStatus || result.notification?.status;
 
       if (
-        result.notification &&
-        result.notification.status &&
-        result.notification.status !== "sent"
+        action === REVIEW_ACTION.REQUEST_CHANGES &&
+        (emailStatus === "skipped" || emailStatus === "failed")
       ) {
-        setWarning(result.message);
+        setWarning(
+          "Changes requested. Student email could not be sent — notify them manually.",
+        );
         setSuccess(null);
       } else {
         setSuccess(result.message);

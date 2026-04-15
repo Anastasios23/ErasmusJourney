@@ -302,6 +302,8 @@ export default async function handler(
       },
     );
 
+    let refreshFailed = false;
+
     if (
       requestAction === REVIEW_ACTION.APPROVED ||
       requestAction === "UNPUBLISH"
@@ -324,6 +326,7 @@ export default async function handler(
             : "Error refreshing public destination read model after approval:",
           refreshError,
         );
+        refreshFailed = true;
       }
     }
 
@@ -355,7 +358,15 @@ export default async function handler(
       experience: updatedExperience,
       reviewAction: reviewActions[reviewActions.length - 1] ?? null,
       reviewActions,
-      ...(notification ? { notification } : {}),
+      ...(notification
+        ? {
+            notification,
+            ...(notification.status !== "sent"
+              ? { emailStatus: notification.status }
+              : {}),
+          }
+        : {}),
+      ...(refreshFailed ? { refreshFailed: true } : {}),
       message: getSuccessMessage(requestAction, {
         wordingEditsSaved: hasWordingChanges,
         notification,
