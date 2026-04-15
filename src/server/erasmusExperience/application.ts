@@ -176,11 +176,11 @@ async function getOwnedExperienceOrThrow(
   experienceId: string,
   userId: string,
 ): Promise<ExperienceRecord> {
-  const experience = await retryDatabaseOperation(() =>
+  const experience = (await retryDatabaseOperation(() =>
     prisma.erasmusExperience.findUnique({
       where: { id: experienceId },
     }),
-  ) as ExperienceRecord | null;
+  )) as ExperienceRecord | null;
 
   if (!experience) {
     throw new ErasmusExperienceHttpError(404, {
@@ -200,20 +200,20 @@ async function getOwnedExperienceOrThrow(
 async function ensureUserRecordExists(
   user: AuthenticatedExperienceUser,
 ): Promise<void> {
-  let userExists = await retryDatabaseOperation(() =>
+  let userExists = (await retryDatabaseOperation(() =>
     prisma.users.findUnique({
       where: { id: user.id },
       select: { id: true },
     }),
-  ) as { id: string } | null;
+  )) as { id: string } | null;
 
   if (!userExists && user.email) {
-    const userByEmail = await retryDatabaseOperation(() =>
+    const userByEmail = (await retryDatabaseOperation(() =>
       prisma.users.findUnique({
         where: { email: user.email! },
         select: { id: true },
       }),
-    ) as { id: string } | null;
+    )) as { id: string } | null;
 
     if (!userByEmail) {
       const email = user.email;
@@ -243,10 +243,13 @@ async function ensureUserRecordExists(
       return;
     }
 
-    console.error("[erasmus-experiences] Session mismatch during create action", {
-      sessionUserId: user.id,
-      databaseUserId: userByEmail.id,
-    });
+    console.error(
+      "[erasmus-experiences] Session mismatch during create action",
+      {
+        sessionUserId: user.id,
+        databaseUserId: userByEmail.id,
+      },
+    );
 
     throw new ErasmusExperienceHttpError(409, {
       error: "Session mismatch",
@@ -297,7 +300,8 @@ function applySubmitExperienceDataTransforms(
   const overallReflection = asRecord(updateData.overallReflection);
 
   if (overallReflection) {
-    const existingExperienceData = asRecord(existingExperience.experience) || {};
+    const existingExperienceData =
+      asRecord(existingExperience.experience) || {};
     submissionData.experience = {
       ...existingExperienceData,
       ...overallReflection,
@@ -308,7 +312,8 @@ function applySubmitExperienceDataTransforms(
   const incomingExperience = asRecord(updateData.experience);
 
   if (incomingExperience?.helpForStudents || existingExperience.experience) {
-    const existingExperienceData = asRecord(existingExperience.experience) || {};
+    const existingExperienceData =
+      asRecord(existingExperience.experience) || {};
     const existingHelpForStudents =
       asRecord(existingExperienceData.helpForStudents) || {};
     const incomingHelpForStudents =
@@ -469,17 +474,17 @@ export async function createDraft(
 ): Promise<CreateDraftResult> {
   await ensureUserRecordExists(user);
 
-  const existingExperience = await retryDatabaseOperation(() =>
+  const existingExperience = (await retryDatabaseOperation(() =>
     prisma.erasmusExperience.findUnique({
       where: { userId: user.id },
     }),
-  ) as ExperienceRecord | null;
+  )) as ExperienceRecord | null;
 
   if (existingExperience) {
     return { experience: existingExperience, created: false };
   }
 
-  const experience = await retryDatabaseOperation(() =>
+  const experience = (await retryDatabaseOperation(() =>
     prisma.erasmusExperience.create({
       data: {
         id: randomUUID(),
@@ -494,7 +499,7 @@ export async function createDraft(
         experience: {},
       },
     }),
-  ) as ExperienceRecord;
+  )) as ExperienceRecord;
 
   return { experience, created: true };
 }
@@ -523,9 +528,11 @@ export async function saveDraft(
       updateFields.livingExpenses,
       {
         fallbackRent:
-          (updateFields.accommodation as
-            | ReturnType<typeof sanitizeAccommodationStepData>
-            | undefined)?.monthlyRent ??
+          (
+            updateFields.accommodation as
+              | ReturnType<typeof sanitizeAccommodationStepData>
+              | undefined
+          )?.monthlyRent ??
           ((existingExperience.accommodation as Record<string, unknown> | null)
             ?.monthlyRent as number | null | undefined) ??
           null,
@@ -566,7 +573,10 @@ export async function submitExperience(
   experienceId: string,
   user: AuthenticatedExperienceUser,
   updateData: ExperienceUpdateData,
-  onStatsRefreshError?: (error: unknown, context: { experienceId: string }) => void,
+  onStatsRefreshError?: (
+    error: unknown,
+    context: { experienceId: string },
+  ) => void,
 ): Promise<ExperienceRecord> {
   if (!isCyprusUniversityEmail(user.email || "")) {
     throw new ErasmusExperienceHttpError(403, {
@@ -624,9 +634,11 @@ export async function submitExperience(
     normalizedUpdateData.livingExpenses ?? existingExperience.livingExpenses,
     {
       fallbackRent:
-        (submissionData.accommodation as ReturnType<
-          typeof sanitizeAccommodationStepData
-        >).monthlyRent ??
+        (
+          submissionData.accommodation as ReturnType<
+            typeof sanitizeAccommodationStepData
+          >
+        ).monthlyRent ??
         ((existingExperience.accommodation as Record<string, unknown> | null)
           ?.monthlyRent as number | null | undefined) ??
         null,
@@ -635,7 +647,7 @@ export async function submitExperience(
 
   validateSubmissionData(submissionData, existingExperience);
 
-  const updatedExperience = await retryDatabaseOperation(() =>
+  const updatedExperience = (await retryDatabaseOperation(() =>
     prisma.$transaction(async (tx) => {
       const submissionCandidate = {
         id: existingExperience.id,
@@ -668,7 +680,7 @@ export async function submitExperience(
 
       return experience;
     }),
-  ) as ExperienceRecord;
+  )) as ExperienceRecord;
 
   await refreshPublicDestinationReadModelIfNeeded({
     id: updatedExperience.id,
