@@ -8,7 +8,6 @@ import legacyAdminDestinationDetailHandler from "../../pages/api/admin/destinati
 import legacyAdminDestinationDetailNewHandler from "../../pages/api/admin/destinations/[id]-new";
 import legacyAdminDestinationsEnhancedHandler from "../../pages/api/admin/destinations/enhanced";
 import legacyAdminDestinationsBackupHandler from "../../pages/api/admin/destinations/index-backup";
-import legacyAdminDestinationsHandler from "../../pages/api/admin/destinations";
 import legacyAdminDestinationsManageHandler from "../../pages/api/admin/destinations/manage";
 import legacyAdminStoriesExportHandler from "../../pages/api/admin/stories/export";
 import legacyAdminStoryDetailHandler from "../../pages/api/admin/stories/[id]";
@@ -78,23 +77,6 @@ describe("stale canonical-conflicting routes", () => {
       expect.objectContaining({
         error: "Deprecated route",
         canonicalPath: "/api/admin/erasmus-experiences/[id]/review",
-      }),
-    );
-  });
-
-  it("returns 410 for the stale admin destinations route", async () => {
-    const res = createMockRes();
-
-    await legacyAdminDestinationsHandler(
-      createMockReq("GET") as any,
-      res as any,
-    );
-
-    expect(res.statusCode).toBe(410);
-    expect(res.jsonPayload).toEqual(
-      expect.objectContaining({
-        error: "Deprecated route",
-        canonicalPath: "/api/admin/erasmus-experiences",
       }),
     );
   });

@@ -199,7 +199,7 @@ describe("admin review submissions page", () => {
         };
       }
 
-      if (url.includes("/api/admin/destinations/live")) {
+      if (url.includes("/api/admin/destinations")) {
         return {
           ok: true,
           json: async () => [],
@@ -316,7 +316,7 @@ describe("admin review submissions page", () => {
           };
         }
 
-        if (url.includes("/api/admin/destinations/live")) {
+        if (url.includes("/api/admin/destinations")) {
           return {
             ok: true,
             json: async () => [
@@ -326,7 +326,7 @@ describe("admin review submissions page", () => {
                 country: "Netherlands",
                 submissionCount: 2,
                 averageRent: 550,
-                updatedAt: "2026-04-14T11:00:00.000Z",
+                latestReportSubmittedAt: "2026-04-14T11:00:00.000Z",
               },
             ],
           };
@@ -336,7 +336,7 @@ describe("admin review submissions page", () => {
           url.includes(
             "/api/admin/erasmus-experiences/experience-approved-1/review",
           ) &&
-          init?.method === "PATCH"
+          init?.method === "POST"
         ) {
           return {
             ok: true,
@@ -365,7 +365,7 @@ describe("admin review submissions page", () => {
       expect(mockFetch).toHaveBeenCalledWith(
         "/api/admin/erasmus-experiences/experience-approved-1/review",
         expect.objectContaining({
-          method: "PATCH",
+          method: "POST",
           body: expect.stringContaining("UNPUBLISH"),
         }),
       );
@@ -390,7 +390,7 @@ describe("admin review submissions page", () => {
         };
       }
 
-      if (url.includes("/api/admin/destinations/live")) {
+      if (url.includes("/api/admin/destinations")) {
         return {
           ok: true,
           json: async () => [
@@ -400,7 +400,7 @@ describe("admin review submissions page", () => {
               country: "Czech Republic",
               submissionCount: 3,
               averageRent: 480,
-              updatedAt: "2026-04-14T11:00:00.000Z",
+              latestReportSubmittedAt: "2026-04-14T11:00:00.000Z",
             },
           ],
         };

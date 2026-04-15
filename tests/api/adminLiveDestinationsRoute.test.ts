@@ -21,7 +21,7 @@ vi.mock("../../lib/prisma", () => ({
   },
 }));
 
-import handler from "../../pages/api/admin/destinations/live";
+import handler from "../../pages/api/admin/destinations";
 
 function createMockReq(method: string) {
   return {
@@ -69,7 +69,7 @@ describe("admin live destinations route", () => {
         country: "Czech Republic",
         submissionCount: 2,
         averageRent: 500,
-        updatedAt: new Date("2026-04-14T11:00:00.000Z"),
+        latestReportSubmittedAt: new Date("2026-04-14T11:00:00.000Z"),
       },
     ]);
   });
@@ -88,9 +88,12 @@ describe("admin live destinations route", () => {
         country: true,
         submissionCount: true,
         averageRent: true,
-        updatedAt: true,
+        latestReportSubmittedAt: true,
       },
-      orderBy: [{ submissionCount: "desc" }, { updatedAt: "desc" }],
+      orderBy: [
+        { submissionCount: "desc" },
+        { latestReportSubmittedAt: "desc" },
+      ],
     });
     expect(res.jsonPayload).toEqual([
       {
@@ -99,7 +102,7 @@ describe("admin live destinations route", () => {
         country: "Czech Republic",
         submissionCount: 2,
         averageRent: 500,
-        updatedAt: new Date("2026-04-14T11:00:00.000Z"),
+        latestReportSubmittedAt: new Date("2026-04-14T11:00:00.000Z"),
       },
     ]);
   });

@@ -95,7 +95,7 @@ interface LiveDestinationRow {
   country: string;
   submissionCount: number;
   averageRent: number | null;
-  updatedAt: string;
+  latestReportSubmittedAt: string | null;
 }
 
 interface ApprovedWordingEditState {
@@ -359,7 +359,7 @@ export default function ReviewSubmissions() {
         await Promise.all([
           fetch("/api/admin/erasmus-experiences?status=SUBMITTED"),
           fetch("/api/admin/erasmus-experiences?status=APPROVED"),
-          fetch("/api/admin/destinations/live"),
+          fetch("/api/admin/destinations"),
         ]);
 
       if (!submittedResponse.ok || !approvedResponse.ok || !liveResponse.ok) {
@@ -380,8 +380,8 @@ export default function ReviewSubmissions() {
         }
 
         return (
-          new Date(right.updatedAt).getTime() -
-          new Date(left.updatedAt).getTime()
+          new Date(right.latestReportSubmittedAt || 0).getTime() -
+          new Date(left.latestReportSubmittedAt || 0).getTime()
         );
       });
 
@@ -587,7 +587,7 @@ export default function ReviewSubmissions() {
       const response = await fetch(
         `/api/admin/erasmus-experiences/${submission.id}/review`,
         {
-          method: "PATCH",
+          method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             action: "UNPUBLISH",
@@ -1500,7 +1500,9 @@ export default function ReviewSubmissions() {
                           <th className="py-2 pr-4 font-medium">
                             Average rent
                           </th>
-                          <th className="py-2 pr-4 font-medium">Updated</th>
+                          <th className="py-2 pr-4 font-medium">
+                            Latest report
+                          </th>
                           <th className="py-2 pr-4 font-medium">Live</th>
                         </tr>
                       </thead>
@@ -1518,7 +1520,9 @@ export default function ReviewSubmissions() {
                                 : "-"}
                             </td>
                             <td className="py-2 pr-4">
-                              {formatSubmissionTimestamp(destination.updatedAt)}
+                              {formatSubmissionTimestamp(
+                                destination.latestReportSubmittedAt,
+                              )}
                             </td>
                             <td className="py-2 pr-4">
                               <Link
