@@ -52,43 +52,33 @@ describe("destinations page", () => {
       />,
     );
 
-    const amsterdamCard = screen
-      .getByRole("heading", { name: "Amsterdam, Netherlands" })
-      .closest("a");
+    const amsterdamHeading = screen.getByRole("heading", { name: "Amsterdam" });
+    const amsterdamLink = within(amsterdamHeading).getByRole("link", {
+      name: "Amsterdam",
+    });
+    const amsterdamCard = amsterdamHeading.closest(".rounded-lg");
 
     expect(amsterdamCard).not.toBeNull();
-    expect(amsterdamCard).toHaveAttribute(
+    expect(amsterdamLink).toHaveAttribute(
       "href",
       "/destinations/amsterdam-netherlands",
     );
     expect(
+      within(amsterdamCard as HTMLElement).getByText("7 student reports"),
+    ).toBeInTheDocument();
+    expect(
+      within(amsterdamCard as HTMLElement).getByText("Netherlands"),
+    ).toBeInTheDocument();
+    expect(
       within(amsterdamCard as HTMLElement).getByText(
-        "Based on 7 approved submissions",
+        /Avg rent:\s*€650\/mo/,
       ),
     ).toBeInTheDocument();
     expect(
       within(amsterdamCard as HTMLElement).getByText(
-        "Stronger signal",
+        /Last report:\s*February 2026/,
       ),
     ).toBeInTheDocument();
-    expect(
-      within(amsterdamCard as HTMLElement).getByText(
-        "Enough approved reports are available to compare recurring patterns more confidently, while still allowing for personal variation.",
-      ),
-    ).toBeInTheDocument();
-    expect(
-      within(amsterdamCard as HTMLElement).getByText(
-        "Latest approved report: Feb 18, 2026",
-      ),
-    ).toBeInTheDocument();
-    expect(
-      within(amsterdamCard as HTMLElement).getByText("Avg rent"),
-    ).toBeInTheDocument();
-    expect(amsterdamCard).toHaveTextContent("650");
-    expect(
-      within(amsterdamCard as HTMLElement).getByText("Avg monthly budget"),
-    ).toBeInTheDocument();
-    expect(amsterdamCard).toHaveTextContent("1,150");
   });
 
   it("filters destinations by search query", () => {
@@ -111,21 +101,14 @@ describe("destinations page", () => {
       />,
     );
 
-    fireEvent.change(
-      screen.getByPlaceholderText("Search by city or country"),
-      {
-        target: { value: "copen" },
-      },
-    );
-
     expect(
-      screen.getByRole("heading", { name: "Copenhagen, Denmark" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole("heading", { name: "Amsterdam, Netherlands" }),
+      screen.queryByPlaceholderText("Search by city or country"),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByText('Showing 1 of 2 destinations for "copen".'),
+      screen.getByRole("heading", { name: "Copenhagen" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Amsterdam" }),
     ).toBeInTheDocument();
   });
 
@@ -150,22 +133,27 @@ describe("destinations page", () => {
     );
 
     fireEvent.click(screen.getByRole("combobox"));
-    fireEvent.click(screen.getByText("Denmark"));
+    fireEvent.click(screen.getByRole("option", { name: "Denmark" }));
 
     expect(
-      screen.queryByRole("heading", { name: "Amsterdam, Netherlands" }),
+      screen.queryByRole("heading", { name: "Amsterdam" }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Copenhagen, Denmark" }),
+      screen.getByRole("heading", { name: "Copenhagen" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Showing 1 of 2 destinations.")).toBeInTheDocument();
+    expect(
+      screen.getByRole("combobox"),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("combobox")).toHaveTextContent("Denmark");
   });
 
   it("renders an empty state when there are no approved destinations", () => {
     render(<DestinationsPage destinations={[]} />);
 
     expect(
-      screen.getByText("No approved destination data available yet."),
+      screen.getByText(
+        /No destinations have been reported yet\.\s*Be the first to share your Erasmus experience\./,
+      ),
     ).toBeInTheDocument();
   });
 
@@ -190,32 +178,24 @@ describe("destinations page", () => {
     );
 
     fireEvent.click(screen.getByRole("combobox"));
-    fireEvent.click(screen.getByText("Denmark"));
-
-    fireEvent.change(
-      screen.getByPlaceholderText("Search by city or country"),
-      {
-        target: { value: "amsterdam" },
-      },
-    );
+    fireEvent.click(screen.getByRole("option", { name: "Denmark" }));
 
     expect(
-      screen.getByText(
-        "No destinations match the current search and filter selection.",
-      ),
+      screen.queryByRole("heading", { name: "Amsterdam" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Copenhagen" }),
     ).toBeInTheDocument();
   });
 
   it("keeps the country filter available for narrowing the list", () => {
-    render(
-      <DestinationsPage
-        destinations={[
-          createDestination(),
-        ]}
-      />,
-    );
+    render(<DestinationsPage destinations={[createDestination()]} />);
 
     expect(screen.getByRole("combobox")).toHaveTextContent("All countries");
-    expect(screen.getByText("Showing 1 of 1 destinations.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("combobox"));
+    fireEvent.click(screen.getByRole("option", { name: "Netherlands" }));
+    expect(
+      screen.getByRole("heading", { name: "Amsterdam" }),
+    ).toBeInTheDocument();
   });
 });
