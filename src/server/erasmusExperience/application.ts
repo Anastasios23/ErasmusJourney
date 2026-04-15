@@ -219,10 +219,12 @@ async function ensureUserRecordExists(
       const email = user.email;
 
       if (!isCyprusUniversityEmail(email)) {
-        throw new Error(
-          "UNAUTHORIZED_DOMAIN: Only Cyprus university email addresses " +
-            "may create a submission account.",
-        );
+        throw new ErasmusExperienceHttpError(403, {
+          success: false,
+          error: "UNAUTHORIZED_DOMAIN",
+          message:
+            "Only Cyprus university email addresses may create a submission account.",
+        });
       }
 
       await retryDatabaseOperation(() =>
