@@ -6,37 +6,206 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import Header from "../../components/Header";
 import Footer from "../../src/components/Footer";
 import PublicDestinationSubnav from "../../src/components/PublicDestinationSubnav";
-import PublicDestinationSignalNotice from "../../src/components/PublicDestinationSignalNotice";
+import { Badge } from "../../src/components/ui/badge";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../../src/components/ui/card";
-import {
-  formatPublicDestinationFreshness,
-  formatPublicDestinationMoney,
-  getPublicDestinationCurrencyMeta,
-} from "../../src/lib/publicDestinationPresentation";
-import { PUBLIC_DESTINATION_PAGE_REVALIDATE_SECONDS } from "../../src/lib/publicDestinationCache";
-import type { PublicDestinationDetail } from "../../src/types/publicDestinations";
+import { getPublicDestinationCurrencyMeta } from "../../src/lib/publicDestinationPresentation";
+import type {
+  PublicDestinationCourseEquivalenceItem,
+  PublicDestinationReadModelDetail,
+} from "../../src/types/publicDestinations";
+
+const PAGE_REVALIDATE_SECONDS = 3600;
 
 interface DestinationDetailPageProps {
-  destination: PublicDestinationDetail;
+  destination: PublicDestinationReadModelDetail;
 }
 
-function DestinationSummaryCard({
+type JsonRecord = Record<string, unknown>;
+
+interface ExperiencePreview {
+  homeUniversity: string;
+  semester: string;
+  accommodationSummary: string;
+  recommendation: "Yes" | "No" | "Not enough data";
+}
+
+interface CourseTableRow {
+  homeUniversity: string;
+  homeCourseName: string;
+  hostCourseName: string;
+  credits: number | null;
+  status: string | null;
+}
+
+function isRecord(value: unknown): value is JsonRecord {
+  return Boolean(value && typeof value === "object" && !Array.isArray(value));
+}
+
+function readStringField(
+  record: JsonRecord,
+  keys: string[],
+  maxLength = 160,
+): string | null {
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value !== "string") {
+      continue;
+    }
+
+    const normalized = value.trim().replace(/\s+/g, " ");
+    if (normalized) {
+      return normalized.slice(0, maxLength);
+    }
+  }
+
+  return null;
+}
+
+function readRecommendation(value: unknown): "Yes" | "No" | "Not enough data" {
+  if (typeof value === "boolean") {
+    return value ? "Yes" : "No";
+  }
+
+  if (typeof value !== "string") {
+    return "Not enough data";
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (["yes", "true", "recommended", "would recommend"].includes(normalized)) {
+    return "Yes";
+  }
+
+  if (["no", "false", "not recommended", "would not recommend"].includes(normalized)) {
+    return "No";
+  }
+
+  return "Not enough data";
+}
+
+function formatMonthYear(value: string | null): string {
+  if (!value) {
+    return "Unknown";
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return "Unknown";
+  }
+
+  return parsed.toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function formatMoney(value: number | null, currency?: string | null): string {
+  if (value === null) {
+    return "Not enough data";
+  }
+
+  const meta = getPublicDestinationCurrencyMeta(currency);
+  const amount = Math.round(value).toLocaleString("en-US");
+  return meta.isMixed
+    ? `${amount} (${meta.amountSuffix})`
+    : `${amount} ${meta.amountSuffix}`;
+}
+
+function formatPercentage(value: number | null): string {
+  return value === null ? "Not enough data" : `${value}%`;
+}
+
+function formatCredits(value: number | null): string {
+  return value === null ? "Not enough data" : `${value} ECTS`;
+}
+
+function sampleLabel(sampleSize: number): string {
+  return `n=${Math.max(0, Math.trunc(sampleSize))}`;
+}
+
+function getCourseRows(
+  destination: PublicDestinationReadModelDetail,
+): CourseTableRow[] {
+  return destination.courseEquivalences.groups.flatMap((group) =>
+    group.examples.map((example: PublicDestinationCourseEquivalenceItem) => ({
+      homeUniversity: group.homeUniversity,
+      homeCourseName: example.homeCourseName,
+      hostCourseName: example.hostCourseName,
+      credits:
+        typeof example.credits === "number" && Number.isFinite(example.credits)
+          ? example.credits
+          : null,
+      status: example.recognitionType || null,
+    })),
+  );
+}
+
+function getExperiencePreviews(
+  destination: PublicDestinationReadModelDetail,
+): ExperiencePreview[] {
+  const detailRecord = isRecord(destination.detail)
+    ? (destination.detail as JsonRecord)
+    : null;
+  if (!detailRecord) {
+    return [];
+  }
+
+  const candidateKeys = [
+    "individualExperienceSummaries",
+    "approvedExperienceSummaries",
+    "experienceSummaries",
+  ];
+  const rawSummaries = candidateKeys
+    .map((key) => detailRecord[key])
+    .find((value): value is unknown[] => Array.isArray(value));
+
+  if (!rawSummaries) {
+    return [];
+  }
+
+  return rawSummaries
+    .filter(isRecord)
+    .map((summary) => ({
+      homeUniversity:
+        readStringField(summary, ["homeUniversity", "homeUniversityName"], 120) ||
+        "Anonymous home university",
+      semester:
+        readStringField(summary, ["semester", "exchangeSemester"], 80) ||
+        "Semester not reported",
+      accommodationSummary:
+        readStringField(
+          summary,
+          ["accommodationSummary", "housingSummary", "accommodation"],
+          140,
+        ) || "No accommodation summary reported.",
+      recommendation: readRecommendation(
+        summary.recommendation ?? summary.wouldRecommend,
+      ),
+    }))
+    .slice(0, 6);
+}
+
+function StatCard({
   label,
   value,
+  sampleSize,
 }: {
   label: string;
   value: React.ReactNode;
+  sampleSize: number;
 }) {
   return (
-    <Card className="border-slate-200 shadow-sm">
-      <CardContent className="pt-5">
-        <p className="text-sm text-slate-500">{label}</p>
-        <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
+    <Card className="border-slate-200 bg-white shadow-sm">
+      <CardContent className="pt-6">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm font-medium text-slate-600">{label}</p>
+          <Badge variant="secondary">{sampleLabel(sampleSize)}</Badge>
+        </div>
+        <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-950">
           {value}
         </p>
       </CardContent>
@@ -44,17 +213,10 @@ function DestinationSummaryCard({
   );
 }
 
-function PreviewItem({
-  label,
-  value,
-}: {
-  label: string;
-  value: React.ReactNode;
-}) {
+function EmptyState({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-start justify-between gap-4 rounded-xl bg-slate-50 px-4 py-3 text-sm">
-      <span className="text-slate-600">{label}</span>
-      <span className="text-right font-medium text-slate-950">{value}</span>
+    <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-5 py-8 text-sm text-slate-600">
+      {children}
     </div>
   );
 }
@@ -62,39 +224,28 @@ function PreviewItem({
 export default function DestinationDetailPage({
   destination,
 }: DestinationDetailPageProps) {
-  const currencyMeta = getPublicDestinationCurrencyMeta(
-    destination.costSummary.currency,
+  const latestReportMonth = formatMonthYear(
+    destination.latestReportSubmittedAt,
   );
-  const sortedAccommodationTypes = [
-    ...destination.accommodationSummary.types,
-  ].sort(
-    (left, right) =>
-      right.count - left.count || left.type.localeCompare(right.type),
-  );
-  const sortedAccommodationDifficulty = [
-    ...destination.accommodationSummary.difficulty,
-  ].sort(
-    (left, right) =>
-      right.count - left.count || left.level.localeCompare(right.level),
-  );
-  const topAccommodationType = sortedAccommodationTypes[0] ?? null;
-  const topAccommodationDifficulty = sortedAccommodationDifficulty[0] ?? null;
-  const highlightedCourseExample =
-    destination.courseEquivalenceExamples[0] ?? null;
-  const highlightedTip = destination.practicalTips[0] ?? null;
-  const accommodationPath = `/destinations/${destination.slug}/accommodation`;
-  const coursesPath = `/destinations/${destination.slug}/courses`;
   const submissionLabel =
-    destination.submissionCount === 1 ? "submission" : "submissions";
-  const hostUniversityLabel =
-    destination.hostUniversityCount === 1
-      ? "host university"
-      : "host universities";
-  const coursePreviewLine = highlightedCourseExample
-    ? `${highlightedCourseExample.homeCourseName} matched to ${highlightedCourseExample.hostCourseName}.`
-    : highlightedTip
-      ? highlightedTip
-      : "No preview has been published yet.";
+    destination.submissionCount === 1 ? "student report" : "student reports";
+  const hasSparseCityData = destination.submissionCount < 3;
+  const currency =
+    destination.detail.costSummary.currency ||
+    destination.accommodation.currency ||
+    "EUR";
+  const rentSampleSize =
+    destination.accommodation.rentSampleSize ||
+    destination.detail.costSummary.sampleSize;
+  const monthlyCostSampleSize = destination.detail.costSummary.sampleSize;
+  const hasAccommodationData =
+    destination.accommodation.sampleSize > 0 ||
+    destination.accommodation.rentSampleSize > 0 ||
+    destination.accommodation.types.length > 0 ||
+    destination.accommodation.commonAreas.length > 0 ||
+    destination.accommodation.recommendationSampleSize > 0;
+  const courseRows = getCourseRows(destination);
+  const experiencePreviews = getExperiencePreviews(destination);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -102,193 +253,263 @@ export default function DestinationDetailPage({
         <title>{`${destination.city}, ${destination.country} | Erasmus Journey`}</title>
         <meta
           name="description"
-          content={`Approved student insights for ${destination.city}, ${destination.country}.`}
+          content={`Student-reported Erasmus costs, accommodation data, and peer course examples for ${destination.city}, ${destination.country}.`}
         />
       </Head>
 
       <Header />
 
-      <main className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-        <section className="space-y-4">
+      <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+        <section className="space-y-5">
           <Link
             href="/destinations"
             className="inline-flex text-sm font-medium text-sky-700 underline underline-offset-4"
           >
             Back to destinations
           </Link>
-          <h1 className="max-w-3xl text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-            Quick overview for {destination.city}, {destination.country}
-          </h1>
-          <p className="max-w-3xl text-base leading-8 text-slate-600">
-            Based on approved student submissions from Cyprus universities.
-          </p>
-          <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm leading-6 text-slate-600 shadow-sm">
-            Approved student signals from {destination.submissionCount}{" "}
-            {submissionLabel}. Helpful for planning, not exact guarantees.
-            <span className="block pt-1">
-              Latest approved report:{" "}
-              {formatPublicDestinationFreshness(
-                destination.latestReportSubmittedAt,
-              )}
-            </span>
-            {destination.isLimitedData ? (
-              <span className="block pt-1">
-                Limited data. City-level averages and summary claims stay
-                hidden until at least 5 approved submissions are available.
-              </span>
-            ) : (
-              <span className="block pt-1">
-                Monthly rent is the minimum living-cost signal. Food,
-                transport, social, travel, and other reported costs deepen the
-                estimate when students provide them.
-              </span>
-            )}
-          </div>
-          {currencyMeta.isMixed ? (
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-900 shadow-sm">
-              Some reports use more than one currency. Treat costs as
-              directional rather than exact.
+
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="outline">{destination.country}</Badge>
+              <Badge variant="secondary">
+                {destination.submissionCount} {submissionLabel}
+              </Badge>
             </div>
-          ) : null}
-          <PublicDestinationSignalNotice
-            submissionCount={destination.submissionCount}
-            hostUniversityCount={destination.hostUniversityCount}
-          />
+            <h1 className="mt-5 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
+              {destination.city}
+            </h1>
+            <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">
+              Based on {destination.submissionCount} {submissionLabel} · Last
+              updated {latestReportMonth}
+            </p>
+          </div>
         </section>
 
-        <section className="mt-8 grid gap-4 sm:grid-cols-3">
-          <DestinationSummaryCard
-            label="Approved submissions"
-            value={destination.submissionCount}
-          />
-          <DestinationSummaryCard
-            label="Avg rent"
-            value={formatPublicDestinationMoney(
-              destination.averageRent,
-              destination.costSummary.currency,
-            )}
-          />
-          <DestinationSummaryCard
-            label="Avg monthly budget"
-            value={formatPublicDestinationMoney(
-              destination.averageMonthlyCost,
-              destination.costSummary.currency,
-            )}
-          />
-        </section>
-
-        <p className="mt-4 text-sm text-slate-500">
-          Reports in this overview cover {destination.hostUniversityCount}{" "}
-          {hostUniversityLabel}.
-        </p>
+        {hasSparseCityData ? (
+          <section className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-950">
+            Limited data — fewer than 3 reports available for this city. Figures
+            below are early estimates only.
+          </section>
+        ) : null}
 
         <div className="mt-8">
           <PublicDestinationSubnav slug={destination.slug} active="overview" />
         </div>
 
-        <section className="mt-8 grid gap-5 lg:grid-cols-2">
-          <Card className="border-slate-200 shadow-sm">
-            <CardHeader className="space-y-3">
-              <CardTitle className="text-2xl text-slate-950">Housing</CardTitle>
-              <p className="text-sm leading-6 text-slate-600">
-                See the main rent and housing signals before opening the full
-                breakdown.
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <PreviewItem
-                label="Avg rent"
-                value={formatPublicDestinationMoney(
-                  destination.averageRent,
-                  destination.costSummary.currency,
-                )}
-              />
-              <PreviewItem
-                label="Most common housing type"
-                value={
-                  destination.accommodationSummary.isLimitedData
-                    ? "Limited data"
-                    : topAccommodationType
-                    ? topAccommodationType.type
-                    : "Not enough data yet"
-                }
-              />
-              <PreviewItem
-                label="Most common difficulty"
-                value={
-                  destination.accommodationSummary.isLimitedData
-                    ? "Limited data"
-                    : topAccommodationDifficulty
-                    ? topAccommodationDifficulty.level
-                    : "Not enough data yet"
-                }
-              />
-              <div className="pt-2">
-                <Link
-                  href={accommodationPath}
-                  className="inline-flex text-sm font-medium text-sky-700 underline underline-offset-4"
-                >
-                  View housing insights
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+        <section className="mt-10 space-y-5">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
+              Living Cost
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
+              Student-reported living costs
+            </h2>
+          </div>
 
-          <Card className="border-slate-200 shadow-sm">
-            <CardHeader className="space-y-3">
-              <CardTitle className="text-2xl text-slate-950">
-                Courses & recognition
-              </CardTitle>
-              <p className="text-sm leading-6 text-slate-600">
-                Check whether this destination already has useful course matches
-                and practical advice.
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <PreviewItem
-                label="Approved course examples"
-                value={destination.courseSampleSize}
-              />
-              <PreviewItem
-                label="Practical tips"
-                value={destination.practicalTips.length}
-              />
-              {destination.courseIsLimitedData ? (
-                <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
-                  Limited data. Cross-course summary claims stay hidden until at
-                  least 3 approved course examples exist for this destination.
-                </div>
-              ) : null}
-              <div className="rounded-xl bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-700">
-                <p className="font-medium text-slate-950">Preview</p>
-                <p className="mt-1">{coursePreviewLine}</p>
-              </div>
-              <div className="pt-2">
-                <Link
-                  href={coursesPath}
-                  className="inline-flex text-sm font-medium text-sky-700 underline underline-offset-4"
-                >
-                  View course equivalences
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <StatCard
+              label="Average monthly rent"
+              sampleSize={rentSampleSize}
+              value={formatMoney(destination.averageRent, currency)}
+            />
+            <StatCard
+              label="Average monthly cost"
+              sampleSize={monthlyCostSampleSize}
+              value={formatMoney(destination.averageMonthlyCost, currency)}
+            />
+          </div>
         </section>
 
-        {highlightedTip ? (
-          <section className="mt-8">
-            <Card className="border-slate-200 shadow-sm">
-              <CardHeader className="space-y-3">
-                <CardTitle className="text-xl text-slate-950">
-                  One student tip to know first
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="max-w-3xl text-sm leading-7 text-slate-700">
-                  {highlightedTip}
-                </p>
-              </CardContent>
+        <section className="mt-12 space-y-5">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
+              Accommodation Data
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
+              Where students lived
+            </h2>
+          </div>
+
+          {!hasAccommodationData ? (
+            <EmptyState>No accommodation data reported yet.</EmptyState>
+          ) : (
+            <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+              <div className="space-y-4">
+                <StatCard
+                  label="Accommodation average rent"
+                  sampleSize={destination.accommodation.rentSampleSize}
+                  value={formatMoney(
+                    destination.accommodation.averageRent,
+                    destination.accommodation.currency,
+                  )}
+                />
+                <StatCard
+                  label="Would recommend"
+                  sampleSize={destination.accommodation.recommendationSampleSize}
+                  value={formatPercentage(
+                    destination.accommodation.recommendationRate,
+                  )}
+                />
+              </div>
+
+              <Card className="border-slate-200 bg-white shadow-sm">
+                <CardHeader>
+                  <CardTitle className="text-xl text-slate-950">
+                    Accommodation breakdown
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-700">
+                      Accommodation types
+                    </h3>
+                    {destination.accommodation.types.length === 0 ? (
+                      <p className="mt-2 text-sm text-slate-500">
+                        Not enough data
+                      </p>
+                    ) : (
+                      <div className="mt-3 space-y-2">
+                        {destination.accommodation.types.map((type) => (
+                          <div
+                            key={type.type}
+                            className="flex items-center justify-between gap-4 rounded-xl bg-slate-50 px-4 py-3 text-sm"
+                          >
+                            <span className="font-medium text-slate-800">
+                              {type.type}
+                            </span>
+                            <span className="text-slate-600">
+                              {sampleLabel(type.count)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-700">
+                      Neighborhood / area distribution
+                    </h3>
+                    {destination.accommodation.commonAreas.length === 0 ? (
+                      <p className="mt-2 text-sm text-slate-500">
+                        Not enough data
+                      </p>
+                    ) : (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {destination.accommodation.commonAreas.map((area) => (
+                          <Badge key={area.name} variant="secondary">
+                            {area.name} ({sampleLabel(area.count)})
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </section>
+
+        <section className="mt-12 space-y-5">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
+              Peer Course Equivalency Examples
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
+              Course matches students reported
+            </h2>
+          </div>
+
+          <div className="rounded-2xl border border-sky-200 bg-sky-50 px-5 py-4 text-sm leading-6 text-sky-950">
+            These are peer examples shared by previous students.
+            <br />
+            They are not official recognition decisions.
+            <br />
+            Contact your home university to confirm equivalency.
+          </div>
+
+          {destination.courseEquivalences.totalMappings < 3 &&
+          destination.courseEquivalences.totalMappings > 0 ? (
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-950">
+              Limited data — fewer than 3 course-match records available. The
+              table shows examples only, not summary claims.
+            </div>
+          ) : null}
+
+          {courseRows.length === 0 ? (
+            <EmptyState>No course equivalency examples reported yet.</EmptyState>
+          ) : (
+            <Card className="overflow-hidden border-slate-200 bg-white shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-slate-200 text-sm">
+                  <thead className="bg-slate-100 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">
+                    <tr>
+                      <th className="px-4 py-3">Home course</th>
+                      <th className="px-4 py-3">Host course</th>
+                      <th className="px-4 py-3">Credits</th>
+                      <th className="px-4 py-3">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 bg-white">
+                    {courseRows.map((row) => (
+                      <tr
+                        key={`${row.homeUniversity}-${row.homeCourseName}-${row.hostCourseName}-${row.status}`}
+                      >
+                        <td className="px-4 py-4 align-top">
+                          <p className="font-medium text-slate-950">
+                            {row.homeCourseName}
+                          </p>
+                          <p className="mt-1 text-xs text-slate-500">
+                            {row.homeUniversity}
+                          </p>
+                        </td>
+                        <td className="px-4 py-4 align-top text-slate-700">
+                          {row.hostCourseName}
+                        </td>
+                        <td className="px-4 py-4 align-top text-slate-700">
+                          {formatCredits(row.credits)}
+                        </td>
+                        <td className="px-4 py-4 align-top text-slate-700">
+                          {row.status || "Not enough data"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </Card>
+          )}
+        </section>
+
+        {experiencePreviews.length > 0 ? (
+          <section className="mt-12 space-y-5">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
+                Anonymous Experience Previews
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
+                Approved individual summaries
+              </h2>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              {experiencePreviews.map((preview) => (
+                <Card
+                  key={`${preview.homeUniversity}-${preview.semester}-${preview.accommodationSummary}`}
+                  className="border-slate-200 bg-white shadow-sm"
+                >
+                  <CardContent className="space-y-3 pt-6 text-sm text-slate-700">
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="secondary">{preview.semester}</Badge>
+                      <Badge variant="outline">{preview.homeUniversity}</Badge>
+                    </div>
+                    <p>{preview.accommodationSummary}</p>
+                    <p className="font-medium text-slate-950">
+                      Would recommend: {preview.recommendation}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </section>
         ) : null}
       </main>
@@ -330,10 +551,10 @@ export const getStaticProps: GetStaticProps<
     return { notFound: true };
   }
 
-  const { getPublicDestinationDetailBySlug, getPublicDestinationList } =
+  const { getPublicDestinationList, getPublicDestinationReadModelBySlug } =
     await import("../../src/server/publicDestinations");
 
-  const destination = await getPublicDestinationDetailBySlug(slug);
+  const destination = await getPublicDestinationReadModelBySlug(slug);
 
   if (!destination && !slug.includes("-")) {
     const destinations = await getPublicDestinationList();
@@ -359,6 +580,6 @@ export const getStaticProps: GetStaticProps<
     props: {
       destination,
     },
-    revalidate: PUBLIC_DESTINATION_PAGE_REVALIDATE_SECONDS,
+    revalidate: PAGE_REVALIDATE_SECONDS,
   };
 };

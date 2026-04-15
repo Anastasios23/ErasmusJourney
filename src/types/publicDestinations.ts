@@ -45,6 +45,7 @@ export interface PublicDestinationCostSummary {
 export interface PublicDestinationCourseExample {
   homeCourseName: string;
   hostCourseName: string;
+  credits?: number | null;
   recognitionType: string;
   notes?: string;
 }
@@ -79,6 +80,7 @@ export interface PublicDestinationCourseEquivalenceItem {
   homeCourseName: string;
   hostCourseName: string;
   hostUniversity?: string;
+  credits?: number | null;
   recognitionType: string;
   notes?: string;
 }
@@ -120,4 +122,18 @@ export interface PublicDestinationDetail {
   courseIsLimitedData: boolean;
   courseEquivalenceExamples: PublicDestinationCourseExample[];
   practicalTips: string[];
+}
+
+export interface PublicDestinationReadModelDetail {
+  slug: string;
+  city: string;
+  country: string;
+  hostUniversityCount: number;
+  submissionCount: number;
+  latestReportSubmittedAt: string | null;
+  averageRent: number | null;
+  averageMonthlyCost: number | null;
+  detail: PublicDestinationDetail;
+  accommodation: PublicDestinationAccommodationInsights;
+  courseEquivalences: PublicDestinationCourseEquivalences;
 }

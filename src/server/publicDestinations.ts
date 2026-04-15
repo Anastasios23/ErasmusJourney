@@ -28,6 +28,7 @@ import type {
   PublicDestinationCourseEquivalences,
   PublicDestinationDetail,
   PublicDestinationListItem,
+  PublicDestinationReadModelDetail,
 } from "../types/publicDestinations";
 
 type RawExperience = {
@@ -52,6 +53,7 @@ type GroupedCourseEquivalence = {
   hostUniversity?: string;
   homeCourseName: string;
   hostCourseName: string;
+  credits?: number | null;
   recognitionType: string;
   notes?: string;
 };
@@ -565,6 +567,7 @@ function buildGroupedDestinations(
         hostUniversity: hostUniversity || undefined,
         homeCourseName,
         hostCourseName,
+        credits: mapping.hostECTS ?? mapping.homeECTS ?? null,
         recognitionType: recognitionLabel(mapping.recognitionType),
         notes:
           sanitizePublicDestinationNarrative(
@@ -1019,6 +1022,7 @@ function buildUniqueCourseExamples(
         {
           homeCourseName: entry.homeCourseName,
           hostCourseName: entry.hostCourseName,
+          credits: entry.credits ?? null,
           recognitionType: entry.recognitionType,
           ...(typeof entry.notes === "string" ? { notes: entry.notes } : {}),
         },
@@ -1077,6 +1081,7 @@ function buildCourseEquivalenceGroups(
             {
               homeCourseName: entry.homeCourseName,
               hostCourseName: entry.hostCourseName,
+              credits: entry.credits ?? null,
               ...(typeof entry.hostUniversity === "string"
                 ? { hostUniversity: entry.hostUniversity }
                 : {}),
@@ -1406,6 +1411,37 @@ export async function getPublicDestinationDetailBySlug(
 ): Promise<PublicDestinationDetail | null> {
   const readModel = await loadPublicDestinationReadModel();
   return readModel.detailsBySlug.get(slug) ?? null;
+}
+
+export async function getPublicDestinationReadModelBySlug(
+  slug: string,
+): Promise<PublicDestinationReadModelDetail | null> {
+  const readModel = await loadPublicDestinationReadModel();
+  const listItem =
+    readModel.destinations.find((destination) => destination.slug === slug) ??
+    null;
+  const detail = readModel.detailsBySlug.get(slug) ?? null;
+  const accommodation = readModel.accommodationBySlug.get(slug) ?? null;
+  const courseEquivalences =
+    readModel.courseEquivalencesBySlug.get(slug) ?? null;
+
+  if (!listItem || !detail || !accommodation || !courseEquivalences) {
+    return null;
+  }
+
+  return {
+    slug: listItem.slug,
+    city: listItem.city,
+    country: listItem.country,
+    hostUniversityCount: listItem.hostUniversityCount,
+    submissionCount: listItem.submissionCount,
+    latestReportSubmittedAt: listItem.latestReportSubmittedAt,
+    averageRent: listItem.averageRent,
+    averageMonthlyCost: listItem.averageMonthlyCost,
+    detail,
+    accommodation,
+    courseEquivalences,
+  };
 }
 
 export async function getPublicAccommodationInsightsByDestinationSlug(

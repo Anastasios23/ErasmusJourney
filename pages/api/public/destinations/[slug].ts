@@ -3,7 +3,7 @@ import {
   PUBLIC_DESTINATION_API_S_MAXAGE_SECONDS,
   PUBLIC_DESTINATION_API_STALE_WHILE_REVALIDATE_SECONDS,
 } from "../../../../src/lib/publicDestinationCache";
-import { getPublicDestinationDetailBySlug } from "../../../../src/server/publicDestinations";
+import { getPublicDestinationReadModelBySlug } from "../../../../src/server/publicDestinations";
 
 export default async function handler(
   req: NextApiRequest,
@@ -24,13 +24,13 @@ export default async function handler(
   }
 
   try {
-    const destination = await getPublicDestinationDetailBySlug(slug);
+    const destination = await getPublicDestinationReadModelBySlug(slug);
 
     if (!destination) {
       return res.status(404).json({ message: "Destination not found" });
     }
 
-    return res.status(200).json({ destination });
+    return res.status(200).json(destination);
   } catch (error) {
     console.error("Failed to load public destination detail", error);
     return res
