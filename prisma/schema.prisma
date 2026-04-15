@@ -64,26 +64,6 @@ model agreements {
   universities_agreements_partnerUniversityIdTouniversities universities @relation("agreements_partnerUniversityIdTouniversities", fields: [partnerUniversityId], references: [id])
 }
 
-model applications {
-  id               String   @id
-  userId           String
-  homeUniversityId String
-  programId        String
-  status           String   @default("DRAFT")
-  semester         String?
-  academicYear     String?
-  duration         String?
-  motivation       String?
-  languageSkills   Json?
-  grades           Json?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime
-
-  @@index([userId])
-  @@index([status])
-  @@index([homeUniversityId])
-}
-
 model departments {
   id          String       @id
   name        String
@@ -212,19 +192,6 @@ model faculties {
   updatedAt    DateTime
   departments  departments[]
   universities universities  @relation(fields: [universityId], references: [id], onDelete: Cascade)
-}
-
-model programs {
-  id           String   @id
-  name         String
-  level        String
-  duration     String
-  type         String?
-  ects         Int?
-  description  String?
-  departmentId String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime
 }
 
 model universities {
