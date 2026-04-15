@@ -70,9 +70,7 @@ describe("destinations page", () => {
       within(amsterdamCard as HTMLElement).getByText("Netherlands"),
     ).toBeInTheDocument();
     expect(
-      within(amsterdamCard as HTMLElement).getByText(
-        /Avg rent:\s*€650\/mo/,
-      ),
+      within(amsterdamCard as HTMLElement).getByText(/Avg rent:\s*€650\/mo/),
     ).toBeInTheDocument();
     expect(
       within(amsterdamCard as HTMLElement).getByText(
@@ -141,9 +139,7 @@ describe("destinations page", () => {
     expect(
       screen.getByRole("heading", { name: "Copenhagen" }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("combobox"),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("combobox")).toBeInTheDocument();
     expect(screen.getByRole("combobox")).toHaveTextContent("Denmark");
   });
 
