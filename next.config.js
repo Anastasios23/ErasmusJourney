@@ -10,8 +10,6 @@ const nextConfig = {
   },
   // Allow cross-origin requests in development for cloud environments
   allowedDevOrigins: [
-    // Allow the current fly.dev domain
-    "e76e6937e0ab4494b4f81584380dda25-a5461613bb5b4ba69ae071f5c.fly.dev",
     // Allow localhost variations used in local development and smoke tests
     "localhost",
     "*.localhost",
@@ -28,14 +26,10 @@ const nextConfig = {
   },
   // Reduce network requests and improve stability
   generateEtags: false,
-  compress: false, // Disable compression in dev to reduce processing
   // Experimental features for better cloud support
   experimental: {
     // Force SWC instead of Babel
     forceSwcTransforms: true,
-    // Reduce memory usage and improve stability
-    workerThreads: false,
-    cpus: 1,
   },
   images: {
     // Performance optimization for images

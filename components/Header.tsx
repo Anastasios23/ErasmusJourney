@@ -38,6 +38,7 @@ export default function Header() {
   const navigation = [
     { name: "Home", href: "/" },
     { name: "Explore", href: "/destinations" },
+    { name: "Courses", href: "/course-matching-experiences" },
     { name: "Share", href: "/share-experience" },
   ];
 
@@ -234,6 +235,13 @@ export default function Header() {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Explore destinations
+            </Link>
+            <Link
+              href="/course-matching-experiences"
+              className="block rounded-md px-3 py-2 text-sm text-gray-800 hover:bg-gray-100"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Course examples
             </Link>
             <Link
               href="/share-experience"
