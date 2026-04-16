@@ -738,6 +738,16 @@ export default function MySubmissions() {
                                   )}
                                 </div>
                               )}
+                              {submission.status ===
+                                EXPERIENCE_STATUS.REVISION_NEEDED &&
+                                (submission.reviewFeedback == null ||
+                                  submission.reviewFeedback === "") && (
+                                  <p className="mt-3 text-sm text-orange-800">
+                                    The reviewer has requested changes. Check
+                                    your email for details, or contact your
+                                    university coordinator.
+                                  </p>
+                                )}
                             </div>
                           </div>
 
