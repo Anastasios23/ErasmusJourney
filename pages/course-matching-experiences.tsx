@@ -5,7 +5,6 @@ import type { GetStaticProps } from "next";
 
 import Header from "../components/Header";
 import Footer from "../src/components/Footer";
-import { Badge } from "../src/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -118,14 +117,6 @@ export default function CourseMatchingExperiencesPage({
               <p>
                 Approved peer course equivalency examples available publicly.
               </p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-slate-200 bg-white shadow-sm">
-            <CardContent className="flex h-full items-center p-5">
-              <Badge variant="secondary" className="text-sm">
-                n={examples.length}
-              </Badge>
             </CardContent>
           </Card>
         </section>
@@ -252,6 +243,10 @@ export default function CourseMatchingExperiencesPage({
   );
 }
 
+// TODO: Replace N+1 query pattern (getPublicDestinationList +
+// per-destination getPublicCourseEquivalencesByDestinationSlug)
+// with a single getPublicAllCourseEquivalences() function in
+// src/server/publicDestinations.ts before scaling beyond 20 destinations.
 export const getStaticProps: GetStaticProps<
   CourseMatchingExperiencesPageProps
 > = async () => {
