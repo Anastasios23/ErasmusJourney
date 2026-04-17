@@ -16,6 +16,7 @@ const CYPRUS_UNIVERSITIES_BY_CODE = new Map(
 const DOMAIN_ALLOWLIST_BY_CODE: Record<string, string[]> = {
   // MVP scope: 5 canonical universities from agreements source.
   ucy: ["ucy.ac.cy"],
+  cut: ["cut.ac.cy"],
   unic: ["unic.ac.cy"],
   euc: ["euc.ac.cy"],
   uclan: ["uclancyprus.ac.cy", "uclan.ac.cy"],

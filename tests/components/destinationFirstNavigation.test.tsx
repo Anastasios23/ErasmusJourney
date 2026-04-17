@@ -19,7 +19,7 @@ describe("destination-first navigation helpers", () => {
     ).toHaveAttribute("href", "/destinations?focus=accommodation");
     expect(
       screen.getByRole("link", { name: "Course Examples" }),
-    ).toHaveAttribute("href", "/destinations?focus=courses");
+    ).toHaveAttribute("href", "/course-matching-experiences");
   });
 
   it("lets logged-out users browse destinations, housing, and courses from the login prompt", () => {

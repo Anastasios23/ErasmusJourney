@@ -3,7 +3,6 @@ import { Icon } from "@iconify/react";
 import React from "react";
 import {
   PUBLIC_DESTINATIONS_ACCOMMODATION_FOCUS_ROUTE,
-  PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE,
   PUBLIC_DESTINATIONS_ROUTE,
 } from "@/lib/publicRoutes";
 
@@ -23,7 +22,7 @@ export default function Footer() {
     },
     {
       name: "Course Examples",
-      href: PUBLIC_DESTINATIONS_COURSES_FOCUS_ROUTE,
+      href: "/course-matching-experiences",
       icon: "solar:notebook-bold-duotone",
     },
     {
@@ -41,7 +40,7 @@ export default function Footer() {
   const supportLinks = [
     {
       name: "Email Support",
-      href: "mailto:support@erasmusjourney.com",
+      href: "mailto:anastasiosandreou1@gmail.com",
       icon: "solar:letter-bold-duotone",
     },
     {
@@ -52,31 +51,8 @@ export default function Footer() {
   ];
 
   const legalLinks = [
-    { name: "Terms of Service", href: "#" },
-    { name: "Privacy Policy", href: "#" },
-  ];
-
-  const socialLinks = [
-    {
-      name: "Twitter",
-      href: "https://x.com/erasmusjourney",
-      icon: "mdi:twitter",
-    },
-    {
-      name: "Instagram",
-      href: "https://instagram.com/erasmusjourney",
-      icon: "mdi:instagram",
-    },
-    {
-      name: "LinkedIn",
-      href: "https://linkedin.com/company/erasmusjourney",
-      icon: "mdi:linkedin",
-    },
-    {
-      name: "GitHub",
-      href: "https://github.com/erasmusjourney",
-      icon: "mdi:github",
-    },
+    { name: "Terms of Service", href: "/privacy-policy" },
+    { name: "Privacy Policy", href: "/privacy-policy" },
   ];
 
   return (
@@ -121,19 +97,6 @@ export default function Footer() {
                   Platform Online
                 </span>
               </div>
-            </div>
-
-            {/* Social Links */}
-            <div className="flex items-center gap-3">
-              {socialLinks.map((social) => (
-                <Link
-                  key={social.name}
-                  href={social.href}
-                  className="w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/50 rounded-xl flex items-center justify-center text-gray-400 hover:text-blue-400 transition-all duration-300"
-                >
-                  <Icon icon={social.icon} className="w-5 h-5" />
-                </Link>
-              ))}
             </div>
           </div>
 
