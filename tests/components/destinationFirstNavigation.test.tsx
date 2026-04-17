@@ -33,10 +33,9 @@ describe("destination-first navigation helpers", () => {
       "href",
       "/destinations?focus=accommodation",
     );
-    expect(screen.getByRole("link", { name: "Course Examples" })).toHaveAttribute(
-      "href",
-      "/destinations?focus=courses",
-    );
+    expect(
+      screen.getByRole("link", { name: "Course Examples" }),
+    ).toHaveAttribute("href", "/destinations?focus=courses");
   });
 
   it("surfaces canonical public discovery routes in the quick-start guide", () => {

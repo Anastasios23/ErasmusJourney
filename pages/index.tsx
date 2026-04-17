@@ -111,30 +111,31 @@ export default function HomePage({
         <section className="border-b border-gray-100">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
             <h1 className="text-3xl md:text-5xl font-semibold text-gray-900 tracking-tight">
-              Plan your Erasmus with real student insights
+              Find out what Erasmus is really like in your city
             </h1>
             <p className="mt-4 text-base md:text-lg text-gray-600 max-w-3xl">
-              Explore destinations, housing reality, and course examples from
-              approved submissions by Cyprus university students.
+              Every submission is reviewed before publishing. No unverified
+              data. Real rent, real courses, real experiences from Cyprus
+              students.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <Link href={PUBLIC_DESTINATIONS_ROUTE}>
+              <Link href="/share-experience">
                 <Button className="w-full sm:w-auto h-11 px-6 bg-blue-600 hover:bg-blue-700 text-white">
-                  Explore destinations
+                  Share your experience
                 </Button>
               </Link>
-              <Link href="/share-experience">
+              <Link href={PUBLIC_DESTINATIONS_ROUTE}>
                 <Button
                   variant="outline"
                   className="w-full sm:w-auto h-11 px-6 border-gray-300 text-gray-700 hover:bg-gray-50"
                 >
-                  Share your experience
+                  Explore destinations
                 </Button>
               </Link>
             </div>
             <p className="mt-5 text-sm text-gray-500">
-              Approved submissions only. Built to help students compare cities
-              before they decide.
+              Every submission is reviewed by a moderator before it goes live.
+              Your name is never shown publicly.
             </p>
             {!publicDataAvailable ? (
               <p className="mt-3 text-sm text-amber-700">
@@ -144,6 +145,7 @@ export default function HomePage({
           </div>
         </section>
 
+        {false && (
         <section className="border-b border-gray-100 bg-gray-50/60">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <div className="grid md:grid-cols-3 gap-3">
@@ -192,6 +194,7 @@ export default function HomePage({
             </div>
           </div>
         </section>
+        )}
 
         <section className="py-14 md:py-16 border-b border-gray-100">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -270,16 +273,16 @@ export default function HomePage({
             <div className="mt-6 grid md:grid-cols-3 gap-4">
               {[
                 {
-                  title: "Explore destinations",
-                  text: "Browse approved destination pages first.",
+                  title: "You don't know if the rent is realistic",
+                  text: "See what students actually paid for accommodation in each city — not estimates, real numbers from approved submissions.",
                 },
                 {
-                  title: "Check housing reality",
-                  text: "See rent, recommendation signals, and housing patterns.",
+                  title: "Your university won't tell you which courses transferred",
+                  text: "Browse course equivalency examples from past students. Peer data only — not official recognition decisions.",
                 },
                 {
-                  title: "Review course examples",
-                  text: "Compare published course matches from previous students.",
+                  title: "You're choosing a city based on Instagram",
+                  text: "Compare cities using structured data reviewed and approved before publishing.",
                 },
               ].map((item) => (
                 <div
