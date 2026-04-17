@@ -105,13 +105,14 @@ export default function Header() {
           <div className="flex items-center gap-4">
             <BackButton className="hidden md:block" />
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center">
+              <span className="sr-only">Erasmus Journey home</span>
+              <div aria-hidden="true" className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center">
                 <Icon
                   icon="solar:square-academic-cap-bold-duotone"
                   className="w-5 h-5 text-white"
                 />
               </div>
-              <div className="hidden sm:block">
+              <div className="hidden sm:block" aria-hidden="true">
                 <span className="text-lg font-semibold text-gray-900">
                   Erasmus Journey
                 </span>
