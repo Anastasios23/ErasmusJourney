@@ -6,7 +6,7 @@
     "clean:next": "node scripts/clean-next-artifacts.mjs",
     "dev": "next dev",
     "dev:fresh": "npm run clean:next && next dev",
-    "prebuild": "npm run clean:next && npm run db:refresh-public-destination-read-model",
+    "prebuild": "npm run clean:next && (npm run db:refresh-public-destination-read-model || true)",
     "build": "next build",
     "prebuild:next-only": "npm run clean:next && npm run db:refresh-public-destination-read-model",
     "build:next-only": "set SKIP_TYPE_CHECK=true&& next build",
