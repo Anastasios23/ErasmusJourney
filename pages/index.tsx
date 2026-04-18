@@ -5,12 +5,6 @@ import Image from "next/image";
 import Header from "../components/Header";
 import Footer from "../src/components/Footer";
 import { Button } from "../src/components/ui/button";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../src/components/ui/accordion";
 import { PUBLIC_DESTINATIONS_ROUTE } from "../src/lib/publicRoutes";
 import { Icon } from "@iconify/react";
 import type { PublicDestinationSignalTone } from "../src/lib/publicDestinationPresentation";
@@ -451,53 +445,53 @@ export default function HomePage({
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-900">
               Common questions
             </h2>
-            <Accordion type="single" collapsible className="mt-6">
-              <AccordionItem value="rent-cost">
-                <AccordionTrigger className="text-left text-base text-gray-900">
+            <div className="mt-6">
+              <div className="border-b border-gray-200 py-5">
+                <h3 className="text-base font-semibold text-gray-900">
                   How much does rent cost for Erasmus students?
-                </AccordionTrigger>
-                <AccordionContent className="text-sm text-gray-600">
+                </h3>
+                <p className="mt-2 text-sm text-gray-600">
                   It depends heavily on the city. Students in Eastern European
                   cities like Prague or Krakow typically report lower costs than
                   those in Amsterdam or Barcelona. Erasmus Journey publishes
                   actual rent figures submitted by Cyprus students — not
                   estimates.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="course-transfer">
-                <AccordionTrigger className="text-left text-base text-gray-900">
+                </p>
+              </div>
+              <div className="border-b border-gray-200 py-5">
+                <h3 className="text-base font-semibold text-gray-900">
                   Can I see which courses transferred to my Cyprus university?
-                </AccordionTrigger>
-                <AccordionContent className="text-sm text-gray-600">
+                </h3>
+                <p className="mt-2 text-sm text-gray-600">
                   You can browse course equivalency examples submitted by past
                   students from UCY, CUT, and other Cyprus universities. These
                   are peer examples only — not official recognition decisions
                   from your home university.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="who-can-submit">
-                <AccordionTrigger className="text-left text-base text-gray-900">
+                </p>
+              </div>
+              <div className="border-b border-gray-200 py-5">
+                <h3 className="text-base font-semibold text-gray-900">
                   Who can submit to Erasmus Journey?
-                </AccordionTrigger>
-                <AccordionContent className="text-sm text-gray-600">
+                </h3>
+                <p className="mt-2 text-sm text-gray-600">
                   Only students with a verified Cyprus university email address.
                   Every submission goes through moderator review before it is
                   published. Your name is never shown publicly.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="official-data">
-                <AccordionTrigger className="text-left text-base text-gray-900">
+                </p>
+              </div>
+              <div className="border-b border-gray-200 py-5">
+                <h3 className="text-base font-semibold text-gray-900">
                   Is the data official or verified by universities?
-                </AccordionTrigger>
-                <AccordionContent className="text-sm text-gray-600">
+                </h3>
+                <p className="mt-2 text-sm text-gray-600">
                   The data is submitted by real students and reviewed by a
                   moderator for completeness and accuracy. It is not officially
                   endorsed by any university. Course equivalency examples are
                   peer data — always confirm credit recognition with your
                   Erasmus coordinator.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+                </p>
+              </div>
+            </div>
           </div>
         </section>
 
