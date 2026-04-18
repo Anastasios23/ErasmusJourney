@@ -84,8 +84,10 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-gray-400 leading-relaxed mb-6 max-w-sm">
-              Approved destination insights, housing summaries, and course
-              examples to help Cyprus students plan smarter exchanges.
+              Built by a Cyprus student who went through the same questions
+              before their own Erasmus. Approved destination insights, real
+              rent figures, and course equivalency examples — moderated before
+              publishing.
             </p>
 
 

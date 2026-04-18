@@ -5,6 +5,12 @@ import Image from "next/image";
 import Header from "../components/Header";
 import Footer from "../src/components/Footer";
 import { Button } from "../src/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../src/components/ui/accordion";
 import { PUBLIC_DESTINATIONS_ROUTE } from "../src/lib/publicRoutes";
 import { Icon } from "@iconify/react";
 import type { PublicDestinationSignalTone } from "../src/lib/publicDestinationPresentation";
@@ -94,14 +100,102 @@ export default function HomePage({
   const hasFeaturedDestinations = featuredDestinations.length > 0;
   const formatNumber = (value: number | null) =>
     typeof value === "number" ? value.toLocaleString() : "-";
+  // TODO: Remove fallback once NEXT_PUBLIC_SITE_URL is configured across all environments.
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "https://erasmus-journey-suce.vercel.app";
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Erasmus Journey",
+    url: siteUrl,
+    description:
+      "A platform where Cyprus university students share approved Erasmus destination insights including housing costs, neighbourhoods, and course equivalency examples.",
+    foundingLocation: {
+      "@type": "Place",
+      name: "Cyprus",
+    },
+  };
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Erasmus Journey",
+    url: siteUrl,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${siteUrl}/destinations?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "How much does rent cost for Erasmus students in European cities?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Rent varies significantly by city. Cyprus students who completed Erasmus report costs ranging from under €300/month in Eastern Europe to over €700/month in Western European capitals. Erasmus Journey publishes approved rent figures submitted by real students from Cyprus universities.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Can I see which courses transferred from my host university to my Cyprus university?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Erasmus Journey shows course equivalency examples submitted by past students from UCY, CUT, and other Cyprus universities. These are peer examples only and are not official recognition decisions from your university.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Who submits the data on Erasmus Journey?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Only students from verified Cyprus university email addresses can submit. Every submission is reviewed by a moderator before it is published. Student names are never shown publicly.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Which universities in Cyprus are supported?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Erasmus Journey currently accepts submissions from students at the University of Cyprus (UCY), Cyprus University of Technology (CUT), and other Cyprus universities with active Erasmus agreements.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Is Erasmus Journey officially affiliated with the Erasmus+ programme?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "No. Erasmus Journey is an independent platform built by students. It is not affiliated with, endorsed by, or part of the official Erasmus+ programme administered by the European Commission.",
+        },
+      },
+    ],
+  };
 
   return (
     <>
       <Head>
-        <title>Erasmus Journey | Explore Destinations</title>
+        <title>Erasmus Journey | Real Erasmus Experiences from Cyprus Students</title>
         <meta
           name="description"
-          content="Explore approved Erasmus destination insights from Cyprus university students, including housing and course examples."
+          content="Real rent costs, housing areas, and course equivalency examples from Cyprus students who completed Erasmus — every submission reviewed before publishing."
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
       </Head>
 
@@ -114,9 +208,10 @@ export default function HomePage({
               Find out what Erasmus is really like in your city
             </h1>
             <p className="mt-4 text-base md:text-lg text-gray-600 max-w-3xl">
-              Every submission is reviewed before publishing. No unverified
-              data. Real rent, real courses, real experiences from Cyprus
-              students.
+              Cyprus students share what they actually paid for rent, where
+              they lived, and which courses transferred — every submission
+              reviewed before it goes live. Real Erasmus housing costs, real
+              course equivalency examples, no unverified data.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <Link href="/share-experience">
@@ -278,7 +373,7 @@ export default function HomePage({
                 },
                 {
                   title: "Your university won't tell you which courses transferred",
-                  text: "Browse course equivalency examples from past students. Peer data only — not official recognition decisions.",
+                  text: "Browse course equivalency examples from UCY, CUT, and other Cyprus university students. Peer data only — not official recognition decisions from your Erasmus coordinator.",
                 },
                 {
                   title: "You're choosing a city based on Instagram",
@@ -341,6 +436,61 @@ export default function HomePage({
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="bg-white border-b border-gray-100 py-14">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-2xl md:text-3xl font-semibold text-gray-900">
+              Common questions
+            </h2>
+            <Accordion type="single" collapsible className="mt-6">
+              <AccordionItem value="rent-cost">
+                <AccordionTrigger className="text-left text-base text-gray-900">
+                  How much does rent cost for Erasmus students?
+                </AccordionTrigger>
+                <AccordionContent className="text-sm text-gray-600">
+                  It depends heavily on the city. Students in Eastern European
+                  cities like Prague or Krakow typically report lower costs than
+                  those in Amsterdam or Barcelona. Erasmus Journey publishes
+                  actual rent figures submitted by Cyprus students — not
+                  estimates.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="course-transfer">
+                <AccordionTrigger className="text-left text-base text-gray-900">
+                  Can I see which courses transferred to my Cyprus university?
+                </AccordionTrigger>
+                <AccordionContent className="text-sm text-gray-600">
+                  You can browse course equivalency examples submitted by past
+                  students from UCY, CUT, and other Cyprus universities. These
+                  are peer examples only — not official recognition decisions
+                  from your home university.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="who-can-submit">
+                <AccordionTrigger className="text-left text-base text-gray-900">
+                  Who can submit to Erasmus Journey?
+                </AccordionTrigger>
+                <AccordionContent className="text-sm text-gray-600">
+                  Only students with a verified Cyprus university email address.
+                  Every submission goes through moderator review before it is
+                  published. Your name is never shown publicly.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="official-data">
+                <AccordionTrigger className="text-left text-base text-gray-900">
+                  Is the data official or verified by universities?
+                </AccordionTrigger>
+                <AccordionContent className="text-sm text-gray-600">
+                  The data is submitted by real students and reviewed by a
+                  moderator for completeness and accuracy. It is not officially
+                  endorsed by any university. Course equivalency examples are
+                  peer data — always confirm credit recognition with your
+                  Erasmus coordinator.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </div>
         </section>
 
