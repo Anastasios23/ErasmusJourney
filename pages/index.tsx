@@ -180,14 +180,18 @@ export default function HomePage({
   return (
     <>
       <Head>
-        <title>Erasmus Journey | Real Erasmus Experiences from Cyprus Students</title>
+        <title>
+          Erasmus Journey | Real Erasmus Experiences from Cyprus Students
+        </title>
         <meta
           name="description"
           content="Real rent costs, housing areas, and course equivalency examples from Cyprus students who completed Erasmus — every submission reviewed before publishing."
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
         />
         <script
           type="application/ld+json"
@@ -208,10 +212,10 @@ export default function HomePage({
               Find out what Erasmus is really like in your city
             </h1>
             <p className="mt-4 text-base md:text-lg text-gray-600 max-w-3xl">
-              Cyprus students share what they actually paid for rent, where
-              they lived, and which courses transferred — every submission
-              reviewed before it goes live. Real Erasmus housing costs, real
-              course equivalency examples, no unverified data.
+              Cyprus students share what they actually paid for rent, where they
+              lived, and which courses transferred — every submission reviewed
+              before it goes live. Real Erasmus housing costs, real course
+              equivalency examples, no unverified data.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <Link href="/share-experience">
@@ -241,54 +245,56 @@ export default function HomePage({
         </section>
 
         {false && (
-        <section className="border-b border-gray-100 bg-gray-50/60">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <div className="grid md:grid-cols-3 gap-3">
-              {[
-                "Approved student submissions",
-                "Housing and budget insights",
-                "Course equivalence examples",
-              ].map((item) => (
-                <div
-                  key={item}
-                  className="rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700"
-                >
-                  {item}
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-              {[
-                {
-                  label: "Destinations",
-                  value: formatNumber(totalDestinations),
-                },
-                {
-                  label: "Approved submissions",
-                  value: formatNumber(totalApprovedSubmissions),
-                },
-                {
-                  label: "Host universities",
-                  value: formatNumber(totalHostUniversities),
-                },
-                {
-                  label: "Stronger-signal destinations",
-                  value: formatNumber(strongerSignalDestinations),
-                },
-              ].map((stat) => (
-                <div
-                  key={stat.label}
-                  className="rounded-lg border border-gray-200 bg-white px-4 py-3"
-                >
-                  <div className="text-xl font-semibold text-gray-900">
-                    {stat.value}
+          <section className="border-b border-gray-100 bg-gray-50/60">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+              <div className="grid md:grid-cols-3 gap-3">
+                {[
+                  "Approved student submissions",
+                  "Housing and budget insights",
+                  "Course equivalence examples",
+                ].map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700"
+                  >
+                    {item}
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">{stat.label}</div>
-                </div>
-              ))}
+                ))}
+              </div>
+              <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[
+                  {
+                    label: "Destinations",
+                    value: formatNumber(totalDestinations),
+                  },
+                  {
+                    label: "Approved submissions",
+                    value: formatNumber(totalApprovedSubmissions),
+                  },
+                  {
+                    label: "Host universities",
+                    value: formatNumber(totalHostUniversities),
+                  },
+                  {
+                    label: "Stronger-signal destinations",
+                    value: formatNumber(strongerSignalDestinations),
+                  },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="rounded-lg border border-gray-200 bg-white px-4 py-3"
+                  >
+                    <div className="text-xl font-semibold text-gray-900">
+                      {stat.value}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {stat.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
         )}
 
         <section className="py-14 md:py-16 border-b border-gray-100">
@@ -372,7 +378,8 @@ export default function HomePage({
                   text: "See what students actually paid for accommodation in each city — not estimates, real numbers from approved submissions.",
                 },
                 {
-                  title: "Your university won't tell you which courses transferred",
+                  title:
+                    "Your university won't tell you which courses transferred",
                   text: "Browse course equivalency examples from UCY, CUT, and other Cyprus university students. Peer data only — not official recognition decisions from your Erasmus coordinator.",
                 },
                 {

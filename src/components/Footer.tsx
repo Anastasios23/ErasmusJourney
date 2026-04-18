@@ -50,9 +50,7 @@ export default function Footer() {
     },
   ];
 
-  const legalLinks = [
-    { name: "Privacy Policy", href: "/privacy-policy" },
-  ];
+  const legalLinks = [{ name: "Privacy Policy", href: "/privacy-policy" }];
 
   return (
     <footer className="relative z-20 bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white overflow-hidden">
@@ -85,12 +83,10 @@ export default function Footer() {
             </Link>
             <p className="text-gray-400 leading-relaxed mb-6 max-w-sm">
               Built by a Cyprus student who went through the same questions
-              before their own Erasmus. Approved destination insights, real
-              rent figures, and course equivalency examples — moderated before
+              before their own Erasmus. Approved destination insights, real rent
+              figures, and course equivalency examples — moderated before
               publishing.
             </p>
-
-
           </div>
 
           {/* Quick Navigation */}
