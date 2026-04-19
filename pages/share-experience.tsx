@@ -2,6 +2,7 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useMemo,
   useRef,
 } from "react";
 import { useSession } from "next-auth/react";
@@ -12,6 +13,7 @@ import Header from "../components/Header";
 import { Button } from "../src/components/ui/button";
 import { Card, CardContent } from "../src/components/ui/card";
 import { Alert, AlertDescription } from "../src/components/ui/alert";
+import { Skeleton } from "../src/components/ui/skeleton";
 import { FormProvider } from "../components/forms/FormProvider";
 import { FormProgressBar } from "../components/forms/FormProgressBar";
 import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
@@ -150,6 +152,75 @@ type ShareExperiencePersistPayload = ShareExperienceFormDataPatch & {
   currentStep?: number;
   completedSteps?: number[];
 };
+
+function ShareExperienceLoadingSkeleton() {
+  return (
+    <>
+      <Head>
+        <title>Share your Erasmus experience | Erasmus Journey</title>
+        <meta
+          name="description"
+          content="Share practical information from your Erasmus experience."
+        />
+      </Head>
+
+      <Header />
+
+      <main className="min-h-screen bg-gray-50 py-8">
+        <div className="mx-auto max-w-4xl px-4">
+          <section className="mb-6 space-y-2">
+            <Skeleton className="h-9 w-72" />
+            <Skeleton className="h-4 w-80 max-w-full" />
+          </section>
+
+          <div className="mb-6 rounded-lg border border-gray-200 bg-white p-4">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+              {FORM_STEPS.map((step) => (
+                <div
+                  key={step.number}
+                  className="rounded-md border border-gray-200 bg-white px-3 py-3"
+                >
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-6 w-6 rounded-full" />
+                    <Skeleton className="h-4 flex-1" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Card className="border border-gray-200 bg-white shadow-sm">
+            <CardContent className="space-y-6 p-5 sm:p-6">
+              <div className="space-y-2">
+                <Skeleton className="h-7 w-56" />
+                <Skeleton className="h-4 w-96 max-w-full" />
+              </div>
+
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <div key={index} className="space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-10 w-full" />
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-40" />
+                <Skeleton className="h-24 w-full" />
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                <Skeleton className="h-10 w-28" />
+                <Skeleton className="h-10 w-36" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+    </>
+  );
+}
 
 export default function ShareExperience() {
   const { data: session, status: sessionStatus } = useSession();
@@ -495,18 +566,61 @@ export default function ShareExperience() {
     };
   });
 
-  if (sessionStatus === "loading" || experienceLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center gap-4">
-          <Icon
-            icon="solar:refresh-circle-bold-duotone"
-            className="h-8 w-8 animate-spin text-gray-700"
+  const handleCurrentStepComplete = useCallback(
+    (data: ShareExperienceFormDataPatch) =>
+      handleStepComplete(currentStep, data),
+    [currentStep, handleStepComplete],
+  );
+
+  const stepProps = useMemo(
+    () => ({
+      data: formData,
+      onComplete: handleCurrentStepComplete,
+      onSave: handleFormDataChange,
+      onPrevious: handlePreviousStep,
+      saveState,
+      onRequiredCountChange: setCurrentStepMissingRequiredCount,
+    }),
+    [
+      formData,
+      handleCurrentStepComplete,
+      handleFormDataChange,
+      handlePreviousStep,
+      saveState,
+    ],
+  );
+
+  const stepContent = useMemo(() => {
+    switch (currentStep) {
+      case 1:
+        return <BasicInformationStep {...stepProps} />;
+      case 2:
+        return <CourseMatchingStep {...stepProps} />;
+      case 3:
+        return <AccommodationStep {...stepProps} />;
+      case 4:
+        return <LivingExpensesStep {...stepProps} />;
+      case 5:
+        return (
+          <ExperienceStep
+            {...stepProps}
+            isSubmitting={isSubmitting || submissionSucceeded}
+            onGoToStep={handleStepClick}
           />
-          <p className="text-gray-600">Loading your draft...</p>
-        </div>
-      </div>
-    );
+        );
+      default:
+        return <BasicInformationStep {...stepProps} />;
+    }
+  }, [
+    currentStep,
+    handleStepClick,
+    isSubmitting,
+    stepProps,
+    submissionSucceeded,
+  ]);
+
+  if (sessionStatus === "loading" || experienceLoading) {
+    return <ShareExperienceLoadingSkeleton />;
   }
 
   if (sessionStatus === "unauthenticated") {
@@ -604,39 +718,6 @@ export default function ShareExperience() {
     );
   }
 
-  const renderStepContent = () => {
-    const stepProps = {
-      data: formData,
-      onComplete: (data: ShareExperienceFormDataPatch) =>
-        handleStepComplete(currentStep, data),
-      onSave: handleFormDataChange,
-      onPrevious: handlePreviousStep,
-      saveState,
-      onRequiredCountChange: setCurrentStepMissingRequiredCount,
-    };
-
-    switch (currentStep) {
-      case 1:
-        return <BasicInformationStep {...stepProps} />;
-      case 2:
-        return <CourseMatchingStep {...stepProps} />;
-      case 3:
-        return <AccommodationStep {...stepProps} />;
-      case 4:
-        return <LivingExpensesStep {...stepProps} />;
-      case 5:
-        return (
-          <ExperienceStep
-            {...stepProps}
-            isSubmitting={isSubmitting || submissionSucceeded}
-            onGoToStep={handleStepClick}
-          />
-        );
-      default:
-        return <BasicInformationStep {...stepProps} />;
-    }
-  };
-
   return (
     <>
       <Head>
@@ -693,7 +774,7 @@ export default function ShareExperience() {
             currentStep={currentStep}
           >
             <Card className="border border-gray-200 bg-white shadow-sm">
-              <CardContent className="p-5 sm:p-6">{renderStepContent()}</CardContent>
+              <CardContent className="p-5 sm:p-6">{stepContent}</CardContent>
             </Card>
           </FormProvider>
         </div>

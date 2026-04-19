@@ -57,4 +57,25 @@ describe("serializeErasmusExperienceForClient", () => {
     );
     expect(serialized.livingExpenses.food).toBe(250);
   });
+
+  it("drops non-whitelisted fields from the serialized response", () => {
+    const serialized = serializeErasmusExperienceForClient({
+      id: "experience-2",
+      status: "DRAFT",
+      basicInfo: {},
+      courses: [],
+      accommodation: {},
+      livingExpenses: {},
+      experience: {},
+      internalAuditFlag: true,
+      ipAddress: "127.0.0.1",
+    });
+
+    expect(serialized).toMatchObject({
+      id: "experience-2",
+      status: "DRAFT",
+    });
+    expect(serialized).not.toHaveProperty("internalAuditFlag");
+    expect(serialized).not.toHaveProperty("ipAddress");
+  });
 });
