@@ -16,5 +16,5 @@
     "tests/**/*.ts",
     "tests/**/*.tsx"
   ],
-  "exclude": ["node_modules", ".next", "legacy", "scripts"]
+  "exclude": ["node_modules", ".next", "legacy", "scripts", "tests"]
 }

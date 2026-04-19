@@ -797,7 +797,7 @@ describe("public destination preview-to-approval proof", () => {
     const previousNodeEnv = process.env.NODE_ENV;
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
 
-    process.env.NODE_ENV = "production";
+    (process.env as Record<string, string>).NODE_ENV = "production";
     persistedRows = [];
     invalidatePublicDestinationReadModel();
 
@@ -813,7 +813,7 @@ describe("public destination preview-to-approval proof", () => {
         ),
       );
     } finally {
-      process.env.NODE_ENV = previousNodeEnv;
+      (process.env as Record<string, string>).NODE_ENV = previousNodeEnv;
       warnSpy.mockRestore();
     }
   });

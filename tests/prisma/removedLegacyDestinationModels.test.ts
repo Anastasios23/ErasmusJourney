@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import * as PrismaClientPackage from "@prisma/client";
 import { describe, expect, it } from "vitest";
 
 const removedLegacyModels = [
@@ -20,6 +20,9 @@ const removedLegacyModels = [
 
 describe("legacy destination schema cleanup", () => {
   it("does not expose removed legacy destination models in the Prisma client", () => {
+    const { Prisma } = PrismaClientPackage as unknown as {
+      Prisma: { ModelName: Record<string, string> };
+    };
     const modelNames = Object.values(Prisma.ModelName);
 
     for (const modelName of removedLegacyModels) {

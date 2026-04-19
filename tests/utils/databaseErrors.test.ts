@@ -16,7 +16,7 @@ import {
 describe("database error helpers", () => {
   it("hides internal database details in production", () => {
     const previousNodeEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = "production";
+    (process.env as Record<string, string>).NODE_ENV = "production";
 
     try {
       expect(getDatabaseUnavailableDetails()).toBe(
@@ -26,7 +26,7 @@ describe("database error helpers", () => {
         undefined,
       );
     } finally {
-      process.env.NODE_ENV = previousNodeEnv;
+      (process.env as Record<string, string>).NODE_ENV = previousNodeEnv;
     }
   });
 
@@ -65,7 +65,7 @@ describe("database error helpers", () => {
 
   it("hides generic internal server details outside development", () => {
     const previousNodeEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = "production";
+    (process.env as Record<string, string>).NODE_ENV = "production";
 
     try {
       expect(getInternalServerDetails(new Error("example failure"))).toBe(
@@ -75,7 +75,7 @@ describe("database error helpers", () => {
         undefined,
       );
     } finally {
-      process.env.NODE_ENV = previousNodeEnv;
+      (process.env as Record<string, string>).NODE_ENV = previousNodeEnv;
     }
   });
 
