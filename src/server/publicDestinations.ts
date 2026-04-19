@@ -66,6 +66,7 @@ type GroupedDestinationData = {
   submissionCount: number;
   latestReportSubmittedAt: Date | null;
   rents: number[];
+  accommodationRents: number[];
   monthlyCosts: number[];
   livingFood: number[];
   livingTransport: number[];
@@ -133,7 +134,7 @@ let publicDestinationReadModelPromise: Promise<PublicDestinationReadModel> | nul
   null;
 let publicDestinationRefreshPromise: Promise<void> | null = null;
 
-const CITY_SPARSE_DATA_THRESHOLD = 5;
+export const CITY_SPARSE_DATA_THRESHOLD = 5;
 const AGGREGATE_SPARSE_DATA_THRESHOLD = 3;
 
 const RAW_EXPERIENCE_SELECT = {
@@ -409,6 +410,7 @@ function buildGroupedDestinations(
         submissionCount: 0,
         latestReportSubmittedAt: null,
         rents: [],
+        accommodationRents: [],
         monthlyCosts: [],
         livingFood: [],
         livingTransport: [],
@@ -494,6 +496,7 @@ function buildGroupedDestinations(
 
     if (hasAccommodationSignals(accommodation)) {
       destination.accommodationSubmissionCount += 1;
+      pushIfNumber(destination.accommodationRents, rent);
     }
 
     if (accommodation.accommodationType) {
@@ -719,7 +722,9 @@ function buildDestinationDetail(
     accommodationSummary: {
       sampleSize: destination.accommodationSubmissionCount,
       isLimitedData: !canShowAccommodationSummary,
-      averageRent: canShowAccommodationSummary ? average(destination.rents) : null,
+      averageRent: canShowAccommodationSummary
+        ? average(destination.accommodationRents)
+        : null,
       types: canShowAccommodationSummary
         ? Array.from(destination.accommodationType.entries())
             .map(([type, value]) => ({
@@ -768,7 +773,7 @@ function buildAccommodationInsights(
     destination.accommodationSubmissionCount < AGGREGATE_SPARSE_DATA_THRESHOLD;
   const canShowRentAggregate = canShowAggregate(
     destination.submissionCount,
-    destination.rents.length,
+    destination.accommodationRents.length,
   );
   const canShowRecommendationAggregate = canShowAggregate(
     destination.submissionCount,
@@ -808,8 +813,10 @@ function buildAccommodationInsights(
     isLimitedData,
     currency: deriveCurrency(destination.currencies),
     sampleSize: destination.accommodationSubmissionCount,
-    rentSampleSize: destination.rents.length,
-    averageRent: canShowRentAggregate ? average(destination.rents) : null,
+    rentSampleSize: destination.accommodationRents.length,
+    averageRent: canShowRentAggregate
+      ? average(destination.accommodationRents)
+      : null,
     recommendationRate: canShowRecommendationAggregate
       ? percentage(
           destination.accommodationRecommendationYesCount,
@@ -1018,7 +1025,11 @@ function buildUniqueCourseExamples(
   return Array.from(
     new Map(
       entries.map((entry) => [
-        `${entry.homeCourseName}|${entry.hostCourseName}|${entry.recognitionType}`,
+        JSON.stringify([
+          entry.homeCourseName,
+          entry.hostCourseName,
+          entry.recognitionType,
+        ]),
         {
           homeCourseName: entry.homeCourseName,
           hostCourseName: entry.hostCourseName,
@@ -1071,13 +1082,13 @@ function buildCourseEquivalenceGroups(
       const examples = Array.from(
         new Map(
           group.entries.map((entry) => [
-            [
+            JSON.stringify([
               entry.homeCourseName,
               entry.hostCourseName,
               entry.hostUniversity || "",
               entry.recognitionType,
               entry.notes || "",
-            ].join("|"),
+            ]),
             {
               homeCourseName: entry.homeCourseName,
               hostCourseName: entry.hostCourseName,
@@ -1381,7 +1392,16 @@ async function loadPublicDestinationReadModel(): Promise<PublicDestinationReadMo
         return staleReadModel;
       }
 
-      throw error;
+      console.error(
+        "Failed to load public destination read model, returning empty:",
+        error,
+      );
+      const fallback = createEmptyPublicDestinationReadModel();
+      publicDestinationReadModelCache = {
+        expiresAt: Date.now() + PUBLIC_DESTINATION_READ_MODEL_TTL_MS,
+        value: fallback,
+      };
+      return fallback;
     })
     .finally(() => {
       if (publicDestinationReadModelPromise === value) {

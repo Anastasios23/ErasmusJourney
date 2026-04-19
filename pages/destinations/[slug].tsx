@@ -2,6 +2,7 @@ import React from "react";
 import Head from "next/head";
 import Link from "next/link";
 import type { GetStaticPaths, GetStaticProps } from "next";
+import { ChevronLeft } from "lucide-react";
 
 import Header from "../../components/Header";
 import Footer from "../../src/components/Footer";
@@ -13,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../src/components/ui/card";
+import { formatMonthYear } from "../../src/lib/formatters";
 import { getPublicDestinationCurrencyMeta } from "../../src/lib/publicDestinationPresentation";
 import type {
   PublicDestinationCourseEquivalenceItem,
@@ -23,6 +25,7 @@ const PAGE_REVALIDATE_SECONDS = 3600;
 
 interface DestinationDetailPageProps {
   destination: PublicDestinationReadModelDetail;
+  sparseDataThreshold?: number;
 }
 
 type JsonRecord = Record<string, unknown>;
@@ -85,22 +88,6 @@ function readRecommendation(value: unknown): "Yes" | "No" | "Not enough data" {
   }
 
   return "Not enough data";
-}
-
-function formatMonthYear(value: string | null): string {
-  if (!value) {
-    return "Unknown";
-  }
-
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) {
-    return "Unknown";
-  }
-
-  return parsed.toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
 }
 
 function formatMoney(value: number | null, currency?: string | null): string {
@@ -203,7 +190,9 @@ function StatCard({
       <CardContent className="pt-6">
         <div className="flex items-center justify-between gap-3">
           <p className="text-sm font-medium text-slate-600">{label}</p>
-          <Badge variant="secondary">{sampleLabel(sampleSize)}</Badge>
+          {sampleSize > 0 && (
+            <Badge variant="secondary">{sampleLabel(sampleSize)}</Badge>
+          )}
         </div>
         <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-950">
           {value}
@@ -223,13 +212,22 @@ function EmptyState({ children }: { children: React.ReactNode }) {
 
 export default function DestinationDetailPage({
   destination,
+  sparseDataThreshold,
 }: DestinationDetailPageProps) {
   const latestReportMonth = formatMonthYear(
     destination.latestReportSubmittedAt,
   );
   const submissionLabel =
     destination.submissionCount === 1 ? "student report" : "student reports";
-  const hasSparseCityData = destination.submissionCount < 3;
+  const hasSparseCityData =
+    typeof sparseDataThreshold === "number"
+      ? destination.submissionCount < sparseDataThreshold
+      : destination.detail.isLimitedData;
+  const sparseDataLabelThreshold =
+    sparseDataThreshold ??
+    (hasSparseCityData
+      ? destination.submissionCount + 1
+      : destination.submissionCount);
   const currency =
     destination.detail.costSummary.currency ||
     destination.accommodation.currency ||
@@ -263,8 +261,9 @@ export default function DestinationDetailPage({
         <section className="space-y-5">
           <Link
             href="/destinations"
-            className="inline-flex text-sm font-medium text-sky-700 underline underline-offset-4"
+            className="inline-flex items-center gap-1.5 py-2 text-sm font-medium text-sky-700 underline underline-offset-4"
           >
+            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
             Back to destinations
           </Link>
 
@@ -287,8 +286,8 @@ export default function DestinationDetailPage({
 
         {hasSparseCityData ? (
           <section className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-950">
-            Limited data — fewer than 3 reports available for this city. Figures
-            below are early estimates only.
+            Limited data — fewer than {sparseDataLabelThreshold} reports
+            available for this city. Figures below are early estimates only.
           </section>
         ) : null}
 
@@ -451,9 +450,9 @@ export default function DestinationDetailPage({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 bg-white">
-                    {courseRows.map((row) => (
+                    {courseRows.map((row, index) => (
                       <tr
-                        key={`${row.homeUniversity}-${row.homeCourseName}-${row.hostCourseName}-${row.status}`}
+                        key={`${row.homeUniversity}-${row.homeCourseName}-${row.hostCourseName}-${row.status}-${index}`}
                       >
                         <td className="px-4 py-4 align-top">
                           <p className="font-medium text-slate-950">
@@ -551,12 +550,23 @@ export const getStaticProps: GetStaticProps<
     return { notFound: true };
   }
 
+  const publicDestinations = await import(
+    "../../src/server/publicDestinations"
+  );
   const { getPublicDestinationList, getPublicDestinationReadModelBySlug } =
-    await import("../../src/server/publicDestinations");
+    publicDestinations;
+  const sparseDataThresholdValue =
+    "CITY_SPARSE_DATA_THRESHOLD" in publicDestinations
+      ? Reflect.get(publicDestinations, "CITY_SPARSE_DATA_THRESHOLD")
+      : undefined;
+  const sparseDataThreshold =
+    typeof sparseDataThresholdValue === "number"
+      ? sparseDataThresholdValue
+      : undefined;
 
   const destination = await getPublicDestinationReadModelBySlug(slug);
 
-  if (!destination && !slug.includes("-")) {
+  if (!destination) {
     const destinations = await getPublicDestinationList();
     const matchedByCity = destinations.find(
       (item) => item.city.toLowerCase().replace(/\s+/g, "-") === slug,
@@ -579,6 +589,9 @@ export const getStaticProps: GetStaticProps<
   return {
     props: {
       destination,
+      ...(typeof sparseDataThreshold === "number"
+        ? { sparseDataThreshold }
+        : {}),
     },
     revalidate: PAGE_REVALIDATE_SECONDS,
   };

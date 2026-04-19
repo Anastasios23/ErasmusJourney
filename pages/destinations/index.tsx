@@ -19,28 +19,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../src/components/ui/select";
+import { formatMonthYear } from "../../src/lib/formatters";
 import type { PublicDestinationListItem } from "../../src/types/publicDestinations";
 
 const DESTINATIONS_REVALIDATE_SECONDS = 3600;
 
 interface DestinationsIndexPageProps {
   destinations: PublicDestinationListItem[];
-}
-
-function formatMonthYear(value: string | null): string {
-  if (!value) {
-    return "Unknown";
-  }
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return "Unknown";
-  }
-
-  return date.toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
+  sparseDataThreshold?: number;
 }
 
 function formatAverageRent(value: number): string {
@@ -49,6 +35,7 @@ function formatAverageRent(value: number): string {
 
 export default function DestinationsIndexPage({
   destinations,
+  sparseDataThreshold,
 }: DestinationsIndexPageProps) {
   const [countryFilter, setCountryFilter] = useState("__all");
 
@@ -118,6 +105,11 @@ export default function DestinationsIndexPage({
             </Select>
           </div>
         </section>
+        {countryFilter !== "__all" && filteredDestinations.length > 0 && (
+          <p className="mt-3 text-sm text-slate-500">
+            Showing {filteredDestinations.length} of {destinations.length} destinations
+          </p>
+        )}
 
         {destinations.length === 0 ? (
           <Card className="mt-8 border-slate-200 shadow-sm">
@@ -148,6 +140,10 @@ export default function DestinationsIndexPage({
                 destination.submissionCount === 1
                   ? "1 student report"
                   : `${destination.submissionCount} student reports`;
+              const isLimitedData =
+                typeof sparseDataThreshold === "number"
+                  ? destination.submissionCount < sparseDataThreshold
+                  : destination.isLimitedData;
 
               return (
                 <Card
@@ -170,7 +166,7 @@ export default function DestinationsIndexPage({
                         </p>
                       </div>
 
-                      {destination.submissionCount < 3 ? (
+                      {isLimitedData ? (
                         <Badge variant="secondary">Limited data</Badge>
                       ) : null}
                     </div>
@@ -206,15 +202,27 @@ export default function DestinationsIndexPage({
 export const getStaticProps: GetStaticProps<
   DestinationsIndexPageProps
 > = async () => {
-  const { getPublicDestinationList } = await import(
+  const publicDestinations = await import(
     "../../src/server/publicDestinations"
   );
+  const { getPublicDestinationList } = publicDestinations;
+  const sparseDataThresholdValue =
+    "CITY_SPARSE_DATA_THRESHOLD" in publicDestinations
+      ? Reflect.get(publicDestinations, "CITY_SPARSE_DATA_THRESHOLD")
+      : undefined;
+  const sparseDataThreshold =
+    typeof sparseDataThresholdValue === "number"
+      ? sparseDataThresholdValue
+      : undefined;
 
   const destinations = await getPublicDestinationList();
 
   return {
     props: {
       destinations,
+      ...(typeof sparseDataThreshold === "number"
+        ? { sparseDataThreshold }
+        : {}),
     },
     revalidate: DESTINATIONS_REVALIDATE_SECONDS,
   };
