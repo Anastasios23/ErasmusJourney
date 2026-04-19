@@ -78,4 +78,46 @@ describe("serializeErasmusExperienceForClient", () => {
     expect(serialized).not.toHaveProperty("internalAuditFlag");
     expect(serialized).not.toHaveProperty("ipAddress");
   });
+
+  it("should not expose userId in output", () => {
+    const result = serializeErasmusExperienceForClient({ userId: "secret-id" });
+    expect(result).not.toHaveProperty("userId");
+  });
+
+  it("should not expose userEmail in output", () => {
+    const result = serializeErasmusExperienceForClient({
+      userEmail: "user@example.com",
+    });
+    expect(result).not.toHaveProperty("userEmail");
+  });
+
+  it("should not expose reviewedBy in output", () => {
+    const result = serializeErasmusExperienceForClient({
+      reviewedBy: "admin-id",
+    });
+    expect(result).not.toHaveProperty("reviewedBy");
+  });
+
+  it("should not expose reviewedAt in output", () => {
+    const result = serializeErasmusExperienceForClient({
+      reviewedAt: new Date(),
+    });
+    expect(result).not.toHaveProperty("reviewedAt");
+  });
+
+  it("should omit reviewFeedback when status is not changes_requested", () => {
+    const result = serializeErasmusExperienceForClient({
+      status: "pending",
+      reviewFeedback: "Some feedback",
+    });
+    expect(result.reviewFeedback).toBeUndefined();
+  });
+
+  it("should include reviewFeedback when status is changes_requested", () => {
+    const result = serializeErasmusExperienceForClient({
+      status: "changes_requested",
+      reviewFeedback: "Please fix section 2.",
+    });
+    expect(result.reviewFeedback).toBe("Please fix section 2.");
+  });
 });

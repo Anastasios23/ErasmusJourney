@@ -247,6 +247,9 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     return res.status(401).json({ error: "Authentication required" });
   }
 
+  // Prevent aggressive polling of draft data
+  assertWithinMutationRateLimit(user.id, "save");
+
   const { id } = req.query;
 
   if (typeof id === "string" && id) {

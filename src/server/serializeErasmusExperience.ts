@@ -1,6 +1,9 @@
+import type { AccommodationStepData } from "../lib/accommodation";
 import { sanitizeAccommodationStepData } from "../lib/accommodation";
+import type { BasicInformationData } from "../lib/basicInformation";
 import { sanitizeBasicInformationData } from "../lib/basicInformation";
 import { sanitizeCourseMappingsData } from "../lib/courseMatching";
+import type { LivingExpensesStepData } from "../lib/livingExpenses";
 import { sanitizeLivingExpensesStepData } from "../lib/livingExpenses";
 
 function asPartialRecord(
@@ -19,27 +22,63 @@ function getExperiencePayload(
   return asPartialRecord(value) || {};
 }
 
+function asOptionalString(value: unknown): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
+function asOptionalNumber(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isFinite(value)
+    ? value
+    : undefined;
+}
+
+function asOptionalBoolean(value: unknown): boolean | undefined {
+  return typeof value === "boolean" ? value : undefined;
+}
+
+function asOptionalNullableString(
+  value: unknown,
+): string | null | undefined {
+  if (value === null) {
+    return null;
+  }
+
+  return typeof value === "string" ? value : undefined;
+}
+
+function asDateOrStringOrNull(
+  value: unknown,
+): Date | string | null | undefined {
+  if (value === null) {
+    return null;
+  }
+
+  if (value instanceof Date || typeof value === "string") {
+    return value;
+  }
+
+  return undefined;
+}
+
 export interface SerializedErasmusExperienceForClient {
   id?: string;
-  status?: unknown;
-  currentStep?: unknown;
-  completedSteps?: unknown;
-  isComplete?: unknown;
+  status?: string;
+  currentStep?: number;
+  completedSteps?: number[];
+  isComplete?: boolean;
   lastSavedAt?: unknown;
   submittedAt?: unknown;
   createdAt?: unknown;
   updatedAt?: unknown;
-  publishedAt?: unknown;
+  publishedAt?: Date | string | null;
   hostCity?: unknown;
   hostCountry?: unknown;
-  semester?: unknown;
-  reviewFeedback?: unknown;
-  reviewedBy?: unknown;
-  reviewedAt?: unknown;
+  semester?: string | null;
+  reviewFeedback?: string | null | undefined;
   revisionCount?: unknown;
-  basicInfo: ReturnType<typeof sanitizeBasicInformationData>;
-  accommodation: ReturnType<typeof sanitizeAccommodationStepData>;
-  livingExpenses: ReturnType<typeof sanitizeLivingExpensesStepData>;
+  basicInfo: BasicInformationData;
+  accommodation: AccommodationStepData;
+  livingExpenses: LivingExpensesStepData;
   courses: ReturnType<typeof sanitizeCourseMappingsData>;
   experience: Partial<Record<string, unknown>>;
 }
@@ -47,23 +86,26 @@ export interface SerializedErasmusExperienceForClient {
 export function serializeErasmusExperienceForClient(
   experience: Record<string, unknown>,
 ): SerializedErasmusExperienceForClient {
+  const status = asOptionalString(experience.status);
+
   return {
     id: experience.id as string | undefined,
-    status: experience.status,
-    currentStep: experience.currentStep,
-    completedSteps: experience.completedSteps,
-    isComplete: experience.isComplete,
+    status,
+    currentStep: asOptionalNumber(experience.currentStep),
+    completedSteps: experience.completedSteps as number[] | undefined,
+    isComplete: asOptionalBoolean(experience.isComplete),
     lastSavedAt: experience.lastSavedAt,
     submittedAt: experience.submittedAt,
     createdAt: experience.createdAt,
     updatedAt: experience.updatedAt,
-    publishedAt: experience.publishedAt,
+    publishedAt: asDateOrStringOrNull(experience.publishedAt),
     hostCity: experience.hostCity,
     hostCountry: experience.hostCountry,
-    semester: experience.semester,
-    reviewFeedback: experience.reviewFeedback,
-    reviewedBy: experience.reviewedBy,
-    reviewedAt: experience.reviewedAt,
+    semester: asOptionalNullableString(experience.semester),
+    reviewFeedback:
+      status === "changes_requested"
+        ? (experience.reviewFeedback as string | null | undefined)
+        : undefined,
     revisionCount: experience.revisionCount,
     basicInfo: sanitizeBasicInformationData(
       asPartialRecord(experience.basicInfo),

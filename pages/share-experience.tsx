@@ -510,11 +510,6 @@ export default function ShareExperience() {
         if (stepNumber < 5) {
           setLocalCurrentStep(stepNumber + 1);
         }
-
-        toast({
-          title: "Progress saved",
-          description: `Step ${stepNumber} completed successfully.`,
-        });
       } catch (error) {
         console.error("Error saving step completion:", error);
         toast({
