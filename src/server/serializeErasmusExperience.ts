@@ -13,7 +13,9 @@ function asPartialRecord(
   return value as Partial<Record<string, unknown>>;
 }
 
-export function serializeErasmusExperienceForClient<T extends Record<string, any>>(
+export function serializeErasmusExperienceForClient<
+  T extends Record<string, unknown>,
+>(
   experience: T,
 ): T {
   return {

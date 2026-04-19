@@ -7,7 +7,6 @@ import React, {
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
 import Header from "../components/Header";
 import { Button } from "../src/components/ui/button";
@@ -18,13 +17,24 @@ import { FormProgressBar } from "../components/forms/FormProgressBar";
 import { useErasmusExperience } from "../src/hooks/useErasmusExperience";
 import { useFormProgress } from "../src/context/FormProgressContext";
 import {
+  type AccommodationStepData,
   createEmptyAccommodationStepData,
   sanitizeAccommodationStepData,
 } from "../src/lib/accommodation";
 import {
+  type BasicInformationData,
+  sanitizeBasicInformationData,
+} from "../src/lib/basicInformation";
+import {
+  type CourseMappingData,
+  sanitizeCourseMappingsData,
+} from "../src/lib/courseMatching";
+import {
+  type LivingExpensesStepData,
   createEmptyLivingExpensesStepData,
   sanitizeLivingExpensesStepData,
 } from "../src/lib/livingExpenses";
+import type { ExperienceStepData } from "../src/lib/schemas";
 import { toast } from "../src/hooks/use-toast";
 import { buildLoginRedirectUrl } from "../src/lib/authRedirect";
 
@@ -107,13 +117,47 @@ function getRequestedStep(
   return parseStepQuery(searchParams.get("step") ?? undefined);
 }
 
+function buildStepRoute(pathname: string, asPath: string, step: number) {
+  const search = asPath.split("?")[1]?.split("#")[0];
+  const searchParams = new URLSearchParams(search);
+  searchParams.set("step", String(step));
+
+  return {
+    pathname,
+    query: Object.fromEntries(searchParams.entries()),
+  };
+}
+
+function toExperienceStepDraft(value: unknown): Partial<ExperienceStepData> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return {};
+  }
+
+  return value as Partial<ExperienceStepData>;
+}
+
+type ShareExperienceFormData = {
+  basicInfo: BasicInformationData;
+  courses: CourseMappingData[];
+  accommodation: AccommodationStepData;
+  livingExpenses: LivingExpensesStepData;
+  experience: Partial<ExperienceStepData>;
+};
+
+type ShareExperienceFormDataPatch = Partial<ShareExperienceFormData>;
+
+type ShareExperiencePersistPayload = ShareExperienceFormDataPatch & {
+  currentStep?: number;
+  completedSteps?: number[];
+};
+
 export default function ShareExperience() {
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
+  const currentQueryStep = router.query.step;
 
   const {
     completedStepNumbers,
-    setCurrentStep,
     markStepCompleted,
     getStepName,
   } = useFormProgress();
@@ -129,11 +173,12 @@ export default function ShareExperience() {
 
   const [currentStep, setLocalCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionSucceeded, setSubmissionSucceeded] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<ShareExperienceSaveState>("idle");
   const [, setCurrentStepMissingRequiredCount] = useState(0);
-  const [formData, setFormData] = useState({
-    basicInfo: {},
+  const [formData, setFormData] = useState<ShareExperienceFormData>({
+    basicInfo: sanitizeBasicInformationData(),
     courses: [],
     accommodation: createEmptyAccommodationStepData(),
     livingExpenses: createEmptyLivingExpensesStepData(),
@@ -160,17 +205,17 @@ export default function ShareExperience() {
       return;
     }
 
-    const requestedStep = getRequestedStep(router.query.step, router.asPath);
+    const requestedStep = getRequestedStep(currentQueryStep, router.asPath);
     const hydratedFormData = {
-      basicInfo: experienceData.basicInfo || {},
-      courses: experienceData.courses || [],
+      basicInfo: sanitizeBasicInformationData(experienceData.basicInfo),
+      courses: sanitizeCourseMappingsData(experienceData.courses),
       accommodation: sanitizeAccommodationStepData(
         experienceData.accommodation,
       ),
       livingExpenses: sanitizeLivingExpensesStepData(
         experienceData.livingExpenses,
       ),
-      experience: experienceData.experience || {},
+      experience: toExperienceStepDraft(experienceData.experience),
     };
 
     hydratedExperienceIdRef.current = experienceData.id;
@@ -188,7 +233,7 @@ export default function ShareExperience() {
     if (experienceData.lastSavedAt) {
       setSaveState("saved");
     }
-  }, [experienceLoading, experienceData?.id, router.asPath, router.query.step]);
+  }, [currentQueryStep, experienceLoading, experienceData, router.asPath]);
 
   useEffect(() => {
     if (!router.isReady || experienceLoading) {
@@ -202,7 +247,7 @@ export default function ShareExperience() {
       return;
     }
 
-    const requestedStep = getRequestedStep(router.query.step, router.asPath);
+    const requestedStep = getRequestedStep(currentQueryStep, router.asPath);
     if (!requestedStep) {
       return;
     }
@@ -223,9 +268,9 @@ export default function ShareExperience() {
   }, [
     experienceData?.id,
     experienceLoading,
+    currentQueryStep,
     router.asPath,
     router.isReady,
-    router.query.step,
   ]);
 
   useEffect(() => {
@@ -255,36 +300,26 @@ export default function ShareExperience() {
       pendingResolvedStepRef.current = null;
     }
 
-    const currentQueryStep = getRequestedStep(router.query.step, router.asPath);
-    if (currentQueryStep === currentStep) {
+    const requestedStep = getRequestedStep(currentQueryStep, router.asPath);
+    if (requestedStep === currentStep) {
       return;
     }
 
     void router.replace(
-      {
-        pathname: router.pathname,
-        query: { ...router.query, step: String(currentStep) },
-      },
+      buildStepRoute(router.pathname, router.asPath, currentStep),
       undefined,
       { shallow: true },
     );
   }, [
     currentStep,
+    currentQueryStep,
     experienceData?.id,
     experienceLoading,
     router.asPath,
     router.isReady,
     router.pathname,
-    router.query,
     router.replace,
   ]);
-
-  useEffect(() => {
-    const stepName = getStepName(currentStep);
-    if (stepName) {
-      setCurrentStep(stepName);
-    }
-  }, [currentStep, setCurrentStep, getStepName]);
 
   useEffect(() => {
     formDataRef.current = formData;
@@ -295,7 +330,7 @@ export default function ShareExperience() {
   }, [currentStep]);
 
   const persistProgress = useCallback(
-    async (payload: Record<string, unknown>) => {
+    async (payload: ShareExperiencePersistPayload) => {
       setSaveState("saving");
 
       try {
@@ -318,7 +353,7 @@ export default function ShareExperience() {
   );
 
   const handleFormDataChange = useCallback(
-    async (stepDataPatch: any) => {
+    async (stepDataPatch: ShareExperienceFormDataPatch) => {
       const mergedData = {
         ...formDataRef.current,
         ...stepDataPatch,
@@ -333,23 +368,28 @@ export default function ShareExperience() {
   );
 
   const handleStepComplete = useCallback(
-    async (stepNumber: number, stepData: any) => {
+    async (stepNumber: number, stepData: ShareExperienceFormDataPatch) => {
       const updatedFormData = { ...formDataRef.current, ...stepData };
       formDataRef.current = updatedFormData;
       setFormData(updatedFormData);
 
       if (stepNumber === 5) {
-        if (isSubmitting) {
+        if (isSubmitting || submissionSucceeded) {
           return;
         }
 
+        let didSubmitSucceed = false;
+
         try {
           setIsSubmitting(true);
+          setSubmissionSucceeded(false);
           setSubmitError(null);
 
           const success = await submitExperience(updatedFormData);
 
           if (success) {
+            didSubmitSucceed = true;
+            setSubmissionSucceeded(true);
             toast({
               title: "Success",
               description: "Your Erasmus experience has been submitted.",
@@ -364,13 +404,16 @@ export default function ShareExperience() {
               : "Failed to submit experience";
 
           setSubmitError(errorMessage);
+          setSubmissionSucceeded(false);
           toast({
             title: "Error",
             description: errorMessage,
             variant: "destructive",
           });
         } finally {
-          setIsSubmitting(false);
+          if (!didSubmitSucceed) {
+            setIsSubmitting(false);
+          }
         }
 
         return;
@@ -412,6 +455,7 @@ export default function ShareExperience() {
     },
     [
       isSubmitting,
+      submissionSucceeded,
       completedStepNumbers,
       persistProgress,
       submitExperience,
@@ -563,7 +607,8 @@ export default function ShareExperience() {
   const renderStepContent = () => {
     const stepProps = {
       data: formData,
-      onComplete: (data: any) => handleStepComplete(currentStep, data),
+      onComplete: (data: ShareExperienceFormDataPatch) =>
+        handleStepComplete(currentStep, data),
       onSave: handleFormDataChange,
       onPrevious: handlePreviousStep,
       saveState,
@@ -583,7 +628,7 @@ export default function ShareExperience() {
         return (
           <ExperienceStep
             {...stepProps}
-            isSubmitting={isSubmitting}
+            isSubmitting={isSubmitting || submissionSucceeded}
             onGoToStep={handleStepClick}
           />
         );
@@ -606,15 +651,23 @@ export default function ShareExperience() {
 
       <main className="min-h-screen bg-gray-50 py-8">
         <div className="mx-auto max-w-4xl px-4">
-          {(submitError || experienceError) && (
+          {submitError && (
             <Alert variant="destructive" className="mb-5">
               <Icon
                 icon="solar:danger-triangle-bold-duotone"
                 className="h-4 w-4"
               />
-              <AlertDescription>
-                {submitError || experienceError}
-              </AlertDescription>
+              <AlertDescription>{submitError}</AlertDescription>
+            </Alert>
+          )}
+
+          {experienceError && !submitError && (
+            <Alert variant="destructive" className="mb-5">
+              <Icon
+                icon="solar:danger-triangle-bold-duotone"
+                className="h-4 w-4"
+              />
+              <AlertDescription>{experienceError}</AlertDescription>
             </Alert>
           )}
 
@@ -640,19 +693,7 @@ export default function ShareExperience() {
             currentStep={currentStep}
           >
             <Card className="border border-gray-200 bg-white shadow-sm">
-              <CardContent className="p-5 sm:p-6">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentStep}
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.16 }}
-                  >
-                    {renderStepContent()}
-                  </motion.div>
-                </AnimatePresence>
-              </CardContent>
+              <CardContent className="p-5 sm:p-6">{renderStepContent()}</CardContent>
             </Card>
           </FormProvider>
         </div>
